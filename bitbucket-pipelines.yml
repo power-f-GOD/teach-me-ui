@@ -4,4 +4,3 @@ pipelines:
     - step:
         script:
           - npm install
-          - npm test
