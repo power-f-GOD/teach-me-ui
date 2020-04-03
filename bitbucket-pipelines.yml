@@ -10,7 +10,7 @@ pipelines:
           - npm run build
           - cd ..
 
-    - step: Build Python
+    - step: 
         name: Build Python
         image: python:3.7.2
         script:
