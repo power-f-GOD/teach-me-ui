@@ -1,7 +1,19 @@
-image: node:10.15.0
+
 pipelines:
   default:
-    - step:
+    - step: 
+        name: Build Front end
+        image: node:10.15.0
         script:
+          - cd teach-me-ui
           - npm install
           - npm run build
+          - cd ..
+
+    - step: Build Python
+        name: Build Python
+        image: python:3.7.2
+        script:
+          - cd teach-me-py-services
+          - python --version
+          - pip3 install -r requirements.txt
