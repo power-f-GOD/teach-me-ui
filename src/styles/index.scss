@@ -1,0 +1,139 @@
+$theme-color-blue-dark: rgb(14, 48, 63); //rgb(24, 58, 73);
+$theme-color-blue-light: rgb(17, 123, 153);
+$theme-color-blue-lighter: rgb(48, 159, 190);
+$theme-color-green-darker: rgb(114, 137, 17);
+$theme-color-green-dark: rgb(134, 157, 37);
+$theme-color-green-light: rgb(154, 177, 57);
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  font-size: 1rem;
+  overflow-x: hidden;
+  background: $theme-color-blue-light;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: Lato, Roboto, 'Trebuchet MS', sans-serif !important;
+}
+
+#root {
+  background: $theme-color-blue-light;
+  height: auto;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+input {
+  margin: 1em 0;
+}
+
+.logo {
+  font-family: Lobster, cursive !important;
+  font-size: 1.25em;
+}
+
+.theme-color-blue-dark {
+  color: $theme-color-blue-dark !important;
+}
+
+.theme-color-blue-light {
+  color: $theme-color-blue-light !important;
+}
+
+.theme-color-blue-light-1 {
+  color: $theme-color-blue-lighter !important;
+}
+
+a {
+  color: $theme-color-blue-light;
+
+  &:visited {
+    color: $theme-color-green-darker;
+  }
+}
+
+button {
+  &[class*='Primary'] {
+    background: $theme-color-green-dark;
+    border-radius: 1.5rem;
+    height: 3rem;
+
+    &:hover {
+      background: $theme-color-green-darker;
+    }
+  }
+}
+
+[class^='MuiFormControl'] {
+  .Mui-focused {
+    color: $theme-color-green-darker!important;
+
+    fieldset {
+      border-color: $theme-color-green-darker !important;
+    }
+  }
+
+  fieldset {
+    transition: 0.35s;
+  }
+}
+
+body {
+  &.desktop .custom-scroll-bar,
+  &.custom-scroll-bar {
+    &::-webkit-scrollbar {
+      width: 0.75em;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $theme-color-blue-dark;
+      border-radius: 0.5em;
+    }
+  }
+}
+
+@media only screen and (max-width: 959px) {
+  [class*='splashSection'] {
+    display: none !important;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s forwards ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-out {
+  animation: fadeOut 0.5s forwards ease;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}

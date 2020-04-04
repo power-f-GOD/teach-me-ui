@@ -1,11 +1,8 @@
 import React from 'react';
-import {Nav, Home, About } from '../components';
+import { Nav, Home, About } from '../components';
 import { Switch, Route } from 'react-router-dom';
 
-
-
 const Main = () => {
-
   return (
     <div>
       <Nav for='main' />
@@ -15,8 +12,7 @@ const Main = () => {
         <Route path='/about' component={About} />
       </Switch>
     </div>
-    
   );
-}
+};
 
 export default Main;

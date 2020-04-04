@@ -17,12 +17,8 @@ const MainNav = (
 );
 const LandingNav = (
   <ul>
-    <li>
-      <Link to='/signin'>Signin</Link>
-    </li>
-    <li>
-      <Link to='/signup'>Signup</Link>
-    </li>
+    <li></li>
+    <li></li>
   </ul>
 );
 
