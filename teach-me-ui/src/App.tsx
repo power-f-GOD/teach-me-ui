@@ -1,9 +1,18 @@
-import React, { FC } from 'react';
+import React from 'react';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
-const App: FC = () => {
+import { Landing, Main, PageNotFound } from './components';
+
+const App = () => {
   return (
-    <h1>Hello, Teach Me App!</h1>
+    <BrowserRouter>
+      <Switch>
+        <Route path={['/', '/home', '/about']} exact component={Main} />
+        <Route path={['/signin', '/signup']} component={Landing} />
+        <Route component={PageNotFound} />
+      </Switch>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;
