@@ -2,13 +2,19 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    landingRootContainer: {
-      padding: '2.5em 1.5em',
+    landingRootGrid: {
       height: '100vh',
       minHeight: '38em',
-      maxHeight: '50em'
+      alignSelf: 'center',
+      maxHeight: '50em',
+      flexGrow: 1,
+      background: 'rgb(17, 123, 153)'
     },
-    landingRootGrid: {
+    landingRootContainer: {
+      padding: '2.5em 1.5em',
+      height: '100%',
+    },
+    landingMainGrid: {
       borderRadius: '0.5em',
       boxShadow: '0 0.5em 2.5em rgba(0, 0, 0, 0.35), 0 0.5em 5em rgba(0, 0, 0, 0.15)',
       height: '100%',

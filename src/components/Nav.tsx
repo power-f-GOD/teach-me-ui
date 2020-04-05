@@ -13,6 +13,9 @@ const MainNav = (
     <li>
       <Link to='/about'>About</Link>
     </li>
+    <li>
+      <Link to='/signin'>Sign out</Link>
+    </li>
   </ul>
 );
 const LandingNav = (

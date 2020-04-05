@@ -2,8 +2,8 @@ import React from 'react';
 
 const About = () => {
   return (
-    <div>
-      <h1>This is the ABOUT page!</h1>
+    <div className='fade-in'>
+      <h1>ABOUT component goes here!</h1>
     </div>
   );
 };

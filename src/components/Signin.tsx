@@ -71,7 +71,7 @@ const Signin = () => {
       </Box>
       <Box marginY='1em'>
         <Typography component='div' align='center'>
-          Don't have an account yet? <Link to='/signup'>Sign up here!</Link>
+          Don't have an account yet? <Link to='/signup'>Sign up!</Link>
         </Typography>
       </Box>
     </Grid>

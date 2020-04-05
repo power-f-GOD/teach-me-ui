@@ -2,8 +2,8 @@ import React from 'react';
 
 const Home = () => {
   return (
-    <div>
-      <h1>This is the HOME page!</h1>
+    <div className='fade-in'>
+      <h1>HOME component goes here!</h1>
     </div>
   );
 };

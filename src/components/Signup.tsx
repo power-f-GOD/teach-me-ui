@@ -130,7 +130,7 @@ const Signin = () => {
       </Box>
       <Box marginY='1em'>
         <Typography component='div' align='center'>
-          Have an account already? <Link to='/signin'>Sign in here!</Link>
+          Have an account already? <Link to='/signin'>Sign in!</Link>
         </Typography>
       </Box>
     </Grid>

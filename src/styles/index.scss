@@ -12,7 +12,6 @@ body,
   margin: 0;
   font-size: 1rem;
   overflow-x: hidden;
-  background: $theme-color-blue-light;
 }
 
 * {
@@ -21,11 +20,9 @@ body,
 }
 
 #root {
-  background: $theme-color-blue-light;
   height: auto;
   min-height: 100vh;
   display: flex;
-  align-items: center;
 }
 
 img {
@@ -89,6 +86,8 @@ button {
 }
 
 body {
+  background-color: $theme-color-blue-light;
+
   &.desktop .custom-scroll-bar,
   &.custom-scroll-bar {
     &::-webkit-scrollbar {

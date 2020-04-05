@@ -6,7 +6,6 @@ const useStyles = makeStyles((theme: Theme) =>
       background: 'inherit'
     },
     flexBasisHalved: {
-      // flexBasis: 'calc(50% - 0.5em)',
       flexGrow: 1,
       minWidth: 'fit-content'
     }
