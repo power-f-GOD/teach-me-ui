@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     flexBasisHalved: {
       flexGrow: 1,
-      minWidth: 'fit-content'
+      minWidth: '45%'
     }
   })
 );

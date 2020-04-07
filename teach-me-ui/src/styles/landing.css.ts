@@ -11,11 +11,11 @@ const useStyles = makeStyles((theme: Theme) =>
       background: 'rgb(17, 123, 153)'
     },
     landingRootContainer: {
-      padding: '2.5em 1.5em',
+      padding: '2.25em 1.5em',
       height: '100%',
     },
     landingMainGrid: {
-      borderRadius: '0.5em',
+      borderRadius: '0.45em',
       boxShadow: '0 0.5em 2.5em rgba(0, 0, 0, 0.35), 0 0.5em 5em rgba(0, 0, 0, 0.15)',
       height: '100%',
       overflowX: 'hidden'

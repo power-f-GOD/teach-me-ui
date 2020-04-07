@@ -80,6 +80,18 @@ button {
     }
   }
 
+  .Mui-error {
+    color: #f44336 !important;
+
+    input {
+      color: #f44336 !important;
+    }
+    
+    fieldset {
+      border-color: #f44336 !important;
+    }
+  }
+
   fieldset {
     transition: 0.35s;
   }
