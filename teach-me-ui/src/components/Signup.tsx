@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
@@ -21,9 +22,22 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 // import { Visibility, VisibilityOff } from '@material-ui/icons';
 
 import { useSignupStyles } from '../styles';
+import { SignupState, ReduxAction } from '../constants/interfaces';
+import { requestValidate } from '../actions/validate';
 
-const Signin = () => {
+let dispatch: Function;
+
+const refs: any = {
+  firstnameInput: React.createRef<any>(),
+  lastnameInput: React.createRef<any>(),
+  usernameInput: React.createRef<any>(),
+  emailInput: React.createRef<any>(),
+  passwordInput: React.createRef<any>(),
+};
+
+const Signup = (props: SignupState) => {
   const classes = useSignupStyles();
+  dispatch = props.dispatch;
 
   return (
     <Grid
@@ -32,7 +46,7 @@ const Signin = () => {
       justify='center'
       direction='column'>
       <Typography component='h2' variant='h6'>
-        <Box marginY='0.5em' fontSize='1.25rem' fontWeight={900}>
+        <Box marginY='0.35em' fontSize='1.25rem' fontWeight={900}>
           Sign Up
         </Box>
       </Typography>
@@ -45,17 +59,22 @@ const Signin = () => {
           md={12}
           lg={6}
           className={classes.flexBasisHalved}>
-          <Box marginY='0.25em'>
+          <Box marginY='0.35em'>
             <TextField
-              // error
+              error={props.validate.firstnameErr}
+              required
               variant='outlined'
               id='firstname'
               label='First name'
-              helperText=' '
+              size='small'
+              inputRef={refs.firstnameInput}
+              helperText={props.validate.firstnameHelperText}
               fullWidth
+              onChange={handleInputChange}
             />
           </Box>
         </Grid>
+
         <Grid
           item
           xs={12}
@@ -63,78 +82,154 @@ const Signin = () => {
           md={12}
           lg={5}
           className={classes.flexBasisHalved}>
-          <Box marginY='0.25em'>
+          <Box marginY='0.35em'>
             <TextField
-              // error
+              required
+              error={props.validate.lastnameErr}
               variant='outlined'
               id='lastname'
               label='Last name'
-              helperText=' '
+              size='small'
+              inputRef={refs.lastnameInput}
+              helperText={props.validate.lastnameHelperText}
               fullWidth
+              onChange={handleInputChange}
             />
           </Box>
         </Grid>
+
+        <Box component='div' marginY='0.35em' minWidth='100%'>
+          <TextField
+            required
+            error={props.validate.usernameErr}
+            variant='outlined'
+            id='username'
+            label='Username'
+            size='small'
+            inputRef={refs.usernameInput}
+            helperText={props.validate.usernameHelperText}
+            fullWidth
+            onChange={handleInputChange}
+          />
+        </Box>
+
+        <Box component='div' marginY='0.35em' minWidth='100%'>
+          <TextField
+            required
+            error={props.validate.emailErr}
+            variant='outlined'
+            id='email'
+            label='Email'
+            size='small'
+            inputRef={refs.emailInput}
+            helperText={props.validate.emailHelperText}
+            fullWidth
+            onChange={handleInputChange}
+          />
+        </Box>
+
+        <Box component='div' marginY='0.35em' minWidth='100%'>
+          <TextField
+            required
+            error={props.validate.passwordErr}
+            variant='outlined'
+            id='password'
+            label='Password'
+            type='password'
+            size='small'
+            inputRef={refs.passwordInput}
+            helperText={props.validate.passwordHelperText}
+            fullWidth
+            onChange={handleInputChange}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position='end'>
+                  <IconButton aria-label='toggle password visibility'>
+                    {true ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Box>
+
+        <Box component='div' marginY='0.35em' minWidth='100%'>
+          <Button
+            variant='contained'
+            size='large'
+            id='sign-up'
+            color='primary'
+            // disabled={props.validate.signupErr}
+            fullWidth
+            onClick={handleSignupFormSubmission}>
+            SIGN UP
+          </Button>
+        </Box>
       </Grid>
 
-      <Box component='div' marginY='0.25em'>
-        <TextField
-          // error
-          variant='outlined'
-          id='username'
-          label='Username'
-          helperText=' '
-          fullWidth
-        />
-      </Box>
-      <Box component='div' marginY='0.25em'>
-        <TextField
-          // error
-          variant='outlined'
-          id='email'
-          label='Email'
-          helperText=' '
-          fullWidth
-        />
-      </Box>
-
-      <Box component='div' marginY='0.25em'>
-        <TextField
-          // error
-          variant='outlined'
-          id='password'
-          label='Password'
-          type='password'
-          // size='small'
-          helperText=' '
-          fullWidth
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position='end'>
-                <IconButton aria-label='toggle password visibility'>
-                  {true ? <Visibility /> : <VisibilityOff />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
-      </Box>
-      <Box component='div' marginY='0.5em'>
-        <Button
-          variant='contained'
-          size='large'
-          id='sign-in'
-          color='primary'
-          fullWidth>
-          SIGN UP
-        </Button>
-      </Box>
       <Box marginY='1em'>
         <Typography component='div' align='center'>
-          Have an account already? <Link to='/signin'>Sign in!</Link>
+          Signed up already? <Link to='/signin'>Sign in here!</Link>
         </Typography>
       </Box>
     </Grid>
   );
 };
 
-export default Signin;
+function handleInputChange({ target }: any) {
+  dispatch(requestValidate(target.id, target.value.trim()));
+}
+
+function handleSignupFormSubmission() {
+  let signupFormValidated = true;
+  let pendingValidations = [];
+
+  for (const key in refs) {
+    const { id, value } = refs[key].current;
+
+    pendingValidations.push(promisedDispatch(requestValidate(id, value)));
+  }
+
+  Promise.all([...pendingValidations]).then((settledValidations: any) => {
+    for (let validation of settledValidations) {
+      let {
+        firstnameErr,
+        lastnameErr,
+        usernameErr,
+        emailErr,
+        passwordErr,
+      } = validation.newState;
+      if (
+        firstnameErr ||
+        lastnameErr ||
+        usernameErr ||
+        emailErr ||
+        passwordErr
+      ) {
+        signupFormValidated = false;
+      }
+    }
+
+    if (signupFormValidated) {
+      //dispatch signup user action here and signup user...
+      window.alert('Form inputs validated! Thank you!');
+      for (const key in refs) {
+        refs[key].current.value = '';
+      }
+    }
+  });
+}
+
+function promisedDispatch(action: ReduxAction) {
+  return new Promise((resolve: Function) => {
+    resolve(dispatch(action));
+  });
+}
+
+const mapStateToProps = (state: SignupState) => {
+  return {
+    ...state,
+  };
+};
+
+export default connect(mapStateToProps)(Signup);
