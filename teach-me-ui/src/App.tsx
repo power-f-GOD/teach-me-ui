@@ -9,6 +9,10 @@ const store = initStore();
 
 export const dispatch = store.dispatch;
 
+const store = initStore();
+
+export const dispatch = store.dispatch;
+
 const App = () => {
   return (
     <Provider store={store}>
