@@ -22,12 +22,10 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 // import { Visibility, VisibilityOff } from '@material-ui/icons';
 
 import { useSignupStyles } from '../styles';
-import { SignupState, ReduxAction } from '../constants/interfaces';
-import { requestValidate } from '../actions/validate';
+import { SignupState } from '../constants/interfaces';
+import { handleInputChange, handleFormSubmission } from '../functions/signup';
 
-let dispatch: Function;
-
-const refs: any = {
+export const refs: any = {
   firstnameInput: React.createRef<any>(),
   lastnameInput: React.createRef<any>(),
   usernameInput: React.createRef<any>(),
@@ -37,7 +35,6 @@ const refs: any = {
 
 const Signup = (props: SignupState) => {
   const classes = useSignupStyles();
-  dispatch = props.dispatch;
 
   return (
     <Grid
@@ -159,9 +156,8 @@ const Signup = (props: SignupState) => {
             size='large'
             id='sign-up'
             color='primary'
-            // disabled={props.validate.signupErr}
             fullWidth
-            onClick={handleSignupFormSubmission}>
+            onClick={handleFormSubmission}>
             SIGN UP
           </Button>
         </Box>
@@ -175,56 +171,6 @@ const Signup = (props: SignupState) => {
     </Grid>
   );
 };
-
-function handleInputChange({ target }: any) {
-  dispatch(requestValidate(target.id, target.value.trim()));
-}
-
-function handleSignupFormSubmission() {
-  let signupFormValidated = true;
-  let pendingValidations = [];
-
-  for (const key in refs) {
-    const { id, value } = refs[key].current;
-
-    pendingValidations.push(promisedDispatch(requestValidate(id, value)));
-  }
-
-  Promise.all([...pendingValidations]).then((settledValidations: any) => {
-    for (let validation of settledValidations) {
-      let {
-        firstnameErr,
-        lastnameErr,
-        usernameErr,
-        emailErr,
-        passwordErr,
-      } = validation.newState;
-      if (
-        firstnameErr ||
-        lastnameErr ||
-        usernameErr ||
-        emailErr ||
-        passwordErr
-      ) {
-        signupFormValidated = false;
-      }
-    }
-
-    if (signupFormValidated) {
-      //dispatch signup user action here and signup user...
-      window.alert('Form inputs validated! Thank you!');
-      for (const key in refs) {
-        refs[key].current.value = '';
-      }
-    }
-  });
-}
-
-function promisedDispatch(action: ReduxAction) {
-  return new Promise((resolve: Function) => {
-    resolve(dispatch(action));
-  });
-}
 
 const mapStateToProps = (state: SignupState) => {
   return {
