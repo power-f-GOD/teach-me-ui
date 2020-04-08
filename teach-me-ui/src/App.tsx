@@ -5,6 +5,10 @@ import { Provider } from 'react-redux';
 import { Landing, Main, PageNotFound } from './components';
 import store from './appStore';
 
+const store = initStore();
+
+export const dispatch = store.dispatch;
+
 const App = () => {
   return (
     <Provider store={store}>
