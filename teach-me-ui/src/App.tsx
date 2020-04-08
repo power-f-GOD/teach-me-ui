@@ -6,9 +6,13 @@ import { Landing, Main, PageNotFound } from './components';
 import initStore from './initStore';
 // import { appState } from './constants';
 
+const store = initStore();
+
+export const dispatch = store.dispatch;
+
 const App = () => {
   return (
-    <Provider store={initStore()}>
+    <Provider store={store}>
       <BrowserRouter>
         <Switch>
           <Route path={['/', '/home', '/about']} exact component={Main} />
