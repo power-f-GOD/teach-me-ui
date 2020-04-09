@@ -22,6 +22,8 @@ pipelines:
         name: Create artifacts react
         script: 
           - cd teach-me-ui
+          - npm install
+          - npm run build
           - ls
           - cd build
           - ls
