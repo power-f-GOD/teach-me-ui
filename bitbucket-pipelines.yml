@@ -14,14 +14,14 @@ pipelines:
         artifacts:
           - teach-me-ui/packaged/**          
 
-    - step: 
-        name: Build Python
-        image: python:3.7.2
-        script:
-          - cd teach-me-py-services
-          - python --version
-          - pip3 install -r requirements.txt
-          - cd ..
+    # - step: 
+    #     name: Build Python
+    #     image: python:3.7.2
+    #     script:
+    #       - cd teach-me-py-services
+    #       - python --version
+    #       - pip3 install -r requirements.txt
+    #       - cd ..
 
     - step:
         name: Deploy to Heroku
