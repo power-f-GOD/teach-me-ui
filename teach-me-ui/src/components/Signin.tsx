@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import Typography from '@material-ui/core/Typography';
@@ -17,6 +17,7 @@ import { useSigninStyles } from '../styles';
 
 const Signin = () => {
   const classes = useSigninStyles();
+  const [passwordVisible, setPasswordVisible] = useState(Boolean);
 
   return (
     <Grid
@@ -45,14 +46,16 @@ const Signin = () => {
           variant='outlined'
           id='password'
           label='Password'
-          type='password'
+          type={passwordVisible ? 'text' : 'password'}
           helperText={true ? ' ' : 'Incorrect email or password.'}
           fullWidth
           InputProps={{
             endAdornment: (
               <InputAdornment position='end'>
-                <IconButton aria-label='toggle password visibility'>
-                  {true ? <Visibility /> : <VisibilityOff />}
+                <IconButton
+                  aria-label='toggle password visibility'
+                  onClick={() => setPasswordVisible(!passwordVisible)}>
+                  {passwordVisible ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
             ),
