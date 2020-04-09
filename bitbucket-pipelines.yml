@@ -28,10 +28,11 @@ pipelines:
         image: node:10.15.0
         deployment: test
         script:
+          - tar --exclude='./node_modules' --exclude='./build' -czvf application-${BITBUCKET_BUILD_NUMBER}.tar.gz -C teach-me-ui .
           - pipe: atlassian/heroku-deploy:1.1.2
             variables:
               HEROKU_API_KEY: $HEROKU_API_KEY
               HEROKU_APP_NAME: $HEROKU_APP_UI
-              ZIP_FILE: "teach-me-ui/packaged/package-${BITBUCKET_BUILD_NUMBER}.tar.gz"
+              ZIP_FILE: "application-${BITBUCKET_BUILD_NUMBER}.tar.gz"
               # WAIT: '<boolean>' # Optional.
               # DEBUG: '<boolean>' # Optional
