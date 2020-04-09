@@ -22,7 +22,10 @@ pipelines:
         name: Create artifacts react
         script: 
           - cd teach-me-ui
-          - npm run build
+          - ls
+          - cd build
+          - ls
+          - cd ..
           - mkdir packaged
           - tar -czvf packaged/package-${BITBUCKET_BUILD_NUMBER}.tar.gz -C build .
           - cd ..
