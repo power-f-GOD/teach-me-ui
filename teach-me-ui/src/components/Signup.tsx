@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
+<<<<<<< HEAD
 import { Link, Redirect } from 'react-router-dom';
+=======
+import { Link } from 'react-router-dom';
+>>>>>>> Modify code base for signup validation et al.
 import { connect } from 'react-redux';
 
 import Typography from '@material-ui/core/Typography';
@@ -30,17 +34,25 @@ export const refs: any = {
   lastnameInput: React.createRef<HTMLInputElement>(),
   usernameInput: React.createRef<HTMLInputElement>(),
   emailInput: React.createRef<HTMLInputElement>(),
+<<<<<<< HEAD
   passwordInput: React.createRef<HTMLInputElement>()
+=======
+  passwordInput: React.createRef<HTMLInputElement>(),
+>>>>>>> Modify code base for signup validation et al.
 };
 
 const Signup = (props: SignupPropsState) => {
   const classes = useSignupStyles();
   const [passwordVisible, setPasswordVisible] = useState(Boolean);
+<<<<<<< HEAD
 
   if (props.signup.success && props.signup.status === 'fulfilled') {
     return <Redirect to='/' />;
   }
 
+=======
+  
+>>>>>>> Modify code base for signup validation et al.
   return (
     <Grid
       className={`${classes.root} fade-in`}
@@ -53,7 +65,11 @@ const Signup = (props: SignupPropsState) => {
         </Box>
       </Typography>
 
+<<<<<<< HEAD
       <form noValidate autoComplete='on' onSubmit={(e: any) => e.preventDefault()}>
+=======
+      <form noValidate autoComplete='on'>
+>>>>>>> Modify code base for signup validation et al.
         <Grid justify='space-between' container>
           <Grid
             item
@@ -153,7 +169,11 @@ const Signup = (props: SignupPropsState) => {
                       {passwordVisible ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
+<<<<<<< HEAD
                 )
+=======
+                ),
+>>>>>>> Modify code base for signup validation et al.
               }}
             />
           </Box>
@@ -162,6 +182,7 @@ const Signup = (props: SignupPropsState) => {
             <Button
               variant='contained'
               size='large'
+<<<<<<< HEAD
               disabled={props.signup.status === 'pending'}
               id='sign-up'
               type='submit'
@@ -183,6 +204,18 @@ const Signup = (props: SignupPropsState) => {
         </Grid>
       </form>
       <Box marginY='0.5em'>
+=======
+              id='sign-up'
+              color='primary'
+              fullWidth
+              onClick={handleFormSubmission}>
+              SIGN UP
+            </Button>
+          </Box>
+        </Grid>
+      </form>
+      <Box marginY='1em'>
+>>>>>>> Modify code base for signup validation et al.
         <Typography component='div' align='center'>
           Have a Teach Me account? <Link to='/signin'>Sign in here!</Link>
         </Typography>
