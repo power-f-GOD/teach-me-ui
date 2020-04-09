@@ -1,8 +1,8 @@
-import { signupState } from './validate';
+import { signupState } from './signup';
 
-export * from './validate';
+export * from './signup';
 export * from './interfaces';
 
 export const appState: any = {
-  ...signupState
-}
+  ...signupState,
+};
