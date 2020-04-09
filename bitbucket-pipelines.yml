@@ -17,3 +17,26 @@ pipelines:
           - cd teach-me-py-services
           - python --version
           - pip3 install -r requirements.txt
+          - cd ..
+
+    - step:
+        name: Create artifacts react
+        script: 
+          - cd teach-me-ui
+          - mkdir packaged
+          - tar -czvf packaged/package-${BITBUCKET_BUILD_NUMBER}.tar.gz -C build .
+          - cd ..
+        artifacts:
+          - teach-me-ui/packaged/**
+
+    - step:
+        name: Deploy to Heroku
+        deployment: test
+        script:
+          - pipe: atlassian/heroku-deploy:1.1.2
+            variables:
+              HEROKU_API_KEY: $HEROKU_API_KEY
+              HEROKU_APP_NAME: $HEROKU_APP_UI
+              ZIP_FILE: 'package-${BITBUCKET_BUILD_NUMBER}.tar.gz'
+              # WAIT: '<boolean>' # Optional.
+              # DEBUG: '<boolean>' # Optional
