@@ -22,7 +22,8 @@
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "styled-components": "^4.4.1",
-    "typescript-eslint": "0.0.1-alpha.0"
+    "typescript-eslint": "0.0.1-alpha.0",
+    "acorn": "^7.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
