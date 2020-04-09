@@ -39,16 +39,8 @@ input {
   font-size: 1.25em;
 }
 
-.theme-color-blue-dark {
-  color: $theme-color-blue-dark !important;
-}
-
-.theme-color-blue-light {
-  color: $theme-color-blue-light !important;
-}
-
-.theme-color-blue-light-1 {
-  color: $theme-color-blue-lighter !important;
+.success {
+  color: #25b625 !important;
 }
 
 a {
@@ -68,12 +60,18 @@ button {
     &:hover {
       background: $theme-color-green-darker;
     }
+
+    &:disabled {
+      background: #ccc;
+      color: #555;
+    }
   }
 }
 
-[class^='MuiFormControl'] {
+[class^='MuiFormControl'],
+div {
   .Mui-focused {
-    color: $theme-color-green-darker!important;
+    color: $theme-color-green-darker !important;
 
     fieldset {
       border-color: $theme-color-green-darker !important;
@@ -86,7 +84,7 @@ button {
     input {
       color: #f44336 !important;
     }
-    
+
     fieldset {
       border-color: #f44336 !important;
     }
@@ -115,6 +113,18 @@ body {
       border-radius: 0.5em;
     }
   }
+}
+
+.theme-color-blue-dark {
+  color: $theme-color-blue-dark !important;
+}
+
+.theme-color-blue-light {
+  color: $theme-color-blue-light !important;
+}
+
+.theme-color-blue-light-1 {
+  color: $theme-color-blue-lighter !important;
 }
 
 @media only screen and (max-width: 959px) {

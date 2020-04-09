@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import Typography from '@material-ui/core/Typography';
@@ -22,7 +22,7 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 // import { Visibility, VisibilityOff } from '@material-ui/icons';
 
 import { useSignupStyles } from '../styles';
-import { SignupState } from '../constants/interfaces';
+import { SignupPropsState } from '../constants/interfaces';
 import { handleInputChange, handleFormSubmission } from '../functions/signup';
 
 export const refs: any = {
@@ -33,10 +33,14 @@ export const refs: any = {
   passwordInput: React.createRef<HTMLInputElement>(),
 };
 
-const Signup = (props: SignupState) => {
+const Signup = (props: SignupPropsState) => {
   const classes = useSignupStyles();
   const [passwordVisible, setPasswordVisible] = useState(Boolean);
-  
+
+  if (props.signup.success && props.signup.status === 'fulfilled') {
+    return <Redirect to='/' />;
+  }
+
   return (
     <Grid
       className={`${classes.root} fade-in`}
@@ -158,16 +162,26 @@ const Signup = (props: SignupState) => {
             <Button
               variant='contained'
               size='large'
+              disabled={props.signup.status === 'pending'}
               id='sign-up'
               color='primary'
               fullWidth
               onClick={handleFormSubmission}>
-              SIGN UP
+              {props.signup.status === 'pending'
+                ? 'Signing you up...'
+                : 'SIGN UP'}
             </Button>
+          </Box>
+          <Box
+            className={`${classes.statusFeedback} ${
+              props.signup.err ? 'Mui-error' : 'success'
+            }`}
+            marginY='0.35em'>
+            {props.signup.statusMsg || ' '}
           </Box>
         </Grid>
       </form>
-      <Box marginY='1em'>
+      <Box marginY='0.5em'>
         <Typography component='div' align='center'>
           Signed up already? <Link to='/signin'>Sign in here!</Link>
         </Typography>
@@ -176,7 +190,7 @@ const Signup = (props: SignupState) => {
   );
 };
 
-const mapStateToProps = (state: SignupState) => {
+const mapStateToProps = (state: SignupPropsState) => {
   return {
     ...state,
   };
