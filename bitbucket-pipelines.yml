@@ -8,12 +8,31 @@ pipelines:
           - cd teach-me-ui
           - npm install
           - npm run build
+          - mkdir packaged
+          - tar -czvf packaged/package-${BITBUCKET_BUILD_NUMBER}.tar.gz -C build .
           - cd ..
+        artifacts:
+          - teach-me-ui/packaged/**          
 
-    - step: 
-        name: Build Python
-        image: python:3.7.2
+    # - step: 
+    #     name: Build Python
+    #     image: python:3.7.2
+    #     script:
+    #       - cd teach-me-py-services
+    #       - python --version
+    #       - pip3 install -r requirements.txt
+    #       - cd ..
+
+    - step:
+        name: Deploy to Heroku
+        image: node:10.15.0
+        deployment: test
         script:
-          - cd teach-me-py-services
-          - python --version
-          - pip3 install -r requirements.txt
+          - tar --exclude='./node_modules' --exclude='./build' -czvf application-${BITBUCKET_BUILD_NUMBER}.tar.gz -C teach-me-ui .
+          - pipe: atlassian/heroku-deploy:1.1.2
+            variables:
+              HEROKU_API_KEY: $HEROKU_API_KEY
+              HEROKU_APP_NAME: $HEROKU_APP_UI
+              ZIP_FILE: "application-${BITBUCKET_BUILD_NUMBER}.tar.gz"
+              # WAIT: '<boolean>' # Optional.
+              # DEBUG: '<boolean>' # Optional
