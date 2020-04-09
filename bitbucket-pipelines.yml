@@ -31,6 +31,6 @@ pipelines:
             variables:
               HEROKU_API_KEY: $HEROKU_API_KEY
               HEROKU_APP_NAME: $HEROKU_APP_UI
-              ZIP_FILE: 'package-${BITBUCKET_BUILD_NUMBER}.tar.gz'
+              ZIP_FILE: "teach-me-ui/packaged/package-${BITBUCKET_BUILD_NUMBER}.tar.gz"
               # WAIT: '<boolean>' # Optional.
               # DEBUG: '<boolean>' # Optional
