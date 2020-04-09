@@ -6,21 +6,25 @@ import {
   PASSWORD_VALIDATE,
   ReduxAction,
   inputState,
-  InputState,
+  InputPropsState,
 } from '../constants';
 
 export const firstname = (
-  state: InputState = inputState,
+  state: InputPropsState = inputState,
   action: ReduxAction
 ) => {
   if (action.type === FIRSTNAME_VALIDATE) {
-    let value = action.payload;
+    let { payload } = action;
+    let { value } = payload;
     let err = !value || /\d+|\W+|_/.test(value);
     let helperText = err
       ? !value
         ? 'Firstname is required.'
         : "Ok. That can't be your firstname."
       : ' ';
+
+    err = 'err' in payload ? payload.err : err;
+    helperText = 'helperText' in payload ? payload.helperText : helperText;
 
     return {
       value,
@@ -32,17 +36,21 @@ export const firstname = (
 };
 
 export const lastname = (
-  state: InputState = inputState,
+  state: InputPropsState = inputState,
   action: ReduxAction
 ) => {
   if (action.type === LASTNAME_VALIDATE) {
-    let value = action.payload;
+    let { payload } = action;
+    let { value } = payload;
     let err = !value || /\d+|\W+|_/.test(value);
     let helperText = err
       ? !value
         ? 'Firstname is required.'
         : "Ok. That can't be your firstname."
       : ' ';
+
+    err = 'err' in payload ? payload.err : err;
+    helperText = 'helperText' in payload ? payload.helperText : helperText;
 
     return {
       value,
@@ -54,17 +62,21 @@ export const lastname = (
 };
 
 export const username = (
-  state: InputState = inputState,
+  state: InputPropsState = inputState,
   action: ReduxAction
 ) => {
   if (action.type === USERNAME_VALIDATE) {
-    let value = action.payload;
+    let { payload } = action;
+    let { value } = payload;
     let err = !value || /\d+|\W+/.test(value);
     let helperText = err
       ? !value
         ? 'Username is required.'
         : 'Username not accepted. Use letters (and underscores) only.'
       : ' ';
+
+    err = 'err' in payload ? payload.err : err;
+    helperText = 'helperText' in payload ? payload.helperText : helperText;
 
     return {
       value,
@@ -75,15 +87,22 @@ export const username = (
   return state;
 };
 
-export const email = (state: InputState = inputState, action: ReduxAction) => {
+export const email = (
+  state: InputPropsState = inputState,
+  action: ReduxAction
+) => {
   if (action.type === EMAIL_VALIDATE) {
-    let value = action.payload;
+    let { payload } = action;
+    let { value } = payload;
     let err = !value || !/^\w+[\w\d.]*[\w\d]+@\w+\.[\w\d.]+[\w\d]$/.test(value);
     let helperText = err
       ? !value
         ? 'Email is required.'
         : "Hm. That doesn't seem like a valid email."
       : ' ';
+
+    err = 'err' in payload ? payload.err : err;
+    helperText = 'helperText' in payload ? payload.helperText : helperText;
 
     return {
       value,
@@ -95,11 +114,12 @@ export const email = (state: InputState = inputState, action: ReduxAction) => {
 };
 
 export const password = (
-  state: InputState = inputState,
+  state: InputPropsState = inputState,
   action: ReduxAction
 ) => {
   if (action.type === PASSWORD_VALIDATE) {
-    let value = action.payload;
+    let { payload } = action;
+    let { value } = payload;
     let err = !value;
     let helperText = err ? 'Password is required.' : ' ';
 
@@ -110,6 +130,9 @@ export const password = (
       err = true;
       helperText = 'Password is weak. Consider combining alphanumerics.';
     }
+
+    err = 'err' in payload ? payload.err : err;
+    helperText = 'helperText' in payload ? payload.helperText : helperText;
 
     return {
       value,

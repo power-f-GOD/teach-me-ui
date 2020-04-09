@@ -1,5 +1,5 @@
 import { ReduxAction } from '../constants';
-import store from './initStore';
+import store from '../appStore';
 
 export const { dispatch, getState } = store;
 
