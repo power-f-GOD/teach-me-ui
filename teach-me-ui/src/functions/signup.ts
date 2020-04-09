@@ -1,22 +1,27 @@
 import * as actions from '../actions';
-import { promisedDispatch, getState } from './utils';
+import { promisedDispatch, getState, dispatch } from './utils';
 import { refs } from '../components/Signup';
 import { ChangeEvent } from 'react';
+import { requestSignup, signupUser } from '../actions';
+import { SignupFormData } from '../constants';
 
 export function handleInputChange({ target }: ChangeEvent<HTMLInputElement>) {
   const { id, value } = target;
 
+  //set status message to empty string on change of input in case status message is visible
+  promisedDispatch(signupUser({ status: 'settled', statusMsg: ' ' }));
+
   switch (id) {
     case 'firstname':
-      return promisedDispatch(actions.validateFirstname(value));
+      return promisedDispatch(actions.validateFirstname({ value }));
     case 'lastname':
-      return promisedDispatch(actions.validateLastname(value));
+      return promisedDispatch(actions.validateLastname({ value }));
     case 'username':
-      return promisedDispatch(actions.validateUsername(value));
+      return promisedDispatch(actions.validateUsername({ value }));
     case 'email':
-      return promisedDispatch(actions.validateEmail(value));
+      return promisedDispatch(actions.validateEmail({ value }));
     case 'password':
-      return promisedDispatch(actions.validatePassword(value));
+      return promisedDispatch(actions.validatePassword({ value }));
   }
 }
 
@@ -43,8 +48,16 @@ export function handleFormSubmission() {
     signupFormValidated = false;
   }
 
+  let formData: SignupFormData = {
+    firstname: firstname.value,
+    lastname: lastname.value,
+    username: username.value,
+    email: email.value,
+    password: password.value,
+  };
+
   if (signupFormValidated) {
     //dispatch signup user action here and signup user...
-    window.alert('Form inputs validated! Thank you!');
+    promisedDispatch(requestSignup({ ...formData })(dispatch));
   }
 }

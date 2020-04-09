@@ -4,40 +4,41 @@ import {
   USERNAME_VALIDATE,
   EMAIL_VALIDATE,
   PASSWORD_VALIDATE,
-  ReduxAction
+  ReduxAction,
+  InputPropsState,
 } from '../constants';
 
-export const validateFirstname = (value: string): ReduxAction => {
+export const validateFirstname = (payload: InputPropsState): ReduxAction => {
   return {
     type: FIRSTNAME_VALIDATE,
-    payload: value,
+    payload,
   };
 };
 
-export const validateLastname = (value: string): ReduxAction => {
+export const validateLastname = (payload: InputPropsState): ReduxAction => {
   return {
     type: LASTNAME_VALIDATE,
-    payload: value,
+    payload,
   };
 };
 
-export const validateUsername = (value: string): ReduxAction => {
+export const validateUsername = (payload: InputPropsState): ReduxAction => {
   return {
     type: USERNAME_VALIDATE,
-    payload: value,
+    payload,
   };
 };
 
-export const validateEmail = (value: string): ReduxAction => {
+export const validateEmail = (payload: InputPropsState): ReduxAction => {
   return {
     type: EMAIL_VALIDATE,
-    payload: value,
+    payload,
   };
 };
 
-export const validatePassword = (value: string): ReduxAction => {
+export const validatePassword = (payload: InputPropsState): ReduxAction => {
   return {
     type: PASSWORD_VALIDATE,
-    payload: value,
+    payload,
   };
 };
