@@ -3,12 +3,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
 import { Landing, Main, PageNotFound } from './components';
-import initStore from './initStore';
-// import { appState } from './constants';
-
-const store = initStore();
-
-export const dispatch = store.dispatch;
+import store from './functions/initStore';
 
 const App = () => {
   return (

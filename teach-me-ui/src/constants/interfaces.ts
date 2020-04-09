@@ -3,6 +3,7 @@ import { StoreEnhancer } from 'redux';
 export interface ReduxAction {
   type: string;
   newState?: any;
+  payload?: any;
 }
 
 export interface AppProps extends StoreEnhancer {
@@ -10,21 +11,17 @@ export interface AppProps extends StoreEnhancer {
   [key: string]: any;
 }
 
+export interface InputState {
+  value: string;
+  err: boolean;
+  helperText: string;
+}
+
 export interface SignupState {
-  firstname: string;
-  firstnameErr: boolean;
-  firstnameHelperText: string;
-  lastname: string;
-  lastnameErr: boolean;
-  lastnameHelperText: string;
-  username: string;
-  usernameErr: boolean;
-  usernameHelperText: string;
-  email: string;
-  emailErr: boolean;
-  emailHelperText: string;
-  password: string;
-  passwordErr: boolean;
-  passwordHelperText: string;
+  firstname: InputState;
+  lastname: InputState;
+  username: InputState;
+  email: InputState;
+  password: InputState;
   [key: string]: any;
 }

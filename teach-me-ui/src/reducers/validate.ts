@@ -5,28 +5,117 @@ import {
   EMAIL_VALIDATE,
   PASSWORD_VALIDATE,
   ReduxAction,
-  signupState,
-  SignupState,
+  inputState,
+  InputState,
 } from '../constants';
 
-export const validate = (
-  state: SignupState = { ...signupState },
+export const firstname = (
+  state: InputState = inputState,
   action: ReduxAction
 ) => {
-  let newState = action.newState;
+  if (action.type === FIRSTNAME_VALIDATE) {
+    let value = action.payload;
+    let err = !value || /\d+|\W+|_/.test(value);
+    let helperText = err
+      ? !value
+        ? 'Firstname is required.'
+        : "Ok. That can't be your firstname."
+      : ' ';
 
-  switch (action.type) {
-    case FIRSTNAME_VALIDATE:
-      return { ...state, ...newState };
-    case LASTNAME_VALIDATE:
-      return { ...state, ...newState };
-    case USERNAME_VALIDATE:
-      return { ...state, ...newState };
-    case EMAIL_VALIDATE:
-      return { ...state, ...newState };
-    case PASSWORD_VALIDATE:
-      return { ...state, ...newState };
-    default:
-      return state;
+    return {
+      value,
+      err,
+      helperText,
+    };
   }
+  return state;
+};
+
+export const lastname = (
+  state: InputState = inputState,
+  action: ReduxAction
+) => {
+  if (action.type === LASTNAME_VALIDATE) {
+    let value = action.payload;
+    let err = !value || /\d+|\W+|_/.test(value);
+    let helperText = err
+      ? !value
+        ? 'Firstname is required.'
+        : "Ok. That can't be your firstname."
+      : ' ';
+
+    return {
+      value,
+      err,
+      helperText,
+    };
+  }
+  return state;
+};
+
+export const username = (
+  state: InputState = inputState,
+  action: ReduxAction
+) => {
+  if (action.type === USERNAME_VALIDATE) {
+    let value = action.payload;
+    let err = !value || /\d+|\W+/.test(value);
+    let helperText = err
+      ? !value
+        ? 'Username is required.'
+        : 'Username not accepted. Use letters (and underscores) only.'
+      : ' ';
+
+    return {
+      value,
+      err,
+      helperText,
+    };
+  }
+  return state;
+};
+
+export const email = (state: InputState = inputState, action: ReduxAction) => {
+  if (action.type === EMAIL_VALIDATE) {
+    let value = action.payload;
+    let err = !value || !/^\w+[\w\d.]*[\w\d]+@\w+\.[\w\d.]+[\w\d]$/.test(value);
+    let helperText = err
+      ? !value
+        ? 'Email is required.'
+        : "Hm. That doesn't seem like a valid email."
+      : ' ';
+
+    return {
+      value,
+      err,
+      helperText,
+    };
+  }
+  return state;
+};
+
+export const password = (
+  state: InputState = inputState,
+  action: ReduxAction
+) => {
+  if (action.type === PASSWORD_VALIDATE) {
+    let value = action.payload;
+    let err = !value;
+    let helperText = err ? 'Password is required.' : ' ';
+
+    if (!err && value.length < 8) {
+      err = true;
+      helperText = 'Password should not be less than 8 characters.';
+    } else if (!err && /^[A-Z]$|^[a-z]+$|^[0-9]+$/.test(value)) {
+      err = true;
+      helperText = 'Password is weak. Consider combining alphanumerics.';
+    }
+
+    return {
+      value,
+      err,
+      helperText,
+    };
+  }
+  return state;
 };
