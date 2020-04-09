@@ -25,6 +25,7 @@ pipelines:
 
     - step:
         name: Deploy to Heroku
+        image: node:10.15.0
         deployment: test
         script:
           - pipe: atlassian/heroku-deploy:1.1.2
