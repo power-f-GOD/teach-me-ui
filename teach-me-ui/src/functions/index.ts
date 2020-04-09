@@ -1,3 +1,3 @@
 export * from './signup';
 export * from './utils';
-export * from './initStore';
+export * from '../appStore';
