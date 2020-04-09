@@ -1,6 +1,6 @@
-import { signupState } from './signup';
+import { signupState } from './validate';
 
-export * from './signup';
+export * from './validate';
 export * from './interfaces';
 export * from './authenticate';
 
