@@ -1,44 +1,50 @@
-import { requestValidate } from '../actions/validate';
-import { promisedDispatch } from './';
+import * as actions from '../actions';
+import { promisedDispatch, getState } from './utils';
 import { refs } from '../components/Signup';
+import { ChangeEvent } from 'react';
 
-export function handleInputChange({ target }: any) {
-  promisedDispatch(requestValidate(target.id, target.value.trim()));
+export function handleInputChange({ target }: ChangeEvent<HTMLInputElement>) {
+  const { id, value } = target;
+
+  switch (id) {
+    case 'firstname':
+      return promisedDispatch(actions.validateFirstname(value));
+    case 'lastname':
+      return promisedDispatch(actions.validateLastname(value));
+    case 'username':
+      return promisedDispatch(actions.validateUsername(value));
+    case 'email':
+      return promisedDispatch(actions.validateEmail(value));
+    case 'password':
+      return promisedDispatch(actions.validatePassword(value));
+  }
 }
 
 export function handleFormSubmission() {
   let signupFormValidated = true;
-  let pendingValidations = [];
 
   for (const key in refs) {
-    const { id, value } = refs[key].current;
+    const event = {
+      target: refs[key].current,
+    } as ChangeEvent<HTMLInputElement>;
 
-    pendingValidations.push(promisedDispatch(requestValidate(id, value)));
+    handleInputChange(event);
   }
 
-  Promise.all([...pendingValidations]).then((settledValidations: any) => {
-    for (let validation of settledValidations) {
-      let {
-        firstnameErr,
-        lastnameErr,
-        usernameErr,
-        emailErr,
-        passwordErr,
-      } = validation.newState;
-      if (
-        firstnameErr ||
-        lastnameErr ||
-        usernameErr ||
-        emailErr ||
-        passwordErr
-      ) {
-        signupFormValidated = false;
-      }
-    }
+  let { firstname, lastname, username, email, password } = getState();
 
-    if (signupFormValidated) {
-      //dispatch signup user action here and signup user...
-      window.alert('Form inputs validated! Thank you!');
-    }
-  });
+  if (
+    firstname.err ||
+    lastname.err ||
+    username.err ||
+    email.err ||
+    password.err
+  ) {
+    signupFormValidated = false;
+  }
+
+  if (signupFormValidated) {
+    //dispatch signup user action here and signup user...
+    window.alert('Form inputs validated! Thank you!');
+  }
 }

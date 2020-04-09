@@ -2,13 +2,18 @@ import { createStore } from 'redux';
 // import thunkMiddleware from 'redux-thunk';
 
 // import { AppProps } from './constants/interfaces';
-import reducers from './reducers';
 
-export default function configureStore() {
+import reducers from '../reducers';
+
+function initStore() {
   const store = createStore(reducers);
 
   return store;
 }
+
+const store = initStore();
+
+export default store;
 
 // export default function configureStore(persistedState: AppProps) {
 //   const store = createStore(
