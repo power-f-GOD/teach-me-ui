@@ -11,8 +11,6 @@ export interface AppProps extends StoreEnhancer {
   [key: string]: any;
 }
 
-
-
 export interface InputPropsState {
   value: string;
   err?: boolean;

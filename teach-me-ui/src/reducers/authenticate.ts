@@ -2,7 +2,7 @@ import {
   signupState,
   SIGNUP_USER,
   SignupState,
-  ReduxAction,
+  ReduxAction
 } from '../constants';
 
 export const signup = (
@@ -12,7 +12,7 @@ export const signup = (
   if (action.type === SIGNUP_USER) {
     return {
       ...state,
-      ...action.payload,
+      ...action.payload
     };
   }
   return state;

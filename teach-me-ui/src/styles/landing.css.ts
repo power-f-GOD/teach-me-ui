@@ -3,20 +3,23 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     landingRootGrid: {
-      height: '100vh',
-      minHeight: '38em',
+      height: 'inherit',
+      minHeight: '30em',
       alignSelf: 'center',
       maxHeight: '50em',
+      margin: 'auto',
       flexGrow: 1,
+      padding: '2.25em 1.5em',
       background: 'rgb(17, 123, 153)'
     },
     landingRootContainer: {
-      padding: '2.25em 1.5em',
-      height: '100%',
+      height: 'inherit',
+      minHeight: '100%'
     },
     landingMainGrid: {
       borderRadius: '0.45em',
-      boxShadow: '0 0.5em 2.5em rgba(0, 0, 0, 0.35), 0 0.5em 5em rgba(0, 0, 0, 0.15)',
+      boxShadow:
+        '0 0.5em 2.5em rgba(0, 0, 0, 0.35), 0 0.5em 5em rgba(0, 0, 0, 0.15)',
       height: '100%',
       overflowX: 'hidden'
     },
@@ -24,15 +27,17 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: '#0e303f',
       backgroundImage: 'url("/images/educational.png")',
       backgroundRepeat: 'no-repeat',
-      backgroundPosition: 'center',
-      backgroundSize: '22.5em auto',
+      backgroundPosition: '50% 35%',
+      backgroundSize: '55% auto',
       color: 'white',
       height: '100%',
       overflowY: 'auto',
       padding: '2em 1em'
     },
     splash: {
-      height: '100%'
+      height: '100%',
+      maxHeight: '35em',
+      minHeight: '30em'
     },
     splashImage: {
       width: '22em',
@@ -40,9 +45,10 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     formSection: {
       background: '#fff',
+      minHeight: '100%',
       height: '100%',
       overflowY: 'auto',
-      padding: '2em 1vw'
+      padding: '2em 2.25rem'
     }
   })
 );

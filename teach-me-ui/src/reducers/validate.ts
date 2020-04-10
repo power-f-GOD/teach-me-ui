@@ -6,7 +6,7 @@ import {
   PASSWORD_VALIDATE,
   ReduxAction,
   inputState,
-  InputPropsState,
+  InputPropsState
 } from '../constants';
 
 export const firstname = (
@@ -29,7 +29,7 @@ export const firstname = (
     return {
       value,
       err,
-      helperText,
+      helperText
     };
   }
   return state;
@@ -45,8 +45,8 @@ export const lastname = (
     let err = !value || /\d+|\W+|_/.test(value);
     let helperText = err
       ? !value
-        ? 'Firstname is required.'
-        : "Ok. That can't be your firstname."
+        ? 'Lastname is required.'
+        : "Hm. Doesn't look like a lastname."
       : ' ';
 
     err = 'err' in payload ? payload.err : err;
@@ -55,7 +55,7 @@ export const lastname = (
     return {
       value,
       err,
-      helperText,
+      helperText
     };
   }
   return state;
@@ -81,7 +81,7 @@ export const username = (
     return {
       value,
       err,
-      helperText,
+      helperText
     };
   }
   return state;
@@ -107,7 +107,7 @@ export const email = (
     return {
       value,
       err,
-      helperText,
+      helperText
     };
   }
   return state;
@@ -137,7 +137,7 @@ export const password = (
     return {
       value,
       err,
-      helperText,
+      helperText
     };
   }
   return state;

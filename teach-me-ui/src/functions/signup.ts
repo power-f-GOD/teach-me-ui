@@ -30,13 +30,13 @@ export function handleFormSubmission() {
 
   for (const key in refs) {
     const event = {
-      target: refs[key].current,
+      target: refs[key].current
     } as ChangeEvent<HTMLInputElement>;
 
     handleInputChange(event);
   }
 
-  let { firstname, lastname, username, email, password } = getState();
+  let { firstname, lastname, username, email, password }: any = getState();
 
   if (
     firstname.err ||
@@ -53,7 +53,7 @@ export function handleFormSubmission() {
     lastname: lastname.value,
     username: username.value,
     email: email.value,
-    password: password.value,
+    password: password.value
   };
 
   if (signupFormValidated) {
