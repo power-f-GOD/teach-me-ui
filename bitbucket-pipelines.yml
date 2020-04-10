@@ -16,7 +16,7 @@ pipelines:
 
   branches:
     master:
-      - step: 
+    - step: 
         name: Build Front end
         image: node:10.15.0
         script:
@@ -29,7 +29,7 @@ pipelines:
         artifacts:
           - teach-me-ui/packaged/**    
 
-      - step:
+    - step:
           name: Deploy to Heroku
           image: node:10.15.0
           deployment: test
