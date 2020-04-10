@@ -30,7 +30,7 @@ export const refs: any = {
   lastnameInput: React.createRef<HTMLInputElement>(),
   usernameInput: React.createRef<HTMLInputElement>(),
   emailInput: React.createRef<HTMLInputElement>(),
-  passwordInput: React.createRef<HTMLInputElement>(),
+  passwordInput: React.createRef<HTMLInputElement>()
 };
 
 const Signup = (props: SignupPropsState) => {
@@ -48,12 +48,12 @@ const Signup = (props: SignupPropsState) => {
       justify='center'
       direction='column'>
       <Typography component='h2' variant='h6'>
-        <Box marginY='0.35em' fontSize='1.25rem' fontWeight={900}>
+        <Box marginY='0.5em' fontSize='1.25rem' fontWeight={900}>
           Sign Up
         </Box>
       </Typography>
 
-      <form noValidate autoComplete='on'>
+      <form noValidate autoComplete='on' onSubmit={(e: any) => e.preventDefault()}>
         <Grid justify='space-between' container>
           <Grid
             item
@@ -153,7 +153,7 @@ const Signup = (props: SignupPropsState) => {
                       {passwordVisible ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
-                ),
+                )
               }}
             />
           </Box>
@@ -164,6 +164,7 @@ const Signup = (props: SignupPropsState) => {
               size='large'
               disabled={props.signup.status === 'pending'}
               id='sign-up'
+              type='submit'
               color='primary'
               fullWidth
               onClick={handleFormSubmission}>
@@ -183,7 +184,7 @@ const Signup = (props: SignupPropsState) => {
       </form>
       <Box marginY='0.5em'>
         <Typography component='div' align='center'>
-          Signed up already? <Link to='/signin'>Sign in here!</Link>
+          Have a Teach Me account? <Link to='/signin'>Sign in here!</Link>
         </Typography>
       </Box>
     </Grid>
@@ -192,7 +193,7 @@ const Signup = (props: SignupPropsState) => {
 
 const mapStateToProps = (state: SignupPropsState) => {
   return {
-    ...state,
+    ...state
   };
 };
 

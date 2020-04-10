@@ -15,7 +15,7 @@ const Landing = () => {
 
   return (
     <Grid className={classes.landingRootGrid}>
-      <Container className={classes.landingRootContainer} maxWidth='lg'>
+      <Container className={classes.landingRootContainer}>
         <Grid
           className={`${classes.landingMainGrid} custom-scroll-bar fade-in`}
           component='main'
@@ -37,14 +37,14 @@ const Landing = () => {
                 justify='flex-end'
                 alignItems='center'
                 direction='column'>
-                <Box marginBottom='2em'>
-                  <Typography component='h3' variant='h6' align='center'>
+                <Typography component='h3' variant='h6' align='center'>
+                  <Box marginBottom='2em' fontSize='1.65vw'>
                     Welcome to{' '}
                     <span className='logo theme-color-blue-light'>
                       Teach Me!
                     </span>
-                  </Typography>
-                </Box>
+                  </Box>
+                </Typography>
               </Grid>
             </Container>
           </Grid>
@@ -56,7 +56,7 @@ const Landing = () => {
             item
             alignItems='center'
             md={5}>
-            <Container maxWidth='sm'>
+            <Container maxWidth='xs'>
               <Box marginBottom='1.25em'>
                 <Typography
                   className='logo theme-color-blue-dark'

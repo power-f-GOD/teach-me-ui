@@ -10,8 +10,8 @@ let userDeviceIsMobile = /(Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows Pho
   window.navigator.userAgent
 );
 
-if (!userDeviceIsMobile) {
-  document.body.classList.add('desktop');
+if (userDeviceIsMobile) {
+  document.body.classList.add('mobile');
 } else {
-  document.body.classList.remove('desktop');
+  document.body.classList.add('desktop');
 }

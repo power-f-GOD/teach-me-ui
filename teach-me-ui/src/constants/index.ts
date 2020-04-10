@@ -5,5 +5,5 @@ export * from './interfaces';
 export * from './authenticate';
 
 export const appState: any = {
-  ...signupState,
+  ...signupState
 };

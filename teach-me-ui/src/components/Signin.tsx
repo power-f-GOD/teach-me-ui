@@ -31,50 +31,55 @@ const Signin = () => {
         </Box>
       </Typography>
 
-      <Box component='div' marginY='0.5em'>
-        <TextField
-          // error
-          variant='outlined'
-          id='username'
-          label='Username or Email'
-          fullWidth
-        />
-      </Box>
-      <Box component='div' marginY='0.5em'>
-        <TextField
-          // error
-          variant='outlined'
-          id='password'
-          label='Password'
-          type={passwordVisible ? 'text' : 'password'}
-          helperText={true ? ' ' : 'Incorrect email or password.'}
-          fullWidth
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position='end'>
-                <IconButton
-                  aria-label='toggle password visibility'
-                  onClick={() => setPasswordVisible(!passwordVisible)}>
-                  {passwordVisible ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
-      </Box>
-      <Box component='div' marginY='0.5em'>
-        <Button
-          variant='contained'
-          size='large'
-          id='sign-in'
-          color='primary'
-          fullWidth>
-          SIGN IN
-        </Button>
-      </Box>
+      <form
+        noValidate
+        autoComplete='on'
+        onSubmit={(e: any) => e.preventDefault()}>
+        <Box component='div' marginY='0.5em'>
+          <TextField
+            // error
+            variant='outlined'
+            id='username'
+            label='Username or Email'
+            fullWidth
+          />
+        </Box>
+        <Box component='div' marginY='0.5em'>
+          <TextField
+            // error
+            variant='outlined'
+            id='password'
+            label='Password'
+            type={passwordVisible ? 'text' : 'password'}
+            helperText={true ? ' ' : 'Incorrect email or password.'}
+            fullWidth
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position='end'>
+                  <IconButton
+                    aria-label='toggle password visibility'
+                    onClick={() => setPasswordVisible(!passwordVisible)}>
+                    {passwordVisible ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
+          />
+        </Box>
+        <Box component='div' marginY='0.5em'>
+          <Button
+            variant='contained'
+            size='large'
+            id='sign-in'
+            color='primary'
+            fullWidth>
+            SIGN IN
+          </Button>
+        </Box>
+      </form>
       <Box marginY='1em'>
         <Typography component='div' align='center'>
-          Don't have an account yet? <Link to='/signup'>Sign up here!</Link>
+          New to Teach Me? <Link to='/signup'>Sign up here!</Link>
         </Typography>
       </Box>
     </Grid>

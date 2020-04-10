@@ -9,7 +9,7 @@ export const PASSWORD_VALIDATE = 'PASSWORD_VALIDATE';
 export const inputState: InputPropsState = {
   value: '',
   err: false,
-  helperText: ' ',
+  helperText: ' '
 };
 
 export const signupState: SignupPropsState = {
@@ -22,6 +22,6 @@ export const signupState: SignupPropsState = {
     status: 'settled',
     err: false,
     success: false,
-    statusMsg: '',
-  },
+    statusMsg: ''
+  }
 };

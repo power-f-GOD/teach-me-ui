@@ -17,13 +17,15 @@ body,
 * {
   box-sizing: border-box;
   font-family: Lato, Roboto, 'Trebuchet MS', sans-serif !important;
+  // border: 1px solid red;
 }
 
 #root {
-  height: auto;
   min-height: 100vh;
   display: flex;
 }
+
+
 
 img {
   max-width: 100%;
@@ -68,6 +70,10 @@ button {
   }
 }
 
+[class*='landingRootContainer'] {
+  max-width: 75rem !important;
+}
+
 [class^='MuiFormControl'],
 div {
   .Mui-focused {
@@ -84,7 +90,6 @@ div {
     input {
       color: #f44336 !important;
     }
-
     fieldset {
       border-color: #f44336 !important;
     }
@@ -95,11 +100,15 @@ div {
   }
 }
 
+.MuiContainer-root {
+  padding: 0 !important;
+}
+
 body {
   background-color: $theme-color-blue-light;
 
   &.desktop .custom-scroll-bar,
-  &.custom-scroll-bar {
+  &.custom-scroll-bar:not(.mobile) {
     &::-webkit-scrollbar {
       width: 0.75em;
     }
@@ -128,8 +137,35 @@ body {
 }
 
 @media only screen and (max-width: 959px) {
+  body {
+    background: white;
+  }
+
+  #root {
+    height: auto !important;
+    min-height: 100vh !important;
+  }
+
+  [class*='landingMainGrid'] {
+    height: 100%;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  [class*='landingRootGrid'] {
+    padding: 0 !important;
+    // min-height: 100vh !important;
+    background: inherit !important;
+  }
+
   [class*='splashSection'] {
     display: none !important;
+  }
+
+  [class*='formSection'] {
+    padding: 3em 2em !important;
+    height: auto !important;
+    overflow-y: hidden !important;
   }
 }
 
