@@ -7,7 +7,13 @@ import {
   ReduxAction,
   inputState,
 <<<<<<< HEAD
+<<<<<<< HEAD
   InputPropsState
+=======
+  InputPropsState,
+  SIGNIN_ID_VALIDATE,
+  SIGNIN_PASSWORD_VALIDATE
+>>>>>>> 36e584fd
 } from '../constants';
 
 export const firstname = (
@@ -202,7 +208,7 @@ export const password = (
       helperText = 'Password should not be less than 8 characters.';
     } else if (!err && /^[A-Z]$|^[a-z]+$|^[0-9]+$/.test(value)) {
       err = true;
-      helperText = 'Password is weak. Consider combining alphanumerics.';
+      helperText = 'Password is weak. Consider combining alphanumerics or symbols.';
     }
 
 <<<<<<< HEAD
@@ -219,6 +225,50 @@ export const password = (
       err,
       helperText,
 >>>>>>> Modify code base for signup validation et al.
+    };
+  }
+  return state;
+};
+
+export const signinId = (
+  state: InputPropsState = inputState,
+  action: ReduxAction
+) => {
+  if (action.type === SIGNIN_ID_VALIDATE) {
+    let { payload } = action;
+    let { value } = payload;
+    let err = !value;
+    let helperText = err ? 'Enter username or email.' : ' '; 
+
+    err = 'err' in payload ? payload.err : err;
+    helperText = 'helperText' in payload ? payload.helperText : helperText;
+
+    return {
+      value,
+      err,
+      helperText
+    };
+  }
+  return state;
+};
+
+export const signinPassword = (
+  state: InputPropsState = inputState,
+  action: ReduxAction
+) => {
+  if (action.type === SIGNIN_PASSWORD_VALIDATE) {
+    let { payload } = action;
+    let { value } = payload;
+    let err = !value;
+    let helperText = err ? 'Enter password.' : ' '; 
+
+    err = 'err' in payload ? payload.err : err;
+    helperText = 'helperText' in payload ? payload.helperText : helperText;
+
+    return {
+      value,
+      err,
+      helperText
     };
   }
   return state;

@@ -4,6 +4,13 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       background: 'inherit'
+    },
+    statusFeedback: {
+      fontSize: '0.9em',
+      textAlign: 'center',
+      whiteSpace: 'pre-wrap',
+      fontWeight: 'bold',
+      width: '100%'
     }
   })
 );

@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 
-import * as validateInputs from './validate';
-import * as authenticate from './authenticate';
+import * as validate from './validate';
+import * as auth from './auth';
+import * as misc from './misc';
 
-export default combineReducers({ ...validateInputs, ...authenticate });
+export default combineReducers({ ...validate, ...auth, ...misc });

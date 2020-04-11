@@ -18,7 +18,7 @@ export interface InputPropsState {
   helperText?: string;
 }
 
-export interface SignupState {
+export interface AuthPropsState {
   status?: 'settled' | 'pending' | 'fulfilled';
   err?: boolean;
   success?: boolean;
@@ -31,7 +31,13 @@ export interface SignupPropsState {
   username: InputPropsState;
   email: InputPropsState;
   password: InputPropsState;
-  signup: SignupState;
+  [key: string]: any;
+}
+
+export interface SigninPropsState {
+  username: InputPropsState;
+  email: InputPropsState;
+  password: InputPropsState;
   [key: string]: any;
 }
 
@@ -56,4 +62,9 @@ export interface SignupState {
   password: InputState;
   [key: string]: any;
 >>>>>>> Modify code base for signup validation et al.
+}
+
+export interface SigninFormData {
+  signinId: string;
+  signinPassword: string;
 }

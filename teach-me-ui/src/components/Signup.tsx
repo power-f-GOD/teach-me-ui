@@ -27,7 +27,11 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 import { useSignupStyles } from '../styles';
 import { SignupPropsState } from '../constants/interfaces';
-import { handleInputChange, handleFormSubmission } from '../functions/signup';
+import {
+  handleSignupInputChange,
+  handleSignupSubmission
+} from '../functions/signup';
+import { authState } from '../constants';
 
 export const refs: any = {
   firstnameInput: React.createRef<HTMLInputElement>(),
@@ -66,10 +70,17 @@ const Signup = (props: SignupPropsState) => {
       </Typography>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
       <form noValidate autoComplete='on' onSubmit={(e: any) => e.preventDefault()}>
 =======
       <form noValidate autoComplete='on'>
 >>>>>>> Modify code base for signup validation et al.
+=======
+      <form
+        noValidate
+        autoComplete='on'
+        onSubmit={(e: any) => e.preventDefault()}>
+>>>>>>> 36e584fd
         <Grid justify='space-between' container>
           <Grid
             item
@@ -81,6 +92,7 @@ const Signup = (props: SignupPropsState) => {
             <Box marginY='0.35em'>
               <TextField
                 error={props.firstname.err}
+                value={props.firstname.value}
                 required
                 variant='outlined'
                 id='firstname'
@@ -89,7 +101,7 @@ const Signup = (props: SignupPropsState) => {
                 inputRef={refs.firstnameInput}
                 helperText={props.firstname.helperText}
                 fullWidth
-                onChange={handleInputChange}
+                onChange={handleSignupInputChange}
               />
             </Box>
           </Grid>
@@ -104,6 +116,7 @@ const Signup = (props: SignupPropsState) => {
             <Box marginY='0.35em'>
               <TextField
                 required
+                value={props.lastname.value}
                 error={props.lastname.err}
                 variant='outlined'
                 id='lastname'
@@ -112,7 +125,7 @@ const Signup = (props: SignupPropsState) => {
                 inputRef={refs.lastnameInput}
                 helperText={props.lastname.helperText}
                 fullWidth
-                onChange={handleInputChange}
+                onChange={handleSignupInputChange}
               />
             </Box>
           </Grid>
@@ -120,6 +133,7 @@ const Signup = (props: SignupPropsState) => {
           <Box component='div' marginY='0.35em' minWidth='100%'>
             <TextField
               required
+              value={props.username.value}
               error={props.username.err}
               variant='outlined'
               id='username'
@@ -128,13 +142,14 @@ const Signup = (props: SignupPropsState) => {
               inputRef={refs.usernameInput}
               helperText={props.username.helperText}
               fullWidth
-              onChange={handleInputChange}
+              onChange={handleSignupInputChange}
             />
           </Box>
 
           <Box component='div' marginY='0.35em' minWidth='100%'>
             <TextField
               required
+              value={props.email.value}
               error={props.email.err}
               variant='outlined'
               id='email'
@@ -143,13 +158,14 @@ const Signup = (props: SignupPropsState) => {
               inputRef={refs.emailInput}
               helperText={props.email.helperText}
               fullWidth
-              onChange={handleInputChange}
+              onChange={handleSignupInputChange}
             />
           </Box>
 
           <Box component='div' marginY='0.35em' minWidth='100%'>
             <TextField
               required
+              value={props.password.value}
               error={props.password.err}
               variant='outlined'
               id='password'
@@ -159,7 +175,7 @@ const Signup = (props: SignupPropsState) => {
               inputRef={refs.passwordInput}
               helperText={props.password.helperText}
               fullWidth
-              onChange={handleInputChange}
+              onChange={handleSignupInputChange}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position='end'>
@@ -188,7 +204,7 @@ const Signup = (props: SignupPropsState) => {
               type='submit'
               color='primary'
               fullWidth
-              onClick={handleFormSubmission}>
+              onClick={handleSignupSubmission}>
               {props.signup.status === 'pending'
                 ? 'Signing you up...'
                 : 'SIGN UP'}
@@ -226,7 +242,9 @@ const Signup = (props: SignupPropsState) => {
 
 const mapStateToProps = (state: SignupPropsState) => {
   return {
-    ...state
+    ...state,
+    online: true,
+    auth: authState
   };
 };
 
