@@ -52,3 +52,8 @@ export interface SigninFormData {
   signinId: string;
   signinPassword: string;
 }
+
+export interface SigninFormData {
+  signinId: string;
+  signinPassword: string;
+}
