@@ -1,15 +1,6 @@
-<<<<<<< HEAD
-import { ReduxAction } from '../constants';
-<<<<<<< HEAD
-import store from '../appStore';
-=======
-import store from './initStore';
->>>>>>> Modify code base for signup validation et al.
-=======
 import { ReduxAction, AuthPropsState } from '../constants';
 import store from '../appStore';
 import { online, signup, signin } from '../actions';
->>>>>>> 36e584fd
 
 export const { dispatch, getState } = store;
 

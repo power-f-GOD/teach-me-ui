@@ -11,7 +11,6 @@ export interface AppProps extends StoreEnhancer {
   [key: string]: any;
 }
 
-<<<<<<< HEAD
 export interface InputPropsState {
   value: string;
   err?: boolean;
@@ -47,21 +46,6 @@ export interface SignupFormData {
   username: string;
   email: string;
   password: string;
-=======
-export interface InputState {
-  value: string;
-  err: boolean;
-  helperText: string;
-}
-
-export interface SignupState {
-  firstname: InputState;
-  lastname: InputState;
-  username: InputState;
-  email: InputState;
-  password: InputState;
-  [key: string]: any;
->>>>>>> Modify code base for signup validation et al.
 }
 
 export interface SigninFormData {
