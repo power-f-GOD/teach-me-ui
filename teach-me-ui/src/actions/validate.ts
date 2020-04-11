@@ -6,7 +6,9 @@ import {
   PASSWORD_VALIDATE,
 <<<<<<< HEAD
   ReduxAction,
-  InputPropsState
+  InputPropsState,
+  SIGNIN_ID_VALIDATE,
+  SIGNIN_PASSWORD_VALIDATE
 } from '../constants';
 
 export const validateFirstname = (payload: InputPropsState): ReduxAction => {
@@ -80,3 +82,17 @@ export const validatePassword = (value: string): ReduxAction => {
 >>>>>>> Modify code base for signup validation et al.
   };
 };
+
+export const validateSigninId = (payload: InputPropsState): ReduxAction => {
+  return {
+    type: SIGNIN_ID_VALIDATE,
+    payload
+  }
+}
+
+export const validateSigninPassword = (payload: InputPropsState): ReduxAction => {
+  return {
+    type: SIGNIN_PASSWORD_VALIDATE,
+    payload
+  }
+}

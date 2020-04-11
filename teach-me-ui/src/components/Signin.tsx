@@ -14,8 +14,16 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 // import { Visibility, VisibilityOff } from '@material-ui/icons';
 
 import { useSigninStyles } from '../styles';
+import { connect } from 'react-redux';
+import { authState, SigninPropsState } from '../constants';
+import { handleSigninSubmission, handleSigninInputChange } from '../functions';
 
-const Signin = () => {
+export const refs: any = {
+  idInput: React.createRef<HTMLInputElement>(),
+  passwordInput: React.createRef<HTMLInputElement>()
+};
+
+const Signin = (props: SigninPropsState) => {
   const classes = useSigninStyles();
   const [passwordVisible, setPasswordVisible] = useState(Boolean);
 
@@ -26,7 +34,7 @@ const Signin = () => {
       justify='center'
       direction='column'>
       <Typography component='h2' variant='h6'>
-        <Box marginY='0.5em' fontSize='1.25rem' fontWeight={900}>
+        <Box marginY='0.75em' fontSize='1.25rem' fontWeight={900}>
           Sign In
         </Box>
       </Typography>
@@ -38,22 +46,29 @@ const Signin = () => {
         onSubmit={(e: any) => e.preventDefault()}>
         <Box component='div' marginY='0.5em'>
           <TextField
-            // error
+            value={props.signinId.value}
+            error={props.signinId.err}
             variant='outlined'
-            id='username'
+            id='signin-id'
             label='Username or Email'
+            inputRef={refs.idInput}
+            helperText={props.signinId.helperText}
             fullWidth
+            onChange={handleSigninInputChange}
           />
         </Box>
         <Box component='div' marginY='0.5em'>
           <TextField
-            // error
+            value={props.signinPassword.value}
+            error={props.signinPassword.err}
             variant='outlined'
-            id='password'
+            id='signin-password'
             label='Password'
             type={passwordVisible ? 'text' : 'password'}
-            helperText={true ? ' ' : 'Incorrect email or password.'}
+            inputRef={refs.passwordInput}
+            helperText={props.signinPassword.helperText}
             fullWidth
+            onChange={handleSigninInputChange}
             InputProps={{
               endAdornment: (
                 <InputAdornment position='end'>
@@ -67,15 +82,27 @@ const Signin = () => {
             }}
           />
         </Box>
-        <Box component='div' marginY='0.5em'>
+        <Box component='div' marginY='0.75em'>
           <Button
             variant='contained'
             size='large'
-            id='sign-in'
+            id='signin-btn'
             color='primary'
-            fullWidth>
-            SIGN IN
+            type='submit'
+            fullWidth
+            disabled={props.signin.status === 'pending'}
+            onClick={handleSigninSubmission}>
+            {props.signin.status === 'pending'
+              ? 'SIGNING YOU IN...'
+              : 'SIGN IN'}
           </Button>
+        </Box>
+        <Box
+          className={`${classes.statusFeedback} ${
+            props.signin.err ? 'Mui-error' : 'success'
+          }`}
+          marginY='0.35em'>
+          {props.signin.statusMsg || ' '}
         </Box>
       </form>
 =======
@@ -130,4 +157,12 @@ const Signin = () => {
   );
 };
 
-export default Signin;
+const mapStateToProps = (state: SigninPropsState) => {
+  return {
+    ...state,
+    online: true,
+    auth: authState
+  };
+};
+
+export default connect(mapStateToProps)(Signin);
