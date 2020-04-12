@@ -17,23 +17,20 @@ export interface InputPropsState {
   helperText?: string;
 }
 
-export interface AuthPropsState {
+export interface AuthState {
+  isAuthenticated?: boolean;
+  status?: 'settled' | 'pending' | 'fulfilled';
+}
+
+export interface StatusPropsState {
   status?: 'settled' | 'pending' | 'fulfilled';
   err?: boolean;
-  success?: boolean;
-  statusMsg?: string;
+  statusText?: string;
 }
 
 export interface SignupPropsState {
   firstname: InputPropsState;
   lastname: InputPropsState;
-  username: InputPropsState;
-  email: InputPropsState;
-  password: InputPropsState;
-  [key: string]: any;
-}
-
-export interface SigninPropsState {
   username: InputPropsState;
   email: InputPropsState;
   password: InputPropsState;
@@ -48,12 +45,13 @@ export interface SignupFormData {
   password: string;
 }
 
-export interface SigninFormData {
-  signinId: string;
-  signinPassword: string;
+export interface SigninPropsState {
+  signinId: InputPropsState;
+  signinPassword: InputPropsState;
+  [key: string]: any;
 }
 
 export interface SigninFormData {
-  signinId: string;
-  signinPassword: string;
+  email: string;
+  password: string;
 }

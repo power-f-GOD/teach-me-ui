@@ -1,10 +1,10 @@
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     landingRootGrid: {
       height: 'inherit',
-      minHeight: '30em',
+      minHeight: '36em',
       alignSelf: 'center',
       maxHeight: '50em',
       margin: 'auto',
@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) =>
       minHeight: '100%',
       height: '100%',
       overflowY: 'auto',
-      padding: '2em 2.25rem'
+      padding: '2em 2.4rem'
     }
   })
 );

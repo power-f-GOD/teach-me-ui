@@ -3,7 +3,7 @@ import { ChangeEvent } from 'react';
 import { refs as signinRefs } from '../components/Signin';
 import { getState, dispatch } from './utils';
 import { SigninFormData } from '../constants';
-import { validateSigninId, validateSigninPassword, signin, requestSignin } from '../actions';
+import { validateSigninId, validateSigninPassword, requestSignin } from '../actions';
 
 export function handleSigninInputChange({
   target
@@ -18,7 +18,7 @@ export function handleSigninInputChange({
   }
 }
 
-export function handleSigninSubmission() {
+export function handleSigninRequest() {
   let signinFormValidated = true;
 
   for (const key in signinRefs) {
@@ -36,8 +36,8 @@ export function handleSigninSubmission() {
   }
 
   let formData: SigninFormData = {
-    signinId: signinId.value,
-    signinPassword: signinPassword.value
+    email: signinId.value,
+    password: signinPassword.value
   };
 
   if (signinFormValidated) {

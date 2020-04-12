@@ -25,9 +25,9 @@ import { useSignupStyles } from '../styles';
 import { SignupPropsState } from '../constants/interfaces';
 import {
   handleSignupInputChange,
-  handleSignupSubmission
+  handleSignupRequest
 } from '../functions/signup';
-import { authState } from '../constants';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 export const refs: any = {
   firstnameInput: React.createRef<HTMLInputElement>(),
@@ -41,7 +41,9 @@ const Signup = (props: SignupPropsState) => {
   const classes = useSignupStyles();
   const [passwordVisible, setPasswordVisible] = useState(Boolean);
 
-  if (props.signup.success && props.signup.status === 'fulfilled') {
+  const { isAuthenticated } = props.auth;
+
+  if (isAuthenticated) {
     return <Redirect to='/' />;
   }
 
@@ -69,7 +71,7 @@ const Signup = (props: SignupPropsState) => {
             md={12}
             lg={6}
             className={classes.flexBasisHalved}>
-            <Box marginY='0.35em'>
+            <Box marginY='0.25em'>
               <TextField
                 error={props.firstname.err}
                 value={props.firstname.value}
@@ -78,6 +80,7 @@ const Signup = (props: SignupPropsState) => {
                 id='firstname'
                 label='First name'
                 size='small'
+                autoComplete='given-name'
                 inputRef={refs.firstnameInput}
                 helperText={props.firstname.helperText}
                 fullWidth
@@ -93,7 +96,7 @@ const Signup = (props: SignupPropsState) => {
             md={12}
             lg={5}
             className={classes.flexBasisHalved}>
-            <Box marginY='0.35em'>
+            <Box marginY='0.25em'>
               <TextField
                 required
                 value={props.lastname.value}
@@ -102,6 +105,7 @@ const Signup = (props: SignupPropsState) => {
                 id='lastname'
                 label='Last name'
                 size='small'
+                autoComplete='family-name'
                 inputRef={refs.lastnameInput}
                 helperText={props.lastname.helperText}
                 fullWidth
@@ -110,7 +114,7 @@ const Signup = (props: SignupPropsState) => {
             </Box>
           </Grid>
 
-          <Box component='div' marginY='0.35em' minWidth='100%'>
+          <Box component='div' marginY='0.25em' minWidth='100%'>
             <TextField
               required
               value={props.username.value}
@@ -119,6 +123,7 @@ const Signup = (props: SignupPropsState) => {
               id='username'
               label='Username'
               size='small'
+              autoComplete='username'
               inputRef={refs.usernameInput}
               helperText={props.username.helperText}
               fullWidth
@@ -126,7 +131,7 @@ const Signup = (props: SignupPropsState) => {
             />
           </Box>
 
-          <Box component='div' marginY='0.35em' minWidth='100%'>
+          <Box component='div' marginY='0.25em' minWidth='100%'>
             <TextField
               required
               value={props.email.value}
@@ -135,6 +140,8 @@ const Signup = (props: SignupPropsState) => {
               id='email'
               label='Email'
               size='small'
+              type='email'
+              autoComplete='email'
               inputRef={refs.emailInput}
               helperText={props.email.helperText}
               fullWidth
@@ -142,7 +149,7 @@ const Signup = (props: SignupPropsState) => {
             />
           </Box>
 
-          <Box component='div' marginY='0.35em' minWidth='100%'>
+          <Box component='div' marginY='0.25em' minWidth='100%'>
             <TextField
               required
               value={props.password.value}
@@ -152,6 +159,7 @@ const Signup = (props: SignupPropsState) => {
               label='Password'
               type={passwordVisible ? 'text' : 'password'}
               size='small'
+              autoComplete='new-password'
               inputRef={refs.passwordInput}
               helperText={props.password.helperText}
               fullWidth
@@ -170,7 +178,7 @@ const Signup = (props: SignupPropsState) => {
             />
           </Box>
 
-          <Box component='div' marginY='0.35em' minWidth='100%'>
+          <Box component='div' marginY='0.25em' minWidth='100%'>
             <Button
               variant='contained'
               size='large'
@@ -179,18 +187,20 @@ const Signup = (props: SignupPropsState) => {
               type='submit'
               color='primary'
               fullWidth
-              onClick={handleSignupSubmission}>
-              {props.signup.status === 'pending'
-                ? 'Signing you up...'
-                : 'SIGN UP'}
+              onClick={handleSignupRequest}>
+              {props.signup.status === 'pending' ? (
+                <CircularProgress color='inherit' size={28} />
+              ) : (
+                'SIGN UP'
+              )}
             </Button>
           </Box>
           <Box
             className={`${classes.statusFeedback} ${
               props.signup.err ? 'Mui-error' : 'success'
             }`}
-            marginY='0.35em'>
-            {props.signup.statusMsg || ' '}
+            marginY='0.25em'>
+            {props.signup.statusText || ' '}
           </Box>
         </Grid>
       </form>
@@ -203,11 +213,15 @@ const Signup = (props: SignupPropsState) => {
   );
 };
 
-const mapStateToProps = (state: SignupPropsState) => {
+const mapStateToProps = (state: any) => {
   return {
-    ...state,
-    online: true,
-    auth: authState
+    firstname: state.firstname,
+    lastname: state.lastname,
+    username: state.username,
+    email: state.email,
+    password: state.password,
+    signup: state.signup,
+    auth: state.auth
   };
 };
 

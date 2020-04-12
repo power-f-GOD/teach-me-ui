@@ -25,7 +25,42 @@ body,
   display: flex;
 }
 
+.top-navbar {
+  background: $theme-color-blue-dark;
+  color: white;
 
+  ul {
+    display: flex;
+    color: white;
+    justify-content: space-around;
+    align-items: center;
+    list-style-type: none;
+    height: 3.5rem;
+
+    a {
+      &:hover {
+        color: white;
+      }
+      
+      &:active {
+        color: $theme-color-blue-lighter !important;
+      }
+    }
+
+    
+  }
+}
+
+.loader-wrapper {
+  height: 100vh;
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  background: $theme-color-blue-dark;
+  color: $theme-color-blue-lighter;
+  justify-content: center;
+  align-items: center;
+}
 
 img {
   max-width: 100%;
@@ -71,7 +106,7 @@ button {
 }
 
 [class*='landingRootContainer'] {
-  max-width: 75rem !important;
+  max-width: 77rem !important;
 }
 
 [class^='MuiFormControl'],
@@ -154,7 +189,6 @@ body {
 
   [class*='landingRootGrid'] {
     padding: 0 !important;
-    // min-height: 100vh !important;
     background: inherit !important;
   }
 
@@ -163,7 +197,7 @@ body {
   }
 
   [class*='formSection'] {
-    padding: 3em 2em !important;
+    padding: 3em 2.5em !important;
     height: auto !important;
     overflow-y: hidden !important;
   }

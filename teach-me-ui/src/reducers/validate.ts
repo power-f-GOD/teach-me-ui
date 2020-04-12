@@ -48,7 +48,7 @@ export const lastname = (
     let helperText = err
       ? !value
         ? 'Lastname is required.'
-        : "Hm. Doesn't look like a lastname."
+        : "Your lastname? Hm."
       : ' ';
 
     err = 'err' in payload ? payload.err : err;
@@ -153,7 +153,7 @@ export const signinId = (
     let { payload } = action;
     let { value } = payload;
     let err = !value;
-    let helperText = err ? 'Enter username or email.' : ' '; 
+    let helperText = err ? 'Enter email.' : ' '; 
 
     err = 'err' in payload ? payload.err : err;
     helperText = 'helperText' in payload ? payload.helperText : helperText;

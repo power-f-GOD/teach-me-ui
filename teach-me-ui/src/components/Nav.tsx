@@ -1,32 +1,45 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Button, Box, CircularProgress } from '@material-ui/core';
+import { handleSignoutRequest } from '../functions';
+import { connect } from 'react-redux';
 
-interface NavProps {
-  for?: string;
-}
-
-const MainNav = (
-  <ul>
-    <li>
-      <Link to='/home'>Home</Link>
-    </li>
-    <li>
-      <Link to='/about'>About</Link>
-    </li>
-    <li>
-      <Link to='/signin'>Sign out</Link>
-    </li>
-  </ul>
-);
-const LandingNav = (
-  <ul>
-    <li></li>
-    <li></li>
-  </ul>
-);
-
-const Nav = (props: NavProps) => {
-  return <nav>{props.for === 'main' ? MainNav : LandingNav}</nav>;
+const Nav = (props: any) => {
+  return (
+    <nav className='top-navbar'>
+      <ul>
+        <li>
+          <Link to='/home'>Home</Link>
+        </li>
+        <li>
+          <Link to='/about'>About</Link>
+        </li>
+        <li>
+          <Box component='div' marginY='0.75em' width='7.5rem'>
+            <Button
+              variant='contained'
+              size='medium'
+              id='signout-btn'
+              color='secondary'
+              fullWidth
+              onClick={handleSignoutRequest}>
+              {props.signout.status === 'pending' ? (
+                <CircularProgress color='inherit' size='1.75rem' thickness={5} />
+              ) : (
+                'SIGN OUT'
+              )}
+            </Button>
+          </Box>
+        </li>
+      </ul>
+    </nav>
+  );
 };
 
-export default Nav;
+const mapStateToProps = (state: any) => {
+  return {
+    signout: state.signout
+  };
+};
+
+export default connect(mapStateToProps)(Nav);

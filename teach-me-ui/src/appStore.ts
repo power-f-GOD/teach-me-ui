@@ -12,5 +12,3 @@ function initStore() {
 }
 
 export default store;
-
-// //   store.dispatch(verifyAuth()(store.dispatch));

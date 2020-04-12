@@ -1,4 +1,4 @@
-import { ReduxAction, AuthPropsState } from '../constants';
+import { ReduxAction, StatusPropsState } from '../constants';
 import store from '../appStore';
 import { online, signup, signin } from '../actions';
 
@@ -10,58 +10,63 @@ export function promisedDispatch(action: ReduxAction) {
   });
 }
 
+let timeout: any;
 export function callNetworkStatusChecker(networkAction: 'signup' | 'signin') {
+  //clear timeout in case it's already been initialized by multiple submit actions
+  clearTimeout(timeout);
+
   promisedDispatch(online(navigator.onLine)).then(() => {
     let state: any;
     let networkStatusChecker = setInterval(() => {
-      let noInternetResponse: AuthPropsState = {
+      let noInternetResponse: StatusPropsState = {
         status: 'settled',
         err: true,
-        success: false,
-        statusMsg: 'You are offline. Check your internet connection.'
+        statusText: 'You are offline. Reconnect to the internet.'
       };
 
       state = getState();
 
-      if (!state.online) clearInterval(networkStatusChecker);
+      if (
+        !navigator.onLine ||
+        /settled|fulfilled/.test(state[networkAction]?.status)
+      )
+        clearInterval(networkStatusChecker);
 
       switch (networkAction) {
         case 'signup':
           if (state.signup.status === 'pending' && !navigator.onLine) {
             dispatch(signup({ ...noInternetResponse }));
-            dispatch(online(false));
           }
           break;
         case 'signin':
           if (state.signin.status === 'pending' && !navigator.onLine) {
             dispatch(signin({ ...noInternetResponse }));
-            dispatch(online(false));
           }
           break;
       }
-    }, 2000);
 
-    //if after 10 seconds of sending request there's no response, throw a network error feedback to user
-    setTimeout(() => {
-      if (navigator.onLine) {
-        let errFeedback: AuthPropsState = {
+      dispatch(online(navigator.onLine));
+    }, 1500);
+
+    //if after 12 seconds of sending request there's no response, throw a network error feedback to user
+    timeout = setTimeout(() => {
+      if (navigator.onLine && state[networkAction]?.status === 'pending') {
+        let errFeedback: StatusPropsState = {
           status: 'pending',
           err: true,
-          success: false,
-          statusMsg:
+          statusText:
             "Network is taking too long to respond. Check and ensure you're connected to the internet."
         };
 
-        if (state?.signin.status === 'pending') {
-          dispatch(signin({ ...errFeedback }));
+        switch (networkAction) {
+          case 'signup':
+            dispatch(signup({ ...errFeedback }));
+            break;
+          case 'signin':
+            dispatch(signin({ ...errFeedback }));
+            break;
         }
-
-        if (state?.signup.status === 'pending') {
-          dispatch(signup({ ...errFeedback }));
-        }
-
-        clearInterval(networkStatusChecker);
       }
-    }, 10000);
+    }, 12000);
   });
 }

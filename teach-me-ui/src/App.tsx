@@ -1,22 +1,38 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import { Provider } from 'react-redux';
+import { connect } from 'react-redux';
 
-import { Landing, Main, PageNotFound } from './components';
-import store from './appStore';
+import { Landing, PageNotFound, Main, Loader } from './components';
+import ProtectedRoute from './ProtectedRoute';
 
-const App = () => {
+const App = (props: any) => {
+  const { status, isAuthenticated } = props.auth;
+  const { signin, signup } = props;
+
+  if (signin?.status !== 'pending' || signup?.status !== 'pending') {
+    if (status === 'pending') return <Loader />;
+  }
+
   return (
-    <Provider store={store}>
-      <BrowserRouter>
-        <Switch>
-          <Route path={['/', '/home', '/about']} exact component={Main} />
-          <Route path={['/signin', '/signup']} component={Landing} />
-          <Route component={PageNotFound} />
-        </Switch>
-      </BrowserRouter>
-    </Provider>
+    <BrowserRouter>
+      <Switch>
+        <ProtectedRoute
+          path={['/', '/home', '/about']}
+          exact
+          component={Main}
+          isAuthenticated={isAuthenticated}
+        />
+        <Route path={['/signin', '/signup']} component={Landing} />
+        <Route component={PageNotFound} />
+      </Switch>
+    </BrowserRouter>
   );
 };
 
-export default App;
+const mapStateToProps = (state: any) => {
+  return {
+    auth: state.auth
+  };
+};
+
+export default connect(mapStateToProps)(App);

@@ -1,10 +1,9 @@
 import { ChangeEvent } from 'react';
 
 import * as actions from '../actions/validate';
-import { promisedDispatch, getState, dispatch } from './utils';
+import { getState, dispatch } from './utils';
 import { refs as signupRefs } from '../components/Signup';
-import { refs as signinRefs } from '../components/Signup';
-import { requestSignup, signup } from '../actions';
+import { requestSignup } from '../actions';
 import { SignupFormData } from '../constants';
 
 export function handleSignupInputChange({ target }: ChangeEvent<HTMLInputElement>) {
@@ -24,7 +23,7 @@ export function handleSignupInputChange({ target }: ChangeEvent<HTMLInputElement
   }
 }
 
-export function handleSignupSubmission() {
+export function handleSignupRequest() {
   let signupFormValidated = true;
 
   for (const key in signupRefs) {

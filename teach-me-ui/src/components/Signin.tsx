@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
@@ -10,13 +10,14 @@ import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import CircularProgress from '@material-ui/core/CircularProgress';
 // import { Typography, Grid, TextField, Box, InputAdornment, IconButton } from '@material-ui/core';
 // import { Visibility, VisibilityOff } from '@material-ui/icons';
 
 import { useSigninStyles } from '../styles';
 import { connect } from 'react-redux';
-import { authState, SigninPropsState } from '../constants';
-import { handleSigninSubmission, handleSigninInputChange } from '../functions';
+import { SigninPropsState } from '../constants';
+import { handleSigninRequest, handleSigninInputChange } from '../functions';
 
 export const refs: any = {
   idInput: React.createRef<HTMLInputElement>(),
@@ -26,6 +27,11 @@ export const refs: any = {
 const Signin = (props: SigninPropsState) => {
   const classes = useSigninStyles();
   const [passwordVisible, setPasswordVisible] = useState(Boolean);
+  const { isAuthenticated } = props.auth;
+
+  if (isAuthenticated) {
+    return <Redirect to='/' />;
+  }
 
   return (
     <Grid
@@ -43,27 +49,32 @@ const Signin = (props: SigninPropsState) => {
         noValidate
         autoComplete='on'
         onSubmit={(e: any) => e.preventDefault()}>
-        <Box component='div' marginY='0.5em'>
+        <Box component='div' marginY='0.45em'>
           <TextField
             value={props.signinId.value}
             error={props.signinId.err}
             variant='outlined'
             id='signin-id'
-            label='Username or Email'
+            required
+            label='Email address'
+            type='email'
+            autoComplete='email'
             inputRef={refs.idInput}
             helperText={props.signinId.helperText}
             fullWidth
             onChange={handleSigninInputChange}
           />
         </Box>
-        <Box component='div' marginY='0.5em'>
+        <Box component='div' marginY='0.45em'>
           <TextField
             value={props.signinPassword.value}
             error={props.signinPassword.err}
             variant='outlined'
             id='signin-password'
+            required
             label='Password'
             type={passwordVisible ? 'text' : 'password'}
+            autoComplete='new-password'
             inputRef={refs.passwordInput}
             helperText={props.signinPassword.helperText}
             fullWidth
@@ -90,18 +101,20 @@ const Signin = (props: SigninPropsState) => {
             type='submit'
             fullWidth
             disabled={props.signin.status === 'pending'}
-            onClick={handleSigninSubmission}>
-            {props.signin.status === 'pending'
-              ? 'SIGNING YOU IN...'
-              : 'SIGN IN'}
+            onClick={handleSigninRequest}>
+            {props.signin.status === 'pending' ? (
+              <CircularProgress color='inherit' size={28} />
+            ) : (
+              'SIGN IN'
+            )}
           </Button>
         </Box>
         <Box
           className={`${classes.statusFeedback} ${
             props.signin.err ? 'Mui-error' : 'success'
           }`}
-          marginY='0.35em'>
-          {props.signin.statusMsg || ' '}
+          marginY='0.4em'>
+          {props.signin.statusText || ' '}
         </Box>
       </form>
       <Box marginY='1em'>
@@ -113,11 +126,12 @@ const Signin = (props: SigninPropsState) => {
   );
 };
 
-const mapStateToProps = (state: SigninPropsState) => {
+const mapStateToProps = (state: any) => {
   return {
-    ...state,
-    online: true,
-    auth: authState
+    signinId: state.signinId,
+    signinPassword: state.signinPassword,
+    signin: state.signin,
+    auth: state.auth
   };
 };
 

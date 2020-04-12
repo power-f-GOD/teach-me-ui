@@ -7,16 +7,18 @@ import Typography from '@material-ui/core/Typography';
 
 import { Nav, Home, About } from '../components';
 import { useMainStyles } from '../styles';
+import { connect } from 'react-redux';
 
-const Main = () => {
+const Main = (props: any) => {
   const classes = useMainStyles();
+  const { displayName } = props;
 
   return (
     <Grid className={`${classes.root} fade-in`}>
+      <Nav />
       <Container component='div'>
-        <Nav for='main' />
         <Typography component='h1' variant='h5'>
-          This is the MAIN area!
+          Welcome, {displayName}! This is the MAIN area!
         </Typography>
         <Switch>
           <Route path={['/', '/home']} exact component={Home} />
@@ -27,4 +29,8 @@ const Main = () => {
   );
 };
 
-export default Main;
+const mapStateToProps = (state: any) => {
+  return { displayName: state.displayName };
+};
+
+export default connect(mapStateToProps)(Main);

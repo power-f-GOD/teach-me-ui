@@ -24,7 +24,6 @@ export const signupProps: SignupPropsState = {
 };
 
 export const signinProps: SigninPropsState = {
-  username: { ...inputState },
-  email: { ...inputState },
-  password: { ...inputState }
+  signinId: { ...inputState },
+  signinPassword: { ...inputState }
 };
