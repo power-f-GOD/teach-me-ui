@@ -21,9 +21,10 @@ import {
   validateSigninId,
   validateSigninPassword
 } from './validate';
-import { callNetworkStatusChecker } from '../functions';
-
-
+import {
+  callNetworkStatusChecker,
+  populateStateWithUserData
+} from '../functions';
 
 export const requestSignup = (data: SignupFormData) => (
   dispatch: Function
@@ -32,8 +33,8 @@ export const requestSignup = (data: SignupFormData) => (
 
   let { firstname, lastname, username, email, password } = data;
 
-  firstname = `${firstname[0].toUpperCase()}${firstname.slice(1)}`;
-  lastname = `${lastname[0].toUpperCase()}${lastname.slice(1)}`;
+  firstname = `${firstname[0].toUpperCase()}${firstname.slice(1).toLowerCase()}`;
+  lastname = `${lastname[0].toUpperCase()}${lastname.slice(1).toLowerCase()}`;
 
   //check if user is online as lost network connection is not a failure state for Firebase db in order to give response to user
   callNetworkStatusChecker('signup');
@@ -44,22 +45,22 @@ export const requestSignup = (data: SignupFormData) => (
     .once('value')
     .then((snapshot) => {
       if (snapshot.val()) {
-        if (email === snapshot.val().email) {
+        if (username === snapshot.val().username) {
           dispatch(
-            validateEmail({
-              value: email,
+            validateUsername({
+              value: username,
               err: true,
-              helperText: 'The email is already in use by another account.'
+              helperText:
+                'The username already exists. Kindly use another or sign in.'
             })
           );
         }
 
         dispatch(
-          validateUsername({
-            value: username,
+          validateEmail({
+            value: email,
             err: true,
-            helperText:
-              'The username already exists. Kindly use another or sign in.'
+            helperText: 'The email is already in use by another account.'
           })
         );
         dispatch(
@@ -81,7 +82,7 @@ export const requestSignup = (data: SignupFormData) => (
                 signup({
                   status: 'pending',
                   err: false,
-                  statusText: `Sign up success! Welcome, ${firstname}!`
+                  statusText: ' '
                 })
               );
               dispatch(auth({ status: 'settled', isAuthenticated: true }));
@@ -99,7 +100,9 @@ export const requestSignup = (data: SignupFormData) => (
                     password: ''
                   })
                   .then(() => {
-                    teachMeApp.auth().currentUser?.updateProfile({ displayName });
+                    // teachMeApp
+                    //   .auth()
+                    //   .currentUser?.updateProfile({ displayName });
                     setTimeout(() => {
                       dispatch(signup({ status: 'fulfilled' }));
                     }, 1000);
@@ -149,46 +152,12 @@ export const requestSignin = (data: SigninFormData) => (
 
   let { email, password } = data;
 
-  // if (!/.+@.+\..+/.test(id) && /^\w+$/.test(id)) {
-  //   callNetworkStatusChecker('signin');
-
-  //   database
-  //     .ref(`users/students/${id}`)
-  //     .once('value')
-  //     .then((snapshot) => {
-  //       if (snapshot.val()) {
-  //         signinWithEmailAndPassword(snapshot.val().email, password);
-  //       } else {
-  //         dispatch(
-  //           signin({
-  //             status: 'settled',
-  //             err: true
-  //           })
-  //         );
-  //         dispatch(
-  //           validateSigninId({
-  //             value: id,
-  //             err: true,
-  //             helperText: "Username doesn't exist."
-  //           })
-  //         );
-  //       }
-  //     });
-  // }
-
   teachMeApp
     .auth()
     .signInWithEmailAndPassword(email, password)
     .then((user) => {
       if (user) {
-        dispatch(displayName(teachMeApp.auth().currentUser?.displayName as string));
-        dispatch(
-          signin({
-            status: 'fulfilled',
-            err: false
-          })
-        );
-        dispatch(auth({ status: 'settled', isAuthenticated: true }));
+        populateStateWithUserData(email);
       }
     })
     .catch((error) => {
@@ -244,8 +213,7 @@ export const verifyAuth = () => (dispatch: Function): ReduxAction => {
 
   teachMeApp.auth().onAuthStateChanged((user) => {
     if (user) {
-      dispatch(auth({ status: 'fulfilled', isAuthenticated: true }));
-      dispatch(signin({ status: 'fulfilled', err: false }));
+      populateStateWithUserData(user.email as string);
     } else {
       dispatch(auth({ status: 'fulfilled', isAuthenticated: false }));
       dispatch(signin({ status: 'fulfilled', err: true }));
@@ -304,7 +272,7 @@ export function signout(payload: StatusPropsState): ReduxAction {
   };
 }
 
-export function displayName(payload: string): ReduxAction {
+export function setDisplayName(payload: string): ReduxAction {
   return {
     type: SET_USER_DISPLAY_NAME,
     payload

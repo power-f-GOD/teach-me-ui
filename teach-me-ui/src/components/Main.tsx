@@ -11,14 +11,14 @@ import { connect } from 'react-redux';
 
 const Main = (props: any) => {
   const classes = useMainStyles();
-  const { displayName } = props;
+  const { firstname } = props;
 
   return (
     <Grid className={`${classes.root} fade-in`}>
       <Nav />
       <Container component='div'>
         <Typography component='h1' variant='h5'>
-          Welcome, {displayName}! This is the MAIN area!
+          Welcome, {firstname.value}! This is the MAIN area!
         </Typography>
         <Switch>
           <Route path={['/', '/home']} exact component={Home} />
@@ -30,7 +30,7 @@ const Main = (props: any) => {
 };
 
 const mapStateToProps = (state: any) => {
-  return { displayName: state.displayName };
+  return { displayName: state.displayName, firstname: state.firstname };
 };
 
 export default connect(mapStateToProps)(Main);

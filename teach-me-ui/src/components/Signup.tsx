@@ -123,7 +123,6 @@ const Signup = (props: SignupPropsState) => {
               id='username'
               label='Username'
               size='small'
-              autoComplete='username'
               inputRef={refs.usernameInput}
               helperText={props.username.helperText}
               fullWidth
