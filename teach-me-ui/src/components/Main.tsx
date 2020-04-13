@@ -6,25 +6,32 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 
 import { Nav, Home, About } from '../components';
-import { useMainStyles } from '../styles';
+import { connect } from 'react-redux';
+import Box from '@material-ui/core/Box';
 
-const Main = () => {
-  const classes = useMainStyles();
+const Main = (props: any) => {
+  const { firstname } = props;
 
   return (
-    <Grid className={`${classes.root} fade-in`}>
-      <Container component='div'>
-        <Nav for='main' />
-        <Typography component='h1' variant='h5'>
-          This is the MAIN area!
-        </Typography>
-        <Switch>
-          <Route path={['/', '/home']} exact component={Home} />
-          <Route path='/about' component={About} />
-        </Switch>
-      </Container>
+    <Grid className='main-root-grid fade-in'>
+      <Nav />
+      <Box padding='1rem'>
+        <Container component='div'>
+          <Typography component='h1' variant='h5'>
+            Welcome, {firstname.value}! This is the MAIN area!
+          </Typography>
+          <Switch>
+            <Route path={['/', '/home']} exact component={Home} />
+            <Route path='/about' component={About} />
+          </Switch>
+        </Container>
+      </Box>
     </Grid>
   );
 };
 
-export default Main;
+const mapStateToProps = (state: any) => {
+  return { displayName: state.displayName, firstname: state.firstname };
+};
+
+export default connect(mapStateToProps)(Main);

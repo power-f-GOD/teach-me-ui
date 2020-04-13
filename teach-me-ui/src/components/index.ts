@@ -6,5 +6,16 @@ import Home from './Home';
 import About from './About';
 import Main from './Main';
 import PageNotFound from './PageNotFound';
+import Loader from './Loader';
 
-export { Nav, Landing, Signin, Signup, Home, About, Main, PageNotFound };
+export {
+  Nav,
+  Landing,
+  Signin,
+  Signup,
+  Home,
+  About,
+  Main,
+  Loader,
+  PageNotFound
+};

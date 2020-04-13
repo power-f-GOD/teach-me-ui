@@ -1,10 +1,17 @@
 import React from 'react';
 
+import Box from '@material-ui/core/Box';
+import Container from '@material-ui/core/Container';
+
+
 const PageNotFound = () => {
+
   return (
-    <div>
-      <h1>Sorry, page not found!</h1>
-    </div>
+    <Box component='main' className='main-root-grid fade-in'>
+      <Container>
+        <h1>Sorry, the page you requested was not found!</h1>
+      </Container>
+    </Box>
   );
 };
 
