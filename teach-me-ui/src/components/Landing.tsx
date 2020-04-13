@@ -8,16 +8,13 @@ import Box from '@material-ui/core/Box';
 // import { Grid, Container, Typography, Box } from '@material-ui/core';
 
 import { Signin, Signup } from '../components';
-import { useLandingStyles } from '../styles';
 
 const Landing = () => {
-  const classes = useLandingStyles();
-
   return (
-    <Grid className={classes.landingRootGrid}>
-      <Container className={classes.landingRootContainer}>
+    <Grid className='landing-root-grid'>
+      <Container className='landing-root-container'>
         <Grid
-          className={`${classes.landingMainGrid} custom-scroll-bar fade-in`}
+          className='landing-main-grid custom-scroll-bar fade-in'
           component='main'
           container
           justify='center'
@@ -25,14 +22,14 @@ const Landing = () => {
           alignItems='flex-start'>
           <Grid
             component='section'
-            className={`${classes.splashSection} custom-scroll-bar`}
+            className='splash-section custom-scroll-bar'
             container
             item
             justify='flex-end'
             md={7}>
             <Container maxWidth='sm'>
               <Grid
-                className={classes.splash}
+                className='splash'
                 container
                 justify='flex-end'
                 alignItems='center'
@@ -51,7 +48,7 @@ const Landing = () => {
 
           <Grid
             component='section'
-            className={`${classes.formSection} custom-scroll-bar`}
+            className='form-section custom-scroll-bar'
             container
             item
             alignItems='center'

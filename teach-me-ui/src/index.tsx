@@ -2,11 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
+import './styles/index.min.css';
+
 import App from './App';
 import store from './appStore';
 import { dispatch } from './functions';
 import { verifyAuth } from './actions';
-import '../src/styles/index.min.css';
+
 
 ReactDOM.render(
   <Provider store={store}>

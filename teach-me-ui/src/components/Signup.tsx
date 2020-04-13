@@ -21,7 +21,6 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 // } from '@material-ui/core';
 // import { Visibility, VisibilityOff } from '@material-ui/icons';
 
-import { useSignupStyles } from '../styles';
 import { SignupPropsState } from '../constants/interfaces';
 import {
   handleSignupInputChange,
@@ -38,7 +37,6 @@ export const refs: any = {
 };
 
 const Signup = (props: SignupPropsState) => {
-  const classes = useSignupStyles();
   const [passwordVisible, setPasswordVisible] = useState(Boolean);
 
   const { isAuthenticated } = props.auth;
@@ -49,7 +47,7 @@ const Signup = (props: SignupPropsState) => {
 
   return (
     <Grid
-      className={`${classes.root} fade-in`}
+      className='landing-form-wrapper fade-in'
       container
       justify='center'
       direction='column'>
@@ -70,7 +68,7 @@ const Signup = (props: SignupPropsState) => {
             sm={6}
             md={12}
             lg={6}
-            className={classes.flexBasisHalved}>
+            className='flex-basis-halved'>
             <Box marginY='0.25em'>
               <TextField
                 error={props.firstname.err}
@@ -95,7 +93,7 @@ const Signup = (props: SignupPropsState) => {
             sm={5}
             md={12}
             lg={5}
-            className={classes.flexBasisHalved}>
+            className='flex-basis-halved'>
             <Box marginY='0.25em'>
               <TextField
                 required
@@ -195,7 +193,7 @@ const Signup = (props: SignupPropsState) => {
             </Button>
           </Box>
           <Box
-            className={`${classes.statusFeedback} ${
+            className={`status-feedback ${
               props.signup.err ? 'Mui-error' : 'success'
             }`}
             marginY='0.25em'>

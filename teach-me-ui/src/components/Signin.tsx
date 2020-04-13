@@ -14,7 +14,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 // import { Typography, Grid, TextField, Box, InputAdornment, IconButton } from '@material-ui/core';
 // import { Visibility, VisibilityOff } from '@material-ui/icons';
 
-import { useSigninStyles } from '../styles';
 import { connect } from 'react-redux';
 import { SigninPropsState } from '../constants';
 import { handleSigninRequest, handleSigninInputChange } from '../functions';
@@ -25,7 +24,6 @@ export const refs: any = {
 };
 
 const Signin = (props: SigninPropsState) => {
-  const classes = useSigninStyles();
   const [passwordVisible, setPasswordVisible] = useState(Boolean);
   const { isAuthenticated } = props.auth;
 
@@ -35,7 +33,7 @@ const Signin = (props: SigninPropsState) => {
 
   return (
     <Grid
-      className={`${classes.root} fade-in`}
+      className='landing-form-wrapper fade-in'
       container
       justify='center'
       direction='column'>
@@ -110,7 +108,7 @@ const Signin = (props: SigninPropsState) => {
           </Button>
         </Box>
         <Box
-          className={`${classes.statusFeedback} ${
+          className={`status-feedback ${
             props.signin.err ? 'Mui-error' : 'success'
           }`}
           marginY='0.4em'>

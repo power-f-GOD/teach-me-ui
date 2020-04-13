@@ -1,0 +1,98 @@
+@import 'color';
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  font-size: 1rem;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: Lato, Roboto, 'Trebuchet MS', sans-serif !important;
+  // border: 1px solid red;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+}
+
+.loader-wrapper {
+  height: 100vh;
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  background: $theme-color-blue-dark;
+  color: $theme-color-blue-lighter;
+  justify-content: center;
+  align-items: center;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+input {
+  margin: 1em 0;
+}
+
+.logo {
+  font-family: Lobster, cursive !important;
+  font-size: 1.25em;
+}
+
+button {
+  &[class*=Primary] {
+    background: $theme-color-green-dark;
+    border-radius: 1.5rem;
+    height: 3rem;
+
+    &:hover {
+      background: $theme-color-green-darker;
+    }
+
+    &:disabled {
+      background: #ccc;
+      color: #555;
+    }
+  }
+}
+
+[class*=landingRootContainer] {
+  max-width: 77rem !important;
+}
+
+[class^=MuiFormControl],
+div {
+  fieldset {
+    transition: 0.35s;
+  }
+}
+
+.MuiContainer-root {
+  padding: 0 !important;
+}
+
+body {
+  background-color: $theme-color-blue-light;
+
+  &.desktop.custom-scroll-bar,
+  &.desktop .custom-scroll-bar {
+    &::-webkit-scrollbar {
+      width: 0.75em;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $theme-color-blue-dark;
+      border-radius: 0.5em;
+    }
+  }
+}

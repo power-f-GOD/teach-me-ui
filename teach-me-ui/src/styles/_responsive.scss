@@ -1,0 +1,31 @@
+@media screen and (max-width: 959px) {
+  body {
+    background: white;
+  }
+
+  #root {
+    height: auto !important;
+    min-height: 100vh !important;
+  }
+
+  .landing-main-grid {
+    height: 100% !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .landing-root-grid {
+    padding: 0 !important;
+    background: inherit !important;
+  }
+
+  .splash-section {
+    display: none !important;
+  }
+
+  .form-section {
+    padding: 3em 2em !important;
+    height: auto !important;
+    overflow-y: hidden !important;
+  }
+}

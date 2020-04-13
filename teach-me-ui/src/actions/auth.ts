@@ -149,6 +149,7 @@ export const requestSignin = (data: SigninFormData) => (
   dispatch: Function
 ): ReduxAction => {
   dispatch(signin({ status: 'pending', statusText: ' ' }));
+  callNetworkStatusChecker('signin');
 
   let { email, password } = data;
 

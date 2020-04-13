@@ -1,0 +1,33 @@
+@import 'color';
+
+.main-root-grid {
+  height: auto;
+  min-height: 100vh;
+  flex-grow: 1;
+  background: white;
+}
+
+.top-navbar {
+  background: $theme-color-blue-dark;
+  color: white;
+
+  ul {
+    display: flex;
+    color: white;
+    justify-content: space-around;
+    align-items: center;
+    list-style-type: none;
+    margin: 0;
+    height: 3.5rem;
+
+    a {
+      &:hover {
+        color: white;
+      }
+
+      &:active {
+        color: $theme-color-blue-lighter !important;
+      }
+    }
+  }
+}
