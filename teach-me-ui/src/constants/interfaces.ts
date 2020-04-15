@@ -55,3 +55,10 @@ export interface SigninFormData {
   email: string;
   password: string;
 }
+
+export interface SnackbarState {
+  open?: boolean;
+  message?: string;
+  severity?: 'error' | 'info' | 'success' | 'warning';
+  autoHide?: boolean;
+}

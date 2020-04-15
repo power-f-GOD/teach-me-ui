@@ -1,5 +1,6 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
+// import { connect } from 'react-redux';
 
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
@@ -37,7 +38,7 @@ const Landing = () => {
                 <Typography component='h3' variant='h6' align='center'>
                   <Box marginBottom='2em' fontSize='1.65vw'>
                     Welcome to{' '}
-                    <span className='logo theme-color-blue-light'>
+                    <span className='logo theme-color-blue-light-1'>
                       Teach Me!
                     </span>
                   </Box>

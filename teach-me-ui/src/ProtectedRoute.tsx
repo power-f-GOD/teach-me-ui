@@ -1,7 +1,8 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 
-import CircularProgress from '@material-ui/core/CircularProgress';
+// import CircularProgress from '@material-ui/core/CircularProgress';
+import { Loader } from './components';
 
 const ProtectedRoute = (props: any) => {
   const { component: Component, status, isAuthenticated } = props;
@@ -9,8 +10,7 @@ const ProtectedRoute = (props: any) => {
   return (
     <Route
       render={(props: any) => {
-        if (status === 'pending')
-          return <CircularProgress color='inherit' size={50} />;
+        if (status === 'pending') return <Loader />;
 
         return isAuthenticated ? (
           <Component {...props} />

@@ -7,6 +7,7 @@ import About from './About';
 import Main from './Main';
 import PageNotFound from './PageNotFound';
 import Loader from './Loader';
+import SnackBar from './SnackBar';
 
 export {
   Nav,
@@ -17,5 +18,6 @@ export {
   About,
   Main,
   Loader,
+  SnackBar,
   PageNotFound
 };

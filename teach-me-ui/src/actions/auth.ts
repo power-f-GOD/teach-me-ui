@@ -25,6 +25,7 @@ import {
   callNetworkStatusChecker,
   populateStateWithUserData
 } from '../functions';
+import { displaySnackbar } from './misc';
 
 export const requestSignup = (data: SignupFormData) => (
   dispatch: Function
@@ -33,7 +34,9 @@ export const requestSignup = (data: SignupFormData) => (
 
   let { firstname, lastname, username, email, password } = data;
 
-  firstname = `${firstname[0].toUpperCase()}${firstname.slice(1).toLowerCase()}`;
+  firstname = `${firstname[0].toUpperCase()}${firstname
+    .slice(1)
+    .toLowerCase()}`;
   lastname = `${lastname[0].toUpperCase()}${lastname.slice(1).toLowerCase()}`;
 
   //check if user is online as lost network connection is not a failure state for Firebase db in order to give response to user
@@ -50,8 +53,7 @@ export const requestSignup = (data: SignupFormData) => (
             validateUsername({
               value: username,
               err: true,
-              helperText:
-                'The username already exists. Kindly use another or sign in.'
+              helperText: 'The username is already taken. Kindly use another.'
             })
           );
         }
@@ -81,8 +83,7 @@ export const requestSignup = (data: SignupFormData) => (
               dispatch(
                 signup({
                   status: 'pending',
-                  err: false,
-                  statusText: ' '
+                  err: false
                 })
               );
               dispatch(auth({ status: 'settled', isAuthenticated: true }));
@@ -100,10 +101,15 @@ export const requestSignup = (data: SignupFormData) => (
                     password: ''
                   })
                   .then(() => {
-                    // teachMeApp
-                    //   .auth()
-                    //   .currentUser?.updateProfile({ displayName });
                     setTimeout(() => {
+                      dispatch(
+                        displaySnackbar({
+                          open: true,
+                          message: 'Sign up success!',
+                          severity: 'success',
+                          autoHide: true
+                        })
+                      );
                       dispatch(signup({ status: 'fulfilled' }));
                     }, 1000);
                   })
@@ -123,8 +129,14 @@ export const requestSignup = (data: SignupFormData) => (
               dispatch(
                 signup({
                   status: 'settled',
-                  err: true,
-                  statusText: error.message
+                  err: true
+                })
+              );
+              dispatch(
+                displaySnackbar({
+                  open: true,
+                  message: error.message,
+                  severity: 'error'
                 })
               );
               console.error('An error occured: ', error.message);
@@ -148,7 +160,7 @@ export function signup(payload: StatusPropsState): ReduxAction {
 export const requestSignin = (data: SigninFormData) => (
   dispatch: Function
 ): ReduxAction => {
-  dispatch(signin({ status: 'pending', statusText: ' ' }));
+  dispatch(signin({ status: 'pending' }));
   callNetworkStatusChecker('signin');
 
   let { email, password } = data;
@@ -179,7 +191,7 @@ export const requestSignin = (data: SigninFormData) => (
             value: email,
             err: true,
             helperText: /@/.test(email)
-              ? 'Email does not exist. Sign up instead.'
+              ? 'No records exist for email. Sign up instead.'
               : 'Invalid input. Enter your email address.'
           })
         );
@@ -190,8 +202,14 @@ export const requestSignin = (data: SigninFormData) => (
       dispatch(
         signin({
           status: 'settled',
-          err: true,
-          statusText: displayStatusText ? statusText : ' '
+          err: true
+        })
+      );
+      dispatch(
+        displaySnackbar({
+          open: displayStatusText,
+          message: statusText,
+          severity: 'error'
         })
       );
       console.error('An error occured: ', statusText);
@@ -234,7 +252,7 @@ export function auth(payload: AuthState): ReduxAction {
 }
 
 export const requestSignout = () => (dispatch: Function): ReduxAction => {
-  dispatch(signout({ status: 'pending', statusText: ' ' }));
+  dispatch(signout({ status: 'pending' }));
 
   teachMeApp
     .auth()
@@ -243,18 +261,30 @@ export const requestSignout = () => (dispatch: Function): ReduxAction => {
       dispatch(
         signout({
           status: 'fulfilled',
-          err: false,
-          statusText: 'You are signed out.'
+          err: false
         })
       );
       dispatch(auth({ status: 'fulfilled', isAuthenticated: false }));
+      dispatch(
+        displaySnackbar({
+          open: true,
+          message: "You're signed out.",
+          severity: 'info'
+        })
+      );
     })
     .catch((error) => {
       dispatch(
         signout({
           status: 'settled',
-          err: true,
-          statusText: 'Something went wrong:' + error.message
+          err: true
+        })
+      );
+      dispatch(
+        displaySnackbar({
+          open: true,
+          message: error.message,
+          severity: 'error'
         })
       );
       dispatch(auth({ status: 'settled', isAuthenticated: true }));

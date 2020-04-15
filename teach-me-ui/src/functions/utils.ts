@@ -9,7 +9,8 @@ import {
   validateEmail,
   validateUsername,
   validateLastname,
-  validateFirstname
+  validateFirstname,
+  displaySnackbar
 } from '../actions';
 import { database } from '../firebase';
 
@@ -34,7 +35,7 @@ export function callNetworkStatusChecker(networkAction: 'signup' | 'signin') {
       let noInternetResponse: StatusPropsState = {
         status: 'settled',
         err: true,
-        statusText: 'You are offline. Reconnect to the internet.'
+        statusText: 'You are offline. Check your internet.'
       };
 
       state = getState();
@@ -49,11 +50,25 @@ export function callNetworkStatusChecker(networkAction: 'signup' | 'signin') {
         case 'signup':
           if (state.signup.status === 'pending' && !navigator.onLine) {
             dispatch(signup({ ...noInternetResponse }));
+            dispatch(
+              displaySnackbar({
+                open: true,
+                message: noInternetResponse.statusText,
+                severity: 'error'
+              })
+            );
           }
           break;
         case 'signin':
           if (state.signin.status === 'pending' && !navigator.onLine) {
             dispatch(signin({ ...noInternetResponse }));
+            dispatch(
+              displaySnackbar({
+                open: true,
+                message: noInternetResponse.statusText,
+                severity: 'error'
+              })
+            );
           }
           break;
       }
@@ -68,7 +83,7 @@ export function callNetworkStatusChecker(networkAction: 'signup' | 'signin') {
           status: 'pending',
           err: true,
           statusText:
-            "Network is taking too long to respond. Check and ensure you're connected to the internet."
+            "Network is taking too long to respond. Sure you're connected?"
         };
         let abortionFeedback: StatusPropsState = {
           status: 'settled',
@@ -79,18 +94,46 @@ export function callNetworkStatusChecker(networkAction: 'signup' | 'signin') {
 
         switch (networkAction) {
           case 'signup':
+            dispatch(
+              displaySnackbar({
+                open: true,
+                message: errFeedback.statusText,
+                severity: 'error'
+              })
+            );
             dispatch(signup({ ...errFeedback }));
             timeoutToAbortNetworkAction = setTimeout(() => {
-              if (navigator.onLine) {
+              if (navigator.onLine && state.signup.status === 'pending') {
                 dispatch(signup({ ...abortionFeedback }));
+                dispatch(
+                  displaySnackbar({
+                    open: true,
+                    message: abortionFeedback.statusText,
+                    severity: 'error'
+                  })
+                );
               }
             }, 8000);
             break;
           case 'signin':
+            dispatch(
+              displaySnackbar({
+                open: true,
+                message: errFeedback.statusText,
+                severity: 'error'
+              })
+            );
             dispatch(signin({ ...errFeedback }));
             timeoutToAbortNetworkAction = setTimeout(() => {
-              if (navigator.onLine) {
+              if (navigator.onLine && state.signin.status === 'pending') {
                 dispatch(signin({ ...abortionFeedback }));
+                dispatch(
+                  displaySnackbar({
+                    open: true,
+                    message: abortionFeedback.statusText,
+                    severity: 'error'
+                  })
+                );
               }
             }, 8000);
             break;
@@ -123,6 +166,14 @@ export function populateStateWithUserData(email: string) {
             })
           );
           dispatch(auth({ status: 'fulfilled', isAuthenticated: true }));
+          dispatch(
+            displaySnackbar({
+              open: true,
+              message: 'Sign in success!',
+              severity: 'success',
+              autoHide: true
+            })
+          );
         });
         dispatch(validateLastname({ value: lastname }));
         dispatch(validateUsername({ value: username }));
