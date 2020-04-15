@@ -72,7 +72,6 @@ const Signup = (props: SignupPropsState) => {
             <Box marginY='0.25em'>
               <TextField
                 error={props.firstname.err}
-                value={props.firstname.value}
                 required
                 variant='outlined'
                 id='firstname'
@@ -97,7 +96,6 @@ const Signup = (props: SignupPropsState) => {
             <Box marginY='0.25em'>
               <TextField
                 required
-                value={props.lastname.value}
                 error={props.lastname.err}
                 variant='outlined'
                 id='lastname'
@@ -115,7 +113,6 @@ const Signup = (props: SignupPropsState) => {
           <Box component='div' marginY='0.25em' minWidth='100%'>
             <TextField
               required
-              value={props.username.value}
               error={props.username.err}
               variant='outlined'
               id='username'
@@ -131,7 +128,6 @@ const Signup = (props: SignupPropsState) => {
           <Box component='div' marginY='0.25em' minWidth='100%'>
             <TextField
               required
-              value={props.email.value}
               error={props.email.err}
               variant='outlined'
               id='email'
@@ -149,7 +145,6 @@ const Signup = (props: SignupPropsState) => {
           <Box component='div' marginY='0.25em' minWidth='100%'>
             <TextField
               required
-              value={props.password.value}
               error={props.password.err}
               variant='outlined'
               id='password'
@@ -192,16 +187,9 @@ const Signup = (props: SignupPropsState) => {
               )}
             </Button>
           </Box>
-          <Box
-            className={`status-feedback ${
-              props.signup.err ? 'Mui-error' : 'success'
-            }`}
-            marginY='0.25em'>
-            {props.signup.statusText || ' '}
-          </Box>
         </Grid>
       </form>
-      <Box marginY='0.5em'>
+      <Box marginY='1em'>
         <Typography component='div' align='center'>
           Have a Teach Me account? <Link to='/signin'>Sign in here!</Link>
         </Typography>

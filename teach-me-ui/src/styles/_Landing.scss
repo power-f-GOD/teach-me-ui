@@ -1,4 +1,4 @@
-@import 'color';
+@import 'constants';
 
 .landing-root-grid {
   height: inherit;
@@ -24,7 +24,7 @@
 }
 
 .splash-section {
-  background-color: $theme-color-blue-dark;
+  background-color: $theme-color-blue-darker;
   background-image: url("/images/educational.png");
   background-repeat: no-repeat;
   background-position: 50% 35%;
@@ -38,7 +38,7 @@
 .splash {
   height: 100%;
   max-height: 35em;
-  min-height: 30em;
+  min-height: 27em;
 }
 
 .splash-image {

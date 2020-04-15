@@ -2,17 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
-import './styles/index.min.css';
+import { StylesProvider } from '@material-ui/core/styles';
 
 import App from './App';
 import store from './appStore';
-import { dispatch } from './functions';
-import { verifyAuth } from './actions';
-
+import './styles/index.min.css';
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <StylesProvider injectFirst>
+      <App />
+    </StylesProvider>
   </Provider>,
   document.querySelector('#root')
 );
@@ -26,6 +26,3 @@ if (userDeviceIsMobile) {
 } else {
   document.body.classList.add('desktop');
 }
-
-//verify auth and keep user logged in assuming page is refreshed/reloaded
-dispatch(verifyAuth()(dispatch));
