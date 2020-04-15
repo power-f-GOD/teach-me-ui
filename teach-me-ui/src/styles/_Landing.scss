@@ -24,11 +24,13 @@
 }
 
 .splash-section {
-  background-color: $theme-color-blue-darker;
-  background-image: url("/images/educational.png");
-  background-repeat: no-repeat;
-  background-position: 50% 35%;
-  background-size: 55% auto;
+  background: {
+    color: $theme-color-blue-darker;
+    image: url('/images/educational.png');
+    repeat: no-repeat;
+    position: 50% 35%;
+    size: 55% auto;
+  }
   color: white;
   height: 100%;
   overflow-y: auto;
@@ -55,10 +57,12 @@
 }
 
 .status-feedback {
-  font-size: 0.9em;
+  font: {
+    size: 0.9em;
+    weight: bold;
+  }
   text-align: center;
   white-space: pre-wrap;
-  font-weight: bold;
   width: 100%;
 }
 

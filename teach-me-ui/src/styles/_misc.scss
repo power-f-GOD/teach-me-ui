@@ -126,8 +126,10 @@ div {
 .MuiAlert-filledError,
 .MuiAlert-filledInfo,
 .MuiAlert-filledWarning {
-  font-weight: bold;
-  font-size: 0.95rem;
+  font: {
+    weight: bold;
+    size: 0.95rem;
+  }
 }
 
 .MuiAlert-filledSuccess {

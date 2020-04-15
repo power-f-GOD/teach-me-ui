@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 import {
   ReduxAction,
   SIGNUP_REQUEST,
@@ -14,7 +16,6 @@ import {
   SIGNOUT_USER,
   SET_USER_DISPLAY_NAME
 } from '../constants';
-import { teachMeApp, database } from '../firebase';
 import {
   validateEmail,
   validateUsername,
@@ -23,7 +24,9 @@ import {
 } from './validate';
 import {
   callNetworkStatusChecker,
-  populateStateWithUserData
+  populateStateWithUserData,
+  logError,
+  promisedDispatch
 } from '../functions';
 import { displaySnackbar } from './misc';
 
@@ -38,112 +41,99 @@ export const requestSignup = (data: SignupFormData) => (
     .slice(1)
     .toLowerCase()}`;
   lastname = `${lastname[0].toUpperCase()}${lastname.slice(1).toLowerCase()}`;
+  username = username.toLowerCase();
+  email = email.toLowerCase();
 
   //check if user is online as lost network connection is not a failure state for Firebase db in order to give response to user
   callNetworkStatusChecker('signup');
 
-  //first check if username already exists before signing user up
-  database
-    .ref(`users/students/${email.replace(/\./g, '')}`)
-    .once('value')
-    .then((snapshot) => {
-      if (snapshot.val()) {
-        if (username === snapshot.val().username) {
+  axios({
+    url: 'https://teach-me-services.herokuapp.com/api/v1/register',
+    method: 'POST',
+    data: {
+      firstname,
+      lastname,
+      username,
+      email,
+      password
+    },
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+    .then((response) => {
+      const { data: _data } = response;
+      const { error, message } = _data;
+
+      if (!error) {
+        const displayName = `${firstname} ${lastname}`;
+
+        populateStateWithUserData({
+          firstname,
+          lastname,
+          username,
+          email,
+          displayName
+        }).then(() => {
+          dispatch(signup({ status: 'fulfilled' }));
+          dispatch(auth({ status: 'settled', isAuthenticated: true }));
           dispatch(
-            validateUsername({
-              value: username,
-              err: true,
-              helperText: 'The username is already taken. Kindly use another.'
+            displaySnackbar({
+              open: true,
+              message: 'Sign up success!',
+              severity: 'success',
+              autoHide: true
             })
           );
+
+          //set token for user session and subsequent authentication
+          if (navigator.cookieEnabled) {
+            localStorage.teachMe = JSON.stringify({
+              ..._data,
+              displayName
+            });
+          }
+        });
+      } else {
+        switch (true) {
+          case /username.+(taken|used?)/i.test(message):
+            dispatch(
+              validateUsername({
+                value: username,
+                err: true,
+                helperText: 'The username is already taken. Kindly use another.'
+              })
+            );
+            break;
+          case /email.+(taken|used?)/i.test(message):
+            dispatch(
+              validateEmail({
+                value: email,
+                err: true,
+                helperText: 'The email is already in use by another account.'
+              })
+            );
+            break;
+          default:
+            dispatch(
+              displaySnackbar({
+                open: true,
+                message,
+                severity: 'error'
+              })
+            );
         }
 
         dispatch(
-          validateEmail({
-            value: email,
-            err: true,
-            helperText: 'The email is already in use by another account.'
-          })
-        );
-        dispatch(
           signup({
             status: 'settled',
-            err: true,
-            statusText: ' '
+            err: error
           })
         );
-      } else {
-        teachMeApp
-          .auth()
-          .createUserWithEmailAndPassword(email, password)
-          .then((user) => {
-            if (user) {
-              const displayName = `${firstname} ${lastname}`;
-
-              dispatch(
-                signup({
-                  status: 'pending',
-                  err: false
-                })
-              );
-              dispatch(auth({ status: 'settled', isAuthenticated: true }));
-
-              //now populate database with the rest of user data after sign up
-              return (
-                database
-                  //replacing dots in email as database doesn't accept them
-                  .ref(`users/students/${email.replace(/\./g, '')}`)
-                  .set({
-                    ...data,
-                    displayName,
-                    firstname,
-                    lastname,
-                    password: ''
-                  })
-                  .then(() => {
-                    setTimeout(() => {
-                      dispatch(
-                        displaySnackbar({
-                          open: true,
-                          message: 'Sign up success!',
-                          severity: 'success',
-                          autoHide: true
-                        })
-                      );
-                      dispatch(signup({ status: 'fulfilled' }));
-                    }, 1000);
-                  })
-              );
-            }
-          })
-          .catch((error) => {
-            if (/email.+in-use/.test(error.code)) {
-              dispatch(
-                validateEmail({
-                  value: email,
-                  err: true,
-                  helperText: error.message
-                })
-              );
-            } else {
-              dispatch(
-                signup({
-                  status: 'settled',
-                  err: true
-                })
-              );
-              dispatch(
-                displaySnackbar({
-                  open: true,
-                  message: error.message,
-                  severity: 'error'
-                })
-              );
-              console.error('An error occured: ', error.message);
-            }
-          });
       }
-    });
+      // console.log('Response: ', response);
+    })
+    .catch(logError(signup));
 
   return {
     type: SIGNUP_REQUEST
@@ -163,57 +153,102 @@ export const requestSignin = (data: SigninFormData) => (
   dispatch(signin({ status: 'pending' }));
   callNetworkStatusChecker('signin');
 
-  let { email, password } = data;
+  let { id, password } = data;
+  let _id;
 
-  teachMeApp
-    .auth()
-    .signInWithEmailAndPassword(email, password)
-    .then((user) => {
-      if (user) {
-        populateStateWithUserData(email);
+  if (/@/.test(id)) {
+    _id = { email: id };
+  } else {
+    _id = { username: id };
+  }
+
+  axios({
+    method: 'POST',
+    url: '/login',
+    baseURL: 'https://teach-me-services.herokuapp.com/api/v1',
+    data: {
+      ..._id,
+      password
+    },
+    headers: {
+      'Content-Type': 'application/json'
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    }
+  })
+    .then((response) => {
+      const { data: _data } = response;
+      const { firstname, lastname, username, email, error, message } = _data;
+
+      if (!error) {
+        const displayName = `${firstname} ${lastname}`;
+
+        populateStateWithUserData({
+          firstname,
+          lastname,
+          username,
+          email,
+          displayName
+        }).then(() => {
+          dispatch(signup({ status: 'fulfilled' }));
+          dispatch(auth({ status: 'settled', isAuthenticated: true }));
+          dispatch(
+            displaySnackbar({
+              open: true,
+              message: 'Sign in success!',
+              severity: 'success',
+              autoHide: true
+            })
+          );
+
+          //set token for user session and subsequent authentication
+          if (navigator.cookieEnabled) {
+            localStorage.teachMe = JSON.stringify({
+              ..._data,
+              displayName
+            });
+          }
+        });
+      } else {
+        switch (true) {
+          case /details?|account/i.test(message):
+            dispatch(
+              validateSigninId({
+                value: id,
+                err: true,
+                helperText: `${
+                  /@/.test(id) ? 'Email' : 'Username'
+                } does not match our records.`
+              })
+            );
+            break;
+          case /password.+(invalid)?/i.test(message):
+            dispatch(
+              validateSigninPassword({
+                value: password,
+                err: true,
+                helperText: 'Password incorrect.'
+              })
+            );
+            break;
+          default:
+            dispatch(
+              displaySnackbar({
+                open: true,
+                message,
+                severity: 'error'
+              })
+            );
+        }
+
+        dispatch(
+          signin({
+            status: 'settled',
+            err: error
+          })
+        );
       }
     })
-    .catch((error) => {
-      let displayStatusText = false;
-      let statusText = error.message;
-
-      if (/password/.test(statusText)) {
-        dispatch(
-          validateSigninPassword({
-            value: password,
-            err: true,
-            helperText: 'Password incorrect.'
-          })
-        );
-      } else if (/credential|user|record|email/.test(statusText)) {
-        dispatch(
-          validateSigninId({
-            value: email,
-            err: true,
-            helperText: /@/.test(email)
-              ? 'No records exist for email. Sign up instead.'
-              : 'Invalid input. Enter your email address.'
-          })
-        );
-      } else {
-        displayStatusText = true;
-      }
-
-      dispatch(
-        signin({
-          status: 'settled',
-          err: true
-        })
-      );
-      dispatch(
-        displaySnackbar({
-          open: displayStatusText,
-          message: statusText,
-          severity: 'error'
-        })
-      );
-      console.error('An error occured: ', statusText);
-    });
+    .catch(logError(signin));
 
   return {
     type: SIGNIN_REQUEST
@@ -230,14 +265,17 @@ export function signin(payload: StatusPropsState): ReduxAction {
 export const verifyAuth = () => (dispatch: Function): ReduxAction => {
   dispatch(auth({ status: 'pending' }));
 
-  teachMeApp.auth().onAuthStateChanged((user) => {
-    if (user) {
-      populateStateWithUserData(user.email as string);
-    } else {
-      dispatch(auth({ status: 'fulfilled', isAuthenticated: false }));
-      dispatch(signin({ status: 'fulfilled', err: true }));
-    }
-  });
+  let userData =
+    navigator.cookieEnabled && localStorage.teachMe
+      ? JSON.parse(localStorage.teachMe)
+      : null;
+
+  if (userData?.token) {
+    populateStateWithUserData({ ...userData });
+  } else {
+    dispatch(auth({ status: 'fulfilled', isAuthenticated: false }));
+    dispatch(signin({ status: 'fulfilled', err: true }));
+  }
 
   return {
     type: VERIFY_AUTH
@@ -254,17 +292,22 @@ export function auth(payload: AuthState): ReduxAction {
 export const requestSignout = () => (dispatch: Function): ReduxAction => {
   dispatch(signout({ status: 'pending' }));
 
-  teachMeApp
-    .auth()
-    .signOut()
-    .then(() => {
-      dispatch(
-        signout({
-          status: 'fulfilled',
-          err: false
-        })
-      );
-      dispatch(auth({ status: 'fulfilled', isAuthenticated: false }));
+  if (navigator.cookieEnabled) {
+    localStorage.teachMe = JSON.stringify({
+      ...JSON.parse(localStorage.teachMe),
+      id: null,
+      token: null
+    });
+  }
+
+  setTimeout(() => {
+    dispatch(auth({ status: 'fulfilled', isAuthenticated: false }));
+    promisedDispatch(
+      signout({
+        status: 'fulfilled',
+        err: false
+      })
+    ).then(() => {
       dispatch(
         displaySnackbar({
           open: true,
@@ -272,24 +315,8 @@ export const requestSignout = () => (dispatch: Function): ReduxAction => {
           severity: 'info'
         })
       );
-    })
-    .catch((error) => {
-      dispatch(
-        signout({
-          status: 'settled',
-          err: true
-        })
-      );
-      dispatch(
-        displaySnackbar({
-          open: true,
-          message: error.message,
-          severity: 'error'
-        })
-      );
-      dispatch(auth({ status: 'settled', isAuthenticated: true }));
-      console.error('An error occurred: ', error.message);
     });
+  }, 750);
 
   return {
     type: SIGNOUT_REQUEST
