@@ -26,9 +26,10 @@ export const refs: any = {
 const Signin = (props: SigninPropsState) => {
   const [passwordVisible, setPasswordVisible] = useState(Boolean);
   const { isAuthenticated } = props.auth;
+  const { from } = props.location?.state || { from: { pathname: '/' } };
 
   if (isAuthenticated) {
-    return <Redirect to='/' />;
+    return <Redirect to={from} />;
   }
 
   return (
@@ -106,13 +107,6 @@ const Signin = (props: SigninPropsState) => {
               'SIGN IN'
             )}
           </Button>
-        </Box>
-        <Box
-          className={`status-feedback ${
-            props.signin.err ? 'Mui-error' : 'success'
-          }`}
-          marginY='0.4em'>
-          {props.signin.statusText || ' '}
         </Box>
       </form>
       <Box marginY='1em'>

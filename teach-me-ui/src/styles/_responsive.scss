@@ -4,28 +4,28 @@
   }
 
   #root {
-    height: auto !important;
-    min-height: 100vh !important;
+    height: auto;
+    min-height: 100vh;
   }
 
   .landing-main-grid {
-    height: 100% !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
+    height: 100%;
+    border-radius: 0;
+    box-shadow: none;
   }
 
   .landing-root-grid {
-    padding: 0 !important;
-    background: inherit !important;
+    padding: 0;
+    background: inherit;
   }
 
   .splash-section {
-    display: none !important;
+    display: none;
   }
 
   .form-section {
-    padding: 3em 2em !important;
-    height: auto !important;
-    overflow-y: hidden !important;
+    padding: 3em 2em;
+    height: auto;
+    overflow-y: hidden;
   }
 }

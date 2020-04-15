@@ -36,7 +36,7 @@ export function handleSigninRequest() {
   }
 
   let formData: SigninFormData = {
-    email: signinId.value,
+    id: signinId.value,
     password: signinPassword.value
   };
 

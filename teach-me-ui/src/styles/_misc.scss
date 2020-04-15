@@ -1,4 +1,4 @@
-@import 'color';
+@import 'constants';
 
 html,
 body,
@@ -40,13 +40,16 @@ input {
   margin: 1em 0;
 }
 
-.logo {
-  font-family: Lobster, cursive !important;
-  font-size: 1.25em;
+a {
+  color: $theme-color-blue-light;
+
+  &:visited {
+    color: $theme-color-green-darker;
+  }
 }
 
 button {
-  &[class*=Primary] {
+  &[class*='Primary'] {
     background: $theme-color-green-dark;
     border-radius: 1.5rem;
     height: 3rem;
@@ -62,19 +65,15 @@ button {
   }
 }
 
-[class*=landingRootContainer] {
-  max-width: 77rem !important;
+.landing-root-container {
+  max-width: $app-max-width !important;
 }
 
-[class^=MuiFormControl],
+[class^='MuiFormControl'],
 div {
   fieldset {
     transition: 0.35s;
   }
-}
-
-.MuiContainer-root {
-  padding: 0 !important;
 }
 
 body {
@@ -95,4 +94,72 @@ body {
       border-radius: 0.5em;
     }
   }
+}
+
+[class^='MuiFormControl'],
+div {
+  .Mui-focused {
+    color: $theme-color-green-darker !important;
+
+    fieldset {
+      border-color: $theme-color-green-darker !important;
+    }
+  }
+
+  .Mui-error {
+    color: #f44336 !important;
+
+    input {
+      color: #f44336 !important;
+    }
+    fieldset {
+      border-color: #f44336 !important;
+    }
+  }
+}
+
+.MuiContainer-root {
+  padding: 0;
+}
+
+.MuiAlert-filledSuccess,
+.MuiAlert-filledError,
+.MuiAlert-filledInfo,
+.MuiAlert-filledWarning {
+  font: {
+    weight: bold;
+    size: 0.95rem;
+  }
+}
+
+.MuiAlert-filledSuccess {
+  background: $theme-color-success;
+}
+
+.MuiAlert-icon {
+  align-items: center;
+}
+
+.MuiSnackbar-root {
+  max-width: $app-max-width / 2;
+}
+
+.logo {
+  font-family: Lobster, cursive !important;
+}
+
+.theme-color-blue-dark {
+  color: $theme-color-blue-dark;
+}
+
+.theme-color-blue-light {
+  color: $theme-color-blue-light;
+}
+
+.theme-color-blue-light-1 {
+  color: $theme-color-blue-lighter;
+}
+
+.success {
+  color: $theme-color-success;
 }

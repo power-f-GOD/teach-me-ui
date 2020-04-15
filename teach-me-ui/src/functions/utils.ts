@@ -1,4 +1,4 @@
-import { ReduxAction, StatusPropsState } from '../constants';
+import { ReduxAction, StatusPropsState, UserData } from '../constants';
 import store from '../appStore';
 import {
   online,
@@ -9,15 +9,16 @@ import {
   validateEmail,
   validateUsername,
   validateLastname,
-  validateFirstname
+  validateFirstname,
+  displaySnackbar
 } from '../actions';
-import { database } from '../firebase';
 
 export const { dispatch, getState } = store;
 
 export function promisedDispatch(action: ReduxAction) {
   return new Promise((resolve: Function) => {
-    resolve(dispatch(action));
+    dispatch(action);
+    setTimeout(() => resolve(action), 100);
   });
 }
 
@@ -30,13 +31,25 @@ export function callNetworkStatusChecker(networkAction: 'signup' | 'signin') {
 
   promisedDispatch(online(navigator.onLine)).then(() => {
     let state: any;
-    let networkStatusChecker = setInterval(() => {
-      let noInternetResponse: StatusPropsState = {
-        status: 'settled',
-        err: true,
-        statusText: 'You are offline. Reconnect to the internet.'
-      };
+    const errFeedback: StatusPropsState = {
+      status: 'pending',
+      err: true,
+      statusText:
+        "Network is taking too long to respond. Sure you're connected?"
+    };
+    const abortionFeedback: StatusPropsState = {
+      status: 'settled',
+      err: true,
+      statusText:
+        'Something seems to be wrong with your data connection. Contact your Service Provider.'
+    };
+    const noInternetResponse: StatusPropsState = {
+      status: 'settled',
+      err: true,
+      statusText: 'You are offline. Check your internet.'
+    };
 
+    const networkStatusChecker = setInterval(() => {
       state = getState();
 
       if (
@@ -49,11 +62,25 @@ export function callNetworkStatusChecker(networkAction: 'signup' | 'signin') {
         case 'signup':
           if (state.signup.status === 'pending' && !navigator.onLine) {
             dispatch(signup({ ...noInternetResponse }));
+            dispatch(
+              displaySnackbar({
+                open: true,
+                message: noInternetResponse.statusText,
+                severity: 'error'
+              })
+            );
           }
           break;
         case 'signin':
           if (state.signin.status === 'pending' && !navigator.onLine) {
             dispatch(signin({ ...noInternetResponse }));
+            dispatch(
+              displaySnackbar({
+                open: true,
+                message: noInternetResponse.statusText,
+                severity: 'error'
+              })
+            );
           }
           break;
       }
@@ -64,72 +91,104 @@ export function callNetworkStatusChecker(networkAction: 'signup' | 'signin') {
     //if after 12 seconds of sending request there's no response, throw a network error feedback to user
     timeoutToGiveFeedback = setTimeout(() => {
       if (navigator.onLine && state[networkAction]?.status === 'pending') {
-        let errFeedback: StatusPropsState = {
-          status: 'pending',
-          err: true,
-          statusText:
-            "Network is taking too long to respond. Check and ensure you're connected to the internet."
-        };
-        let abortionFeedback: StatusPropsState = {
-          status: 'settled',
-          err: true,
-          statusText:
-            'Something seems to be wrong with your data connection. Contact your Service Provider.'
-        };
-
         switch (networkAction) {
           case 'signup':
-            dispatch(signup({ ...errFeedback }));
-            timeoutToAbortNetworkAction = setTimeout(() => {
-              if (navigator.onLine) {
-                dispatch(signup({ ...abortionFeedback }));
-              }
-            }, 8000);
+            callTimeoutToAbortNetworkAction('signup');
             break;
           case 'signin':
-            dispatch(signin({ ...errFeedback }));
-            timeoutToAbortNetworkAction = setTimeout(() => {
-              if (navigator.onLine) {
-                dispatch(signin({ ...abortionFeedback }));
-              }
-            }, 8000);
+            callTimeoutToAbortNetworkAction('signin');
             break;
         }
       }
     }, 10000);
+
+    function callTimeoutToAbortNetworkAction(networkAction: string) {
+      switch (networkAction) {
+        case 'signup':
+          dispatch(signup({ ...errFeedback }));
+          break;
+        case 'signin':
+          dispatch(signin({ ...errFeedback }));
+          break;
+      }
+
+      dispatch(
+        displaySnackbar({
+          open: true,
+          message: errFeedback.statusText,
+          severity: 'error'
+        })
+      );
+
+      timeoutToAbortNetworkAction = setTimeout(() => {
+        if (navigator.onLine && state[networkAction].status === 'pending') {
+          switch (networkAction) {
+            case 'signup':
+              dispatch(signup({ ...abortionFeedback }));
+              break;
+            case 'signin':
+              dispatch(signin({ ...abortionFeedback }));
+              break;
+          }
+
+          dispatch(
+            displaySnackbar({
+              open: true,
+              message: abortionFeedback.statusText,
+              severity: 'error'
+            })
+          );
+        }
+      }, 8000);
+    }
   });
 }
 
-export function populateStateWithUserData(email: string) {
-  return database
-    .ref(`users/students/${email.replace(/\./g, '')}`)
-    .once('value')
-    .then((snapshot) => {
-      //update/populate state with user details after signin
-      if (snapshot.val()) {
-        const {
-          firstname,
-          lastname,
-          username,
-          email,
-          displayName
-        } = snapshot.val();
-        //using same action creators for validation to set state values as it was used
-        promisedDispatch(validateFirstname({ value: firstname })).then(() => {
-          dispatch(
-            signin({
-              status: 'fulfilled',
-              err: false
-            })
-          );
-          dispatch(auth({ status: 'fulfilled', isAuthenticated: true }));
-        });
-        dispatch(validateLastname({ value: lastname }));
-        dispatch(validateUsername({ value: username }));
-        dispatch(validateEmail({ value: email }));
-        dispatch(setDisplayName(displayName));
-      } else {
-        dispatch(auth({ status: 'settled', isAuthenticated: false }));
-      }
+export function populateStateWithUserData(data: UserData) {
+  const { firstname, lastname, username, email, displayName } = data;
+
+  //using same action creators for validation to set state values as it was used
+  return promisedDispatch(setDisplayName(displayName)).then(() => {
+    dispatch(validateFirstname({ value: firstname }));
+    dispatch(validateLastname({ value: lastname }));
+    dispatch(validateUsername({ value: username }));
+    promisedDispatch(validateEmail({ value: email })).then(() => {
+      dispatch(
+        signin({
+          status: 'fulfilled',
+          err: false
+        })
+      );
+      dispatch(auth({ status: 'fulfilled', isAuthenticated: true }));
+      dispatch(
+        displaySnackbar({
+          open: true,
+          message: 'Sign in success!',
+          severity: 'success',
+          autoHide: true
+        })
+      );
     });
+  });
+}
+
+export const logError = (action: Function) => (error: any) => {
+  let message = /network/i.test(error.message)
+        ? 'A network error occurred. Check your internet connection.'
+        : error.message;
+
+      dispatch(
+        action({
+          status: 'settled',
+          err: true
+        })
+      );
+      dispatch(
+        displaySnackbar({
+          open: true,
+          message,
+          severity: 'error'
+        })
+      );
+      console.error('An error occured: ', message);
 }

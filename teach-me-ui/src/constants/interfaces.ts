@@ -42,7 +42,7 @@ export interface SignupFormData {
   lastname: string;
   username: string;
   email: string;
-  password: string;
+  password?: string;
 }
 
 export interface SigninPropsState {
@@ -52,6 +52,17 @@ export interface SigninPropsState {
 }
 
 export interface SigninFormData {
-  email: string;
+  id: string;
   password: string;
+}
+
+export interface SnackbarState {
+  open?: boolean;
+  message?: string;
+  severity?: 'error' | 'info' | 'success' | 'warning';
+  autoHide?: boolean;
+}
+
+export interface UserData extends SignupFormData {
+  displayName: string;
 }
