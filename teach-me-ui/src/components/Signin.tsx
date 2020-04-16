@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
@@ -11,10 +12,7 @@ import Button from '@material-ui/core/Button';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import CircularProgress from '@material-ui/core/CircularProgress';
-// import { Typography, Grid, TextField, Box, InputAdornment, IconButton } from '@material-ui/core';
-// import { Visibility, VisibilityOff } from '@material-ui/icons';
 
-import { connect } from 'react-redux';
 import { SigninPropsState } from '../constants';
 import { handleSigninRequest, handleSigninInputChange } from '../functions';
 

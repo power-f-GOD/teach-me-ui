@@ -7,6 +7,7 @@ import Fade from '@material-ui/core/Fade';
 
 import { promisedDispatch } from '../functions';
 import { displaySnackbar } from '../actions';
+import { userDeviceIsMobile } from '../index';
 
 const SnackBar = (props: any) => {
   const { snackbar } = props;
@@ -28,7 +29,7 @@ const SnackBar = (props: any) => {
       in={open && !closed}
       mountOnEnter
       unmountOnExit
-      timeout={closed ? 325 : 375}>
+      timeout={userDeviceIsMobile ? (closed ? 225 : 275) : closed ? 325 : 375}>
       <Snackbar
         open
         onClose={handleClose}

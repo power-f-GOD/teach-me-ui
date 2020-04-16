@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Landing, PageNotFound, Main, Loader, SnackBar } from './components';
 import ProtectedRoute from './ProtectedRoute';
 import { dispatch } from './functions';
-import { verifyAuth, displaySnackbar, online } from './actions';
+import { verifyAuth, displaySnackbar } from './actions';
 
 const App = (props: any) => {
   const { status, isAuthenticated } = props.auth;
@@ -45,7 +45,6 @@ window.ononline = () => {
       severity: 'success'
     })
   );
-  dispatch(online(true));
 };
 
 window.onoffline = () => {
@@ -56,7 +55,6 @@ window.onoffline = () => {
       severity: 'error'
     })
   );
-  dispatch(online(false));
 };
 
 const mapStateToProps = (state: any) => {

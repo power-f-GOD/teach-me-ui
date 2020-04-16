@@ -11,22 +11,13 @@ import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-// import {
-//   Typography,
-//   Grid,
-//   TextField,
-//   Box,
-//   InputAdornment,
-//   IconButton,
-// } from '@material-ui/core';
-// import { Visibility, VisibilityOff } from '@material-ui/icons';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { SignupPropsState } from '../constants/interfaces';
 import {
   handleSignupInputChange,
   handleSignupRequest
 } from '../functions/signup';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
 export const refs: any = {
   firstnameInput: React.createRef<HTMLInputElement>(),

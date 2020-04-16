@@ -8,7 +8,7 @@
   margin: auto;
   flex-grow: 1;
   padding: 2.25em 1.5em;
-  background: $theme-color-blue-light;
+  background: $theme-color-primary-v7;
 }
 
 .landing-root-container {
@@ -18,14 +18,14 @@
 
 .landing-main-grid {
   border-radius: 0.45em;
-  box-shadow: 0 0.5em 2.5em rgba(0, 0, 0, 0.35), 0 0.5em 5em rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1em 4em rgba(0, 0, 0, 0.3), 0 1em 4em rgba(0, 0, 0, 0.15);
   height: 100%;
   overflow-x: hidden;
 }
 
 .splash-section {
   background: {
-    color: $theme-color-blue-darker;
+    color: $theme-color-primary-v3;
     image: url('/images/educational.png');
     repeat: no-repeat;
     position: 50% 35%;

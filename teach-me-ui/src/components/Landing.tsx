@@ -1,12 +1,10 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-// import { connect } from 'react-redux';
 
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
-// import { Grid, Container, Typography, Box } from '@material-ui/core';
 
 import { Signin, Signup } from '../components';
 
@@ -38,7 +36,7 @@ const Landing = () => {
                 <Typography component='h3' variant='h6' align='center'>
                   <Box marginBottom='2em' fontSize='1.65vw'>
                     Welcome to{' '}
-                    <span className='logo theme-color-blue-light-1'>
+                    <span className='logo theme-color-primary-lightest'>
                       Teach Me!
                     </span>
                   </Box>
@@ -57,7 +55,7 @@ const Landing = () => {
             <Container maxWidth='xs'>
               <Box marginBottom='1.25em'>
                 <Typography
-                  className='logo theme-color-blue-dark'
+                  className='logo theme-color-primary-darker'
                   component='h1'
                   variant='h4'
                   align='center'>

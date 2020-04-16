@@ -25,8 +25,8 @@ body,
   width: 100%;
   min-height: 100%;
   display: flex;
-  background: $theme-color-blue-dark;
-  color: $theme-color-blue-lighter;
+  background: $theme-color-primary-v1;
+  color: $theme-color-primary-v4;
   justify-content: center;
   align-items: center;
 }
@@ -41,21 +41,21 @@ input {
 }
 
 a {
-  color: $theme-color-blue-light;
+  color: $theme-color-secondary-v5;
 
   &:visited {
-    color: $theme-color-green-darker;
+    color: $theme-color-primary-v9;
   }
 }
 
 button {
   &[class*='Primary'] {
-    background: $theme-color-green-dark;
+    background: $theme-color-secondary-v5;
     border-radius: 1.5rem;
     height: 3rem;
 
     &:hover {
-      background: $theme-color-green-darker;
+      background: $theme-color-secondary-v4;
     }
 
     &:disabled {
@@ -77,7 +77,7 @@ div {
 }
 
 body {
-  background-color: $theme-color-blue-light;
+  background-color: $theme-color-primary-v3;
 
   &.desktop.custom-scroll-bar,
   &.desktop .custom-scroll-bar {
@@ -90,7 +90,7 @@ body {
     }
 
     &::-webkit-scrollbar-thumb {
-      background: $theme-color-blue-dark;
+      background: $theme-color-primary-v1;
       border-radius: 0.5em;
     }
   }
@@ -99,21 +99,21 @@ body {
 [class^='MuiFormControl'],
 div {
   .Mui-focused {
-    color: $theme-color-green-darker !important;
+    color: $theme-color-secondary-v5 !important;
 
     fieldset {
-      border-color: $theme-color-green-darker !important;
+      border-color: $theme-color-secondary-v5 !important;
     }
   }
 
   .Mui-error {
-    color: #f44336 !important;
+    color: $error !important;
 
     input {
-      color: #f44336 !important;
+      color: $error !important;
     }
     fieldset {
-      border-color: #f44336 !important;
+      border-color: $error !important;
     }
   }
 }
@@ -133,7 +133,15 @@ div {
 }
 
 .MuiAlert-filledSuccess {
-  background: $theme-color-success;
+  background: $success;
+}
+
+.MuiAlert-filledError {
+  background: $error;
+}
+
+.MuiAlert-filledInfo {
+  background: $info;
 }
 
 .MuiAlert-icon {
@@ -148,18 +156,38 @@ div {
   font-family: Lobster, cursive !important;
 }
 
-.theme-color-blue-dark {
-  color: $theme-color-blue-dark;
+.theme-color-primary {
+  color: $theme-color-primary;
+}
+.theme-color-primary-lighter {
+  color: $theme-color-primary-v7;
+}
+.theme-color-primary-lightest {
+  color: $theme-color-primary-v9;
+}
+.theme-color-primary-darker {
+  color: $theme-color-primary-v3;
+}
+.theme-color-primary-darkest {
+  color: $theme-color-primary-v1;
 }
 
-.theme-color-blue-light {
-  color: $theme-color-blue-light;
+.theme-color-secondary {
+  color: $theme-color-secondary;
 }
 
-.theme-color-blue-light-1 {
-  color: $theme-color-blue-lighter;
+.theme-color-tertiary {
+  color: $theme-color-tertiary;
 }
 
-.success {
-  color: $theme-color-success;
+.theme-bgcolor-primary {
+  background-color: $theme-color-primary;
+}
+
+.theme-bgcolor-secondary {
+  background-color: $theme-color-secondary;
+}
+
+.theme-bgcolor-tertiary {
+  background-color: $theme-color-tertiary;
 }

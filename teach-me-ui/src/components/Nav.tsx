@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Box, CircularProgress } from '@material-ui/core';
-import { handleSignoutRequest } from '../functions';
 import { connect } from 'react-redux';
+
+import { Button, Box, CircularProgress } from '@material-ui/core';
+
+import { handleSignoutRequest } from '../functions';
+
 
 const Nav = (props: any) => {
   return (
