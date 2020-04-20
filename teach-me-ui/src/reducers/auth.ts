@@ -9,8 +9,7 @@ import {
   AUTHENTICATE_USER,
   AuthState,
   SIGNOUT_USER,
-  signoutState,
-  SET_USER_DISPLAY_NAME
+  signoutState
 } from '../constants';
 
 export const signup = (

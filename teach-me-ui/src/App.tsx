@@ -16,7 +16,7 @@ const App = (props: any) => {
   }
 
   return (
-    <div data-testid='app'>
+    <>
       <BrowserRouter>
         <Switch>
           <ProtectedRoute
@@ -30,7 +30,7 @@ const App = (props: any) => {
         </Switch>
       </BrowserRouter>
       <SnackBar snackbar={snackbar} />
-    </div>
+    </>
   );
 };
 

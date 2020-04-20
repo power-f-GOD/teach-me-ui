@@ -13,8 +13,7 @@ import {
   AuthState,
   VERIFY_AUTH,
   SIGNOUT_REQUEST,
-  SIGNOUT_USER,
-  SET_USER_DISPLAY_NAME
+  SIGNOUT_USER
 } from '../constants';
 import {
   validateEmail,
