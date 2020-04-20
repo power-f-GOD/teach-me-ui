@@ -25,8 +25,8 @@ body,
   width: 100%;
   min-height: 100%;
   display: flex;
-  background: $theme-color-primary-v1;
-  color: $theme-color-primary-v4;
+  background: $theme-color-primary-v3;
+  color: $theme-color-primary-v9;
   justify-content: center;
   align-items: center;
 }
@@ -130,6 +130,7 @@ div {
     weight: bold;
     size: 0.95rem;
   }
+  transition: background-color 0.35s !important;
 }
 
 .MuiAlert-filledSuccess {

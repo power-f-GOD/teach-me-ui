@@ -24,7 +24,7 @@ ReactDOM.render(
       <App />
     </StylesProvider>
   </Provider>,
-  document.querySelector('#root')
+  document.querySelector('#root') || document.createElement('div')
 );
 
 

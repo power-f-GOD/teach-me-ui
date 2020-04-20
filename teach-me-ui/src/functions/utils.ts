@@ -134,7 +134,7 @@ export const logError = (action: Function) => (error: any) => {
   dispatch(
     displaySnackbar({
       open: true,
-      message,
+      message: navigator.onLine ? message : 'You are offline.',
       severity: 'error'
     })
   );

@@ -25,8 +25,7 @@ import {
 import {
   callNetworkStatusChecker,
   populateStateWithUserData,
-  logError,
-  promisedDispatch
+  logError
 } from '../functions';
 import { displaySnackbar } from './misc';
 
@@ -131,7 +130,6 @@ export const requestSignup = (data: SignupFormData) => (
           })
         );
       }
-      // console.log('Response: ', response);
     })
     .catch(logError(signup));
 
@@ -172,7 +170,6 @@ export const requestSignin = (data: SigninFormData) => (
     },
     headers: {
       'Content-Type': 'application/json'
-      // 'Content-Type': 'application/x-www-form-urlencoded',
     }
   })
     .then((response) => {
@@ -190,7 +187,7 @@ export const requestSignin = (data: SigninFormData) => (
           displayName
         }).then(() => {
           dispatch(signup({ status: 'fulfilled' }));
-          dispatch(auth({ status: 'settled', isAuthenticated: true }));
+          dispatch(auth({ status: 'fulfilled', isAuthenticated: true }));
           dispatch(
             displaySnackbar({
               open: true,
@@ -265,10 +262,9 @@ export function signin(payload: StatusPropsState): ReduxAction {
 export const verifyAuth = () => (dispatch: Function): ReduxAction => {
   dispatch(auth({ status: 'pending' }));
 
-  let userData =
-    navigator.cookieEnabled && localStorage.teachMe
-      ? JSON.parse(localStorage.teachMe)
-      : null;
+  let userData = navigator.cookieEnabled
+    ? JSON.parse(localStorage.teachMe ?? '{}')
+    : null;
 
   if (userData?.token) {
     populateStateWithUserData({ ...userData });
@@ -294,7 +290,7 @@ export const requestSignout = () => (dispatch: Function): ReduxAction => {
 
   if (navigator.cookieEnabled) {
     localStorage.teachMe = JSON.stringify({
-      ...JSON.parse(localStorage.teachMe),
+      ...JSON.parse(localStorage.teachMe ?? '{}'),
       id: null,
       token: null
     });
@@ -302,21 +298,21 @@ export const requestSignout = () => (dispatch: Function): ReduxAction => {
 
   setTimeout(() => {
     dispatch(auth({ status: 'fulfilled', isAuthenticated: false }));
-    promisedDispatch(
+    dispatch(
       signout({
         status: 'fulfilled',
         err: false
       })
-    ).then(() => {
-      dispatch(
-        displaySnackbar({
-          open: true,
-          message: "You're signed out.",
-          severity: 'info'
-        })
-      );
-    });
-  }, 750);
+    );
+    dispatch(
+      displaySnackbar({
+        open: true,
+        message: "You're signed out.",
+        severity: 'info',
+        autoHide: true
+      })
+    );
+  }, 400);
 
   return {
     type: SIGNOUT_REQUEST
@@ -326,13 +322,6 @@ export const requestSignout = () => (dispatch: Function): ReduxAction => {
 export function signout(payload: StatusPropsState): ReduxAction {
   return {
     type: SIGNOUT_USER,
-    payload
-  };
-}
-
-export function setDisplayName(payload: string): ReduxAction {
-  return {
-    type: SET_USER_DISPLAY_NAME,
     payload
   };
 }

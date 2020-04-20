@@ -62,9 +62,4 @@ export const signout = (
   return state;
 };
 
-export const displayName = (state: string = 'User', action: ReduxAction) => {
-  if (action.type === SET_USER_DISPLAY_NAME) {
-    return action.payload;
-  }
-  return state;
-};
+

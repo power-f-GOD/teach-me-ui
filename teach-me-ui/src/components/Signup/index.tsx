@@ -13,11 +13,11 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import { SignupPropsState } from '../constants/interfaces';
+import { SignupPropsState } from '../../constants/interfaces';
 import {
   handleSignupInputChange,
   handleSignupRequest
-} from '../functions/signup';
+} from '../../functions/signup';
 
 export const refs: any = {
   firstnameInput: React.createRef<HTMLInputElement>(),

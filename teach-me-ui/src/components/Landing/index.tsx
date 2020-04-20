@@ -6,7 +6,7 @@ import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
 
-import { Signin, Signup } from '../components';
+import { Signin, Signup } from '../';
 
 const Landing = () => {
   return (

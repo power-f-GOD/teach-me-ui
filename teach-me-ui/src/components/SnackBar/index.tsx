@@ -5,9 +5,9 @@ import MuiAlert from '@material-ui/lab/Alert';
 import Slide from '@material-ui/core/Slide';
 import Fade from '@material-ui/core/Fade';
 
-import { promisedDispatch } from '../functions';
-import { displaySnackbar } from '../actions';
-import { userDeviceIsMobile } from '../index';
+import { promisedDispatch } from '../../functions';
+import { displaySnackbar } from '../../actions';
+import { userDeviceIsMobile } from '../../index';
 
 const SnackBar = (props: any) => {
   const { snackbar } = props;
@@ -15,11 +15,15 @@ const SnackBar = (props: any) => {
   const [closed = true, setClosed] = useState(Boolean);
   let timeout: any;
 
-  const handleClose = () => {
+  const handleClose = (event?: any, reason?: string) => {
     clearTimeout(timeout);
+    
+    if (reason === 'clickaway' && !autoHide) return;
+
     setClosed(true);
     promisedDispatch(displaySnackbar({ open: false })).then(() => {
       timeout = setTimeout(() => setClosed(false), 400);
+      event = !!event; // did this just to avoid unused variable and self assigned errors by TS
     });
   };
 
@@ -35,7 +39,7 @@ const SnackBar = (props: any) => {
         onClose={handleClose}
         onEntered={() => setClosed(false)}
         TransitionComponent={Fade}
-        autoHideDuration={autoHide ? 5000 : null}
+        autoHideDuration={autoHide ? 4000 : null}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left'
