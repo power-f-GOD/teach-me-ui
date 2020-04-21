@@ -15,9 +15,9 @@ import {
 export const { dispatch, getState } = store;
 
 export function promisedDispatch(action: ReduxAction) {
+  dispatch(action);
   return new Promise((resolve: Function) => {
-    dispatch(action);
-    setTimeout(() => resolve(action), 200);
+    setTimeout(() => resolve(getState()), 200);
   });
 }
 
@@ -100,24 +100,22 @@ export function callNetworkStatusChecker(networkAction: 'signup' | 'signin') {
   }
 }
 
-export function populateStateWithUserData(data: UserData) {
+export async function populateStateWithUserData(data: UserData) {
   const { firstname, lastname, username, email, displayName } = data;
 
   //using same action creators for validation to set state values as it was used
-  return promisedDispatch(setDisplayName(displayName)).then(() => {
-    dispatch(validateFirstname({ value: firstname }));
-    dispatch(validateLastname({ value: lastname }));
-    dispatch(validateUsername({ value: username }));
-    promisedDispatch(validateEmail({ value: email })).then(() => {
-      dispatch(
-        signin({
-          status: 'fulfilled',
-          err: false
-        })
-      );
-      dispatch(auth({ status: 'fulfilled', isAuthenticated: true }));
-    });
-  });
+  await promisedDispatch(setDisplayName(displayName));
+  dispatch(validateFirstname({ value: firstname }));
+  dispatch(validateLastname({ value: lastname }));
+  dispatch(validateUsername({ value: username }));
+  await promisedDispatch(validateEmail({ value: email }));
+  dispatch(
+    signin({
+      status: 'fulfilled',
+      err: false
+    })
+  );
+  dispatch(auth({ status: 'fulfilled', isAuthenticated: true }));
 }
 
 export const logError = (action: Function) => (error: any) => {
