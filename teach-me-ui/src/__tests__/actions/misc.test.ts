@@ -7,7 +7,7 @@ import {
   SET_USER_DISPLAY_NAME
 } from '../../constants';
 
-import { displaySnackbar, setDisplayName } from '../misc';
+import { displaySnackbar, setDisplayName } from '../../actions';
 
 afterEach(cleanup);
 

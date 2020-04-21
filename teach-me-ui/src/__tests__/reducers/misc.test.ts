@@ -7,7 +7,7 @@ import {
   DISPLAY_SNACK_BAR,
   SET_USER_DISPLAY_NAME
 } from '../../constants';
-import { displayName, snackbar } from '../misc';
+import { displayName, snackbar } from '../../reducers/misc';
 
 afterEach(cleanup);
 
@@ -37,8 +37,8 @@ it("misc reducers should be called with 'state' and 'action' params and return v
 
   snackbarMockFunc(snackbarState, snackbarAction);
   expect(snackbarMockFunc).toHaveBeenCalledWith(snackbarState, snackbarAction);
-  expect(snackbar(mockSnackbarState, snackbarAction)).toMatchObject(
-    snackbarState
+  expect(snackbar(snackbarState, snackbarAction)).toMatchObject(
+    mockSnackbarState
   );
 
   displayNameMockFunc('User', displayNameAction);

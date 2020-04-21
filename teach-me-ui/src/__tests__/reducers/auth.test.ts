@@ -9,7 +9,7 @@ import {
   signoutState,
   AuthState
 } from '../../constants';
-import { signin, signup, auth, signout } from '../auth';
+import { signin, signup, auth, signout } from '../../reducers/auth';
 
 afterEach(cleanup);
 

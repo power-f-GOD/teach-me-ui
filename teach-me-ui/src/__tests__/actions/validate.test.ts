@@ -10,7 +10,7 @@ import {
   validateEmail,
   validatePassword,
   validateLastname
-} from '../validate';
+} from '../../actions';
 
 afterEach(cleanup);
 

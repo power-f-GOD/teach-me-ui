@@ -19,6 +19,7 @@ git clone https://powerofgod@bitbucket.org/learning-app/teach-me.git
 Teach Me UI depends on several packages to run especially TypeScript.
 
 To get it up and running, having cloned the project locally,
+
 1. `cd` into the project directory;
 2. `cd` into the `teach-me-ui` folder;
 3. Then run `npm install` from the command line. This adds all dependencies for the project including TypeScript, React and Material UI.

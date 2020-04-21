@@ -24,7 +24,7 @@ import {
   signin,
   verifyAuth,
   requestSignout
-} from '../auth';
+} from '../../actions';
 import { dispatch } from '../../functions';
 
 afterEach(cleanup);

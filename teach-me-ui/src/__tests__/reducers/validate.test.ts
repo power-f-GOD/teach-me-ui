@@ -1,6 +1,6 @@
 import { cleanup } from '@testing-library/react';
 
-import { firstname, lastname, password, email, username } from '../validate';
+import { firstname, lastname, password, email, username } from '../../reducers/validate';
 import { inputState, InputPropsState, ReduxAction } from '../../constants';
 
 afterEach(cleanup);

@@ -17,8 +17,8 @@ We'll go over each directory in `src` as section (excluding `components`).
 - [functions](#functions)
 - [reducers](#reducers)
 - [styles](#styles)
-- [appStore.ts](#appStore.ts)
-- [ProtectedRoute.tsx](#ProtectedRoute.tsx)
+- [appStore.ts](#appstore-ts)
+- [ProtectedRoute.tsx](#protectedroute-tsx)
 
 **Sidebar:** When you look in the, **actions**, **reducers** and **constants** directories, you'll notice that they all have similar file names. This was done to ease identification and relationships for corresponding 'processes'.
 
@@ -40,7 +40,7 @@ Then in `utils.ts` where lie helper/utility functions...
 
 `promisedDispatch()` is a [Promise](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise)-d variant of Redux's `dispatch()`. It is useful in cases where you want to make sure the store is updated before dispatching an action or you want to perform a task or dispatch an action after the store has been updated. 
 
-It resolves with the current or updated value of state [the store].
+It resolves with an object representing the action dispatched.
 
 `callNetworkStatusChecker()` checks to ensure a user is still connected to the internet after a long period of waiting for a specific network task to complete e.g. signing up or signing in.
 

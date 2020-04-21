@@ -5,7 +5,7 @@ import {
   callNetworkStatusChecker,
   populateStateWithUserData,
   logError
-} from '../utils';
+} from '../../functions';
 import { ReduxAction, UserData } from '../../constants';
 
 afterEach(cleanup);

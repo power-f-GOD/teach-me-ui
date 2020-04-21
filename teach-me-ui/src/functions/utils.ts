@@ -17,7 +17,7 @@ export const { dispatch, getState } = store;
 export function promisedDispatch(action: ReduxAction) {
   dispatch(action);
   return new Promise((resolve: Function) => {
-    setTimeout(() => resolve(getState()), 200);
+    setTimeout(() => resolve(action), 200);
   });
 }
 
