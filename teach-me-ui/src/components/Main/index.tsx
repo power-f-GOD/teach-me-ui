@@ -7,11 +7,11 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 
-import { Nav, Home, About } from '../components';
+import { Nav, Home, About } from '../index';
 
 const Main = (props: any) => {
   const { firstname } = props;
-  
+
   return (
     <Grid className='main-root-grid fade-in'>
       <Nav />
@@ -31,10 +31,10 @@ const Main = (props: any) => {
   );
 };
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = ({ displayName, firstname }: any) => {
   return {
-    displayName: state.displayName,
-    firstname: state.firstname
+    displayName,
+    firstname
   };
 };
 

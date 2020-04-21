@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
@@ -11,12 +12,9 @@ import Button from '@material-ui/core/Button';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import CircularProgress from '@material-ui/core/CircularProgress';
-// import { Typography, Grid, TextField, Box, InputAdornment, IconButton } from '@material-ui/core';
-// import { Visibility, VisibilityOff } from '@material-ui/icons';
 
-import { connect } from 'react-redux';
-import { SigninPropsState } from '../constants';
-import { handleSigninRequest, handleSigninInputChange } from '../functions';
+import { SigninPropsState } from '../../constants';
+import { handleSigninRequest, handleSigninInputChange } from '../../functions';
 
 export const refs: any = {
   idInput: React.createRef<HTMLInputElement>(),
@@ -55,7 +53,7 @@ const Signin = (props: SigninPropsState) => {
             variant='outlined'
             id='signin-id'
             required
-            label='Email address'
+            label='Username or Email'
             type='email'
             autoComplete='email'
             inputRef={refs.idInput}
@@ -118,12 +116,12 @@ const Signin = (props: SigninPropsState) => {
   );
 };
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = ({ signinId, signinPassword, signin, auth }: any) => {
   return {
-    signinId: state.signinId,
-    signinPassword: state.signinPassword,
-    signin: state.signin,
-    auth: state.auth
+    signinId,
+    signinPassword,
+    signin,
+    auth
   };
 };
 

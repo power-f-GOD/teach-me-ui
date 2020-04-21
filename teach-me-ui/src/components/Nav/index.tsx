@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Box, CircularProgress } from '@material-ui/core';
-import { handleSignoutRequest } from '../functions';
 import { connect } from 'react-redux';
+
+import { Button, Box, CircularProgress } from '@material-ui/core';
+
+import { handleSignoutRequest } from '../../functions';
 
 const Nav = (props: any) => {
   return (
@@ -24,7 +26,11 @@ const Nav = (props: any) => {
               fullWidth
               onClick={handleSignoutRequest}>
               {props.signout.status === 'pending' ? (
-                <CircularProgress color='inherit' size='1.75rem' thickness={5} />
+                <CircularProgress
+                  color='inherit'
+                  size='1.75rem'
+                  thickness={5}
+                />
               ) : (
                 'SIGN OUT'
               )}
@@ -36,10 +42,8 @@ const Nav = (props: any) => {
   );
 };
 
-const mapStateToProps = (state: any) => {
-  return {
-    signout: state.signout
-  };
+const mapStateToProps = ({ signout }: any) => {
+  return { signout };
 };
 
 export default connect(mapStateToProps)(Nav);

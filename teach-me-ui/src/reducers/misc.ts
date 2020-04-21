@@ -1,20 +1,23 @@
 import {
-  NETWORK_STATUS_CHECK,
   ReduxAction,
   snackbarState,
   SnackbarState,
-  DISPLAY_SNACK_BAR
+  DISPLAY_SNACK_BAR,
+  SET_USER_DISPLAY_NAME
 } from '../constants';
-
-export const online = (state: boolean = true, action: ReduxAction): boolean => {
-  return action.type === NETWORK_STATUS_CHECK ? action.newState : state;
-};
 
 export const snackbar = (
   state: SnackbarState = snackbarState,
   action: ReduxAction
 ): SnackbarState => {
   return action.type === DISPLAY_SNACK_BAR
-    ? { ...state, ...action.payload }
+    ? { ...state, autoHide: false, ...action.payload }
     : state;
+};
+
+export const displayName = (state: string = 'User', action: ReduxAction) => {
+  if (action.type === SET_USER_DISPLAY_NAME) {
+    return action.payload;
+  }
+  return state;
 };

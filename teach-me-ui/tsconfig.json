@@ -23,7 +23,7 @@
     "outDir": "dist"
   },
   "include": [
-    "src/**/*"
+    "src/**/*", "src/components/__tests__"
   ],
   "exclude": [
     "dist",

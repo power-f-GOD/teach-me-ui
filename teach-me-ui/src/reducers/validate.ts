@@ -154,7 +154,7 @@ export const signinId = (
     let { payload } = action;
     let { value } = payload;
     let err = !value;
-    let helperText = err ? 'Enter email.' : ' ';
+    let helperText = err ? 'Enter username or email.' : ' ';
 
     err = 'err' in payload ? payload.err : err;
     helperText = 'helperText' in payload ? payload.helperText : helperText;

@@ -2,17 +2,17 @@ import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { Landing, PageNotFound, Main, Loader, SnackBar } from './components';
+import { Landing, _404, Main, Loader, SnackBar } from './components';
 import ProtectedRoute from './ProtectedRoute';
 import { dispatch } from './functions';
-import { verifyAuth, displaySnackbar, online } from './actions';
+import { verifyAuth, displaySnackbar } from './actions';
 
 const App = (props: any) => {
-  const { status, isAuthenticated } = props.auth;
+  const { status: authStatus, isAuthenticated } = props.auth;
   const { signin, signup, snackbar } = props;
 
   if (signin?.status !== 'pending' || signup?.status !== 'pending') {
-    if (status === 'pending') return <Loader />;
+    if (authStatus === 'pending') return <Loader />;
   }
 
   return (
@@ -26,7 +26,7 @@ const App = (props: any) => {
             isAuthenticated={isAuthenticated}
           />
           <Route path={['/signin', '/signup']} component={Landing} />
-          <Route component={PageNotFound} />
+          <Route component={_404} />
         </Switch>
       </BrowserRouter>
       <SnackBar snackbar={snackbar} />
@@ -42,10 +42,10 @@ window.ononline = () => {
     displaySnackbar({
       open: true,
       message: 'You are back online.',
-      severity: 'success'
+      severity: 'success',
+      autoHide: true
     })
   );
-  dispatch(online(true));
 };
 
 window.onoffline = () => {
@@ -56,16 +56,10 @@ window.onoffline = () => {
       severity: 'error'
     })
   );
-  dispatch(online(false));
 };
 
-const mapStateToProps = (state: any) => {
-  return {
-    auth: state.auth,
-    signin: state.signin,
-    signup: state.signup,
-    snackbar: state.snackbar
-  };
+const mapStateToProps = ({ auth, signin, signup, snackbar }: any) => {
+  return { auth, signin, signup, snackbar };
 };
 
 export default connect(mapStateToProps)(App);

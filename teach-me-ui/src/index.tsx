@@ -8,16 +8,7 @@ import App from './App';
 import store from './appStore';
 import './styles/index.min.css';
 
-ReactDOM.render(
-  <Provider store={store}>
-    <StylesProvider injectFirst>
-      <App />
-    </StylesProvider>
-  </Provider>,
-  document.querySelector('#root')
-);
-
-let userDeviceIsMobile = /(Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows Phone)/i.test(
+export const userDeviceIsMobile = /(Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows Phone)/i.test(
   window.navigator.userAgent
 );
 
@@ -26,3 +17,14 @@ if (userDeviceIsMobile) {
 } else {
   document.body.classList.add('desktop');
 }
+
+ReactDOM.render(
+  <Provider store={store}>
+    <StylesProvider injectFirst>
+      <App />
+    </StylesProvider>
+  </Provider>,
+  document.querySelector('#root') || document.createElement('div')
+);
+
+

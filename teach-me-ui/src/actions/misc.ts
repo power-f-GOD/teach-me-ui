@@ -1,16 +1,9 @@
 import {
   ReduxAction,
-  NETWORK_STATUS_CHECK,
   DISPLAY_SNACK_BAR,
-  SnackbarState
+  SnackbarState,
+  SET_USER_DISPLAY_NAME
 } from '../constants';
-
-export const online = (newState: boolean): ReduxAction => {
-  return {
-    type: NETWORK_STATUS_CHECK,
-    newState
-  };
-};
 
 export const displaySnackbar = (payload: SnackbarState): ReduxAction => {
   return {
@@ -18,3 +11,10 @@ export const displaySnackbar = (payload: SnackbarState): ReduxAction => {
     payload
   };
 };
+
+export function setDisplayName(payload: string): ReduxAction {
+  return {
+    type: SET_USER_DISPLAY_NAME,
+    payload
+  };
+}

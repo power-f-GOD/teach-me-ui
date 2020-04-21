@@ -9,8 +9,7 @@ import {
   AUTHENTICATE_USER,
   AuthState,
   SIGNOUT_USER,
-  signoutState,
-  SET_USER_DISPLAY_NAME
+  signoutState
 } from '../constants';
 
 export const signup = (
@@ -62,9 +61,4 @@ export const signout = (
   return state;
 };
 
-export const displayName = (state: string = 'User', action: ReduxAction) => {
-  if (action.type === SET_USER_DISPLAY_NAME) {
-    return action.payload;
-  }
-  return state;
-};
+

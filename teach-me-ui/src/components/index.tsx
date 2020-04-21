@@ -5,7 +5,7 @@ import Signup from './Signup';
 import Home from './Home';
 import About from './About';
 import Main from './Main';
-import PageNotFound from './PageNotFound';
+import _404 from './_404';
 import Loader from './Loader';
 import SnackBar from './SnackBar';
 
@@ -19,5 +19,5 @@ export {
   Main,
   Loader,
   SnackBar,
-  PageNotFound
+  _404
 };
