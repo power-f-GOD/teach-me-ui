@@ -1,5 +1,5 @@
 import Nav from './Nav';
-import Landing from './Landing';
+import Auth from './Auth';
 import Signin from './Signin';
 import Signup from './Signup';
 import Home from './Home';
@@ -11,7 +11,7 @@ import SnackBar from './SnackBar';
 
 export {
   Nav,
-  Landing,
+  Auth,
   Signin,
   Signup,
   Home,

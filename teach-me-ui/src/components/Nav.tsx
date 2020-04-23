@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { Button, Box, CircularProgress } from '@material-ui/core';
 
-import { handleSignoutRequest } from '../../functions';
+import { handleSignoutRequest } from '../functions';
 
 const Nav = (props: any) => {
   return (
