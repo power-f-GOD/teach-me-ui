@@ -1,4 +1,4 @@
-@media screen and (max-width: 959px) {
+@media screen and (max-width: 599px) {
   body {
     background: white;
   }
@@ -8,24 +8,23 @@
     min-height: 100vh;
   }
 
-  .landing-main-grid {
+  .auth-main-box {
     height: 100%;
+    padding: 0;
     border-radius: 0;
     box-shadow: none;
   }
 
-  .landing-root-grid {
-    padding: 0;
-    background: inherit;
-  }
-
-  .splash-section {
-    display: none;
+  .auth-container {
+    min-height: inherit;
+    background-color: white;
   }
 
   .form-section {
     padding: 3em 2em;
     height: auto;
+    box-shadow: none;
+    border: none;
     overflow-y: hidden;
   }
 }

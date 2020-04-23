@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { Landing, _404, Main, Loader, SnackBar } from './components';
+import { Auth, _404, Main, Loader, SnackBar } from './components';
 import ProtectedRoute from './ProtectedRoute';
 import { dispatch } from './functions';
 import { verifyAuth, displaySnackbar } from './actions';
@@ -25,7 +25,7 @@ const App = (props: any) => {
             component={Main}
             isAuthenticated={isAuthenticated}
           />
-          <Route path={['/signin', '/signup']} component={Landing} />
+          <Route path={['/signin', '/signup']} component={Auth} />
           <Route component={_404} />
         </Switch>
       </BrowserRouter>
