@@ -6,6 +6,7 @@ body,
   height: 100%;
   margin: 0;
   font-size: 1rem;
+  color: $theme-color-tertiary-v1;
   overflow-x: hidden;
 }
 
@@ -15,7 +16,26 @@ body,
   // border: 1px solid red;
 }
 
+body {
+  &.desktop.custom-scroll-bar,
+  &.desktop .custom-scroll-bar {
+    &::-webkit-scrollbar {
+      width: 0.75em;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $theme-color-primary-v7;
+      border-radius: 0.5em;
+    }
+  }
+}
+
 #root {
+  height: auto;
   min-height: 100vh;
   display: flex;
 }
@@ -41,21 +61,21 @@ input {
 }
 
 a {
-  color: $theme-color-secondary-v5;
+  color: $theme-color-secondary-v4;
 
   &:visited {
-    color: $theme-color-primary-v9;
+    color: $theme-color-secondary-v8;
   }
 }
 
 button {
   &[class*='Primary'] {
-    background: $theme-color-secondary-v5;
-    border-radius: 1.5rem;
-    height: 3rem;
+    background: $theme-color-primary-v5;
+    border-radius: 1.75rem;
+    height: 3.2rem;
 
     &:hover {
-      background: $theme-color-secondary-v4;
+      background: $theme-color-primary-v4;
     }
 
     &:disabled {
@@ -65,44 +85,39 @@ button {
   }
 }
 
-.landing-root-container {
-  max-width: $app-max-width !important;
+.MuiOutlinedInput-root {
+  &:hover .MuiOutlinedInput-notchedOutline {
+    border: 2px solid $theme-color-tertiary-v7;
+  }
+}
+
+.MuiCheckbox-colorPrimary.Mui-checked {
+  color: $theme-color-primary;
 }
 
 [class^='MuiFormControl'],
 div {
   fieldset {
-    transition: 0.35s;
+    transition: 0.35s, border-width 0s;
   }
 }
 
-body {
-  background-color: $theme-color-primary-v3;
-
-  &.desktop.custom-scroll-bar,
-  &.desktop .custom-scroll-bar {
-    &::-webkit-scrollbar {
-      width: 0.75em;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: $theme-color-primary-v1;
-      border-radius: 0.5em;
-    }
-  }
+.MuiOutlinedInput-root {
+  border-radius: 0.5rem;
+  background: #f8f8f8;
 }
 
 [class^='MuiFormControl'],
 div {
+  fieldset {
+    border-color: #ddd;
+  }
+
   .Mui-focused {
-    color: $theme-color-secondary-v5 !important;
+    color: $theme-color-secondary !important;
 
     fieldset {
-      border-color: $theme-color-secondary-v5 !important;
+      border-color: $theme-color-secondary !important;
     }
   }
 
