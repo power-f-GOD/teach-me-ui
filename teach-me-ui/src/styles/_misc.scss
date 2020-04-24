@@ -58,6 +58,10 @@ img {
 
 input {
   margin: 1em 0;
+  font: {
+    family: inherit;
+    size: inherit;
+  }
 }
 
 a {
@@ -69,6 +73,8 @@ a {
 }
 
 button {
+  text-transform: unset !important;
+
   &[class*='Primary'] {
     background: $theme-color-primary-v5;
     border-radius: 1.75rem;
@@ -168,8 +174,29 @@ div {
   max-width: $app-max-width / 2;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  a {
+    text-decoration: none;
+  }
+}
+
 .logo {
-  font-family: Lobster, cursive !important;
+  font: {
+    family: Audiowide, cursive !important;
+    size: 1.75rem;
+    weight: 500;
+  }
+  letter-spacing: -1.5px;
+  margin: {
+    top: 0;
+    bottom: 0;
+  }
+  color: inherit;
 }
 
 .theme-color-primary {

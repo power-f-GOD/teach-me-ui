@@ -1,3 +1,4 @@
+import Index from './_Index';
 import Nav from './Nav';
 import Auth from './Auth';
 import Signin from './Signin';
@@ -10,6 +11,7 @@ import Loader from './Loader';
 import SnackBar from './SnackBar';
 
 export {
+  Index,
   Nav,
   Auth,
   Signin,

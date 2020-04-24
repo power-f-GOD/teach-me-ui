@@ -1,0 +1,50 @@
+@import 'constants';
+
+.MuiAppBar-root {
+  background-color: transparent !important;
+  transition: 0.3s;
+}
+
+.nav-background {
+  background-color: rgba(0, 65, 108, 0.97) !important;
+}
+
+.nav-toolbar {
+  display: flex;
+  justify-content: space-between;
+  height: 3em;
+
+  a {
+    text-decoration: none;
+  }
+
+  .logo {
+    flex-grow: 1;
+  }
+
+  .nav-links-wrapper {
+    height: 100%;
+    display: flex;
+
+    .nav-link {
+      height: 100%;
+      border-radius: 0;
+      box-shadow: none;
+      display: inline-flex;
+      align-items: center;
+      padding: 0.5em 1.25em;
+      font-weight: 600;
+      font-size: 1.035em;
+      color: white;
+      transition: 0.3s;
+
+      &:last-child {
+        background-color: $theme-color-primary-v7;
+      }
+      &:hover {
+        background-color: $theme-color-secondary-v5;
+        color: white;
+      }
+    }
+  }
+}
