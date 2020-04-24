@@ -7,22 +7,29 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 
-import { Nav, Home, About } from './index';
+import { Nav, Home, About, Loader } from './index';
 
 const Main = (props: any) => {
-  const { firstname } = props;
+  const { firstname, signout } = props;
+
+  if (signout.status === 'pending') {
+    return <Loader />;
+  }
 
   return (
     <Grid className='main-root-grid fade-in'>
-      <Nav />
+      <Nav for='main' />
 
       <Box padding='1rem'>
         <Container component='div'>
+          <br />
+          <br />
+          <br />
           <Typography component='h1' variant='h5'>
             Welcome, {firstname.value}! This is the MAIN area!
           </Typography>
           <Switch>
-            <Route path={['/', '/home']} exact component={Home} />
+            <Route path={['/', '/index', '/home']} exact component={Home} />
             <Route path='/about' component={About} />
           </Switch>
         </Container>
@@ -31,10 +38,11 @@ const Main = (props: any) => {
   );
 };
 
-const mapStateToProps = ({ displayName, firstname }: any) => {
+const mapStateToProps = ({ displayName, firstname, signout }: any) => {
   return {
     displayName,
-    firstname
+    firstname,
+    signout
   };
 };
 

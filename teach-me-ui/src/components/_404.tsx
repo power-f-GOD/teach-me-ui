@@ -5,9 +5,7 @@ import Container from '@material-ui/core/Container';
 
 
 const _404 = () => {
-
-  return (
-    
+  return (  
     <Box component='main' className='main-root-grid fade-in' data-testid='_404'>
       <Container>
         <h1>Sorry, the page you requested was not found!</h1>

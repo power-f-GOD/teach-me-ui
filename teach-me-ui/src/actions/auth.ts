@@ -285,7 +285,7 @@ export function auth(payload: AuthState): ReduxAction {
 }
 
 export const requestSignout = () => (dispatch: Function): ReduxAction => {
-  dispatch(signout({ status: 'pending' }));
+  setTimeout(() => dispatch(signout({ status: 'pending' })), 200);
 
   if (navigator.cookieEnabled) {
     localStorage.teachMe = JSON.stringify({
@@ -311,7 +311,7 @@ export const requestSignout = () => (dispatch: Function): ReduxAction => {
         autoHide: true
       })
     );
-  }, 400);
+  }, 300);
 
   return {
     type: SIGNOUT_REQUEST
