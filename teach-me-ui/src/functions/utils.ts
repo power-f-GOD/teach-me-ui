@@ -108,14 +108,14 @@ export async function populateStateWithUserData(data: UserData) {
   dispatch(validateFirstname({ value: firstname }));
   dispatch(validateLastname({ value: lastname }));
   dispatch(validateUsername({ value: username }));
-  await promisedDispatch(validateEmail({ value: email }));
+  dispatch(validateEmail({ value: email }));
   dispatch(
     signin({
       status: 'fulfilled',
       err: false
     })
   );
-  dispatch(auth({ status: 'fulfilled', isAuthenticated: true }));
+  return promisedDispatch(auth({ status: 'fulfilled', isAuthenticated: true }));
 }
 
 export const logError = (action: Function) => (error: any) => {

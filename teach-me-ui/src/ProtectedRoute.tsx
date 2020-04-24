@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 
 // import CircularProgress from '@material-ui/core/CircularProgress';
-import { Loader } from './components';
+import { Loader } from './components/index';
 
 const ProtectedRoute = (props: any) => {
   const { component: Component, status, isAuthenticated } = props;

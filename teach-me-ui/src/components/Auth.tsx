@@ -1,12 +1,12 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Link } from 'react-router-dom';
 
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
 
-import { Signin, Signup } from '.';
+import { Signin, Signup } from './index';
 
 const Auth = (props: any) => {
   const isSignup = /\/signup/.test(props.location.pathname);
@@ -29,9 +29,11 @@ const Auth = (props: any) => {
               alignItems='center'>
               <Box marginY='1em' textAlign='center' width='100%'>
                 <Typography component='h1' variant='h4' align='center'>
-                  <Box component='span' className='logo theme-color-primary'>
-                    Teach Me!
-                  </Box>
+                  <Link to='/'>
+                    <Box component='span' className='logo theme-color-primary'>
+                      Teach Me!
+                    </Box>
+                  </Link>
                   {isSignup ? (
                     <Box component='span' fontSize='1.5rem' fontWeight={900}>
                       {' '}
