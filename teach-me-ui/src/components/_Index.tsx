@@ -14,26 +14,20 @@ const Index = () => {
     <Grid className='index-root-grid custom-scroll-bar fade-in'>
       <Nav for='index' />
 
-      <Box className='index-main-box' component='main'>
-        <Container className='index-container'>
+      <Box className='index-root-box'>
+        {/* <Container className='index-container'>
           <Grid
             className='custom-scroll-bar fade-in'
             container
             justify='center'
             direction='column'
-            alignItems='center'>
-            <br />
-            <br />
-            <br />
-            <Box>This is the Index Page!</Box>
-            <br />
-            Scroll to bottom and see nav bar change background!
+            alignItems='center'> */}
             <Switch>
               <Route path={['/', '/index']} exact component={Landing} />
               <Route path='/about' component={About} />
             </Switch>
-          </Grid>
-        </Container>
+          {/* </Grid>
+        </Container> */}
       </Box>
     </Grid>
   );
