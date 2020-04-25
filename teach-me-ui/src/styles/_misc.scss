@@ -17,6 +17,7 @@ body,
 }
 
 body {
+  position: relative;
   &.desktop.custom-scroll-bar,
   &.desktop .custom-scroll-bar {
     &::-webkit-scrollbar {
@@ -28,8 +29,8 @@ body {
     }
 
     &::-webkit-scrollbar-thumb {
-      background: $theme-color-primary-v7;
-      border-radius: 0.5em;
+      background: $theme-color-primary-v4;
+      // border-radius: 0.5em;
     }
   }
 }
@@ -74,14 +75,21 @@ a {
 
 button {
   text-transform: unset !important;
+  
 
   &[class*='Primary'] {
-    background: $theme-color-primary-v5;
+    background: {
+      color: $theme-color-primary-v5;
+      image: linear-gradient(to right, $theme-color-primary, $theme-color-secondary);
+    }
     border-radius: 1.75rem;
     height: 3.2rem;
 
     &:hover {
-      background: $theme-color-primary-v4;
+      background: {
+        color: $theme-color-primary-v4;
+        image: linear-gradient(to right, $theme-color-secondary, $theme-color-primary);
+      }
     }
 
     &:disabled {
@@ -94,6 +102,7 @@ button {
 .MuiOutlinedInput-root {
   &:hover .MuiOutlinedInput-notchedOutline {
     border: 2px solid $theme-color-tertiary-v7;
+    border-color: linear-gradient(to right, $theme-color-primary, $theme-color-secondary);
   }
 }
 
@@ -140,7 +149,7 @@ div {
 }
 
 .MuiContainer-root {
-  padding: 0;
+  padding: 0 1.5rem;
 }
 
 .MuiAlert-filledSuccess,
@@ -191,12 +200,22 @@ h6 {
     size: 1.75rem;
     weight: 500;
   }
+  // text-decoration: underline !important;
+  // text-decoration-color: inherit;
   letter-spacing: -1.5px;
   margin: {
     top: 0;
     bottom: 0;
   }
   color: inherit;
+}
+
+.with-text-gradient {
+  background: {
+    image: linear-gradient(to right, $theme-color-secondary, $theme-color-primary);
+  }
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .theme-color-primary {

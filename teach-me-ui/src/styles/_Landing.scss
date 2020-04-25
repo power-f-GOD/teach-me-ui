@@ -1,0 +1,95 @@
+@import 'constants';
+
+.landing-splash-box {
+  height: 100vh;
+  max-height: 46rem;
+  min-height: 30rem;
+  display: flex;
+  align-items: center;
+  color: white;
+  background-color: $theme-color-primary-v9;
+  position: relative;
+  overflow: hidden;
+  background: {
+    image: linear-gradient(to left, $theme-color-primary-v3, $theme-color-secondary-v5);
+    size: contain;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  &::before {
+    position: absolute;
+    z-index: 0;
+    height: 110%;
+    width: 104%;
+    border-radius: 1.5rem;
+    top: -28%;
+    left: -0.5%;
+    bottom: 0;
+    right: 0;
+    content: ' ';
+    transform: rotateZ(-5deg);
+    opacity: 0.9;
+    background: {
+      color: $theme-color-primary-v3;
+      repeat: no-repeat;
+      position: left ;
+      size: contain;
+    }
+    box-shadow: 0 2.5rem 0 rgba(111, 138, 33, 0.75),
+    2rem 3rem 2rem 0 rgba(0, 0, 0, 0.25);
+  }
+
+  &::after {
+    position: absolute;
+    z-index: 0;
+    width: 50%;
+    height: 30em;
+    border-radius: 1.5em;
+    top: 22%;
+    left: 50%;
+    bottom: 0;
+    right: 0;
+    content: ' ';
+    transform: rotateZ(-5deg);
+    background: {
+      image: url('/images/educational.png');
+      repeat: no-repeat;
+      position: 70%;
+      size:  60%;
+    }
+  }
+
+  .landing-splash-links-box {
+    display: flex;
+    max-width: 30em;
+
+    a {
+      text-decoration: none;
+      padding: 0.85em 1.85em;
+      border-radius: 1.75em;
+      color: white;
+      background: $theme-color-secondary-v5;
+      border: 2px solid #ddd;
+      transition: 0.3s;
+
+      &:last-child {
+        color: #ddd;
+        border-color: #ddd;
+        margin-left: 1.5em;
+        background-color: inherit;
+      }
+
+      &:hover {
+        color: white;
+        background-color: $theme-color-secondary-v4;
+      }
+    }
+  }
+
+  
+}
+

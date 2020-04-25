@@ -20,13 +20,15 @@ const App = (props: any) => {
       <BrowserRouter>
         <Switch>
           <ProtectedRoute
-            path={isAuthenticated ? ['/', '/index', '/home', '/about'] : ['/home']}
+            path={
+              isAuthenticated ? ['/', '/index', '/home', '/about'] : ['/home']
+            }
             exact
             component={Main}
             isAuthenticated={isAuthenticated}
           />
-          <Route path={['/signin', '/signup']} component={Auth} /><Route path={['/', '/index', '/about']} exact component={Index} />
-          
+          <Route path={['/signin', '/signup']} component={Auth} />
+          <Route path={['/', '/index', '/about']} exact component={Index} />
           <Route component={_404} />
         </Switch>
       </BrowserRouter>
