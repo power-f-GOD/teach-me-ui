@@ -7,7 +7,7 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 
-import { Nav, Home, About, Loader } from './index';
+import { Nav, Home, About, Footer, Loader } from './index';
 
 const Main = (props: any) => {
   const { firstname, signout } = props;
@@ -34,6 +34,8 @@ const Main = (props: any) => {
           </Switch>
         </Container>
       </Box>
+      
+      <Footer />
     </Grid>
   );
 };

@@ -1,0 +1,63 @@
+@import 'constants';
+
+footer {
+  color: $theme-color-tertiary-v4;
+  font-size: 0.95rem;
+
+  .major {
+    background: #eee;
+    padding: 3rem 0;
+
+    section {
+      flex-grow: 1;
+      padding: 1rem;
+      padding-left: 0;
+      min-width: 200px;
+
+      .logo {
+        font-size: 1.4em;
+      }
+
+      h6 {
+        font: {
+          weight: bolder !important;
+          size: 1rem;
+        }
+        margin-bottom: 1.25rem !important;
+        color: $theme-color-tertiary-v1;
+      }
+
+      .link-box {
+        margin: 1rem 0;
+      }
+    }
+  }
+
+  .minor {
+    padding: 0.5rem 0;
+    background: #ddd;
+    color: $theme-color-tertiary-v3;
+    border: 1px solid #ccc;
+    justify-content: center !important;
+
+    span {
+      margin: 0.5em;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 80px;
+      font-size: 0.85em;
+
+      &:first-child {
+        flex-grow: 0.25;
+        justify-content: start;
+      }
+    }
+
+    .logo {
+      margin: 0;
+      font-size: 1.3em;
+      flex-grow: 0 !important;
+    }
+  }
+}

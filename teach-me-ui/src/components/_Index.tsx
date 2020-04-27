@@ -2,12 +2,9 @@ import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 
 import Box from '@material-ui/core/Box';
-import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 
-import Nav from './Nav';
-import About from './About';
-import Landing from './Landing';
+import { Nav, About, Landing, Footer } from './index';
 
 const Index = () => {
   return (
@@ -15,20 +12,13 @@ const Index = () => {
       <Nav for='index' />
 
       <Box className='index-root-box'>
-        {/* <Container className='index-container'>
-          <Grid
-            className='custom-scroll-bar fade-in'
-            container
-            justify='center'
-            direction='column'
-            alignItems='center'> */}
-            <Switch>
-              <Route path={['/', '/index']} exact component={Landing} />
-              <Route path='/about' component={About} />
-            </Switch>
-          {/* </Grid>
-        </Container> */}
+        <Switch>
+          <Route path={['/', '/index']} exact component={Landing} />
+          <Route path='/about' component={About} />
+        </Switch>
       </Box>
+
+      <Footer />
     </Grid>
   );
 };
