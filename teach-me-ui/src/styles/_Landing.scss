@@ -2,8 +2,8 @@
 
 .landing-splash-box {
   height: 100vh;
-  max-height: 46rem;
-  min-height: 30rem;
+  max-height: 50rem;
+  min-height: 40rem;
   display: flex;
   align-items: center;
   color: white;
@@ -11,7 +11,11 @@
   position: relative;
   overflow: hidden;
   background: {
-    image: linear-gradient(to left, $theme-color-primary-v3, $theme-color-secondary-v5);
+    image: linear-gradient(
+      to bottom,
+      $theme-color-primary-v3,
+      $theme-color-primary-v5
+    );
     size: contain;
   }
 
@@ -23,11 +27,11 @@
   &::before {
     position: absolute;
     z-index: 0;
-    height: 110%;
+    height: 112%;
     width: 104%;
     border-radius: 1.5rem;
-    top: -28%;
-    left: -0.5%;
+    top: -32%;
+    left: 0.5%;
     bottom: 0;
     right: 0;
     content: ' ';
@@ -36,11 +40,12 @@
     background: {
       color: $theme-color-primary-v3;
       repeat: no-repeat;
-      position: left ;
+      position: left;
       size: contain;
     }
-    box-shadow: 0 2.5rem 0 rgba(111, 138, 33, 0.75),
-    2rem 3rem 2rem 0 rgba(0, 0, 0, 0.25);
+    // box-shadow: 0.75rem 0.25rem 1.25rem 0 rgba(0, 0, 0, 0.35), 0 2.5rem 0 rgba(111, 138, 33, 0.75), 2.5rem 3rem 2rem 0 rgba(0, 0, 0, 0.25);
+    box-shadow: 0 2.5rem 0 rgba(0, 102, 145, 1),
+      1.45rem 2.5rem 1.5rem 0 rgba(0, 0, 0, 0.35);
   }
 
   &::after {
@@ -49,7 +54,7 @@
     width: 50%;
     height: 30em;
     border-radius: 1.5em;
-    top: 22%;
+    top: 20%;
     left: 50%;
     bottom: 0;
     right: 0;
@@ -59,18 +64,22 @@
       image: url('/images/educational.png');
       repeat: no-repeat;
       position: 70%;
-      size:  60%;
+      size: 65%;
     }
   }
 
   .landing-splash-links-box {
     display: flex;
+    flex-wrap: wrap;
     max-width: 30em;
 
     a {
       text-decoration: none;
-      padding: 0.85em 1.85em;
+      padding: 0.75em 1.85em;
       border-radius: 1.75em;
+      min-width: 10rem;
+      text-align: center;
+      margin: 0.85em 1.5em 0 0;
       color: white;
       background: $theme-color-secondary-v5;
       border: 2px solid #ddd;
@@ -79,7 +88,6 @@
       &:last-child {
         color: #ddd;
         border-color: #ddd;
-        margin-left: 1.5em;
         background-color: inherit;
       }
 
@@ -89,7 +97,4 @@
       }
     }
   }
-
-  
 }
-

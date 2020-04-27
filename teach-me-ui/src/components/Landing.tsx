@@ -33,8 +33,8 @@ const Landing = () => {
           </Container>
         </Box>
 
-        <Box component='section'>
-          <Container>Some Extra content below!</Container>
+        <Box component='section' paddingY='250px'>
+          <Container><b>Some Extra content goes here!</b></Container>
         </Box>
       </Box>
     </Box>
