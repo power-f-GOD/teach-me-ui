@@ -1,4 +1,5 @@
 import Index from './_Index';
+import Landing from './Landing';
 import Nav from './Nav';
 import Auth from './Auth';
 import Signin from './Signin';
@@ -9,9 +10,11 @@ import Main from './Main';
 import _404 from './_404';
 import Loader from './Loader';
 import SnackBar from './SnackBar';
+import Footer from './Footer';
 
 export {
   Index,
+  Landing,
   Nav,
   Auth,
   Signin,
@@ -21,5 +24,6 @@ export {
   Main,
   Loader,
   SnackBar,
-  _404
+  _404,
+  Footer
 };

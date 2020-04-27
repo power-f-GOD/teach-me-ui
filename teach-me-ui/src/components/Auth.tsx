@@ -6,54 +6,58 @@ import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
 
-import { Signin, Signup } from './index';
+import { Signin, Signup, Footer } from './index';
 
 const Auth = (props: any) => {
   const isSignup = /\/signup/.test(props.location.pathname);
 
   return (
-    <Box className='auth-main-box custom-scroll-bar fade-in' component='main'>
-      <Container className='auth-container'>
-        <Grid
-          className='custom-scroll-bar fade-in'
-          container
-          justify='center'
-          direction='row'
-          alignItems='center'>
-          <Box maxWidth={isSignup ? '820px' : 'xs'}>
-            <Grid
-              component='section'
-              className='form-section custom-scroll-bar'
-              container
-              item
-              alignItems='center'>
-              <Box marginY='1em' textAlign='center' width='100%'>
-                <Typography component='h1' variant='h4' align='center'>
-                  <Link to='/'>
-                    <Box component='span' className='logo with-text-gradient'>
-                      Teach Me!
-                    </Box>
-                  </Link>
-                  {isSignup ? (
-                    <Box component='span' fontSize='1.5rem' fontWeight={900}>
-                      {' '}
-                      - Sign up
-                    </Box>
-                  ) : (
-                    ''
-                  )}
-                </Typography>
-              </Box>
+    <Grid className='auth-root-grid custom-scroll-bar fade-in' direction='column'>
+      <Box className='auth-main-box' component='main'>
+        <Container className='auth-container'>
+          <Grid
+            className='custom-scroll-bar fade-in'
+            container
+            justify='center'
+            direction='row'
+            alignItems='center'>
+            <Box maxWidth={isSignup ? '820px' : 'xs'}>
+              <Grid
+                component='section'
+                className='form-section custom-scroll-bar'
+                container
+                item
+                alignItems='center'>
+                <Box marginY='1em' textAlign='center' width='100%'>
+                  <Typography component='h1' variant='h4' align='center'>
+                    <Link to='/'>
+                      <Box component='span' className='logo with-text-gradient'>
+                        Teach Me!
+                      </Box>
+                    </Link>
+                    {isSignup ? (
+                      <Box component='span' fontSize='1.5rem' fontWeight={900}>
+                        {' '}
+                        - Sign up
+                      </Box>
+                    ) : (
+                      ''
+                    )}
+                  </Typography>
+                </Box>
 
-              <Switch>
-                <Route path='/signin' component={Signin} />
-                <Route path='/signup' component={Signup} />
-              </Switch>
-            </Grid>
-          </Box>
-        </Grid>
-      </Container>
-    </Box>
+                <Switch>
+                  <Route path='/signin' component={Signin} />
+                  <Route path='/signup' component={Signup} />
+                </Switch>
+              </Grid>
+            </Box>
+          </Grid>
+        </Container>
+      </Box>
+
+      <Footer for='auth' />
+    </Grid>
   );
 };
 

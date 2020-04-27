@@ -13,7 +13,7 @@ body,
 * {
   box-sizing: border-box;
   font-family: Lato, Roboto, 'Trebuchet MS', sans-serif !important;
-  // border: 1px solid red;
+  // border: 1px solid deeppink;
 }
 
 body {
@@ -77,18 +77,33 @@ button {
   text-transform: unset !important;
   
 
-  &[class*='Primary'] {
+   &[class*=Primary] {
     background: {
       color: $theme-color-primary-v5;
       image: linear-gradient(to right, $theme-color-primary, $theme-color-secondary);
     }
     border-radius: 1.75rem;
     height: 3.2rem;
+    z-index: 1;
+    position: relative;
+
+    &::before {
+      position: absolute;
+      content: " ";
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      border-radius: inherit;
+      background-image: linear-gradient(to right, $theme-color-secondary, $theme-color-primary);
+      z-index: -1;
+      transition: opacity 0.2s;
+      opacity: 0;
+    }
 
     &:hover {
-      background: {
-        color: $theme-color-primary-v4;
-        image: linear-gradient(to right, $theme-color-secondary, $theme-color-primary);
+      &::before {
+        opacity: 1;
       }
     }
 
@@ -148,10 +163,6 @@ div {
   }
 }
 
-.MuiContainer-root {
-  padding: 0 1.5rem;
-}
-
 .MuiAlert-filledSuccess,
 .MuiAlert-filledError,
 .MuiAlert-filledInfo,
@@ -195,13 +206,12 @@ h6 {
 }
 
 .logo {
+  min-width: 10rem;
   font: {
-    family: Audiowide, cursive !important;
+    family: Audiowide, Trebuchet MS, sans !important;
     size: 1.75rem;
     weight: 500;
   }
-  // text-decoration: underline !important;
-  // text-decoration-color: inherit;
   letter-spacing: -1.5px;
   margin: {
     top: 0;

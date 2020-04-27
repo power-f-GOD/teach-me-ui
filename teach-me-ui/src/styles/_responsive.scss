@@ -1,4 +1,6 @@
 @media screen and (max-width: 599px) {
+  // auth component styles
+
   body {
     background: white;
     position: relative;
@@ -26,30 +28,55 @@
       position: relative;
     }
 
-    &:before {
+    &::before {
       position: fixed;
-      top: -3.5rem;
-      left: 0;
+      top: -10%;
+      width: 120%;
+      height: 120%;
+      left: 6%;
       bottom: 0;
       right: 0;
       content: ' ';
-      transform: rotateZ(34deg);
-      opacity: 0.7;
+      transform: rotateZ(45deg);
+      opacity: 0.9;
       background: {
         color: white;
-        image: url('/images/auth-bg-right.png');
+        image: url('/images/auth-bg-left.png');
         repeat: no-repeat;
-        position: right;
+        position: left;
         size: 48vh;
       }
     }
   }
 
   .form-section {
-    padding: 3em 2em;
+    padding: 3em 0.5em;
     height: auto;
     box-shadow: none;
     border: none;
     background: transparent;
+  }
+
+  //landing component styles
+
+  .landing-splash-box {
+    &::before {
+      left: -4%;
+      top: -24%;
+      transform: rotateZ(-4deg);
+    }
+
+    &::after {
+      height: 20em;
+      width: 100%;
+      top: 47%;
+      left: 40%;
+      transform: rotateZ(-4deg);
+      opacity: 0.2;
+      background: {
+        position: center;
+        size: 75%;
+      }
+    }
   }
 }

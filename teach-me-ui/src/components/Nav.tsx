@@ -16,14 +16,21 @@ import { handleSignoutRequest } from '../functions';
 import { userDeviceIsMobile } from '../index';
 
 const Nav = (props: any) => {
-  const forMain = /main/i.test(props.for);
+  const forMainComponent = /main/i.test(props.for);
 
   return (
     <Box component='nav'>
-      <ElevationScroll {...props} forMain={forMain} >
-        <AppBar position='fixed'>
+      <ElevationScroll {...props} forMainComponent={forMainComponent}>
+        <AppBar position='fixed' className='mobile-width'>
           <Container>
             <Toolbar className='nav-toolbar'>
+              <Link to='/'>
+                <Box
+                  component='h1'
+                  className='logo theme-color-primary-lightest'>
+                  Teach Me!
+                </Box>
+              </Link>
               {userDeviceIsMobile ? (
                 <IconButton
                   edge='start'
@@ -35,15 +42,12 @@ const Nav = (props: any) => {
               ) : (
                 ''
               )}
-              <Link to='/'>
-                <Box
-                  component='h1'
-                  marginLeft={userDeviceIsMobile ? '0.5em' : ''}
-                  className='logo theme-color-primary-lightest'>
-                  Teach Me!
-                </Box>
-              </Link>
-              {forMain ? <MainNav {...props} /> : <IndexNav {...props} />}
+
+              {forMainComponent ? (
+                <MainNav {...props} />
+              ) : (
+                <IndexNav {...props} />
+              )}
             </Toolbar>
           </Container>
         </AppBar>
@@ -52,7 +56,7 @@ const Nav = (props: any) => {
   );
 };
 
-function IndexNav(props: any) {
+function IndexNav() {
   return (
     <Box className='nav-links-wrapper'>
       <Link to='/#!' className='nav-link'>
@@ -75,7 +79,7 @@ function IndexNav(props: any) {
   );
 }
 
-function MainNav(props: any) {
+function MainNav() {
   return (
     <Box className='nav-links-wrapper'>
       <Link to='/home' className='nav-link'>
@@ -102,16 +106,26 @@ function MainNav(props: any) {
   );
 }
 
-function ElevationScroll(props: { children: React.ReactElement; forMain: boolean }) {
-  const { children, forMain } = props;
-  const trigger = useScrollTrigger({
+function ElevationScroll(props: {
+  children: React.ReactElement;
+  forMainComponent: boolean;
+}) {
+  const { children, forMainComponent } = props;
+
+  let trigger = useScrollTrigger({
+    disableHysteresis: true,
     target: document.body,
-    threshold: 50
+    threshold: 40
   });
 
   return React.cloneElement(children, {
     elevation: trigger ? 8 : 0,
-    className: trigger || forMain ? 'nav-background' : ''
+    className:
+      trigger || forMainComponent
+        ? userDeviceIsMobile
+          ? 'nav-background mobile-width'
+          : 'nav-background'
+        : ''
   });
 }
 
