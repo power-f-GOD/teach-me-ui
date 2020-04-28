@@ -1,5 +1,46 @@
 @import 'constants';
 
+$clip-art-urls: (
+  1: 'online-education.png',
+  2: 'light-bulb-education.png',
+  3: 'group-education.png'
+);
+
+@each $key, $url in $clip-art-urls {
+  @if $key % 2 == 0 {
+    .clip-art-box-#{$key} {
+      order: 1;
+    }
+
+    .clip-art-text-#{$key} {
+      padding-right: 6.5% !important;
+      text-align: left;
+
+      &::after {
+        left: -54%;
+        border-radius: 0 1.25em 1.25em 0;
+      }
+    }
+  } @else {
+    .clip-art-text-#{$key} {
+      padding-left: 6.5% !important;
+      text-align: right;
+
+      &::after {
+        left: 4%;
+        border-radius: 1.25em 0 0 1.25em;
+      }
+    }
+  }
+
+  .clip-art-box-#{$key} {
+    &::after {
+      filter: grayscale(1);
+      background-image: url('/images/#{$url}');
+    }
+  }
+}
+
 .landing-splash-box {
   height: 100vh;
   max-height: 50rem;
@@ -9,12 +50,11 @@
   color: white;
   background-color: $theme-color-primary-v9;
   position: relative;
-  overflow: hidden;
   background: {
     image: linear-gradient(
       to bottom,
       $theme-color-primary-v3,
-      $theme-color-primary-v5
+      $theme-color-primary
     );
     size: contain;
   }
@@ -36,65 +76,231 @@
     right: 0;
     content: ' ';
     transform: rotateZ(-5deg);
-    opacity: 0.9;
+    opacity: 0.85;
     background: {
       color: $theme-color-primary-v3;
       repeat: no-repeat;
       position: left;
       size: contain;
     }
-    // box-shadow: 0.75rem 0.25rem 1.25rem 0 rgba(0, 0, 0, 0.35), 0 2.5rem 0 rgba(111, 138, 33, 0.75), 2.5rem 3rem 2rem 0 rgba(0, 0, 0, 0.25);
     box-shadow: 0 2.5rem 0 rgba(0, 102, 145, 1),
       1.45rem 2.5rem 1.5rem 0 rgba(0, 0, 0, 0.35);
   }
 
   &::after {
     position: absolute;
-    z-index: 0;
-    width: 50%;
-    height: 30em;
-    border-radius: 1.5em;
-    top: 20%;
-    left: 50%;
+    z-index: -2;
+    height: 25rem;
+    width: 180vw;
+    border-radius: 0 0 50% 50%;
+    top: 75%;
+    left: -40vw;
     bottom: 0;
     right: 0;
     content: ' ';
-    transform: rotateZ(-5deg);
-    background: {
-      image: url('/images/educational.png');
-      repeat: no-repeat;
-      position: 70%;
-      size: 65%;
-    }
+    background-color: $theme-color-primary;
   }
 
-  .landing-splash-links-box {
-    display: flex;
-    flex-wrap: wrap;
-    max-width: 30em;
+  .landing-splash-container {
+    > * {
+      position: relative;
+      z-index: 1;
+    }
 
-    a {
-      text-decoration: none;
-      padding: 0.75em 1.85em;
-      border-radius: 1.75em;
-      min-width: 10rem;
-      text-align: center;
-      margin: 0.85em 1.5em 0 0;
-      color: white;
-      background: $theme-color-secondary-v5;
-      border: 2px solid #ddd;
-      transition: 0.3s;
-
-      &:last-child {
-        color: #ddd;
-        border-color: #ddd;
-        background-color: inherit;
+    &::after {
+      position: absolute;
+      z-index: 0;
+      width: 50%;
+      height: 30em;
+      border-radius: 1.5em;
+      top: -20%;
+      left: 50%;
+      bottom: 0;
+      right: 0;
+      content: ' ';
+      transform: rotateZ(-5deg);
+      background: {
+        image: url('/images/educational.png');
+        repeat: no-repeat;
+        position: 70%;
+        size: 70%;
       }
+    }
 
-      &:hover {
+    .landing-splash-links-box {
+      display: flex;
+      flex-wrap: wrap;
+      max-width: 30em;
+
+      a {
+        text-decoration: none;
+        padding: 0.75em 1.85em;
+        border-radius: 1.75em;
+        min-width: 10rem;
+        text-align: center;
+        margin: 1em 1.5em 0 0;
         color: white;
-        background-color: $theme-color-secondary-v4;
+        // background: $theme-color-secondary-v5;
+        border: 2px solid #ddd;
+        transition: 0.3s;
+
+        &:first-child {
+          width: 60%;
+        }
+
+        &:last-child {
+          color: #ddd;
+          border-color: #ddd;
+          background-color: inherit;
+        }
+
+        &:hover {
+          color: white;
+          background-color: $theme-color-secondary-v5;
+        }
       }
     }
   }
+}
+
+.landing-text-section {
+  padding: 4rem 0;
+
+  .card-section-row {
+    display: flex;
+    justify-content: center;
+    padding: 0 !important;
+
+    .card-section-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      text-align: center;
+      font-size: 1em;
+      margin-bottom: 5em;
+      line-height: 2em;
+
+      .MuiCard-root {
+        // flex-grow: 1;
+        width: 30%;
+        margin: 1rem 0;
+        min-width: 20rem;
+      }
+    }
+  }
+
+  .text-section-row {
+    display: flex;
+    justify-content: center;
+    padding: 0 !important;
+
+    &.text-section-1 {
+      background: #f4f4f4;
+      margin: 4rem 0;
+    }
+
+    .text-section-container {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 8rem 0;
+      position: relative;
+      font-size: 1.05rem;
+      line-height: 2.25em;
+
+      .text-section-box {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        flex-grow: 1;
+        align-items: center;
+        width: 50%;
+        text-align: justify !important;
+        min-width: 20rem;
+        min-height: 18rem;
+        padding: 3rem;
+        position: relative;
+
+        > * {
+          position: relative;
+          z-index: 1;
+        }
+
+        &[class*='clip-art-box'],
+        &[class*='clip-art-text'] {
+          &::after {
+            position: absolute;
+            z-index: 0;
+            bottom: 0;
+            right: 0;
+            content: ' ';
+            background: {
+              repeat: no-repeat;
+              position: center;
+              size: contain;
+            }
+          }
+        }
+
+        &[class*='clip-art-box'] {
+          &::after {
+            height: 120%;
+            top: -10%;
+            left: 0;
+          }
+        }
+
+        &[class*='clip-art-text'] {
+          &::after {
+            width: 150%;
+            top: 0;
+            background: #f8f8f8;
+          }
+        }
+      }
+    }
+
+    &.photos {
+      .text-section-container {
+        position: relative;
+        perspective: 10rem;
+
+        > * {
+          position: relative;
+          z-index: 1;
+        }
+
+        &::after,
+        &::before {
+          position: absolute;
+          width: 100%;
+          z-index: 0;
+          top: 0;
+          bottom: 0;
+          right: 0;
+          content: ' ';
+          background: #f4f4f4;
+          border-radius: 4em;
+        }
+
+        &::before {
+          left: -49%;
+          transform: rotateY(6deg);
+        }
+
+        &::after {
+          left: 49%;
+          transform: rotateY(-6deg);
+        }
+      }
+    }
+  }
+}
+
+.icon-large {
+  font-size: 7.5rem;
+  text-align: center;
+}
+
+.icon-box {
+  color: $theme-color-secondary-v6;
 }
