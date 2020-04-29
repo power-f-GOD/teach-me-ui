@@ -87,19 +87,41 @@ hr {
   margin: 1.25rem 0;
   height: 0.2rem;
   border-radius: 0.1rem;
-  background-image: linear-gradient(to right, $theme-color-secondary, $theme-color-primary);
+  background-image: linear-gradient(
+    to right,
+    $theme-color-secondary,
+    $theme-color-primary-v4
+  );
   border: none;
 }
 
-button, a {
+button,
+a {
   text-transform: unset !important;
+
+  &[class*='outlined'] {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    padding: 0.25em 1.85em;
+    border-radius: 1.75em;
+    color: white;
+    border: 2px solid white;
+    transition: 0.3s;
+
+    &:hover {
+      color: $theme-color-secondary;
+      background-color: white;
+    }
+  }
 
   &[class*='Primary'] {
     background: {
       color: $theme-color-primary-v5;
       image: linear-gradient(
         to right,
-        $theme-color-primary,
+        $theme-color-primary-v4,
         $theme-color-secondary
       );
     }
@@ -119,7 +141,7 @@ button, a {
       background-image: linear-gradient(
         to right,
         $theme-color-secondary,
-        $theme-color-primary
+        $theme-color-primary-v4
       );
       z-index: -1;
       transition: opacity 0.2s;
@@ -144,7 +166,7 @@ button, a {
     border: 2px solid $theme-color-tertiary-v7;
     border-color: linear-gradient(
       to right,
-      $theme-color-primary,
+      $theme-color-primary-v4,
       $theme-color-secondary
     );
   }
@@ -193,9 +215,9 @@ div {
 }
 
 .MuiCard-root {
-  border-radius: 0.5em;
+  border-radius: 1em;
   color: inherit;
-  box-shadow: 0 0 2rem rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 2.5rem rgba(0, 0, 0, 0.125);
 
   .MuiCardContent-root {
     padding: 2.5rem;
@@ -253,7 +275,7 @@ div {
     image: linear-gradient(
       to right,
       $theme-color-secondary,
-      $theme-color-primary
+      $theme-color-primary-v4
     );
   }
   background-clip: text;
