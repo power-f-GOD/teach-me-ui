@@ -5,7 +5,7 @@ footer {
   font-size: 0.95rem;
 
   .major {
-    background: #eee;
+    background: white;
     padding: 3rem 0;
 
     section {
@@ -35,9 +35,9 @@ footer {
 
   .minor {
     padding: 0.5rem 0;
-    background: #ddd;
+    background: #f4f4f4;
     color: $theme-color-tertiary-v3;
-    border: 1px solid #ccc;
+    border: 1px solid #e4e4e4;
     justify-content: center !important;
 
     span {

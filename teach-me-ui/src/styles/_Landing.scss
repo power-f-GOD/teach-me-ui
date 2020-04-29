@@ -2,8 +2,8 @@
 
 $clip-art-urls: (
   1: 'online-education.png',
-  2: 'light-bulb-education.png',
-  3: 'group-education.png'
+  2: 'group-education.png',
+  3: 'light-bulb-education.png'
 );
 
 @each $key, $url in $clip-art-urls {
@@ -14,7 +14,6 @@ $clip-art-urls: (
 
     .clip-art-text-#{$key} {
       padding-right: 6.5% !important;
-      text-align: left;
 
       &::after {
         left: -54%;
@@ -24,7 +23,6 @@ $clip-art-urls: (
   } @else {
     .clip-art-text-#{$key} {
       padding-left: 6.5% !important;
-      text-align: right;
 
       &::after {
         left: 4%;
@@ -35,7 +33,7 @@ $clip-art-urls: (
 
   .clip-art-box-#{$key} {
     &::after {
-      filter: grayscale(1);
+      // filter: sepia(100%) hue-rotate(160deg) saturate(350%);
       background-image: url('/images/#{$url}');
     }
   }
@@ -56,7 +54,6 @@ $clip-art-urls: (
       $theme-color-primary-v3,
       $theme-color-primary
     );
-    size: contain;
   }
 
   > * {
@@ -67,7 +64,7 @@ $clip-art-urls: (
   &::before {
     position: absolute;
     z-index: 0;
-    height: 112%;
+    height: 115%;
     width: 104%;
     border-radius: 1.5rem;
     top: -32%;
@@ -91,10 +88,10 @@ $clip-art-urls: (
     position: absolute;
     z-index: -2;
     height: 25rem;
-    width: 180vw;
+    width: 150vw;
     border-radius: 0 0 50% 50%;
     top: 75%;
-    left: -40vw;
+    left: -25vw;
     bottom: 0;
     right: 0;
     content: ' ';
@@ -133,15 +130,17 @@ $clip-art-urls: (
       max-width: 30em;
 
       a {
+        display: inline-flex;
+        justify-content: space-between;
+        align-items: center;
         text-decoration: none;
         padding: 0.75em 1.85em;
         border-radius: 1.75em;
-        min-width: 10rem;
-        text-align: center;
+        min-width: 13rem;
+        // text-align: center;
         margin: 1em 1.5em 0 0;
         color: white;
-        // background: $theme-color-secondary-v5;
-        border: 2px solid #ddd;
+        border: 2px solid #eee;
         transition: 0.3s;
 
         &:first-child {
@@ -156,6 +155,8 @@ $clip-art-urls: (
 
         &:hover {
           color: white;
+          padding-left: 2.5rem;
+          padding-right: 2.5rem;
           background-color: $theme-color-secondary-v5;
         }
       }
@@ -164,7 +165,7 @@ $clip-art-urls: (
 }
 
 .landing-text-section {
-  padding: 4rem 0;
+  padding: 0;
 
   .card-section-row {
     display: flex;
@@ -177,7 +178,7 @@ $clip-art-urls: (
       justify-content: space-between;
       text-align: center;
       font-size: 1em;
-      margin-bottom: 5em;
+      margin: 4em 0;
       line-height: 2em;
 
       .MuiCard-root {
@@ -194,15 +195,10 @@ $clip-art-urls: (
     justify-content: center;
     padding: 0 !important;
 
-    &.text-section-1 {
-      background: #f4f4f4;
-      margin: 4rem 0;
-    }
-
     .text-section-container {
       display: flex;
       flex-wrap: wrap;
-      margin: 8rem 0;
+      margin: 3rem 0;
       position: relative;
       font-size: 1.05rem;
       line-height: 2.25em;
@@ -212,6 +208,7 @@ $clip-art-urls: (
         justify-content: center;
         flex-direction: column;
         flex-grow: 1;
+        margin: 3rem 0;
         align-items: center;
         width: 50%;
         text-align: justify !important;
@@ -253,43 +250,175 @@ $clip-art-urls: (
           &::after {
             width: 150%;
             top: 0;
+            box-shadow: 0 0.5em 0 #f2f2f2;
             background: #f8f8f8;
           }
         }
       }
     }
 
-    &.photos {
-      .text-section-container {
+    &.avatars-box {
+      flex-direction: column;
+      align-items: center;
+
+      .avatars-box-header-container {
+        justify-content: center;
+        margin-bottom: 0 !important;
         position: relative;
-        perspective: 10rem;
 
-        > * {
-          position: relative;
-          z-index: 1;
+        .avatars-box-header {
+          &::after,
+          &::before {
+            position: absolute;
+            width: 25%;
+            height: 0.65rem;
+            z-index: 0;
+            right: 0;
+            top: 150%;
+            bottom: 0;
+            content: ' ';
+            background: {
+              color: #ccc;
+            }
+          }
+
+          &::after {
+            left: 50%;
+            border-radius: 0 0 1em 0;
+            transform: skewY(-6deg);
+          }
+
+          &::before {
+            right: 50%;
+            border-radius: 0 0 0 1em;
+            transform: skewY(6deg);
+          }
         }
+      }
 
-        &::after,
-        &::before {
-          position: absolute;
-          width: 100%;
-          z-index: 0;
-          top: 0;
-          bottom: 0;
-          right: 0;
-          content: ' ';
-          background: #f4f4f4;
-          border-radius: 4em;
+      .text-section-container {
+        margin: 1rem 0;
+
+        .text-section-box {
+          perspective: 10rem;
+          flex-direction: row;
+          flex-wrap: wrap;
+          justify-content: space-around;
+          min-width: unset;
+
+          &::after {
+            position: absolute;
+            width: 150%;
+            z-index: 0;
+            top: 0;
+            bottom: 0;
+            content: ' ';
+            border-radius: 2em;
+          }
+
+          &:first-child::after {
+            right: -14.5%;
+            transform: rotateY(6deg);
+            box-shadow: -0.5em 0.25em 1em rgba(0, 0, 0, 0.1);
+            background: {
+              color: #ddd;
+            }
+          }
+
+          &:last-child::after {
+            left: -14.5%;
+            transform: rotateY(-6deg);
+            box-shadow: 0.5em 0.25em 1em rgba(0, 0, 0, 0.1);
+            background: {
+              color: #ddd;
+            }
+          }
+
+          .avatar-small,
+          .avatar-medium {
+            border: 0.45rem solid #bbb;
+            border-radius: 50%;
+            background: {
+              color: white;
+              size: cover;
+              repeat: no-repeat;
+              position: center;
+            }
+          }
+
+          .avatar-small {
+            height: 11rem;
+            width: 11rem;
+            background-image: url(/images/avatar-1.png);
+          }
+
+          .avatar-medium {
+            height: 15rem;
+            width: 15rem;
+            background-image: url(/images/avatar-2.png);
+          }
         }
+      }
+    }
 
-        &::before {
-          left: -49%;
-          transform: rotateY(6deg);
-        }
+    &.text-section-last {
+      // background: #f8f8f8;
+      margin: 3rem 0;
+    }
 
-        &::after {
-          left: 49%;
-          transform: rotateY(-6deg);
+    &:last-child {
+      margin-top: 5rem;
+      background: {
+        image: url(/images/business-education.png);
+        repeat-y: no-repeat;
+        size: 33vw;
+        color: #f4f4f4;
+        position: center;
+      }
+    }
+  }
+
+  .card-section-last-box {
+    margin-top: 3rem;
+
+    .card-section-container {
+      justify-content: space-evenly;
+
+      .card-below {
+        color: white;
+        border-radius: 0.5em;
+        width: 45%;
+        text-align: left;
+        box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.35);
+        background-image: linear-gradient(
+          to right,
+          $theme-color-primary-v4,
+          $theme-color-secondary
+        );
+
+        > div {
+          display: flex;
+          flex-direction: row;
+
+          .card-header-box {
+            margin-right: 1rem;
+          }
+
+          hr {
+            background: white;
+          }
+
+          .card-link-box {
+            margin-top: 1rem;
+
+            a {
+              padding: 0.25em 4em;
+            }
+          }
+
+          .icon-large {
+            display: none;
+          }
         }
       }
     }
@@ -297,10 +426,19 @@ $clip-art-urls: (
 }
 
 .icon-large {
-  font-size: 7.5rem;
+  font-size: 8.5rem;
   text-align: center;
+  padding: 1.5rem;
+  border-radius: 50%;
+  background: {
+    image: linear-gradient(
+      to right,
+      $theme-color-primary-v4,
+      $theme-color-secondary
+    );
+  }
 }
 
 .icon-box {
-  color: $theme-color-secondary-v6;
+  color: white;
 }
