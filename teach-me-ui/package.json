@@ -61,6 +61,16 @@
     "eject": "react-scripts eject",
     "sass": "node-sass -w --output-style=compressed src/styles/index.scss src/styles/index.min.css"
   },
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "coverageReporters": [
+      "text",
+      "json",
+      "html"
+    ]
+  },
   "eslintConfig": {
     "extends": "teach-me"
   },
