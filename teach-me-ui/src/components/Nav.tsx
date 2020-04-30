@@ -31,17 +31,13 @@ const Nav = (props: any) => {
                   Teach Me!
                 </Box>
               </Link>
-              {userDeviceIsMobile ? (
-                <IconButton
-                  edge='start'
-                  className=''
-                  color='inherit'
-                  aria-label='menu'>
-                  <MenuIcon />
-                </IconButton>
-              ) : (
-                ''
-              )}
+              <IconButton
+                edge='start'
+                className='menu-button'
+                color='inherit'
+                aria-label='menu'>
+                <MenuIcon />
+              </IconButton>
 
               {forMainComponent ? (
                 <MainNav {...props} />

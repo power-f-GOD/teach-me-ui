@@ -12,8 +12,12 @@
 }
 
 .nav-background {
-  background-color: rgba(0, 65, 108, 0.95) !important;
+  background-color: rgba(0, 65, 108, 0.97) !important;
   box-shadow: 0 0rem 2rem rgba(0, 0, 0, 0.35);
+}
+
+.menu-button {
+  border: 0.1em solid white;
 }
 
 .nav-toolbar {
@@ -47,8 +51,9 @@
       border-bottom: 0.15em solid transparent;
 
       &:last-child {
-        background-color: $theme-color-primary-v7;
+        background-color: $theme-color-primary-v6;
       }
+
       &:hover {
         background-color: $theme-color-secondary-v6;
         border-bottom-color: #eee;
