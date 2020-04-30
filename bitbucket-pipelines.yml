@@ -15,7 +15,7 @@ pipelines:
           - cd ..
         artifacts:
           - teach-me-ui/packaged/**
-          - teach-me-ui/output
+          - teach-me-ui/coverage.tar.gz
 
   branches:
     master:
