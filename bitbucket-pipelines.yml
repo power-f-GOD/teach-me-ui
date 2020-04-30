@@ -18,7 +18,7 @@ pipelines:
           - teach-me-ui/coverage.tar.gz
 
   branches:
-    master:
+    TMFED-33-configure-automatic-redirects-t:
     - step: 
         name: Build Front end
         image: node:10.15.0
