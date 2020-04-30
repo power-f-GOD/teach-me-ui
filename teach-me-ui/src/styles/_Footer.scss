@@ -2,39 +2,95 @@
 
 footer {
   color: $theme-color-tertiary-v4;
+  position: relative;
+  z-index: 1;
   font-size: 0.95rem;
 
   .major {
     background: white;
-    padding: 3rem 0;
+    padding: 4rem 0;
 
-    section {
-      flex-grow: 1;
-      padding: 1rem;
-      padding-left: 0;
-      min-width: 200px;
+    .major-box-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row;
 
-      .logo {
-        font-size: 1.4em;
+      .logo-section,
+      .links-section {
+        display: flex;
+        flex-wrap: wrap;
       }
 
-      h6 {
-        font: {
-          weight: bolder !important;
-          size: 1rem;
+      .logo-section {
+        padding-right: 2rem;
+        margin: 1rem 0 2rem 0;
+        flex-grow: 1;
+        max-width: 100%;
+        flex-direction: column;
+
+        .link-box {
+          margin-top: 0.85rem;
         }
-        margin-bottom: 1.25rem !important;
-        color: $theme-color-tertiary-v1;
+
+        .logo {
+          font-size: 1.4em;
+        }
       }
 
-      .link-box {
-        margin: 1rem 0;
+      .links-section {
+        padding-left: 0;
+        flex-grow: 1.5;
+        flex-direction: row;
+
+        section {
+          display: flex;
+          justify-content: flex-start;
+          flex-direction: column;
+          padding-right: 2rem;
+          margin: 1rem 0;
+          width: 30%;
+          min-width: 10rem;
+          flex-grow: 1;
+          position: relative;
+
+          &:first-child {
+            flex-grow: 1.5;
+          }
+
+          &::after {
+            position: absolute;
+            width: 100vh;
+            height: 0.15rem;
+            z-index: 0;
+            right: 0;
+            top: 2rem;
+            left: 0;
+            bottom: 0;
+            content: ' ';
+            background: {
+              color: #ddd;
+            }
+          }
+        }
+
+        h6 {
+          font: {
+            weight: bolder !important;
+            size: 1rem;
+          }
+          margin-bottom: 1.25rem !important;
+          color: $theme-color-tertiary-v1;
+        }
+
+        .link-box {
+          margin: 0.85rem 0;
+        }
       }
     }
   }
 
   .minor {
-    padding: 0.5rem 0;
+    padding: 1rem 0;
     background: #f4f4f4;
     color: $theme-color-tertiary-v3;
     border: 1px solid #e4e4e4;
@@ -50,7 +106,7 @@ footer {
 
       &:first-child {
         flex-grow: 0.25;
-        justify-content: start;
+        justify-content: flex-start;
       }
     }
 
