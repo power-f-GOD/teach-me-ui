@@ -22,13 +22,14 @@ if (userDeviceIsMobile) {
 }
 
 ReactDOM.render(
-  <HttpsRedirect>
+  
   <Provider store={store}>
-    <StylesProvider injectFirst>
-      <App />
-    </StylesProvider>
-  </Provider>
-  </HttpsRedirect>,
+    <HttpsRedirect>
+      <StylesProvider injectFirst>
+        <App />
+      </StylesProvider>
+    </HttpsRedirect>
+  </Provider>,
   document.querySelector('#root') || document.createElement('div')
 );
 
