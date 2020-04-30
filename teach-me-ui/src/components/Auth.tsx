@@ -31,7 +31,7 @@ const Auth = (props: any) => {
                 <Box marginY='1em' textAlign='center' width='100%'>
                   <Typography component='h1' variant='h4' align='center'>
                     <Link to='/'>
-                      <Box component='span' className='logo with-text-gradient'>
+                      <Box component='span' className='logo theme-color-primary'>
                         Teach Me!
                       </Box>
                     </Link>

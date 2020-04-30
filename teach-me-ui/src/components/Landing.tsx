@@ -25,7 +25,7 @@ let mockData: any = {
       icon: ForumRoundedIcon,
       heading: 'Lorem',
       text:
-        'Consectetur adipisicing elit. Praesentium magnam consectetur vel in deserunt aspernatur est reprehenderit sunt hic. Nulla tempora soluta ea et odio, unde doloremque repellendus iure, iste.'
+        'Consectetur adipisicing elit. Praesentium magnam consectetur vel in deserunt aspernatur est reprehenderit sunt hic.'
     },
     {
       icon: LibraryBooksRoundedIcon,
@@ -37,7 +37,7 @@ let mockData: any = {
       icon: SchoolRoundedIcon,
       heading: 'Dolor',
       text:
-        'Sed mattis nunc id lorem euismod placerat. Vivamus porttitor magna enim, ac accumsan tortor cursus at. Phasellus sed ultricies mi non congue ullam corper.'
+        'Sed mattis nunc id lorem euismod placerat. Vivamus porttitor magna enim, ac accumsan tortor cursus at.'
     }
   ],
   forClipArt: [
@@ -77,7 +77,6 @@ const Landing = () => {
                 </Typography>
               </Box>
               <br />
-              <br />
               <Box className='landing-splash-links-box'>
                 <Link to='/signup' className='Primary'>
                   JOIN NOW <ArrowForward fontSize='inherit' />
@@ -99,17 +98,6 @@ const Landing = () => {
           {mockData.forClipArt.map((item: any, key: number) => (
             <ClipArtWithText item={item} key={key} />
           ))}
-          <Box className='text-section-row text-section-last'>
-            <Container className='text-section-container'>
-              <Box>
-                <Typography component='h3' variant='h4'>
-                  Fermentum
-                </Typography>
-                <hr />
-                <Box component='span'>{mockData.forClipArt[0].text}</Box>
-              </Box>
-            </Container>
-          </Box>
           <Box className='text-section-row avatars-box'>
             <Container className='text-section-container avatars-box-header-container'>
               <Box>
@@ -132,6 +120,17 @@ const Landing = () => {
               </Box>
             </Container>
           </Box>
+          <Box className='text-section-row text-section-last'>
+            <Container className='text-section-container'>
+              <Box>
+                <Typography component='h3' variant='h4'>
+                  Fermentum
+                </Typography>
+                <hr />
+                <Box component='span'>{mockData.forClipArt[0].text}</Box>
+              </Box>
+            </Container>
+          </Box>
           <Box className='card-section-row card-section-last-box'>
             <Container className='card-section-container'>
               {mockData.forCard.map((item: any, key: number) =>
@@ -143,7 +142,6 @@ const Landing = () => {
           </Box>
           <Box className='text-section-row'>
             <Container className='text-section-container'>
-              <Box className='text-section-box'></Box>
               <Box className='text-section-box'></Box>
             </Container>
           </Box>
