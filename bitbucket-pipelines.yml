@@ -18,7 +18,7 @@ pipelines:
           - teach-me-ui/coverage.tar.gz
 
   branches:
-    master:
+    '{master,staging}':
     - step: 
         name: Build Front end
         image: node:10.15.0

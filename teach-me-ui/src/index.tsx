@@ -1,8 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-
-//Redirects all requests to https..
 import HttpsRedirect from 'react-https-redirect';
 
 import { StylesProvider } from '@material-ui/core/styles';
@@ -22,7 +20,6 @@ if (userDeviceIsMobile) {
 }
 
 ReactDOM.render(
-  
   <Provider store={store}>
     <HttpsRedirect>
       <StylesProvider injectFirst>
@@ -32,5 +29,3 @@ ReactDOM.render(
   </Provider>,
   document.querySelector('#root') || document.createElement('div')
 );
-
-
