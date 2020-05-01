@@ -7,7 +7,7 @@ body,
   width: 100vw;
   margin: 0;
   font-size: 1rem;
-  color: $theme-color-tertiary-v3;
+  color: $theme-color-tertiary-v2;
   overflow-x: hidden;
 }
 
@@ -26,7 +26,7 @@ body {
     }
 
     &::-webkit-scrollbar-track {
-      background: transparent;
+      background: $theme-color-tertiary-v9;
     }
 
     &::-webkit-scrollbar-thumb {
@@ -37,6 +37,7 @@ body {
 
 #root {
   height: auto;
+  width: 100%;
   min-height: 100vh;
   display: flex;
 

@@ -1,26 +1,34 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
 
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import ArrowForward from '@material-ui/icons/ArrowForwardIosSharp';
+import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import InputBase from '@material-ui/core/InputBase';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/MenuRounded';
+import HomeIcon from '@material-ui/icons/HomeRounded';
+import InfoIcon from '@material-ui/icons/InfoRounded';
+import HelpIcon from '@material-ui/icons/HelpRounded';
+import AccountIcon from '@material-ui/icons/AccountBoxRounded';
+import SearchIcon from '@material-ui/icons/Search';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 
 import { handleSignoutRequest } from '../functions';
 import { userDeviceIsMobile } from '../index';
 
 const Nav = (props: any) => {
-  const forMainComponent = /main/i.test(props.for);
+  const forIndexPage = /index/i.test(props.for);
+  const forLandingPage = forIndexPage && /\/index|\/$|\/[^a-z]+$/i.test(window.location.href);
 
   return (
     <Box component='nav'>
-      <ElevationScroll {...props} forMainComponent={forMainComponent}>
+      <ElevationScroll {...props} forLandingPage={forLandingPage}>
         <AppBar position='fixed' className='mobile-width'>
           <Container>
             <Toolbar className='nav-toolbar'>
@@ -31,19 +39,20 @@ const Nav = (props: any) => {
                   Teach Me!
                 </Box>
               </Link>
-              <IconButton
-                edge='start'
-                className='menu-button'
-                color='inherit'
-                aria-label='menu'>
-                <MenuIcon />
-              </IconButton>
 
-              {forMainComponent ? (
-                <MainNav {...props} />
+              {forIndexPage ? (
+                <IndexNav {...props} className='app-bar-nav' />
               ) : (
-                <IndexNav {...props} />
+                <MainNav {...props} className='app-bar-nav' />
               )}
+
+              <TemporaryDrawer>
+                {forIndexPage ? (
+                  <IndexNav {...props} />
+                ) : (
+                  <MainNav {...props} />
+                )}
+              </TemporaryDrawer>
             </Toolbar>
           </Container>
         </AppBar>
@@ -52,42 +61,27 @@ const Nav = (props: any) => {
   );
 };
 
-function IndexNav() {
+function IndexNav(props: any) {
   return (
-    <Box className='nav-links-wrapper'>
-      <Link to='/#!' className='nav-link'>
-        Developers
-      </Link>
-      <Link to='/#!' className='nav-link'>
-        Pricing
-      </Link>
-      <Link to='/about' className='nav-link'>
-        About
-      </Link>
-      <Box component='span' marginX='2.5rem'></Box>
-      <Link to='/#!' className='nav-link'>
-        Support
-      </Link>
+    <Box className={`nav-links-wrapper ${props?.className}`}>
+      <Search />
+      <NavGeneralLinks />
       <Link to='/signin' className='nav-link'>
-        <ArrowForward fontSize='inherit' /> Sign in
+        <ArrowForward className='nav-icon' fontSize='inherit' /> Sign in
       </Link>
     </Box>
   );
 }
 
-function MainNav() {
+function MainNav(props: any) {
   return (
-    <Box className='nav-links-wrapper'>
-      <Link to='/home' className='nav-link'>
-        Home
-      </Link>
-      <Link to='/about' className='nav-link'>
-        About
-      </Link>
+    <Box className={`nav-links-wrapper ${props?.className}`}>
+      <Search />
+      <NavGeneralLinks />
       <Link to='/#!' className='nav-link'>
-        Profile
+        <AccountIcon className='nav-icon' /> Profile
       </Link>
-      <Box component='span' marginX='2.5rem'></Box>
+
       <Button
         variant='contained'
         className='nav-link'
@@ -102,11 +96,46 @@ function MainNav() {
   );
 }
 
+function NavGeneralLinks() {
+  return (
+    <>
+      <Link to='/' className='nav-link'>
+        <HomeIcon className='nav-icon' />
+        Home
+      </Link>
+      <Link to='/about' className='nav-link'>
+        <InfoIcon className='nav-icon' />
+        About
+      </Link>
+      <Box component='span' marginX='1.5em'></Box>
+      <Link to='/#!' className='nav-link'>
+        <HelpIcon className='nav-icon' />
+        Support
+      </Link>
+    </>
+  );
+}
+
+function Search() {
+  return (
+    <Grid container className='search'>
+      <SearchIcon />
+      <Grid item className='search-input-wrapper'>
+        <InputBase
+          placeholder='Search…'
+          className='search-input'
+          inputProps={{ 'aria-label': 'search' }}
+        />
+      </Grid>
+    </Grid>
+  );
+}
+
 function ElevationScroll(props: {
   children: React.ReactElement;
-  forMainComponent: boolean;
+  forLandingPage: boolean;
 }) {
-  const { children, forMainComponent } = props;
+  const { children, forLandingPage } = props;
 
   let trigger = useScrollTrigger({
     disableHysteresis: true,
@@ -114,19 +143,54 @@ function ElevationScroll(props: {
     threshold: 40
   });
 
+  let mobileWidthClassName = userDeviceIsMobile ? 'mobile-width' : '';
+
   return React.cloneElement(children, {
     elevation: trigger ? 8 : 0,
-    className:
-      trigger || forMainComponent
-        ? userDeviceIsMobile
-          ? 'nav-background mobile-width'
-          : 'nav-background'
-        : ''
+    className: `${
+      trigger || !forLandingPage ? 'nav-background' : ''
+    } ${mobileWidthClassName}`
   });
 }
 
-const mapStateToProps = ({ signout }: any) => {
-  return { signout };
-};
+function TemporaryDrawer(props: any) {
+  const [open, setOpen] = React.useState(Boolean);
 
-export default connect(mapStateToProps)(Nav);
+  const toggleDrawer = (open: boolean) => (
+    event: React.KeyboardEvent | React.MouseEvent
+  ) => {
+    if (
+      event?.type === 'keydown' &&
+      ((event as React.KeyboardEvent)?.key === 'Tab' ||
+        (event as React.KeyboardEvent)?.key === 'Shift')
+    ) {
+      return;
+    }
+
+    setOpen(open);
+  };
+
+  return (
+    <Box className='drawer'>
+      <Search />
+      <IconButton
+        edge='start'
+        className='menu-button'
+        color='inherit'
+        onClick={toggleDrawer(true)}
+        aria-label='menu'>
+        <MenuIcon />
+      </IconButton>
+      <SwipeableDrawer
+        className='drawer-nav'
+        anchor='right'
+        open={open}
+        onOpen={toggleDrawer(true)}
+        onClose={toggleDrawer(false)}>
+        {props.children}
+      </SwipeableDrawer>
+    </Box>
+  );
+}
+
+export default Nav;
