@@ -12,7 +12,7 @@ const Auth = (props: any) => {
   const isSignup = /\/signup/.test(props.location.pathname);
 
   return (
-    <Grid className='auth-root-grid custom-scroll-bar fade-in' direction='column'>
+    <Grid container className='auth-root-grid custom-scroll-bar fade-in' direction='column'>
       <Box className='auth-main-box' component='main'>
         <Container className='auth-container'>
           <Grid

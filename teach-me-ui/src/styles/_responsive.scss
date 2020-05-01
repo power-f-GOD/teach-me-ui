@@ -1,15 +1,29 @@
-@media screen and (min-width: 1024px) and (max-width: 1152px) {
-  .clip-art-box-1,
-  .clip-art-box-3 {
-    left: -12%;
+@media screen and (min-width: 1024px) {
+  .drawer {
+    display: none;
   }
 
-  .clip-art-box-2 {
-    right: -12%;
+  @media screen and (max-width: 1152px) {
+    .clip-art-box-1,
+    .clip-art-box-3 {
+      left: -12%;
+    }
+
+    .clip-art-box-2 {
+      right: -12%;
+    }
   }
 }
 
-@media screen and (max-width: 1023px) and (min-width: 600px) {
+@media screen and (max-width: 1023px) {
+  .drawer {
+    display: flex;
+  }
+
+  .app-bar-nav {
+    display: none !important;
+  }
+
   .clip-art-box-1,
   .clip-art-box-3 {
     left: -27.5%;
@@ -40,7 +54,7 @@
   }
 }
 
-@media screen and (max-width: 767px) and (min-width: 600px) {
+@media screen and (max-width: 767px) {
   .clip-art-box-1,
   .clip-art-box-3 {
     left: -38%;
@@ -80,8 +94,22 @@
 }
 
 @media screen and (max-width: 599px) {
-  // landing page styles
+  .landing-splash-container {
+    margin-top: 8rem !important;
+    font-size: 0.95em !important;
 
+    h2 {
+      font-size: 2.5rem;
+    }
+  }
+
+  .drawer {
+    .search {
+      display: none;
+    }
+  }
+
+  // landing page styles
   .landing-splash-box {
     &::before {
       left: -2%;
@@ -177,7 +205,6 @@
         background-color: white;
         overflow: hidden;
         position: relative;
-        border: 2px solid blue;
         > * {
           position: relative;
           z-index: 1;
@@ -204,7 +231,7 @@
           }
         }
         .form-section {
-          padding: 4em 0.5em;
+          padding: 4em 1em;
           height: auto;
           box-shadow: none;
           border: none;
