@@ -18,11 +18,36 @@
 
 .menu-button {
   border: 0.1em solid white;
+  margin: 0.35em 0;
+}
+
+.search {
+  border-radius: 0.35em;
+  height: 2.75em;
+  align-items: center;
+  flex-wrap: nowrap;
+  align-self: center;
+  padding: 0 0.75em;
+  margin: 0 2.5em 0 0;
+  width: auto;
+  background: rgba(255, 255, 255, 0.15);
+
+  .search-input {
+    color: white !important;
+    width: 8em;
+    transition: 0.3s;
+    margin-left: 0.5em;
+
+    &:focus-within {
+      width: 13em;
+    }
+  }
 }
 
 .nav-toolbar {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 0;
 
   a {
@@ -32,33 +57,83 @@
   .logo {
     flex-grow: 1;
   }
+}
+
+.nav-links-wrapper {
+  min-height: inherit;
+  display: flex;
+
+  .nav-icon {
+    margin-right: 0.35em;
+  }
+
+  .nav-link {
+    min-height: inherit;
+    box-shadow: none;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5em 1em;
+    font-weight: 600;
+    font-size: 1.035em;
+    color: white;
+    transition: 0.3s;
+    border-radius: 0 0 0.35em 0.35em;
+    
+    border-bottom: 0.15em solid transparent;
+
+    &:last-child {
+      background-color: $theme-color-primary-v6;
+    }
+
+    &:hover {
+      background-color: $theme-color-secondary-v6;
+      border-bottom-color: #eee;
+      color: white;
+    }
+
+    &:active {
+      background: $theme-color-secondary-v3;
+    }
+  }
+}
+
+.drawer-nav {
+  a {
+    text-decoration: none;
+    border-radius: 0 !important;
+  }
 
   .nav-links-wrapper {
-    min-height: inherit;
-    display: flex;
+    flex-direction: column;
+    padding: 2em 0;
+
+    
 
     .nav-link {
-      min-height: inherit;
-      box-shadow: none;
-      display: inline-flex;
-      align-items: center;
-      padding: 0.5em 1.25em;
-      font-weight: 600;
-      font-size: 1.035em;
-      color: white;
-      transition: 0.3s;
-      border-radius: 0 0 0.35em 0.35em;
-      border-bottom: 0.15em solid transparent;
-
-      &:last-child {
-        background-color: $theme-color-primary-v6;
-      }
+      padding: 1.15em;
 
       &:hover {
-        background-color: $theme-color-secondary-v6;
-        border-bottom-color: #eee;
-        color: white;
+        border-bottom-color: transparent;
       }
+
+      
     }
+
+    .search {
+      color: white;
+      margin: 0;
+      margin-top: 3rem;
+      border-radius: 0;
+      height: 3em;
+      padding: 2em 1.15em;
+      width: 100% !important;
+      order: 1;
+    }
+  }
+
+  .MuiDrawer-paper {
+    width: 60%;
+    background: $theme-color-primary-v3;
+    max-width: 300px;
   }
 }
