@@ -1,6 +1,192 @@
-@media screen and (max-width: 959px) {
+@media screen and (min-width: 1024px) {
+  .drawer {
+    display: none;
+  }
+
+  @media screen and (max-width: 1152px) {
+    .clip-art-box-1,
+    .clip-art-box-3 {
+      left: -12%;
+    }
+
+    .clip-art-box-2 {
+      right: -12%;
+    }
+  }
+}
+
+@media screen and (max-width: 1023px) {
+  .drawer {
+    display: flex;
+  }
+
+  .app-bar-nav {
+    display: none !important;
+  }
+
+  .clip-art-box-1,
+  .clip-art-box-3 {
+    left: -27.5%;
+  }
+
+  .clip-art-box-2 {
+    right: -27.5%;
+  }
+
+  .avatars-box {
+    .text-section-box {
+      &:first-child::after {
+        right: -5% !important;
+      }
+
+      &:last-child::after {
+        left: -5% !important;
+      }
+    }
+  }
+
+  @media screen and (orientation: landscape) {
+    .card-below {
+      > div {
+        flex-wrap: wrap !important;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .clip-art-box-1,
+  .clip-art-box-3 {
+    left: -38%;
+  }
+
+  .clip-art-box-2 {
+    right: -38%;
+  }
+
+  .avatars-box {
+    .text-section-box {
+      &:first-child::after {
+        right: -5% !important;
+      }
+
+      &:last-child::after {
+        left: -5% !important;
+      }
+    }
+  }
+
+  .card-below {
+    > div {
+      flex-wrap: wrap !important;
+    }
+
+    width: 80% !important;
+  }
+
+  @media screen and (orientation: landscape) {
+    .card-below {
+      > div {
+        flex-wrap: nowrap !important;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 599px) {
+  .landing-splash-container {
+    margin-top: 8rem !important;
+    font-size: 0.95em !important;
+
+    h2 {
+      font-size: 2.5rem;
+    }
+  }
+
+  .drawer {
+    .search {
+      display: none;
+    }
+  }
+
+  // landing page styles
+  .landing-splash-box {
+    &::before {
+      left: -2%;
+      top: -28%;
+      transform: rotateZ(-4deg);
+    }
+  }
+
+  .MuiCard-root {
+    flex-grow: 1;
+    min-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+
+    .MuiCardContent-root {
+      padding: 2em 1.5em;
+    }
+  }
+
+  [class*='clip-art-box'] {
+    width: 90% !important;
+  }
+
+  .clip-art-box-2 {
+    order: 0 !important;
+  }
+
+  .clip-art-box-1,
+  .clip-art-box-3 {
+    left: 25%;
+  }
+
+  .clip-art-box-2 {
+    right: 25%;
+  }
+
+  .card-below {
+    > div {
+      flex-wrap: wrap !important;
+    }
+  }
+
+  .avatars-box {
+    .text-section-box {
+      min-width: 100% !important;
+
+      &:first-child::after {
+        right: -8% !important;
+      }
+
+      &:last-child::after {
+        left: -8% !important;
+      }
+    }
+  }
+
+  .text-section-row {
+    &:last-child {
+      background: {
+        size: contain !important;
+      }
+    }
+  }
+
+  @media screen and (orientation: landscape) {
+    .card-below {
+      > div {
+        flex-wrap: nowrap !important;
+      }
+    }
+  }
+
+  // auth component styles
   body {
     background: white;
+    position: relative;
+    z-index: 1;
   }
 
   #root {
@@ -8,24 +194,50 @@
     min-height: 100vh;
   }
 
-  .landing-main-grid {
-    height: 100%;
-    border-radius: 0;
-    box-shadow: none;
-  }
+  .auth-root-grid {
+    .auth-main-box {
+      padding: 0;
+      border-radius: 0;
+      box-shadow: none;
 
-  .landing-root-grid {
-    padding: 0;
-    background: inherit;
-  }
+      .auth-container {
+        min-height: inherit;
+        background-color: white;
+        overflow: hidden;
+        position: relative;
+        > * {
+          position: relative;
+          z-index: 1;
+        }
 
-  .splash-section {
-    display: none;
-  }
-
-  .form-section {
-    padding: 3em 2em;
-    height: auto;
-    overflow-y: hidden;
+        &::before {
+          position: fixed;
+          top: -10%;
+          z-index: -1;
+          width: 160%;
+          height: 130%;
+          left: 5%;
+          bottom: 0;
+          right: 0;
+          content: ' ';
+          transform: rotateZ(35deg);
+          opacity: 0.9;
+          background: {
+            color: white;
+            image: url('/images/auth-bg-left.png');
+            repeat: no-repeat;
+            position: left;
+            size: 60%;
+          }
+        }
+        .form-section {
+          padding: 4em 1em;
+          height: auto;
+          box-shadow: none;
+          border: none;
+          background: transparent;
+        }
+      }
+    }
   }
 }

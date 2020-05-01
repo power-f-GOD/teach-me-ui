@@ -12,9 +12,10 @@ import Button from '@material-ui/core/Button';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Checkbox from '@material-ui/core/Checkbox';
 
-import { SigninPropsState } from '../../constants';
-import { handleSigninRequest, handleSigninInputChange } from '../../functions';
+import { SigninPropsState } from '../constants';
+import { handleSigninRequest, handleSigninInputChange } from '../functions';
 
 export const refs: any = {
   idInput: React.createRef<HTMLInputElement>(),
@@ -32,7 +33,7 @@ const Signin = (props: SigninPropsState) => {
 
   return (
     <Grid
-      className='landing-form-wrapper fade-in'
+      className='auth-form-wrapper fade-in'
       container
       justify='center'
       direction='column'>
@@ -89,7 +90,30 @@ const Signin = (props: SigninPropsState) => {
             }}
           />
         </Box>
-        <Box component='div' marginY='0.75em'>
+
+        <Box
+          display='flex'
+          justifyContent='space-between'
+          alignItems='center'
+          component='div'>
+          <Box
+            component='label'
+            display='flex'
+            className='flex-basis-halved'
+            alignItems='center'>
+            <Checkbox
+              defaultChecked
+              color='primary'
+              inputProps={{ 'aria-label': 'remember me' }}
+            />
+            <Box component='div'>Remember me</Box>
+          </Box>
+          <Box component='div' textAlign='right' marginLeft='10px'>
+            <Link to='#!'>Forgot password?</Link>
+          </Box>
+        </Box>
+
+        <Box component='div' marginY='0.85em'>
           <Button
             variant='contained'
             size='large'

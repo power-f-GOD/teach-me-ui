@@ -1,0 +1,30 @@
+@import 'constants';
+
+.index-root-grid {
+  height: auto;
+  min-height: 100vh;
+  flex-grow: 1;
+  background: white;
+}
+
+.index-root-box {
+  // background: {
+  //   color: white;
+  //   image: url('/images/auth-bg-right.png'), url('/images/auth-bg-left.png'),
+  //     url('/images/auth-bg-center.png');
+  //   repeat: no-repeat;
+  //   position: right, left, center;
+  //   size: 42vh;
+  // }
+  width: 100%;
+  // overflow-x: hidden;
+  // min-height: inherit;
+}
+
+.index-container {
+  height: inherit;
+  min-height: 100%;
+  // max-width: $app-max-width !important;
+  display: flex;
+  align-items: center;
+}

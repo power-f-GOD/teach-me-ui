@@ -1,5 +1,5 @@
 .fade-in {
-  animation: fadeIn 0.5s forwards ease;
+  animation: fadeIn 0.3s forwards ease;
 }
 
 @keyframes fadeIn {
@@ -12,7 +12,7 @@
 }
 
 .fade-out {
-  animation: fadeOut 0.4s forwards ease;
+  animation: fadeOut 0.3s forwards ease;
 }
 
 @keyframes fadeOut {
@@ -21,5 +21,31 @@
   }
   to {
     opacity: 0;
+  }
+}
+
+.slide-in {
+  animation: slideIn 0.75s forwards ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%)
+  }
+  to {
+    transform: translateX(0)
+  }
+}
+
+.slide-out {
+  animation: slideOut 0.75s forwards ease;
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0)
+  }
+  to {
+    transform: translateX(-100%)
   }
 }

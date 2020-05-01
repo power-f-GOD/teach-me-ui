@@ -1,0 +1,75 @@
+@import 'constants';
+
+.auth-root-grid {
+  width: 100%;
+  min-height: inherit;
+
+  .auth-main-box {
+    width: 100%;
+    display: flex;
+    align-content: center;
+    padding: 2.25em 1.5em;
+    min-height: inherit;
+    overflow: hidden;
+    position: relative;
+
+    > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    &::before {
+      position: absolute;
+      z-index: 0;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      content: ' ';
+      transform: rotateZ(0deg);
+      background: {
+        image: url('/images/auth-bg-right.png'), url('/images/auth-bg-left.png'),
+          url('/images/auth-bg-center.png');
+        repeat: no-repeat;
+        position: left, right, center;
+        size: 25vw, 25vw, 20vw;
+      }
+    }
+
+    .auth-container {
+      height: inherit;
+      min-height: 100%;
+      max-width: $app-max-width !important;
+      display: flex;
+      align-items: center;
+    }
+
+    .form-section {
+      background: #fff;
+      min-height: 100%;
+      justify-self: center;
+      height: 100%;
+      overflow-x: hidden;
+      padding: 2em 2.4rem;
+      border-radius: 0.5em;
+      border: 1px solid #ddd;
+      box-shadow: 0 1em 5em rgba(0, 0, 0, 0.075), 0 0em 5em rgba(0, 0, 0, 0.075);
+    }
+  }
+
+  footer {
+    .minor {
+      background: #eee;
+      border-color: #ddd;
+
+      [class*=Grid] {
+        justify-content: center;
+      }
+    }
+  }
+}
+
+.flex-basis-halved {
+  flex-grow: 1;
+  min-width: 46%;
+}

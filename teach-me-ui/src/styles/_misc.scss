@@ -3,21 +3,47 @@
 html,
 body,
 #root {
-  height: 100%;
+  height: 100vh;
+  width: 100vw;
   margin: 0;
   font-size: 1rem;
+  color: $theme-color-tertiary-v2;
   overflow-x: hidden;
 }
 
 * {
   box-sizing: border-box;
   font-family: Lato, Roboto, 'Trebuchet MS', sans-serif !important;
-  // border: 1px solid red;
+  // border: 1px solid deeppink;
+}
+
+body {
+  position: relative;
+  &.desktop.custom-scroll-bar,
+  &.desktop .custom-scroll-bar {
+    &::-webkit-scrollbar {
+      width: 0.75em;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: $theme-color-tertiary-v9;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $theme-color-primary-v4;
+    }
+  }
 }
 
 #root {
+  height: auto;
+  width: 100%;
   min-height: 100vh;
   display: flex;
+
+  > div {
+    width: 100%;
+  }
 }
 
 .loader-wrapper {
@@ -38,24 +64,100 @@ img {
 
 input {
   margin: 1em 0;
-}
-
-a {
-  color: $theme-color-secondary-v5;
-
-  &:visited {
-    color: $theme-color-primary-v9;
+  font: {
+    family: inherit;
+    size: inherit;
   }
 }
 
-button {
-  &[class*='Primary'] {
-    background: $theme-color-secondary-v5;
-    border-radius: 1.5rem;
-    height: 3rem;
+a {
+  color: $theme-color-secondary-v4;
+
+  &:visited {
+    color: $theme-color-secondary-v8;
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  a {
+    text-decoration: none;
+  }
+}
+
+hr {
+  margin: 1.25rem 0;
+  height: 0.2rem;
+  border-radius: 0.1rem;
+  background-image: linear-gradient(
+    to right,
+    $theme-color-secondary,
+    $theme-color-primary-v4
+  );
+  border: none;
+}
+
+button,
+a {
+  text-transform: unset !important;
+
+  &[class*='outlined'] {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    padding: 0.25em 1.85em;
+    border-radius: 1.75em;
+    color: white;
+    border: 2px solid white;
+    transition: 0.3s;
 
     &:hover {
-      background: $theme-color-secondary-v4;
+      color: $theme-color-secondary;
+      background-color: white;
+    }
+  }
+
+  &[class*='Primary'] {
+    background: {
+      color: $theme-color-primary-v5;
+      image: linear-gradient(
+        to right,
+        $theme-color-primary-v4,
+        $theme-color-secondary
+      );
+    }
+    border-radius: 1.75rem;
+    height: 3.2rem;
+    z-index: 1;
+    position: relative;
+
+    &::before {
+      position: absolute;
+      content: ' ';
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      border-radius: inherit;
+      background-image: linear-gradient(
+        to right,
+        $theme-color-secondary,
+        $theme-color-primary-v4
+      );
+      z-index: -1;
+      transition: opacity 0.2s;
+      opacity: 0;
+    }
+
+    &:hover {
+      &::before {
+        opacity: 1;
+      }
     }
 
     &:disabled {
@@ -65,44 +167,44 @@ button {
   }
 }
 
-.landing-root-container {
-  max-width: $app-max-width !important;
+.MuiOutlinedInput-root {
+  &:hover .MuiOutlinedInput-notchedOutline {
+    border: 2px solid $theme-color-tertiary-v7;
+    border-color: linear-gradient(
+      to right,
+      $theme-color-primary-v4,
+      $theme-color-secondary
+    );
+  }
+}
+
+.MuiCheckbox-colorPrimary.Mui-checked {
+  color: $theme-color-primary;
 }
 
 [class^='MuiFormControl'],
 div {
   fieldset {
-    transition: 0.35s;
+    transition: 0.35s, border-width 0s;
   }
 }
 
-body {
-  background-color: $theme-color-primary-v3;
-
-  &.desktop.custom-scroll-bar,
-  &.desktop .custom-scroll-bar {
-    &::-webkit-scrollbar {
-      width: 0.75em;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: $theme-color-primary-v1;
-      border-radius: 0.5em;
-    }
-  }
+.MuiOutlinedInput-root {
+  border-radius: 0.5rem;
+  background: #f8f8f8;
 }
 
 [class^='MuiFormControl'],
 div {
+  fieldset {
+    border-color: #ddd;
+  }
+
   .Mui-focused {
-    color: $theme-color-secondary-v5 !important;
+    color: $theme-color-secondary !important;
 
     fieldset {
-      border-color: $theme-color-secondary-v5 !important;
+      border-color: $theme-color-secondary !important;
     }
   }
 
@@ -118,8 +220,14 @@ div {
   }
 }
 
-.MuiContainer-root {
-  padding: 0;
+.MuiCard-root {
+  border-radius: 0.75em;
+  color: inherit;
+  box-shadow: 0 0 2.5rem rgba(0, 0, 0, 0.2);
+
+  .MuiCardContent-root {
+    padding: 2.5rem;
+  }
 }
 
 .MuiAlert-filledSuccess,
@@ -154,7 +262,30 @@ div {
 }
 
 .logo {
-  font-family: Lobster, cursive !important;
+  min-width: 10rem;
+  font: {
+    family: Audiowide, Trebuchet MS, sans !important;
+    size: 1.75rem;
+    weight: 500;
+  }
+  letter-spacing: -1.5px;
+  margin: {
+    top: 0;
+    bottom: 0;
+  }
+  color: inherit;
+}
+
+.with-text-gradient {
+  background: {
+    image: linear-gradient(
+      to right,
+      $theme-color-secondary,
+      $theme-color-primary-v4
+    );
+  }
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .theme-color-primary {
