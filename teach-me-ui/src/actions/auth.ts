@@ -190,7 +190,7 @@ export const requestSignin = (data: SigninFormData) => (
           dispatch(
             displaySnackbar({
               open: true,
-              message: 'Sign in success!',
+              message: 'Welcome back!',
               severity: 'success',
               autoHide: true
             })
