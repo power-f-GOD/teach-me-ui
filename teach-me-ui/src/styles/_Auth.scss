@@ -28,11 +28,10 @@
       content: ' ';
       transform: rotateZ(0deg);
       background: {
-        image: url('/images/auth-bg-right.png'), url('/images/auth-bg-left.png'),
-          url('/images/auth-bg-center.png');
+        image: url('/images/auth-bg-right.png'), url('/images/auth-bg-left.png');
         repeat: no-repeat;
-        position: left, right, center;
-        size: 25vw, 25vw, 20vw;
+        position: left, right;
+        size: 25vw, 25vw;
       }
     }
 

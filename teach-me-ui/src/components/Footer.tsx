@@ -26,7 +26,7 @@ function MajorFooter() {
             <Typography
               className='logo theme-color-primary-darker'
               component='h5'>
-              Teach Me!
+              Kanyimuta!
             </Typography>
             <Box className='link-box'>https://www.teach-me.com</Box>
             <Box className='link-box'>hello@teach-me.com</Box>
@@ -76,7 +76,7 @@ function MinorFooter() {
             <Typography
               className='logo theme-color-tertiary-darker'
               component='span'>
-              Teach Me!
+              Kanyimuta!
             </Typography>{' '}
             &copy; 2020
           </Box>

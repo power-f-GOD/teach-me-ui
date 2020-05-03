@@ -55,6 +55,18 @@
 }
 
 @media screen and (max-width: 767px) {
+  // landing page styles
+  .landing-splash-box {
+    &::before {
+      width: 200vw;
+      left: -50vw;
+      background: {
+        position: 115vw 102%, center;
+        size: 20rem, 100vw;
+      }
+    }
+  }
+
   .clip-art-box-1,
   .clip-art-box-3 {
     left: -38%;
@@ -95,7 +107,7 @@
 
 @media screen and (max-width: 599px) {
   .landing-splash-container {
-    margin-top: 8rem !important;
+    // margin-top: 8rem !important;
     font-size: 0.95em !important;
 
     h2 {
@@ -110,13 +122,6 @@
   }
 
   // landing page styles
-  .landing-splash-box {
-    &::before {
-      left: -2%;
-      top: -28%;
-      transform: rotateZ(-4deg);
-    }
-  }
 
   .MuiCard-root {
     flex-grow: 1;

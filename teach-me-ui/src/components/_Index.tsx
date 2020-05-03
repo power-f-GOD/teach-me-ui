@@ -4,7 +4,7 @@ import { Switch, Route } from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 
-import { Nav, About, Landing, Footer } from './index';
+import { Nav, About, Landing, Support, Footer } from './index';
 
 const Index = () => {
   return (
@@ -15,6 +15,7 @@ const Index = () => {
         <Switch>
           <Route path={['/', '/index']} exact component={Landing} />
           <Route path='/about' component={About} />
+          <Route path='/support' component={Support} />
         </Switch>
       </Box>
 

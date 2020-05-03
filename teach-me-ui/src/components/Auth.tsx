@@ -21,7 +21,7 @@ const Auth = (props: any) => {
             justify='center'
             direction='row'
             alignItems='center'>
-            <Box maxWidth={isSignup ? '820px' : 'xs'}>
+            <Box maxWidth={isSignup ? '820px' : '500px'}>
               <Grid
                 component='section'
                 className='form-section custom-scroll-bar'
@@ -32,7 +32,7 @@ const Auth = (props: any) => {
                   <Typography component='h1' variant='h4' align='center'>
                     <Link to='/'>
                       <Box component='span' className='logo theme-color-primary'>
-                        Teach Me!
+                        Kanyimuta!
                       </Box>
                     </Link>
                     {isSignup ? (

@@ -4,21 +4,25 @@ html,
 body,
 #root {
   height: 100vh;
-  width: 100vw;
+  width: 100%;
   margin: 0;
   font-size: 1rem;
   color: $theme-color-tertiary-v2;
+  line-height: 1.5em;
+}
+
+html {
+  position: relative;
   overflow-x: hidden;
 }
 
 * {
   box-sizing: border-box;
-  font-family: Lato, Roboto, 'Trebuchet MS', sans-serif !important;
+  font-family: 'Exo 2', 'Trebuchet MS', sans-serif !important;
   // border: 1px solid deeppink;
 }
 
 body {
-  position: relative;
   &.desktop.custom-scroll-bar,
   &.desktop .custom-scroll-bar {
     &::-webkit-scrollbar {
@@ -104,6 +108,7 @@ hr {
 button,
 a {
   text-transform: unset !important;
+  font-size: 1rem !important;
 
   &[class*='outlined'] {
     display: inline-flex;
@@ -123,40 +128,47 @@ a {
   }
 
   &[class*='Primary'] {
-    background: {
-      color: $theme-color-primary-v5;
-      image: linear-gradient(
-        to right,
-        $theme-color-primary-v4,
-        $theme-color-secondary
-      );
-    }
     border-radius: 1.75rem;
     height: 3.2rem;
+    overflow: hidden;
     z-index: 1;
     position: relative;
 
-    &::before {
+    &::before,
+    &::after {
       position: absolute;
       content: ' ';
       top: 0;
       right: 0;
       bottom: 0;
       left: 0;
-      border-radius: inherit;
+      z-index: -1;
+      transition: 0.45s;
+    }
+
+    &::before {
+      background-image: linear-gradient(
+        to left,
+        $theme-color-secondary,
+        $theme-color-primary-v4
+      );
+    }
+
+    &::after {
+      transform: translateX(-100%);
       background-image: linear-gradient(
         to right,
         $theme-color-secondary,
         $theme-color-primary-v4
       );
-      z-index: -1;
-      transition: opacity 0.2s;
-      opacity: 0;
     }
 
     &:hover {
       &::before {
-        opacity: 1;
+        transform: translateX(100%);
+      }
+      &::after {
+        transform: translateX(0);
       }
     }
 
@@ -190,7 +202,7 @@ div {
 }
 
 .MuiOutlinedInput-root {
-  border-radius: 0.5rem;
+  border-radius: 0.35rem;
   background: #f8f8f8;
 }
 
@@ -268,7 +280,7 @@ div {
     size: 1.75rem;
     weight: 500;
   }
-  letter-spacing: -1.5px;
+  letter-spacing: -0.75px;
   margin: {
     top: 0;
     bottom: 0;

@@ -9,7 +9,7 @@ const Loader = () => {
       <Box textAlign='center'>
         <CircularProgress color='inherit' size='3rem' thickness={4} />
         <Box className='logo' fontSize='1.75rem' marginY='0.5em'>
-          Teach Me!
+          Kanyimuta!
         </Box>
       </Box>
     </div>

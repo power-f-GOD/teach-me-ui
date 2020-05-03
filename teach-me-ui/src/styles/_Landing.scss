@@ -32,92 +32,72 @@ $clip-art-urls: (
 
 .landing-splash-box {
   height: 100vh;
-  max-height: 50rem;
+  max-height: 45rem;
   min-height: 40rem;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  color: white;
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.85);
+  color: #eee;
   background-color: $theme-color-primary-v9;
   position: relative;
-  background: {
-    image: linear-gradient(
-      to bottom,
-      $theme-color-primary-v3,
-      $theme-color-primary
-    );
-  }
+  background: transparent;
 
   > * {
     position: relative;
     z-index: 1;
   }
 
-  &::before {
+  &::before,
+  &::after {
     position: absolute;
-    z-index: 0;
-    height: 115%;
-    width: 105%;
-    border-radius: 1.5rem;
-    top: -32%;
-    left: 0.5%;
+    z-index: -1;
+    height: 120%;
+    width: 180vw;
+    top: -32.5%;
+    left: -40vw;
     bottom: 0;
     right: 0;
+    border-radius: 0 0 50% 50%;
     content: ' ';
-    transform: rotateZ(-5deg);
-    opacity: 0.85;
+  }
+
+  &::before {
     background: {
-      color: $theme-color-primary-v3;
+      image:
+      url('/images/educational.png'), 
+      linear-gradient(
+        125deg,
+        $theme-color-primary-v2,
+        $theme-color-primary
+      ) 
+      ;
       repeat: no-repeat;
-      position: left;
-      size: contain;
+      position: 100vw 90%, center;
+      size: 28rem, 100vw;
     }
-    box-shadow: 0 2.5rem 0 $theme-color-primary,
+    box-shadow: 0 2.25rem 0 $theme-color-primary,
       1.45rem 2.5rem 1.5rem 0 rgba(0, 0, 0, 0.35);
   }
 
   &::after {
-    position: absolute;
-    z-index: -1;
-    height: 25rem;
-    width: 150vw;
-    border-radius: 0 0 50% 50%;
-    top: 75%;
-    left: -25vw;
-    bottom: 0;
-    right: 0;
-    content: ' ';
-    background-color: $theme-color-primary;
+    z-index: -2;
+    width: 200vw;
+    left: -50vw;
+    height: 150%;
+    top: -15%;
+    background: {
+      color: $theme-color-primary;
+      image: linear-gradient(
+        -125deg,
+        $theme-color-primary-v3,
+        $theme-color-primary
+      );
+      position: center;
+      size: 100vw;
+    }
   }
 
   .landing-splash-container {
-    > * {
-      position: relative;
-      z-index: 1;
-    }
-
-    &::after {
-      position: absolute;
-      z-index: 0;
-      width: 28em;
-      height: 28em;
-      border-radius: 50%;
-      top: -6em;
-      left: 65%;
-      bottom: 0;
-      right: 0;
-      content: ' ';
-      transform: rotateZ(-5deg);
-      background: {
-        color: $theme-color-primary;
-        image: url('/images/educational.png');
-        repeat: no-repeat;
-        position: center;
-        size: 90%;
-      }
-    }
-
     .landing-splash-links-box {
       display: flex;
       flex-wrap: wrap;
@@ -129,13 +109,14 @@ $clip-art-urls: (
         align-items: center;
         text-decoration: none;
         text-shadow: none;
-        padding: 0.75em 1.85em;
+        padding: 0.65em 1.85em;
         border-radius: 1.75em;
+        height: unset;
         min-width: 12rem;
         max-width: 16rem;
         margin: 1em 1.5em 0 0;
         color: white;
-        border: 2px solid #eee;
+        border: 1.5px solid #ddd;
         transition: 0.3s;
 
         &:first-child {
@@ -178,9 +159,9 @@ $clip-art-urls: (
 
       .MuiCard-root {
         flex-grow: 1;
-        width: 30%;
-        margin: 1.25rem;
-        min-width: 16rem;
+        width: 27.5%;
+        margin: 1.25em 2%;
+        min-width: 16em;
       }
     }
   }
@@ -349,67 +330,67 @@ $clip-art-urls: (
       }
     }
 
-    &.text-section-last {
-      margin: 3rem 0;
-    }
+    // &.text-section-last {
+    //   margin: 3rem 0;
+    // }
 
-    &:last-child {
-      margin-top: 5rem;
-      background: {
-        image: url(/images/business-education.png);
-        repeat-y: no-repeat;
-        size: 33%;
-        color: #f4f4f4;
-        position: center;
-      }
-    }
+    // &:last-child {
+    //   margin-top: 5rem;
+    //   background: {
+    //     image: url(/images/business-education.png);
+    //     repeat-y: no-repeat;
+    //     size: 33%;
+    //     color: #f4f4f4;
+    //     position: center;
+    //   }
+    // }
   }
 
-  .card-section-last-box {
-    margin-top: 3rem;
+  // .card-section-last-box {
+  //   margin-top: 3rem;
 
-    .card-section-container {
-      justify-content: space-between;
+  //   .card-section-container {
+  //     justify-content: space-between;
 
-      .card-below {
-        color: white;
-        border-radius: 0.5em;
-        width: 45%;
-        text-align: left;
-        box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.35);
-        background-image: linear-gradient(
-          to right,
-          $theme-color-primary-v4,
-          $theme-color-secondary
-        );
+  //     .card-below {
+  //       color: white;
+  //       border-radius: 0.5em;
+  //       width: 45%;
+  //       text-align: left;
+  //       box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.35);
+  //       background-image: linear-gradient(
+  //         to right,
+  //         $theme-color-primary-v4,
+  //         $theme-color-secondary
+  //       );
 
-        > div {
-          display: flex;
-          flex-direction: row;
+  //       > div {
+  //         display: flex;
+  //         flex-direction: row;
 
-          .card-header-box {
-            margin-right: 1rem;
-          }
+  //         .card-header-box {
+  //           margin-right: 1rem;
+  //         }
 
-          hr {
-            background: white;
-          }
+  //         hr {
+  //           background: white;
+  //         }
 
-          .card-link-box {
-            margin-top: 1rem;
+  //         .card-link-box {
+  //           margin-top: 1rem;
 
-            a {
-              padding: 0.25em 4em;
-            }
-          }
+  //           a {
+  //             padding: 0.25em 4em;
+  //           }
+  //         }
 
-          .icon-large {
-            display: none;
-          }
-        }
-      }
-    }
-  }
+  //         .icon-large {
+  //           display: none;
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 }
 
 .icon-large {
