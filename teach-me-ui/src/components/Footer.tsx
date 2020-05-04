@@ -29,7 +29,7 @@ function MinorFooter() {
           <Grid item component='section'>
             <Grid container direction='column'>
               <Grid item>
-                <Box fontWeight='bold' marginBottom='1rem'>
+                <Box fontWeight='bold' marginBottom='0.5rem'>
                   Navigation
                 </Box>
               </Grid>

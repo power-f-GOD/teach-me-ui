@@ -27,13 +27,24 @@
 @media screen and (max-width: 767px) {
   // landing page styles
   .landing-splash-box {
+    &::before,
+    &::after {
+      width: 300vw;
+      left: -100vw;
+    }
+
     &::before {
-      width: 200vw;
-      left: -50vw;
       background: {
-        position: 115vw 102%, center;
+        position: 165vw 102%, center;
         size: 20rem, 100vw;
       }
+    }
+  }
+
+  .minor {
+    &::after {
+      width: 230vw !important;
+      left: -65vw !important;
     }
   }
 }

@@ -20,11 +20,6 @@
   &::before,
   &::after {
     position: absolute;
-    z-index: -1;
-    height: 120%;
-    width: 180vw;
-    top: -32.5%;
-    left: -40vw;
     bottom: 0;
     right: 0;
     border-radius: 0 0 50% 50%;
@@ -32,6 +27,11 @@
   }
 
   &::before {
+    z-index: -1;
+    height: 120%;
+    width: 180vw;
+    top: -32.5%;
+    left: -40vw;
     background: {
       image: url('/images/educational.png'),
         linear-gradient(125deg, $theme-color-primary-v2, $theme-color-primary);
