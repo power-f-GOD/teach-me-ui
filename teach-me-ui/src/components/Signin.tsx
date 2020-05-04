@@ -133,7 +133,7 @@ const Signin = (props: SigninPropsState) => {
       </form>
       <Box marginY='1em'>
         <Typography component='div' align='center'>
-          New to Teach Me? <Link to='/signup'>Sign up here!</Link>
+          New to Kanyimuta? <Link to='/signup'>Sign up here!</Link>
         </Typography>
       </Box>
     </Grid>

@@ -180,7 +180,7 @@ const Signup = (props: SignupPropsState) => {
       </form>
       <Box marginY='1em'>
         <Typography component='div' align='center'>
-          Have a Teach Me account? <Link to='/signin'>Sign in here!</Link>
+          Have a an account? <Link to='/signin'>Sign in here!</Link>
         </Typography>
       </Box>
     </Grid>
