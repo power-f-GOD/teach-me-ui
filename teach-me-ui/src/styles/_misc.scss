@@ -4,21 +4,25 @@ html,
 body,
 #root {
   height: 100vh;
-  width: 100vw;
+  width: 100%;
   margin: 0;
   font-size: 1rem;
   color: $theme-color-tertiary-v2;
+  line-height: 1.5rem;
+}
+
+html {
+  position: relative;
   overflow-x: hidden;
 }
 
 * {
   box-sizing: border-box;
-  font-family: Lato, Roboto, 'Trebuchet MS', sans-serif !important;
+  font-family: 'Exo 2', 'Trebuchet MS', sans-serif !important;
   // border: 1px solid deeppink;
 }
 
 body {
-  position: relative;
   &.desktop.custom-scroll-bar,
   &.desktop .custom-scroll-bar {
     &::-webkit-scrollbar {
@@ -104,6 +108,7 @@ hr {
 button,
 a {
   text-transform: unset !important;
+  font-size: 1rem !important;
 
   &[class*='outlined'] {
     display: inline-flex;
@@ -123,46 +128,59 @@ a {
   }
 
   &[class*='Primary'] {
-    background: {
-      color: $theme-color-primary-v5;
-      image: linear-gradient(
-        to right,
-        $theme-color-primary-v4,
-        $theme-color-secondary
-      );
-    }
+    background-color: #ccc !important;
     border-radius: 1.75rem;
     height: 3.2rem;
-    z-index: 1;
+    overflow: hidden;
+    z-index: 0;
     position: relative;
 
-    &::before {
+    &::before,
+    &::after {
       position: absolute;
       content: ' ';
       top: 0;
       right: 0;
       bottom: 0;
       left: 0;
-      border-radius: inherit;
+      z-index: -1;
+      transition: 0.45s;
+    }
+
+    &::before {
+      background-image: linear-gradient(
+        to left,
+        $theme-color-secondary,
+        $theme-color-primary-v4
+      );
+    }
+
+    &::after {
+      transform: translateX(-100%);
       background-image: linear-gradient(
         to right,
         $theme-color-secondary,
         $theme-color-primary-v4
       );
-      z-index: -1;
-      transition: opacity 0.2s;
-      opacity: 0;
     }
 
     &:hover {
       &::before {
-        opacity: 1;
+        transform: translateX(100%);
+      }
+      &::after {
+        transform: translateX(0);
       }
     }
 
-    &:disabled {
-      background: #ccc;
+    &:disabled,
+    &.Mui-disabled {
       color: #555;
+
+      &::before,
+      &::after {
+        opacity: 0;
+      }
     }
   }
 }
@@ -190,7 +208,7 @@ div {
 }
 
 .MuiOutlinedInput-root {
-  border-radius: 0.5rem;
+  border-radius: 0.35rem;
   background: #f8f8f8;
 }
 
@@ -226,7 +244,7 @@ div {
   box-shadow: 0 0 2.5rem rgba(0, 0, 0, 0.2);
 
   .MuiCardContent-root {
-    padding: 2.5rem;
+    padding: 2rem;
   }
 }
 
@@ -262,18 +280,45 @@ div {
 }
 
 .logo {
-  min-width: 10rem;
-  font: {
-    family: Audiowide, Trebuchet MS, sans !important;
-    size: 1.75rem;
-    weight: 500;
-  }
-  letter-spacing: -1.5px;
+  // min-width: 10rem;
+  width: auto !important;
+  padding: 0.25em 0.35em !important;
+  border-radius: 0 0.45em 0 0.45em;
+  color: #f8f8f8;
+  line-height: 100% !important;
+  letter-spacing: -0.5px;
+  text-transform: capitalize !important;
+  user-select: none;
   margin: {
+    right: 0.25em;
     top: 0;
     bottom: 0;
   }
-  color: inherit;
+  font: {
+    family: Audiowide, Trebuchet MS, sans !important;
+    size: 1.5rem;
+    weight: 500;
+  }
+
+  &.light-blue {
+    background: $theme-color-primary;
+  }
+
+  &.grey {
+    background: $theme-color-tertiary-v3;
+  }
+
+  &.gradient {
+    background: {
+      image: linear-gradient(
+        to right,
+        $theme-color-secondary,
+        $theme-color-primary-v4
+      );
+      position: 100% center;
+      size: 200%;
+    }
+  }
 }
 
 .with-text-gradient {
