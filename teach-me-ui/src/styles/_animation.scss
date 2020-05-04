@@ -1,5 +1,5 @@
 .fade-in {
-  animation: fadeIn 0.3s forwards ease;
+  animation: fadeIn 0.5s forwards ease;
 }
 
 @keyframes fadeIn {
@@ -30,10 +30,10 @@
 
 @keyframes slideIn {
   from {
-    transform: translateX(100%)
+    transform: translateX(100%);
   }
   to {
-    transform: translateX(0)
+    transform: translateX(0);
   }
 }
 
@@ -43,9 +43,9 @@
 
 @keyframes slideOut {
   from {
-    transform: translateX(0)
+    transform: translateX(0);
   }
   to {
-    transform: translateX(-100%)
+    transform: translateX(-100%);
   }
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -20,11 +20,11 @@ import SearchIcon from '@material-ui/icons/Search';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 
 import { handleSignoutRequest } from '../functions';
-import { userDeviceIsMobile } from '../index';
 
 const Nav = (props: any) => {
   const forIndexPage = /index/i.test(props.for);
-  const forLandingPage = forIndexPage && /\/index|\/$|\/[^a-z]+$/i.test(window.location.href);
+  const forLandingPage =
+    forIndexPage && /\/index|\/$|\/[^a-z]+$/i.test(window.location.href);
 
   return (
     <Box component='nav'>
@@ -33,17 +33,13 @@ const Nav = (props: any) => {
           <Container>
             <Toolbar className='nav-toolbar'>
               <Link to='/'>
-                <Box
-                  component='h1'
-                  className='logo theme-color-primary-lightest'>
-                  Teach Me!
-                </Box>
+                <Box className='logo gradient'>Kanyimuta!</Box>
               </Link>
 
               {forIndexPage ? (
-                <IndexNav {...props} className='app-bar-nav' />
+                <IndexNav {...props} className='app-bar-links' />
               ) : (
-                <MainNav {...props} className='app-bar-nav' />
+                <MainNav {...props} className='app-bar-links' />
               )}
 
               <TemporaryDrawer>
@@ -66,9 +62,9 @@ function IndexNav(props: any) {
     <Box className={`nav-links-wrapper ${props?.className}`}>
       <Search />
       <NavGeneralLinks />
-      <Link to='/signin' className='nav-link'>
-        <ArrowForward className='nav-icon' fontSize='inherit' /> Sign in
-      </Link>
+      <NavLink to='/signin' className='nav-link'>
+        <ArrowForward fontSize='inherit' /> Sign in
+      </NavLink>
     </Box>
   );
 }
@@ -78,9 +74,9 @@ function MainNav(props: any) {
     <Box className={`nav-links-wrapper ${props?.className}`}>
       <Search />
       <NavGeneralLinks />
-      <Link to='/#!' className='nav-link'>
+      <NavLink exact to='/profile' className='nav-link'>
         <AccountIcon className='nav-icon' /> Profile
-      </Link>
+      </NavLink>
 
       <Button
         variant='contained'
@@ -99,19 +95,19 @@ function MainNav(props: any) {
 function NavGeneralLinks() {
   return (
     <>
-      <Link to='/' className='nav-link'>
+      <NavLink exact to='/' className='nav-link'>
         <HomeIcon className='nav-icon' />
         Home
-      </Link>
-      <Link to='/about' className='nav-link'>
+      </NavLink>
+      <NavLink to='/about' className='nav-link'>
         <InfoIcon className='nav-icon' />
         About
-      </Link>
+      </NavLink>
       <Box component='span' marginX='1.5em'></Box>
-      <Link to='/#!' className='nav-link'>
+      <NavLink exact to='/support' className='nav-link'>
         <HelpIcon className='nav-icon' />
         Support
-      </Link>
+      </NavLink>
     </>
   );
 }
@@ -139,17 +135,12 @@ function ElevationScroll(props: {
 
   let trigger = useScrollTrigger({
     disableHysteresis: true,
-    target: document.body,
     threshold: 40
   });
 
-  let mobileWidthClassName = userDeviceIsMobile ? 'mobile-width' : '';
-
   return React.cloneElement(children, {
     elevation: trigger ? 8 : 0,
-    className: `${
-      trigger || !forLandingPage ? 'nav-background' : ''
-    } ${mobileWidthClassName}`
+    className: trigger || !forLandingPage ? 'nav-background' : ''
   });
 }
 
@@ -163,9 +154,8 @@ function TemporaryDrawer(props: any) {
       event?.type === 'keydown' &&
       ((event as React.KeyboardEvent)?.key === 'Tab' ||
         (event as React.KeyboardEvent)?.key === 'Shift')
-    ) {
+    )
       return;
-    }
 
     setOpen(open);
   };

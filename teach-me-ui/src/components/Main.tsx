@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
 
-import { Nav, Home, About, Footer, Loader } from './index';
+import { Nav, Home, About, Support, Profile, Footer, Loader } from './index';
 
 const Main = (props: any) => {
   const { firstname, signout } = props;
@@ -20,7 +20,7 @@ const Main = (props: any) => {
     <Grid className='main-root-grid fade-in'>
       <Nav for='main' />
 
-      <Box padding='1rem'>
+      <Box paddingY='1rem'>
         <br />
         <br />
         <br />
@@ -33,6 +33,8 @@ const Main = (props: any) => {
         <Switch>
           <Route path={['/', '/index', '/home']} exact component={Home} />
           <Route path='/about' component={About} />
+          <Route path='/support' component={Support} />
+          <Route path='/profile' component={Profile} />
         </Switch>
       </Box>
 
