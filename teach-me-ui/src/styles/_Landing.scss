@@ -1,123 +1,67 @@
 @import 'constants';
 
-$clip-art-urls: (
-  1: 'online-education.png',
-  2: 'group-education.png',
-  3: 'light-bulb-education.png'
-);
-
-@each $key, $url in $clip-art-urls {
-  @if $key % 2 == 0 {
-    .clip-art-box-#{$key} {
-      order: 1;
-
-      &::after {
-        right: -20%;
-      }
-    }
-  } @else {
-    .clip-art-box-#{$key} {
-      &::after {
-        left: -20%;
-      }
-    }
-  }
-
-  .clip-art-box-#{$key} {
-    &::after {
-      background-image: url('/images/#{$url}');
-    }
-  }
-}
-
 .landing-splash-box {
   height: 100vh;
-  max-height: 50rem;
+  max-height: 45rem;
   min-height: 40rem;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  color: white;
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.85);
+  color: #eee;
   background-color: $theme-color-primary-v9;
   position: relative;
-  background: {
-    image: linear-gradient(
-      to bottom,
-      $theme-color-primary-v3,
-      $theme-color-primary
-    );
-  }
+  background: transparent;
 
   > * {
     position: relative;
     z-index: 1;
   }
 
-  &::before {
+  &::before,
+  &::after {
     position: absolute;
-    z-index: 0;
-    height: 115%;
-    width: 105%;
-    border-radius: 1.5rem;
-    top: -32%;
-    left: 0.5%;
+    z-index: -1;
+    height: 120%;
+    width: 180vw;
+    top: -32.5%;
+    left: -40vw;
     bottom: 0;
     right: 0;
+    border-radius: 0 0 50% 50%;
     content: ' ';
-    transform: rotateZ(-5deg);
-    opacity: 0.85;
+  }
+
+  &::before {
     background: {
-      color: $theme-color-primary-v3;
+      image: url('/images/educational.png'),
+        linear-gradient(125deg, $theme-color-primary-v2, $theme-color-primary);
       repeat: no-repeat;
-      position: left;
-      size: contain;
+      position: 97vw 90%, center;
+      size: 28rem, 100vw;
     }
-    box-shadow: 0 2.5rem 0 $theme-color-primary,
+    box-shadow: 0 2.25rem 0 $theme-color-primary,
       1.45rem 2.5rem 1.5rem 0 rgba(0, 0, 0, 0.35);
   }
 
   &::after {
-    position: absolute;
-    z-index: -1;
-    height: 25rem;
-    width: 150vw;
-    border-radius: 0 0 50% 50%;
-    top: 75%;
-    left: -25vw;
-    bottom: 0;
-    right: 0;
-    content: ' ';
-    background-color: $theme-color-primary;
+    z-index: -2;
+    width: 200vw;
+    left: -50vw;
+    height: 150%;
+    top: -20%;
+    background: {
+      color: $theme-color-primary;
+      image: linear-gradient(
+        -125deg,
+        $theme-color-primary-v3,
+        $theme-color-primary
+      );
+      position: center;
+      size: 100vw;
+    }
   }
 
   .landing-splash-container {
-    > * {
-      position: relative;
-      z-index: 1;
-    }
-
-    &::after {
-      position: absolute;
-      z-index: 0;
-      width: 28em;
-      height: 28em;
-      border-radius: 50%;
-      top: -6em;
-      left: 65%;
-      bottom: 0;
-      right: 0;
-      content: ' ';
-      transform: rotateZ(-5deg);
-      background: {
-        color: $theme-color-primary;
-        image: url('/images/educational.png');
-        repeat: no-repeat;
-        position: center;
-        size: 90%;
-      }
-    }
-
     .landing-splash-links-box {
       display: flex;
       flex-wrap: wrap;
@@ -129,14 +73,15 @@ $clip-art-urls: (
         align-items: center;
         text-decoration: none;
         text-shadow: none;
-        padding: 0.75em 1.85em;
+        padding: 0.65em 1.85em;
         border-radius: 1.75em;
+        height: unset;
         min-width: 12rem;
         max-width: 16rem;
         margin: 1em 1.5em 0 0;
         color: white;
-        border: 2px solid #eee;
-        transition: 0.3s;
+        border: 1.5px solid #ddd;
+        transition: 0.35s;
 
         &:first-child {
           width: 100%;
@@ -173,259 +118,20 @@ $clip-art-urls: (
       justify-content: space-between;
       text-align: center;
       font-size: 1em;
-      margin: 3em 0 5em 0;
+      margin: 1.5em 0 5em 0;
       line-height: 2em;
 
       .MuiCard-root {
         flex-grow: 1;
-        width: 30%;
-        margin: 1.25rem;
-        min-width: 16rem;
-      }
-    }
-  }
+        width: 27.5%;
+        margin: 1.25em;
+        min-width: 16em;
 
-  .text-section-row {
-    display: flex;
-    justify-content: center;
-    padding: 0 !important;
-
-    .text-section-container {
-      display: flex;
-      flex-wrap: wrap;
-      margin: 2rem 0;
-      position: relative;
-      font-size: 1.05rem;
-      line-height: 2rem;
-
-      .text-section-box {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        flex-direction: column;
-        flex-grow: 1;
-        margin: 6rem 0;
-        align-items: center;
-        width: 50%;
-        text-align: justify !important;
-        min-width: 16rem;
-        position: relative;
-
-        > * {
-          position: relative;
-          z-index: 1;
-        }
-
-        &[class*='clip-art-box'] {
-          min-height: 18rem;
-          width: 40%;
-
-          &::after {
-            position: absolute;
-            z-index: 0;
-            bottom: 0;
-            content: ' ';
-            height: 34rem;
-            width: 34rem;
-            top: -40%;
-            border-radius: 50%;
-            background: {
-              repeat: no-repeat;
-              position: center;
-              size: 80%;
-              color: #f4f4f4;
-            }
-          }
-        }
-      }
-    }
-
-    &.avatars-box {
-      flex-direction: column;
-      align-items: center;
-      margin: 4rem 0;
-
-      .avatars-box-header-container {
-        justify-content: center;
-        margin-bottom: 1rem !important;
-        position: relative;
-
-        .avatars-box-header {
-          &::after,
-          &::before {
-            position: absolute;
-            width: 25%;
-            height: 0.5rem;
-            z-index: 0;
-            right: 0;
-            top: 130%;
-            bottom: 0;
-            content: ' ';
-            background: {
-              color: #bbb;
-            }
-          }
-
-          &::after {
-            left: 50%;
-            border-radius: 0 0 1em 0;
-            transform: skewY(-6deg);
-          }
-
-          &::before {
-            right: 50%;
-            border-radius: 0 0 0 1em;
-            transform: skewY(6deg);
-          }
-        }
-      }
-
-      .text-section-container {
-        .text-section-box {
-          perspective: 10rem;
-          flex-direction: row;
-          flex-wrap: wrap;
-          margin: 1.5rem 0;
-          justify-content: space-evenly;
-
-          &::after {
-            position: absolute;
-            width: 150%;
-            height: 110%;
-            z-index: 0;
-            top: -5%;
-            bottom: 0;
-            content: ' ';
-            border-radius: 2em;
-          }
-
-          &:first-child::after {
-            right: -10.5%;
-            transform: rotateY(6deg);
-            box-shadow: -0.5em 0.25em 1em rgba(0, 0, 0, 0.35);
-            background-image: linear-gradient(
-              to right,
-              $theme-color-primary-v4,
-              $theme-color-secondary
-            );
-          }
-
-          &:last-child::after {
-            left: -10.5%;
-            transform: rotateY(-6deg);
-            box-shadow: 0.5em 0.25em 1em rgba(0, 0, 0, 0.35);
-            background-image: linear-gradient(
-              to left,
-              $theme-color-primary-v4,
-              $theme-color-secondary
-            );
-          }
-
-          .avatar-small,
-          .avatar-medium {
-            border: 0.45rem solid #ddd;
-            border-radius: 50%;
-            margin: 0.75em 0;
-            background: {
-              color: white;
-              size: cover;
-              repeat: no-repeat;
-              position: center;
-            }
-          }
-
-          .avatar-small {
-            height: 11rem;
-            width: 11rem;
-            background-image: url(/images/avatar-1.png);
-          }
-
-          .avatar-medium {
-            height: 15rem;
-            width: 15rem;
-            background-image: url(/images/avatar-2.png);
-          }
-        }
-      }
-    }
-
-    &.text-section-last {
-      margin: 3rem 0;
-    }
-
-    &:last-child {
-      margin-top: 5rem;
-      background: {
-        image: url(/images/business-education.png);
-        repeat-y: no-repeat;
-        size: 33%;
-        color: #f4f4f4;
-        position: center;
-      }
-    }
-  }
-
-  .card-section-last-box {
-    margin-top: 3rem;
-
-    .card-section-container {
-      justify-content: space-between;
-
-      .card-below {
-        color: white;
-        border-radius: 0.5em;
-        width: 45%;
-        text-align: left;
-        box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.35);
-        background-image: linear-gradient(
-          to right,
-          $theme-color-primary-v4,
-          $theme-color-secondary
-        );
-
-        > div {
-          display: flex;
-          flex-direction: row;
-
-          .card-header-box {
-            margin-right: 1rem;
-          }
-
-          hr {
-            background: white;
-          }
-
-          .card-link-box {
-            margin-top: 1rem;
-
-            a {
-              padding: 0.25em 4em;
-            }
-          }
-
-          .icon-large {
-            display: none;
-          }
+        .card-image {
+          width: 12rem;
+          border-radius: 50%;
         }
       }
     }
   }
-}
-
-.icon-large {
-  font-size: 8.5rem;
-  text-align: center;
-  padding: 1.5rem;
-  border-radius: 50%;
-  background: {
-    image: linear-gradient(
-      to right,
-      $theme-color-primary-v4,
-      $theme-color-secondary
-    );
-  }
-}
-
-.icon-box {
-  color: white;
 }
