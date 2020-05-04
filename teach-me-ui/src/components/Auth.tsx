@@ -12,7 +12,10 @@ const Auth = (props: any) => {
   const isSignup = /\/signup/.test(props.location.pathname);
 
   return (
-    <Grid container className='auth-root-grid custom-scroll-bar fade-in' direction='column'>
+    <Grid
+      container
+      className='auth-root-grid custom-scroll-bar fade-in'
+      direction='column'>
       <Box className='auth-main-box' component='main'>
         <Container className='auth-container'>
           <Grid
@@ -28,10 +31,10 @@ const Auth = (props: any) => {
                 container
                 item
                 alignItems='center'>
-                <Box marginY='1em' textAlign='center' width='100%'>
-                  <Typography component='h1' variant='h4' align='center'>
+                <Box marginY='1.5em' textAlign='center' width='100%'>
+                  <Typography component='h6' variant='h4' align='center'>
                     <Link to='/'>
-                      <Box component='span' className='logo theme-color-primary'>
+                      <Box component='span' className='logo gradient'>
                         Kanyimuta!
                       </Box>
                     </Link>
@@ -56,7 +59,7 @@ const Auth = (props: any) => {
         </Container>
       </Box>
 
-      <Footer for='auth' />
+      <Footer />
     </Grid>
   );
 };

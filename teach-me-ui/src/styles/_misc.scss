@@ -8,7 +8,7 @@ body,
   margin: 0;
   font-size: 1rem;
   color: $theme-color-tertiary-v2;
-  line-height: 1.5em;
+  line-height: 1.5rem;
 }
 
 html {
@@ -128,10 +128,11 @@ a {
   }
 
   &[class*='Primary'] {
+    background-color: #ccc !important;
     border-radius: 1.75rem;
     height: 3.2rem;
     overflow: hidden;
-    z-index: 1;
+    z-index: 0;
     position: relative;
 
     &::before,
@@ -172,9 +173,14 @@ a {
       }
     }
 
-    &:disabled {
-      background: #ccc;
+    &:disabled,
+    &.Mui-disabled {
       color: #555;
+
+      &::before,
+      &::after {
+        opacity: 0;
+      }
     }
   }
 }
@@ -238,7 +244,7 @@ div {
   box-shadow: 0 0 2.5rem rgba(0, 0, 0, 0.2);
 
   .MuiCardContent-root {
-    padding: 2.5rem;
+    padding: 2rem;
   }
 }
 
@@ -274,18 +280,45 @@ div {
 }
 
 .logo {
-  min-width: 10rem;
-  font: {
-    family: Audiowide, Trebuchet MS, sans !important;
-    size: 1.75rem;
-    weight: 500;
-  }
-  letter-spacing: -0.75px;
+  // min-width: 10rem;
+  width: auto !important;
+  padding: 0.25em 0.35em !important;
+  border-radius: 0 0.45em 0 0.45em;
+  color: #f8f8f8;
+  line-height: 100% !important;
+  letter-spacing: -0.5px;
+  text-transform: capitalize !important;
+  user-select: none;
   margin: {
+    right: 0.25em;
     top: 0;
     bottom: 0;
   }
-  color: inherit;
+  font: {
+    family: Audiowide, Trebuchet MS, sans !important;
+    size: 1.5rem;
+    weight: 500;
+  }
+
+  &.light-blue {
+    background: $theme-color-primary;
+  }
+
+  &.grey {
+    background: $theme-color-tertiary-v3;
+  }
+
+  &.gradient {
+    background: {
+      image: linear-gradient(
+        to right,
+        $theme-color-secondary,
+        $theme-color-primary-v4
+      );
+      position: 100% center;
+      size: 200%;
+    }
+  }
 }
 
 .with-text-gradient {

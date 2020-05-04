@@ -23,7 +23,8 @@ import { handleSignoutRequest } from '../functions';
 
 const Nav = (props: any) => {
   const forIndexPage = /index/i.test(props.for);
-  const forLandingPage = forIndexPage && /\/index|\/$|\/[^a-z]+$/i.test(window.location.href);
+  const forLandingPage =
+    forIndexPage && /\/index|\/$|\/[^a-z]+$/i.test(window.location.href);
 
   return (
     <Box component='nav'>
@@ -32,17 +33,13 @@ const Nav = (props: any) => {
           <Container>
             <Toolbar className='nav-toolbar'>
               <Link to='/'>
-                <Box
-                  component='h1'
-                  className='logo theme-color-primary-lightest'>
-                  Kanyimuta!
-                </Box>
+                <Box className='logo gradient'>Kanyimuta!</Box>
               </Link>
 
               {forIndexPage ? (
-                <IndexNav {...props} className='app-bar-nav' />
+                <IndexNav {...props} className='app-bar-links' />
               ) : (
-                <MainNav {...props} className='app-bar-nav' />
+                <MainNav {...props} className='app-bar-links' />
               )}
 
               <TemporaryDrawer>
@@ -157,9 +154,8 @@ function TemporaryDrawer(props: any) {
       event?.type === 'keydown' &&
       ((event as React.KeyboardEvent)?.key === 'Tab' ||
         (event as React.KeyboardEvent)?.key === 'Shift')
-    ) {
+    )
       return;
-    }
 
     setOpen(open);
   };

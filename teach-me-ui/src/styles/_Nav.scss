@@ -8,8 +8,14 @@
 }
 
 .nav-background {
-  background-color: rgba(0, 65, 108, 0.97) !important;
+  background-color: rgba(0, 65, 108, 0.99) !important;
   box-shadow: 0 0rem 2rem rgba(0, 0, 0, 0.35);
+}
+
+.drawer-nav {
+  .search {
+    display: none;
+  }
 }
 
 .search {
@@ -155,7 +161,6 @@
       padding: 0.85em;
       margin: 0 0.5em;
       margin-top: 0.5em;
-      
 
       &:hover {
         border-bottom-color: transparent;

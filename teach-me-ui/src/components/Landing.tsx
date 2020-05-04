@@ -16,21 +16,24 @@ let mockData: any = {
   forCard: [
     {
       icon: ForumRoundedIcon,
-      heading: 'Lorem',
+      img: 'worldwide-education.png',
+      heading: 'Connect',
       text:
-        'Consectetur adipisicing elit. Praesentium magnam consectetur vel in deserunt aspernatur est reprehenderit sunt hic.'
+        'Connect with the best academic intellects from universities around the world.'
     },
     {
       icon: LibraryBooksRoundedIcon,
-      heading: 'Ipsum',
+      img: 'group-education.png',
+      heading: 'Share',
       text:
-        'Praesent tincidunt sed tellus ut rutrum. Sed vitae justo condimentum, porta lectus vitae, ultricies congue gravida diam non fringilla.'
+        'Create topics, discussions on any subject matter and learn from top and world-class Academia.'
     },
     {
       icon: SchoolRoundedIcon,
-      heading: 'Dolor',
+      img: 'light-bulb-education.png',
+      heading: 'Learn',
       text:
-        'Sed mattis nunc id lorem euismod placerat. Vivamus porttitor magna enim, ac accumsan tortor cursus at.'
+        'With access to a worldwide network of Academics, see your IQ and skill capacity increase rapidly with getting the right knowledge and information.'
     }
   ]
 };
@@ -48,7 +51,7 @@ const Landing = () => {
                 </Typography>
                 <br />
                 <Box fontSize='1.05em'>
-                  The online Community (for learning) where Students, Lecturers, Academics,
+                  The online Community where Students, Lecturers, Academics,
                   Universities converge!
                 </Box>
               </Box>
@@ -71,33 +74,6 @@ const Landing = () => {
               ))}
             </Container>
           </Box>
-          <Box className='text-section-row avatars-box'>
-            <Container className='text-section-container avatars-box-header-container'>
-              <Box>
-                <Typography
-                  className='avatars-box-header'
-                  component='h3'
-                  variant='h4'>
-                  Erectus
-                </Typography>
-              </Box>
-            </Container>
-            <Container className='text-section-container'>
-              <Box className='text-section-box'>
-                <Box className='avatar-medium'></Box>
-                <Box className='avatar-small'></Box>
-              </Box>
-              <Box className='text-section-box'>
-                <Box className='avatar-small'></Box>
-                <Box className='avatar-medium'></Box>
-              </Box>
-            </Container>
-          </Box>
-          <Box className='text-section-row'>
-            <Container className='text-section-container'>
-              <Box className='text-section-box'></Box>
-            </Container>
-          </Box>
         </Box>
       </Box>
     </Box>
@@ -105,14 +81,14 @@ const Landing = () => {
 };
 
 function CardComponent(props: any) {
-  const { icon: Icon, heading, text } = props.item;
+  const { heading, text, img } = props.item;
   const { className } = props;
 
   return (
     <Card className={className ?? ''}>
       <CardContent>
         <Box className='icon-box'>
-          <Icon className='icon-large' />
+          <img className='card-image' src={`/images/${img}`} alt={heading} />
         </Box>
         <Box className='card-header-box'>
           <Typography component='h3' variant='h4'>
@@ -120,9 +96,7 @@ function CardComponent(props: any) {
           </Typography>
           <hr />
         </Box>
-        <Box>
-          {text}
-        </Box>
+        <Box>{text}</Box>
       </CardContent>
     </Card>
   );

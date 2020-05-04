@@ -20,7 +20,7 @@ const Main = (props: any) => {
     <Grid className='main-root-grid fade-in'>
       <Nav for='main' />
 
-      <Box padding='1rem'>
+      <Box paddingY='1rem'>
         <br />
         <br />
         <br />
