@@ -9,7 +9,6 @@ body,
   font-size: 1rem;
   color: $theme-color-tertiary-v2;
   line-height: 1.5rem;
-  
 }
 
 html {
@@ -130,48 +129,54 @@ a {
   }
 
   &[class*='Primary'] {
-    background-color: #ccc !important;
-    border-radius: 1.75rem;
-    height: 3.2rem;
-    overflow: hidden;
-    z-index: 0;
-    position: relative;
+    border-radius: 0.25rem;
+    background-color: $theme-color-secondary !important;
+    color: white;
 
-    &::before,
-    &::after {
-      position: absolute;
-      content: ' ';
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      z-index: -1;
-      transition: 0.45s;
-    }
+    &.major-button {
+      overflow: hidden;
+      z-index: 0;
+      position: relative;
+      background-color: #ccc !important;
+      border-radius: 1.75rem;
+      height: 3.2rem;
 
-    &::before {
-      background-image: linear-gradient(
-        to left,
-        $theme-color-secondary,
-        $theme-color-primary-v4
-      );
-    }
-
-    &::after {
-      transform: translateX(-100%);
-      background-image: linear-gradient(
-        to right,
-        $theme-color-secondary,
-        $theme-color-primary-v4
-      );
-    }
-
-    &:hover {
-      &::before {
-        transform: translateX(100%);
-      }
+      &::before,
       &::after {
-        transform: translateX(0);
+        position: absolute;
+        content: ' ';
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: -1;
+        transition: 0.75s;
+      }
+
+      &::before {
+        background-image: linear-gradient(
+          to left,
+          $theme-color-secondary,
+          $theme-color-primary
+        );
+      }
+
+      &::after {
+        transform: translateX(-100%);
+        background-image: linear-gradient(
+          to right,
+          $theme-color-secondary,
+          $theme-color-primary
+        );
+      }
+
+      &:hover {
+        &::before {
+          transform: translateX(100%);
+        }
+        &::after {
+          transform: translateX(0);
+        }
       }
     }
 
@@ -196,6 +201,11 @@ a {
       $theme-color-secondary
     );
   }
+}
+
+.MuiPickersToolbar-toolbar,
+.MuiPickersDay-daySelected {
+  background-color: $theme-color-secondary !important;
 }
 
 .MuiCheckbox-colorPrimary.Mui-checked {
@@ -315,9 +325,9 @@ div {
       image: linear-gradient(
         to right,
         $theme-color-secondary,
-        $theme-color-primary-v4
+        $theme-color-primary
       );
-      position: 100% center;
+      position: 90% center;
       size: 200%;
     }
   }

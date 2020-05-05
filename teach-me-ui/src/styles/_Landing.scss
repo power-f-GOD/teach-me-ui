@@ -34,7 +34,7 @@
     left: -40vw;
     background: {
       image: url('/images/educational.png'),
-        linear-gradient(125deg, $theme-color-primary-v2, $theme-color-primary);
+        linear-gradient(135deg, $theme-color-primary-v2, $theme-color-primary);
       repeat: no-repeat;
       position: 97vw 90%, center;
       size: 28rem, 100vw;
@@ -60,78 +60,76 @@
       size: 100vw;
     }
   }
+}
 
-  .landing-splash-container {
-    .landing-splash-links-box {
-      display: flex;
-      flex-wrap: wrap;
-      max-width: 20rem;
+.landing-splash-links-box {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 20rem;
 
-      a {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        text-decoration: none;
-        text-shadow: none;
-        padding: 0.65em 1.85em;
-        border-radius: 1.75em;
-        height: unset;
-        min-width: 12rem;
-        max-width: 16rem;
-        margin: 1em 1.5em 0 0;
-        color: white;
-        border: 1.5px solid #ddd;
-        transition: 0.35s;
+  a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    text-shadow: none;
+    padding: 0.65em 1.85em;
+    border-radius: 1.75em;
+    height: unset;
+    min-width: 12rem;
+    max-width: 16rem;
+    margin: 1em 1.5em 0 0;
+    color: white;
+    border: 1.5px solid #ddd;
+    transition: 0.35s;
 
-        &:first-child {
-          width: 100%;
-        }
+    &:first-child {
+      width: 100%;
+    }
 
-        &:last-child {
-          color: #ddd;
-          border-color: #ddd;
-          background-color: inherit;
-        }
+    &:last-child {
+      color: #ddd;
+      border-color: #ddd;
+      background-color: inherit;
+    }
 
-        &:hover {
-          color: white;
-          padding-left: 2.5rem;
-          padding-right: 2.5rem;
-          background-color: $theme-color-secondary-v5;
-        }
-      }
+    &:hover {
+      color: white;
+      padding-left: 2.5rem;
+      padding-right: 2.5rem;
+      background-color: $theme-color-secondary-v5;
     }
   }
 }
 
 .landing-text-section {
   padding: 0;
+}
 
-  .card-section-row {
-    display: flex;
-    justify-content: center;
-    padding: 0 !important;
+.card-section-row {
+  display: flex;
+  justify-content: center;
+  padding: 0 !important;
+}
 
-    .card-section-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      text-align: center;
-      font-size: 1em;
-      margin: 1.5em 0 5em 0;
-      line-height: 2em;
+.card-section-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  text-align: center;
+  font-size: 1em;
+  margin: 1.5em 0 5em 0;
+  line-height: 2em;
 
-      .MuiCard-root {
-        flex-grow: 1;
-        width: 27.5%;
-        margin: 1.25em;
-        min-width: 16em;
-
-        .card-image {
-          width: 12rem;
-          border-radius: 50%;
-        }
-      }
-    }
+  .MuiCard-root {
+    flex-grow: 1;
+    width: 27.5%;
+    margin: 1.25em;
+    min-width: 16em;
   }
+}
+
+.card-image {
+  width: 12rem;
+  border-radius: 50%;
 }

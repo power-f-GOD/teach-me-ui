@@ -56,7 +56,7 @@ const Signin = (props: SigninPropsState) => {
             required
             label='Username or Email'
             type='email'
-            autoComplete='email'
+            autoComplete='username'
             inputRef={refs.idInput}
             helperText={props.signinId.helperText}
             fullWidth
@@ -72,7 +72,7 @@ const Signin = (props: SigninPropsState) => {
             required
             label='Password'
             type={passwordVisible ? 'text' : 'password'}
-            autoComplete='new-password'
+            autoComplete='current-password'
             inputRef={refs.passwordInput}
             helperText={props.signinPassword.helperText}
             fullWidth
@@ -118,6 +118,7 @@ const Signin = (props: SigninPropsState) => {
             variant='contained'
             size='large'
             id='signin-btn'
+            className='major-button'
             color='primary'
             type='submit'
             fullWidth

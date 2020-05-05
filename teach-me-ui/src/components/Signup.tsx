@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
+
+// import 'date-fns';
+// import DateFnsUtils from '@date-io/date-fns';
+import MomentUtils from '@date-io/moment';
 
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
@@ -12,6 +16,10 @@ import Button from '@material-ui/core/Button';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker
+} from '@material-ui/pickers';
 
 import { SignupPropsState } from '../constants/interfaces';
 import {
@@ -24,7 +32,11 @@ export const refs: any = {
   lastnameInput: React.createRef<HTMLInputElement>(),
   usernameInput: React.createRef<HTMLInputElement>(),
   emailInput: React.createRef<HTMLInputElement>(),
-  passwordInput: React.createRef<HTMLInputElement>()
+  dobInput: React.createRef<HTMLInputElement>(),
+  passwordInput: React.createRef<HTMLInputElement>(),
+  universityInput: React.createRef<HTMLInputElement>(),
+  departmentInput: React.createRef<HTMLInputElement>(),
+  levelInput: React.createRef<HTMLInputElement>()
 };
 
 const Signup = (props: SignupPropsState) => {
@@ -99,6 +111,7 @@ const Signup = (props: SignupPropsState) => {
                   id='username'
                   label='Username'
                   size='medium'
+                  autoComplete='nickname'
                   inputRef={refs.usernameInput}
                   helperText={props.username.helperText}
                   fullWidth
@@ -116,7 +129,7 @@ const Signup = (props: SignupPropsState) => {
                   label='Email'
                   size='medium'
                   type='email'
-                  autoComplete='email'
+                  autoComplete='username'
                   inputRef={refs.emailInput}
                   helperText={props.email.helperText}
                   fullWidth
@@ -128,6 +141,11 @@ const Signup = (props: SignupPropsState) => {
 
           <Grid justify='space-between' container>
             <Grid item xs={12} sm={6} className='flex-basis-halved'>
+              <Box component='div' marginY='0.25em' minWidth='100%'>
+                <DatePicker dob={props.dob} />
+              </Box>
+            </Grid>
+            <Grid item xs={12} sm={5} className='flex-basis-halved'>
               <Box component='div' marginY='0.25em' minWidth='100%'>
                 <TextField
                   required
@@ -156,6 +174,72 @@ const Signup = (props: SignupPropsState) => {
                 />
               </Box>
             </Grid>
+          </Grid>
+
+          <Typography component='h2' variant='h6'>
+            <Box marginY='0.5em' fontSize='1.25rem' fontWeight={900}>
+              Academic info:
+            </Box>
+          </Typography>
+
+          <Grid justify='space-between' container>
+            <Grid item xs={12} sm={6} className='flex-basis-halved'>
+              <Box component='div' marginY='0.25em' minWidth='100%'>
+                <TextField
+                  required
+                  error={props.university.err}
+                  variant='outlined'
+                  id='university'
+                  label='University'
+                  size='medium'
+                  // type='text'
+                  autoComplete='university'
+                  inputRef={refs.universityInput}
+                  helperText={props.university.helperText}
+                  fullWidth
+                  onChange={handleSignupInputChange}
+                />
+              </Box>
+            </Grid>
+            <Grid item xs={12} sm={5} className='flex-basis-halved'>
+              <Box component='div' marginY='0.25em' minWidth='100%'>
+                <TextField
+                  required
+                  error={props.department.err}
+                  variant='outlined'
+                  id='department'
+                  label='Department'
+                  size='medium'
+                  // type='email'
+                  autoComplete='department'
+                  inputRef={refs.departmentInput}
+                  helperText={props.department.helperText}
+                  fullWidth
+                  onChange={handleSignupInputChange}
+                />
+              </Box>
+            </Grid>
+          </Grid>
+
+          <Grid justify='space-between' container>
+            <Grid item xs={12} sm={6} className='flex-basis-halved'>
+              <Box component='div' marginY='0.25em' minWidth='100%'>
+                <TextField
+                  required
+                  error={props.level.err}
+                  variant='outlined'
+                  id='level'
+                  label='Level (E.g. 100)'
+                  size='medium'
+                  type='number'
+                  autoComplete='level'
+                  inputRef={refs.levelInput}
+                  helperText={props.level.helperText}
+                  fullWidth
+                  onChange={handleSignupInputChange}
+                />
+              </Box>
+            </Grid>
             <Grid item xs={12} sm={5} className='flex-basis-halved'>
               <Box component='div' marginY='0.25em' minWidth='100%'>
                 <Button
@@ -163,6 +247,7 @@ const Signup = (props: SignupPropsState) => {
                   size='large'
                   disabled={props.signup.status === 'pending'}
                   id='sign-up'
+                  className='major-button'
                   type='submit'
                   color='primary'
                   fullWidth
@@ -187,13 +272,65 @@ const Signup = (props: SignupPropsState) => {
   );
 };
 
+function DatePicker({ dob }: any) {
+  const [selectedDate, setSelectedDate] = React.useState<any>(
+    null
+  );
+
+  const handleDateChange = (date: any, value: any) => {
+    //this is a hack as there is no working way of getting the target input element in the onChange eventListener in KeyboardDatePicker below
+    const event = {
+      target: {
+        id: 'dob',
+        value
+      }
+    } as ChangeEvent<any>;
+
+    setSelectedDate(date);
+    handleSignupInputChange(event);
+  };
+
+  return (
+    <MuiPickersUtilsProvider utils={MomentUtils}>
+      <KeyboardDatePicker
+        // margin='normal'
+        variant={'dialog'}
+        id='dob'
+        label='Date of Birth (DD/MM/YYYY)'
+        format='DD/MM/yyyy'
+        size='medium'
+        autoOk
+        disableFuture
+        inputVariant='outlined'
+        // inputProps={{
+        //   id: 'dob',
+        //   onChange:
+        // }}
+        value={selectedDate}
+        error={dob.err}
+        inputRef={refs.dobInput}
+        helperText={dob.helperText}
+        fullWidth
+        onChange={handleDateChange}
+        KeyboardButtonProps={{
+          'aria-label': 'change date'
+        }}
+      />
+    </MuiPickersUtilsProvider>
+  );
+}
+
 const mapStateToProps = (state: any) => {
   return {
     firstname: state.firstname,
     lastname: state.lastname,
     username: state.username,
     email: state.email,
+    dob: state.dob,
     password: state.password,
+    university: state.university,
+    department: state.department,
+    level: state.level,
     signup: state.signup,
     auth: state.auth
   };

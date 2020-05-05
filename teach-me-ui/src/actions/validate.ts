@@ -7,7 +7,11 @@ import {
   ReduxAction,
   InputPropsState,
   SIGNIN_ID_VALIDATE,
-  SIGNIN_PASSWORD_VALIDATE
+  SIGNIN_PASSWORD_VALIDATE,
+  DOB_VALIDATE,
+  UNIVERSITY_VALIDATE,
+  DEPARTMENT_VALIDATE,
+  LEVEL_VALIDATE
 } from '../constants';
 
 export const validateFirstname = (payload: InputPropsState): ReduxAction => {
@@ -38,9 +42,40 @@ export const validateEmail = (payload: InputPropsState): ReduxAction => {
   };
 };
 
+export const validateDob = (payload: InputPropsState): ReduxAction => {
+  return {
+    type: DOB_VALIDATE,
+    payload: {
+      ...payload,
+      currentYear: new Date().getFullYear()
+    }
+  };
+};
+
 export const validatePassword = (payload: InputPropsState): ReduxAction => {
   return {
     type: PASSWORD_VALIDATE,
+    payload
+  };
+};
+
+export const validateUniversity = (payload: InputPropsState): ReduxAction => {
+  return {
+    type: UNIVERSITY_VALIDATE,
+    payload
+  };
+};
+
+export const validateDepartment = (payload: InputPropsState): ReduxAction => {
+  return {
+    type: DEPARTMENT_VALIDATE,
+    payload
+  };
+};
+
+export const validateLevel = (payload: InputPropsState): ReduxAction => {
+  return {
+    type: LEVEL_VALIDATE,
     payload
   };
 };
@@ -49,12 +84,14 @@ export const validateSigninId = (payload: InputPropsState): ReduxAction => {
   return {
     type: SIGNIN_ID_VALIDATE,
     payload
-  }
-}
+  };
+};
 
-export const validateSigninPassword = (payload: InputPropsState): ReduxAction => {
+export const validateSigninPassword = (
+  payload: InputPropsState
+): ReduxAction => {
   return {
     type: SIGNIN_PASSWORD_VALIDATE,
     payload
-  }
-}
+  };
+};
