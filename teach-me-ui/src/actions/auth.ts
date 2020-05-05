@@ -33,7 +33,7 @@ export const requestSignup = (data: SignupFormData) => (
 ): ReduxAction => {
   dispatch(signup({ status: 'pending', statusText: ' ' }));
 
-  let { firstname, lastname, username, email, password } = data;
+  let { firstname, lastname, username, email, dob, password, university, department, level } = data;
 
   firstname = `${firstname[0].toUpperCase()}${firstname
     .slice(1)
@@ -53,7 +53,11 @@ export const requestSignup = (data: SignupFormData) => (
       lastname,
       username,
       email,
-      password
+      date_of_birth: dob,
+      password,
+      university,
+      department,
+      level
     },
     headers: {
       'Content-Type': 'application/json'
@@ -71,6 +75,10 @@ export const requestSignup = (data: SignupFormData) => (
           lastname,
           username,
           email,
+          dob,
+          university,
+          department,
+          level,
           displayName
         }).then(() => {
           dispatch(signup({ status: 'fulfilled' }));
@@ -173,7 +181,7 @@ export const requestSignin = (data: SigninFormData) => (
   })
     .then((response) => {
       const { data: _data } = response;
-      const { firstname, lastname, username, email, error, message } = _data;
+      const { firstname, lastname, username, email, date_of_birth: dob, university, department, level, error, message } = _data;
 
       if (!error) {
         const displayName = `${firstname} ${lastname}`;
@@ -183,6 +191,10 @@ export const requestSignin = (data: SigninFormData) => (
           lastname,
           username,
           email,
+          dob,
+          university,
+          department,
+          level,
           displayName
         }).then(() => {
           dispatch(signup({ status: 'fulfilled' }));

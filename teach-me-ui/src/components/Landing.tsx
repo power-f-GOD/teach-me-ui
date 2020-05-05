@@ -57,7 +57,7 @@ const Landing = () => {
               </Box>
               <br />
               <Box className='landing-splash-links-box'>
-                <Link to='/signup' className='Primary'>
+                <Link to='/signup' className='Primary major-button'>
                   JOIN NOW <ArrowForward fontSize='inherit' />
                 </Link>
                 <Link to='/about'>LEARN MORE</Link>

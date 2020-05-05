@@ -6,7 +6,9 @@ import { refs as signupRefs } from '../components/Signup';
 import { requestSignup } from '../actions';
 import { SignupFormData } from '../constants';
 
-export function handleSignupInputChange({ target }: ChangeEvent<HTMLInputElement>) {
+export function handleSignupInputChange({
+  target
+}: ChangeEvent<HTMLInputElement>) {
   const { id, value } = target;
 
   switch (id) {
@@ -18,8 +20,16 @@ export function handleSignupInputChange({ target }: ChangeEvent<HTMLInputElement
       return dispatch(actions.validateUsername({ value }));
     case 'email':
       return dispatch(actions.validateEmail({ value }));
+    case 'dob':
+      return dispatch(actions.validateDob({ value }));
     case 'password':
       return dispatch(actions.validatePassword({ value }));
+    case 'university':
+      return dispatch(actions.validateUniversity({ value }));
+    case 'department':
+      return dispatch(actions.validateDepartment({ value }));
+    case 'level':
+      return dispatch(actions.validateLevel({ value }));
   }
 }
 
@@ -34,14 +44,28 @@ export function handleSignupRequest() {
     handleSignupInputChange(event);
   }
 
-  let { firstname, lastname, username, email, password }: any = getState();
+  let {
+    firstname,
+    lastname,
+    username,
+    email,
+    dob,
+    password,
+    university,
+    department,
+    level
+  }: any = getState();
 
   if (
     firstname.err ||
     lastname.err ||
     username.err ||
     email.err ||
-    password.err
+    dob.err ||
+    password.err ||
+    university.err ||
+    department.err ||
+    level.err
   ) {
     signupFormValidated = false;
   }
@@ -51,7 +75,11 @@ export function handleSignupRequest() {
     lastname: lastname.value,
     username: username.value,
     email: email.value,
-    password: password.value
+    dob: dob.value,
+    password: password.value,
+    university: university.value,
+    department: department.value,
+    level: level.value
   };
 
   if (signupFormValidated) {

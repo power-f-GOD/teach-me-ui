@@ -9,7 +9,7 @@
     }
 
     .app-bar-links {
-      display: none !important;
+      display: none;
     }
   }
 }
@@ -20,7 +20,7 @@
   }
 
   .app-bar-links {
-    display: none !important;
+    display: none;
   }
 }
 
@@ -112,15 +112,15 @@
 
         &::before {
           position: fixed;
-          top: -15%;
+          top: -8.25rem;
           z-index: -1;
-          width: 20rem;
-          height: 120%;
-          left: 22%;
+          width: 19rem;
+          height: 55rem;
+          left: 24%;
           bottom: 0;
           right: 0;
           content: ' ';
-          transform: rotateZ(40deg);
+          transform: rotateZ(41deg);
           opacity: 0.9;
           background: {
             color: white;
@@ -131,7 +131,7 @@
           }
         }
         .form-section {
-          padding: 4em 1em;
+          padding: 2em 1em;
           height: auto;
           box-shadow: none;
           border: none;

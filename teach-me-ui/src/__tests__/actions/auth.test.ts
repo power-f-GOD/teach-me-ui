@@ -35,7 +35,11 @@ it("creates signup request action and should be called with 'signup data' and re
     lastname: 'Doe',
     username: 'johndoe',
     email: 'johndoe@gmail.com',
-    password: '********'
+    dob: '12/12/1995',
+    password: '********',
+    university: 'State University',
+    department: 'Department',
+    level: '100'
   };
   const requestSignupAction: ReduxAction = {
     type: SIGNUP_REQUEST

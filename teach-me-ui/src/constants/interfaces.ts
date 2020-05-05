@@ -33,7 +33,11 @@ export interface SignupPropsState {
   lastname: InputPropsState;
   username: InputPropsState;
   email: InputPropsState;
+  dob: InputPropsState;
   password: InputPropsState;
+  university: InputPropsState;
+  department: InputPropsState;
+  level: InputPropsState;
   [key: string]: any;
 }
 
@@ -42,7 +46,11 @@ export interface SignupFormData {
   lastname: string;
   username: string;
   email: string;
+  dob: string;
   password?: string;
+  university: string;
+  department: string;
+  level: string;
 }
 
 export interface SigninPropsState {
