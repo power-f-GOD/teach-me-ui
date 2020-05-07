@@ -28,12 +28,21 @@ export interface StatusPropsState {
   statusText?: string;
 }
 
+export interface MatchingInstitutionsState extends StatusPropsState {
+  data?: any[]
+}
+
 export interface SignupPropsState {
   firstname: InputPropsState;
   lastname: InputPropsState;
   username: InputPropsState;
   email: InputPropsState;
+  dob: InputPropsState;
   password: InputPropsState;
+  university: InputPropsState;
+  department: InputPropsState;
+  level: InputPropsState;
+  matchingInstitutions?: MatchingInstitutionsState
   [key: string]: any;
 }
 
@@ -42,7 +51,11 @@ export interface SignupFormData {
   lastname: string;
   username: string;
   email: string;
+  dob: string;
   password?: string;
+  university: string;
+  department: string;
+  level: string;
 }
 
 export interface SigninPropsState {
@@ -66,3 +79,5 @@ export interface SnackbarState {
 export interface UserData extends SignupFormData {
   displayName: string;
 }
+
+
