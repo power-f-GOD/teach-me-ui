@@ -28,6 +28,10 @@ export interface StatusPropsState {
   statusText?: string;
 }
 
+export interface MatchingInstitutionsState extends StatusPropsState {
+  data?: any[]
+}
+
 export interface SignupPropsState {
   firstname: InputPropsState;
   lastname: InputPropsState;
@@ -38,6 +42,7 @@ export interface SignupPropsState {
   university: InputPropsState;
   department: InputPropsState;
   level: InputPropsState;
+  matchingInstitutions?: MatchingInstitutionsState
   [key: string]: any;
 }
 
@@ -74,3 +79,5 @@ export interface SnackbarState {
 export interface UserData extends SignupFormData {
   displayName: string;
 }
+
+

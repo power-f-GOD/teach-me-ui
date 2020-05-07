@@ -23,18 +23,21 @@ html {
 }
 
 body {
-  &.desktop.custom-scroll-bar,
-  &.desktop .custom-scroll-bar {
-    &::-webkit-scrollbar {
-      width: 0.75em;
-    }
+  &.desktop {
+    &.custom-scroll-bar,
+    .custom-scroll-bar,
+    .MuiDialogContent-root {
+      &::-webkit-scrollbar {
+        width: 0.75em;
+      }
 
-    &::-webkit-scrollbar-track {
-      background: $theme-color-tertiary-v9;
-    }
+      &::-webkit-scrollbar-track {
+        background: $theme-color-tertiary-v9;
+      }
 
-    &::-webkit-scrollbar-thumb {
-      background: $theme-color-primary-v4;
+      &::-webkit-scrollbar-thumb {
+        background: $theme-color-secondary-v6 !important;
+      }
     }
   }
 }
@@ -203,6 +206,17 @@ a {
   }
 }
 
+.MuiLinearProgress-colorPrimary {
+  background-color: $theme-color-secondary-v8;
+}
+.MuiLinearProgress-barColorPrimary {
+  background-color: $theme-color-secondary-v4;
+}
+
+.MuiTypography-colorPrimary {
+  color: $theme-color-secondary;
+}
+
 .MuiPickersToolbar-toolbar,
 .MuiPickersDay-daySelected {
   background-color: $theme-color-secondary !important;
@@ -364,9 +378,21 @@ div {
 .theme-color-secondary {
   color: $theme-color-secondary;
 }
+.theme-color-secondary-darker {
+  color: $theme-color-secondary-v7;
+}
+.theme-color-secondary-lighter {
+  color: $theme-color-secondary-v7;
+}
 
 .theme-color-tertiary {
   color: $theme-color-tertiary;
+}
+.theme-color-tertiary-darker {
+  color: $theme-color-tertiary-v3;
+}
+.theme-color-tertiary-lighter {
+  color: $theme-color-tertiary-v7;
 }
 
 .theme-bgcolor-primary {

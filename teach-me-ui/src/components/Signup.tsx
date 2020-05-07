@@ -2,8 +2,6 @@ import React, { useState, ChangeEvent } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-// import 'date-fns';
-// import DateFnsUtils from '@date-io/date-fns';
 import MomentUtils from '@date-io/moment';
 
 import Typography from '@material-ui/core/Typography';
@@ -20,12 +18,17 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker
 } from '@material-ui/pickers';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 import { SignupPropsState } from '../constants/interfaces';
 import {
   handleSignupInputChange,
   handleSignupRequest
 } from '../functions/signup';
+import { dispatch } from '../functions';
+import { validateUniversity, getMatchingInstitutions } from '../actions';
 
 export const refs: any = {
   firstnameInput: React.createRef<HTMLInputElement>(),
@@ -41,7 +44,7 @@ export const refs: any = {
 
 const Signup = (props: SignupPropsState) => {
   const [passwordVisible, setPasswordVisible] = useState(Boolean);
-
+  const [hideList, setHideList] = useState(Boolean);
   const { isAuthenticated } = props.auth;
 
   if (isAuthenticated) {
@@ -82,7 +85,6 @@ const Signup = (props: SignupPropsState) => {
               />
             </Box>
           </Grid>
-
           <Grid item xs={12} sm={5} className='flex-basis-halved'>
             <Box marginY='0.25em'>
               <TextField
@@ -184,7 +186,11 @@ const Signup = (props: SignupPropsState) => {
 
           <Grid justify='space-between' container>
             <Grid item xs={12} sm={6} className='flex-basis-halved'>
-              <Box component='div' marginY='0.25em' minWidth='100%'>
+              <Box
+                component='div'
+                marginY='0.25em'
+                minWidth='100%'
+                className='university-input-wrapper'>
                 <TextField
                   required
                   error={props.university.err}
@@ -192,13 +198,63 @@ const Signup = (props: SignupPropsState) => {
                   id='university'
                   label='University'
                   size='medium'
-                  // type='text'
+                  value={`${props.university.value ?? ''}`}
                   autoComplete='university'
                   inputRef={refs.universityInput}
                   helperText={props.university.helperText}
                   fullWidth
-                  onChange={handleSignupInputChange}
+                  onChange={(e: any) => {
+                    dispatch(getMatchingInstitutions(e.target.value)(dispatch));
+                    handleSignupInputChange(e);
+                    setHideList(!e.target.value);
+                  }}
                 />
+                <ClickAwayListener onClickAway={() => setHideList(true)}>
+                  <List
+                    id='institutions'
+                    className={`institutions-list custom-scroll-bar ${
+                      props.university.value &&
+                      !props.university.err &&
+                      !hideList
+                        ? 'open'
+                        : 'close'
+                    }`}
+                    aria-label='institutions list'>
+                    {props.matchingInstitutions?.data
+                      ?.slice(0, 15)
+                      .map((institution, key) => (
+                        <ListItem
+                          button
+                          divider
+                          key={key}
+                          onClick={() => {
+                            setHideList(true);
+                            dispatch(
+                              validateUniversity({
+                                value: institution.name,
+                                uid: institution.id
+                              })
+                            );
+                          }}>
+                          {(() => {
+                            const country = `<span class='theme-color-tertiary-lighter'>${institution.country}</span>`;
+                            const keyword = props.university.value;
+                            const highlighted = `${institution.name.replace(
+                              new RegExp(`(${keyword})`, 'i'),
+                              `<span class='theme-color-secondary-darker'>$1</span>`
+                            )}, ${country}`.replace(/<\/?script>/gi, '');
+
+                            return (
+                              <span
+                                dangerouslySetInnerHTML={{
+                                  __html: highlighted
+                                }}></span>
+                            );
+                          })()}
+                        </ListItem>
+                      ))}
+                  </List>
+                </ClickAwayListener>
               </Box>
             </Grid>
             <Grid item xs={12} sm={5} className='flex-basis-halved'>
@@ -210,7 +266,6 @@ const Signup = (props: SignupPropsState) => {
                   id='department'
                   label='Department'
                   size='medium'
-                  // type='email'
                   autoComplete='department'
                   inputRef={refs.departmentInput}
                   helperText={props.department.helperText}
@@ -240,7 +295,12 @@ const Signup = (props: SignupPropsState) => {
                 />
               </Box>
             </Grid>
-            <Grid item xs={12} sm={5} className='flex-basis-halved'>
+            <Grid
+              item
+              xs={12}
+              sm={5}
+              className='flex-basis-halved'
+              key='button'>
               <Box component='div' marginY='0.25em' minWidth='100%'>
                 <Button
                   variant='contained'
@@ -273,12 +333,12 @@ const Signup = (props: SignupPropsState) => {
 };
 
 function DatePicker({ dob }: any) {
-  const [selectedDate, setSelectedDate] = React.useState<any>(
-    null
-  );
+  const [selectedDate, setSelectedDate] = React.useState<any>(null);
 
   const handleDateChange = (date: any, value: any) => {
-    //this is a hack as there is no working way of getting the target input element in the onChange eventListener in KeyboardDatePicker below
+    setSelectedDate(date);
+
+    //the following is a hack as there is no working way of getting the target input element event object in the onChange eventListener in KeyboardDatePicker below
     const event = {
       target: {
         id: 'dob',
@@ -286,26 +346,21 @@ function DatePicker({ dob }: any) {
       }
     } as ChangeEvent<any>;
 
-    setSelectedDate(date);
     handleSignupInputChange(event);
   };
 
   return (
     <MuiPickersUtilsProvider utils={MomentUtils}>
       <KeyboardDatePicker
-        // margin='normal'
         variant={'dialog'}
         id='dob'
+        required
         label='Date of Birth (DD/MM/YYYY)'
         format='DD/MM/yyyy'
         size='medium'
         autoOk
         disableFuture
         inputVariant='outlined'
-        // inputProps={{
-        //   id: 'dob',
-        //   onChange:
-        // }}
         value={selectedDate}
         error={dob.err}
         inputRef={refs.dobInput}
@@ -331,6 +386,7 @@ const mapStateToProps = (state: any) => {
     university: state.university,
     department: state.department,
     level: state.level,
+    matchingInstitutions: state.matchingInstitutions,
     signup: state.signup,
     auth: state.auth
   };
