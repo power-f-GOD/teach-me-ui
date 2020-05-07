@@ -35,7 +35,7 @@
       repeat: no-repeat;
       position: left, right;
       attachment: fixed;
-      size: 25vw;
+      size: 23vw;
     }
   }
 }
@@ -53,11 +53,46 @@
   min-height: 100%;
   justify-self: center;
   height: 100%;
-  overflow-x: hidden;
   padding: 2em 2.4rem;
   border-radius: 0.5em;
   // border: 1px solid #ddd;
   box-shadow: 0 1em 5em rgba(0, 0, 0, 0.075), 0 0em 5em rgba(0, 0, 0, 0.075);
+}
+
+.university-input-wrapper {
+  width: 100%;
+  position: relative;
+  // overflow-y: hidden;
+}
+
+.institutions-list {
+  left: 0;
+  right: 0;
+  font-size: 0.85rem;
+  top: calc(100% - 1rem);
+  max-height: calc((1.5rem * 10) + 16px);
+  padding: 0;
+  overflow-x: hidden;
+  position: absolute;
+  width: 100%;
+  background-color: white;
+  z-index: 10;
+  border-radius: 0.35rem;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.2);
+
+  &.open {
+    display: initial;
+  }
+
+  &.close {
+    display: none;
+  }
+
+  &.custom-scroll-bar {
+    &::-webkit-scrollbar-thumb {
+      background: $theme-color-secondary-v4 !important;
+    }
+  }
 }
 
 .flex-basis-halved {

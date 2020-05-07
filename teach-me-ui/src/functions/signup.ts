@@ -9,7 +9,7 @@ import { SignupFormData } from '../constants';
 export function handleSignupInputChange({
   target
 }: ChangeEvent<HTMLInputElement>) {
-  const { id, value } = target;
+  let { id, value } = target;
 
   switch (id) {
     case 'firstname':
@@ -77,7 +77,7 @@ export function handleSignupRequest() {
     email: email.value,
     dob: dob.value,
     password: password.value,
-    university: university.value,
+    university: university.uid,
     department: department.value,
     level: level.value
   };

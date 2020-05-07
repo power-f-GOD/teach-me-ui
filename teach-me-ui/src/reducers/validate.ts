@@ -12,7 +12,10 @@ import {
   DOB_VALIDATE,
   UNIVERSITY_VALIDATE,
   LEVEL_VALIDATE,
-  DEPARTMENT_VALIDATE
+  DEPARTMENT_VALIDATE,
+  POPULATE_MATCHING_INSTITUTIONS,
+  MatchingInstitutionsState,
+  statusPropsState
 } from '../constants';
 
 export const firstname = (
@@ -192,7 +195,7 @@ export const password = (
 };
 
 export const university = (
-  state: InputPropsState = inputState,
+  state: InputPropsState | any = { ...inputState, uid: '' },
   action: ReduxAction
 ) => {
   if (action.type === UNIVERSITY_VALIDATE) {
@@ -202,13 +205,15 @@ export const university = (
     let helperText = err
       ? !value
         ? 'University required.'
-        : "That doesn't look valid."
+        : "University doesn't match our records."
       : ' ';
 
     err = 'err' in payload ? payload.err : err;
     helperText = 'helperText' in payload ? payload.helperText : helperText;
 
     return {
+      ...state,
+      ...payload,
       value,
       err,
       helperText
@@ -256,7 +261,7 @@ export const level = (
     let helperText = err
       ? !value
         ? 'Level of study required.'
-        : "You can't be in that level."
+        : 'Invalid university level.'
       : ' ';
 
     err = 'err' in payload ? payload.err : err;
@@ -311,6 +316,19 @@ export const signinPassword = (
       value,
       err,
       helperText
+    };
+  }
+  return state;
+};
+
+export const matchingInstitutions = (
+  state: MatchingInstitutionsState = { ...statusPropsState, data: [] },
+  action: ReduxAction
+) => {
+  if (action.type === POPULATE_MATCHING_INSTITUTIONS) {
+    return {
+      ...state,
+      ...action.payload
     };
   }
   return state;
