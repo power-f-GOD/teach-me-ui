@@ -11,7 +11,7 @@ const Loader = () => {
           <CircularProgress color='inherit' size='3rem' thickness={4} />
         </Box>
         <Box  fontSize='1.75rem' marginY='1em'>
-          <Box component='span' className='logo light-blue'>Kanyimuta!</Box>
+          <Box component='span' className='logo gradient'>Kanyimuta!</Box>
         </Box>
       </Box>
     </Box>
