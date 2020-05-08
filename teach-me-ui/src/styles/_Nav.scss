@@ -9,7 +9,7 @@
 
 .nav-background {
   background-color: rgba(0, 65, 108, 0.99) !important;
-  box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.45);
 }
 
 .search {
@@ -30,13 +30,17 @@
 }
 
 .search-input {
-  color: white !important;
+  color: #bbb;
   width: 8em;
   transition: 0.3s;
   margin-left: 0.5em;
 
   &:focus-within {
     width: 13em;
+
+    > input {
+      color: white;
+    }
   }
 }
 
@@ -122,6 +126,7 @@
     margin-right: 0;
     padding: 0.5em 1em;
     color: white !important;
+    background-color: unset;
 
     &::before {
       top: -70%;

@@ -146,7 +146,7 @@ export const getMatchingInstitutions = (keyword: string) => (
           }
         })
         .catch(logError(signup));
-    }, 450);
+    }, 400);
   } else {
     dispatch(matchingInstitutions({ status: 'settled', data: [] }));
   }

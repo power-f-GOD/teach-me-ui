@@ -38,7 +38,7 @@ pipelines:
     - step:
           name: Deploy to Heroku
           image: node:10.15.0
-          deployment: test
+          deployment: staging
           script:
             - tar --exclude='./node_modules' --exclude='./build' -czvf application-${BITBUCKET_BUILD_NUMBER}.tar.gz -C teach-me-ui .
             - pipe: atlassian/heroku-deploy:1.1.2

@@ -79,12 +79,26 @@
     min-width: 12rem;
     max-width: 16rem;
     margin: 1em 1.5em 0 0;
-    color: white;
-    border: 1.5px solid #ddd;
+    color: white !important;
+    border: 1.5px solid white !important;
     transition: 0.35s;
 
     &:first-child {
       width: 100%;
+      position: relative;
+
+      &.animate {
+        animation: ripple 1.5s infinite ease;
+      }
+
+      @keyframes ripple {
+        from {
+          box-shadow: 0 0 0 0 lime;
+        }
+        to {
+          box-shadow: 0 0 0 0.5em rgba(255, 255, 255, 0);
+        }
+      }
     }
 
     &:last-child {
