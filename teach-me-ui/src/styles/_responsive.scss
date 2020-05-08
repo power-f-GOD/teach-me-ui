@@ -100,18 +100,23 @@
       border-radius: 0;
       box-shadow: none;
 
+      &::before {
+        background: none;
+      }
+
       .auth-container {
         min-height: inherit;
         background-color: white;
         overflow-x: hidden;
         position: relative;
+        
         > * {
           position: relative;
           z-index: 1;
         }
 
         &::before {
-          position: fixed;
+          position: absolute;
           top: -8.25rem;
           z-index: -1;
           width: 19rem;
@@ -121,7 +126,7 @@
           right: 0;
           content: ' ';
           transform: rotateZ(41deg);
-          opacity: 0.9;
+          opacity: 0.75;
           background: {
             color: white;
             image: url('/images/auth-bg-left.png');
@@ -130,6 +135,7 @@
             size: contain;
           }
         }
+
         .form-section {
           padding: 2em 1em;
           height: auto;

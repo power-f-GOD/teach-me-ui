@@ -39,15 +39,15 @@ const Nav = (props: any) => {
               {forIndexPage ? (
                 <IndexNav {...props} className='app-bar-links' />
               ) : (
-                <MainNav {...props} className='app-bar-links' />
-              )}
+                  <MainNav {...props} className='app-bar-links' />
+                )}
 
               <TemporaryDrawer>
                 {forIndexPage ? (
                   <IndexNav {...props} />
                 ) : (
-                  <MainNav {...props} />
-                )}
+                    <MainNav {...props} />
+                  )}
               </TemporaryDrawer>
             </Toolbar>
           </Container>
@@ -83,7 +83,6 @@ function MainNav(props: any) {
         className='nav-link'
         size='medium'
         id='signout-btn'
-        color='secondary'
         fullWidth
         onClick={handleSignoutRequest}>
         Sign Out <ArrowForward fontSize='inherit' />
@@ -95,7 +94,7 @@ function MainNav(props: any) {
 function NavGeneralLinks() {
   return (
     <>
-      <NavLink exact to='/' className='nav-link'>
+      <NavLink exact to='/' isActive={(_, { pathname }) => ["/", "/home"].includes(pathname)} className='nav-link'>
         <HomeIcon className='nav-icon' />
         Home
       </NavLink>

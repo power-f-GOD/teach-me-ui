@@ -1,15 +1,16 @@
 import { cleanup } from '@testing-library/react';
 
-import {
-  ReduxAction,
-  InputPropsState
-} from '../../constants';
+import { ReduxAction, InputPropsState } from '../../constants';
 import {
   validateFirstname,
+  validateLastname,
   validateUsername,
   validateEmail,
+  validateDob,
   validatePassword,
-  validateLastname
+  validateUniversity,
+  validateDepartment,
+  validateLevel
 } from '../../actions';
 
 afterEach(cleanup);
@@ -33,7 +34,11 @@ it("creates validate (inputs) action and should be called with its 'state props'
     validateLastname(payload);
     validateUsername(payload);
     validateEmail(payload);
+    validateDob(payload);
     validatePassword(payload);
+    validateUniversity(payload);
+    validateDepartment(payload);
+    validateLevel(payload);
   });
 
   validateMockFunc(mockInputState);
@@ -42,5 +47,9 @@ it("creates validate (inputs) action and should be called with its 'state props'
   expect(validateLastname(mockInputState)).toMatchObject(validateAction);
   expect(validateUsername(mockInputState)).toMatchObject(validateAction);
   expect(validateEmail(mockInputState)).toMatchObject(validateAction);
+  expect(validateDob(mockInputState)).toMatchObject(validateAction);
   expect(validatePassword(mockInputState)).toMatchObject(validateAction);
+  expect(validateUniversity(mockInputState)).toMatchObject(validateAction);
+  expect(validateDepartment(mockInputState)).toMatchObject(validateAction);
+  expect(validateLevel(mockInputState)).toMatchObject(validateAction);
 });

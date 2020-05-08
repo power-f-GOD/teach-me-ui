@@ -11,9 +11,9 @@ body,
   line-height: 1.5rem;
 }
 
-html {
+body {
   position: relative;
-  overflow-x: hidden;
+  overflow: auto !important;
 }
 
 * {

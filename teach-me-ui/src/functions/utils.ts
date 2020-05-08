@@ -9,7 +9,11 @@ import {
   validateUsername,
   validateLastname,
   validateFirstname,
-  displaySnackbar
+  displaySnackbar,
+  validateUniversity,
+  validateDepartment,
+  validateLevel,
+  validateDob
 } from '../actions';
 
 export const { dispatch, getState } = store;
@@ -96,12 +100,22 @@ export function callNetworkStatusChecker(networkAction: 'signup' | 'signin') {
           })
         );
       }
-    }, 8000);
+    }, 10000);
   }
 }
 
 export async function populateStateWithUserData(data: UserData) {
-  const { firstname, lastname, username, email, displayName } = data;
+  const {
+    firstname,
+    lastname,
+    username,
+    email,
+    dob,
+    university,
+    department,
+    level,
+    displayName
+  } = data;
 
   //using same action creators for validation to set state values as it was used
   await promisedDispatch(setDisplayName(displayName));
@@ -109,6 +123,10 @@ export async function populateStateWithUserData(data: UserData) {
   dispatch(validateLastname({ value: lastname }));
   dispatch(validateUsername({ value: username }));
   dispatch(validateEmail({ value: email }));
+  dispatch(validateDob({ value: dob }));
+  dispatch(validateUniversity({ value: university }));
+  dispatch(validateDepartment({ value: department }));
+  dispatch(validateLevel({ value: level }));
   dispatch(
     signin({
       status: 'fulfilled',

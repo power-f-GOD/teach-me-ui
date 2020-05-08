@@ -44,6 +44,8 @@ export const requestSignup = (data: SignupFormData) => (
     department,
     level
   } = data;
+  const [day, month, year] = dob.split('/');
+  const date_of_birth = `${year}-${month}-${day}`;
 
   firstname = `${firstname[0].toUpperCase()}${firstname
     .slice(1)
@@ -63,7 +65,7 @@ export const requestSignup = (data: SignupFormData) => (
       lastname,
       username,
       email,
-      date_of_birth: dob,
+      date_of_birth,
       password,
       university,
       department,
