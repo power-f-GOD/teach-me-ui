@@ -29,7 +29,7 @@ export const firstname = (
     let helperText = err
       ? !value
         ? 'Firstname required.'
-        : "That can't be your firstname."
+        : "Doesn't look like a firstname."
       : ' ';
 
     err = 'err' in payload ? payload.err : err;
@@ -55,7 +55,7 @@ export const lastname = (
     let helperText = err
       ? !value
         ? 'Lastname required.'
-        : 'Your lastname? Hm.'
+        : 'Your lastname?'
       : ' ';
 
     err = 'err' in payload ? payload.err : err;
@@ -107,7 +107,7 @@ export const email = (
     let helperText = err
       ? !value
         ? 'Email required.'
-        : "Hm. That doesn't seem like a valid email."
+        : "Ok. That doesn't seem like a valid email yet."
       : ' ';
 
     err = 'err' in payload ? payload.err : err;
@@ -146,7 +146,7 @@ export const dob = (
       err = true;
       helperText =
         +year > currentYear - 12
-          ? "That can't be your D.O.B. Underaged?"
+          ? "Hmm. Not so fast. Underaged?"
           : 'Invalid D.O.B pattern or input.';
     }
 

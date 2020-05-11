@@ -33,7 +33,7 @@ const Nav = (props: any) => {
           <Container>
             <Toolbar className='nav-toolbar'>
               <Link to='/'>
-                <Box className='logo gradient'>Kanyimuta!</Box>
+                <Box component='h3' className='logo gradient'>Kanyimuta!</Box>
               </Link>
 
               {forIndexPage ? (

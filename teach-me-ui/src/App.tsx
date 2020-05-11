@@ -7,6 +7,18 @@ import ProtectedRoute from './ProtectedRoute';
 import { dispatch } from './functions';
 import { verifyAuth, displaySnackbar } from './actions';
 
+export const Memoize = React.memo((props: any) => {
+  const Component = props.memoizedComponent;
+  let _props = { ...props };
+
+  if (!Component) {
+    throw Error('You\'re probably missing the \'memoizedComponent\' prop for Memoize.');
+  }
+
+  delete _props.memoizedComponent;
+  return <Component {..._props} />;
+})
+
 const App = (props: any) => {
   const { status: authStatus, isAuthenticated } = props.auth;
   const { signin, signup, snackbar } = props;

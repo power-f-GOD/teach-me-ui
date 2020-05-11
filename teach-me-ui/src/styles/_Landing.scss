@@ -86,17 +86,20 @@
     &:first-child {
       width: 100%;
       position: relative;
+      border: none !important;
 
       &.animate {
-        animation: ripple 1.5s infinite ease;
+        animation: ripple 2.25s infinite ease-out;
       }
 
       @keyframes ripple {
         from {
-          box-shadow: 0 0 0 0 lime;
+          box-shadow: 0 0 0 0.025em white, 0 0 0 0.025em white,
+            0 0 0.25em rgba(0, 0, 0, 0.25);
         }
         to {
-          box-shadow: 0 0 0 0.5em rgba(255, 255, 255, 0);
+          box-shadow: 0 0 0 0.25em rgba(0, 0, 0, 0),
+            0 0 0 0.5em rgba(0, 0, 0, 0), 0 0 0.25em rgba(0, 0, 0, 0.25);
         }
       }
     }

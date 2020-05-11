@@ -9,6 +9,8 @@ import App from './App';
 import store from './appStore';
 import './styles/index.min.css';
 
+
+
 export const userDeviceIsMobile = /(Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows Phone)/i.test(
   window.navigator.userAgent
 );
