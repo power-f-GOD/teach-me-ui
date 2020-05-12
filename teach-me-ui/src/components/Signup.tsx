@@ -1,6 +1,6 @@
 /* eslint import/no-webpack-loader-syntax: off */
 
-import React, { useState, useCallback, createRef, ChangeEvent } from 'react';
+import React, { useState, useCallback, useMemo, createRef, ChangeEvent } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -26,7 +26,6 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 // import Worker from 'worker-loader!./worker.ts';
 
-import { createMemo } from '../index';
 import { SignupPropsState } from '../constants/interfaces';
 import {
   handleSignupInputChange,
@@ -34,8 +33,6 @@ import {
 } from '../functions/signup';
 import { dispatch } from '../functions';
 import { validateUniversity, getMatchingInstitutions } from '../actions';
-
-
 
 export const refs: any = {
   firstnameInput: createRef<HTMLInputElement>(),
@@ -49,18 +46,33 @@ export const refs: any = {
   levelInput: createRef<HTMLInputElement>()
 };
 
+const Memoize = createMemo();
+
 const Signup = (props: SignupPropsState) => {
-  const Memoize = createMemo();
+  
   const [passwordVisible, setPasswordVisible] = useState(Boolean);
   const [hideList, setHideList] = useState(Boolean);
   const { isAuthenticated } = props.auth;
-
   const handleUniversityChange = useCallback((e: any) => {
     dispatch(getMatchingInstitutions(e.target.value)(dispatch));
     handleSignupInputChange(e);
     setHideList(!e.target.value);
   }, []);
-
+  const inputAdorned = useMemo(() => {
+    return {
+      endAdornment: (
+        <InputAdornment position='end'>
+          <IconButton
+            aria-label='toggle password visibility'
+            onClick={() => setPasswordVisible(!passwordVisible)}
+            >
+            {passwordVisible ? <VisibilityOff /> : <Visibility />}
+          </IconButton>
+        </InputAdornment>
+      )
+    }
+  }, [passwordVisible])
+    
   if (isAuthenticated) {
     return <Redirect to='/' />;
   }
@@ -88,6 +100,7 @@ const Signup = (props: SignupPropsState) => {
                 memoizedComponent={TextField}
                 error={props.firstname.err}
                 required
+                key='1'
                 variant='outlined'
                 id='firstname'
                 label='First name'
@@ -168,7 +181,8 @@ const Signup = (props: SignupPropsState) => {
           </Grid>
           <Grid item xs={12} sm={5} className='flex-basis-halved'>
             <Box component='div' marginY='0.25em' minWidth='100%'>
-              <TextField
+              <Memoize
+                memoizedComponent={TextField}
                 required
                 error={props.password.err}
                 variant='outlined'
@@ -181,17 +195,7 @@ const Signup = (props: SignupPropsState) => {
                 helperText={props.password.helperText}
                 fullWidth
                 onChange={handleSignupInputChange}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position='end'>
-                      <IconButton
-                        aria-label='toggle password visibility'
-                        onClick={() => setPasswordVisible(!passwordVisible)}>
-                        {passwordVisible ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  )
-                }}
+                InputProps={inputAdorned}
               />
             </Box>
           </Grid>
@@ -218,7 +222,7 @@ const Signup = (props: SignupPropsState) => {
                 id='university'
                 label='University'
                 size='medium'
-                value={`${props.university.value ?? ''}`}
+                value={props.university.value || ''}
                 autoComplete='university'
                 inputRef={refs.universityInput}
                 helperText={props.university.helperText}
@@ -387,6 +391,20 @@ function DatePicker({ dob }: any) {
     </MuiPickersUtilsProvider>
   );
 }
+
+export function createMemo() {
+  return React.memo((props: any) => {
+    const Component = props.memoizedComponent;
+    let _props = { ...props };
+
+    if (!Component) {
+      throw Error('You\'re probably missing the \'memoizedComponent\' prop for Memoize.');
+    }
+
+    delete _props.memoizedComponent;
+    return <Component {..._props} />;
+  })
+};
 
 const mapStateToProps = (state: any) => {
   return {
