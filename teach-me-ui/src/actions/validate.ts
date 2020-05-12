@@ -118,7 +118,7 @@ export const getMatchingInstitutions = (keyword: string) => (
 
     institutionSearchTimeout = window.setTimeout(() => {
       axios({
-        url: `https://teach-me-services.herokuapp.com/api/v1/institution/search?keyword=${keyword}`,
+        url: `https://teach-me-services.herokuapp.com/api/v1/institution/search?keyword=${keyword}&limit=15`,
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -146,7 +146,7 @@ export const getMatchingInstitutions = (keyword: string) => (
           }
         })
         .catch(logError(signup));
-    }, 400);
+    }, 200);
   } else {
     dispatch(matchingInstitutions({ status: 'settled', data: [] }));
   }

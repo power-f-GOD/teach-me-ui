@@ -23,6 +23,8 @@ body {
 }
 
 body {
+  padding: 0 !important;
+  
   &.desktop {
     &.custom-scroll-bar,
     .custom-scroll-bar,
@@ -153,7 +155,7 @@ a {
         bottom: 0;
         left: 0;
         z-index: -1;
-        transition: 0.75s;
+        transition: 0.5s;
       }
 
       &::before {
@@ -308,15 +310,16 @@ div {
 .logo {
   // min-width: 10rem;
   width: auto !important;
-  padding: 0.25em 0.35em !important;
-  border-radius: 0 0.45em 0 0.45em;
+  display: inline-block;
+  padding: 0.45rem !important;
+  border-radius: 0 0.45rem 0 0.45rem;
   color: #f8f8f8;
   line-height: 100% !important;
   letter-spacing: -0.5px;
   text-transform: capitalize !important;
   user-select: none;
   margin: {
-    right: 0.25em;
+    right: 0.25rem;
     top: 0;
     bottom: 0;
   }

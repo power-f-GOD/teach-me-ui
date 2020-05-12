@@ -108,33 +108,6 @@
         min-height: inherit;
         background-color: white;
         overflow-x: hidden;
-        position: relative;
-        
-        > * {
-          position: relative;
-          z-index: 1;
-        }
-
-        &::before {
-          position: absolute;
-          top: -8.25rem;
-          z-index: -1;
-          width: 19rem;
-          height: 55rem;
-          left: 24%;
-          bottom: 0;
-          right: 0;
-          content: ' ';
-          transform: rotateZ(41deg);
-          opacity: 0.75;
-          background: {
-            color: white;
-            image: url('/images/auth-bg-left.png');
-            repeat: no-repeat;
-            position: left;
-            size: contain;
-          }
-        }
 
         .form-section {
           padding: 2em 1em;

@@ -37,7 +37,7 @@ it("creates displaySnackbar action and should be called with its 'state props' a
   );
 });
 
-it("creates setDisplayName action and should be called with a string and return action", () => {
+it('creates setDisplayName action and should be called with a string and return action', () => {
   const mockDisplayName: string = 'John Doe';
   const setDisplayNameAction: ReduxAction = {
     type: SET_USER_DISPLAY_NAME,

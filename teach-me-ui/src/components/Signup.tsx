@@ -1,4 +1,6 @@
-import React, { useState, ChangeEvent } from 'react';
+/* eslint import/no-webpack-loader-syntax: off */
+
+import React, { useState, useCallback, createRef, ChangeEvent } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -22,6 +24,9 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
+// import Worker from 'worker-loader!./worker.ts';
+
+import { createMemo } from '../index';
 import { SignupPropsState } from '../constants/interfaces';
 import {
   handleSignupInputChange,
@@ -30,22 +35,31 @@ import {
 import { dispatch } from '../functions';
 import { validateUniversity, getMatchingInstitutions } from '../actions';
 
+
+
 export const refs: any = {
-  firstnameInput: React.createRef<HTMLInputElement>(),
-  lastnameInput: React.createRef<HTMLInputElement>(),
-  usernameInput: React.createRef<HTMLInputElement>(),
-  emailInput: React.createRef<HTMLInputElement>(),
-  dobInput: React.createRef<HTMLInputElement>(),
-  passwordInput: React.createRef<HTMLInputElement>(),
-  universityInput: React.createRef<HTMLInputElement>(),
-  departmentInput: React.createRef<HTMLInputElement>(),
-  levelInput: React.createRef<HTMLInputElement>()
+  firstnameInput: createRef<HTMLInputElement>(),
+  lastnameInput: createRef<HTMLInputElement>(),
+  usernameInput: createRef<HTMLInputElement>(),
+  emailInput: createRef<HTMLInputElement>(),
+  dobInput: createRef<HTMLInputElement>(),
+  passwordInput: createRef<HTMLInputElement>(),
+  universityInput: createRef<HTMLInputElement>(),
+  departmentInput: createRef<HTMLInputElement>(),
+  levelInput: createRef<HTMLInputElement>()
 };
 
 const Signup = (props: SignupPropsState) => {
+  const Memoize = createMemo();
   const [passwordVisible, setPasswordVisible] = useState(Boolean);
   const [hideList, setHideList] = useState(Boolean);
   const { isAuthenticated } = props.auth;
+
+  const handleUniversityChange = useCallback((e: any) => {
+    dispatch(getMatchingInstitutions(e.target.value)(dispatch));
+    handleSignupInputChange(e);
+    setHideList(!e.target.value);
+  }, []);
 
   if (isAuthenticated) {
     return <Redirect to='/' />;
@@ -70,7 +84,8 @@ const Signup = (props: SignupPropsState) => {
         <Grid justify='space-between' container>
           <Grid item xs={12} sm={6} className='flex-basis-halved'>
             <Box marginY='0.25em'>
-              <TextField
+              <Memoize
+                memoizedComponent={TextField}
                 error={props.firstname.err}
                 required
                 variant='outlined'
@@ -87,7 +102,8 @@ const Signup = (props: SignupPropsState) => {
           </Grid>
           <Grid item xs={12} sm={5} className='flex-basis-halved'>
             <Box marginY='0.25em'>
-              <TextField
+              <Memoize
+                memoizedComponent={TextField}
                 required
                 error={props.lastname.err}
                 variant='outlined'
@@ -102,227 +118,224 @@ const Signup = (props: SignupPropsState) => {
               />
             </Box>
           </Grid>
+        </Grid>
 
-          <Grid justify='space-between' container>
-            <Grid item xs={12} sm={6} className='flex-basis-halved'>
-              <Box component='div' marginY='0.25em' minWidth='100%'>
-                <TextField
-                  required
-                  error={props.username.err}
-                  variant='outlined'
-                  id='username'
-                  label='Username'
-                  size='medium'
-                  autoComplete='nickname'
-                  inputRef={refs.usernameInput}
-                  helperText={props.username.helperText}
-                  fullWidth
-                  onChange={handleSignupInputChange}
-                />
-              </Box>
-            </Grid>
-            <Grid item xs={12} sm={5} className='flex-basis-halved'>
-              <Box component='div' marginY='0.25em' minWidth='100%'>
-                <TextField
-                  required
-                  error={props.email.err}
-                  variant='outlined'
-                  id='email'
-                  label='Email'
-                  size='medium'
-                  type='email'
-                  autoComplete='username'
-                  inputRef={refs.emailInput}
-                  helperText={props.email.helperText}
-                  fullWidth
-                  onChange={handleSignupInputChange}
-                />
-              </Box>
-            </Grid>
-          </Grid>
-
-          <Grid justify='space-between' container>
-            <Grid item xs={12} sm={6} className='flex-basis-halved'>
-              <Box component='div' marginY='0.25em' minWidth='100%'>
-                <DatePicker dob={props.dob} />
-              </Box>
-            </Grid>
-            <Grid item xs={12} sm={5} className='flex-basis-halved'>
-              <Box component='div' marginY='0.25em' minWidth='100%'>
-                <TextField
-                  required
-                  error={props.password.err}
-                  variant='outlined'
-                  id='password'
-                  label='Password'
-                  type={passwordVisible ? 'text' : 'password'}
-                  size='medium'
-                  autoComplete='new-password'
-                  inputRef={refs.passwordInput}
-                  helperText={props.password.helperText}
-                  fullWidth
-                  onChange={handleSignupInputChange}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position='end'>
-                        <IconButton
-                          aria-label='toggle password visibility'
-                          onClick={() => setPasswordVisible(!passwordVisible)}>
-                          {passwordVisible ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    )
-                  }}
-                />
-              </Box>
-            </Grid>
-          </Grid>
-
-          <Typography component='h2' variant='h6'>
-            <Box marginY='0.5em' fontSize='1.25rem' fontWeight={900}>
-              Academic info:
+        <Grid justify='space-between' container>
+          <Grid item xs={12} sm={6} className='flex-basis-halved'>
+            <Box component='div' marginY='0.25em' minWidth='100%'>
+              <Memoize
+                memoizedComponent={TextField}
+                required
+                error={props.username.err}
+                variant='outlined'
+                id='username'
+                label='Username'
+                size='medium'
+                autoComplete='nickname'
+                inputRef={refs.usernameInput}
+                helperText={props.username.helperText}
+                fullWidth
+                onChange={handleSignupInputChange}
+              />
             </Box>
-          </Typography>
-
-          <Grid justify='space-between' container>
-            <Grid item xs={12} sm={6} className='flex-basis-halved'>
-              <Box
-                component='div'
-                marginY='0.25em'
-                minWidth='100%'
-                className='university-input-wrapper'>
-                <TextField
-                  required
-                  error={props.university.err}
-                  variant='outlined'
-                  id='university'
-                  label='University'
-                  size='medium'
-                  value={`${props.university.value ?? ''}`}
-                  autoComplete='university'
-                  inputRef={refs.universityInput}
-                  helperText={props.university.helperText}
-                  fullWidth
-                  onChange={(e: any) => {
-                    dispatch(getMatchingInstitutions(e.target.value)(dispatch));
-                    handleSignupInputChange(e);
-                    setHideList(!e.target.value);
-                  }}
-                />
-                <ClickAwayListener onClickAway={() => setHideList(true)}>
-                  <List
-                    id='institutions'
-                    className={`institutions-list custom-scroll-bar ${
-                      props.university.value &&
-                      !props.university.err &&
-                      !hideList
-                        ? 'open'
-                        : 'close'
-                    }`}
-                    aria-label='institutions list'>
-                    {props.matchingInstitutions?.data
-                      ?.slice(0, 15)
-                      .map((institution, key) => (
-                        <ListItem
-                          button
-                          divider
-                          key={key}
-                          onClick={() => {
-                            setHideList(true);
-                            dispatch(
-                              validateUniversity({
-                                value: institution.name,
-                                uid: institution.id
-                              })
-                            );
-                          }}>
-                          {(() => {
-                            const country = `<span class='theme-color-tertiary-lighter'>${institution.country}</span>`;
-                            const keyword = props.university.value;
-                            const highlighted = `${institution.name.replace(
-                              new RegExp(`(${keyword})`, 'i'),
-                              `<span class='theme-color-secondary-darker'>$1</span>`
-                            )}, ${country}`.replace(/<\/?script>/gi, '');
-
-                            return (
-                              <span
-                                dangerouslySetInnerHTML={{
-                                  __html: highlighted
-                                }}></span>
-                            );
-                          })()}
-                        </ListItem>
-                      ))}
-                  </List>
-                </ClickAwayListener>
-              </Box>
-            </Grid>
-            <Grid item xs={12} sm={5} className='flex-basis-halved'>
-              <Box component='div' marginY='0.25em' minWidth='100%'>
-                <TextField
-                  required
-                  error={props.department.err}
-                  variant='outlined'
-                  id='department'
-                  label='Department'
-                  size='medium'
-                  autoComplete='department'
-                  inputRef={refs.departmentInput}
-                  helperText={props.department.helperText}
-                  fullWidth
-                  onChange={handleSignupInputChange}
-                />
-              </Box>
-            </Grid>
           </Grid>
+          <Grid item xs={12} sm={5} className='flex-basis-halved'>
+            <Box component='div' marginY='0.25em' minWidth='100%'>
+              <Memoize
+                memoizedComponent={TextField}
+                required
+                error={props.email.err}
+                variant='outlined'
+                id='email'
+                label='Email'
+                size='medium'
+                type='email'
+                autoComplete='username'
+                inputRef={refs.emailInput}
+                helperText={props.email.helperText}
+                fullWidth
+                onChange={handleSignupInputChange}
+              />
+            </Box>
+          </Grid>
+        </Grid>
 
-          <Grid justify='space-between' container>
-            <Grid item xs={12} sm={6} className='flex-basis-halved'>
-              <Box component='div' marginY='0.25em' minWidth='100%'>
-                <TextField
-                  required
-                  error={props.level.err}
-                  variant='outlined'
-                  id='level'
-                  label='Level (E.g. 100)'
-                  size='medium'
-                  type='number'
-                  autoComplete='level'
-                  inputRef={refs.levelInput}
-                  helperText={props.level.helperText}
-                  fullWidth
-                  onChange={handleSignupInputChange}
-                />
-              </Box>
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={5}
-              className='flex-basis-halved'
-              key='button'>
-              <Box component='div' marginY='0.25em' minWidth='100%'>
-                <Button
-                  variant='contained'
-                  size='large'
-                  disabled={props.signup.status === 'pending'}
-                  id='sign-up'
-                  className='major-button'
-                  type='submit'
-                  color='primary'
-                  fullWidth
-                  onClick={handleSignupRequest}>
-                  {props.signup.status === 'pending' ? (
-                    <CircularProgress color='inherit' size={28} />
-                  ) : (
-                    'SIGN UP'
-                  )}
-                </Button>
-              </Box>
-            </Grid>
+        <Grid justify='space-between' container>
+          <Grid item xs={12} sm={6} className='flex-basis-halved'>
+            <Box component='div' marginY='0.25em' minWidth='100%'>
+              <Memoize memoizedComponent={DatePicker} dob={props.dob} />
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={5} className='flex-basis-halved'>
+            <Box component='div' marginY='0.25em' minWidth='100%'>
+              <TextField
+                required
+                error={props.password.err}
+                variant='outlined'
+                id='password'
+                label='Password'
+                type={passwordVisible ? 'text' : 'password'}
+                size='medium'
+                autoComplete='new-password'
+                inputRef={refs.passwordInput}
+                helperText={props.password.helperText}
+                fullWidth
+                onChange={handleSignupInputChange}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position='end'>
+                      <IconButton
+                        aria-label='toggle password visibility'
+                        onClick={() => setPasswordVisible(!passwordVisible)}>
+                        {passwordVisible ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}
+              />
+            </Box>
+          </Grid>
+        </Grid>
+
+        <Typography component='h2' variant='h6'>
+          <Box marginY='0.5em' fontSize='1.25rem' fontWeight={900}>
+            Academic info:
+          </Box>
+        </Typography>
+
+        <Grid justify='space-between' container>
+          <Grid item xs={12} sm={6} className='flex-basis-halved'>
+            <Box
+              component='div'
+              marginY='0.25em'
+              minWidth='100%'
+              className='university-input-wrapper'>
+              <Memoize
+                memoizedComponent={TextField}
+                required
+                error={props.university.err}
+                variant='outlined'
+                id='university'
+                label='University'
+                size='medium'
+                value={`${props.university.value ?? ''}`}
+                autoComplete='university'
+                inputRef={refs.universityInput}
+                helperText={props.university.helperText}
+                fullWidth
+                onChange={handleUniversityChange}
+              />
+              <ClickAwayListener onClickAway={() => setHideList(true)}>
+                <List
+                  id='institutions'
+                  className={`institutions-list custom-scroll-bar ${
+                    props.university.value && !props.university.err && !hideList
+                      ? 'open'
+                      : 'close'
+                  }`}
+                  aria-label='institutions list'>
+                  {props.matchingInstitutions?.data
+                    ?.slice(0, 15)
+                    .map((institution, key) => (
+                      <ListItem
+                        button
+                        divider
+                        key={key}
+                        onClick={() => {
+                          setHideList(true);
+                          dispatch(
+                            validateUniversity({
+                              value: institution.name,
+                              uid: institution.id
+                            })
+                          );
+                        }}>
+                        {(() => {
+                          const country = `<span class='theme-color-tertiary-lighter'>${institution.country}</span>`;
+                          const keyword = props.university.value;
+                          const highlighted = `${institution.name.replace(
+                            new RegExp(`(${keyword})`, 'i'),
+                            `<span class='theme-color-secondary-darker'>$1</span>`
+                          )}, ${country}`.replace(/<\/?script>/gi, '');
+
+                          return (
+                            <span
+                              dangerouslySetInnerHTML={{
+                                __html: highlighted
+                              }}></span>
+                          );
+                        })()}
+                      </ListItem>
+                    ))}
+                </List>
+              </ClickAwayListener>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={5} className='flex-basis-halved'>
+            <Box component='div' marginY='0.25em' minWidth='100%'>
+              <Memoize
+                memoizedComponent={TextField}
+                required
+                error={props.department.err}
+                variant='outlined'
+                id='department'
+                label='Department'
+                size='medium'
+                autoComplete='department'
+                inputRef={refs.departmentInput}
+                helperText={props.department.helperText}
+                fullWidth
+                onChange={handleSignupInputChange}
+              />
+            </Box>
+          </Grid>
+        </Grid>
+
+        <Grid justify='space-between' container>
+          <Grid item xs={12} sm={6} className='flex-basis-halved'>
+            <Box component='div' marginY='0.25em' minWidth='100%'>
+              <Memoize
+                memoizedComponent={TextField}
+                required
+                error={props.level.err}
+                variant='outlined'
+                id='level'
+                label='Level (E.g. 100)'
+                size='medium'
+                type='number'
+                autoComplete='level'
+                inputRef={refs.levelInput}
+                helperText={props.level.helperText}
+                fullWidth
+                onChange={handleSignupInputChange}
+              />
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={5} className='flex-basis-halved' key='button'>
+            <Box component='div' marginY='0.25em' minWidth='100%'>
+              <Memoize
+                memoizedComponent={Button}
+                variant='contained'
+                size='large'
+                disabled={props.signup.status === 'pending'}
+                id='sign-up'
+                className='major-button'
+                type='submit'
+                color='primary'
+                fullWidth
+                onClick={handleSignupRequest}>
+                {props.signup.status === 'pending' ? (
+                  <CircularProgress color='inherit' size={28} />
+                ) : (
+                  'SIGN UP'
+                )}
+                {/* </Button> */}
+              </Memoize>
+            </Box>
           </Grid>
         </Grid>
       </form>
+
       <Box marginY='1em'>
         <Typography component='div' align='center'>
           Have a an account? <Link to='/signin'>Sign in here!</Link>

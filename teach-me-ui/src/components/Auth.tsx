@@ -32,9 +32,9 @@ const Auth = (props: any) => {
                 item
                 alignItems='center'>
                 <Box marginY='1.5em' textAlign='center' width='100%'>
-                  <Typography component='h6' variant='h4' align='center'>
+                  <Typography component='div' variant='h4' align='center'>
                     <Link to='/'>
-                      <Box component='span' className='logo gradient'>
+                      <Box component='h3' className='logo gradient'>
                         Kanyimuta!
                       </Box>
                     </Link>

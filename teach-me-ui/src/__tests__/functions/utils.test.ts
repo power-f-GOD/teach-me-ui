@@ -25,18 +25,25 @@ it("callNetworkStatusChecker should be called with 'signin' or 'signup' as param
 });
 
 it("populateStateWithUserData should be called with 'user data' as param and return a promise which resolves with undefined.", () => {
+  let action: ReduxAction = {
+    type: 'SIGNUP_USER'
+  };
   let userData: UserData = {
     firstname: 'John',
     lastname: 'Doe',
     displayName: 'John Doe',
     email: 'johndoe@gmail.com',
     username: 'johndoe',
-    password: '********'
+    dob: '12/12/2000',
+    password: '********',
+    university: 'University of Nowhere',
+    department: 'A department',
+    level: '100'
   };
   let mockFunc = jest.fn();
   populateStateWithUserData(mockFunc(userData) || userData);
   expect(mockFunc).toHaveBeenCalledWith(userData);
-  expect(populateStateWithUserData(userData)).resolves.toBeUndefined();
+  expect(populateStateWithUserData(userData)).resolves.toMatchObject(action);
 });
 
 it("logError should be called with an 'action' as param and return undefined.", () => {
