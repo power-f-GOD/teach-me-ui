@@ -2,22 +2,11 @@ import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { Index, Auth, _404, Main, Loader, SnackBar } from './components/index';
+import { Index, Auth, _404, Main, Loader, SnackBar } from './components';
 import ProtectedRoute from './ProtectedRoute';
-import { dispatch } from './functions';
-import { verifyAuth, displaySnackbar } from './actions';
-
-export const Memoize = React.memo((props: any) => {
-  const Component = props.memoizedComponent;
-  let _props = { ...props };
-
-  if (!Component) {
-    throw Error('You\'re probably missing the \'memoizedComponent\' prop for Memoize.');
-  }
-
-  delete _props.memoizedComponent;
-  return <Component {..._props} />;
-})
+import { dispatch } from './functions/utils';
+import { displaySnackbar } from './actions/misc';
+import { verifyAuth } from './actions/auth';
 
 const App = (props: any) => {
   const { status: authStatus, isAuthenticated } = props.auth;

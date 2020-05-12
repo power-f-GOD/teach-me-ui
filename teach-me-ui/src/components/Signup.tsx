@@ -4,8 +4,6 @@ import React, { useState, useCallback, createRef, ChangeEvent } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-
-
 import MomentUtils from '@date-io/moment';
 
 import Typography from '@material-ui/core/Typography';
@@ -28,7 +26,7 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 // import Worker from 'worker-loader!./worker.ts';
 
-import { Memoize } from '../App';
+import { createMemo } from '../index';
 import { SignupPropsState } from '../constants/interfaces';
 import {
   handleSignupInputChange,
@@ -36,6 +34,8 @@ import {
 } from '../functions/signup';
 import { dispatch } from '../functions';
 import { validateUniversity, getMatchingInstitutions } from '../actions';
+
+const Memoize = createMemo();
 
 export const refs: any = {
   firstnameInput: createRef<HTMLInputElement>(),
@@ -199,7 +199,7 @@ const Signup = (props: SignupPropsState) => {
         <Typography component='h2' variant='h6'>
           <Box marginY='0.5em' fontSize='1.25rem' fontWeight={900}>
             Academic info:
-            </Box>
+          </Box>
         </Typography>
 
         <Grid justify='space-between' container>
@@ -228,12 +228,10 @@ const Signup = (props: SignupPropsState) => {
                 <List
                   id='institutions'
                   className={`institutions-list custom-scroll-bar ${
-                    props.university.value &&
-                      !props.university.err &&
-                      !hideList
+                    props.university.value && !props.university.err && !hideList
                       ? 'open'
                       : 'close'
-                    }`}
+                  }`}
                   aria-label='institutions list'>
                   {props.matchingInstitutions?.data
                     ?.slice(0, 15)
@@ -312,12 +310,7 @@ const Signup = (props: SignupPropsState) => {
               />
             </Box>
           </Grid>
-          <Grid
-            item
-            xs={12}
-            sm={5}
-            className='flex-basis-halved'
-            key='button'>
+          <Grid item xs={12} sm={5} className='flex-basis-halved' key='button'>
             <Box component='div' marginY='0.25em' minWidth='100%'>
               <Memoize
                 memoizedComponent={Button}
@@ -333,8 +326,9 @@ const Signup = (props: SignupPropsState) => {
                 {props.signup.status === 'pending' ? (
                   <CircularProgress color='inherit' size={28} />
                 ) : (
-                    'SIGN UP'
-                  )}
+                  'SIGN UP'
+                )}
+                {/* </Button> */}
               </Memoize>
             </Box>
           </Grid>
@@ -349,8 +343,6 @@ const Signup = (props: SignupPropsState) => {
     </Grid>
   );
 };
-
-
 
 function DatePicker({ dob }: any) {
   const [selectedDate, setSelectedDate] = React.useState<any>(null);
