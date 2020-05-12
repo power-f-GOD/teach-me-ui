@@ -35,7 +35,7 @@ import {
 import { dispatch } from '../functions';
 import { validateUniversity, getMatchingInstitutions } from '../actions';
 
-const Memoize = createMemo();
+
 
 export const refs: any = {
   firstnameInput: createRef<HTMLInputElement>(),
@@ -50,6 +50,7 @@ export const refs: any = {
 };
 
 const Signup = (props: SignupPropsState) => {
+  const Memoize = createMemo();
   const [passwordVisible, setPasswordVisible] = useState(Boolean);
   const [hideList, setHideList] = useState(Boolean);
   const { isAuthenticated } = props.auth;

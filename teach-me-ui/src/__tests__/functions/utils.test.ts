@@ -43,7 +43,7 @@ it("populateStateWithUserData should be called with 'user data' as param and ret
   let mockFunc = jest.fn();
   populateStateWithUserData(mockFunc(userData) || userData);
   expect(mockFunc).toHaveBeenCalledWith(userData);
-  expect(populateStateWithUserData(userData)).resolves.toBe(action);
+  expect(populateStateWithUserData(userData)).resolves.toMatchObject(action);
 });
 
 it("logError should be called with an 'action' as param and return undefined.", () => {
