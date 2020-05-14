@@ -1,6 +1,12 @@
 /* eslint import/no-webpack-loader-syntax: off */
 
-import React, { useState, useCallback, useMemo, createRef, ChangeEvent } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useMemo,
+  createRef,
+  ChangeEvent
+} from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -26,13 +32,20 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 // import Worker from 'worker-loader!./worker.ts';
 
-import { SignupPropsState } from '../constants/interfaces';
+import { SignupPropsState } from '../../constants/interfaces';
 import {
   handleSignupInputChange,
   handleSignupRequest
-} from '../functions/signup';
-import { dispatch } from '../functions';
-import { validateUniversity, getMatchingInstitutions } from '../actions';
+} from '../../functions/signup';
+import { dispatch } from '../../functions';
+import {
+  validateInstitution,
+  getMatchingInstitutions,
+  getMatchingDepartments,
+  getMatchingLevels,
+  validateDepartment,
+  validateLevel
+} from '../../actions';
 
 export const refs: any = {
   firstnameInput: createRef<HTMLInputElement>(),
@@ -41,7 +54,7 @@ export const refs: any = {
   emailInput: createRef<HTMLInputElement>(),
   dobInput: createRef<HTMLInputElement>(),
   passwordInput: createRef<HTMLInputElement>(),
-  universityInput: createRef<HTMLInputElement>(),
+  institutionInput: createRef<HTMLInputElement>(),
   departmentInput: createRef<HTMLInputElement>(),
   levelInput: createRef<HTMLInputElement>()
 };
@@ -49,14 +62,34 @@ export const refs: any = {
 const Memoize = createMemo();
 
 const Signup = (props: SignupPropsState) => {
-  
   const [passwordVisible, setPasswordVisible] = useState(Boolean);
-  const [hideList, setHideList] = useState(Boolean);
+  const [hideInstitutionsList, setHideInstitutionsList] = useState(Boolean);
+  const [hideDepartmentsList, setHideDepartmentsList] = useState(Boolean);
+  const [hideLevelsList, setHideLevelsList] = useState(Boolean);
   const { isAuthenticated } = props.auth;
-  const handleUniversityChange = useCallback((e: any) => {
-    dispatch(getMatchingInstitutions(e.target.value)(dispatch));
+  const handleInstitutionChange = useCallback((e: any) => {
+    const { target } = e;
+
+    e.target.dataset.uid = '';
+    dispatch(getMatchingInstitutions(target.value)(dispatch));
     handleSignupInputChange(e);
-    setHideList(!e.target.value);
+    setHideInstitutionsList(!target.value || !navigator.onLine);
+  }, []);
+  const handleDepartmentChange = useCallback((e: any) => {
+    const { target } = e;
+
+    e.target.dataset.uid = '';
+    dispatch(getMatchingDepartments(target.value)(dispatch));
+    handleSignupInputChange(e);
+    setHideDepartmentsList(!target.value || !navigator.onLine);
+  }, []);
+  const handleLevelChange = useCallback((e: any) => {
+    const { target } = e;
+
+    e.target.dataset.uid = '';
+    dispatch(getMatchingLevels(target.value)(dispatch));
+    handleSignupInputChange(e);
+    setHideLevelsList(!target.value || !navigator.onLine);
   }, []);
   const inputAdorned = useMemo(() => {
     return {
@@ -64,19 +97,18 @@ const Signup = (props: SignupPropsState) => {
         <InputAdornment position='end'>
           <IconButton
             aria-label='toggle password visibility'
-            onClick={() => setPasswordVisible(!passwordVisible)}
-            >
+            onClick={() => setPasswordVisible(!passwordVisible)}>
             {passwordVisible ? <VisibilityOff /> : <Visibility />}
           </IconButton>
         </InputAdornment>
       )
-    }
-  }, [passwordVisible])
-    
+    };
+  }, [passwordVisible]);
+
   if (isAuthenticated) {
     return <Redirect to='/' />;
   }
-
+  
   return (
     <Grid
       className='auth-form-wrapper fade-in'
@@ -100,7 +132,6 @@ const Signup = (props: SignupPropsState) => {
                 memoizedComponent={TextField}
                 error={props.firstname.err}
                 required
-                key='1'
                 variant='outlined'
                 id='firstname'
                 label='First name'
@@ -213,27 +244,29 @@ const Signup = (props: SignupPropsState) => {
               component='div'
               marginY='0.25em'
               minWidth='100%'
-              className='university-input-wrapper'>
+              className='academic-info-input-wrapper'>
               <Memoize
                 memoizedComponent={TextField}
                 required
-                error={props.university.err}
+                error={props.institution.err}
                 variant='outlined'
-                id='university'
-                label='University'
+                id='institution'
+                label='Institution'
                 size='medium'
-                value={props.university.value || ''}
-                autoComplete='university'
-                inputRef={refs.universityInput}
-                helperText={props.university.helperText}
+                value={props.institution.value.keyword || ''}
+                autoComplete='institution'
+                inputRef={refs.institutionInput}
+                helperText={props.institution.helperText}
                 fullWidth
-                onChange={handleUniversityChange}
+                onChange={handleInstitutionChange}
               />
-              <ClickAwayListener onClickAway={() => setHideList(true)}>
+              <ClickAwayListener
+                onClickAway={() => setHideInstitutionsList(true)}>
                 <List
-                  id='institutions'
-                  className={`institutions-list custom-scroll-bar ${
-                    props.university.value && !props.university.err && !hideList
+                  className={`search-list custom-scroll-bar ${
+                    props.institution.value.keyword &&
+                    !props.institution.err &&
+                    !hideInstitutionsList
                       ? 'open'
                       : 'close'
                   }`}
@@ -246,17 +279,20 @@ const Signup = (props: SignupPropsState) => {
                         divider
                         key={key}
                         onClick={() => {
-                          setHideList(true);
+                          setHideInstitutionsList(true);
                           dispatch(
-                            validateUniversity({
-                              value: institution.name,
-                              uid: institution.id
+                            validateInstitution({
+                              value: {
+                                keyword: institution.name,
+                                uid: institution.id
+                              }
                             })
                           );
+                          refs.institutionInput.current.dataset.uid = institution.id;
                         }}>
                         {(() => {
                           const country = `<span class='theme-color-tertiary-lighter'>${institution.country}</span>`;
-                          const keyword = props.university.value;
+                          const keyword = props.institution.value.keyword;
                           const highlighted = `${institution.name.replace(
                             new RegExp(`(${keyword})`, 'i'),
                             `<span class='theme-color-secondary-darker'>$1</span>`
@@ -276,43 +312,150 @@ const Signup = (props: SignupPropsState) => {
             </Box>
           </Grid>
           <Grid item xs={12} sm={5} className='flex-basis-halved'>
-            <Box component='div' marginY='0.25em' minWidth='100%'>
+            <Box
+              component='div'
+              marginY='0.25em'
+              minWidth='100%'
+              className='academic-info-input-wrapper'>
               <Memoize
                 memoizedComponent={TextField}
                 required
                 error={props.department.err}
                 variant='outlined'
+                disabled={props.institution.err || !props.institution.value.uid}
                 id='department'
                 label='Department'
+                value={props.department.value.keyword || ''}
                 size='medium'
                 autoComplete='department'
                 inputRef={refs.departmentInput}
                 helperText={props.department.helperText}
                 fullWidth
-                onChange={handleSignupInputChange}
+                onChange={handleDepartmentChange}
               />
+              <ClickAwayListener
+                onClickAway={() => setHideDepartmentsList(true)}>
+                <List
+                  className={`search-list custom-scroll-bar ${
+                    props.department.value.keyword &&
+                    !props.department.err &&
+                    !hideDepartmentsList
+                      ? 'open'
+                      : 'close'
+                  }`}
+                  aria-label='departments list'>
+                  {props.matchingDepartments?.data
+                    ?.slice(0, 15)
+                    .map((department: any, key: number) => (
+                      <ListItem
+                        button
+                        divider
+                        key={key}
+                        onClick={() => {
+                          setHideDepartmentsList(true);
+                          dispatch(
+                            validateDepartment({
+                              value: {
+                                keyword: department.name,
+                                uid: department.id
+                              }
+                            })
+                          );
+                          refs.departmentInput.current.dataset.uid = department.id;
+                        }}>
+                        {(() => {
+                          const highlighted = `${department.name.replace(
+                            new RegExp(
+                              `(${props.department.value.keyword})`,
+                              'i'
+                            ),
+                            `<span class='theme-color-secondary-darker'>$1</span>`
+                          )}`.replace(/<\/?script>/gi, '');
+
+                          return (
+                            <span
+                              dangerouslySetInnerHTML={{
+                                __html: highlighted
+                              }}></span>
+                          );
+                        })()}
+                      </ListItem>
+                    ))}
+                </List>
+              </ClickAwayListener>
             </Box>
           </Grid>
         </Grid>
 
         <Grid justify='space-between' container>
           <Grid item xs={12} sm={6} className='flex-basis-halved'>
-            <Box component='div' marginY='0.25em' minWidth='100%'>
+            <Box
+              component='div'
+              marginY='0.25em'
+              minWidth='100%'
+              className='academic-info-input-wrapper'>
               <Memoize
                 memoizedComponent={TextField}
                 required
                 error={props.level.err}
                 variant='outlined'
+                disabled={props.department.err || !props.department.value.uid}
                 id='level'
                 label='Level (E.g. 100)'
+                value={props.level.value.keyword || ''}
                 size='medium'
-                type='number'
                 autoComplete='level'
                 inputRef={refs.levelInput}
                 helperText={props.level.helperText}
                 fullWidth
-                onChange={handleSignupInputChange}
+                onChange={handleLevelChange}
               />
+              <ClickAwayListener onClickAway={() => setHideLevelsList(true)}>
+                <List
+                  className={`search-list custom-scroll-bar ${
+                    props.level.value.keyword &&
+                    !props.level.err &&
+                    !hideLevelsList
+                      ? 'open'
+                      : 'close'
+                  }`}
+                  aria-label='institutions list'>
+                  {props.matchingLevels?.data
+                    ?.slice(0, 15)
+                    .map((level: any, key: number) => (
+                      <ListItem
+                        button
+                        divider
+                        key={key}
+                        onClick={() => {
+                          setHideLevelsList(true);
+                          dispatch(
+                            validateLevel({
+                              value: {
+                                keyword: level.name,
+                                uid: level.id
+                              }
+                            })
+                          );
+                          refs.levelInput.current.dataset.uid = level.id;
+                        }}>
+                        {(() => {
+                          const highlighted = `${level.name.replace(
+                            new RegExp(`(${props.level.value.keyword})`, 'i'),
+                            `<span class='theme-color-secondary-darker'>$1</span>`
+                          )}`.replace(/<\/?script>/gi, '');
+
+                          return (
+                            <span
+                              dangerouslySetInnerHTML={{
+                                __html: highlighted
+                              }}></span>
+                          );
+                        })()}
+                      </ListItem>
+                    ))}
+                </List>
+              </ClickAwayListener>
             </Box>
           </Grid>
           <Grid item xs={12} sm={5} className='flex-basis-halved' key='button'>
@@ -333,7 +476,6 @@ const Signup = (props: SignupPropsState) => {
                 ) : (
                   'SIGN UP'
                 )}
-                {/* </Button> */}
               </Memoize>
             </Box>
           </Grid>
@@ -398,13 +540,15 @@ export function createMemo() {
     let _props = { ...props };
 
     if (!Component) {
-      throw Error('You\'re probably missing the \'memoizedComponent\' prop for Memoize.');
+      throw Error(
+        "You're probably missing the 'memoizedComponent' prop for Memoize."
+      );
     }
 
     delete _props.memoizedComponent;
     return <Component {..._props} />;
-  })
-};
+  });
+}
 
 const mapStateToProps = (state: any) => {
   return {
@@ -414,10 +558,12 @@ const mapStateToProps = (state: any) => {
     email: state.email,
     dob: state.dob,
     password: state.password,
-    university: state.university,
+    institution: state.institution,
     department: state.department,
     level: state.level,
     matchingInstitutions: state.matchingInstitutions,
+    matchingDepartments: state.matchingDepartments,
+    matchingLevels: state.matchingLevels,
     signup: state.signup,
     auth: state.auth
   };

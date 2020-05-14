@@ -54,18 +54,18 @@
   justify-self: center;
   height: 100%;
   padding: 2em 2.4rem;
-  border-radius: 0.5em;
-  // border: 1px solid #ddd;
-  box-shadow: 0 1em 5em rgba(0, 0, 0, 0.075), 0 0em 5em rgba(0, 0, 0, 0.075);
+  border-radius: 1em;
+  border: 1px solid #eee;
+  box-shadow: 0 1em 4em 1em rgba(0, 0, 0, 0.065), 0 0em 3em 2em rgba(0, 0, 0, 0.035);
 }
 
-.university-input-wrapper {
+.academic-info-input-wrapper {
   width: 100%;
   position: relative;
   // overflow-y: hidden;
 }
 
-.institutions-list {
+.search-list {
   left: 0;
   right: 0;
   font-size: 0.85rem;

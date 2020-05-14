@@ -19,7 +19,7 @@ import AccountIcon from '@material-ui/icons/AccountBoxRounded';
 import SearchIcon from '@material-ui/icons/Search';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 
-import { handleSignoutRequest } from '../functions';
+import { handleSignoutRequest } from '../../functions';
 
 const Nav = (props: any) => {
   const forIndexPage = /index/i.test(props.for);

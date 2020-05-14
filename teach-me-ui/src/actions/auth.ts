@@ -40,7 +40,7 @@ export const requestSignup = (data: SignupFormData) => (
     email,
     dob,
     password,
-    university,
+    institution,
     department,
     level
   } = data;
@@ -67,7 +67,7 @@ export const requestSignup = (data: SignupFormData) => (
       email,
       date_of_birth,
       password,
-      university,
+      institution,
       department,
       level
     },
@@ -88,7 +88,7 @@ export const requestSignup = (data: SignupFormData) => (
           username,
           email,
           dob,
-          university,
+          institution,
           department,
           level,
           displayName
@@ -199,7 +199,7 @@ export const requestSignin = (data: SigninFormData) => (
         username,
         email,
         date_of_birth: dob,
-        university,
+        institution,
         department,
         level,
         error,
@@ -215,7 +215,7 @@ export const requestSignin = (data: SigninFormData) => (
           username,
           email,
           dob,
-          university,
+          institution,
           department,
           level,
           displayName

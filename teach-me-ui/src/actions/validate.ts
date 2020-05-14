@@ -7,49 +7,56 @@ import {
   EMAIL_VALIDATE,
   PASSWORD_VALIDATE,
   ReduxAction,
-  InputPropsState,
+  BasicInputState,
   SIGNIN_ID_VALIDATE,
   SIGNIN_PASSWORD_VALIDATE,
   DOB_VALIDATE,
-  UNIVERSITY_VALIDATE,
+  INSTITUTION_VALIDATE,
   DEPARTMENT_VALIDATE,
   LEVEL_VALIDATE,
   GET_MATCHING_INSTITUTIONS,
   POPULATE_MATCHING_INSTITUTIONS,
-  MatchingInstitutionsState
+  SearchState,
+  POPULATE_MATCHING_DEPARTMENTS,
+  POPULATE_MATCHING_LEVELS,
+  GET_MATCHING_DEPARTMENTS,
+  GET_MATCHING_LEVELS,
+  AcademicInputState
 } from '../constants';
-import { logError } from '../functions';
+import { logError, getState } from '../functions';
 import { signup } from './';
 
-export const validateFirstname = (payload: InputPropsState): ReduxAction => {
+const endpointUrl = 'https://teach-me-services.herokuapp.com/api/v1';
+
+export const validateFirstname = (payload: BasicInputState): ReduxAction => {
   return {
     type: FIRSTNAME_VALIDATE,
     payload
   };
 };
 
-export const validateLastname = (payload: InputPropsState): ReduxAction => {
+export const validateLastname = (payload: BasicInputState): ReduxAction => {
   return {
     type: LASTNAME_VALIDATE,
     payload
   };
 };
 
-export const validateUsername = (payload: InputPropsState): ReduxAction => {
+export const validateUsername = (payload: BasicInputState): ReduxAction => {
   return {
     type: USERNAME_VALIDATE,
     payload
   };
 };
 
-export const validateEmail = (payload: InputPropsState): ReduxAction => {
+export const validateEmail = (payload: BasicInputState): ReduxAction => {
   return {
     type: EMAIL_VALIDATE,
     payload
   };
 };
 
-export const validateDob = (payload: InputPropsState): ReduxAction => {
+export const validateDob = (payload: BasicInputState): ReduxAction => {
   return {
     type: DOB_VALIDATE,
     payload: {
@@ -59,37 +66,37 @@ export const validateDob = (payload: InputPropsState): ReduxAction => {
   };
 };
 
-export const validatePassword = (payload: InputPropsState): ReduxAction => {
+export const validatePassword = (payload: BasicInputState): ReduxAction => {
   return {
     type: PASSWORD_VALIDATE,
     payload
   };
 };
 
-export const validateUniversity = (
-  payload: InputPropsState | any
+export const validateInstitution = (
+  payload: AcademicInputState
 ): ReduxAction => {
   return {
-    type: UNIVERSITY_VALIDATE,
+    type: INSTITUTION_VALIDATE,
     payload
   };
 };
 
-export const validateDepartment = (payload: InputPropsState): ReduxAction => {
+export const validateDepartment = (payload: AcademicInputState): ReduxAction => {
   return {
     type: DEPARTMENT_VALIDATE,
     payload
   };
 };
 
-export const validateLevel = (payload: InputPropsState): ReduxAction => {
+export const validateLevel = (payload: AcademicInputState): ReduxAction => {
   return {
     type: LEVEL_VALIDATE,
     payload
   };
 };
 
-export const validateSigninId = (payload: InputPropsState): ReduxAction => {
+export const validateSigninId = (payload: BasicInputState): ReduxAction => {
   return {
     type: SIGNIN_ID_VALIDATE,
     payload
@@ -97,7 +104,7 @@ export const validateSigninId = (payload: InputPropsState): ReduxAction => {
 };
 
 export const validateSigninPassword = (
-  payload: InputPropsState
+  payload: BasicInputState
 ): ReduxAction => {
   return {
     type: SIGNIN_PASSWORD_VALIDATE,
@@ -135,11 +142,14 @@ export const getMatchingInstitutions = (keyword: string) => (
             );
           } else {
             dispatch(
-              validateUniversity({
-                value: keyword,
+              validateInstitution({
+                value: {
+                  keyword,
+                  uid: null
+                },
                 err: true,
                 helperText: keyword
-                  ? "University doesn't match our records."
+                  ? "Institution doesn't match our records."
                   : ' '
               })
             );
@@ -157,9 +167,134 @@ export const getMatchingInstitutions = (keyword: string) => (
   };
 };
 
-export const matchingInstitutions = (payload: MatchingInstitutionsState) => {
+export const matchingInstitutions = (payload: SearchState) => {
   return {
     type: POPULATE_MATCHING_INSTITUTIONS,
+    payload
+  };
+};
+
+//use this to delay search in case user types very fast to ensure the right results display
+let departmentSearchTimeout: any = null;
+
+export const getMatchingDepartments = (keyword: string) => (
+  dispatch: Function
+): ReduxAction => {
+  const { institution } = getState();
+
+  clearTimeout(departmentSearchTimeout);
+
+  if (keyword) {
+    dispatch(matchingDepartments({ status: 'pending' }));
+
+    departmentSearchTimeout = window.setTimeout(() => {
+      axios({
+        url: `${endpointUrl}/department/search?keyword=${keyword}&institution=${institution.value.uid}&limit=15`,
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then((response: any) => {
+          console.log('what is department response', )
+          if (!response.data.error && !!response.data.departments[0]) {
+            console.log('what is response for department: ', response);
+            dispatch(
+              matchingDepartments({
+                status: 'fulfilled',
+                err: false,
+                data: response.data.departments
+              })
+            );
+          } else {
+            dispatch(
+              validateDepartment({
+                value: {
+                  keyword,
+                  uid: null
+                },
+                err: true,
+                helperText: 'Department doesn\'t match our records. Click \'Create\' to create.'
+              })
+            );
+          }
+        })
+        .catch(logError(signup));
+    }, 200);
+  } else {
+    dispatch(matchingDepartments({ status: 'settled', data: [] }));
+  }
+
+  return {
+    type: GET_MATCHING_DEPARTMENTS,
+    newState: keyword
+  };
+};
+
+export const matchingDepartments = (payload: SearchState) => {
+  return {
+    type: POPULATE_MATCHING_DEPARTMENTS,
+    payload
+  };
+};
+
+//use this to delay search in case user types very fast to ensure the right results display
+let levelSearchTimeout: any = null;
+
+export const getMatchingLevels = (keyword: string) => (
+  dispatch: Function
+): ReduxAction => {
+  const { department } = getState();
+
+  clearTimeout(levelSearchTimeout);
+
+  if (keyword) {
+    dispatch(matchingLevels({ status: 'pending' }));
+
+    levelSearchTimeout = window.setTimeout(() => {
+      axios({
+        url: `${endpointUrl}/department/search?keyword=${keyword}&department=${department.value.uid}&limit=15`,
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then((response: any) => {
+          console.log('what is response for level: ', response)
+          if (!response.data.error && !!response.data.levels[0]) {
+            dispatch(
+              matchingLevels({
+                status: 'fulfilled',
+                err: false,
+                data: response.data.levels
+              })
+            );
+          } else {
+            dispatch(
+              validateLevel({
+                value: {
+                  keyword,
+                  uid: null
+                }
+              })
+            );
+          }
+        })
+        .catch(logError(signup));
+    }, 200);
+  } else {
+    dispatch(matchingLevels({ status: 'settled', data: [] }));
+  }
+
+  return {
+    type: GET_MATCHING_LEVELS,
+    newState: keyword
+  };
+};
+
+export const matchingLevels = (payload: SearchState) => {
+  return {
+    type: POPULATE_MATCHING_LEVELS,
     payload
   };
 };

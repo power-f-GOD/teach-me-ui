@@ -24,7 +24,7 @@ body {
 
 body {
   padding: 0 !important;
-  
+
   &.desktop {
     &.custom-scroll-bar,
     .custom-scroll-bar,
@@ -228,6 +228,10 @@ a {
   color: $theme-color-primary;
 }
 
+.MuiFormHelperText-root {
+  letter-spacing: unset;
+}
+
 [class^='MuiFormControl'],
 div {
   fieldset {
@@ -243,7 +247,7 @@ div {
 [class^='MuiFormControl'],
 div {
   fieldset {
-    border-color: #ddd;
+    border-color: #eee;
   }
 
   .Mui-focused {
@@ -262,6 +266,13 @@ div {
     }
     fieldset {
       border-color: $error !important;
+    }
+  }
+
+  .Mui-disabled {
+    fieldset {
+      background: #ddd;
+      border: none !important;
     }
   }
 }

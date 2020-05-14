@@ -10,7 +10,7 @@ import {
   validateLastname,
   validateFirstname,
   displaySnackbar,
-  validateUniversity,
+  validateInstitution,
   validateDepartment,
   validateLevel,
   validateDob
@@ -111,7 +111,7 @@ export async function populateStateWithUserData(data: UserData) {
     username,
     email,
     dob,
-    university,
+    institution,
     department,
     level,
     displayName
@@ -124,9 +124,9 @@ export async function populateStateWithUserData(data: UserData) {
   dispatch(validateUsername({ value: username }));
   dispatch(validateEmail({ value: email }));
   dispatch(validateDob({ value: dob }));
-  dispatch(validateUniversity({ value: university }));
-  dispatch(validateDepartment({ value: department }));
-  dispatch(validateLevel({ value: level }));
+  dispatch(validateInstitution({ value: { keyword: institution } }));
+  dispatch(validateDepartment({ value: { keyword: department } }));
+  dispatch(validateLevel({ value: { keyword: level } }));
   dispatch(
     signin({
       status: 'fulfilled',

@@ -1,20 +1,20 @@
-import { StoreEnhancer } from 'redux';
-
 export interface ReduxAction {
   type: string;
   newState?: any;
   payload?: any;
 }
 
-export interface AppProps extends StoreEnhancer {
-  dispatch?: Function;
-  [key: string]: any;
-}
-
-export interface InputPropsState {
-  value: string;
+export interface InputErrState {
   err?: boolean;
   helperText?: string;
+}
+
+export interface BasicInputState extends InputErrState {
+  value: string;
+}
+
+export interface AcademicInputState extends InputErrState {
+  value: { keyword: string; uid?: string | null };
 }
 
 export interface AuthState {
@@ -28,21 +28,21 @@ export interface StatusPropsState {
   statusText?: string;
 }
 
-export interface MatchingInstitutionsState extends StatusPropsState {
-  data?: any[]
+export interface SearchState extends StatusPropsState {
+  data?: any[];
 }
 
 export interface SignupPropsState {
-  firstname: InputPropsState;
-  lastname: InputPropsState;
-  username: InputPropsState;
-  email: InputPropsState;
-  dob: InputPropsState;
-  password: InputPropsState;
-  university: InputPropsState;
-  department: InputPropsState;
-  level: InputPropsState;
-  matchingInstitutions?: MatchingInstitutionsState
+  firstname: BasicInputState;
+  lastname: BasicInputState;
+  username: BasicInputState;
+  email: BasicInputState;
+  dob: BasicInputState;
+  password: BasicInputState;
+  institution: AcademicInputState;
+  department: AcademicInputState;
+  level: AcademicInputState;
+  matchingInstitutions?: SearchState;
   [key: string]: any;
 }
 
@@ -53,14 +53,14 @@ export interface SignupFormData {
   email: string;
   dob: string;
   password?: string;
-  university: string;
+  institution: string;
   department: string;
   level: string;
 }
 
 export interface SigninPropsState {
-  signinId: InputPropsState;
-  signinPassword: InputPropsState;
+  signinId: BasicInputState;
+  signinPassword: BasicInputState;
   [key: string]: any;
 }
 
@@ -79,5 +79,3 @@ export interface SnackbarState {
 export interface UserData extends SignupFormData {
   displayName: string;
 }
-
-

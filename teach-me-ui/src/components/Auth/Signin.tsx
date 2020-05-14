@@ -14,8 +14,8 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Checkbox from '@material-ui/core/Checkbox';
 
-import { SigninPropsState } from '../constants';
-import { handleSigninRequest, handleSigninInputChange } from '../functions';
+import { SigninPropsState } from '../../constants';
+import { handleSigninRequest, handleSigninInputChange } from '../../functions';
 
 export const refs: any = {
   idInput: React.createRef<HTMLInputElement>(),
