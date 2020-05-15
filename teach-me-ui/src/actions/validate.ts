@@ -82,7 +82,9 @@ export const validateInstitution = (
   };
 };
 
-export const validateDepartment = (payload: AcademicInputState): ReduxAction => {
+export const validateDepartment = (
+  payload: AcademicInputState
+): ReduxAction => {
   return {
     type: DEPARTMENT_VALIDATE,
     payload
@@ -121,8 +123,6 @@ export const getMatchingInstitutions = (keyword: string) => (
   clearTimeout(institutionSearchTimeout);
 
   if (keyword) {
-    dispatch(matchingInstitutions({ status: 'pending' }));
-
     institutionSearchTimeout = window.setTimeout(() => {
       axios({
         url: `https://teach-me-services.herokuapp.com/api/v1/institution/search?keyword=${keyword}&limit=15`,
@@ -142,13 +142,11 @@ export const getMatchingInstitutions = (keyword: string) => (
             );
           } else {
             dispatch(
-              validateInstitution({
-                value: {
-                  keyword,
-                  uid: null
-                },
+              matchingInstitutions({
+                status: 'fulfilled',
                 err: true,
-                helperText: keyword
+                data: response.data.institutions,
+                statusText: keyword
                   ? "Institution doesn't match our records."
                   : ' '
               })
@@ -185,8 +183,6 @@ export const getMatchingDepartments = (keyword: string) => (
   clearTimeout(departmentSearchTimeout);
 
   if (keyword) {
-    dispatch(matchingDepartments({ status: 'pending' }));
-
     departmentSearchTimeout = window.setTimeout(() => {
       axios({
         url: `${endpointUrl}/department/search?keyword=${keyword}&institution=${institution.value.uid}&limit=15`,
@@ -196,9 +192,8 @@ export const getMatchingDepartments = (keyword: string) => (
         }
       })
         .then((response: any) => {
-          console.log('what is department response', )
+          console.log('what is department response');
           if (!response.data.error && !!response.data.departments[0]) {
-            console.log('what is response for department: ', response);
             dispatch(
               matchingDepartments({
                 status: 'fulfilled',
@@ -208,13 +203,13 @@ export const getMatchingDepartments = (keyword: string) => (
             );
           } else {
             dispatch(
-              validateDepartment({
-                value: {
-                  keyword,
-                  uid: null
-                },
+              matchingDepartments({
+                status: 'fulfilled',
                 err: true,
-                helperText: 'Department doesn\'t match our records. Click \'Create\' to create.'
+                data: [],
+                statusText: `Department doesn\'t match our records. ${
+                  keyword.length > 2 ? "'Create' one?" : ''
+                }`
               })
             );
           }
@@ -249,8 +244,6 @@ export const getMatchingLevels = (keyword: string) => (
   clearTimeout(levelSearchTimeout);
 
   if (keyword) {
-    dispatch(matchingLevels({ status: 'pending' }));
-
     levelSearchTimeout = window.setTimeout(() => {
       axios({
         url: `${endpointUrl}/department/search?keyword=${keyword}&department=${department.value.uid}&limit=15`,
@@ -260,7 +253,7 @@ export const getMatchingLevels = (keyword: string) => (
         }
       })
         .then((response: any) => {
-          console.log('what is response for level: ', response)
+          console.log('what is response for level: ', response);
           if (!response.data.error && !!response.data.levels[0]) {
             dispatch(
               matchingLevels({
@@ -271,11 +264,10 @@ export const getMatchingLevels = (keyword: string) => (
             );
           } else {
             dispatch(
-              validateLevel({
-                value: {
-                  keyword,
-                  uid: null
-                }
+              matchingLevels({
+                status: 'fulfilled',
+                err: true,
+                data: []
               })
             );
           }

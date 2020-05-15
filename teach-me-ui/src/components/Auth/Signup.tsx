@@ -18,7 +18,9 @@ import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
+import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
+import Popover from '@material-ui/core/Popover';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -41,10 +43,10 @@ import { dispatch } from '../../functions';
 import {
   validateInstitution,
   getMatchingInstitutions,
-  getMatchingDepartments,
-  getMatchingLevels,
   validateDepartment,
-  validateLevel
+  getMatchingDepartments,
+  validateLevel,
+  getMatchingLevels
 } from '../../actions';
 
 export const refs: any = {
@@ -62,11 +64,28 @@ export const refs: any = {
 const Memoize = createMemo();
 
 const Signup = (props: SignupPropsState) => {
+  const {
+    firstname,
+    lastname,
+    username,
+    email,
+    dob,
+    password,
+    institution,
+    department,
+    level,
+    matchingInstitutions,
+    matchingDepartments,
+    matchingLevels,
+    signup,
+    auth
+  } = props;
   const [passwordVisible, setPasswordVisible] = useState(Boolean);
   const [hideInstitutionsList, setHideInstitutionsList] = useState(Boolean);
   const [hideDepartmentsList, setHideDepartmentsList] = useState(Boolean);
   const [hideLevelsList, setHideLevelsList] = useState(Boolean);
-  const { isAuthenticated } = props.auth;
+  const [openDepartmentPopover, setOpenDepartmentPopover] = useState(Boolean);
+  const { isAuthenticated } = auth;
   const handleInstitutionChange = useCallback((e: any) => {
     const { target } = e;
 
@@ -82,6 +101,7 @@ const Signup = (props: SignupPropsState) => {
     dispatch(getMatchingDepartments(target.value)(dispatch));
     handleSignupInputChange(e);
     setHideDepartmentsList(!target.value || !navigator.onLine);
+    setOpenDepartmentPopover(target.value.length > 2 && !department.value.uid);
   }, []);
   const handleLevelChange = useCallback((e: any) => {
     const { target } = e;
@@ -108,7 +128,7 @@ const Signup = (props: SignupPropsState) => {
   if (isAuthenticated) {
     return <Redirect to='/' />;
   }
-  
+
   return (
     <Grid
       className='auth-form-wrapper fade-in'
@@ -130,7 +150,7 @@ const Signup = (props: SignupPropsState) => {
             <Box marginY='0.25em'>
               <Memoize
                 memoizedComponent={TextField}
-                error={props.firstname.err}
+                error={firstname.err}
                 required
                 variant='outlined'
                 id='firstname'
@@ -138,7 +158,7 @@ const Signup = (props: SignupPropsState) => {
                 size='medium'
                 autoComplete='given-name'
                 inputRef={refs.firstnameInput}
-                helperText={props.firstname.helperText}
+                helperText={firstname.helperText}
                 fullWidth
                 onChange={handleSignupInputChange}
               />
@@ -149,14 +169,14 @@ const Signup = (props: SignupPropsState) => {
               <Memoize
                 memoizedComponent={TextField}
                 required
-                error={props.lastname.err}
+                error={lastname.err}
                 variant='outlined'
                 id='lastname'
                 label='Last name'
                 size='medium'
                 autoComplete='family-name'
                 inputRef={refs.lastnameInput}
-                helperText={props.lastname.helperText}
+                helperText={lastname.helperText}
                 fullWidth
                 onChange={handleSignupInputChange}
               />
@@ -170,14 +190,14 @@ const Signup = (props: SignupPropsState) => {
               <Memoize
                 memoizedComponent={TextField}
                 required
-                error={props.username.err}
+                error={username.err}
                 variant='outlined'
                 id='username'
                 label='Username'
                 size='medium'
                 autoComplete='nickname'
                 inputRef={refs.usernameInput}
-                helperText={props.username.helperText}
+                helperText={username.helperText}
                 fullWidth
                 onChange={handleSignupInputChange}
               />
@@ -188,7 +208,7 @@ const Signup = (props: SignupPropsState) => {
               <Memoize
                 memoizedComponent={TextField}
                 required
-                error={props.email.err}
+                error={email.err}
                 variant='outlined'
                 id='email'
                 label='Email'
@@ -196,7 +216,7 @@ const Signup = (props: SignupPropsState) => {
                 type='email'
                 autoComplete='username'
                 inputRef={refs.emailInput}
-                helperText={props.email.helperText}
+                helperText={email.helperText}
                 fullWidth
                 onChange={handleSignupInputChange}
               />
@@ -207,7 +227,7 @@ const Signup = (props: SignupPropsState) => {
         <Grid justify='space-between' container>
           <Grid item xs={12} sm={6} className='flex-basis-halved'>
             <Box component='div' marginY='0.25em' minWidth='100%'>
-              <Memoize memoizedComponent={DatePicker} dob={props.dob} />
+              <Memoize memoizedComponent={DatePicker} dob={dob} />
             </Box>
           </Grid>
           <Grid item xs={12} sm={5} className='flex-basis-halved'>
@@ -215,7 +235,7 @@ const Signup = (props: SignupPropsState) => {
               <Memoize
                 memoizedComponent={TextField}
                 required
-                error={props.password.err}
+                error={password.err}
                 variant='outlined'
                 id='password'
                 label='Password'
@@ -223,7 +243,7 @@ const Signup = (props: SignupPropsState) => {
                 size='medium'
                 autoComplete='new-password'
                 inputRef={refs.passwordInput}
-                helperText={props.password.helperText}
+                helperText={password.helperText}
                 fullWidth
                 onChange={handleSignupInputChange}
                 InputProps={inputAdorned}
@@ -248,15 +268,19 @@ const Signup = (props: SignupPropsState) => {
               <Memoize
                 memoizedComponent={TextField}
                 required
-                error={props.institution.err}
+                error={institution.err || matchingInstitutions.err}
                 variant='outlined'
                 id='institution'
                 label='Institution'
                 size='medium'
-                value={props.institution.value.keyword || ''}
+                value={institution.value.keyword || ''}
                 autoComplete='institution'
                 inputRef={refs.institutionInput}
-                helperText={props.institution.helperText}
+                helperText={
+                  matchingInstitutions.data[0]
+                    ? institution.helperText
+                    : matchingInstitutions.statusText
+                }
                 fullWidth
                 onChange={handleInstitutionChange}
               />
@@ -264,16 +288,16 @@ const Signup = (props: SignupPropsState) => {
                 onClickAway={() => setHideInstitutionsList(true)}>
                 <List
                   className={`search-list custom-scroll-bar ${
-                    props.institution.value.keyword &&
-                    !props.institution.err &&
+                    institution.value.keyword &&
+                    !institution.err &&
                     !hideInstitutionsList
                       ? 'open'
                       : 'close'
                   }`}
                   aria-label='institutions list'>
-                  {props.matchingInstitutions?.data
+                  {matchingInstitutions?.data
                     ?.slice(0, 15)
-                    .map((institution, key) => (
+                    .map((_institution, key) => (
                       <ListItem
                         button
                         divider
@@ -283,17 +307,18 @@ const Signup = (props: SignupPropsState) => {
                           dispatch(
                             validateInstitution({
                               value: {
-                                keyword: institution.name,
-                                uid: institution.id
+                                keyword: _institution.name,
+                                uid: _institution.id
                               }
                             })
                           );
-                          refs.institutionInput.current.dataset.uid = institution.id;
+                          refs.institutionInput.current.dataset.uid =
+                            _institution.id;
                         }}>
                         {(() => {
-                          const country = `<span class='theme-color-tertiary-lighter'>${institution.country}</span>`;
-                          const keyword = props.institution.value.keyword;
-                          const highlighted = `${institution.name.replace(
+                          const country = `<span class='theme-color-tertiary-lighter'>${_institution.country}</span>`;
+                          const keyword = institution.value.keyword;
+                          const highlighted = `${_institution.name.replace(
                             new RegExp(`(${keyword})`, 'i'),
                             `<span class='theme-color-secondary-darker'>$1</span>`
                           )}, ${country}`.replace(/<\/?script>/gi, '');
@@ -320,16 +345,20 @@ const Signup = (props: SignupPropsState) => {
               <Memoize
                 memoizedComponent={TextField}
                 required
-                error={props.department.err}
+                error={department.err || matchingDepartments.err}
                 variant='outlined'
-                disabled={props.institution.err || !props.institution.value.uid}
+                // disabled={institution.err || !institution.value.uid}
                 id='department'
                 label='Department'
-                value={props.department.value.keyword || ''}
+                value={department.value.keyword || ''}
                 size='medium'
                 autoComplete='department'
                 inputRef={refs.departmentInput}
-                helperText={props.department.helperText}
+                helperText={
+                  matchingDepartments.data[0]
+                    ? department.helperText
+                    : matchingDepartments.statusText
+                }
                 fullWidth
                 onChange={handleDepartmentChange}
               />
@@ -337,16 +366,16 @@ const Signup = (props: SignupPropsState) => {
                 onClickAway={() => setHideDepartmentsList(true)}>
                 <List
                   className={`search-list custom-scroll-bar ${
-                    props.department.value.keyword &&
-                    !props.department.err &&
+                    department.value.keyword &&
+                    !department.err &&
                     !hideDepartmentsList
                       ? 'open'
                       : 'close'
                   }`}
                   aria-label='departments list'>
-                  {props.matchingDepartments?.data
+                  {matchingDepartments?.data
                     ?.slice(0, 15)
-                    .map((department: any, key: number) => (
+                    .map((_department, key: number) => (
                       <ListItem
                         button
                         divider
@@ -356,19 +385,17 @@ const Signup = (props: SignupPropsState) => {
                           dispatch(
                             validateDepartment({
                               value: {
-                                keyword: department.name,
-                                uid: department.id
+                                keyword: _department.name,
+                                uid: _department.id
                               }
                             })
                           );
-                          refs.departmentInput.current.dataset.uid = department.id;
+                          refs.departmentInput.current.dataset.uid =
+                            _department.id;
                         }}>
                         {(() => {
-                          const highlighted = `${department.name.replace(
-                            new RegExp(
-                              `(${props.department.value.keyword})`,
-                              'i'
-                            ),
+                          const highlighted = `${_department.name.replace(
+                            new RegExp(`(${department.value.keyword})`, 'i'),
                             `<span class='theme-color-secondary-darker'>$1</span>`
                           )}`.replace(/<\/?script>/gi, '');
 
@@ -382,6 +409,18 @@ const Signup = (props: SignupPropsState) => {
                       </ListItem>
                     ))}
                 </List>
+              </ClickAwayListener>
+              <ClickAwayListener
+                onClickAway={() => setOpenDepartmentPopover(false)}>
+                <Button
+                  id='create-department-button'
+                  color='primary'
+                  className={`signup-create-button fade-in ${
+                    openDepartmentPopover ? 'open' : 'close'
+                  }`}
+                  onClick={() => setOpenDepartmentPopover(false)}>
+                  <AddIcon color='inherit' fontSize='inherit' /> Create
+                </Button>
               </ClickAwayListener>
             </Box>
           </Grid>
@@ -397,32 +436,34 @@ const Signup = (props: SignupPropsState) => {
               <Memoize
                 memoizedComponent={TextField}
                 required
-                error={props.level.err}
+                error={level.err || matchingLevels.err}
                 variant='outlined'
-                disabled={props.department.err || !props.department.value.uid}
+                disabled={department.err || !department.value.uid}
                 id='level'
                 label='Level (E.g. 100)'
-                value={props.level.value.keyword || ''}
+                value={level.value.keyword || ''}
                 size='medium'
                 autoComplete='level'
                 inputRef={refs.levelInput}
-                helperText={props.level.helperText}
+                helperText={
+                  matchingLevels.data[0]
+                    ? level.helperText
+                    : matchingLevels.statusText
+                }
                 fullWidth
                 onChange={handleLevelChange}
               />
               <ClickAwayListener onClickAway={() => setHideLevelsList(true)}>
                 <List
                   className={`search-list custom-scroll-bar ${
-                    props.level.value.keyword &&
-                    !props.level.err &&
-                    !hideLevelsList
+                    level.value.keyword && !level.err && !hideLevelsList
                       ? 'open'
                       : 'close'
                   }`}
                   aria-label='institutions list'>
-                  {props.matchingLevels?.data
+                  {matchingLevels?.data
                     ?.slice(0, 15)
-                    .map((level: any, key: number) => (
+                    .map((_level, key: number) => (
                       <ListItem
                         button
                         divider
@@ -432,16 +473,16 @@ const Signup = (props: SignupPropsState) => {
                           dispatch(
                             validateLevel({
                               value: {
-                                keyword: level.name,
-                                uid: level.id
+                                keyword: _level.name,
+                                uid: _level.id
                               }
                             })
                           );
-                          refs.levelInput.current.dataset.uid = level.id;
+                          refs.levelInput.current.dataset.uid = _level.id;
                         }}>
                         {(() => {
-                          const highlighted = `${level.name.replace(
-                            new RegExp(`(${props.level.value.keyword})`, 'i'),
+                          const highlighted = `${_level.name.replace(
+                            new RegExp(`(${level.value.keyword})`, 'i'),
                             `<span class='theme-color-secondary-darker'>$1</span>`
                           )}`.replace(/<\/?script>/gi, '');
 
@@ -464,14 +505,14 @@ const Signup = (props: SignupPropsState) => {
                 memoizedComponent={Button}
                 variant='contained'
                 size='large'
-                disabled={props.signup.status === 'pending'}
+                disabled={signup.status === 'pending'}
                 id='sign-up'
                 className='major-button'
                 type='submit'
                 color='primary'
                 fullWidth
                 onClick={handleSignupRequest}>
-                {props.signup.status === 'pending' ? (
+                {signup.status === 'pending' ? (
                   <CircularProgress color='inherit' size={28} />
                 ) : (
                   'SIGN UP'

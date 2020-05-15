@@ -29,7 +29,7 @@ export interface StatusPropsState {
 }
 
 export interface SearchState extends StatusPropsState {
-  data?: any[];
+  data: any[];
 }
 
 export interface SignupPropsState {
@@ -42,7 +42,9 @@ export interface SignupPropsState {
   institution: AcademicInputState;
   department: AcademicInputState;
   level: AcademicInputState;
-  matchingInstitutions?: SearchState;
+  matchingInstitutions: SearchState;
+  matchingDepartments: SearchState;
+  matchingLevels: SearchState;
   [key: string]: any;
 }
 

@@ -3,7 +3,8 @@ import {
   BasicInputState,
   SigninPropsState,
   AcademicInputState,
-  InputErrState
+  InputErrState,
+  SearchState
 } from './interfaces';
 
 export const FIRSTNAME_VALIDATE = 'FIRSTNAME_VALIDATE';
@@ -41,6 +42,13 @@ export const academicInputState: AcademicInputState = {
   ...inputErrState
 };
 
+export const searchState: SearchState = {
+  status: 'settled',
+  err: false,
+  statusText: ' ',
+  data: []
+};
+
 export const signupProps: SignupPropsState = {
   firstname: { ...basicInputState },
   lastname: { ...basicInputState },
@@ -50,7 +58,10 @@ export const signupProps: SignupPropsState = {
   password: { ...basicInputState },
   institution: { ...academicInputState },
   department: { ...academicInputState },
-  level: { ...academicInputState }
+  level: { ...academicInputState },
+  matchingInstitutions: { ...searchState },
+  matchingDepartments: { ...searchState },
+  matchingLevels: { ...searchState }
 };
 
 export const signinProps: SigninPropsState = {
