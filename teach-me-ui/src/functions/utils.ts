@@ -1,7 +1,10 @@
-import { ReduxAction, StatusPropsState, UserData } from '../constants';
+import {
+  ReduxAction,
+  StatusPropsState,
+  UserData
+} from '../constants';
 import store from '../appStore';
 import {
-  signup,
   signin,
   auth,
   setDisplayName,
@@ -27,7 +30,7 @@ export function promisedDispatch(action: ReduxAction) {
 
 let timeoutToGiveFeedback: any;
 let timeoutToAbortNetworkAction: any;
-export function callNetworkStatusChecker(networkAction: 'signup' | 'signin') {
+export function callNetworkStatusCheckerFor(action: Function) {
   //clear timeout in case it's already been initialized by multiple submit actions
   clearTimeout(timeoutToGiveFeedback);
   clearTimeout(timeoutToAbortNetworkAction);
@@ -49,26 +52,29 @@ export function callNetworkStatusChecker(networkAction: 'signup' | 'signin') {
   timeoutToGiveFeedback = setTimeout(() => {
     state = getState();
 
-    switch (networkAction) {
-      case 'signup':
-        callTimeoutToAbortNetworkAction('signup');
-        break;
-      case 'signin':
-        callTimeoutToAbortNetworkAction('signin');
-        break;
-    }
-  }, 10000);
+    if (!state[action.name])
+      throw Error(
+        `Dispatch function '${action.name}' does not exist in state. Did you forget to map to props.`
+      );
 
-  function callTimeoutToAbortNetworkAction(networkAction: string) {
-    if (navigator.onLine && state[networkAction]?.status === 'pending') {
-      switch (networkAction) {
-        case 'signup':
-          dispatch(signup({ ...errFeedback }));
-          break;
-        case 'signin':
-          dispatch(signin({ ...errFeedback }));
-          break;
-      }
+    callTimeoutToAbortNetworkAction(action);
+  }, 12000);
+
+  function callTimeoutToAbortNetworkAction(action: Function) {
+    if (navigator.onLine && state[action.name]?.status === 'pending') {
+      dispatch(action({ ...errFeedback }));
+
+      // switch (actionName) {
+      //   case 'signup':
+
+      //     break;
+      //   case 'signin':
+      //     dispatch(signin({ ...errFeedback }));
+      //     break;
+      //   case 'create-level':
+      //     dispatch(createDepartment({ ...errFeedback }));
+      //   case 'create-department'
+      // }
 
       dispatch(
         displaySnackbar({
@@ -82,15 +88,17 @@ export function callNetworkStatusChecker(networkAction: 'signup' | 'signin') {
     timeoutToAbortNetworkAction = setTimeout(() => {
       state = getState();
 
-      if (navigator.onLine && state[networkAction].status === 'pending') {
-        switch (networkAction) {
-          case 'signup':
-            dispatch(signup({ ...abortionFeedback }));
-            break;
-          case 'signin':
-            dispatch(signin({ ...abortionFeedback }));
-            break;
-        }
+      if (navigator.onLine && state[action.name].status === 'pending') {
+        dispatch(action({ ...abortionFeedback }));
+
+        // switch (actionName) {
+        //   case 'signup':
+        //     dispatch(signup({ ...abortionFeedback }));
+        //     break;
+        //   case 'signin':
+        //     dispatch(signin({ ...abortionFeedback }));
+        //     break;
+        // }
 
         dispatch(
           displaySnackbar({

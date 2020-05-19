@@ -21,7 +21,13 @@ import {
   statusPropsState,
   AcademicInputState,
   POPULATE_MATCHING_LEVELS,
-  POPULATE_MATCHING_DEPARTMENTS
+  POPULATE_MATCHING_DEPARTMENTS,
+  CreateDepartmentState,
+  createDepartmentState,
+  CREATE_DEPARTMENT,
+  CreateLevelState,
+  createLevelState,
+  CREATE_LEVEL
 } from '../constants';
 
 export const firstname = (
@@ -184,8 +190,7 @@ export const password = (
       helperText = 'Password should not be less than 8 characters.';
     } else if (!err && /^[A-Z]$|^[a-z]+$|^[0-9]+$/.test(value)) {
       err = true;
-      helperText =
-        'Password weak. Consider combining alphanumerics/symbols.';
+      helperText = 'Password weak. Consider combining alphanumerics/symbols.';
     }
 
     err = 'err' in payload ? payload.err : err;
@@ -284,6 +289,20 @@ export const matchingDepartments = (
   return state;
 };
 
+export const createDepartment = (
+  state: CreateDepartmentState = createDepartmentState,
+  action: ReduxAction
+) => {
+  if (action.type === CREATE_DEPARTMENT) {
+    return {
+      ...state,
+      ...action.payload
+    };
+  }
+
+  return state;
+};
+
 export const level = (
   state: AcademicInputState = academicInputState,
   action: ReduxAction
@@ -317,6 +336,20 @@ export const matchingLevels = (
   action: ReduxAction
 ) => {
   if (action.type === POPULATE_MATCHING_LEVELS) {
+    return {
+      ...state,
+      ...action.payload
+    };
+  }
+
+  return state;
+};
+
+export const createLevel = (
+  state: CreateLevelState = createLevelState,
+  action: ReduxAction
+) => {
+  if (action.type === CREATE_LEVEL) {
     return {
       ...state,
       ...action.payload

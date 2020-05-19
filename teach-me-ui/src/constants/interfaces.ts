@@ -14,7 +14,7 @@ export interface BasicInputState extends InputErrState {
 }
 
 export interface AcademicInputState extends InputErrState {
-  value: { keyword: string; uid?: string | null };
+  value: { keyword: string; uid?: string };
 }
 
 export interface AuthState {
@@ -80,4 +80,16 @@ export interface SnackbarState {
 
 export interface UserData extends SignupFormData {
   displayName: string;
+}
+
+export interface CreateDepartmentState extends StatusPropsState {
+  department?: string;
+  university?: string;
+  uid?: string;
+}
+
+export interface CreateLevelState extends StatusPropsState {
+  level?: string;
+  department?: string;
+  uid?: string;
 }

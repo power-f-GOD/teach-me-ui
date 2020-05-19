@@ -4,7 +4,9 @@ import {
   SigninPropsState,
   AcademicInputState,
   InputErrState,
-  SearchState
+  SearchState,
+  CreateDepartmentState,
+  CreateLevelState
 } from './interfaces';
 
 export const FIRSTNAME_VALIDATE = 'FIRSTNAME_VALIDATE';
@@ -23,6 +25,10 @@ export const GET_MATCHING_DEPARTMENTS = 'GET_MATCHING_DEPARTMENTS';
 export const POPULATE_MATCHING_DEPARTMENTS = 'POPULATE_MATCHING_DEPARTMENTS';
 export const GET_MATCHING_LEVELS = 'GET_MATCHING_LEVELS';
 export const POPULATE_MATCHING_LEVELS = 'POPULATE_MATCHING_LEVELS';
+export const REQUEST_CREATE_DEPARTMENT = 'REQUEST_CREATE_DEPARTMENT';
+export const CREATE_DEPARTMENT = 'CREATE_DEPARTMENT';
+export const REQUEST_CREATE_LEVEL = 'REQUEST_CREATE_LEVEL';
+export const CREATE_LEVEL = 'CREATE_LEVEL';
 
 export const SIGNIN_ID_VALIDATE = 'SIGNIN_ID_VALIDATE';
 export const SIGNIN_PASSWORD_VALIDATE = 'SIGNIN_PASSWORD_VALIDATE';
@@ -47,6 +53,18 @@ export const searchState: SearchState = {
   err: false,
   statusText: ' ',
   data: []
+};
+
+export const createDepartmentState: CreateDepartmentState = {
+  department: '',
+  university: '',
+  uid: ''
+};
+
+export const createLevelState: CreateLevelState = {
+  level: '',
+  department: '',
+  uid: ''
 };
 
 export const signupProps: SignupPropsState = {

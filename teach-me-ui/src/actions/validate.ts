@@ -21,10 +21,18 @@ import {
   POPULATE_MATCHING_LEVELS,
   GET_MATCHING_DEPARTMENTS,
   GET_MATCHING_LEVELS,
-  AcademicInputState
+  AcademicInputState,
+  CreateDepartmentState,
+  createDepartmentState,
+  REQUEST_CREATE_DEPARTMENT,
+  CREATE_DEPARTMENT,
+  REQUEST_CREATE_LEVEL,
+  CREATE_LEVEL,
+  CreateLevelState,
+  createLevelState
 } from '../constants';
-import { logError, getState } from '../functions';
-import { signup } from './';
+import { logError, getState, callNetworkStatusCheckerFor } from '../functions';
+import { signup, displaySnackbar } from './';
 
 const endpointUrl = 'https://teach-me-services.herokuapp.com/api/v1';
 
@@ -125,7 +133,7 @@ export const getMatchingInstitutions = (keyword: string) => (
   if (keyword) {
     institutionSearchTimeout = window.setTimeout(() => {
       axios({
-        url: `https://teach-me-services.herokuapp.com/api/v1/institution/search?keyword=${keyword}&limit=15`,
+        url: `${endpointUrl}/institution/search?keyword=${keyword}&limit=15`,
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -207,7 +215,7 @@ export const getMatchingDepartments = (keyword: string) => (
                 status: 'fulfilled',
                 err: true,
                 data: [],
-                statusText: `Department doesn\'t match our records. ${
+                statusText: `Department doesn't match our records. ${
                   keyword.length > 2 ? "'Create' one?" : ''
                 }`
               })
@@ -229,6 +237,80 @@ export const getMatchingDepartments = (keyword: string) => (
 export const matchingDepartments = (payload: SearchState) => {
   return {
     type: POPULATE_MATCHING_DEPARTMENTS,
+    payload
+  };
+};
+
+export const requestCreateDepartment = (
+  payload: CreateDepartmentState = createDepartmentState
+) => (dispatch: Function): ReduxAction => {
+  const { department, university } = payload;
+
+  dispatch(createDepartment({ status: 'pending' }));
+  callNetworkStatusCheckerFor(createDepartment);
+  console.log();
+  if (department && university) {
+    axios({
+      url: '/department/create',
+      method: 'POST',
+      baseURL: endpointUrl,
+      data: {
+        department,
+        university
+      },
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then((response: any) => {
+        console.log('response from department:', response.data);
+        if (!response.data.error && !!response.data.uid) {
+          dispatch(
+            createDepartment({
+              status: 'fulfilled',
+              err: false,
+              uid: response.data.uid
+            })
+          );
+        } else {
+          dispatch(
+            createDepartment({
+              status: 'fulfilled',
+              err: true,
+              uid: ''
+            })
+          );
+        }
+      })
+      .catch(logError(signup));
+  } else {
+    dispatch(
+      createDepartment({
+        status: 'settled',
+        err: true,
+        uid: ''
+      })
+    );
+    dispatch(
+      displaySnackbar({
+        open: true,
+        message: 'Could not create Department. Did you select an Institution?',
+        severity: 'error'
+      })
+    );
+  }
+
+  return {
+    type: REQUEST_CREATE_DEPARTMENT,
+    payload
+  };
+};
+
+export const createDepartment = (
+  payload: CreateDepartmentState = createDepartmentState
+) => {
+  return {
+    type: CREATE_DEPARTMENT,
     payload
   };
 };
@@ -287,6 +369,78 @@ export const getMatchingLevels = (keyword: string) => (
 export const matchingLevels = (payload: SearchState) => {
   return {
     type: POPULATE_MATCHING_LEVELS,
+    payload
+  };
+};
+
+export const requestCreateLevel = (
+  payload: CreateLevelState = createLevelState
+) => (dispatch: Function): ReduxAction => {
+  const { level, department } = payload;
+
+  dispatch(createLevel({ status: 'pending', level, department }));
+  callNetworkStatusCheckerFor(createLevel);
+
+  if (level && department) {
+    axios({
+      url: '/level/create',
+      method: 'POST',
+      baseURL: endpointUrl,
+      data: {
+        level,
+        department
+      },
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then((response: any) => {
+        console.log('response from level:', response.data);
+        if (!response.data.error && !!response.data.uid) {
+          dispatch(
+            createLevel({
+              status: 'fulfilled',
+              err: false,
+              uid: response.data.uid
+            })
+          );
+        } else {
+          dispatch(
+            createLevel({
+              status: 'fulfilled',
+              err: true,
+              uid: ''
+            })
+          );
+        }
+      })
+      .catch(logError(signup));
+  } else {
+    dispatch(
+      createLevel({
+        status: 'settled',
+        err: true,
+        uid: ''
+      })
+    );
+    dispatch(
+      displaySnackbar({
+        open: true,
+        message: 'Could not create Level. Did you select a Department?',
+        severity: 'error'
+      })
+    );
+  }
+
+  return {
+    type: REQUEST_CREATE_LEVEL,
+    payload
+  };
+};
+
+export const createLevel = (payload: CreateLevelState = createLevelState) => {
+  return {
+    type: CREATE_LEVEL,
     payload
   };
 };

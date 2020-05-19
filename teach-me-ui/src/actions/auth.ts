@@ -22,7 +22,7 @@ import {
   validateSigninPassword
 } from './validate';
 import {
-  callNetworkStatusChecker,
+  callNetworkStatusCheckerFor,
   populateStateWithUserData,
   logError
 } from '../functions';
@@ -55,7 +55,7 @@ export const requestSignup = (data: SignupFormData) => (
   email = email.toLowerCase();
 
   //check if user is online as lost network connection is not a failure state for Firebase db in order to give response to user
-  callNetworkStatusChecker('signup');
+  callNetworkStatusCheckerFor(signup);
 
   axios({
     url: 'https://teach-me-services.herokuapp.com/api/v1/register',
@@ -168,7 +168,7 @@ export const requestSignin = (data: SigninFormData) => (
   dispatch: Function
 ): ReduxAction => {
   dispatch(signin({ status: 'pending' }));
-  callNetworkStatusChecker('signin');
+  callNetworkStatusCheckerFor(signin);
 
   let { id, password } = data;
   let _id;

@@ -20,7 +20,6 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
-import Popover from '@material-ui/core/Popover';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -46,7 +45,9 @@ import {
   validateDepartment,
   getMatchingDepartments,
   validateLevel,
-  getMatchingLevels
+  getMatchingLevels,
+  requestCreateDepartment,
+  requestCreateLevel
 } from '../../actions';
 
 export const refs: any = {
@@ -76,7 +77,9 @@ const Signup = (props: SignupPropsState) => {
     level,
     matchingInstitutions,
     matchingDepartments,
+    createDepartment,
     matchingLevels,
+    createLevel,
     signup,
     auth
   } = props;
@@ -85,32 +88,8 @@ const Signup = (props: SignupPropsState) => {
   const [hideDepartmentsList, setHideDepartmentsList] = useState(Boolean);
   const [hideLevelsList, setHideLevelsList] = useState(Boolean);
   const [openDepartmentPopover, setOpenDepartmentPopover] = useState(Boolean);
+  const [openLevelPopover, setOpenLevelPopover] = useState(Boolean);
   const { isAuthenticated } = auth;
-  const handleInstitutionChange = useCallback((e: any) => {
-    const { target } = e;
-
-    e.target.dataset.uid = '';
-    dispatch(getMatchingInstitutions(target.value)(dispatch));
-    handleSignupInputChange(e);
-    setHideInstitutionsList(!target.value || !navigator.onLine);
-  }, []);
-  const handleDepartmentChange = useCallback((e: any) => {
-    const { target } = e;
-
-    e.target.dataset.uid = '';
-    dispatch(getMatchingDepartments(target.value)(dispatch));
-    handleSignupInputChange(e);
-    setHideDepartmentsList(!target.value || !navigator.onLine);
-    setOpenDepartmentPopover(target.value.length > 2 && !department.value.uid);
-  }, []);
-  const handleLevelChange = useCallback((e: any) => {
-    const { target } = e;
-
-    e.target.dataset.uid = '';
-    dispatch(getMatchingLevels(target.value)(dispatch));
-    handleSignupInputChange(e);
-    setHideLevelsList(!target.value || !navigator.onLine);
-  }, []);
   const inputAdorned = useMemo(() => {
     return {
       endAdornment: (
@@ -124,6 +103,61 @@ const Signup = (props: SignupPropsState) => {
       )
     };
   }, [passwordVisible]);
+
+  const handleInstitutionChange = useCallback((e: any) => {
+    const { target } = e;
+
+    e.target.dataset.uid = '';
+    dispatch(getMatchingInstitutions(target.value)(dispatch));
+    handleSignupInputChange(e);
+    setHideInstitutionsList(!target.value || !navigator.onLine);
+  }, []);
+
+  const handleDepartmentChange = useCallback(
+    (e: any) => {
+      const { target } = e;
+
+      e.target.dataset.uid = '';
+      dispatch(getMatchingDepartments(target.value)(dispatch));
+      handleSignupInputChange(e);
+      setHideDepartmentsList(!target.value || !navigator.onLine);
+      setOpenDepartmentPopover(
+        target.value.length > 2 && !department.value.uid
+      );
+    },
+    [department.value]
+  );
+
+  const handleLevelChange = useCallback(
+    (e: any) => {
+      const { target } = e;
+
+      e.target.dataset.uid = '';
+      dispatch(getMatchingLevels(target.value)(dispatch));
+      handleSignupInputChange(e);
+      setHideLevelsList(!target.value || !navigator.onLine);
+      setOpenLevelPopover(target.value.length > 2 && !level.value.uid);
+    },
+    [level.value]
+  );
+
+  const handleCreateDepartment = useCallback(() => {
+    dispatch(
+      requestCreateDepartment({
+        department: department.value.keyword,
+        university: institution.value.uid ?? ''
+      })(dispatch)
+    );
+  }, [department.value.keyword, institution.value.uid]);
+
+  const handleCreateLevel = useCallback(() => {
+    dispatch(
+      requestCreateLevel({
+        level: level.value.keyword,
+        department: department.value.uid ?? ''
+      })(dispatch)
+    );
+  }, [level.value.keyword, department.value.uid]);
 
   if (isAuthenticated) {
     return <Redirect to='/' />;
@@ -347,7 +381,7 @@ const Signup = (props: SignupPropsState) => {
                 required
                 error={department.err || matchingDepartments.err}
                 variant='outlined'
-                // disabled={institution.err || !institution.value.uid}
+                disabled={institution.err || !institution.value.uid}
                 id='department'
                 label='Department'
                 value={department.value.keyword || ''}
@@ -411,15 +445,22 @@ const Signup = (props: SignupPropsState) => {
                 </List>
               </ClickAwayListener>
               <ClickAwayListener
-                onClickAway={() => setOpenDepartmentPopover(false)}>
+                onClickAway={() =>
+                  setOpenDepartmentPopover(
+                    createDepartment.status === 'pending'
+                  )
+                }>
                 <Button
                   id='create-department-button'
                   color='primary'
                   className={`signup-create-button fade-in ${
-                    openDepartmentPopover ? 'open' : 'close'
+                    openDepartmentPopover ||
+                    createDepartment.status === 'pending'
+                      ? 'open'
+                      : 'close'
                   }`}
-                  onClick={() => setOpenDepartmentPopover(false)}>
-                  <AddIcon color='inherit' fontSize='inherit' /> Create
+                  onClick={handleCreateDepartment}>
+                  {createDepartment.status === 'pending' ? <CircularProgress color='inherit' size={28} /> : <><AddIcon color='inherit' fontSize='inherit' /> Create</>}
                 </Button>
               </ClickAwayListener>
             </Box>
@@ -496,6 +537,24 @@ const Signup = (props: SignupPropsState) => {
                       </ListItem>
                     ))}
                 </List>
+              </ClickAwayListener>
+              <ClickAwayListener
+                onClickAway={() =>
+                  setOpenLevelPopover(createLevel.status === 'pending')
+                }>
+                <Button
+                  id='create-level-button'
+                  color='primary'
+                  className={`signup-create-button fade-in ${
+                    openLevelPopover || createLevel.status === 'pending'
+                      ? 'open'
+                      : 'close'
+                  }`}
+                  onClick={handleCreateLevel}>{
+                    createLevel.status === 'pending' ? <CircularProgress color='inherit' size={28} /> : <><AddIcon color='inherit' fontSize='inherit' /> Create</>
+                  }
+                  
+                </Button>
               </ClickAwayListener>
             </Box>
           </Grid>
@@ -604,7 +663,9 @@ const mapStateToProps = (state: any) => {
     level: state.level,
     matchingInstitutions: state.matchingInstitutions,
     matchingDepartments: state.matchingDepartments,
+    createDepartment: state.createDepartment,
     matchingLevels: state.matchingLevels,
+    createLevel: state.createLevel,
     signup: state.signup,
     auth: state.auth
   };
