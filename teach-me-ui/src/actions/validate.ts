@@ -150,19 +150,22 @@ export const getMatchingInstitutions = (keyword: string) => (
             );
           } else {
             dispatch(
+              validateInstitution({
+                err: true,
+                helperText: "Institution doesn't match our records."
+              })
+            );
+            dispatch(
               matchingInstitutions({
                 status: 'fulfilled',
                 err: true,
-                data: response.data.institutions,
-                statusText: keyword
-                  ? "Institution doesn't match our records."
-                  : ' '
+                data: response.data.institutions
               })
             );
           }
         })
         .catch(logError(signup));
-    }, 200);
+    }, 100);
   } else {
     dispatch(matchingInstitutions({ status: 'settled', data: [] }));
   }
@@ -186,44 +189,57 @@ let departmentSearchTimeout: any = null;
 export const getMatchingDepartments = (keyword: string) => (
   dispatch: Function
 ): ReduxAction => {
-  const { institution } = getState();
+  const institutionUid = getState().institution.value?.uid;
 
   clearTimeout(departmentSearchTimeout);
 
   if (keyword) {
     departmentSearchTimeout = window.setTimeout(() => {
-      axios({
-        url: `${endpointUrl}/department/search?keyword=${keyword}&institution=${institution.value.uid}&limit=15`,
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-        .then((response: any) => {
-          console.log('what is department response');
-          if (!response.data.error && !!response.data.departments[0]) {
-            dispatch(
-              matchingDepartments({
-                status: 'fulfilled',
-                err: false,
-                data: response.data.departments
-              })
-            );
-          } else {
-            dispatch(
-              matchingDepartments({
-                status: 'fulfilled',
-                err: true,
-                data: [],
-                statusText: `Department doesn't match our records. ${
-                  keyword.length > 2 ? "'Create' one?" : ''
-                }`
-              })
-            );
+      if (institutionUid) {
+        axios({
+          url: `${endpointUrl}/department/search?keyword=${keyword}&institution=${institutionUid}&limit=15`,
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
           }
         })
-        .catch(logError(signup));
-    }, 200);
+          .then((response: any) => {
+            if (!response.data.error && !!response.data.departments[0]) {
+              dispatch(
+                matchingDepartments({
+                  status: 'fulfilled',
+                  err: false,
+                  data: response.data.departments
+                })
+              );
+            } else {
+              dispatch(
+                validateDepartment({
+                  err: true,
+                  helperText: `Department doesn't match our records. ${
+                    keyword.length > 2 ? "'Create' one?" : ''
+                  }`
+                })
+              );
+              dispatch(
+                matchingDepartments({
+                  status: 'fulfilled',
+                  err: true,
+                  data: []
+                })
+              );
+            }
+          })
+          .catch(logError(signup));
+      } else {
+        dispatch(
+          validateDepartment({
+            err: true,
+            helperText: 'You need to select an institution first.'
+          })
+        );
+      }
+    }, 100);
   } else {
     dispatch(matchingDepartments({ status: 'settled', data: [] }));
   }
@@ -244,40 +260,54 @@ export const matchingDepartments = (payload: SearchState) => {
 export const requestCreateDepartment = (
   payload: CreateDepartmentState = createDepartmentState
 ) => (dispatch: Function): ReduxAction => {
-  const { department, university } = payload;
+  const { department, institution } = payload;
 
   dispatch(createDepartment({ status: 'pending' }));
   callNetworkStatusCheckerFor(createDepartment);
-  console.log();
-  if (department && university) {
+
+  if (department && institution) {
     axios({
       url: '/department/create',
       method: 'POST',
       baseURL: endpointUrl,
       data: {
         department,
-        university
+        institution
       },
       headers: {
         'Content-Type': 'application/json'
       }
     })
       .then((response: any) => {
-        console.log('response from department:', response.data);
-        if (!response.data.error && !!response.data.uid) {
+        if (!response.data.error && !!response.data.id) {
           dispatch(
             createDepartment({
               status: 'fulfilled',
-              err: false,
-              uid: response.data.uid
+              err: false
+            })
+          );
+          dispatch(
+            validateDepartment({
+              value: {
+                keyword: department,
+                uid: response.data.uid
+              },
+              err: false
+            })
+          );
+          dispatch(
+            displaySnackbar({
+              autoHide: true,
+              severity: 'success',
+              open: true,
+              message: 'Department created.'
             })
           );
         } else {
           dispatch(
             createDepartment({
               status: 'fulfilled',
-              err: true,
-              uid: ''
+              err: true
             })
           );
         }
@@ -287,8 +317,7 @@ export const requestCreateDepartment = (
     dispatch(
       createDepartment({
         status: 'settled',
-        err: true,
-        uid: ''
+        err: true
       })
     );
     dispatch(
@@ -321,41 +350,57 @@ let levelSearchTimeout: any = null;
 export const getMatchingLevels = (keyword: string) => (
   dispatch: Function
 ): ReduxAction => {
-  const { department } = getState();
+  const departmentUid = getState().department.value?.uid;
 
   clearTimeout(levelSearchTimeout);
 
   if (keyword) {
     levelSearchTimeout = window.setTimeout(() => {
-      axios({
-        url: `${endpointUrl}/department/search?keyword=${keyword}&department=${department.value.uid}&limit=15`,
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-        .then((response: any) => {
-          console.log('what is response for level: ', response);
-          if (!response.data.error && !!response.data.levels[0]) {
-            dispatch(
-              matchingLevels({
-                status: 'fulfilled',
-                err: false,
-                data: response.data.levels
-              })
-            );
-          } else {
-            dispatch(
-              matchingLevels({
-                status: 'fulfilled',
-                err: true,
-                data: []
-              })
-            );
+      if (departmentUid) {
+        axios({
+          url: `${endpointUrl}/department/search?keyword=${keyword}&department=${departmentUid}&limit=15`,
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
           }
         })
-        .catch(logError(signup));
-    }, 200);
+          .then((response: any) => {
+            if (!response.data.error && !!response.data.levels[0]) {
+              dispatch(
+                matchingLevels({
+                  status: 'fulfilled',
+                  err: false,
+                  data: response.data.levels
+                })
+              );
+            } else {
+              dispatch(
+                validateLevel({
+                  err: true,
+                  helperText: `Level doesn't match our records. ${
+                    keyword.length > 2 ? "'Create' one?" : ''
+                  }`
+                })
+              );
+              dispatch(
+                matchingLevels({
+                  status: 'fulfilled',
+                  err: true,
+                  data: []
+                })
+              );
+            }
+          })
+          .catch(logError(signup));
+      } else {
+        dispatch(
+          validateLevel({
+            err: true,
+            helperText: 'You need to select a department first.'
+          })
+        );
+      }
+    }, 100);
   } else {
     dispatch(matchingLevels({ status: 'settled', data: [] }));
   }
@@ -378,7 +423,7 @@ export const requestCreateLevel = (
 ) => (dispatch: Function): ReduxAction => {
   const { level, department } = payload;
 
-  dispatch(createLevel({ status: 'pending', level, department }));
+  dispatch(createLevel({ status: 'pending' }));
   callNetworkStatusCheckerFor(createLevel);
 
   if (level && department) {
@@ -395,21 +440,35 @@ export const requestCreateLevel = (
       }
     })
       .then((response: any) => {
-        console.log('response from level:', response.data);
-        if (!response.data.error && !!response.data.uid) {
+        if (!response.data.error && !!response.data.id) {
           dispatch(
             createLevel({
               status: 'fulfilled',
-              err: false,
-              uid: response.data.uid
+              err: false
+            })
+          );
+          dispatch(
+            validateLevel({
+              value: {
+                keyword: level,
+                uid: response.data.uid
+              },
+              err: false
+            })
+          );
+          dispatch(
+            displaySnackbar({
+              open: true,
+              message: 'Level created.',
+              severity: 'success',
+              autoHide: true
             })
           );
         } else {
           dispatch(
             createLevel({
               status: 'fulfilled',
-              err: true,
-              uid: ''
+              err: true
             })
           );
         }
@@ -419,8 +478,7 @@ export const requestCreateLevel = (
     dispatch(
       createLevel({
         status: 'settled',
-        err: true,
-        uid: ''
+        err: true
       })
     );
     dispatch(

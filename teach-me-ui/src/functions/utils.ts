@@ -63,19 +63,6 @@ export function callNetworkStatusCheckerFor(action: Function) {
   function callTimeoutToAbortNetworkAction(action: Function) {
     if (navigator.onLine && state[action.name]?.status === 'pending') {
       dispatch(action({ ...errFeedback }));
-
-      // switch (actionName) {
-      //   case 'signup':
-
-      //     break;
-      //   case 'signin':
-      //     dispatch(signin({ ...errFeedback }));
-      //     break;
-      //   case 'create-level':
-      //     dispatch(createDepartment({ ...errFeedback }));
-      //   case 'create-department'
-      // }
-
       dispatch(
         displaySnackbar({
           open: true,
@@ -90,16 +77,6 @@ export function callNetworkStatusCheckerFor(action: Function) {
 
       if (navigator.onLine && state[action.name].status === 'pending') {
         dispatch(action({ ...abortionFeedback }));
-
-        // switch (actionName) {
-        //   case 'signup':
-        //     dispatch(signup({ ...abortionFeedback }));
-        //     break;
-        //   case 'signin':
-        //     dispatch(signin({ ...abortionFeedback }));
-        //     break;
-        // }
-
         dispatch(
           displaySnackbar({
             open: true,

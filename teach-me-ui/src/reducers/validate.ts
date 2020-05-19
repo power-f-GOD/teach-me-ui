@@ -88,7 +88,7 @@ export const username = (
 ) => {
   if (action.type === USERNAME_VALIDATE) {
     let { payload } = action;
-    let { value } = payload;
+    let value = payload.value || state.value;
     let err = !value || /\d+|\W+/.test(value);
     let helperText = err
       ? !value
@@ -140,7 +140,7 @@ export const dob = (
 ) => {
   if (action.type === DOB_VALIDATE) {
     let { payload } = action;
-    let { value, currentYear } = payload;
+    let [value, { currentYear }] = [payload.value || state.value, payload];
     let [day, month, year] = value?.split('/') ?? [0, 0, 0];
     let err = !value || !/^\d{2,2}\/\d{2,2}\/\d{4,4}$/.test(value);
     let helperText = !value ? 'Date of birth required.' : ' ';
@@ -211,9 +211,9 @@ export const institution = (
 ): AcademicInputState => {
   if (action.type === INSTITUTION_VALIDATE) {
     let { payload } = action;
-    let { value: val } = payload;
+    let val = payload.value || state.value;
     let value = val.keyword;
-    let err = !value || !/^[a-z,\s]+$/i.test(value);
+    let err = !value;
     let helperText = err
       ? !value
         ? 'Institution required.'
@@ -224,7 +224,7 @@ export const institution = (
     helperText = 'helperText' in payload ? payload.helperText : helperText;
 
     return (produce({ ...state, ...payload }, (draft: AcademicInputState) => {
-      draft.value.keyword = value;
+      draft.value!.keyword = value;
       draft.err = err;
       draft.helperText = helperText;
     }) as unknown) as AcademicInputState;
@@ -253,7 +253,7 @@ export const department = (
 ): AcademicInputState => {
   if (action.type === DEPARTMENT_VALIDATE) {
     let { payload } = action;
-    let { value: val } = payload;
+    let val = payload.value || state.value;
     let value = val.keyword;
     let err = !value || !/^[a-z,\s]+$/i.test(value);
     let helperText = err
@@ -266,7 +266,7 @@ export const department = (
     helperText = 'helperText' in payload ? payload.helperText : helperText;
 
     return (produce({ ...state, ...payload }, (draft: AcademicInputState) => {
-      draft.value.keyword = value;
+      draft.value!.keyword = value;
       draft.err = err;
       draft.helperText = helperText;
     }) as unknown) as AcademicInputState;
@@ -309,7 +309,7 @@ export const level = (
 ): AcademicInputState => {
   if (action.type === LEVEL_VALIDATE) {
     let { payload } = action;
-    let { value: val } = payload;
+    let val = payload.value || state.value;
     let value = val.keyword;
     let err = !value || !/[a-z]|^(1|2|3|4|5|6|7|8|9)00$/i.test(value);
     let helperText = err
@@ -322,7 +322,7 @@ export const level = (
     helperText = 'helperText' in payload ? payload.helperText : helperText;
 
     return (produce({ ...state, ...payload }, (draft: AcademicInputState) => {
-      draft.value.keyword = value;
+      draft.value!.keyword = value;
       draft.err = err;
       draft.helperText = helperText;
     }) as unknown) as AcademicInputState;

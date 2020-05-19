@@ -57,14 +57,12 @@ export const searchState: SearchState = {
 
 export const createDepartmentState: CreateDepartmentState = {
   department: '',
-  university: '',
-  uid: ''
+  institution: ''
 };
 
 export const createLevelState: CreateLevelState = {
   level: '',
-  department: '',
-  uid: ''
+  department: ''
 };
 
 export const signupProps: SignupPropsState = {

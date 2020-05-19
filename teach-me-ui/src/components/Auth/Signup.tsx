@@ -108,8 +108,8 @@ const Signup = (props: SignupPropsState) => {
     const { target } = e;
 
     e.target.dataset.uid = '';
-    dispatch(getMatchingInstitutions(target.value)(dispatch));
     handleSignupInputChange(e);
+    dispatch(getMatchingInstitutions(target.value)(dispatch));
     setHideInstitutionsList(!target.value || !navigator.onLine);
   }, []);
 
@@ -118,14 +118,16 @@ const Signup = (props: SignupPropsState) => {
       const { target } = e;
 
       e.target.dataset.uid = '';
-      dispatch(getMatchingDepartments(target.value)(dispatch));
       handleSignupInputChange(e);
+      dispatch(getMatchingDepartments(target.value)(dispatch));
       setHideDepartmentsList(!target.value || !navigator.onLine);
       setOpenDepartmentPopover(
-        target.value.length > 2 && !department.value.uid
+        target.value.length > 2 &&
+          !department.value!.uid &&
+          !!institution.value!.uid
       );
     },
-    [department.value]
+    [department.value, institution.value]
   );
 
   const handleLevelChange = useCallback(
@@ -133,31 +135,33 @@ const Signup = (props: SignupPropsState) => {
       const { target } = e;
 
       e.target.dataset.uid = '';
-      dispatch(getMatchingLevels(target.value)(dispatch));
       handleSignupInputChange(e);
+      dispatch(getMatchingLevels(target.value)(dispatch));
       setHideLevelsList(!target.value || !navigator.onLine);
-      setOpenLevelPopover(target.value.length > 2 && !level.value.uid);
+      setOpenLevelPopover(
+        target.value.length > 2 && !level.value?.uid && !!department.value!.uid
+      );
     },
-    [level.value]
+    [level.value, department.value]
   );
 
   const handleCreateDepartment = useCallback(() => {
     dispatch(
       requestCreateDepartment({
-        department: department.value.keyword,
-        university: institution.value.uid ?? ''
+        department: department.value?.keyword,
+        institution: institution.value!.uid
       })(dispatch)
     );
-  }, [department.value.keyword, institution.value.uid]);
+  }, [department.value, institution.value]);
 
   const handleCreateLevel = useCallback(() => {
     dispatch(
       requestCreateLevel({
-        level: level.value.keyword,
-        department: department.value.uid ?? ''
+        level: level.value?.keyword,
+        department: department.value!.uid
       })(dispatch)
     );
-  }, [level.value.keyword, department.value.uid]);
+  }, [level.value, department.value]);
 
   if (isAuthenticated) {
     return <Redirect to='/' />;
@@ -302,19 +306,15 @@ const Signup = (props: SignupPropsState) => {
               <Memoize
                 memoizedComponent={TextField}
                 required
-                error={institution.err || matchingInstitutions.err}
+                error={institution.err}
                 variant='outlined'
                 id='institution'
                 label='Institution'
                 size='medium'
-                value={institution.value.keyword || ''}
+                value={institution.value?.keyword || ''}
                 autoComplete='institution'
                 inputRef={refs.institutionInput}
-                helperText={
-                  matchingInstitutions.data[0]
-                    ? institution.helperText
-                    : matchingInstitutions.statusText
-                }
+                helperText={institution.helperText}
                 fullWidth
                 onChange={handleInstitutionChange}
               />
@@ -322,7 +322,7 @@ const Signup = (props: SignupPropsState) => {
                 onClickAway={() => setHideInstitutionsList(true)}>
                 <List
                   className={`search-list custom-scroll-bar ${
-                    institution.value.keyword &&
+                    institution.value?.keyword &&
                     !institution.err &&
                     !hideInstitutionsList
                       ? 'open'
@@ -351,7 +351,7 @@ const Signup = (props: SignupPropsState) => {
                         }}>
                         {(() => {
                           const country = `<span class='theme-color-tertiary-lighter'>${_institution.country}</span>`;
-                          const keyword = institution.value.keyword;
+                          const keyword = institution.value?.keyword;
                           const highlighted = `${_institution.name.replace(
                             new RegExp(`(${keyword})`, 'i'),
                             `<span class='theme-color-secondary-darker'>$1</span>`
@@ -379,20 +379,16 @@ const Signup = (props: SignupPropsState) => {
               <Memoize
                 memoizedComponent={TextField}
                 required
-                error={department.err || matchingDepartments.err}
+                error={department.err}
                 variant='outlined'
-                disabled={institution.err || !institution.value.uid}
+                // disabled={institution.err || !institution.value?.uid}
                 id='department'
                 label='Department'
-                value={department.value.keyword || ''}
+                value={department.value?.keyword || ''}
                 size='medium'
                 autoComplete='department'
                 inputRef={refs.departmentInput}
-                helperText={
-                  matchingDepartments.data[0]
-                    ? department.helperText
-                    : matchingDepartments.statusText
-                }
+                helperText={department.helperText}
                 fullWidth
                 onChange={handleDepartmentChange}
               />
@@ -400,7 +396,7 @@ const Signup = (props: SignupPropsState) => {
                 onClickAway={() => setHideDepartmentsList(true)}>
                 <List
                   className={`search-list custom-scroll-bar ${
-                    department.value.keyword &&
+                    department.value?.keyword &&
                     !department.err &&
                     !hideDepartmentsList
                       ? 'open'
@@ -429,7 +425,7 @@ const Signup = (props: SignupPropsState) => {
                         }}>
                         {(() => {
                           const highlighted = `${_department.name.replace(
-                            new RegExp(`(${department.value.keyword})`, 'i'),
+                            new RegExp(`(${department.value?.keyword})`, 'i'),
                             `<span class='theme-color-secondary-darker'>$1</span>`
                           )}`.replace(/<\/?script>/gi, '');
 
@@ -444,25 +440,25 @@ const Signup = (props: SignupPropsState) => {
                     ))}
                 </List>
               </ClickAwayListener>
-              <ClickAwayListener
-                onClickAway={() =>
-                  setOpenDepartmentPopover(
-                    createDepartment.status === 'pending'
-                  )
-                }>
-                <Button
-                  id='create-department-button'
-                  color='primary'
-                  className={`signup-create-button fade-in ${
-                    openDepartmentPopover ||
-                    createDepartment.status === 'pending'
-                      ? 'open'
-                      : 'close'
-                  }`}
-                  onClick={handleCreateDepartment}>
-                  {createDepartment.status === 'pending' ? <CircularProgress color='inherit' size={28} /> : <><AddIcon color='inherit' fontSize='inherit' /> Create</>}
-                </Button>
-              </ClickAwayListener>
+              <Button
+                id='create-department-button'
+                color='primary'
+                className={`signup-create-button ${
+                  openDepartmentPopover &&
+                  !matchingDepartments.data![0] &&
+                  createDepartment.status !== 'fulfilled'
+                    ? 'show'
+                    : 'hide'
+                }`}
+                onClick={handleCreateDepartment}>
+                {createDepartment.status === 'pending' ? (
+                  <CircularProgress color='inherit' size={22} />
+                ) : (
+                  <>
+                    <AddIcon color='inherit' fontSize='inherit' /> Create
+                  </>
+                )}
+              </Button>
             </Box>
           </Grid>
         </Grid>
@@ -477,27 +473,23 @@ const Signup = (props: SignupPropsState) => {
               <Memoize
                 memoizedComponent={TextField}
                 required
-                error={level.err || matchingLevels.err}
+                error={level.err}
                 variant='outlined'
-                disabled={department.err || !department.value.uid}
+                // disabled={department.err || !department.value?.uid}
                 id='level'
                 label='Level (E.g. 100)'
-                value={level.value.keyword || ''}
+                value={level.value?.keyword || ''}
                 size='medium'
                 autoComplete='level'
                 inputRef={refs.levelInput}
-                helperText={
-                  matchingLevels.data[0]
-                    ? level.helperText
-                    : matchingLevels.statusText
-                }
+                helperText={level.helperText}
                 fullWidth
                 onChange={handleLevelChange}
               />
               <ClickAwayListener onClickAway={() => setHideLevelsList(true)}>
                 <List
                   className={`search-list custom-scroll-bar ${
-                    level.value.keyword && !level.err && !hideLevelsList
+                    level.value?.keyword && !level.err && !hideLevelsList
                       ? 'open'
                       : 'close'
                   }`}
@@ -523,7 +515,7 @@ const Signup = (props: SignupPropsState) => {
                         }}>
                         {(() => {
                           const highlighted = `${_level.name.replace(
-                            new RegExp(`(${level.value.keyword})`, 'i'),
+                            new RegExp(`(${level.value?.keyword})`, 'i'),
                             `<span class='theme-color-secondary-darker'>$1</span>`
                           )}`.replace(/<\/?script>/gi, '');
 
@@ -538,24 +530,25 @@ const Signup = (props: SignupPropsState) => {
                     ))}
                 </List>
               </ClickAwayListener>
-              <ClickAwayListener
-                onClickAway={() =>
-                  setOpenLevelPopover(createLevel.status === 'pending')
-                }>
-                <Button
-                  id='create-level-button'
-                  color='primary'
-                  className={`signup-create-button fade-in ${
-                    openLevelPopover || createLevel.status === 'pending'
-                      ? 'open'
-                      : 'close'
-                  }`}
-                  onClick={handleCreateLevel}>{
-                    createLevel.status === 'pending' ? <CircularProgress color='inherit' size={28} /> : <><AddIcon color='inherit' fontSize='inherit' /> Create</>
-                  }
-                  
-                </Button>
-              </ClickAwayListener>
+              <Button
+                id='create-level-button'
+                color='primary'
+                className={`signup-create-button ${
+                  openLevelPopover &&
+                  !matchingLevels.data![0] &&
+                  createLevel.status !== 'fulfilled'
+                    ? 'show'
+                    : 'hide'
+                }`}
+                onClick={handleCreateLevel}>
+                {createLevel.status === 'pending' ? (
+                  <CircularProgress color='inherit' size={22} />
+                ) : (
+                  <>
+                    <AddIcon color='inherit' fontSize='inherit' /> Create
+                  </>
+                )}
+              </Button>
             </Box>
           </Grid>
           <Grid item xs={12} sm={5} className='flex-basis-halved' key='button'>

@@ -57,7 +57,7 @@ it("validate reducers should be called with 'state' and 'action' and return obje
   const dobMockFunc = jest.fn((state: BasicInputState, action: ReduxAction) =>
     dob(state, action)
   );
-  const universityMockFunc = jest.fn(
+  const institutionMockFunc = jest.fn(
     (state: AcademicInputState, action: ReduxAction) =>
       institution(state, action)
   );
@@ -130,8 +130,8 @@ it("validate reducers should be called with 'state' and 'action' and return obje
 
   // mockInputState.value = academicInputStateVal;
 
-  // universityMockFunc(academicInputState, action);
-  // expect(universityMockFunc).toHaveBeenCalledWith(academicInputState, action);
+  // institutionMockFunc(academicInputState, action);
+  // expect(institutionMockFunc).toHaveBeenCalledWith(academicInputState, action);
   // expect(institution(<AcademicInputState>mockInputState, action)).toMatchObject(
   //   academicInputState
   // );

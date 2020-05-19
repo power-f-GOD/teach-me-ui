@@ -47,11 +47,23 @@ export function handleSignupRequest() {
     const event = {
       target: signupRefs[key].current
     } as ChangeEvent<HTMLInputElement>;
+    const { target } = event;
 
     handleSignupInputChange(event);
+
+    switch (target.id) {
+      case 'institution':
+        dispatch(actions.getMatchingInstitutions(target.value)(dispatch));
+        break;
+      case 'department':
+        dispatch(actions.getMatchingDepartments(target.value)(dispatch));
+        break;
+      case 'level':
+        dispatch(actions.getMatchingLevels(target.value)(dispatch));
+    }
   }
 
-  let {
+  const {
     firstname,
     lastname,
     username,
@@ -73,6 +85,7 @@ export function handleSignupRequest() {
     institution.err ||
     department.err ||
     level.err
+    // !level.value.uid
   ) {
     signupFormValidated = false;
   }
@@ -84,9 +97,9 @@ export function handleSignupRequest() {
     email: email.value,
     dob: dob.value,
     password: password.value,
-    institution: institution.uid,
-    department: department.value,
-    level: level.value
+    institution: institution.value.uid,
+    department: department.value.uid,
+    level: level.value.uid
   };
 
   if (signupFormValidated) {

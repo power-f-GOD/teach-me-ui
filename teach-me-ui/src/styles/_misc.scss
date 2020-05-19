@@ -134,6 +134,7 @@ a {
   }
 
   &[class*='Primary'] {
+    min-height: 2.5rem;
     border-radius: 0.25rem;
     background-color: $theme-color-secondary !important;
     color: white;
@@ -230,6 +231,7 @@ a {
 
 .MuiFormHelperText-root {
   letter-spacing: unset;
+  white-space: nowrap;
 }
 
 [class^='MuiFormControl'],
