@@ -368,7 +368,7 @@ export const getMatchingLevels = (keyword: string) => (
     levelSearchTimeout = window.setTimeout(() => {
       if (departmentUid) {
         axios({
-          url: `${endpointUrl}/department/search?keyword=${keyword}&department=${departmentUid}&limit=15`,
+          url: `${endpointUrl}/level/search?keyword=${keyword}&department=${departmentUid}&limit=15`,
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
