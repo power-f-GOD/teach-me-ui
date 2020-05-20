@@ -6,7 +6,7 @@ import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
 
-import { Signin, Signup, Footer } from './index';
+import { Signin, Signup, Footer } from '../index';
 
 const Auth = (props: any) => {
   const isSignup = /\/signup/.test(props.location.pathname);

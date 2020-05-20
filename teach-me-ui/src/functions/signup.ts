@@ -2,7 +2,7 @@ import { ChangeEvent } from 'react';
 
 import * as actions from '../actions/validate';
 import { getState, dispatch } from './utils';
-import { refs as signupRefs } from '../components/Signup';
+import { refs as signupRefs } from '../components/Auth/Signup';
 import { requestSignup } from '../actions';
 import { SignupFormData } from '../constants';
 
@@ -10,6 +10,7 @@ export function handleSignupInputChange({
   target
 }: ChangeEvent<HTMLInputElement>) {
   let { id, value } = target;
+  let uid = target.dataset?.uid;
 
   switch (id) {
     case 'firstname':
@@ -24,34 +25,61 @@ export function handleSignupInputChange({
       return dispatch(actions.validateDob({ value }));
     case 'password':
       return dispatch(actions.validatePassword({ value }));
-    case 'university':
-      return dispatch(actions.validateUniversity({ value }));
+    case 'institution':
+      return dispatch(
+        actions.validateInstitution({ value: { keyword: value, uid } })
+      );
     case 'department':
-      return dispatch(actions.validateDepartment({ value }));
+      return dispatch(
+        actions.validateDepartment({ value: { keyword: value, uid } })
+      );
     case 'level':
-      return dispatch(actions.validateLevel({ value }));
+      return dispatch(
+        actions.validateLevel({ value: { keyword: value, uid } })
+      );
   }
 }
 
 export function handleSignupRequest() {
   let signupFormValidated = true;
+  const { institution: i, department: d, level: l } = getState();
 
   for (const key in signupRefs) {
     const event = {
       target: signupRefs[key].current
     } as ChangeEvent<HTMLInputElement>;
+    const { target } = event;
+
+    if (!/institution|department|level/.test(target.id)) {
+      handleSignupInputChange(event);
+      continue;
+    }
+
+    switch (target.id) {
+      case 'institution':
+        event.target.dataset.uid = i.value?.uid;
+        dispatch(actions.getMatchingInstitutions(target.value)(dispatch));
+        break;
+      case 'department':
+        event.target.dataset.uid = d.value?.uid;
+        dispatch(actions.getMatchingDepartments(target.value)(dispatch));
+        break;
+      case 'level':
+        event.target.dataset.uid = l.value?.uid;
+        dispatch(actions.getMatchingLevels(target.value)(dispatch));
+    }
 
     handleSignupInputChange(event);
   }
 
-  let {
+  const {
     firstname,
     lastname,
     username,
     email,
     dob,
     password,
-    university,
+    institution,
     department,
     level
   }: any = getState();
@@ -63,9 +91,10 @@ export function handleSignupRequest() {
     email.err ||
     dob.err ||
     password.err ||
-    university.err ||
+    institution.err ||
     department.err ||
     level.err
+    // !level.value.uid
   ) {
     signupFormValidated = false;
   }
@@ -77,9 +106,9 @@ export function handleSignupRequest() {
     email: email.value,
     dob: dob.value,
     password: password.value,
-    university: university.uid,
-    department: department.value,
-    level: level.value
+    institution: institution.value.uid,
+    department: department.value.uid,
+    level: level.value.uid
   };
 
   if (signupFormValidated) {

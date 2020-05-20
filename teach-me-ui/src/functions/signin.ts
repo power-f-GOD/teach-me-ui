@@ -1,6 +1,6 @@
 import { ChangeEvent } from 'react';
 
-import { refs as signinRefs } from '../components/Signin';
+import { refs as signinRefs } from '../components/Auth/Signin';
 import { getState, dispatch } from './utils';
 import { SigninFormData } from '../constants';
 import { validateSigninId, validateSigninPassword, requestSignin } from '../actions';

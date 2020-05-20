@@ -7,7 +7,7 @@ import {
   email,
   username,
   dob,
-  university,
+  institution,
   department,
   level,
   matchingInstitutions,
@@ -15,17 +15,23 @@ import {
   signinPassword
 } from '../../reducers/validate';
 import {
-  inputState,
-  InputPropsState,
+  basicInputState,
+  academicInputState,
+  BasicInputState,
   ReduxAction,
-  MatchingInstitutionsState
+  SearchState,
+  AcademicInputState
 } from '../../constants';
 
 afterEach(cleanup);
 
 it("validate reducers should be called with 'state' and 'action' and return object of type InputPropsState", () => {
-  const mockInputState: InputPropsState = {
-    value: expect.any(String),
+  const [basicInputStateVal, academicInputStateVal] = [
+    expect.any(String),
+    expect.any({ keyword: '', uid: '' })
+  ];
+  const mockInputState: BasicInputState | AcademicInputState = {
+    value: basicInputStateVal,
     err: expect.any(Boolean),
     helperText: expect.any(String)
   };
@@ -34,91 +40,120 @@ it("validate reducers should be called with 'state' and 'action' and return obje
     payload: { ...mockInputState, helperText: 'New helper text.' }
   };
   const firstnameMockFunc = jest.fn(
-    (state: InputPropsState, action: ReduxAction) => firstname(state, action)
+    (state: BasicInputState, action: ReduxAction) => firstname(state, action)
   );
   const lastnameMockFunc = jest.fn(
-    (state: InputPropsState, action: ReduxAction) => lastname(state, action)
+    (state: BasicInputState, action: ReduxAction) => lastname(state, action)
   );
   const usernameMockFunc = jest.fn(
-    (state: InputPropsState, action: ReduxAction) => username(state, action)
+    (state: BasicInputState, action: ReduxAction) => username(state, action)
   );
-  const emailMockFunc = jest.fn((state: InputPropsState, action: ReduxAction) =>
+  const emailMockFunc = jest.fn((state: BasicInputState, action: ReduxAction) =>
     email(state, action)
   );
   const passwordMockFunc = jest.fn(
-    (state: InputPropsState, action: ReduxAction) => password(state, action)
+    (state: BasicInputState, action: ReduxAction) => password(state, action)
   );
-  const dobMockFunc = jest.fn((state: InputPropsState, action: ReduxAction) =>
+  const dobMockFunc = jest.fn((state: BasicInputState, action: ReduxAction) =>
     dob(state, action)
   );
-  const universityMockFunc = jest.fn(
-    (state: InputPropsState, action: ReduxAction) => university(state, action)
+  const institutionMockFunc = jest.fn(
+    (state: AcademicInputState, action: ReduxAction) =>
+      institution(state, action)
   );
   const departmentMockFunc = jest.fn(
-    (state: InputPropsState, action: ReduxAction) => department(state, action)
+    (state: AcademicInputState, action: ReduxAction) =>
+      department(state, action)
   );
-  const levelMockFunc = jest.fn((state: InputPropsState, action: ReduxAction) =>
-    level(state, action)
+  const levelMockFunc = jest.fn(
+    (state: AcademicInputState, action: ReduxAction) => level(state, action)
   );
   const matchingInstitutionsMockFunc = jest.fn(
-    (state: MatchingInstitutionsState, action: ReduxAction) =>
+    (state: SearchState, action: ReduxAction) =>
       matchingInstitutions(state, action)
   );
   const signinIdMockFunc = jest.fn(
-    (state: InputPropsState, action: ReduxAction) => signinId(state, action)
+    (state: BasicInputState, action: ReduxAction) => signinId(state, action)
   );
   const signinPasswordMockFunc = jest.fn(
-    (state: InputPropsState, action: ReduxAction) =>
+    (state: BasicInputState, action: ReduxAction) =>
       signinPassword(state, action)
   );
 
-  firstnameMockFunc(inputState, action);
-  expect(firstnameMockFunc).toHaveBeenCalledWith(inputState, action);
-  expect(firstname(mockInputState, action)).toMatchObject(inputState);
-
-  lastnameMockFunc(inputState, action);
-  expect(lastnameMockFunc).toHaveBeenCalledWith(inputState, action);
-  expect(lastname(mockInputState, action)).toMatchObject(inputState);
-
-  usernameMockFunc(inputState, action);
-  expect(usernameMockFunc).toHaveBeenCalledWith(inputState, action);
-  expect(username(mockInputState, action)).toMatchObject(inputState);
-
-  emailMockFunc(inputState, action);
-  expect(emailMockFunc).toHaveBeenCalledWith(inputState, action);
-  expect(email(mockInputState, action)).toMatchObject(inputState);
-
-  dobMockFunc(inputState, action);
-  expect(dobMockFunc).toHaveBeenCalledWith(inputState, action);
-  expect(dob(mockInputState, action)).toMatchObject(inputState);
-
-  passwordMockFunc(inputState, action);
-  expect(passwordMockFunc).toHaveBeenCalledWith(inputState, action);
-  expect(password(mockInputState, action)).toMatchObject(inputState);
-
-  universityMockFunc(inputState, action);
-  expect(universityMockFunc).toHaveBeenCalledWith(inputState, action);
-  expect(university(mockInputState, action)).toMatchObject(inputState);
-
-  departmentMockFunc(inputState, action);
-  expect(departmentMockFunc).toHaveBeenCalledWith(inputState, action);
-  expect(department(mockInputState, action)).toMatchObject(inputState);
-
-  levelMockFunc(inputState, action);
-  expect(levelMockFunc).toHaveBeenCalledWith(inputState, action);
-  expect(level(mockInputState, action)).toMatchObject(inputState);
-
-  matchingInstitutionsMockFunc(inputState, action);
-  expect(matchingInstitutionsMockFunc).toHaveBeenCalledWith(inputState, action);
-  expect(matchingInstitutions(mockInputState, action)).toMatchObject(
-    inputState
+  firstnameMockFunc(basicInputState, action);
+  expect(firstnameMockFunc).toHaveBeenCalledWith(basicInputState, action);
+  expect(firstname(<BasicInputState>mockInputState, action)).toMatchObject(
+    basicInputState
   );
 
-  signinIdMockFunc(inputState, action);
-  expect(signinIdMockFunc).toHaveBeenCalledWith(inputState, action);
-  expect(signinId(mockInputState, action)).toMatchObject(inputState);
+  lastnameMockFunc(basicInputState, action);
+  expect(lastnameMockFunc).toHaveBeenCalledWith(basicInputState, action);
+  expect(lastname(<BasicInputState>mockInputState, action)).toMatchObject(
+    basicInputState
+  );
 
-  signinPasswordMockFunc(inputState, action);
-  expect(signinPasswordMockFunc).toHaveBeenCalledWith(inputState, action);
-  expect(signinPassword(mockInputState, action)).toMatchObject(inputState);
+  usernameMockFunc(basicInputState, action);
+  expect(usernameMockFunc).toHaveBeenCalledWith(basicInputState, action);
+  expect(username(<BasicInputState>mockInputState, action)).toMatchObject(
+    basicInputState
+  );
+
+  emailMockFunc(basicInputState, action);
+  expect(emailMockFunc).toHaveBeenCalledWith(basicInputState, action);
+  expect(email(<BasicInputState>mockInputState, action)).toMatchObject(
+    basicInputState
+  );
+
+  dobMockFunc(basicInputState, action);
+  expect(dobMockFunc).toHaveBeenCalledWith(basicInputState, action);
+  expect(dob(<BasicInputState>mockInputState, action)).toMatchObject(
+    basicInputState
+  );
+
+  passwordMockFunc(basicInputState, action);
+  expect(passwordMockFunc).toHaveBeenCalledWith(basicInputState, action);
+  expect(password(<BasicInputState>mockInputState, action)).toMatchObject(
+    basicInputState
+  );
+
+  signinIdMockFunc(basicInputState, action);
+  expect(signinIdMockFunc).toHaveBeenCalledWith(basicInputState, action);
+  expect(signinId(<BasicInputState>mockInputState, action)).toMatchObject(
+    basicInputState
+  );
+
+  signinPasswordMockFunc(basicInputState, action);
+  expect(signinPasswordMockFunc).toHaveBeenCalledWith(basicInputState, action);
+  expect(signinPassword(<BasicInputState>mockInputState, action)).toMatchObject(
+    basicInputState
+  );
+
+  // mockInputState.value = academicInputStateVal;
+
+  // institutionMockFunc(academicInputState, action);
+  // expect(institutionMockFunc).toHaveBeenCalledWith(academicInputState, action);
+  // expect(institution(<AcademicInputState>mockInputState, action)).toMatchObject(
+  //   academicInputState
+  // );
+
+  // departmentMockFunc(academicInputState, action);
+  // expect(departmentMockFunc).toHaveBeenCalledWith(academicInputState, action);
+  // expect(department(<AcademicInputState>mockInputState, action)).toMatchObject(
+  //   academicInputState
+  // );
+
+  // levelMockFunc(academicInputState, action);
+  // expect(levelMockFunc).toHaveBeenCalledWith(academicInputState, action);
+  // expect(level(<AcademicInputState>mockInputState, action)).toMatchObject(
+  //   academicInputState
+  // );
+
+  // matchingInstitutionsMockFunc(basicInputState, action);
+  // expect(matchingInstitutionsMockFunc).toHaveBeenCalledWith(
+  //   basicInputState,
+  //   action
+  // );
+  // expect(matchingInstitutions(mockInputState, action)).toMatchObject(
+  //   basicInputState
+  // );
 });

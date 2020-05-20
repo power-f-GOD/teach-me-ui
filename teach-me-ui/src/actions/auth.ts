@@ -22,7 +22,7 @@ import {
   validateSigninPassword
 } from './validate';
 import {
-  callNetworkStatusChecker,
+  callNetworkStatusCheckerFor,
   populateStateWithUserData,
   logError
 } from '../functions';
@@ -40,7 +40,7 @@ export const requestSignup = (data: SignupFormData) => (
     email,
     dob,
     password,
-    university,
+    institution,
     department,
     level
   } = data;
@@ -55,7 +55,7 @@ export const requestSignup = (data: SignupFormData) => (
   email = email.toLowerCase();
 
   //check if user is online as lost network connection is not a failure state for Firebase db in order to give response to user
-  callNetworkStatusChecker('signup');
+  callNetworkStatusCheckerFor(signup);
 
   axios({
     url: 'https://teach-me-services.herokuapp.com/api/v1/register',
@@ -67,7 +67,7 @@ export const requestSignup = (data: SignupFormData) => (
       email,
       date_of_birth,
       password,
-      university,
+      institution,
       department,
       level
     },
@@ -88,7 +88,7 @@ export const requestSignup = (data: SignupFormData) => (
           username,
           email,
           dob,
-          university,
+          institution,
           department,
           level,
           displayName
@@ -168,7 +168,7 @@ export const requestSignin = (data: SigninFormData) => (
   dispatch: Function
 ): ReduxAction => {
   dispatch(signin({ status: 'pending' }));
-  callNetworkStatusChecker('signin');
+  callNetworkStatusCheckerFor(signin);
 
   let { id, password } = data;
   let _id;
@@ -199,7 +199,7 @@ export const requestSignin = (data: SigninFormData) => (
         username,
         email,
         date_of_birth: dob,
-        university,
+        institution,
         department,
         level,
         error,
@@ -215,7 +215,7 @@ export const requestSignin = (data: SigninFormData) => (
           username,
           email,
           dob,
-          university,
+          institution,
           department,
           level,
           displayName

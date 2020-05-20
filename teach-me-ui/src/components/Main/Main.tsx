@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
 
-import { Nav, Home, About, Support, Profile, Footer, Loader } from './index';
+import { Nav, Home, About, Support, Profile, Footer, Loader } from '../index';
 
 const Main = (props: any) => {
   const { firstname, signout } = props;

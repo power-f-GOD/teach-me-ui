@@ -24,7 +24,7 @@ body {
 
 body {
   padding: 0 !important;
-  
+
   &.desktop {
     &.custom-scroll-bar,
     .custom-scroll-bar,
@@ -134,6 +134,7 @@ a {
   }
 
   &[class*='Primary'] {
+    min-height: 2.5rem;
     border-radius: 0.25rem;
     background-color: $theme-color-secondary !important;
     color: white;
@@ -228,6 +229,11 @@ a {
   color: $theme-color-primary;
 }
 
+.MuiFormHelperText-root {
+  letter-spacing: unset;
+  white-space: nowrap;
+}
+
 [class^='MuiFormControl'],
 div {
   fieldset {
@@ -243,7 +249,7 @@ div {
 [class^='MuiFormControl'],
 div {
   fieldset {
-    border-color: #ddd;
+    border-color: #eee;
   }
 
   .Mui-focused {
@@ -262,6 +268,13 @@ div {
     }
     fieldset {
       border-color: $error !important;
+    }
+  }
+
+  .Mui-disabled {
+    fieldset {
+      background: #ddd;
+      border: none !important;
     }
   }
 }

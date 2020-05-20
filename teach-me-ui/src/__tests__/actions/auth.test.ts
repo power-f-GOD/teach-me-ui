@@ -37,7 +37,7 @@ it("creates signup request action and should be called with 'signup data' and re
     email: 'johndoe@gmail.com',
     dob: '12/12/1995',
     password: '********',
-    university: 'State University',
+    institution: 'State University',
     department: 'Department',
     level: '100'
   };
