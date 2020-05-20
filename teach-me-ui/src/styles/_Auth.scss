@@ -63,6 +63,14 @@
 .academic-info-input-wrapper {
   width: 100%;
   position: relative;
+
+  .MuiLinearProgress-root {
+    position: absolute;
+    top: 75%;
+    height: 0.1875rem;
+    width: 100%;
+    border-radius: 0.25rem;
+  }
 }
 
 .search-list {

@@ -23,6 +23,7 @@ import Button from '@material-ui/core/Button';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker
@@ -318,6 +319,9 @@ const Signup = (props: SignupPropsState) => {
                 fullWidth
                 onChange={handleInstitutionChange}
               />
+              {matchingInstitutions.status === 'pending' && (
+                <LinearProgress color='primary' />
+              )}
               <ClickAwayListener
                 onClickAway={() => setHideInstitutionsList(true)}>
                 <List
@@ -392,6 +396,9 @@ const Signup = (props: SignupPropsState) => {
                 fullWidth
                 onChange={handleDepartmentChange}
               />
+              {matchingDepartments.status === 'pending' && (
+                <LinearProgress color='primary' />
+              )}
               <ClickAwayListener
                 onClickAway={() => setHideDepartmentsList(true)}>
                 <List
@@ -446,6 +453,7 @@ const Signup = (props: SignupPropsState) => {
                 className={`signup-create-button ${
                   openDepartmentPopover &&
                   !matchingDepartments.data![0] &&
+                  matchingDepartments.status !== 'pending' &&
                   createDepartment.status !== 'fulfilled'
                     ? 'show'
                     : 'hide'
@@ -486,6 +494,9 @@ const Signup = (props: SignupPropsState) => {
                 fullWidth
                 onChange={handleLevelChange}
               />
+              {matchingLevels.status === 'pending' && (
+                <LinearProgress color='primary' />
+              )}
               <ClickAwayListener onClickAway={() => setHideLevelsList(true)}>
                 <List
                   className={`search-list custom-scroll-bar ${
@@ -536,6 +547,7 @@ const Signup = (props: SignupPropsState) => {
                 className={`signup-create-button ${
                   openLevelPopover &&
                   !matchingLevels.data![0] &&
+                  matchingLevels.status !== 'pending' &&
                   createLevel.status !== 'fulfilled'
                     ? 'show'
                     : 'hide'

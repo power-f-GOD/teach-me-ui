@@ -129,6 +129,7 @@ export const getMatchingInstitutions = (keyword: string) => (
   dispatch: Function
 ): ReduxAction => {
   clearTimeout(institutionSearchTimeout);
+  dispatch(matchingInstitutions({ status: 'pending', data: [] }));
 
   if (keyword) {
     institutionSearchTimeout = window.setTimeout(() => {
@@ -167,7 +168,7 @@ export const getMatchingInstitutions = (keyword: string) => (
         .catch(logError(signup));
     }, 100);
   } else {
-    dispatch(matchingInstitutions({ status: 'settled', data: [] }));
+    dispatch(matchingInstitutions({ status: 'settled', err: true, data: [] }));
   }
 
   return {
@@ -192,6 +193,7 @@ export const getMatchingDepartments = (keyword: string) => (
   const institutionUid = getState().institution.value?.uid;
 
   clearTimeout(departmentSearchTimeout);
+  dispatch(matchingDepartments({ status: 'pending', data: [] }));
 
   if (keyword) {
     departmentSearchTimeout = window.setTimeout(() => {
@@ -236,6 +238,13 @@ export const getMatchingDepartments = (keyword: string) => (
           validateDepartment({
             err: true,
             helperText: 'You need to select an institution first.'
+          })
+        );
+        dispatch(
+          matchingDepartments({
+            status: 'settled',
+            err: true,
+            data: []
           })
         );
       }
@@ -290,7 +299,7 @@ export const requestCreateDepartment = (
             validateDepartment({
               value: {
                 keyword: department,
-                uid: response.data.uid
+                uid: response.data.id
               },
               err: false
             })
@@ -353,6 +362,7 @@ export const getMatchingLevels = (keyword: string) => (
   const departmentUid = getState().department.value?.uid;
 
   clearTimeout(levelSearchTimeout);
+  dispatch(matchingLevels({ status: 'pending', data: [] }));
 
   if (keyword) {
     levelSearchTimeout = window.setTimeout(() => {
@@ -365,6 +375,7 @@ export const getMatchingLevels = (keyword: string) => (
           }
         })
           .then((response: any) => {
+            console.log('Response from level search:', response.data);
             if (!response.data.error && !!response.data.levels[0]) {
               dispatch(
                 matchingLevels({
@@ -397,6 +408,13 @@ export const getMatchingLevels = (keyword: string) => (
           validateLevel({
             err: true,
             helperText: 'You need to select a department first.'
+          })
+        );
+        dispatch(
+          matchingLevels({
+            status: 'settled',
+            err: true,
+            data: []
           })
         );
       }
@@ -440,6 +458,7 @@ export const requestCreateLevel = (
       }
     })
       .then((response: any) => {
+        console.log('Response from createLevel', response.data);
         if (!response.data.error && !!response.data.id) {
           dispatch(
             createLevel({
@@ -451,7 +470,7 @@ export const requestCreateLevel = (
             validateLevel({
               value: {
                 keyword: level,
-                uid: response.data.uid
+                uid: response.data.id
               },
               err: false
             })

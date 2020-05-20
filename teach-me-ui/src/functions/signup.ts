@@ -42,6 +42,7 @@ export function handleSignupInputChange({
 
 export function handleSignupRequest() {
   let signupFormValidated = true;
+  const { institution: i, department: d, level: l } = getState();
 
   for (const key in signupRefs) {
     const event = {
@@ -49,18 +50,26 @@ export function handleSignupRequest() {
     } as ChangeEvent<HTMLInputElement>;
     const { target } = event;
 
-    handleSignupInputChange(event);
+    if (!/institution|department|level/.test(target.id)) {
+      handleSignupInputChange(event);
+      continue;
+    }
 
     switch (target.id) {
       case 'institution':
+        event.target.dataset.uid = i.value?.uid;
         dispatch(actions.getMatchingInstitutions(target.value)(dispatch));
         break;
       case 'department':
+        event.target.dataset.uid = d.value?.uid;
         dispatch(actions.getMatchingDepartments(target.value)(dispatch));
         break;
       case 'level':
+        event.target.dataset.uid = l.value?.uid;
         dispatch(actions.getMatchingLevels(target.value)(dispatch));
     }
+
+    handleSignupInputChange(event);
   }
 
   const {
