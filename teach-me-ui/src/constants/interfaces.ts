@@ -29,7 +29,7 @@ export interface StatusPropsState {
 }
 
 export interface SearchState extends StatusPropsState {
-  data: any[];
+  data?: any[];
 }
 
 export interface SignupPropsState {

@@ -311,11 +311,11 @@ export const level = (
     let { payload } = action;
     let val = payload.value || state.value;
     let value = val.keyword;
-    let err = !value || !/[a-z]|^(1|2|3|4|5|6|7|8|9)00$/i.test(value);
+    let err = !value || !/^([a-z0-9\s?]+)$/i.test(value);
     let helperText = err
       ? !value
         ? 'Level of study required.'
-        : 'Institution level not accepted.'
+        : 'Input not accepted.'
       : ' ';
 
     err = 'err' in payload ? payload.err : err;
