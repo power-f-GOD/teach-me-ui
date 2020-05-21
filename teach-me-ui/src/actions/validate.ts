@@ -32,7 +32,7 @@ import {
   createLevelState
 } from '../constants';
 import { logError, getState, callNetworkStatusCheckerFor } from '../functions';
-import { signup, displaySnackbar } from './';
+import { displaySnackbar } from './misc';
 
 const endpointUrl = 'https://teach-me-services.herokuapp.com/api/v1';
 
@@ -166,7 +166,7 @@ export const getMatchingInstitutions = (keyword: string) => (
             );
           }
         })
-        .catch(logError(signup));
+        .catch(logError(matchingInstitutions));
     }, 100);
   } else {
     dispatch(matchingInstitutions({ status: 'settled', err: true, data: [] }));
@@ -234,7 +234,7 @@ export const getMatchingDepartments = (keyword: string) => (
               );
             }
           })
-          .catch(logError(signup));
+          .catch(logError(matchingDepartments));
       } else {
         dispatch(
           validateDepartment({
@@ -323,7 +323,7 @@ export const requestCreateDepartment = (
           );
         }
       })
-      .catch(logError(signup));
+      .catch(logError(createDepartment));
   } else {
     dispatch(
       createDepartment({
@@ -404,7 +404,7 @@ export const getMatchingLevels = (keyword: string) => (
               );
             }
           })
-          .catch(logError(signup));
+          .catch(logError(matchingLevels));
       } else {
         dispatch(
           validateLevel({
@@ -493,7 +493,7 @@ export const requestCreateLevel = (
           );
         }
       })
-      .catch(logError(signup));
+      .catch(logError(createLevel));
   } else {
     dispatch(
       createLevel({

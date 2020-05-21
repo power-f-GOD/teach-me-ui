@@ -224,7 +224,7 @@ const Signup = (props: SignupPropsState) => {
               dispatch(
                 validateLevel({
                   value: {
-                    keyword: _level.level,
+                    keyword: _level.name,
                     uid: _level.id
                   }
                 })
@@ -232,7 +232,7 @@ const Signup = (props: SignupPropsState) => {
               refs.levelInput.current.dataset.uid = _level.id;
             }}>
             {(() => {
-              const highlighted = `${_level.level
+              const highlighted = `${_level.name
                 .trim()
                 .replace(
                   new RegExp(`(${level.value!.keyword!.trim()})`, 'i'),

@@ -60,11 +60,11 @@
     0 0em 3em 2em rgba(0, 0, 0, 0.035);
 
   .input-set fieldset {
-    border-right: 0.125rem solid $theme-color-primary-v7;
+    border-right: 0.175rem solid $theme-color-primary-v7;
   }
 
   .not-set fieldset {
-    border-right: 0.125rem solid $error;
+    border-right: 0.175rem solid $error;
   }
 }
 

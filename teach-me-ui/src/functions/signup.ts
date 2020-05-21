@@ -130,11 +130,10 @@ export function handleSignupRequest() {
     institution.err ||
     department.err ||
     level.err
-    // !level.value.uid
   ) {
     signupFormValidated = false;
   }
-  console.log('level uid', level.value.uid);
+
   let formData: SignupFormData = {
     firstname: firstname.value,
     lastname: lastname.value,
