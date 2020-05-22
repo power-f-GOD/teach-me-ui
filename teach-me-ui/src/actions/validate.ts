@@ -32,7 +32,7 @@ import {
   createLevelState
 } from '../constants';
 import { logError, getState, callNetworkStatusCheckerFor } from '../functions';
-import { signup, displaySnackbar } from './';
+import { displaySnackbar } from './misc';
 
 const endpointUrl = 'https://teach-me-services.herokuapp.com/api/v1';
 
@@ -129,12 +129,13 @@ export const getMatchingInstitutions = (keyword: string) => (
   dispatch: Function
 ): ReduxAction => {
   clearTimeout(institutionSearchTimeout);
-  dispatch(matchingInstitutions({ status: 'pending', data: [] }));
+  dispatch(matchingInstitutions({ status: 'pending' }));
+  callNetworkStatusCheckerFor(matchingInstitutions);
 
   if (keyword) {
     institutionSearchTimeout = window.setTimeout(() => {
       axios({
-        url: `${endpointUrl}/institution/search?keyword=${keyword}&limit=15`,
+        url: `${endpointUrl}/institution/search?keyword=${keyword.trim()}&limit=15`,
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -153,7 +154,7 @@ export const getMatchingInstitutions = (keyword: string) => (
             dispatch(
               validateInstitution({
                 err: true,
-                helperText: "Institution doesn't match our records."
+                helperText: "Institution doesn't match the records."
               })
             );
             dispatch(
@@ -165,7 +166,7 @@ export const getMatchingInstitutions = (keyword: string) => (
             );
           }
         })
-        .catch(logError(signup));
+        .catch(logError(matchingInstitutions));
     }, 100);
   } else {
     dispatch(matchingInstitutions({ status: 'settled', err: true, data: [] }));
@@ -193,13 +194,14 @@ export const getMatchingDepartments = (keyword: string) => (
   const institutionUid = getState().institution.value?.uid;
 
   clearTimeout(departmentSearchTimeout);
-  dispatch(matchingDepartments({ status: 'pending', data: [] }));
+  dispatch(matchingDepartments({ status: 'pending' }));
+  callNetworkStatusCheckerFor(matchingDepartments);
 
   if (keyword) {
     departmentSearchTimeout = window.setTimeout(() => {
       if (institutionUid) {
         axios({
-          url: `${endpointUrl}/department/search?keyword=${keyword}&institution=${institutionUid}&limit=15`,
+          url: `${endpointUrl}/department/search?keyword=${keyword.trim()}&institution=${institutionUid}&limit=15`,
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -218,7 +220,7 @@ export const getMatchingDepartments = (keyword: string) => (
               dispatch(
                 validateDepartment({
                   err: true,
-                  helperText: `Department doesn't match our records. ${
+                  helperText: `Department doesn't match the records. ${
                     keyword.length > 2 ? "'Create' one?" : ''
                   }`
                 })
@@ -232,12 +234,12 @@ export const getMatchingDepartments = (keyword: string) => (
               );
             }
           })
-          .catch(logError(signup));
+          .catch(logError(matchingDepartments));
       } else {
         dispatch(
           validateDepartment({
             err: true,
-            helperText: 'You need to select an institution first.'
+            helperText: 'You need to select an institution from its dropdown.'
           })
         );
         dispatch(
@@ -321,7 +323,7 @@ export const requestCreateDepartment = (
           );
         }
       })
-      .catch(logError(signup));
+      .catch(logError(createDepartment));
   } else {
     dispatch(
       createDepartment({
@@ -362,20 +364,20 @@ export const getMatchingLevels = (keyword: string) => (
   const departmentUid = getState().department.value?.uid;
 
   clearTimeout(levelSearchTimeout);
-  dispatch(matchingLevels({ status: 'pending', data: [] }));
+  dispatch(matchingLevels({ status: 'pending' }));
+  callNetworkStatusCheckerFor(matchingLevels);
 
   if (keyword) {
     levelSearchTimeout = window.setTimeout(() => {
       if (departmentUid) {
         axios({
-          url: `${endpointUrl}/level/search?keyword=${keyword}&department=${departmentUid}&limit=15`,
+          url: `${endpointUrl}/level/search?keyword=${keyword.trim()}&department=${departmentUid}&limit=15`,
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
           }
         })
           .then((response: any) => {
-            console.log('Response from level search:', response.data);
             if (!response.data.error && !!response.data.levels[0]) {
               dispatch(
                 matchingLevels({
@@ -388,7 +390,7 @@ export const getMatchingLevels = (keyword: string) => (
               dispatch(
                 validateLevel({
                   err: true,
-                  helperText: `Level doesn't match our records. ${
+                  helperText: `Level doesn't match the records. ${
                     keyword.length > 2 ? "'Create' one?" : ''
                   }`
                 })
@@ -402,12 +404,12 @@ export const getMatchingLevels = (keyword: string) => (
               );
             }
           })
-          .catch(logError(signup));
+          .catch(logError(matchingLevels));
       } else {
         dispatch(
           validateLevel({
             err: true,
-            helperText: 'You need to select a department first.'
+            helperText: 'You need to select a department from its dropdown.'
           })
         );
         dispatch(
@@ -458,7 +460,6 @@ export const requestCreateLevel = (
       }
     })
       .then((response: any) => {
-        console.log('Response from createLevel', response.data);
         if (!response.data.error && !!response.data.id) {
           dispatch(
             createLevel({
@@ -492,7 +493,7 @@ export const requestCreateLevel = (
           );
         }
       })
-      .catch(logError(signup));
+      .catch(logError(createLevel));
   } else {
     dispatch(
       createLevel({

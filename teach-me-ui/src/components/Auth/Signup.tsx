@@ -34,6 +34,7 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 // import Worker from 'worker-loader!./worker.ts';
 
+import createMemo from '../../Memo';
 import { SignupPropsState } from '../../constants/interfaces';
 import {
   handleSignupInputChange,
@@ -91,6 +92,7 @@ const Signup = (props: SignupPropsState) => {
   const [openDepartmentPopover, setOpenDepartmentPopover] = useState(Boolean);
   const [openLevelPopover, setOpenLevelPopover] = useState(Boolean);
   const { isAuthenticated } = auth;
+
   const inputAdorned = useMemo(() => {
     return {
       endAdornment: (
@@ -105,60 +107,236 @@ const Signup = (props: SignupPropsState) => {
     };
   }, [passwordVisible]);
 
-  const handleInstitutionChange = useCallback((e: any) => {
-    const { target } = e;
+  const matchingInstitutionsList = (
+    <ClickAwayListener onClickAway={() => setHideInstitutionsList(true)}>
+      <List
+        className={`search-list custom-scroll-bar ${
+          institution.value?.keyword &&
+          !institution.err &&
+          !hideInstitutionsList
+            ? 'open'
+            : 'close'
+        }`}
+        aria-label='institutions list'>
+        {matchingInstitutions?.data?.slice(0, 15).map((_institution, key) => (
+          <ListItem
+            button
+            divider
+            key={key}
+            onClick={() => {
+              setHideInstitutionsList(true);
+              dispatch(
+                validateInstitution({
+                  value: {
+                    keyword: _institution.name,
+                    uid: _institution.id
+                  }
+                })
+              );
+              refs.institutionInput.current.dataset.uid = _institution.id;
+            }}>
+            {(() => {
+              const country = `<span class='theme-color-tertiary-lighter'>${_institution.country}</span>`;
+              const keyword = institution.value?.keyword!.trim();
+              const highlighted = `${_institution.name.replace(
+                new RegExp(`(${keyword})`, 'i'),
+                `<span class='theme-color-secondary-darker'>$1</span>`
+              )}, ${country}`.replace(/<\/?script>/gi, '');
 
-    e.target.dataset.uid = '';
-    handleSignupInputChange(e);
-    dispatch(getMatchingInstitutions(target.value)(dispatch));
-    setHideInstitutionsList(!target.value || !navigator.onLine);
-  }, []);
+              return (
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: highlighted
+                  }}></span>
+              );
+            })()}
+          </ListItem>
+        ))}
+      </List>
+    </ClickAwayListener>
+  );
 
+  const matchingDepartmentsList = (
+    <ClickAwayListener onClickAway={() => setHideDepartmentsList(true)}>
+      <List
+        className={`search-list custom-scroll-bar ${
+          department.value?.keyword && !department.err && !hideDepartmentsList
+            ? 'open'
+            : 'close'
+        }`}
+        aria-label='departments list'>
+        {matchingDepartments?.data
+          ?.slice(0, 15)
+          .map((_department, key: number) => (
+            <ListItem
+              button
+              divider
+              key={key}
+              onClick={() => {
+                setHideDepartmentsList(true);
+                dispatch(
+                  validateDepartment({
+                    value: {
+                      keyword: _department.name,
+                      uid: _department.id
+                    }
+                  })
+                );
+                refs.departmentInput.current.dataset.uid = _department.id;
+              }}>
+              {(() => {
+                const highlighted = `${_department.name
+                  .trim()
+                  .replace(
+                    new RegExp(`(${department.value?.keyword?.trim()})`, 'i'),
+                    `<span class='theme-color-secondary-darker'>$1</span>`
+                  )}`.replace(/<\/?script>/gi, '');
+
+                return (
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: highlighted
+                    }}></span>
+                );
+              })()}
+            </ListItem>
+          ))}
+      </List>
+    </ClickAwayListener>
+  );
+
+  const matchingLevelsList = (
+    <ClickAwayListener onClickAway={() => setHideLevelsList(true)}>
+      <List
+        className={`search-list custom-scroll-bar ${
+          level.value?.keyword && !level.err && !hideLevelsList
+            ? 'open'
+            : 'close'
+        }`}
+        aria-label='institutions list'>
+        {matchingLevels?.data?.slice(0, 15).map((_level, key: number) => (
+          <ListItem
+            button
+            divider
+            key={key}
+            onClick={() => {
+              setHideLevelsList(true);
+              dispatch(
+                validateLevel({
+                  value: {
+                    keyword: _level.name,
+                    uid: _level.id
+                  }
+                })
+              );
+              refs.levelInput.current.dataset.uid = _level.id;
+            }}>
+            {(() => {
+              const highlighted = `${_level.name
+                .trim()
+                .replace(
+                  new RegExp(`(${level.value!.keyword!.trim()})`, 'i'),
+                  `<span class='theme-color-secondary-darker'>$1</span>`
+                )}`.replace(/<\/?script>/gi, '');
+
+              return (
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: highlighted
+                  }}></span>
+              );
+            })()}
+          </ListItem>
+        ))}
+      </List>
+    </ClickAwayListener>
+  );
+
+  const handleInstitutionChange = useCallback(
+    (e: any) => {
+      const { target } = e;
+
+      target.dataset.uid =
+        institution.value!.keyword !== target.value.trim()
+          ? ''
+          : institution.value!.uid;
+      handleSignupInputChange(e);
+      dispatch(getMatchingInstitutions(target.value)(dispatch));
+      setHideInstitutionsList(!target.value || !navigator.onLine);
+    },
+    [institution.value]
+  );
+
+  const institutionUid = institution.value!.uid;
   const handleDepartmentChange = useCallback(
     (e: any) => {
       const { target } = e;
+      const inputIsValid = /^[a-z\s?]+$/i.test(target.value);
 
-      e.target.dataset.uid = '';
+      e.target.dataset.uid =
+        department.value!.keyword !== target.value.trim()
+          ? ''
+          : department.value!.uid;
       handleSignupInputChange(e);
-      dispatch(getMatchingDepartments(target.value)(dispatch));
       setHideDepartmentsList(!target.value || !navigator.onLine);
       setOpenDepartmentPopover(
         target.value.length > 2 &&
+          inputIsValid &&
           !department.value!.uid &&
-          !!institution.value!.uid
+          !!institutionUid
       );
+
+      if (inputIsValid)
+        dispatch(getMatchingDepartments(target.value)(dispatch));
     },
-    [department.value, institution.value]
+    [department.value, institutionUid]
   );
 
+  const departmentUid = department.value!.uid;
   const handleLevelChange = useCallback(
     (e: any) => {
       const { target } = e;
+      const inputIsValid = /^[a-z0-9\s?]+$/i.test(target.value);
 
-      e.target.dataset.uid = '';
+      e.target.dataset.uid =
+        level.value!.keyword !== target.value.trim() ? '' : level.value!.uid;
       handleSignupInputChange(e);
-      dispatch(getMatchingLevels(target.value)(dispatch));
       setHideLevelsList(!target.value || !navigator.onLine);
       setOpenLevelPopover(
-        target.value.length > 2 && !level.value?.uid && !!department.value!.uid
+        target.value.length > 2 &&
+          inputIsValid &&
+          !level.value?.uid &&
+          !!departmentUid
       );
+
+      if (inputIsValid) dispatch(getMatchingLevels(target.value)(dispatch));
     },
-    [level.value, department.value]
+    [level.value, departmentUid]
   );
 
   const handleCreateDepartment = useCallback(() => {
+    const capitalizedKeyword = department
+      .value!.keyword!.split(' ')
+      .map((word) => word[0].toUpperCase() + word.slice(1))
+      .join(' ');
+
     dispatch(
       requestCreateDepartment({
-        department: department.value?.keyword,
+        department: capitalizedKeyword,
         institution: institution.value!.uid
       })(dispatch)
     );
   }, [department.value, institution.value]);
 
   const handleCreateLevel = useCallback(() => {
+    const capitalizedKeyword = level
+      .value!.keyword!.split(' ')
+      .map((word) => word[0].toUpperCase() + word.slice(1))
+      .join(' ');
+
     dispatch(
       requestCreateLevel({
-        level: level.value?.keyword,
+        level: capitalizedKeyword,
         department: department.value!.uid
       })(dispatch)
     );
@@ -312,7 +490,8 @@ const Signup = (props: SignupPropsState) => {
                 id='institution'
                 label='Institution'
                 size='medium'
-                value={institution.value?.keyword || ''}
+                value={institution.value!.keyword || ''}
+                className={institution.value!.uid ? 'input-set' : 'not-set'}
                 autoComplete='institution'
                 inputRef={refs.institutionInput}
                 helperText={institution.helperText}
@@ -322,56 +501,7 @@ const Signup = (props: SignupPropsState) => {
               {matchingInstitutions.status === 'pending' && (
                 <LinearProgress color='primary' />
               )}
-              <ClickAwayListener
-                onClickAway={() => setHideInstitutionsList(true)}>
-                <List
-                  className={`search-list custom-scroll-bar ${
-                    institution.value?.keyword &&
-                    !institution.err &&
-                    !hideInstitutionsList
-                      ? 'open'
-                      : 'close'
-                  }`}
-                  aria-label='institutions list'>
-                  {matchingInstitutions?.data
-                    ?.slice(0, 15)
-                    .map((_institution, key) => (
-                      <ListItem
-                        button
-                        divider
-                        key={key}
-                        onClick={() => {
-                          setHideInstitutionsList(true);
-                          dispatch(
-                            validateInstitution({
-                              value: {
-                                keyword: _institution.name,
-                                uid: _institution.id
-                              }
-                            })
-                          );
-                          refs.institutionInput.current.dataset.uid =
-                            _institution.id;
-                        }}>
-                        {(() => {
-                          const country = `<span class='theme-color-tertiary-lighter'>${_institution.country}</span>`;
-                          const keyword = institution.value?.keyword;
-                          const highlighted = `${_institution.name.replace(
-                            new RegExp(`(${keyword})`, 'i'),
-                            `<span class='theme-color-secondary-darker'>$1</span>`
-                          )}, ${country}`.replace(/<\/?script>/gi, '');
-
-                          return (
-                            <span
-                              dangerouslySetInnerHTML={{
-                                __html: highlighted
-                              }}></span>
-                          );
-                        })()}
-                      </ListItem>
-                    ))}
-                </List>
-              </ClickAwayListener>
+              {matchingInstitutionsList}
             </Box>
           </Grid>
           <Grid item xs={12} sm={5} className='flex-basis-halved'>
@@ -388,8 +518,9 @@ const Signup = (props: SignupPropsState) => {
                 // disabled={institution.err || !institution.value?.uid}
                 id='department'
                 label='Department'
-                value={department.value?.keyword || ''}
                 size='medium'
+                value={department.value!.keyword || ''}
+                className={department.value!.uid ? 'input-set' : 'not-set'}
                 autoComplete='department'
                 inputRef={refs.departmentInput}
                 helperText={department.helperText}
@@ -399,54 +530,7 @@ const Signup = (props: SignupPropsState) => {
               {matchingDepartments.status === 'pending' && (
                 <LinearProgress color='primary' />
               )}
-              <ClickAwayListener
-                onClickAway={() => setHideDepartmentsList(true)}>
-                <List
-                  className={`search-list custom-scroll-bar ${
-                    department.value?.keyword &&
-                    !department.err &&
-                    !hideDepartmentsList
-                      ? 'open'
-                      : 'close'
-                  }`}
-                  aria-label='departments list'>
-                  {matchingDepartments?.data
-                    ?.slice(0, 15)
-                    .map((_department, key: number) => (
-                      <ListItem
-                        button
-                        divider
-                        key={key}
-                        onClick={() => {
-                          setHideDepartmentsList(true);
-                          dispatch(
-                            validateDepartment({
-                              value: {
-                                keyword: _department.name,
-                                uid: _department.id
-                              }
-                            })
-                          );
-                          refs.departmentInput.current.dataset.uid =
-                            _department.id;
-                        }}>
-                        {(() => {
-                          const highlighted = `${_department.name.replace(
-                            new RegExp(`(${department.value?.keyword})`, 'i'),
-                            `<span class='theme-color-secondary-darker'>$1</span>`
-                          )}`.replace(/<\/?script>/gi, '');
-
-                          return (
-                            <span
-                              dangerouslySetInnerHTML={{
-                                __html: highlighted
-                              }}></span>
-                          );
-                        })()}
-                      </ListItem>
-                    ))}
-                </List>
-              </ClickAwayListener>
+              {matchingDepartmentsList}
               <Button
                 id='create-department-button'
                 color='primary'
@@ -485,10 +569,11 @@ const Signup = (props: SignupPropsState) => {
                 variant='outlined'
                 // disabled={department.err || !department.value?.uid}
                 id='level'
-                label='Level (E.g. 100)'
-                value={level.value?.keyword || ''}
+                label='Level (E.g. 100, Freshman)'
                 size='medium'
                 autoComplete='level'
+                value={level.value?.keyword || ''}
+                className={level.value!.uid ? 'input-set' : 'not-set'}
                 inputRef={refs.levelInput}
                 helperText={level.helperText}
                 fullWidth
@@ -497,50 +582,7 @@ const Signup = (props: SignupPropsState) => {
               {matchingLevels.status === 'pending' && (
                 <LinearProgress color='primary' />
               )}
-              <ClickAwayListener onClickAway={() => setHideLevelsList(true)}>
-                <List
-                  className={`search-list custom-scroll-bar ${
-                    level.value?.keyword && !level.err && !hideLevelsList
-                      ? 'open'
-                      : 'close'
-                  }`}
-                  aria-label='institutions list'>
-                  {matchingLevels?.data
-                    ?.slice(0, 15)
-                    .map((_level, key: number) => (
-                      <ListItem
-                        button
-                        divider
-                        key={key}
-                        onClick={() => {
-                          setHideLevelsList(true);
-                          dispatch(
-                            validateLevel({
-                              value: {
-                                keyword: _level.name,
-                                uid: _level.id
-                              }
-                            })
-                          );
-                          refs.levelInput.current.dataset.uid = _level.id;
-                        }}>
-                        {(() => {
-                          const highlighted = `${_level.name.replace(
-                            new RegExp(`(${level.value?.keyword})`, 'i'),
-                            `<span class='theme-color-secondary-darker'>$1</span>`
-                          )}`.replace(/<\/?script>/gi, '');
-
-                          return (
-                            <span
-                              dangerouslySetInnerHTML={{
-                                __html: highlighted
-                              }}></span>
-                          );
-                        })()}
-                      </ListItem>
-                    ))}
-                </List>
-              </ClickAwayListener>
+              {matchingLevelsList}
               <Button
                 id='create-level-button'
                 color='primary'
@@ -637,22 +679,6 @@ function DatePicker({ dob }: any) {
       />
     </MuiPickersUtilsProvider>
   );
-}
-
-export function createMemo() {
-  return React.memo((props: any) => {
-    const Component = props.memoizedComponent;
-    let _props = { ...props };
-
-    if (!Component) {
-      throw Error(
-        "You're probably missing the 'memoizedComponent' prop for Memoize."
-      );
-    }
-
-    delete _props.memoizedComponent;
-    return <Component {..._props} />;
-  });
 }
 
 const mapStateToProps = (state: any) => {

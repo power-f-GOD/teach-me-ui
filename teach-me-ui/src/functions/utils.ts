@@ -1,8 +1,4 @@
-import {
-  ReduxAction,
-  StatusPropsState,
-  UserData
-} from '../constants';
+import { ReduxAction, StatusPropsState, UserData } from '../constants';
 import store from '../appStore';
 import {
   signin,
@@ -135,7 +131,9 @@ export const logError = (action: Function) => (error: any) => {
   dispatch(
     displaySnackbar({
       open: true,
-      message: navigator.onLine ? message : 'You are offline.',
+      message: navigator.onLine
+        ? `${message[0].toUpperCase()}${message.slice(1)}.`
+        : 'You are offline.',
       severity: 'error'
     })
   );

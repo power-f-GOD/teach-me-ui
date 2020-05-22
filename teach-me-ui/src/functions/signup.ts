@@ -42,7 +42,14 @@ export function handleSignupInputChange({
 
 export function handleSignupRequest() {
   let signupFormValidated = true;
-  const { institution: i, department: d, level: l } = getState();
+  const {
+    institution: _institution,
+    department: _department,
+    level: _level,
+    matchingInstitutions,
+    matchingDepartments,
+    matchingLevels
+  } = getState();
 
   for (const key in signupRefs) {
     const event = {
@@ -50,26 +57,55 @@ export function handleSignupRequest() {
     } as ChangeEvent<HTMLInputElement>;
     const { target } = event;
 
-    if (!/institution|department|level/.test(target.id)) {
-      handleSignupInputChange(event);
-      continue;
-    }
+    handleSignupInputChange(event);
 
     switch (target.id) {
       case 'institution':
-        event.target.dataset.uid = i.value?.uid;
-        dispatch(actions.getMatchingInstitutions(target.value)(dispatch));
+        if (
+          !_institution.value!.uid &&
+          !!matchingInstitutions!.data![0] &&
+          target.value
+        ) {
+          dispatch(
+            actions.validateInstitution({
+              err: true,
+              helperText: 'You need to select an institution from the list.'
+            })
+          );
+        } else
+          dispatch(actions.getMatchingInstitutions(target.value)(dispatch));
         break;
       case 'department':
-        event.target.dataset.uid = d.value?.uid;
-        dispatch(actions.getMatchingDepartments(target.value)(dispatch));
+        if (/^[a-z\s?]+$/i.test(target.value))
+          if (
+            !_department.value!.uid &&
+            !!matchingDepartments!.data![0] &&
+            target.value
+          ) {
+            dispatch(
+              actions.validateDepartment({
+                err: true,
+                helperText: 'You need to select a department from the list.'
+              })
+            );
+          } else
+            dispatch(actions.getMatchingDepartments(target.value)(dispatch));
         break;
       case 'level':
-        event.target.dataset.uid = l.value?.uid;
-        dispatch(actions.getMatchingLevels(target.value)(dispatch));
+        if (/^[a-z0-9\s?]+$/i.test(target.value))
+          if (
+            !_level.value!.uid &&
+            !!matchingLevels!.data![0] &&
+            target.value
+          ) {
+            dispatch(
+              actions.validateLevel({
+                err: true,
+                helperText: 'You need to select a level from the list.'
+              })
+            );
+          } else dispatch(actions.getMatchingLevels(target.value)(dispatch));
     }
-
-    handleSignupInputChange(event);
   }
 
   const {
@@ -94,7 +130,6 @@ export function handleSignupRequest() {
     institution.err ||
     department.err ||
     level.err
-    // !level.value.uid
   ) {
     signupFormValidated = false;
   }

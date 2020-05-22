@@ -24,11 +24,113 @@
   }
 }
 
-@media screen and (max-width: 767px) {}
+@media screen and (max-width: 767px) {
+  // landing page styles
+  .landing-splash-box {
+    &::before,
+    &::after {
+      width: 300vw;
+      left: -100vw;
+    }
+
+    &::before {
+      background: {
+        position: 165vw 102%, center;
+        size: 20rem, 100vw;
+      }
+    }
+  }
+
+  .auth-main-box {
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+
+    &::before {
+      background: none;
+    }
+
+    .auth-container {
+      min-height: inherit;
+      background-color: white;
+      overflow-x: hidden;
+
+      .form-section {
+        padding: 2em 1em;
+        height: auto;
+        box-shadow: none;
+        border: none;
+        background: transparent;
+      }
+    }
+  }
+
+  .minor {
+    &::after {
+      width: 230vw !important;
+      left: -65vw !important;
+    }
+  }
+}
 
 @media screen and (max-width: 599px) {
+  .drawer {
+    .search {
+      display: none;
+    }
+  }
+
+  .drawer-nav {
+    .search {
+      display: inline-flex;
+    }
+  }
+
+  // landing page styles
+  .landing-splash-container {
+    font-size: 0.95em !important;
+
+    h2 {
+      font-size: 2.5rem;
+    }
+  }
+
+  .MuiCard-root {
+    flex-grow: 1;
+    min-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+
+    .MuiCardContent-root {
+      padding: 2em 1.5em;
+    }
+  }
+
+  // auth component styles
+  body {
+    background: white;
+    position: relative;
+    z-index: 1;
+  }
+
   #root {
     height: auto;
     min-height: 100vh;
+  }
+
+  .minor {
+    padding: 3rem 0;
+
+    > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    &::after {
+      height: 110%;
+      width: 220vw;
+      top: -10%;
+      left: -60vw;
+    }
   }
 }
