@@ -22,7 +22,7 @@ import {
   validateSigninPassword
 } from './validate';
 import {
-  callNetworkStatusChecker,
+  callNetworkStatusCheckerFor,
   populateStateWithUserData,
   logError
 } from '../functions';
@@ -33,7 +33,19 @@ export const requestSignup = (data: SignupFormData) => (
 ): ReduxAction => {
   dispatch(signup({ status: 'pending', statusText: ' ' }));
 
-  let { firstname, lastname, username, email, password } = data;
+  let {
+    firstname,
+    lastname,
+    username,
+    email,
+    dob,
+    password,
+    institution,
+    department,
+    level
+  } = data;
+  const [day, month, year] = dob.split('/');
+  const date_of_birth = `${year}-${month}-${day}`;
 
   firstname = `${firstname[0].toUpperCase()}${firstname
     .slice(1)
@@ -43,7 +55,7 @@ export const requestSignup = (data: SignupFormData) => (
   email = email.toLowerCase();
 
   //check if user is online as lost network connection is not a failure state for Firebase db in order to give response to user
-  callNetworkStatusChecker('signup');
+  callNetworkStatusCheckerFor(signup);
 
   axios({
     url: 'https://teach-me-services.herokuapp.com/api/v1/register',
@@ -53,7 +65,11 @@ export const requestSignup = (data: SignupFormData) => (
       lastname,
       username,
       email,
-      password
+      date_of_birth,
+      password,
+      institution,
+      department,
+      level
     },
     headers: {
       'Content-Type': 'application/json'
@@ -71,6 +87,10 @@ export const requestSignup = (data: SignupFormData) => (
           lastname,
           username,
           email,
+          dob,
+          institution,
+          department,
+          level,
           displayName
         }).then(() => {
           dispatch(signup({ status: 'fulfilled' }));
@@ -148,7 +168,7 @@ export const requestSignin = (data: SigninFormData) => (
   dispatch: Function
 ): ReduxAction => {
   dispatch(signin({ status: 'pending' }));
-  callNetworkStatusChecker('signin');
+  callNetworkStatusCheckerFor(signin);
 
   let { id, password } = data;
   let _id;
@@ -173,7 +193,18 @@ export const requestSignin = (data: SigninFormData) => (
   })
     .then((response) => {
       const { data: _data } = response;
-      const { firstname, lastname, username, email, error, message } = _data;
+      const {
+        firstname,
+        lastname,
+        username,
+        email,
+        date_of_birth: dob,
+        institution,
+        department,
+        level,
+        error,
+        message
+      } = _data;
 
       if (!error) {
         const displayName = `${firstname} ${lastname}`;
@@ -183,14 +214,18 @@ export const requestSignin = (data: SigninFormData) => (
           lastname,
           username,
           email,
+          dob,
+          institution,
+          department,
+          level,
           displayName
         }).then(() => {
-          dispatch(signup({ status: 'fulfilled' }));
+          dispatch(signin({ status: 'fulfilled' }));
           dispatch(auth({ status: 'fulfilled', isAuthenticated: true }));
           dispatch(
             displaySnackbar({
               open: true,
-              message: 'Sign in success!',
+              message: 'Welcome back!',
               severity: 'success',
               autoHide: true
             })

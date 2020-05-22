@@ -14,8 +14,8 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Checkbox from '@material-ui/core/Checkbox';
 
-import { SigninPropsState } from '../constants';
-import { handleSigninRequest, handleSigninInputChange } from '../functions';
+import { SigninPropsState } from '../../constants';
+import { handleSigninRequest, handleSigninInputChange } from '../../functions';
 
 export const refs: any = {
   idInput: React.createRef<HTMLInputElement>(),
@@ -56,7 +56,7 @@ const Signin = (props: SigninPropsState) => {
             required
             label='Username or Email'
             type='email'
-            autoComplete='email'
+            autoComplete='username'
             inputRef={refs.idInput}
             helperText={props.signinId.helperText}
             fullWidth
@@ -72,7 +72,7 @@ const Signin = (props: SigninPropsState) => {
             required
             label='Password'
             type={passwordVisible ? 'text' : 'password'}
-            autoComplete='new-password'
+            autoComplete='current-password'
             inputRef={refs.passwordInput}
             helperText={props.signinPassword.helperText}
             fullWidth
@@ -118,6 +118,7 @@ const Signin = (props: SigninPropsState) => {
             variant='contained'
             size='large'
             id='signin-btn'
+            className='major-button'
             color='primary'
             type='submit'
             fullWidth
@@ -133,7 +134,7 @@ const Signin = (props: SigninPropsState) => {
       </form>
       <Box marginY='1em'>
         <Typography component='div' align='center'>
-          New to Teach Me? <Link to='/signup'>Sign up here!</Link>
+          New to Kanyimuta? <Link to='/signup'>Sign up here!</Link>
         </Typography>
       </Box>
     </Grid>

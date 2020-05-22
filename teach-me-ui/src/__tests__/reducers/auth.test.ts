@@ -22,7 +22,7 @@ it("auth reducers should be called with 'state' and 'action' params and return o
   const mockAuthState: AuthState = {
     isAuthenticated: false,
     status: expect.stringMatching(/settled|pending|fulfilled/)
-  }
+  };
   const action: ReduxAction = {
     type: 'AUTHENTICATE_USER',
     payload: { ...authState }

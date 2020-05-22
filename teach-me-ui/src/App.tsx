@@ -2,10 +2,11 @@ import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { Index, Auth, _404, Main, Loader, SnackBar } from './components/index';
+import { Index, Auth, _404, Main, Loader, SnackBar } from './components';
 import ProtectedRoute from './ProtectedRoute';
-import { dispatch } from './functions';
-import { verifyAuth, displaySnackbar } from './actions';
+import { dispatch } from './functions/utils';
+import { displaySnackbar } from './actions/misc';
+import { verifyAuth } from './actions/auth';
 
 const App = (props: any) => {
   const { status: authStatus, isAuthenticated } = props.auth;
@@ -21,14 +22,20 @@ const App = (props: any) => {
         <Switch>
           <ProtectedRoute
             path={
-              isAuthenticated ? ['/', '/index', '/home', '/about'] : ['/home']
+              isAuthenticated
+                ? ['/', '/index', '/home', '/about', '/support', '/profile']
+                : ['/home', '/profile']
             }
             exact
             component={Main}
             isAuthenticated={isAuthenticated}
           />
           <Route path={['/signin', '/signup']} component={Auth} />
-          <Route path={['/', '/index', '/about']} exact component={Index} />
+          <Route
+            path={['/', '/index', '/about', '/support']}
+            exact
+            component={Index}
+          />
           <Route component={_404} />
         </Switch>
       </BrowserRouter>

@@ -4,33 +4,42 @@ html,
 body,
 #root {
   height: 100vh;
-  width: 100vw;
+  width: 100%;
   margin: 0;
   font-size: 1rem;
   color: $theme-color-tertiary-v2;
-  overflow-x: hidden;
-}
-
-* {
-  box-sizing: border-box;
-  font-family: Lato, Roboto, 'Trebuchet MS', sans-serif !important;
-  // border: 1px solid deeppink;
+  line-height: 1.5rem;
 }
 
 body {
   position: relative;
-  &.desktop.custom-scroll-bar,
-  &.desktop .custom-scroll-bar {
-    &::-webkit-scrollbar {
-      width: 0.75em;
-    }
+  overflow: auto !important;
+}
 
-    &::-webkit-scrollbar-track {
-      background: $theme-color-tertiary-v9;
-    }
+* {
+  box-sizing: border-box;
+  font-family: 'Exo 2', 'Trebuchet MS', sans-serif !important;
+  // border: 1px solid deeppink;
+}
 
-    &::-webkit-scrollbar-thumb {
-      background: $theme-color-primary-v4;
+body {
+  padding: 0 !important;
+
+  &.desktop {
+    &.custom-scroll-bar,
+    .custom-scroll-bar,
+    .MuiDialogContent-root {
+      &::-webkit-scrollbar {
+        width: 0.75em;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: $theme-color-tertiary-v9;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: $theme-color-secondary-v6 !important;
+      }
     }
   }
 }
@@ -40,6 +49,7 @@ body {
   width: 100%;
   min-height: 100vh;
   display: flex;
+  overflow: hidden;
 
   > div {
     width: 100%;
@@ -104,6 +114,7 @@ hr {
 button,
 a {
   text-transform: unset !important;
+  font-size: 1rem !important;
 
   &[class*='outlined'] {
     display: inline-flex;
@@ -123,46 +134,66 @@ a {
   }
 
   &[class*='Primary'] {
-    background: {
-      color: $theme-color-primary-v5;
-      image: linear-gradient(
-        to right,
-        $theme-color-primary-v4,
-        $theme-color-secondary
-      );
-    }
-    border-radius: 1.75rem;
-    height: 3.2rem;
-    z-index: 1;
-    position: relative;
+    min-height: 2.5rem;
+    border-radius: 0.25rem;
+    background-color: $theme-color-secondary !important;
+    color: white;
 
-    &::before {
-      position: absolute;
-      content: ' ';
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      border-radius: inherit;
-      background-image: linear-gradient(
-        to right,
-        $theme-color-secondary,
-        $theme-color-primary-v4
-      );
-      z-index: -1;
-      transition: opacity 0.2s;
-      opacity: 0;
-    }
+    &.major-button {
+      overflow: hidden;
+      z-index: 0;
+      position: relative;
+      background-color: #ccc !important;
+      border-radius: 1.75rem;
+      height: 3.2rem;
 
-    &:hover {
+      &::before,
+      &::after {
+        position: absolute;
+        content: ' ';
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: -1;
+        transition: 0.5s;
+      }
+
       &::before {
-        opacity: 1;
+        background-image: linear-gradient(
+          to left,
+          $theme-color-secondary,
+          $theme-color-primary
+        );
+      }
+
+      &::after {
+        transform: translateX(-100%);
+        background-image: linear-gradient(
+          to right,
+          $theme-color-secondary,
+          $theme-color-primary
+        );
+      }
+
+      &:hover {
+        &::before {
+          transform: translateX(100%);
+        }
+        &::after {
+          transform: translateX(0);
+        }
       }
     }
 
-    &:disabled {
-      background: #ccc;
+    &:disabled,
+    &.Mui-disabled {
       color: #555;
+
+      &::before,
+      &::after {
+        opacity: 0;
+      }
     }
   }
 }
@@ -178,8 +209,28 @@ a {
   }
 }
 
+.MuiLinearProgress-colorPrimary {
+  background-color: $theme-color-secondary-v8;
+}
+.MuiLinearProgress-barColorPrimary {
+  background-color: $theme-color-secondary-v4;
+}
+
+.MuiTypography-colorPrimary {
+  color: $theme-color-secondary;
+}
+
+.MuiPickersToolbar-toolbar,
+.MuiPickersDay-daySelected {
+  background-color: $theme-color-secondary !important;
+}
+
 .MuiCheckbox-colorPrimary.Mui-checked {
   color: $theme-color-primary;
+}
+
+.MuiFormHelperText-root {
+  letter-spacing: unset;
 }
 
 [class^='MuiFormControl'],
@@ -190,14 +241,14 @@ div {
 }
 
 .MuiOutlinedInput-root {
-  border-radius: 0.5rem;
+  border-radius: 0.35rem;
   background: #f8f8f8;
 }
 
 [class^='MuiFormControl'],
 div {
   fieldset {
-    border-color: #ddd;
+    border-color: #eee;
   }
 
   .Mui-focused {
@@ -218,6 +269,13 @@ div {
       border-color: $error !important;
     }
   }
+
+  .Mui-disabled {
+    fieldset {
+      background: #ddd;
+      border: none !important;
+    }
+  }
 }
 
 .MuiCard-root {
@@ -226,7 +284,7 @@ div {
   box-shadow: 0 0 2.5rem rgba(0, 0, 0, 0.2);
 
   .MuiCardContent-root {
-    padding: 2.5rem;
+    padding: 2rem;
   }
 }
 
@@ -262,18 +320,46 @@ div {
 }
 
 .logo {
-  min-width: 10rem;
-  font: {
-    family: Audiowide, Trebuchet MS, sans !important;
-    size: 1.75rem;
-    weight: 500;
-  }
-  letter-spacing: -1.5px;
+  // min-width: 10rem;
+  width: auto !important;
+  display: inline-block;
+  padding: 0.45rem !important;
+  border-radius: 0 0.45rem 0 0.45rem;
+  color: #f8f8f8;
+  line-height: 100% !important;
+  letter-spacing: -0.5px;
+  text-transform: capitalize !important;
+  user-select: none;
   margin: {
+    right: 0.25rem;
     top: 0;
     bottom: 0;
   }
-  color: inherit;
+  font: {
+    family: Audiowide, Trebuchet MS, sans !important;
+    size: 1.5rem;
+    weight: 500;
+  }
+
+  &.light-blue {
+    background: $theme-color-primary;
+  }
+
+  &.grey {
+    background: $theme-color-tertiary-v3;
+  }
+
+  &.gradient {
+    background: {
+      image: linear-gradient(
+        to right,
+        $theme-color-secondary,
+        $theme-color-primary
+      );
+      position: 90% center;
+      size: 200%;
+    }
+  }
 }
 
 .with-text-gradient {
@@ -307,9 +393,21 @@ div {
 .theme-color-secondary {
   color: $theme-color-secondary;
 }
+.theme-color-secondary-darker {
+  color: $theme-color-secondary-v7;
+}
+.theme-color-secondary-lighter {
+  color: $theme-color-secondary-v7;
+}
 
 .theme-color-tertiary {
   color: $theme-color-tertiary;
+}
+.theme-color-tertiary-darker {
+  color: $theme-color-tertiary-v3;
+}
+.theme-color-tertiary-lighter {
+  color: $theme-color-tertiary-v7;
 }
 
 .theme-bgcolor-primary {

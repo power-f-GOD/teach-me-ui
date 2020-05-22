@@ -2,27 +2,18 @@
 
 .MuiAppBar-root {
   background-color: transparent !important;
-  transition: 0.3s;
-  width: calc(100% - 12px);
+  transition: 0.5s;
+  width: 100%;
   left: 0;
-
-  &.mobile-width {
-    width: 100%;
-  }
 }
 
 .nav-background {
-  background-color: rgba(0, 65, 108, 0.97) !important;
-  box-shadow: 0 0rem 2rem rgba(0, 0, 0, 0.35);
-}
-
-.menu-button {
-  border: 0.1em solid white;
-  margin: 0.35em 0;
+  background-color: rgba(0, 65, 108, 0.99) !important;
+  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.45);
 }
 
 .search {
-  border-radius: 0.35em;
+  border-radius: 0.25em;
   height: 2.75em;
   align-items: center;
   flex-wrap: nowrap;
@@ -30,16 +21,25 @@
   padding: 0 0.75em;
   margin: 0 2.5em 0 0;
   width: auto;
-  background: rgba(255, 255, 255, 0.15);
+  transition: 0.3s;
+  background: rgba(255, 255, 255, 0.075);
 
-  .search-input {
-    color: white !important;
-    width: 8em;
-    transition: 0.3s;
-    margin-left: 0.5em;
+  &:focus-within {
+    background: rgba(255, 255, 255, 0.125);
+  }
+}
 
-    &:focus-within {
-      width: 13em;
+.search-input {
+  color: #bbb;
+  width: 8em;
+  transition: 0.3s;
+  margin-left: 0.5em;
+
+  &:focus-within {
+    width: 13em;
+
+    > input {
+      color: white;
     }
   }
 }
@@ -60,44 +60,97 @@
 }
 
 .nav-links-wrapper {
-  min-height: inherit;
   display: flex;
+}
 
-  .nav-icon {
-    margin-right: 0.35em;
+.nav-icon {
+  margin-right: 0.25em;
+  opacity: 0.15;
+  transition: 0.35s;
+  display: none;
+}
+
+.nav-link {
+  box-shadow: none;
+  display: inline-flex;
+  align-items: center;
+  margin: 0 1em;
+  padding: 0.5em;
+  color: #f0f0f0 !important;
+  background: unset;
+  text-transform: uppercase !important;
+  transition: 0.35s;
+  position: relative;
+
+  &::before {
+    position: absolute;
+    content: ' ';
+    width: 0.25em;
+    max-width: 50%;
+    height: 0.25em;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+    border-radius: 0.25em;
+    background-color: $theme-color-primary-v8;
+    transition: 0.35s;
   }
 
-  .nav-link {
-    min-height: inherit;
-    box-shadow: none;
-    display: inline-flex;
-    align-items: center;
-    padding: 0.5em 1em;
-    font-weight: 600;
-    font-size: 1.035em;
-    color: white;
-    transition: 0.3s;
-    border-radius: 0 0 0.35em 0.35em;
-    
-    border-bottom: 0.15em solid transparent;
+  &.active {
+    &::before {
+      width: 60% !important;
+      background: $theme-color-secondary;
+    }
 
-    &:last-child {
-      background-color: $theme-color-primary-v6;
+    .nav-icon {
+      opacity: 0.85;
+    }
+  }
+
+  &:hover {
+    color: $theme-color-secondary-v8 !important;
+
+    &::before {
+      width: 3em;
+      background-color: $theme-color-secondary-v7;
+    }
+
+    .nav-icon {
+      opacity: unset;
+    }
+  }
+
+  &:last-child {
+    margin-right: 0;
+    padding: 0.5em 1em;
+    color: white !important;
+    background-color: unset;
+
+    &::before {
+      top: -70%;
+      max-width: unset;
+      width: 100%;
+      height: 180%;
+      background: $theme-color-primary-v6;
     }
 
     &:hover {
-      background-color: $theme-color-secondary-v6;
-      border-bottom-color: #eee;
-      color: white;
-    }
-
-    &:active {
-      background: $theme-color-secondary-v3;
+      &::before {
+        height: 100%;
+        top: 0;
+        background-color: $theme-color-secondary;
+      }
     }
   }
 }
 
 .drawer-nav {
+  .search {
+    display: none;
+  }
+
   a {
     text-decoration: none;
     border-radius: 0 !important;
@@ -106,33 +159,49 @@
   .nav-links-wrapper {
     flex-direction: column;
     padding: 2em 0;
+  }
 
-    
+  .nav-link {
+    padding: 0.85em;
+    margin: 0 0.5em;
+    margin-top: 0.5em;
 
-    .nav-link {
-      padding: 1.15em;
+    &:hover {
+      border-bottom-color: transparent;
+    }
 
-      &:hover {
-        border-bottom-color: transparent;
+    &:last-child {
+      margin-top: 2rem;
+      justify-content: flex-start;
+
+      &::before {
+        top: 0;
+        width: 150%;
+        height: 100%;
       }
 
-      
+      &:hover {
+        &::before {
+          width: 100%;
+        }
+      }
     }
+  }
 
-    .search {
-      color: white;
-      margin: 0;
-      margin-top: 3rem;
-      border-radius: 0;
-      height: 3em;
-      padding: 2em 1.15em;
-      width: 100% !important;
-      order: 1;
-    }
+  .search {
+    color: white;
+    margin: 0;
+    margin-top: 3rem;
+    border-radius: 0;
+    height: 3em;
+    padding: 2em 1.15em;
+    width: 100% !important;
+    order: 1;
   }
 
   .MuiDrawer-paper {
     width: 60%;
+    overflow-x: hidden;
     background: $theme-color-primary-v3;
     max-width: 300px;
   }

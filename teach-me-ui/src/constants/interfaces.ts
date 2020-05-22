@@ -1,20 +1,20 @@
-import { StoreEnhancer } from 'redux';
-
 export interface ReduxAction {
   type: string;
   newState?: any;
   payload?: any;
 }
 
-export interface AppProps extends StoreEnhancer {
-  dispatch?: Function;
-  [key: string]: any;
-}
-
-export interface InputPropsState {
-  value: string;
+export interface InputErrState {
   err?: boolean;
   helperText?: string;
+}
+
+export interface BasicInputState extends InputErrState {
+  value?: string;
+}
+
+export interface AcademicInputState extends InputErrState {
+  value?: { keyword?: string; uid?: string };
 }
 
 export interface AuthState {
@@ -28,12 +28,23 @@ export interface StatusPropsState {
   statusText?: string;
 }
 
+export interface SearchState extends StatusPropsState {
+  data?: any[];
+}
+
 export interface SignupPropsState {
-  firstname: InputPropsState;
-  lastname: InputPropsState;
-  username: InputPropsState;
-  email: InputPropsState;
-  password: InputPropsState;
+  firstname: BasicInputState;
+  lastname: BasicInputState;
+  username: BasicInputState;
+  email: BasicInputState;
+  dob: BasicInputState;
+  password: BasicInputState;
+  institution: AcademicInputState;
+  department: AcademicInputState;
+  level: AcademicInputState;
+  matchingInstitutions: SearchState;
+  matchingDepartments: SearchState;
+  matchingLevels: SearchState;
   [key: string]: any;
 }
 
@@ -42,12 +53,16 @@ export interface SignupFormData {
   lastname: string;
   username: string;
   email: string;
+  dob: string;
   password?: string;
+  institution: string;
+  department: string;
+  level: string;
 }
 
 export interface SigninPropsState {
-  signinId: InputPropsState;
-  signinPassword: InputPropsState;
+  signinId: BasicInputState;
+  signinPassword: BasicInputState;
   [key: string]: any;
 }
 
@@ -65,4 +80,14 @@ export interface SnackbarState {
 
 export interface UserData extends SignupFormData {
   displayName: string;
+}
+
+export interface CreateDepartmentState extends StatusPropsState {
+  department?: string;
+  institution?: string;
+}
+
+export interface CreateLevelState extends StatusPropsState {
+  level?: string;
+  department?: string;
 }

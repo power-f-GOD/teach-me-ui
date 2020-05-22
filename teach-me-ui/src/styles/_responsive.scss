@@ -4,13 +4,12 @@
   }
 
   @media screen and (max-width: 1152px) {
-    .clip-art-box-1,
-    .clip-art-box-3 {
-      left: -12%;
+    .drawer {
+      display: flex;
     }
 
-    .clip-art-box-2 {
-      right: -12%;
+    .app-bar-links {
+      display: none;
     }
   }
 }
@@ -20,101 +19,79 @@
     display: flex;
   }
 
-  .app-bar-nav {
-    display: none !important;
-  }
-
-  .clip-art-box-1,
-  .clip-art-box-3 {
-    left: -27.5%;
-  }
-
-  .clip-art-box-2 {
-    right: -27.5%;
-  }
-
-  .avatars-box {
-    .text-section-box {
-      &:first-child::after {
-        right: -5% !important;
-      }
-
-      &:last-child::after {
-        left: -5% !important;
-      }
-    }
-  }
-
-  @media screen and (orientation: landscape) {
-    .card-below {
-      > div {
-        flex-wrap: wrap !important;
-      }
-    }
+  .app-bar-links {
+    display: none;
   }
 }
 
 @media screen and (max-width: 767px) {
-  .clip-art-box-1,
-  .clip-art-box-3 {
-    left: -38%;
-  }
+  // landing page styles
+  .landing-splash-box {
+    &::before,
+    &::after {
+      width: 300vw;
+      left: -100vw;
+    }
 
-  .clip-art-box-2 {
-    right: -38%;
-  }
-
-  .avatars-box {
-    .text-section-box {
-      &:first-child::after {
-        right: -5% !important;
-      }
-
-      &:last-child::after {
-        left: -5% !important;
+    &::before {
+      background: {
+        position: 165vw 102%, center;
+        size: 20rem, 100vw;
       }
     }
   }
 
-  .card-below {
-    > div {
-      flex-wrap: wrap !important;
+  .auth-main-box {
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+
+    &::before {
+      background: none;
     }
 
-    width: 80% !important;
+    .auth-container {
+      min-height: inherit;
+      background-color: white;
+      overflow-x: hidden;
+
+      .form-section {
+        padding: 2em 1em;
+        height: auto;
+        box-shadow: none;
+        border: none;
+        background: transparent;
+      }
+    }
   }
 
-  @media screen and (orientation: landscape) {
-    .card-below {
-      > div {
-        flex-wrap: nowrap !important;
-      }
+  .minor {
+    &::after {
+      width: 230vw !important;
+      left: -65vw !important;
     }
   }
 }
 
 @media screen and (max-width: 599px) {
-  .landing-splash-container {
-    margin-top: 8rem !important;
-    font-size: 0.95em !important;
-
-    h2 {
-      font-size: 2.5rem;
-    }
-  }
-
   .drawer {
     .search {
       display: none;
     }
   }
 
+  .drawer-nav {
+    .search {
+      display: inline-flex;
+    }
+  }
+
   // landing page styles
-  .landing-splash-box {
-    &::before {
-      left: -2%;
-      top: -28%;
-      transform: rotateZ(-4deg);
+  .landing-splash-container {
+    font-size: 0.95em !important;
+
+    h2 {
+      font-size: 2.5rem;
     }
   }
 
@@ -126,59 +103,6 @@
 
     .MuiCardContent-root {
       padding: 2em 1.5em;
-    }
-  }
-
-  [class*='clip-art-box'] {
-    width: 90% !important;
-  }
-
-  .clip-art-box-2 {
-    order: 0 !important;
-  }
-
-  .clip-art-box-1,
-  .clip-art-box-3 {
-    left: 25%;
-  }
-
-  .clip-art-box-2 {
-    right: 25%;
-  }
-
-  .card-below {
-    > div {
-      flex-wrap: wrap !important;
-    }
-  }
-
-  .avatars-box {
-    .text-section-box {
-      min-width: 100% !important;
-
-      &:first-child::after {
-        right: -8% !important;
-      }
-
-      &:last-child::after {
-        left: -8% !important;
-      }
-    }
-  }
-
-  .text-section-row {
-    &:last-child {
-      background: {
-        size: contain !important;
-      }
-    }
-  }
-
-  @media screen and (orientation: landscape) {
-    .card-below {
-      > div {
-        flex-wrap: nowrap !important;
-      }
     }
   }
 
@@ -194,50 +118,19 @@
     min-height: 100vh;
   }
 
-  .auth-root-grid {
-    .auth-main-box {
-      padding: 0;
-      border-radius: 0;
-      box-shadow: none;
+  .minor {
+    padding: 3rem 0;
 
-      .auth-container {
-        min-height: inherit;
-        background-color: white;
-        overflow: hidden;
-        position: relative;
-        > * {
-          position: relative;
-          z-index: 1;
-        }
+    > * {
+      position: relative;
+      z-index: 1;
+    }
 
-        &::before {
-          position: fixed;
-          top: -10%;
-          z-index: -1;
-          width: 160%;
-          height: 130%;
-          left: 5%;
-          bottom: 0;
-          right: 0;
-          content: ' ';
-          transform: rotateZ(35deg);
-          opacity: 0.9;
-          background: {
-            color: white;
-            image: url('/images/auth-bg-left.png');
-            repeat: no-repeat;
-            position: left;
-            size: 60%;
-          }
-        }
-        .form-section {
-          padding: 4em 1em;
-          height: auto;
-          box-shadow: none;
-          border: none;
-          background: transparent;
-        }
-      }
+    &::after {
+      height: 110%;
+      width: 220vw;
+      top: -10%;
+      left: -60vw;
     }
   }
 }
