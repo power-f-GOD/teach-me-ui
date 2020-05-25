@@ -61,7 +61,7 @@ function IndexNav(props: any) {
   return (
     <Box className={`nav-links-wrapper ${props?.className}`}>
       <Search />
-      <NavGeneralLinks />
+      <NavGeneralLinks forIndex />
       <NavLink to='/signin' className='nav-link'>
         <ArrowForward fontSize='inherit' /> Sign in
       </NavLink>
@@ -91,17 +91,17 @@ function MainNav(props: any) {
   );
 }
 
-function NavGeneralLinks() {
+function NavGeneralLinks(props: any) {
   return (
     <>
       <NavLink exact to='/' isActive={(_, { pathname }) => ["/", "/home"].includes(pathname)} className='nav-link'>
         <HomeIcon className='nav-icon' />
         Home
       </NavLink>
-      <NavLink to='/about' className='nav-link'>
+      {props.forIndex && <NavLink to='/about' className='nav-link'>
         <InfoIcon className='nav-icon' />
         About
-      </NavLink>
+      </NavLink>}
       <Box component='span' marginX='1.5em'></Box>
       <NavLink exact to='/support' className='nav-link'>
         <HelpIcon className='nav-icon' />
