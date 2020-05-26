@@ -1,16 +1,30 @@
 import React from 'react';
 
-import Box from '@material-ui/core/Box';
-import Container from '@material-ui/core/Container';
+// import Box from '@material-ui/core/Box';
+
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+
+import RightPane from './RightPane';
+import MiddlePane from './MiddlePane';
+import LeftPane from './LeftPane';
 
 const Home = () => {
   return (
-    <Box className='fade-in' paddingY='100px'>
-      <Container>
-        <h1>HOME component goes here!</h1>
-        <h1>And more HOME component content goes here!</h1>
-      </Container>
-    </Box>
+    <Container fluid className='Home p-0 fade-in'>
+      <Row className='flex-row w-100 m-0 justify-content-around'>
+        <Col lg={3} className='left-pane-col'>
+          <LeftPane />
+        </Col>
+        <Col lg={6} className='middle-pane-col'>
+          <MiddlePane />
+        </Col>
+        <Col lg={3} className='right-pane-col'>
+          <RightPane />
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

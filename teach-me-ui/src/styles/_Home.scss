@@ -1,0 +1,45 @@
+@import 'constants';
+
+.Home {
+  margin-top: 4rem;
+}
+
+.left-pane-col,
+.middle-pane-col,
+.right-pane-col {
+  padding: 1rem;
+}
+
+.left-pane,
+.middle-pane,
+.right-pane {
+  border-radius: 0.75rem;
+}
+
+.left-pane,
+.right-pane {
+  position: fixed;
+  top: 5rem;
+  max-width: 20rem;
+  height: calc(100vh - 6rem);
+}
+
+.left-pane {
+  background-color: $theme-color-primary-v4;
+  color: white;
+  left: 1rem;
+}
+
+.middle-pane {
+  max-width: 40rem;
+  min-height: 150vh;
+}
+
+.right-pane {
+  right: 1rem;
+}
+
+.middle-pane,
+.right-pane {
+  border: 0.0625rem solid #ddd;
+}

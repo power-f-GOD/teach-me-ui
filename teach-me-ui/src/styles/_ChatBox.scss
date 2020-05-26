@@ -1,0 +1,52 @@
+@import 'constants';
+
+.ChatBox {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  height: 0;
+  width: 0;
+  border: 1px solid red;
+}
+
+.chat-box-container {
+  position: relative;
+}
+
+.chat-box-wrapper {
+  $box-height: 26rem;
+  $box-width: 20rem;
+
+  border-radius: 0.75rem 0.75rem 0 0;
+  overflow: hidden;
+  display: none;
+  max-width: calc(100vw - 2rem);
+  position: absolute;
+  width: $box-width;
+  height: $box-height;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.25);
+  background-color: $theme-color-primary-v8;
+  left: -$box-width;
+  top: -$box-height;
+}
+
+.chat-button {
+  background-color: $theme-color-primary-v6;
+  color: white;
+  $size: 3.25rem;
+  position: absolute;
+  height: $size !important;
+  width: $size !important;
+  left: -$size;
+  top: -$size;
+  border-radius: 50% !important;
+  font-size: 1.75rem !important;
+
+  &:hover {
+    background-color: $theme-color-primary-v5;
+  }
+
+  span {
+    margin-bottom: -0.25rem;
+  }
+}
