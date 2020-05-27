@@ -14,7 +14,7 @@ const Auth = (props: any) => {
   return (
     <Grid
       container
-      className='auth-root-grid custom-scroll-bar fade-in'
+      className='Auth auth-root-grid custom-scroll-bar fade-in'
       direction='column'>
       <Box className='auth-main-box' component='main'>
         <Container className='auth-container'>

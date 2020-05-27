@@ -25,13 +25,20 @@
 }
 
 .left-pane {
-  background-color: $theme-color-primary-v4;
+  background: {
+    image: linear-gradient(180deg, $theme-color-primary-v4, $theme-color-primary-v5);
+    color: $theme-color-primary-v4;
+    position: center;
+    size: contain;
+    attachment: fixed;
+  }
+  box-shadow: 0 0.1rem 0.35rem rgba(0, 0, 0, 0.5);
   color: white;
   left: 1rem;
 }
 
 .middle-pane {
-  max-width: 40rem;
+  max-width: 38.5rem;
   min-height: 150vh;
 }
 
@@ -41,5 +48,7 @@
 
 .middle-pane,
 .right-pane {
-  border: 0.0625rem solid #ddd;
+  // border: 0.0625rem solid #ddd;
+  box-shadow: 0 0.1rem 0.45rem rgba(0, 0, 0, 0.15);
+  background-color: #eee;
 }
