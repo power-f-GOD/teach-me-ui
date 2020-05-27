@@ -8,7 +8,7 @@ body,
   margin: 0;
   font-size: 1rem;
   color: $theme-color-tertiary-v2;
-  line-height: 1.5rem;
+  line-height: 1.35rem;
 }
 
 body {
@@ -23,7 +23,10 @@ body {
 }
 
 .debugger {
-  border: 1px solid green;
+  &,
+  * {
+    border: 1px solid green;
+  }
 }
 
 body {
@@ -249,35 +252,37 @@ div {
   background: #f8f8f8;
 }
 
-[class^='MuiFormControl'],
-div {
-  fieldset {
-    border-color: #eee;
-  }
-
-  .Mui-focused {
-    color: $theme-color-secondary !important;
-
+.Auth {
+  [class^='MuiFormControl'],
+  div {
     fieldset {
-      border-color: $theme-color-secondary !important;
+      border-color: #eee;
     }
-  }
 
-  .Mui-error {
-    color: $error !important;
+    .Mui-focused {
+      color: $theme-color-secondary !important;
 
-    input {
+      fieldset {
+        border-color: $theme-color-secondary !important;
+      }
+    }
+
+    .Mui-error {
       color: $error !important;
-    }
-    fieldset {
-      border-color: $error !important;
-    }
-  }
 
-  .Mui-disabled {
-    fieldset {
-      background: #ddd;
-      border: none !important;
+      input {
+        color: $error !important;
+      }
+      fieldset {
+        border-color: $error !important;
+      }
+    }
+
+    .Mui-disabled {
+      fieldset {
+        background: #ddd;
+        border: none !important;
+      }
     }
   }
 }
@@ -327,7 +332,7 @@ div {
   // min-width: 10rem;
   width: auto !important;
   display: inline-block;
-  padding: 0.45rem !important;
+  padding: 0.65rem !important;
   border-radius: 0 0.45rem 0 0.45rem;
   color: #f8f8f8;
   line-height: 100% !important;
