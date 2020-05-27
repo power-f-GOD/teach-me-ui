@@ -140,4 +140,19 @@
       left: -60vw;
     }
   }
+
+  .chat-box-wrapper {
+    $box-height: 100vh;
+    $box-width: 98vw;
+
+    border-radius: 0;
+    overflow: hidden;
+    max-width: unset;
+    max-height: unset;
+    width: $box-width;
+    height: $box-height;
+    background-color: white;
+    left: -$box-width + 6.5vw;
+    bottom: -1rem;
+  }
 }
