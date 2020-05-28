@@ -1,138 +1,138 @@
 // the -v5's are the actual colors. Colors above them are the darker variants while those below lighter
 
-$theme-color-primary: rgb(0, 105, 148); //seablue
+$theme-primary: rgb(0, 105, 148); //seablue
 $prim-r: 0;
 $prim-g: 105;
 $prim-b: 148;
-$theme-color-primary-v1: rgb(
+$theme-primary-v1: rgb(
   $prim-r - (22 * 4),
   $prim-g - (22 * 4),
   $prim-b - (22 * 4)
 );
-$theme-color-primary-v2: rgb(
+$theme-primary-v2: rgb(
   $prim-r - (22 * 3),
   $prim-g - (22 * 3),
   $prim-b - (22 * 3)
 );
-$theme-color-primary-v3: rgb(
+$theme-primary-v3: rgb(
   $prim-r - (22 * 2),
   $prim-g - (22 * 2),
   $prim-b - (22 * 2)
 );
-$theme-color-primary-v4: rgb(
+$theme-primary-v4: rgb(
   $prim-r - (22 * 1),
   $prim-g - (22 * 1),
   $prim-b - (22 * 1)
 );
-$theme-color-primary-v5: rgb($prim-r, $prim-g, $prim-b);
-$theme-color-primary-v6: rgb(
+$theme-primary-v5: rgb($prim-r, $prim-g, $prim-b);
+$theme-primary-v6: rgb(
   $prim-r + (22 * 1),
   $prim-g + (22 * 1),
   $prim-b + (22 * 1)
 );
-$theme-color-primary-v7: rgb(
+$theme-primary-v7: rgb(
   $prim-r + (22 * 2),
   $prim-g + (22 * 2),
   $prim-b + (22 * 2)
 );
-$theme-color-primary-v8: rgb(
+$theme-primary-v8: rgb(
   $prim-r + (22 * 3),
   $prim-g + (22 * 3),
   $prim-b + (22 * 3)
 );
-$theme-color-primary-v9: rgb(
+$theme-primary-v9: rgb(
   $prim-r + (22 * 4),
   $prim-g + (22 * 4),
   $prim-b + (22 * 4)
 );
 
-$theme-color-secondary: rgb(114, 137, 17); // lightgreen
+$theme-secondary: rgb(114, 137, 17); // lightgreen
 $sec-r: 114;
 $sec-g: 137;
 $sec-b: 17;
-$theme-color-secondary-v1: rgb(
+$theme-secondary-v1: rgb(
   $sec-r - (22 * 4),
   $sec-g - (22 * 4),
   $sec-b - (22 * 4)
 );
-$theme-color-secondary-v2: rgb(
+$theme-secondary-v2: rgb(
   $sec-r - (22 * 3),
   $sec-g - (22 * 3),
   $sec-b - (22 * 3)
 );
-$theme-color-secondary-v3: rgb(
+$theme-secondary-v3: rgb(
   $sec-r - (22 * 2),
   $sec-g - (22 * 2),
   $sec-b - (22 * 2)
 );
-$theme-color-secondary-v4: rgb(
+$theme-secondary-v4: rgb(
   $sec-r - (22 * 1),
   $sec-g - (22 * 1),
   $sec-b - (22 * 1)
 );
-$theme-color-secondary-v5: rgb($sec-r, $sec-g, $sec-b);
-$theme-color-secondary-v6: rgb(
+$theme-secondary-v5: rgb($sec-r, $sec-g, $sec-b);
+$theme-secondary-v6: rgb(
   $sec-r + (22 * 1),
   $sec-g + (22 * 1),
   $sec-b + (22 * 1)
 );
-$theme-color-secondary-v7: rgb(
+$theme-secondary-v7: rgb(
   $sec-r + (22 * 2),
   $sec-g + (22 * 2),
   $sec-b + (22 * 2)
 );
-$theme-color-secondary-v8: rgb(
+$theme-secondary-v8: rgb(
   $sec-r + (22 * 3),
   $sec-g + (22 * 3),
   $sec-b + (22 * 3)
 );
-$theme-color-secondary-v9: rgb(
+$theme-secondary-v9: rgb(
   $sec-r + (22 * 4),
   $sec-g + (22 * 4),
   $sec-b + (22 * 4)
 );
 
-$theme-color-tertiary: rgb(128, 128, 128); //grey
+$theme-tertiary: rgb(128, 128, 128); //grey
 $tert-r: 128;
 $tert-g: 128;
 $tert-b: 128;
-$theme-color-tertiary-v1: rgb(
+$theme-tertiary-v1: rgb(
   $tert-r - (22 * 4),
   $tert-g - (22 * 4),
   $tert-b - (22 * 4)
 );
-$theme-color-tertiary-v2: rgb(
+$theme-tertiary-v2: rgb(
   $tert-r - (22 * 3),
   $tert-g - (22 * 3),
   $tert-b - (22 * 3)
 );
-$theme-color-tertiary-v3: rgb(
+$theme-tertiary-v3: rgb(
   $tert-r - (22 * 2),
   $tert-g - (22 * 2),
   $tert-b - (22 * 2)
 );
-$theme-color-tertiary-v4: rgb(
+$theme-tertiary-v4: rgb(
   $tert-r - (22 * 1),
   $tert-g - (22 * 1),
   $tert-b - (22 * 1)
 );
-$theme-color-tertiary-v5: rgb($tert-r, $tert-g, $tert-b);
-$theme-color-tertiary-v6: rgb(
+$theme-tertiary-v5: rgb($tert-r, $tert-g, $tert-b);
+$theme-tertiary-v6: rgb(
   $tert-r + (22 * 1),
   $tert-g + (22 * 1),
   $tert-b + (22 * 1)
 );
-$theme-color-tertiary-v7: rgb(
+$theme-tertiary-v7: rgb(
   $tert-r + (22 * 2),
   $tert-g + (22 * 2),
   $tert-b + (22 * 2)
 );
-$theme-color-tertiary-v8: rgb(
+$theme-tertiary-v8: rgb(
   $tert-r + (22 * 3),
   $tert-g + (22 * 3),
   $tert-b + (22 * 3)
 );
-$theme-color-tertiary-v9: rgb(
+$theme-tertiary-v9: rgb(
   $tert-r + (22 * 4),
   $tert-g + (22 * 4),
   $tert-b + (22 * 4)
