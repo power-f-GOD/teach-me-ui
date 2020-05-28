@@ -136,11 +136,11 @@ const Signup = (props: SignupPropsState) => {
               refs.institutionInput.current.dataset.uid = _institution.id;
             }}>
             {(() => {
-              const country = `<span class='theme-color-tertiary-lighter'>${_institution.country}</span>`;
+              const country = `<span class='theme-tertiary-lighter'>${_institution.country}</span>`;
               const keyword = institution.value?.keyword!.trim();
               const highlighted = `${_institution.name.replace(
                 new RegExp(`(${keyword})`, 'i'),
-                `<span class='theme-color-secondary-darker'>$1</span>`
+                `<span class='theme-secondary-darker'>$1</span>`
               )}, ${country}`.replace(/<\/?script>/gi, '');
 
               return (
@@ -189,7 +189,7 @@ const Signup = (props: SignupPropsState) => {
                   .trim()
                   .replace(
                     new RegExp(`(${department.value?.keyword?.trim()})`, 'i'),
-                    `<span class='theme-color-secondary-darker'>$1</span>`
+                    `<span class='theme-secondary-darker'>$1</span>`
                   )}`.replace(/<\/?script>/gi, '');
 
                 return (
@@ -236,7 +236,7 @@ const Signup = (props: SignupPropsState) => {
                 .trim()
                 .replace(
                   new RegExp(`(${level.value!.keyword!.trim()})`, 'i'),
-                  `<span class='theme-color-secondary-darker'>$1</span>`
+                  `<span class='theme-secondary-darker'>$1</span>`
                 )}`.replace(/<\/?script>/gi, '');
 
               return (

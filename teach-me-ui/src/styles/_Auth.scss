@@ -60,7 +60,7 @@
     0 0em 3em 2em rgba(0, 0, 0, 0.035);
 
   .input-set fieldset {
-    border-right: 0.175rem solid $theme-color-primary-v7;
+    border-right: 0.175rem solid $theme-primary-v7;
   }
 
   .not-set fieldset {
@@ -111,7 +111,7 @@
 
   &.custom-scroll-bar {
     &::-webkit-scrollbar-thumb {
-      background: $theme-color-secondary-v4 !important;
+      background: $theme-secondary-v4 !important;
     }
   }
 }
@@ -120,7 +120,7 @@ button.signup-create-button {
   position: absolute;
   top: -57%;
   right: 0;
-  background-color: $theme-color-secondary !important;
+  background-color: $theme-secondary !important;
   box-shadow: 0 0.25rem 0.5rem rgba(116, 90, 90, 0.5);
   transition: 0.3s;
 
@@ -137,7 +137,7 @@ button.signup-create-button {
   }
 
   &:hover {
-    background-color: $theme-color-secondary-v4 !important;
+    background-color: $theme-secondary-v4 !important;
   }
 }
 

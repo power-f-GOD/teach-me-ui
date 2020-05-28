@@ -139,3 +139,39 @@ export const logError = (action: Function) => (error: any) => {
   );
   console.error('An error occured: ', message);
 };
+
+export const timestampFormatter = (
+  _timestamp?: string | number,
+  withSeconds?: boolean
+): string => {
+  let timestamp = Number(_timestamp)
+    ? new Date(String(_timestamp)).toLocaleTimeString()
+    : _timestamp;
+
+  if (timestamp) {
+    if (!/^\d\d:\d\d:\d\d$/.test(String(timestamp)) && !Number(timestamp)) {
+      console.error('Invalid timestamp format: ', timestamp);
+      return String(timestamp);
+    }
+  } else {
+    timestamp = new Date().toLocaleTimeString();
+  }
+
+  let [hour, minute, second] = String(timestamp).split(':');
+  let hr = +hour;
+  let amOrPm = '';
+
+  if (hr > 11) {
+    amOrPm = 'pm';
+    hr = hr === 12 ? hr : hr - 12;
+  } else {
+    amOrPm = 'am';
+    hr = hr === 0 ? 12 : hr;
+  }
+
+  hour = hr < 10 ? '0' + hr : '' + hr;
+
+  return withSeconds
+    ? `${hour}:${minute}:${second} ${amOrPm}`
+    : `${hour}:${minute} ${amOrPm}`;
+};
