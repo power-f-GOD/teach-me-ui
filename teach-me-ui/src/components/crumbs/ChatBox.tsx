@@ -8,8 +8,6 @@ import Grid from '@material-ui/core/Grid';
 // import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import ChatIcon from '@material-ui/icons/Chat';
-import MinimizeIcon from '@material-ui/icons/Minimize';
-// import MaximizeIcon from '@material-ui/icons/Maximize';
 import WebAssetIcon from '@material-ui/icons/WebAsset';
 import CloseIcon from '@material-ui/icons/Close';
 import EmojiIcon from '@material-ui/icons/Mood';
@@ -17,6 +15,14 @@ import SendIcon from '@material-ui/icons/Send';
 import TextField from '@material-ui/core/TextField';
 import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
+
+import { timestampFormatter } from '../../functions';
+
+interface Message {
+  type: 'incoming' | 'outgoing';
+  text: string;
+  timestamp: string;
+}
 
 const msgBoxRef = createRef<HTMLInputElement>();
 const scrollViewRef = createRef<HTMLElement>();
@@ -31,21 +37,81 @@ const ChatBox = () => {
   const [msgBoxCurrentHeight, setMsgBoxCurrentHeight] = useState<number>(
     msgBoxInitHeight
   );
+  const [messages, setMessages] = useState<Message[]>([]);
+
   const handleMinimizeChatClick = useCallback(() => {
     setMinimizeChatBox((prevState: boolean) => !prevState);
-  }, []);
+
+    if (window.innerWidth < 768) {
+      if (!minimizeChatBox) {
+        document.body.style.overflow = 'auto';
+      } else {
+        document.body.style.overflow = 'hidden';
+      }
+    }
+  }, [minimizeChatBox]);
+
   const handleCloseChatClick = useCallback(() => {
     setCloseChatBox(true);
+    document.body.style.overflow = 'auto';
   }, []);
+
   const handleOpenChatClick = useCallback(() => {
     setCloseChatBox(false);
+
+    if (window.innerWidth < 768 && !minimizeChatBox) {
+      document.body.style.overflow = 'hidden';
+    }
+  }, [minimizeChatBox]);
+
+  const handleSendMsgClick = useCallback(() => {
+    const msgBox = msgBoxRef.current!;
+    const timestamp = timestampFormatter();
+    const msg: Message = {
+      type: 'outgoing',
+      text: msgBox.value.trim(),
+      timestamp
+    };
+
+    msgBox.value = '';
+    msgBox.focus();
+    setMessages((prevState: Message[]) => {
+      const newMessages = [...prevState];
+
+      newMessages.push(msg);
+      return newMessages;
+    });
+    setScrollViewElevation('calc(19px - 1.25rem)');
+
+    window.setTimeout(() => {
+      const timestamp = timestampFormatter();
+      const msg: Message = {
+        type: 'incoming',
+        text:
+          'A sample response from the end user via the server (web socket)...',
+        timestamp
+      };
+
+      setMessages((prevState: Message[]) => {
+        const newMessages = [...prevState];
+
+        newMessages.push(msg);
+        return newMessages;
+      });
+    }, 2000);
   }, []);
-  const handleMessageInputChange = useCallback(
+
+  const handleMsgInputChange = useCallback(
     (e: any) => {
+      if (!e.shiftKey && (e.key === 'Enter' || e.keyCode === 13)) {
+        handleSendMsgClick();
+        return;
+      }
+
       const scrollView = scrollViewRef.current!;
       const elevation = e.target.offsetHeight;
       const chatBoxMaxHeight = msgBoxInitHeight * msgBoxMaxRow;
-      const remValue = elevation > msgBoxInitHeight * 4 ? 1 : 1.25;
+      const remValue = elevation > msgBoxInitHeight * 4 ? 1.25 : 1.25;
 
       if (elevation <= chatBoxMaxHeight) {
         if (elevation > msgBoxCurrentHeight) {
@@ -68,8 +134,10 @@ const ChatBox = () => {
 
       setScrollViewElevation(`calc(${elevation}px - ${remValue}rem)`);
       setMsgBoxCurrentHeight(elevation);
+
+      
     },
-    [msgBoxCurrentHeight]
+    [msgBoxCurrentHeight, handleSendMsgClick]
   );
 
   useEffect(() => {
@@ -79,6 +147,12 @@ const ChatBox = () => {
       scrollView.scrollTop = scrollView.scrollHeight;
     }
   }, [scrollView]);
+
+  useEffect(() => {
+    if (messages && scrollView) {
+      scrollView.scrollTop = scrollView.scrollHeight;
+    }
+  }, [messages, scrollView]);
 
   return (
     <Container className='ChatBox p-0'>
@@ -96,7 +170,6 @@ const ChatBox = () => {
                   horizontal: 'right'
                 }}
                 color='primary'
-                badgeContent={4}
                 overlap='circle'
                 variant='dot'>
                 <Avatar
@@ -107,7 +180,7 @@ const ChatBox = () => {
               </Badge>{' '}
               Emmanuel Sunday
             </Col>
-            <Col as='section' className='controls p-0'>
+            <Col as='span' className='controls p-0'>
               <Col xs={6} as='span' className='minimize-wrapper'>
                 <IconButton
                   // edge='start'
@@ -115,7 +188,9 @@ const ChatBox = () => {
                   onClick={handleMinimizeChatClick}
                   aria-label='minimize chat box'>
                   {!minimizeChatBox ? (
-                    <MinimizeIcon fontSize='inherit' />
+                    <Col as='span' className='minimize-icon'>
+                      ─
+                    </Col>
                   ) : (
                     <WebAssetIcon fontSize='inherit' />
                   )}
@@ -134,21 +209,24 @@ const ChatBox = () => {
           </Col>
           <Grid
             component='section'
-            className='chat-scroll-view d-flex flex-column col'
+            className='chat-scroll-view custom-scroll-bar d-flex flex-column col'
             style={{ marginBottom: scrollViewElevation }}
             ref={scrollViewRef}>
-            <IncomingMessage />
-            <IncomingMessage />
-            <IncomingMessage />
-            <OutgoingMessage />
-            <OutgoingMessage />
-            <IncomingMessage />
-            <OutgoingMessage />
-            <IncomingMessage />
-            <IncomingMessage />
-            <OutgoingMessage />
+            {!!messages[0] ? (
+              messages.map((message, key: number) =>
+                message.type === 'incoming' ? (
+                  <IncomingMsg message={message} key={key} />
+                ) : (
+                  <OutgoingMsg message={message} key={key} />
+                )
+              )
+            ) : (
+              <Col className='theme-tertiary-lighter d-flex align-items-center justify-content-center'>
+                Start a new conversation.
+              </Col>
+            )}
           </Grid>
-          <Col as='section' className='chat-message-box d-flex p-0'>
+          <Col as='section' className='chat-msg-box d-flex p-0'>
             <Col as='span' className='emoji-wrapper p-0'>
               <IconButton
                 // edge='start'
@@ -158,11 +236,11 @@ const ChatBox = () => {
                 <EmojiIcon fontSize='inherit' />
               </IconButton>
             </Col>
-            <Col className='message-box-wrapper p-0'>
+            <Col className='msg-box-wrapper p-0'>
               <TextField
                 variant='outlined'
-                id='message-box'
-                className='message-box'
+                id='msg-box'
+                className='msg-box custom-scroll-bar'
                 placeholder='Type a message...'
                 multiline
                 rows={1}
@@ -171,7 +249,7 @@ const ChatBox = () => {
                 inputRef={msgBoxRef}
                 fullWidth
                 inputProps={{
-                  onKeyUp: handleMessageInputChange
+                  onKeyUp: handleMsgInputChange
                 }}
                 // onChange={}
               />
@@ -180,8 +258,8 @@ const ChatBox = () => {
               <IconButton
                 // edge='start'
                 className='send-button'
-                // onClick={toggleDrawer(true)}
-                aria-label='send message'>
+                onClick={handleSendMsgClick}
+                aria-label='send msg'>
                 <SendIcon fontSize='inherit' />
               </IconButton>
             </Col>
@@ -199,33 +277,45 @@ const ChatBox = () => {
   );
 };
 
-function IncomingMessage() {
+function IncomingMsg(props: { message: Message } | any) {
+  const { text, timestamp } = props.message;
+
   return (
-    <Col
-      as='div'
-      className='incoming-message-wrapper scroll-view-message-wrapper d-flex flex-column justify-content-end p-0'>
-      <Col as='span' className='scroll-view-message d-block'>
-        Lorem ipsum dolor anticidunct efler dist dejour flerm turis.
+    <Container className='incoming-msg-container p-0 m-0'>
+      <Col
+        as='div'
+        className='incoming-msg-wrapper scroll-view-msg-wrapper d-inline-flex flex-column justify-content-end p-0'>
+        <Col as='span' className='scroll-view-msg d-block'>
+          {text}
+        </Col>
+        <Col as='span' className='chat-timestamp-wrapper d-block p-0'>
+          <Col as='span' className='chat-timestamp d-inline-block m-0'>
+            {timestamp}
+          </Col>
+        </Col>
       </Col>
-      <Col as='span' className='chat-timestamp d-inline-block'>
-        07:56am
-      </Col>
-    </Col>
+    </Container>
   );
 }
 
-function OutgoingMessage() {
+function OutgoingMsg(props: { message: Message } | any) {
+  const { text, timestamp } = props.message;
+
   return (
-    <Col
-      as='div'
-      className='outgoing-message-wrapper scroll-view-message-wrapper d-flex flex-column justify-content-end p-0'>
-      <Col as='span' className='scroll-view-message d-block'>
-        Lorem ipsum dolor anticidunct intellisus res pundo letus adoliva.
+    <Container className='outgoing-msg-container p-0 m-0'>
+      <Col
+        as='div'
+        className='outgoing-msg-wrapper scroll-view-msg-wrapper d-inline-flex flex-column justify-content-end p-0'>
+        <Col as='span' className='scroll-view-msg d-block'>
+          {text}
+        </Col>
+        <Col as='span' className='chat-timestamp-wrapper d-block p-0'>
+          <Col as='span' className='chat-timestamp d-inline-block m-0'>
+            {timestamp}
+          </Col>
+        </Col>
       </Col>
-      <Col as='span' className='chat-timestamp d-inline-block'>
-        07:56am
-      </Col>
-    </Col>
+    </Container>
   );
 }
 

@@ -8,7 +8,7 @@
   flex-wrap: wrap;
   align-items: center;
   color: #eee;
-  background-color: $theme-color-primary-v9;
+  background-color: $theme-primary-v9;
   position: relative;
   background: transparent;
 
@@ -34,12 +34,12 @@
     left: -40vw;
     background: {
       image: url('/images/educational.png'),
-        linear-gradient(135deg, $theme-color-primary-v2, $theme-color-primary);
+        linear-gradient(135deg, $theme-primary-v2, $theme-primary);
       repeat: no-repeat;
       position: 97vw 90%, center;
       size: 28rem, 100vw;
     }
-    box-shadow: 0 2.25rem 0 $theme-color-primary,
+    box-shadow: 0 2.25rem 0 $theme-primary,
       1.45rem 2.5rem 1.5rem 0 rgba(0, 0, 0, 0.35);
   }
 
@@ -50,11 +50,11 @@
     height: 150%;
     top: -20%;
     background: {
-      color: $theme-color-primary;
+      color: $theme-primary;
       image: linear-gradient(
         -125deg,
-        $theme-color-primary-v3,
-        $theme-color-primary
+        $theme-primary-v3,
+        $theme-primary
       );
       position: center;
       size: 100vw;
@@ -114,7 +114,7 @@
       color: white;
       padding-left: 2.5rem;
       padding-right: 2.5rem;
-      background-color: $theme-color-secondary-v5;
+      background-color: $theme-secondary-v5;
     }
   }
 }

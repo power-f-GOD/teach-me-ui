@@ -26,8 +26,8 @@
 
 .left-pane {
   background: {
-    image: linear-gradient(180deg, $theme-color-primary-v4, $theme-color-primary-v5);
-    color: $theme-color-primary-v4;
+    image: linear-gradient(180deg, $theme-primary-v4, $theme-primary-v5);
+    color: $theme-primary-v4;
     position: center;
     size: contain;
     attachment: fixed;
