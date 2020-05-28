@@ -3,14 +3,11 @@ import { Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
-import Container from '@material-ui/core/Container';
 
-import { Nav, Home, About, Support, Profile, Footer, Loader } from '../index';
+import { Nav, Home, About, Support, Profile, Loader, ChatBox } from '../index';
 
 const Main = (props: any) => {
-  const { firstname, signout } = props;
+  const { signout } = props;
 
   if (signout.status === 'pending') {
     return <Loader />;
@@ -19,34 +16,19 @@ const Main = (props: any) => {
   return (
     <Grid className='main-root-grid fade-in'>
       <Nav for='main' />
-
-      <Box paddingY='1rem'>
-        <br />
-        <br />
-        <br />
-        <Container>
-          <Typography component='h1' variant='h5'>
-            Welcome, {firstname.value}! This is the MAIN area!
-          </Typography>
-        </Container>
-
-        <Switch>
-          <Route path={['/', '/index', '/home']} exact component={Home} />
-          <Route path='/about' component={About} />
-          <Route path='/support' component={Support} />
-          <Route path='/profile' component={Profile} />
-        </Switch>
-      </Box>
-
-      <Footer />
+      <Switch>
+        <Route path={['/', '/index', '/home']} exact component={Home} />
+        <Route path='/about' component={About} />
+        <Route path='/support' component={Support} />
+        <Route path='/profile' component={Profile} />
+      </Switch>
+      <ChatBox />
     </Grid>
   );
 };
 
-const mapStateToProps = ({ displayName, firstname, signout }: any) => {
+const mapStateToProps = ({ signout }: any) => {
   return {
-    displayName,
-    firstname,
     signout
   };
 };

@@ -1,0 +1,54 @@
+@import 'constants';
+
+.Home {
+  margin-top: 4rem;
+}
+
+.left-pane-col,
+.middle-pane-col,
+.right-pane-col {
+  padding: 1rem;
+}
+
+.left-pane,
+.middle-pane,
+.right-pane {
+  border-radius: 0.75rem;
+}
+
+.left-pane,
+.right-pane {
+  position: fixed;
+  top: 5rem;
+  max-width: 20rem;
+  height: calc(100vh - 6rem);
+}
+
+.left-pane {
+  background: {
+    image: linear-gradient(180deg, $theme-color-primary-v4, $theme-color-primary-v5);
+    color: $theme-color-primary-v4;
+    position: center;
+    size: contain;
+    attachment: fixed;
+  }
+  box-shadow: 0 0.1rem 0.35rem rgba(0, 0, 0, 0.5);
+  color: white;
+  left: 1rem;
+}
+
+.middle-pane {
+  max-width: 38.5rem;
+  min-height: 150vh;
+}
+
+.right-pane {
+  right: 1rem;
+}
+
+.middle-pane,
+.right-pane {
+  // border: 0.0625rem solid #ddd;
+  box-shadow: 0 0.1rem 0.45rem rgba(0, 0, 0, 0.15);
+  background-color: #eee;
+}

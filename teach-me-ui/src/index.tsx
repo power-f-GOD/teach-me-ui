@@ -5,9 +5,11 @@ import HttpsRedirect from 'react-https-redirect';
 
 import { StylesProvider } from '@material-ui/core/styles';
 
+import './styles/bootstrap-grid.min.css';
+import './styles/index.min.css';
+
 import App from './App';
 import store from './appStore';
-import './styles/index.min.css';
 
 export const userDeviceIsMobile = /(Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows Phone)/i.test(
   window.navigator.userAgent
