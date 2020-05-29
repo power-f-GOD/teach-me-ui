@@ -78,6 +78,23 @@
       left: -65vw !important;
     }
   }
+
+  .chat-box-wrapper {
+    $full-length: 100%;
+
+    border-radius: 0;
+    overflow: hidden;
+    max-width: unset;
+    max-height: unset;
+    width: $full-length;
+    height: $full-length;
+    position: fixed !important;
+    left: 0.95rem;
+  }
+
+  .scroll-view-msg-wrapper {
+    max-width: 22rem;
+  }  
 }
 
 @media screen and (max-width: 599px) {
@@ -139,20 +156,5 @@
       top: -10%;
       left: -60vw;
     }
-  }
-
-  .chat-box-wrapper {
-    $box-height: 100vh;
-    $box-width: 98vw;
-
-    border-radius: 0;
-    overflow: hidden;
-    max-width: unset;
-    max-height: unset;
-    width: $box-width;
-    height: $box-height;
-    background-color: white;
-    left: -$box-width + 6.5vw;
-    bottom: -1rem;
   }
 }

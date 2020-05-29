@@ -7,13 +7,13 @@ body,
   width: 100%;
   margin: 0;
   font-size: 1rem;
-  color: $theme-color-tertiary-v2;
+  color: $theme-tertiary-v2;
   line-height: 1.35rem;
 }
 
 body {
   position: relative;
-  overflow: auto !important;
+  overflow: auto;
 }
 
 * {
@@ -35,17 +35,18 @@ body {
   &.desktop {
     &.custom-scroll-bar,
     .custom-scroll-bar,
+    textarea,
     .MuiDialogContent-root {
       &::-webkit-scrollbar {
         width: 0.75em;
       }
 
       &::-webkit-scrollbar-track {
-        background: $theme-color-tertiary-v9;
+        background: $theme-tertiary-v9;
       }
 
       &::-webkit-scrollbar-thumb {
-        background: $theme-color-secondary-v6 !important;
+        background: $theme-secondary-v6 !important;
       }
     }
   }
@@ -68,8 +69,8 @@ body {
   width: 100%;
   min-height: 100%;
   display: flex;
-  background: $theme-color-primary-v3;
-  color: $theme-color-primary-v9;
+  background: $theme-primary-v3;
+  color: $theme-primary-v9;
   justify-content: center;
   align-items: center;
 }
@@ -88,10 +89,10 @@ input {
 }
 
 a {
-  color: $theme-color-secondary-v4;
+  color: $theme-secondary-v4;
 
   &:visited {
-    color: $theme-color-secondary-v8;
+    color: $theme-secondary-v8;
   }
 }
 
@@ -112,8 +113,8 @@ hr {
   border-radius: 0.1rem;
   background-image: linear-gradient(
     to right,
-    $theme-color-secondary,
-    $theme-color-primary-v4
+    $theme-secondary,
+    $theme-primary-v4
   );
   border: none;
 }
@@ -135,7 +136,7 @@ a {
     transition: 0.3s;
 
     &:hover {
-      color: $theme-color-secondary;
+      color: $theme-secondary;
       background-color: white;
     }
   }
@@ -143,7 +144,7 @@ a {
   &[class*='Primary'] {
     min-height: 2.5rem;
     border-radius: 0.25rem;
-    background-color: $theme-color-secondary !important;
+    background-color: $theme-secondary !important;
     color: white;
 
     &.major-button {
@@ -169,8 +170,8 @@ a {
       &::before {
         background-image: linear-gradient(
           to left,
-          $theme-color-secondary,
-          $theme-color-primary
+          $theme-secondary,
+          $theme-primary
         );
       }
 
@@ -178,8 +179,8 @@ a {
         transform: translateX(-100%);
         background-image: linear-gradient(
           to right,
-          $theme-color-secondary,
-          $theme-color-primary
+          $theme-secondary,
+          $theme-primary
         );
       }
 
@@ -207,33 +208,33 @@ a {
 
 .MuiOutlinedInput-root {
   &:hover .MuiOutlinedInput-notchedOutline {
-    border: 2px solid $theme-color-tertiary-v7;
+    border: 2px solid $theme-tertiary-v7;
     border-color: linear-gradient(
       to right,
-      $theme-color-primary-v4,
-      $theme-color-secondary
+      $theme-primary-v4,
+      $theme-secondary
     );
   }
 }
 
 .MuiLinearProgress-colorPrimary {
-  background-color: $theme-color-secondary-v8;
+  background-color: $theme-secondary-v8;
 }
 .MuiLinearProgress-barColorPrimary {
-  background-color: $theme-color-secondary-v4;
+  background-color: $theme-secondary-v4;
 }
 
 .MuiTypography-colorPrimary {
-  color: $theme-color-secondary;
+  color: $theme-secondary;
 }
 
 .MuiPickersToolbar-toolbar,
 .MuiPickersDay-daySelected {
-  background-color: $theme-color-secondary !important;
+  background-color: $theme-secondary !important;
 }
 
 .MuiCheckbox-colorPrimary.Mui-checked {
-  color: $theme-color-primary;
+  color: $theme-primary;
 }
 
 .MuiFormHelperText-root {
@@ -260,10 +261,10 @@ div {
     }
 
     .Mui-focused {
-      color: $theme-color-secondary !important;
+      color: $theme-secondary !important;
 
       fieldset {
-        border-color: $theme-color-secondary !important;
+        border-color: $theme-secondary !important;
       }
     }
 
@@ -332,7 +333,7 @@ div {
   // min-width: 10rem;
   width: auto !important;
   display: inline-block;
-  padding: 0.55rem !important;
+  padding: 0.5rem !important;
   border-radius: 0 0.45rem 0 0.45rem;
   color: #f8f8f8;
   line-height: 100% !important;
@@ -351,19 +352,19 @@ div {
   }
 
   &.light-blue {
-    background: $theme-color-primary;
+    background: $theme-primary;
   }
 
   &.grey {
-    background: $theme-color-tertiary-v3;
+    background: $theme-tertiary-v3;
   }
 
   &.gradient {
     background: {
       image: linear-gradient(
         to right,
-        $theme-color-secondary,
-        $theme-color-primary
+        $theme-secondary,
+        $theme-primary
       );
       position: 90% center;
       size: 200%;
@@ -375,58 +376,61 @@ div {
   background: {
     image: linear-gradient(
       to right,
-      $theme-color-secondary,
-      $theme-color-primary-v4
+      $theme-secondary,
+      $theme-primary-v4
     );
   }
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.theme-color-primary {
-  color: $theme-color-primary;
+.theme-primary {
+  color: $theme-primary;
 }
-.theme-color-primary-lighter {
-  color: $theme-color-primary-v7;
+.theme-primary-lighter {
+  color: $theme-primary-v7;
 }
-.theme-color-primary-lightest {
-  color: $theme-color-primary-v9;
+.theme-primary-lightest {
+  color: $theme-primary-v9;
 }
-.theme-color-primary-darker {
-  color: $theme-color-primary-v3;
+.theme-primary-darker {
+  color: $theme-primary-v3;
 }
-.theme-color-primary-darkest {
-  color: $theme-color-primary-v1;
-}
-
-.theme-color-secondary {
-  color: $theme-color-secondary;
-}
-.theme-color-secondary-darker {
-  color: $theme-color-secondary-v7;
-}
-.theme-color-secondary-lighter {
-  color: $theme-color-secondary-v7;
+.theme-primary-darkest {
+  color: $theme-primary-v1;
 }
 
-.theme-color-tertiary {
-  color: $theme-color-tertiary;
+.theme-secondary {
+  color: $theme-secondary;
 }
-.theme-color-tertiary-darker {
-  color: $theme-color-tertiary-v3;
+.theme-secondary-darker {
+  color: $theme-secondary-v7;
 }
-.theme-color-tertiary-lighter {
-  color: $theme-color-tertiary-v7;
+.theme-secondary-lighter {
+  color: $theme-secondary-v7;
+}
+
+.theme-tertiary {
+  color: $theme-tertiary;
+}
+.theme-tertiary-darker {
+  color: $theme-tertiary-v3;
+}
+.theme-tertiary-lighter {
+  color: $theme-tertiary-v7 !important;
+}
+.theme-tertiary-lightest {
+  color: $theme-tertiary-v9 !important;
 }
 
 .theme-bgcolor-primary {
-  background-color: $theme-color-primary;
+  background-color: $theme-primary;
 }
 
 .theme-bgcolor-secondary {
-  background-color: $theme-color-secondary;
+  background-color: $theme-secondary;
 }
 
 .theme-bgcolor-tertiary {
-  background-color: $theme-color-tertiary;
+  background-color: $theme-tertiary;
 }

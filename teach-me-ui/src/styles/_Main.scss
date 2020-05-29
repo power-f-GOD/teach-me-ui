@@ -8,7 +8,7 @@
 }
 
 .top-navbar {
-  background: $theme-color-primary-v4;
+  background: $theme-primary-v4;
   color: white;
 
   ul {
@@ -26,7 +26,7 @@
       }
 
       &:active {
-        color: $theme-color-primary-v4;
+        color: $theme-primary-v4;
       }
     }
   }
