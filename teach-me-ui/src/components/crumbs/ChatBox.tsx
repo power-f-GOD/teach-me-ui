@@ -26,7 +26,7 @@ interface Message {
 
 const msgBoxRef = createRef<HTMLInputElement>();
 const scrollViewRef = createRef<HTMLElement>();
-const msgBoxMaxRow = 6;
+// const msgBoxMaxRow = 6;
 const msgBoxInitHeight = 19;
 
 const ChatBox = () => {
@@ -37,6 +37,7 @@ const ChatBox = () => {
   const [msgBoxCurrentHeight, setMsgBoxCurrentHeight] = useState<number>(
     msgBoxInitHeight
   );
+  const [msgBoxRowsMax, setMsgBoxRowsMax] = useState<number>(1);
   const [messages, setMessages] = useState<Message[]>([]);
 
   const handleMinimizeChatClick = useCallback(() => {
@@ -73,8 +74,13 @@ const ChatBox = () => {
       timestamp
     };
 
+    if (!msg.text) {
+      setMsgBoxRowsMax(msgBoxRowsMax < 6 ? msgBoxRowsMax + 1 : msgBoxRowsMax);
+      return;
+    }
+
     msgBox.value = '';
-    msgBox.focus();
+    setMsgBoxRowsMax(1);
     setMessages((prevState: Message[]) => {
       const newMessages = [...prevState];
 
@@ -99,18 +105,23 @@ const ChatBox = () => {
         return newMessages;
       });
     }, 2000);
-  }, []);
+  }, [msgBoxRowsMax]);
 
   const handleMsgInputChange = useCallback(
     (e: any) => {
-      if (!e.shiftKey && (e.key === 'Enter' || e.keyCode === 13)) {
+      if (!e.shiftKey && e.key === 'Enter') {
         handleSendMsgClick();
         return;
+      } else if (
+        (e.shiftKey && e.key === 'Enter') ||
+        e.target.scrollHeight > msgBoxInitHeight
+      ) {
+        setMsgBoxRowsMax(msgBoxRowsMax < 6 ? msgBoxRowsMax + 1 : msgBoxRowsMax);
       }
 
       const scrollView = scrollViewRef.current!;
       const elevation = e.target.offsetHeight;
-      const chatBoxMaxHeight = msgBoxInitHeight * msgBoxMaxRow;
+      const chatBoxMaxHeight = msgBoxInitHeight * msgBoxRowsMax;
       const remValue = elevation > msgBoxInitHeight * 4 ? 1.25 : 1.25;
 
       if (elevation <= chatBoxMaxHeight) {
@@ -134,10 +145,8 @@ const ChatBox = () => {
 
       setScrollViewElevation(`calc(${elevation}px - ${remValue}rem)`);
       setMsgBoxCurrentHeight(elevation);
-
-      
     },
-    [msgBoxCurrentHeight, handleSendMsgClick]
+    [msgBoxCurrentHeight, msgBoxRowsMax, handleSendMsgClick]
   );
 
   useEffect(() => {
@@ -244,7 +253,7 @@ const ChatBox = () => {
                 placeholder='Type a message...'
                 multiline
                 rows={1}
-                rowsMax={msgBoxMaxRow}
+                rowsMax={msgBoxRowsMax}
                 size='small'
                 inputRef={msgBoxRef}
                 fullWidth
