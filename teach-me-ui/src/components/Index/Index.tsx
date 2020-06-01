@@ -4,7 +4,12 @@ import { Switch, Route } from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 
-import { Nav, About, Landing, Support, Footer } from '../index';
+import Nav from '../crumbs/Nav';
+import About from './About';
+import Landing from './Landing';
+import Support from './Support';
+import Footer from '../crumbs/Footer';
+import _404 from './_404';
 
 const Index = () => {
   return (
@@ -16,6 +21,7 @@ const Index = () => {
           <Route path={['/', '/index']} exact component={Landing} />
           <Route path='/about' component={About} />
           <Route path='/support' component={Support} />
+          <Route component={_404} />
         </Switch>
       </Box>
 

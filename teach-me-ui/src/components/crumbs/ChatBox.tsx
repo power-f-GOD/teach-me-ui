@@ -5,7 +5,6 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import Grid from '@material-ui/core/Grid';
-// import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import ChatIcon from '@material-ui/icons/Chat';
 import WebAssetIcon from '@material-ui/icons/WebAsset';
@@ -16,6 +15,7 @@ import TextField from '@material-ui/core/TextField';
 import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 
+import createMemo from '../../Memo';
 import { timestampFormatter } from '../../functions';
 
 interface Message {
@@ -26,44 +26,48 @@ interface Message {
 
 const msgBoxRef = createRef<HTMLInputElement>();
 const scrollViewRef = createRef<HTMLElement>();
-// const msgBoxMaxRow = 6;
 const msgBoxInitHeight = 19;
+
+const themeColorPrimary = '#00537e';
+const themeColorSecondary = '#465d00';
+
+const Memoize = createMemo();
 
 const ChatBox = () => {
   const [scrollView, setScrollView] = useState<HTMLElement | null>(null);
   const [scrollViewElevation, setScrollViewElevation] = React.useState(String);
-  const [minimizeChatBox, setMinimizeChatBox] = useState<boolean>(false);
-  const [closeChatBox, setCloseChatBox] = useState<boolean>(true);
+  const [chatBoxMinimized, setMinimizeChatBox] = useState<boolean>(false);
+  const [chatBoxClosed, setCloseChatBox] = useState<boolean>(true);
   const [msgBoxCurrentHeight, setMsgBoxCurrentHeight] = useState<number>(
     msgBoxInitHeight
   );
   const [msgBoxRowsMax, setMsgBoxRowsMax] = useState<number>(1);
   const [messages, setMessages] = useState<Message[]>([]);
 
+  const setBodyOverflow = useCallback(() => {
+    const metaTheme = document.querySelector('meta#theme-color') as any;
+    let bodyStyle = document.body.style;
+
+    if (window.innerWidth < 768 && !chatBoxClosed && !chatBoxMinimized) {
+      bodyStyle.overflow = 'hidden';
+      metaTheme.content = themeColorSecondary;
+    } else {
+      bodyStyle.overflow = 'auto';
+      metaTheme.content = themeColorPrimary;
+    }
+  }, [chatBoxClosed, chatBoxMinimized]);
+
   const handleMinimizeChatClick = useCallback(() => {
     setMinimizeChatBox((prevState: boolean) => !prevState);
-
-    if (window.innerWidth < 768) {
-      if (!minimizeChatBox) {
-        document.body.style.overflow = 'auto';
-      } else {
-        document.body.style.overflow = 'hidden';
-      }
-    }
-  }, [minimizeChatBox]);
+  }, []);
 
   const handleCloseChatClick = useCallback(() => {
     setCloseChatBox(true);
-    document.body.style.overflow = 'auto';
   }, []);
 
   const handleOpenChatClick = useCallback(() => {
     setCloseChatBox(false);
-
-    if (window.innerWidth < 768 && !minimizeChatBox) {
-      document.body.style.overflow = 'hidden';
-    }
-  }, [minimizeChatBox]);
+  }, []);
 
   const handleSendMsgClick = useCallback(() => {
     const msgBox = msgBoxRef.current!;
@@ -111,7 +115,7 @@ const ChatBox = () => {
     (e: any) => {
       if (!e.shiftKey && e.key === 'Enter') {
         handleSendMsgClick();
-        return;
+        return false;
       } else if (
         (e.shiftKey && e.key === 'Enter') ||
         e.target.scrollHeight > msgBoxInitHeight
@@ -149,6 +153,14 @@ const ChatBox = () => {
     [msgBoxCurrentHeight, msgBoxRowsMax, handleSendMsgClick]
   );
 
+  const preventEnterNewLine = useCallback((e) => {
+    if (!e.shiftKey && e.key === 'Enter') {
+      e.preventDefault();
+    }
+  }, []);
+
+  window.addEventListener('resize', setBodyOverflow);
+
   useEffect(() => {
     setScrollView(scrollViewRef.current);
 
@@ -163,14 +175,16 @@ const ChatBox = () => {
     }
   }, [messages, scrollView]);
 
+  useEffect(setBodyOverflow, [chatBoxClosed, chatBoxMinimized]);
+console.log('chat rendered')
   return (
     <Container className='ChatBox p-0'>
       <Container className='chat-box-container'>
         <Row
           as='section'
           className={`chat-box-wrapper flex-column ${
-            minimizeChatBox ? 'minimized' : ''
-          } ${closeChatBox ? 'closed' : ''} debugger`}>
+            chatBoxMinimized ? 'minimize' : ''
+          } ${chatBoxClosed ? 'close' : ''} debugger`}>
           <Col as='section' className='chat-header d-flex p-0'>
             <Col as='span' className='colleague-name'>
               <Badge
@@ -196,7 +210,7 @@ const ChatBox = () => {
                   className='minimize-button'
                   onClick={handleMinimizeChatClick}
                   aria-label='minimize chat box'>
-                  {!minimizeChatBox ? (
+                  {!chatBoxMinimized ? (
                     <Col as='span' className='minimize-icon'>
                       ─
                     </Col>
@@ -216,11 +230,14 @@ const ChatBox = () => {
               </Col>
             </Col>
           </Col>
-          <Grid
+          <Memoize
+            memoizedComponent={{
+              component: Grid,
+              ref: scrollViewRef
+            }}
             component='section'
             className='chat-scroll-view custom-scroll-bar d-flex flex-column col'
-            style={{ marginBottom: scrollViewElevation }}
-            ref={scrollViewRef}>
+            style={{ marginBottom: scrollViewElevation }}>
             {!!messages[0] ? (
               messages.map((message, key: number) =>
                 message.type === 'incoming' ? (
@@ -234,7 +251,7 @@ const ChatBox = () => {
                 Start a new conversation.
               </Col>
             )}
-          </Grid>
+          </Memoize>
           <Col as='section' className='chat-msg-box d-flex p-0'>
             <Col as='span' className='emoji-wrapper p-0'>
               <IconButton
@@ -258,7 +275,8 @@ const ChatBox = () => {
                 inputRef={msgBoxRef}
                 fullWidth
                 inputProps={{
-                  onKeyUp: handleMsgInputChange
+                  onKeyUp: handleMsgInputChange,
+                  onKeyPress: preventEnterNewLine
                 }}
                 // onChange={}
               />
@@ -276,7 +294,7 @@ const ChatBox = () => {
         </Row>
         <IconButton
           // edge='start'
-          className={`chat-button ${closeChatBox ? '' : 'hide'}`}
+          className={`chat-button ${chatBoxClosed ? '' : 'hide'}`}
           onClick={handleOpenChatClick}
           aria-label='chat'>
           <ChatIcon fontSize='inherit' />

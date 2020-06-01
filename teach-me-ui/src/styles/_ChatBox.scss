@@ -8,6 +8,7 @@
 }
 
 $chat-text-color: #333;
+$chat-header-min-height: 3.35rem;
 
 .ChatBox {
   position: fixed;
@@ -57,8 +58,6 @@ $chat-text-color: #333;
   position: relative;
 }
 
-$chat-header-min-height: 3.35rem;
-
 .chat-box-wrapper {
   $box-height: 32rem;
   $box-width: 23rem;
@@ -67,7 +66,6 @@ $chat-header-min-height: 3.35rem;
   overflow: hidden;
   max-width: calc(100vw - 2rem);
   max-height: calc(100vh - 5rem);
-  // min-height: 12rem;
   position: absolute;
   width: $box-width;
   height: $box-height;
@@ -75,25 +73,23 @@ $chat-header-min-height: 3.35rem;
   background-color: white;
   left: -$box-width - 4.25rem;
   bottom: 0;
-  transition: 0.3s;
+  transition: 0.35s;
 
-  &.minimized {
-    height: $chat-header-min-height;
-    // min-height: unset;
+  &.minimize {
+    transform: translateY(calc(100% - #{$chat-header-min-height}));
 
     .chat-header {
       ~ section {
-        display: none !important;
+        display: none;
       }
     }
   }
 
-  &.closed {
-    height: 0;
-    // min-height: unset;
+  &.close {
+    transform: translateY(100%);
 
     > section {
-      display: none !important;
+      display: none;
     }
   }
 }
@@ -175,7 +171,7 @@ $msg-radius: 0.6rem;
 
 .scroll-view-msg-wrapper {
   width: auto;
-  max-width: 80%;
+  max-width: 75%;
 
   &::before {
     position: absolute;
@@ -351,11 +347,18 @@ body.desktop {
       }
 
       &::-webkit-scrollbar-track {
-        background: transparent;
+        background: rgba(0, 0, 0, 0.1);
       }
 
       &::-webkit-scrollbar-thumb {
-        background-color: #444 !important;
+        background-color: #444;
+        visibility: hidden;
+      }
+
+      &:hover {
+        &::-webkit-scrollbar-thumb {
+          visibility: visible;
+        }
       }
     }
   }

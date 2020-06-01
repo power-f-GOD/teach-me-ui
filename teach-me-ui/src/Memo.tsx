@@ -2,16 +2,30 @@ import React from 'react';
 
 export default function createMemo() {
   return React.memo((props: any) => {
-    const Component = props.memoizedComponent;
-    let _props = { ...props };
+    let Component = props.memoizedComponent.component;
+    let ref;
+    let _props;
+
+    if (Component) {
+      ref = props.memoizedComponent.ref;
+    } else {
+      Component = props.memoizedComponent;
+      ref = null;
+    }
 
     if (!Component) {
       throw Error(
         "You're probably missing the 'memoizedComponent' prop for Memoize."
       );
     }
+console.log(props.id, 'should not re-render.', props.label, props.className);
+    _props = { ...props };
 
     delete _props.memoizedComponent;
-    return <Component {..._props} />;
+    return ref ? (
+      <Component {..._props} ref={ref} />
+    ) : (
+      <Component {..._props} />
+    );
   });
 }
