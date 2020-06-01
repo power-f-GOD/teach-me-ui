@@ -79,18 +79,18 @@
     }
   }
 
-  .chat-box-wrapper {
-    $full-length: 100%;
+  // .chat-box-wrapper {
+  //   $full-length: 100%;
 
-    border-radius: 0;
-    overflow: hidden;
-    max-width: unset;
-    max-height: unset;
-    width: $full-length;
-    height: $full-length;
-    position: fixed !important;
-    left: 0.95rem;
-  }
+  //   border-radius: 0;
+  //   overflow: hidden;
+  //   max-width: unset;
+  //   max-height: unset;
+  //   width: $full-length;
+  //   height: $full-length;
+  //   position: fixed !important;
+  //   left: 0.95rem;
+  // }
   
   .scroll-view-msg-wrapper {
     max-width: 22rem;

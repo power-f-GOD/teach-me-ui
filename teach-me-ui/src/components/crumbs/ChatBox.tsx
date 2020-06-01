@@ -6,7 +6,8 @@ import Col from 'react-bootstrap/Col';
 
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
-import ChatIcon from '@material-ui/icons/Chat';
+// import ChatIcon from '@material-ui/icons/Chat';
+import ForumIcon from '@material-ui/icons/Forum';
 import WebAssetIcon from '@material-ui/icons/WebAsset';
 import CloseIcon from '@material-ui/icons/Close';
 import EmojiIcon from '@material-ui/icons/Mood';
@@ -17,6 +18,7 @@ import Badge from '@material-ui/core/Badge';
 
 import createMemo from '../../Memo';
 import { timestampFormatter } from '../../functions';
+import ChatLeftPane from './ChatLeftPane';
 
 interface Message {
   type: 'incoming' | 'outgoing';
@@ -34,10 +36,21 @@ const themeColorSecondary = '#465d00';
 const Memoize = createMemo();
 
 const ChatBox = () => {
+  const participants = [{
+    name: 'Emmanuel Sunday',
+    avatar: 'emmanuel.png'
+  }, {
+    name: 'Abba Chinomso',
+    avatar: 'avatar-2.png'
+  }, {
+    name: 'Sunday Power',
+    avatar: 'avatar-1.png'
+  },] 
+
   const [scrollView, setScrollView] = useState<HTMLElement | null>(null);
   const [scrollViewElevation, setScrollViewElevation] = React.useState(String);
   const [chatBoxMinimized, setMinimizeChatBox] = useState<boolean>(false);
-  const [chatBoxClosed, setCloseChatBox] = useState<boolean>(true);
+  const [chatBoxClosed, setCloseChatBox] = useState<boolean>(false);
   const [msgBoxCurrentHeight, setMsgBoxCurrentHeight] = useState<number>(
     msgBoxInitHeight
   );
@@ -48,7 +61,8 @@ const ChatBox = () => {
     const metaTheme = document.querySelector('meta#theme-color') as any;
     let bodyStyle = document.body.style;
 
-    if (window.innerWidth < 768 && !chatBoxClosed && !chatBoxMinimized) {
+    // if (window.innerWidth < 768 && !chatBoxClosed && !chatBoxMinimized) {
+    if (!chatBoxClosed && !chatBoxMinimized) {
       bodyStyle.overflow = 'hidden';
       metaTheme.content = themeColorSecondary;
     } else {
@@ -159,7 +173,7 @@ const ChatBox = () => {
     }
   }, []);
 
-  window.addEventListener('resize', setBodyOverflow);
+  // window.addEventListener('resize', setBodyOverflow);
 
   useEffect(() => {
     setScrollView(scrollViewRef.current);
@@ -176,16 +190,152 @@ const ChatBox = () => {
   }, [messages, scrollView]);
 
   useEffect(setBodyOverflow, [chatBoxClosed, chatBoxMinimized]);
-console.log('chat rendered')
+
   return (
-    <Container className='ChatBox p-0'>
+    <Container fluid className='ChatBox p-0'>
       <Container className='chat-box-container'>
         <Row
           as='section'
-          className={`chat-box-wrapper flex-column ${
+          className={`chat-box-wrapper m-0 ${
             chatBoxMinimized ? 'minimize' : ''
           } ${chatBoxClosed ? 'close' : ''} debugger`}>
-          <Col as='section' className='chat-header d-flex p-0'>
+          <Col as='section' md={3} className='chat-left-pane d-flex p-0'>
+            <ChatLeftPane />
+          </Col>
+          <Col as='section' md={6} className='chat-middle-pane d-flex flex-column p-0'>
+            <Col as='section' className='chat-header d-flex p-0'>
+              <Col as='span' className='colleague-name'>
+                <Badge
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right'
+                  }}
+                  color='primary'
+                  overlap='circle'
+                  variant='dot'>
+                  <Avatar
+                    className='chat-avatar mr-2'
+                    alt='Emmanuel Sunday'
+                    src='/images/emmanuel.png'
+                  />
+                </Badge>{' '}
+                Emmanuel Sunday
+              </Col>
+              <Col as='span' className='controls p-0'>
+                <Col xs={6} as='span' className='minimize-wrapper'>
+                  <IconButton
+                    // edge='start'
+                    className='minimize-button'
+                    onClick={handleMinimizeChatClick}
+                    aria-label='minimize chat box'>
+                    {!chatBoxMinimized ? (
+                      <Col as='span' className='minimize-icon'>
+                        ─
+                      </Col>
+                    ) : (
+                      <WebAssetIcon fontSize='inherit' />
+                    )}
+                  </IconButton>
+                </Col>
+                <Col xs={6} as='span' className='close-wrapper'>
+                  <IconButton
+                    // edge='start'
+                    className='close-button'
+                    onClick={handleCloseChatClick}
+                    aria-label='close chat box'>
+                    <CloseIcon fontSize='inherit' />
+                  </IconButton>
+                </Col>
+              </Col>
+            </Col>
+            <Memoize
+              memoizedComponent={{
+                component: Grid,
+                ref: scrollViewRef
+              }}
+              component='section'
+              className='chat-scroll-view custom-scroll-bar d-flex flex-column col'
+              style={{ marginBottom: scrollViewElevation }}>
+              {!!messages[0] ? (
+                messages.map((message, key: number) =>
+                  message.type === 'incoming' ? (
+                    <IncomingMsg message={message} key={key} />
+                  ) : (
+                    <OutgoingMsg message={message} key={key} />
+                  )
+                )
+              ) : (
+                <Col className='theme-tertiary-lighter d-flex align-items-center justify-content-center'>
+                  Start a new conversation.
+                </Col>
+              )}
+            </Memoize>
+            <Col as='section' className='chat-msg-box d-flex p-0'>
+              <Col as='span' className='emoji-wrapper p-0'>
+                <IconButton
+                  // edge='start'
+                  className='emoji-button'
+                  // onClick={toggleDrawer(true)}
+                  aria-label='insert emoji'>
+                  <EmojiIcon fontSize='inherit' />
+                </IconButton>
+              </Col>
+              <Col className='msg-box-wrapper p-0'>
+                <TextField
+                  variant='outlined'
+                  id='msg-box'
+                  className='msg-box custom-scroll-bar'
+                  placeholder='Type a message...'
+                  multiline
+                  rows={1}
+                  rowsMax={msgBoxRowsMax}
+                  size='small'
+                  inputRef={msgBoxRef}
+                  fullWidth
+                  inputProps={{
+                    onKeyUp: handleMsgInputChange,
+                    onKeyPress: preventEnterNewLine
+                  }}
+                  // onChange={}
+                />
+              </Col>
+              <Col as='span' className='send-wrapper p-0'>
+                <IconButton
+                  // edge='start'
+                  className='send-button'
+                  onClick={handleSendMsgClick}
+                  aria-label='send msg'>
+                  <SendIcon fontSize='inherit' />
+                </IconButton>
+              </Col>
+            </Col>
+          </Col>
+          <Col as='section' md={3} className='chat-right-pane d-flex flex-column p-0'>
+            <ChatRightPane participants={participants} />
+          </Col>
+        </Row>
+        <IconButton
+          // edge='start'
+          className={`chat-button ${chatBoxClosed ? '' : 'hide'}`}
+          onClick={handleOpenChatClick}
+          aria-label='chat'>
+          <ForumIcon fontSize='inherit' />
+        </IconButton>
+      </Container>
+    </Container>
+  );
+};
+
+function ChatRightPane(props: any) {
+  const {participants} = props;
+  return (
+    <>
+      <Col className='chat-header d-flex flex-column justify-content-center'>
+        Participants
+      </Col>
+      <Col className='participants-container p-0'>
+        {participants.map((participant: any) => {
+          return (
             <Col as='span' className='colleague-name'>
               <Badge
                 anchorOrigin={{
@@ -197,112 +347,18 @@ console.log('chat rendered')
                 variant='dot'>
                 <Avatar
                   className='chat-avatar mr-2'
-                  alt='Emmanuel Sunday'
-                  src='/images/emmanuel.png'
+                  alt={participant.name}
+                  src={`/images/${participant.avatar}`}
                 />
               </Badge>{' '}
-              Emmanuel Sunday
+              {participant.name}
             </Col>
-            <Col as='span' className='controls p-0'>
-              <Col xs={6} as='span' className='minimize-wrapper'>
-                <IconButton
-                  // edge='start'
-                  className='minimize-button'
-                  onClick={handleMinimizeChatClick}
-                  aria-label='minimize chat box'>
-                  {!chatBoxMinimized ? (
-                    <Col as='span' className='minimize-icon'>
-                      ─
-                    </Col>
-                  ) : (
-                    <WebAssetIcon fontSize='inherit' />
-                  )}
-                </IconButton>
-              </Col>
-              <Col xs={6} as='span' className='close-wrapper'>
-                <IconButton
-                  // edge='start'
-                  className='close-button'
-                  onClick={handleCloseChatClick}
-                  aria-label='close chat box'>
-                  <CloseIcon fontSize='inherit' />
-                </IconButton>
-              </Col>
-            </Col>
-          </Col>
-          <Memoize
-            memoizedComponent={{
-              component: Grid,
-              ref: scrollViewRef
-            }}
-            component='section'
-            className='chat-scroll-view custom-scroll-bar d-flex flex-column col'
-            style={{ marginBottom: scrollViewElevation }}>
-            {!!messages[0] ? (
-              messages.map((message, key: number) =>
-                message.type === 'incoming' ? (
-                  <IncomingMsg message={message} key={key} />
-                ) : (
-                  <OutgoingMsg message={message} key={key} />
-                )
-              )
-            ) : (
-              <Col className='theme-tertiary-lighter d-flex align-items-center justify-content-center'>
-                Start a new conversation.
-              </Col>
-            )}
-          </Memoize>
-          <Col as='section' className='chat-msg-box d-flex p-0'>
-            <Col as='span' className='emoji-wrapper p-0'>
-              <IconButton
-                // edge='start'
-                className='emoji-button'
-                // onClick={toggleDrawer(true)}
-                aria-label='insert emoji'>
-                <EmojiIcon fontSize='inherit' />
-              </IconButton>
-            </Col>
-            <Col className='msg-box-wrapper p-0'>
-              <TextField
-                variant='outlined'
-                id='msg-box'
-                className='msg-box custom-scroll-bar'
-                placeholder='Type a message...'
-                multiline
-                rows={1}
-                rowsMax={msgBoxRowsMax}
-                size='small'
-                inputRef={msgBoxRef}
-                fullWidth
-                inputProps={{
-                  onKeyUp: handleMsgInputChange,
-                  onKeyPress: preventEnterNewLine
-                }}
-                // onChange={}
-              />
-            </Col>
-            <Col as='span' className='send-wrapper p-0'>
-              <IconButton
-                // edge='start'
-                className='send-button'
-                onClick={handleSendMsgClick}
-                aria-label='send msg'>
-                <SendIcon fontSize='inherit' />
-              </IconButton>
-            </Col>
-          </Col>
-        </Row>
-        <IconButton
-          // edge='start'
-          className={`chat-button ${chatBoxClosed ? '' : 'hide'}`}
-          onClick={handleOpenChatClick}
-          aria-label='chat'>
-          <ChatIcon fontSize='inherit' />
-        </IconButton>
-      </Container>
-    </Container>
+          );
+        })}
+      </Col>
+    </>
   );
-};
+}
 
 function IncomingMsg(props: { message: Message } | any) {
   const { text, timestamp } = props.message;

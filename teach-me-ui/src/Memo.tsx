@@ -18,7 +18,7 @@ export default function createMemo() {
         "You're probably missing the 'memoizedComponent' prop for Memoize."
       );
     }
-console.log(props.id, 'should not re-render.', props.label, props.className);
+    
     _props = { ...props };
 
     delete _props.memoizedComponent;
