@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -26,6 +26,16 @@ const Signin = (props: SigninPropsState) => {
   const [passwordVisible, setPasswordVisible] = useState(Boolean);
   const { isAuthenticated } = props.auth;
   const { from } = props.location?.state || { from: { pathname: '/' } };
+
+  const inputProps = useMemo(() => {
+    return {
+      onKeyPress: (e: any) => {
+        if (e.key === 'Enter') {
+          e.target.blur();
+        }
+      }
+    }
+  }, []);
 
   if (isAuthenticated) {
     return <Redirect to={from} />;
@@ -61,6 +71,7 @@ const Signin = (props: SigninPropsState) => {
             helperText={props.signinId.helperText}
             fullWidth
             onChange={handleSigninInputChange}
+            inputProps={inputProps}
           />
         </Box>
         <Box component='div' marginY='0.45em'>
@@ -77,6 +88,7 @@ const Signin = (props: SigninPropsState) => {
             helperText={props.signinPassword.helperText}
             fullWidth
             onChange={handleSigninInputChange}
+            inputProps={inputProps}
             InputProps={{
               endAdornment: (
                 <InputAdornment position='end'>

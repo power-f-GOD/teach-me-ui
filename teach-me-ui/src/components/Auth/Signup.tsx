@@ -93,6 +93,16 @@ const Signup = (props: SignupPropsState) => {
   const [openLevelPopover, setOpenLevelPopover] = useState(Boolean);
   const { isAuthenticated } = auth;
 
+  const inputProps = useMemo(() => {
+    return {
+      onKeyPress: (e: any) => {
+        if (e.key === 'Enter') {
+          e.target.blur();
+        }
+      }
+    }
+  }, []);
+
   const inputAdorned = useMemo(() => {
     return {
       endAdornment: (
@@ -378,6 +388,7 @@ const Signup = (props: SignupPropsState) => {
                 helperText={firstname.helperText}
                 fullWidth
                 onChange={handleSignupInputChange}
+                inputProps={inputProps}
               />
             </Box>
           </Grid>
@@ -396,6 +407,7 @@ const Signup = (props: SignupPropsState) => {
                 helperText={lastname.helperText}
                 fullWidth
                 onChange={handleSignupInputChange}
+                inputProps={inputProps}
               />
             </Box>
           </Grid>
@@ -417,6 +429,7 @@ const Signup = (props: SignupPropsState) => {
                 helperText={username.helperText}
                 fullWidth
                 onChange={handleSignupInputChange}
+                inputProps={inputProps}
               />
             </Box>
           </Grid>
@@ -436,6 +449,7 @@ const Signup = (props: SignupPropsState) => {
                 helperText={email.helperText}
                 fullWidth
                 onChange={handleSignupInputChange}
+                inputProps={inputProps}
               />
             </Box>
           </Grid>
@@ -463,6 +477,7 @@ const Signup = (props: SignupPropsState) => {
                 helperText={password.helperText}
                 fullWidth
                 onChange={handleSignupInputChange}
+                inputProps={inputProps}
                 InputProps={inputAdorned}
               />
             </Box>
@@ -497,6 +512,7 @@ const Signup = (props: SignupPropsState) => {
                 helperText={institution.helperText}
                 fullWidth
                 onChange={handleInstitutionChange}
+                inputProps={inputProps}
               />
               {matchingInstitutions.status === 'pending' && (
                 <LinearProgress color='primary' />
@@ -526,6 +542,7 @@ const Signup = (props: SignupPropsState) => {
                 helperText={department.helperText}
                 fullWidth
                 onChange={handleDepartmentChange}
+                inputProps={inputProps}
               />
               {matchingDepartments.status === 'pending' && (
                 <LinearProgress color='primary' />
@@ -578,6 +595,7 @@ const Signup = (props: SignupPropsState) => {
                 helperText={level.helperText}
                 fullWidth
                 onChange={handleLevelChange}
+                inputProps={inputProps}
               />
               {matchingLevels.status === 'pending' && (
                 <LinearProgress color='primary' />

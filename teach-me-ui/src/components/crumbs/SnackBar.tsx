@@ -5,14 +5,14 @@ import MuiAlert from '@material-ui/lab/Alert';
 import Slide from '@material-ui/core/Slide';
 import Fade from '@material-ui/core/Fade';
 
-import { promisedDispatch } from '../../functions';
-import { displaySnackbar } from '../../actions';
+import { promisedDispatch } from '../../functions/utils';
+import { displaySnackbar } from '../../actions/misc';
 import { userDeviceIsMobile } from '../../index';
 
 const SnackBar = (props: any) => {
   const { snackbar } = props;
   const { open, message, severity, autoHide } = snackbar;
-  const [closed = true, setClosed] = useState(Boolean);
+  const [closed, setClosed] = useState<boolean>(true);
   let timeout: any;
 
   const handleClose = (event?: any, reason?: string) => {
