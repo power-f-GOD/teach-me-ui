@@ -62,8 +62,8 @@ $chat-header-min-height: 3.35rem;
 }
 
 .chat-box-wrapper {
-  $box-height: 100vh;//32rem;
-  $box-width: 100vw;//23rem;
+  $box-height: 100vh; //32rem;
+  $box-width: 100vw; //23rem;
 
   // border-radius: 0.75rem 0.75rem 0 0;
   overflow: hidden;
@@ -75,8 +75,9 @@ $chat-header-min-height: 3.35rem;
   box-shadow: 0 0.25rem 1.5rem rgba(0, 0, 0, 0.2);
   background-color: white;
   // left: -$box-width - 4.25rem;
-  left: 0;//calc(-#{$box-width} - 4.25rem);
-  top: 0; right: 0;
+  left: 0; //calc(-#{$box-width} - 4.25rem);
+  top: 0;
+  right: 0;
   transition: 0.35s;
 
   &.minimize {
@@ -163,7 +164,7 @@ $chat-header-min-height: 3.35rem;
   height: $size;
   width: $size;
   border-radius: 50%;
-  margin-right: 0.75rem !important;
+  margin-right: 0.5rem !important;
 
   + .MuiBadge-dot {
     $size: 0.75rem;
@@ -208,7 +209,7 @@ $chat-header-min-height: 3.35rem;
 }
 
 .colleague-name {
-  padding: 0.45rem 0.65rem;
+  padding: 0.45rem 0.5rem;
   min-width: calc(100% - 5.85rem);
   // font-weight: bold;
   // font-size: inherit;
@@ -265,7 +266,7 @@ $msg-radius: 0.6rem;
 }
 
 .incoming-msg-wrapper {
-  $bg-color: lightblue;//$theme-secondary-v9;
+  $bg-color: lightblue; //$theme-secondary-v9;
 
   margin: 0;
   background: $bg-color;

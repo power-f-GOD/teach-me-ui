@@ -30,6 +30,7 @@
     "immer": "^6.0.5",
     "jest-dom": "^4.0.0",
     "moment": "^2.25.3",
+    "query-string": "^6.12.1",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
     "react-dom": "^16.13.1",

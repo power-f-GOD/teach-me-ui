@@ -4,6 +4,8 @@ export interface ReduxAction {
   payload?: any;
 }
 
+// Auth [Signin/Signup] interfaces ...
+
 export interface InputErrState {
   err?: boolean;
   helperText?: string;
@@ -90,4 +92,22 @@ export interface CreateDepartmentState extends StatusPropsState {
 export interface CreateLevelState extends StatusPropsState {
   level?: string;
   department?: string;
+}
+
+// ChatBox interfaces...
+
+export interface Chat {
+  name?: string;
+  type?: 'conversation' | 'classroom';
+  avatar?: string;
+  id?: string;
+  pathname?: string;
+  isOpen?: boolean;
+  isMinimized?: boolean;
+}
+
+export interface Message {
+  type: 'incoming' | 'outgoing';
+  text: string;
+  timestamp: string;
 }

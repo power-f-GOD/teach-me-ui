@@ -1,5 +1,5 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
+import React, { useCallback } from 'react';
+import { Link } from 'react-router-dom';
 
 import Col from 'react-bootstrap/Col';
 
@@ -11,6 +11,10 @@ import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 
+import { setActiveChat } from '../../actions/chat';
+import { dispatch } from '../../functions/utils';
+import { Chat } from '../../constants/interfaces';
+
 interface TabPanelProps {
   children?: React.ReactNode;
   index: any;
@@ -21,19 +25,18 @@ const [CV, CR] = ['Conversations', 'Classrooms'];
 
 const ChatLeftPane = (props: any) => {
   const [value, setValue] = React.useState<number>(0);
-  const {pathname} = window.location;
-  const users =[{
-    name: 'Emmanuel Sunday',
-    avatar: 'emmanuel.png'
-  }, {
-    name: 'Abba Chinomso',
-    avatar: 'avatar-2.png'
-  }];
-  const rooms = ['Room 1', 'Room 2', 'Room 3'];
+  const { conversations, rooms } = props;
+  const { pathname } = window.location;
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
+
+  const handleChatClick = useCallback((chatInfo: Chat) => {
+    return () => {
+      dispatch(setActiveChat(chatInfo));
+    };
+  }, []);
 
   return (
     <Box width='100%'>
@@ -48,28 +51,59 @@ const ChatLeftPane = (props: any) => {
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
-        {users.map((user: any) => <Link to={`${pathname}?chat&converstation=${user}`} className='tab-panel-item p-0' key={user}>
-          <Col as='span' className='colleague-name'>
-            <Badge
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right'
-              }}
-              color='primary'
-              overlap='circle'
-              variant='dot'>
-              <Avatar
-                className='chat-avatar mr-2'
-                alt={user.name}
-                src={`/images/${user.avatar}`}
-              />
-            </Badge>{' '}
-            {user.name}
-          </Col>
-        </Link>)}
+        {conversations.map((conversation: Chat) => {
+          const _pathname = `${pathname}?chat=open&type=conversation&name=${conversation.name}`;
+          const chatInfo = {
+            ...conversation,
+            pathname: _pathname
+          };
+
+          return (
+            <Link
+              to={_pathname}
+              className='tab-panel-item p-0'
+              key={conversation.name}
+              onClick={handleChatClick({ ...chatInfo })}>
+              <Col as='span' className='colleague-name'>
+                <Badge
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right'
+                  }}
+                  color='primary'
+                  overlap='circle'
+                  variant='dot'>
+                  <Avatar
+                    component='span'
+                    className='chat-avatar mr-2'
+                    alt={conversation.name}
+                    src={`/images/${conversation.avatar}`}
+                  />
+                </Badge>{' '}
+                {conversation.name}
+              </Col>
+            </Link>
+          );
+        })}
       </TabPanel>
       <TabPanel value={value} index={1}>
-        {rooms.map((room: string) => <Link to={`${pathname}?chat&classroom=${room}`} className='tab-panel-item' key={room}>{room}</Link>)}
+        {rooms.map((room: Chat) => {
+          const _pathname = `${pathname}?chat=open&type=classroom&name=${room.name}`;
+          const chatInfo = {
+            ...room,
+            pathname: _pathname
+          };
+
+          return (
+            <Link
+              to={_pathname}
+              className='tab-panel-item'
+              key={room.name}
+              onClick={handleChatClick({ ...chatInfo })}>
+              {room.name}
+            </Link>
+          );
+        })}
       </TabPanel>
     </Box>
   );
@@ -87,9 +121,9 @@ function TabPanel(props: TabPanelProps) {
       className={`${name}-tab-panel ${value === index ? 'show' : 'hide'}`}
       aria-labelledby={index}
       {...other}>
-        <Box>
-          <Typography>{children}</Typography>
-        </Box>
+      <Box>
+        <Typography>{children}</Typography>
+      </Box>
     </div>
   );
 }
