@@ -114,7 +114,7 @@ function TabPanel(props: TabPanelProps) {
   const name = (value === 0 ? CV : CR).toLowerCase();
 
   return (
-    <div
+    <section
       role='tabpanel'
       hidden={value !== index}
       id={name}
@@ -124,7 +124,7 @@ function TabPanel(props: TabPanelProps) {
       <Box>
         <Typography>{children}</Typography>
       </Box>
-    </div>
+    </section>
   );
 }
 

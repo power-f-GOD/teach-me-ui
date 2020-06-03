@@ -107,11 +107,11 @@ const ChatBox = (props: any) => {
   const {
     name: activeChatName,
     avatar: activeChatAvatar,
-    pathname: activeChatPathname,
+    queryString: activeChatQString,
     type: activeChatType,
     isOpen,
     isMinimized
-  } = props.activeChat;
+  }: Chat = props.activeChat;
 
   const [scrollView, setScrollView] = useState<HTMLElement | null>(null);
   const [scrollViewElevation, setScrollViewElevation] = React.useState(String);
@@ -136,30 +136,31 @@ const ChatBox = (props: any) => {
   }, [isOpen, isMinimized]);
 
   const handleMinimizeChatClick = useCallback(() => {
-    const pathname = activeChatPathname.replace(
+    const queryString = activeChatQString!.replace(
       isMinimized ? 'chat=minimized' : 'chat=open',
       isMinimized ? 'chat=open' : 'chat=minimized'
     );
+
     dispatch(
       setActiveChat({
         name: activeChatName,
         type: activeChatType,
         avatar: activeChatAvatar,
         isMinimized: !isMinimized,
-        pathname
+        queryString
       })
     );
-    window.history.replaceState({}, '', pathname);
+    window.history.replaceState({}, '', window.location.pathname + queryString);
   }, [
     activeChatName,
     activeChatAvatar,
     activeChatType,
-    activeChatPathname,
+    activeChatQString,
     isMinimized
   ]);
 
   const handleCloseChatClick = useCallback(() => {
-    const pathname = window.location.pathname;
+    const queryString = window.location.search;
 
     dispatch(
       setActiveChat({
@@ -167,16 +168,16 @@ const ChatBox = (props: any) => {
         type: activeChatType,
         avatar: activeChatAvatar,
         isOpen: false,
-        pathname
+        queryString
       })
     );
-    window.history.pushState({}, '', pathname);
+    window.history.pushState({}, '', window.location.pathname);
   }, [activeChatName, activeChatAvatar, activeChatType]);
 
   const handleOpenChatClick = useCallback(() => {
-    const pathname = /chat=/.test(activeChatPathname)
-      ? activeChatPathname
-      : `${window.location.pathname}?chat=${
+    const queryString = /chat=/.test(String(activeChatQString))
+      ? activeChatQString
+      : `?chat=${
           isMinimized ? 'minimized' : 'open'
         }&type=${activeChatType}&name=${activeChatName}`;
 
@@ -186,15 +187,15 @@ const ChatBox = (props: any) => {
         type: activeChatType,
         avatar: activeChatAvatar,
         isOpen: true,
-        pathname
+        queryString
       })
     );
-    window.history.pushState({}, '', pathname);
+    window.history.pushState({}, '', window.location.pathname + queryString);
   }, [
     activeChatName,
     activeChatAvatar,
     activeChatType,
-    activeChatPathname,
+    activeChatQString,
     isMinimized
   ]);
 
@@ -305,7 +306,7 @@ const ChatBox = (props: any) => {
   useEffect(setBodyOverflow, [isOpen, isMinimized]);
 
   useEffect(() => {
-    const { pathname, search } = window.location;
+    const { search } = window.location;
     const { chat } = queryString.parse(search);
 
     dispatch(
@@ -313,7 +314,7 @@ const ChatBox = (props: any) => {
         name: activeChatName,
         type: activeChatType,
         avatar: activeChatAvatar,
-        pathname: !!chat ? `${pathname}${search}` : activeChatPathname,
+        queryString: !!chat ? search : activeChatQString,
         isOpen: !!chat || isOpen
       })
     );
@@ -321,7 +322,7 @@ const ChatBox = (props: any) => {
     activeChatName,
     activeChatAvatar,
     activeChatType,
-    activeChatPathname,
+    activeChatQString,
     isOpen
   ]);
 
@@ -329,7 +330,6 @@ const ChatBox = (props: any) => {
     <Container fluid className='ChatBox p-0'>
       <Container className='chat-box-container'>
         <Row
-          as='section'
           className={`chat-box-wrapper m-0 ${isMinimized ? 'minimize' : ''} ${
             isOpen ? '' : 'close'
           } debugger`}>
@@ -341,7 +341,7 @@ const ChatBox = (props: any) => {
             as='section'
             md={6}
             className='chat-middle-pane d-flex flex-column p-0'>
-            <Col as='section' className='chat-header d-flex p-0'>
+            <Col as='header' className='chat-header d-flex p-0'>
               <Col as='span' className='colleague-name'>
                 {activeChatType === CONVO_CHAT_TYPE ? (
                   <>
@@ -430,7 +430,7 @@ const ChatBox = (props: any) => {
             <Col
               as='section'
               className={`chat-msg-box d-flex p-0 ${
-                /start.*conv/i.test(activeChatName) ? 'hide' : 'show'
+                /start.*conv/i.test(String(activeChatName)) ? 'hide' : 'show'
               }`}>
               <Col as='span' className='emoji-wrapper p-0'>
                 <IconButton
@@ -496,10 +496,11 @@ function ChatRightPane(props: any) {
   const { participants, type: activeChatType } = props;
   return (
     <>
-      <Col className='chat-header d-flex flex-column justify-content-center'>
+      <Col as='header' className='chat-header d-flex flex-column justify-content-center'>
         {activeChatType === CONVO_CHAT_TYPE ? 'User info' : 'Participants'}
       </Col>
-      <Col className='participants-container p-0'>
+      
+      <Col as='section' className='participants-container p-0'>
         {activeChatType === ROOM_CHAT_TYPE &&
           participants.map((participant: any, key: string) => {
             return (

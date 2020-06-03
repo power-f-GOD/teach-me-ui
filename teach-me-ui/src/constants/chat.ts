@@ -24,7 +24,7 @@ export const activeChatState: Chat = {
   avatar: '',
   type: ROOM_CHAT_TYPE,
   id: '',
-  pathname: window.location.pathname,
+  queryString: window.location.pathname,
   isOpen: false,
   isMinimized: false
 };

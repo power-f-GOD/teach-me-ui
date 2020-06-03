@@ -101,7 +101,7 @@ export interface Chat {
   type?: 'conversation' | 'classroom';
   avatar?: string;
   id?: string;
-  pathname?: string;
+  queryString?: string;
   isOpen?: boolean;
   isMinimized?: boolean;
 }

@@ -14,11 +14,23 @@ import ChatBox from '../crumbs/ChatBox';
 import _404 from '../Index/_404';
 
 import createMemo from '../../Memo';
+import { getState } from '../../functions/utils';
 
 const Memoize = createMemo();
 
 const Main = (props: any) => {
   const { signout } = props;
+  const {
+    queryString: activeChatQString,
+    isOpen: chatIsOpen
+  } = getState().activeChat;
+  let queryString = activeChatQString.split('?')[1] ?? '';
+
+  queryString = chatIsOpen ? `?${queryString}` : '';
+
+  if (chatIsOpen && !/chat=/.test(window.location.search)) {
+    window.history.replaceState({}, '', window.location.pathname + queryString);
+  }
 
   if (signout.status === 'pending') {
     return <Loader />;
@@ -39,7 +51,7 @@ const Main = (props: any) => {
         <Route path='/profile' component={Profile} />
         <Route component={_404} />
       </Switch>
-      
+
       <Memoize memoizedComponent={ChatBox} />
     </Grid>
   );
