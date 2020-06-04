@@ -102,22 +102,28 @@ export interface Message {
   text: string;
   timestamp: string | number;
   senderId?: string | number;
-  anchorId?: string | number;
+  id?: string | number;
 }
 
 export interface Chat {
   name: string;
   type?: 'conversation' | 'classroom';
-  avatar?: string;
+  avatar: string;
   id: string;
   queryString?: string;
   isOpen?: boolean;
   isMinimized?: boolean;
-  // messages?: Message[]
 }
 
-export interface ChatMessages {
-  // id: string | number;
-  // messages: Message[];
-  [key: string]: Message[];
+export interface ChatData {
+  [id: string]: AnchorInfo;
+}
+
+export interface AnchorInfo {
+  name?: string;
+  id: string;
+  messages: Message[];
+  avatar: string;
+  info?: any;
+  type?: 'conversation' | 'classroom'
 }

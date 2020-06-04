@@ -3,11 +3,10 @@ import {
   // REQUEST_START_CONVERSATION,
   // START_CONVERSATION,
   activeChatState,
-  // activeChatMessagesState,
   SET_CHATS_MESSAGES,
   chatsMessagesState
 } from '../constants/chat';
-import { Chat, ReduxAction, ChatMessages } from '../constants/interfaces';
+import { Chat, ReduxAction, ChatData } from '../constants/interfaces';
 
 export const activeChat = (
   state: Chat = activeChatState,
@@ -16,7 +15,6 @@ export const activeChat = (
   if (action.type === SET_ACTIVE_CHAT) {
     return {
       ...state,
-      avatar: '',
       ...action.payload
     };
   }
@@ -25,9 +23,9 @@ export const activeChat = (
 };
 
 export const chatsMessages = (
-  state: ChatMessages = chatsMessagesState,
+  state: ChatData = chatsMessagesState,
   action: ReduxAction
-): ChatMessages => {
+): ChatData => {
   if (action.type === SET_CHATS_MESSAGES) {
     return { 
       ...state,

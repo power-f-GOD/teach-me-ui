@@ -1,6 +1,6 @@
 import {
   // StatusPropsState,
-  Chat, ChatMessages
+  Chat, ChatData
 } from './interfaces';
 
 export const SET_ACTIVE_CHAT = 'SET_ACTIVE_CHAT';
@@ -14,23 +14,22 @@ export const CONVO_CHAT_TYPE = 'conversation';
 export const ROOM_CHAT_TYPE = 'classroom';
 export const SET_CHATS_MESSAGES = 'SET_ACTIVE_CHAT_MESSAGES';
 
-// export const statusPropsState: StatusPropsState = {
-//   status: 'settled',
-//   err: false,
-//   statusText: ' '
-// };
-
 export const activeChatState: Chat = {
   name: 'Start a conversation',
   avatar: '',
-  type: ROOM_CHAT_TYPE,
+  type: CONVO_CHAT_TYPE,
   id: '',
   queryString: window.location.pathname,
   isOpen: false,
-  isMinimized: false,
-  // messages: []
+  isMinimized: false
 };
 
-export const chatsMessagesState: ChatMessages = {
-  'id': []
+export const chatsMessagesState: ChatData = {
+  'id': {
+    name: '',
+    id: '',
+    messages: [],
+    avatar: '',
+    info: ''
+  }
 };

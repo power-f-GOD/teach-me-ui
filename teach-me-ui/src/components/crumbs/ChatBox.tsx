@@ -9,7 +9,6 @@ import Col from 'react-bootstrap/Col';
 
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
-// import ChatIcon from '@material-ui/icons/Chat';
 import ForumIcon from '@material-ui/icons/Forum';
 import WebAssetIcon from '@material-ui/icons/WebAsset';
 import CloseIcon from '@material-ui/icons/Close';
@@ -20,7 +19,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 
 import createMemo from '../../Memo';
-import { timestampFormatter, dispatch } from '../../functions';
+import { timestampFormatter, dispatch, getState } from '../../functions';
 import { setActiveChat, setChatsMessages } from '../../actions/chat';
 import { Chat, Message } from '../../constants/interfaces';
 import { CONVO_CHAT_TYPE, ROOM_CHAT_TYPE } from '../../constants/chat';
@@ -31,45 +30,11 @@ const msgBoxRef = createRef<HTMLInputElement>();
 const scrollViewRef = createRef<HTMLElement>();
 const msgBoxInitHeight = 19;
 
-// const themeColorPrimary = '#00537e';
-// const themeColorSecondary = '#465d00';
-
 const Memoize = createMemo();
 
 const cookieEnabled = navigator.cookieEnabled;
 
-window.addEventListener('popstate', (e) => {
-  let { chat, name, id, type: _type } = queryString.parse(
-    window.location.search
-  );
-  let type: 'conversation' | 'classroom' =
-    _type === CONVO_CHAT_TYPE ? CONVO_CHAT_TYPE : ROOM_CHAT_TYPE;
-
-  name = name ? String(name) : 'Start a Conversation';
-  id = id ? String(id) : '';
-
-  if (chat) {
-    if (chat === 'open') {
-      dispatch(
-        setActiveChat({ name, type, id, isOpen: true, isMinimized: false })
-      );
-    } else {
-      dispatch(
-        setActiveChat({ name, type, id, isOpen: true, isMinimized: true })
-      );
-    }
-  } else {
-    dispatch(
-      setActiveChat({
-        name,
-        id,
-        type: CONVO_CHAT_TYPE,
-        isOpen: false,
-        isMinimized: false
-      })
-    );
-  }
-});
+const placeHolderChatName = 'Start a new Conversation';
 
 const conversations: Chat[] = [
   {
@@ -93,6 +58,7 @@ const rooms: Chat[] = [
   {
     name: 'Room 1',
     type: ROOM_CHAT_TYPE,
+    avatar: '',
     get id() {
       return this.name;
     }
@@ -100,6 +66,7 @@ const rooms: Chat[] = [
   {
     name: 'Room 2',
     type: ROOM_CHAT_TYPE,
+    avatar: '',
     get id() {
       return this.name;
     }
@@ -107,6 +74,7 @@ const rooms: Chat[] = [
   {
     name: 'Room 3',
     type: ROOM_CHAT_TYPE,
+    avatar: '',
     get id() {
       return this.name;
     }
@@ -136,6 +104,57 @@ const participants: Chat[] = [
   }
 ];
 
+window.addEventListener('popstate', (e) => {
+  let { chat, name, id, type: _type } = queryString.parse(
+    window.location.search
+  );
+  let type: 'conversation' | 'classroom' =
+    _type === CONVO_CHAT_TYPE ? CONVO_CHAT_TYPE : ROOM_CHAT_TYPE;
+
+  name = name ? String(name) : placeHolderChatName;
+  id = id ? String(id) : '';
+
+  const currentChat = getState().chatsMessages[id];
+  const avatar = currentChat?.avatar ?? '';
+
+  if (chat) {
+    if (chat === 'open') {
+      dispatch(
+        setActiveChat({
+          name,
+          avatar,
+          type,
+          id,
+          isOpen: true,
+          isMinimized: false
+        })
+      );
+    } else {
+      dispatch(
+        setActiveChat({
+          name,
+          avatar,
+          type,
+          id,
+          isOpen: true,
+          isMinimized: true
+        })
+      );
+    }
+  } else {
+    dispatch(
+      setActiveChat({
+        name,
+        avatar,
+        id,
+        type: CONVO_CHAT_TYPE,
+        isOpen: false,
+        isMinimized: false
+      })
+    );
+  }
+});
+
 const ChatBox = (props: any) => {
   const { activeChat } = props;
   const {
@@ -156,20 +175,6 @@ const ChatBox = (props: any) => {
   );
   const [msgBoxRowsMax, setMsgBoxRowsMax] = useState<number>(1);
 
-  const setBodyOverflow = useCallback(() => {
-    // const metaTheme = document.querySelector('meta#theme-color') as any;
-    let bodyStyle = document.body.style;
-
-    // if (window.innerWidth < 768 && !isOpen && !isMinimized) {
-    if (isOpen && !isMinimized) {
-      // metaTheme.content = themeColorSecondary;
-      bodyStyle.overflow = 'hidden';
-    } else {
-      setTimeout(() => (bodyStyle.overflow = 'auto'), 350);
-      // metaTheme.content = themeColorPrimary;
-    }
-  }, [isOpen, isMinimized]);
-
   const handleMinimizeChatClick = useCallback(() => {
     const {
       name,
@@ -180,8 +185,8 @@ const ChatBox = (props: any) => {
       queryString: qString
     } = activeChat;
     const queryString = qString!.replace(
-      isMinimized ? 'chat=minimized' : 'chat=open',
-      isMinimized ? 'chat=open' : 'chat=minimized'
+      isMinimized ? 'chat=min' : 'chat=open',
+      isMinimized ? 'chat=open' : 'chat=min'
     );
 
     dispatch(
@@ -219,7 +224,7 @@ const ChatBox = (props: any) => {
     const queryString = /chat=/.test(String(qString))
       ? qString
       : `?chat=${
-          isMinimized ? 'minimized' : 'open'
+          isMinimized ? 'min' : 'open'
         }&type=${type}&id=${id}&name=${name}`;
 
     dispatch(
@@ -234,8 +239,7 @@ const ChatBox = (props: any) => {
     const msg: Message = {
       type: 'outgoing',
       text: msgBox.value.trim(),
-      timestamp,
-      anchorId: activeChatId
+      timestamp
     };
 
     if (!msg.text) {
@@ -245,7 +249,14 @@ const ChatBox = (props: any) => {
 
     msgBox.value = '';
     setMsgBoxRowsMax(1);
-    dispatch(setChatsMessages(msg));
+    dispatch(
+      setChatsMessages({
+        name: activeChatName,
+        avatar: activeChatAvatar,
+        id: activeChatId,
+        messages: [msg]
+      })
+    );
     setScrollViewElevation('calc(19px - 1.25rem)');
 
     window.setTimeout(() => {
@@ -254,13 +265,19 @@ const ChatBox = (props: any) => {
         type: 'incoming',
         text:
           'A sample response from the end user via the server (web socket)...',
-        timestamp,
-        anchorId: activeChatId
+        timestamp
       };
 
-      dispatch(setChatsMessages(msg));
+      dispatch(
+        setChatsMessages({
+          name: activeChatName,
+          avatar: activeChatAvatar,
+          messages: [msg],
+          id: activeChatId
+        })
+      );
     }, 2000);
-  }, [msgBoxRowsMax, activeChatId]);
+  }, [msgBoxRowsMax, activeChatName, activeChatAvatar, activeChatId]);
 
   const handleMsgInputChange = useCallback(
     (e: any) => {
@@ -325,8 +342,15 @@ const ChatBox = (props: any) => {
     }
   }, [_activeChatMessages, scrollView]);
 
-  useEffect(setBodyOverflow, [isOpen, isMinimized]);
+  useEffect(() => {
+    if (isOpen && !isMinimized) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+  }, [isOpen, isMinimized]);
 
+  const _currentChat = chatsMessages[activeChatId];
   useEffect(() => {
     const { search } = window.location;
     let { chat, type: _type, id, name } = queryString.parse(search);
@@ -336,11 +360,14 @@ const ChatBox = (props: any) => {
     name = String(name);
     id = String(id);
 
+    const currentChat = _currentChat;
+    const avatar = currentChat?.avatar ?? '';
+
     dispatch(
       setActiveChat({
         name: name || activeChatName,
         type: type || activeChatType,
-        avatar: activeChatAvatar,
+        avatar: avatar,
         id: id || activeChatId,
         queryString: !!chat ? search : activeChatQString,
         isOpen: !!chat || isOpen
@@ -352,7 +379,8 @@ const ChatBox = (props: any) => {
     activeChatAvatar,
     activeChatId,
     activeChatQString,
-    isOpen
+    isOpen,
+    _currentChat
   ]);
 
   useEffect(() => {
@@ -365,20 +393,23 @@ const ChatBox = (props: any) => {
 
       if (storageChatsMessages) {
         storageChatsMessages = JSON.parse(storageChatsMessages);
-        activeChatLastMessage = storageChatsMessages[id]?.slice(-1) ?? [];
+        activeChatLastMessage =
+          storageChatsMessages[id]?.messages.slice(-1) ?? [];
       }
     }
-    
+
     if (!!activeChatLastMessage[0]) {
       //set "text: ''" here to prevent duplicate message from appending since it's most likely coming from localStorage and not the user sending it; also see 'chat.ts' in the 'actions' directory for the code that does the prevention
       dispatch(
         setChatsMessages({
-          ...activeChatLastMessage[0],
-          text: ''
+          name: activeChatName,
+          avatar: activeChatAvatar,
+          id: activeChatId,
+          messages: [{ ...activeChatLastMessage[0], text: '' }]
         })
       );
     }
-  }, [activeChatId]);
+  }, [activeChatName, activeChatAvatar, activeChatId]);
 
   return (
     <Container fluid className='ChatBox p-0'>
@@ -409,22 +440,30 @@ const ChatBox = (props: any) => {
                       variant='dot'>
                       <Avatar
                         component='span'
-                        className='chat-avatar mr-2'
+                        className='chat-avatar'
                         alt={activeChatName}
                         src={`/images/${activeChatAvatar}`}
                       />
                     </Badge>{' '}
-                    {activeChatName}
+                    <Col as='span' className='ml-2 p-0'>
+                      {activeChatName ?? placeHolderChatName}
+                    </Col>
                   </>
+                ) : !activeChatId ? (
+                  <Col as='span' className='ml-2 p-0'>
+                    {activeChatName ?? placeHolderChatName}
+                  </Col>
                 ) : (
                   <>
                     <Avatar
                       component='span'
-                      className='chat-avatar mr-2'
+                      className='chat-avatar'
                       alt='Emmanuel Sunday'
                       src={`/images/${activeChatAvatar}`}
                     />
-                    {activeChatName}
+                    <Col as='span' className='ml-2 p-0'>
+                      {activeChatName ?? placeHolderChatName}
+                    </Col>
                   </>
                 )}
               </Col>
@@ -432,7 +471,6 @@ const ChatBox = (props: any) => {
               <Col as='span' className='controls p-0'>
                 <Col xs={6} as='span' className='minimize-wrapper'>
                   <IconButton
-                    // edge='start'
                     className='minimize-button'
                     onClick={handleMinimizeChatClick}
                     aria-label='minimize chat box'>
@@ -444,11 +482,9 @@ const ChatBox = (props: any) => {
                       <WebAssetIcon fontSize='inherit' />
                     )}
                   </IconButton>
-                  {/* </Link> */}
                 </Col>
                 <Col xs={6} as='span' className='close-wrapper'>
                   <IconButton
-                    // edge='start'
                     className='close-button'
                     onClick={handleCloseChatClick}
                     aria-label='close chat box'>
@@ -466,10 +502,10 @@ const ChatBox = (props: any) => {
               component='section'
               className='chat-scroll-view custom-scroll-bar d-flex flex-column col'
               style={{ marginBottom: scrollViewElevation }}>
-              {!!chatsMessages[activeChatId] ? (
+              {!!chatsMessages[activeChatId]?.messages ? (
                 chatsMessages[
                   activeChatId
-                ].map((message: Message, key: number) =>
+                ].messages.map((message: Message, key: number) =>
                   message.type === 'incoming' ? (
                     <IncomingMsg message={message} key={key} />
                   ) : (
@@ -486,11 +522,10 @@ const ChatBox = (props: any) => {
             <Col
               as='section'
               className={`chat-msg-box d-flex p-0 ${
-                /start.*conv/i.test(String(activeChatName)) ? 'hide' : 'show'
+                !activeChatId ? 'hide' : 'show'
               }`}>
               <Col as='span' className='emoji-wrapper p-0'>
                 <IconButton
-                  // edge='start'
                   className='emoji-button'
                   // onClick={toggleDrawer(true)}
                   aria-label='insert emoji'>
@@ -513,12 +548,10 @@ const ChatBox = (props: any) => {
                     onKeyUp: handleMsgInputChange,
                     onKeyPress: preventEnterNewLine
                   }}
-                  // onChange={}
                 />
               </Col>
               <Col as='span' className='send-wrapper p-0'>
                 <IconButton
-                  // edge='start'
                   className='send-button'
                   onClick={handleSendMsgClick}
                   aria-label='send msg'>
@@ -537,7 +570,6 @@ const ChatBox = (props: any) => {
         </Row>
 
         <IconButton
-          // edge='start'
           className={`chat-button ${isOpen ? 'hide' : ''}`}
           onClick={handleOpenChatClick}
           aria-label='chat'>

@@ -1,6 +1,12 @@
 import axios from 'axios';
 
-import { ReduxAction, Chat, Message } from '../constants/interfaces';
+import {
+  ReduxAction,
+  Chat,
+  Message,
+  ChatData,
+  AnchorInfo
+} from '../constants/interfaces';
 import {
   SET_ACTIVE_CHAT,
   REQUEST_START_CONVERSATION,
@@ -24,40 +30,48 @@ export const setActiveChat = (payload: Chat): ReduxAction => {
   };
 };
 
-export const setChatsMessages = (payload: Message) => {
-  // message 'name' will be used as 'anchorId' temporarily
-  let id = payload.anchorId as string;
-  let activeChatMessages = getState().chatsMessages[id];
-  let messages: Message[] = [];
-
+export const setChatsMessages = (payload: AnchorInfo) => {
+  // payload message 'name' will be used as 'anchorId' temporarily
+  let { name, avatar, id, messages } = payload;
+  let activeChatData = getState().chatsMessages[id] ?? {};
+  let chatData: ChatData = {
+    [id]: { ...activeChatData, messages, name, avatar, id }
+  };
+  let chatMessages: Message[] = [];
+  
   if (cookieEnabled) {
     let storageChatsMessages = localStorage.chatsMessages;
 
     if (storageChatsMessages) {
       storageChatsMessages = JSON.parse(storageChatsMessages);
-      messages = storageChatsMessages[id] ?? [];
+      chatData[id] = { ...chatData[id], ...storageChatsMessages[id] };
+      chatMessages = chatData[id]?.messages ?? [];
     } else {
       storageChatsMessages = {};
       localStorage.chatsMessages = JSON.stringify({});
     }
 
-    if (payload.text) {
-      messages.push(payload);
-      storageChatsMessages[id] = messages;
+    if (payload.messages[0].text) {
+      chatMessages.push(payload.messages[0]);
+      storageChatsMessages[id] = {
+        ...chatData[id],
+        messages: chatMessages
+      };
       localStorage.chatsMessages = JSON.stringify(storageChatsMessages);
     }
-    
   } else {
-    messages = activeChatMessages?.slice() ?? [];
+    chatMessages = activeChatData?.messages?.slice() ?? [];
 
-    if (payload.text)
-      messages.push(payload);
+    if (payload.messages[0].text) chatMessages.push(payload.messages[0]);
   }
-
+  
   return {
     type: SET_CHATS_MESSAGES,
     payload: {
-      [id]: messages
+      [id]: {
+        ...chatData[id],
+        messages: chatMessages
+      }
     }
   };
 };
