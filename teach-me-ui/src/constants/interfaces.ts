@@ -96,18 +96,34 @@ export interface CreateLevelState extends StatusPropsState {
 
 // ChatBox interfaces...
 
+//you should eventually make all the Message props required
+export interface Message {
+  type: 'incoming' | 'outgoing';
+  text: string;
+  timestamp: string | number;
+  senderId?: string | number;
+  id?: string | number;
+}
+
 export interface Chat {
-  name?: string;
+  name: string;
   type?: 'conversation' | 'classroom';
-  avatar?: string;
-  id?: string;
-  pathname?: string;
+  avatar: string;
+  id: string;
+  queryString?: string;
   isOpen?: boolean;
   isMinimized?: boolean;
 }
 
-export interface Message {
-  type: 'incoming' | 'outgoing';
-  text: string;
-  timestamp: string;
+export interface ChatData {
+  [id: string]: AnchorInfo;
+}
+
+export interface AnchorInfo {
+  name?: string;
+  id: string;
+  messages: Message[];
+  avatar: string;
+  info?: any;
+  type?: 'conversation' | 'classroom'
 }

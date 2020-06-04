@@ -52,7 +52,7 @@ const ChatLeftPane = (props: any) => {
       </AppBar>
       <TabPanel value={value} index={0}>
         {conversations.map((conversation: Chat) => {
-          const _pathname = `${pathname}?chat=open&type=conversation&name=${conversation.name}`;
+          const _pathname = `${pathname}?chat=open&type=conversation&id=${conversation.id}&name=${conversation.name}`;
           const chatInfo = {
             ...conversation,
             pathname: _pathname
@@ -88,7 +88,7 @@ const ChatLeftPane = (props: any) => {
       </TabPanel>
       <TabPanel value={value} index={1}>
         {rooms.map((room: Chat) => {
-          const _pathname = `${pathname}?chat=open&type=classroom&name=${room.name}`;
+          const _pathname = `${pathname}?chat=open&type=classroom&id=${room.id}&name=${room.name}`;
           const chatInfo = {
             ...room,
             pathname: _pathname
@@ -114,7 +114,7 @@ function TabPanel(props: TabPanelProps) {
   const name = (value === 0 ? CV : CR).toLowerCase();
 
   return (
-    <div
+    <section
       role='tabpanel'
       hidden={value !== index}
       id={name}
@@ -124,7 +124,7 @@ function TabPanel(props: TabPanelProps) {
       <Box>
         <Typography>{children}</Typography>
       </Box>
-    </div>
+    </section>
   );
 }
 
