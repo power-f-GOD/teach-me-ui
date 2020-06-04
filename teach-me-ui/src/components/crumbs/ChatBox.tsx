@@ -21,10 +21,11 @@ import Badge from '@material-ui/core/Badge';
 
 import createMemo from '../../Memo';
 import { timestampFormatter, dispatch } from '../../functions';
-import { setActiveChat } from '../../actions/chat';
+import { setActiveChat, setChatsMessages } from '../../actions/chat';
 import { Chat, Message } from '../../constants/interfaces';
 import { CONVO_CHAT_TYPE, ROOM_CHAT_TYPE } from '../../constants/chat';
 import ChatLeftPane from './ChatLeftPane';
+import { userDeviceIsMobile } from '../..';
 
 const msgBoxRef = createRef<HTMLInputElement>();
 const scrollViewRef = createRef<HTMLElement>();
@@ -35,25 +36,33 @@ const msgBoxInitHeight = 19;
 
 const Memoize = createMemo();
 
-// const cookieEnabled = navigator.cookieEnabled;
+const cookieEnabled = navigator.cookieEnabled;
 
 window.addEventListener('popstate', (e) => {
-  let { chat, name, type: _type } = queryString.parse(window.location.search);
+  let { chat, name, id, type: _type } = queryString.parse(
+    window.location.search
+  );
   let type: 'conversation' | 'classroom' =
     _type === CONVO_CHAT_TYPE ? CONVO_CHAT_TYPE : ROOM_CHAT_TYPE;
 
-  if (chat) {
-    name = name ? String(name) : 'Start a Conversation';
+  name = name ? String(name) : 'Start a Conversation';
+  id = id ? String(id) : '';
 
+  if (chat) {
     if (chat === 'open') {
-      dispatch(setActiveChat({ name, type, isOpen: true, isMinimized: false }));
+      dispatch(
+        setActiveChat({ name, type, id, isOpen: true, isMinimized: false })
+      );
     } else {
-      dispatch(setActiveChat({ name, type, isOpen: true, isMinimized: true }));
+      dispatch(
+        setActiveChat({ name, type, id, isOpen: true, isMinimized: true })
+      );
     }
   } else {
     dispatch(
       setActiveChat({
-        name: 'Start a Conversation',
+        name,
+        id,
         type: CONVO_CHAT_TYPE,
         isOpen: false,
         isMinimized: false
@@ -66,52 +75,79 @@ const conversations: Chat[] = [
   {
     name: 'Emmanuel Sunday',
     avatar: 'emmanuel.png',
-    type: CONVO_CHAT_TYPE
+    type: CONVO_CHAT_TYPE,
+    get id() {
+      return this.name;
+    }
   },
   {
     name: 'Abba Chinomso',
     avatar: 'avatar-2.png',
-    type: CONVO_CHAT_TYPE
+    type: CONVO_CHAT_TYPE,
+    get id() {
+      return this.name;
+    }
   }
 ];
 const rooms: Chat[] = [
   {
     name: 'Room 1',
-    type: ROOM_CHAT_TYPE
+    type: ROOM_CHAT_TYPE,
+    get id() {
+      return this.name;
+    }
   },
   {
     name: 'Room 2',
-    type: ROOM_CHAT_TYPE
+    type: ROOM_CHAT_TYPE,
+    get id() {
+      return this.name;
+    }
   },
   {
     name: 'Room 3',
-    type: ROOM_CHAT_TYPE
+    type: ROOM_CHAT_TYPE,
+    get id() {
+      return this.name;
+    }
   }
 ];
 const participants: Chat[] = [
   {
     name: 'Emmanuel Sunday',
-    avatar: 'emmanuel.png'
+    avatar: 'emmanuel.png',
+    get id() {
+      return this.name;
+    }
   },
   {
     name: 'Abba Chinomso',
-    avatar: 'avatar-2.png'
+    avatar: 'avatar-2.png',
+    get id() {
+      return this.name;
+    }
   },
   {
     name: 'Sunday Power',
-    avatar: 'avatar-1.png'
+    avatar: 'avatar-1.png',
+    get id() {
+      return this.name;
+    }
   }
 ];
 
 const ChatBox = (props: any) => {
+  const { activeChat } = props;
   const {
     name: activeChatName,
     avatar: activeChatAvatar,
     queryString: activeChatQString,
     type: activeChatType,
     isOpen,
+    id: activeChatId,
     isMinimized
-  }: Chat = props.activeChat;
+  }: Chat = activeChat;
+  const { chatsMessages } = props;
 
   const [scrollView, setScrollView] = useState<HTMLElement | null>(null);
   const [scrollViewElevation, setScrollViewElevation] = React.useState(String);
@@ -119,7 +155,6 @@ const ChatBox = (props: any) => {
     msgBoxInitHeight
   );
   const [msgBoxRowsMax, setMsgBoxRowsMax] = useState<number>(1);
-  const [messages, setMessages] = useState<Message[]>([]);
 
   const setBodyOverflow = useCallback(() => {
     // const metaTheme = document.querySelector('meta#theme-color') as any;
@@ -136,68 +171,62 @@ const ChatBox = (props: any) => {
   }, [isOpen, isMinimized]);
 
   const handleMinimizeChatClick = useCallback(() => {
-    const queryString = activeChatQString!.replace(
+    const {
+      name,
+      type,
+      avatar,
+      id,
+      isMinimized,
+      queryString: qString
+    } = activeChat;
+    const queryString = qString!.replace(
       isMinimized ? 'chat=minimized' : 'chat=open',
       isMinimized ? 'chat=open' : 'chat=minimized'
     );
 
     dispatch(
       setActiveChat({
-        name: activeChatName,
-        type: activeChatType,
-        avatar: activeChatAvatar,
+        name,
+        type,
+        avatar,
+        id,
         isMinimized: !isMinimized,
         queryString
       })
     );
     window.history.replaceState({}, '', window.location.pathname + queryString);
-  }, [
-    activeChatName,
-    activeChatAvatar,
-    activeChatType,
-    activeChatQString,
-    isMinimized
-  ]);
+  }, [activeChat]);
 
   const handleCloseChatClick = useCallback(() => {
     const queryString = window.location.search;
+    const { name, type, avatar, id } = activeChat;
 
     dispatch(
-      setActiveChat({
-        name: activeChatName,
-        type: activeChatType,
-        avatar: activeChatAvatar,
-        isOpen: false,
-        queryString
-      })
+      setActiveChat({ name, type, avatar, id, isOpen: false, queryString })
     );
     window.history.pushState({}, '', window.location.pathname);
-  }, [activeChatName, activeChatAvatar, activeChatType]);
+  }, [activeChat]);
 
   const handleOpenChatClick = useCallback(() => {
-    const queryString = /chat=/.test(String(activeChatQString))
-      ? activeChatQString
+    const {
+      name,
+      type,
+      avatar,
+      id,
+      isMinimized,
+      queryString: qString
+    } = activeChat;
+    const queryString = /chat=/.test(String(qString))
+      ? qString
       : `?chat=${
           isMinimized ? 'minimized' : 'open'
-        }&type=${activeChatType}&name=${activeChatName}`;
+        }&type=${type}&id=${id}&name=${name}`;
 
     dispatch(
-      setActiveChat({
-        name: activeChatName,
-        type: activeChatType,
-        avatar: activeChatAvatar,
-        isOpen: true,
-        queryString
-      })
+      setActiveChat({ name, type, avatar, id, isOpen: true, queryString })
     );
     window.history.pushState({}, '', window.location.pathname + queryString);
-  }, [
-    activeChatName,
-    activeChatAvatar,
-    activeChatType,
-    activeChatQString,
-    isMinimized
-  ]);
+  }, [activeChat]);
 
   const handleSendMsgClick = useCallback(() => {
     const msgBox = msgBoxRef.current!;
@@ -205,7 +234,8 @@ const ChatBox = (props: any) => {
     const msg: Message = {
       type: 'outgoing',
       text: msgBox.value.trim(),
-      timestamp
+      timestamp,
+      anchorId: activeChatId
     };
 
     if (!msg.text) {
@@ -215,12 +245,7 @@ const ChatBox = (props: any) => {
 
     msgBox.value = '';
     setMsgBoxRowsMax(1);
-    setMessages((prevState: Message[]) => {
-      const newMessages = [...prevState];
-
-      newMessages.push(msg);
-      return newMessages;
-    });
+    dispatch(setChatsMessages(msg));
     setScrollViewElevation('calc(19px - 1.25rem)');
 
     window.setTimeout(() => {
@@ -229,21 +254,17 @@ const ChatBox = (props: any) => {
         type: 'incoming',
         text:
           'A sample response from the end user via the server (web socket)...',
-        timestamp
+        timestamp,
+        anchorId: activeChatId
       };
 
-      setMessages((prevState: Message[]) => {
-        const newMessages = [...prevState];
-
-        newMessages.push(msg);
-        return newMessages;
-      });
+      dispatch(setChatsMessages(msg));
     }, 2000);
-  }, [msgBoxRowsMax]);
+  }, [msgBoxRowsMax, activeChatId]);
 
   const handleMsgInputChange = useCallback(
     (e: any) => {
-      if (!e.shiftKey && e.key === 'Enter') {
+      if (!e.shiftKey && e.key === 'Enter' && !userDeviceIsMobile) {
         handleSendMsgClick();
         return false;
       } else if (
@@ -297,34 +318,67 @@ const ChatBox = (props: any) => {
     }
   }, [scrollView]);
 
+  let _activeChatMessages = chatsMessages[activeChatId];
   useEffect(() => {
-    if (messages && scrollView) {
+    if (!!_activeChatMessages && scrollView) {
       scrollView.scrollTop = scrollView.scrollHeight;
     }
-  }, [messages, scrollView]);
+  }, [_activeChatMessages, scrollView]);
 
   useEffect(setBodyOverflow, [isOpen, isMinimized]);
 
   useEffect(() => {
     const { search } = window.location;
-    const { chat } = queryString.parse(search);
+    let { chat, type: _type, id, name } = queryString.parse(search);
+    let type: 'conversation' | 'classroom' =
+      _type === CONVO_CHAT_TYPE ? CONVO_CHAT_TYPE : ROOM_CHAT_TYPE;
+
+    name = String(name);
+    id = String(id);
 
     dispatch(
       setActiveChat({
-        name: activeChatName,
-        type: activeChatType,
+        name: name || activeChatName,
+        type: type || activeChatType,
         avatar: activeChatAvatar,
+        id: id || activeChatId,
         queryString: !!chat ? search : activeChatQString,
         isOpen: !!chat || isOpen
       })
     );
   }, [
     activeChatName,
-    activeChatAvatar,
     activeChatType,
+    activeChatAvatar,
+    activeChatId,
     activeChatQString,
     isOpen
   ]);
+
+  useEffect(() => {
+    let storageChatsMessages: any;
+    let activeChatLastMessage: Message[] = [];
+    let id = activeChatId;
+
+    if (cookieEnabled) {
+      storageChatsMessages = localStorage.chatsMessages;
+
+      if (storageChatsMessages) {
+        storageChatsMessages = JSON.parse(storageChatsMessages);
+        activeChatLastMessage = storageChatsMessages[id]?.slice(-1) ?? [];
+      }
+    }
+    
+    if (!!activeChatLastMessage[0]) {
+      //set "text: ''" here to prevent duplicate message from appending since it's most likely coming from localStorage and not the user sending it; also see 'chat.ts' in the 'actions' directory for the code that does the prevention
+      dispatch(
+        setChatsMessages({
+          ...activeChatLastMessage[0],
+          text: ''
+        })
+      );
+    }
+  }, [activeChatId]);
 
   return (
     <Container fluid className='ChatBox p-0'>
@@ -412,8 +466,10 @@ const ChatBox = (props: any) => {
               component='section'
               className='chat-scroll-view custom-scroll-bar d-flex flex-column col'
               style={{ marginBottom: scrollViewElevation }}>
-              {!!messages[0] ? (
-                messages.map((message, key: number) =>
+              {!!chatsMessages[activeChatId] ? (
+                chatsMessages[
+                  activeChatId
+                ].map((message: Message, key: number) =>
                   message.type === 'incoming' ? (
                     <IncomingMsg message={message} key={key} />
                   ) : (
@@ -496,10 +552,12 @@ function ChatRightPane(props: any) {
   const { participants, type: activeChatType } = props;
   return (
     <>
-      <Col as='header' className='chat-header d-flex flex-column justify-content-center'>
+      <Col
+        as='header'
+        className='chat-header d-flex flex-column justify-content-center'>
         {activeChatType === CONVO_CHAT_TYPE ? 'User info' : 'Participants'}
       </Col>
-      
+
       <Col as='section' className='participants-container p-0'>
         {activeChatType === ROOM_CHAT_TYPE &&
           participants.map((participant: any, key: string) => {
@@ -573,7 +631,8 @@ function OutgoingMsg(props: { message: Message } | any) {
 
 const mapStateToProps = (state: any) => {
   return {
-    activeChat: state.activeChat
+    activeChat: state.activeChat,
+    chatsMessages: state.chatsMessages
   };
 };
 

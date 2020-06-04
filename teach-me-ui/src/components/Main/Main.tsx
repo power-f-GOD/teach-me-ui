@@ -24,7 +24,7 @@ const Main = (props: any) => {
     queryString: activeChatQString,
     isOpen: chatIsOpen
   } = getState().activeChat;
-  let queryString = activeChatQString.split('?')[1] ?? '';
+  let queryString = activeChatQString!.split('?')[1] ?? '';
 
   queryString = chatIsOpen ? `?${queryString}` : '';
 
