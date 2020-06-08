@@ -111,8 +111,8 @@ window.addEventListener('popstate', (e) => {
   let type: 'conversation' | 'classroom' =
     _type === CONVO_CHAT_TYPE ? CONVO_CHAT_TYPE : ROOM_CHAT_TYPE;
 
-  name = name ? String(name) : placeHolderChatName;
-  id = id ? String(id) : '';
+  name = String(name ?? placeHolderChatName);
+  id = String(id ?? '');
 
   const currentChat = getState().chatsMessages[id];
   const avatar = currentChat?.avatar ?? '';
@@ -357,12 +357,12 @@ const ChatBox = (props: any) => {
     let type: 'conversation' | 'classroom' =
       _type === CONVO_CHAT_TYPE ? CONVO_CHAT_TYPE : ROOM_CHAT_TYPE;
 
-    name = String(name);
-    id = String(id);
+    name = String(name ?? placeHolderChatName);
+    id = String(id ?? '');
 
     const currentChat = _currentChat;
     const avatar = currentChat?.avatar ?? '';
-
+    
     dispatch(
       setActiveChat({
         name: name || activeChatName,
