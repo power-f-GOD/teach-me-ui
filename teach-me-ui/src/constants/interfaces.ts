@@ -80,7 +80,12 @@ export interface SnackbarState {
   autoHide?: boolean;
 }
 
-export interface UserData extends SignupFormData {
+export interface UserData {
+  firstname: string;
+  lastname: string;
+  username: string;
+  email: string;
+  dob: string;
   displayName: string;
 }
 

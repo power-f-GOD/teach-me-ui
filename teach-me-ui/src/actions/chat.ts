@@ -5,23 +5,67 @@ import {
   Chat,
   Message,
   ChatData,
-  AnchorInfo
+  AnchorInfo,
+  SearchState
 } from '../constants/interfaces';
 import {
+  GET_PEOPLE_ENROLLED_IN_INSTITUTION,
+  SET_PEOPLE_ENROLLED_IN_INSTITUTION,
   SET_ACTIVE_CHAT,
   REQUEST_START_CONVERSATION,
   START_CONVERSATION,
   SET_CHATS_MESSAGES
 } from '../constants/chat';
 import {
-  // logError,
-  getState
-  // callNetworkStatusCheckerFor
+  logError,
+  getState,
+  callNetworkStatusCheckerFor
 } from '../functions';
 // import { displaySnackbar } from './misc';
 
 const baseUrl = 'teach-me-services.herokuapp.com/api/v1';
 const cookieEnabled = navigator.cookieEnabled;
+
+export const peopleEnrolledInInstitution = (payload: SearchState): ReduxAction => {
+  return {
+    type: SET_PEOPLE_ENROLLED_IN_INSTITUTION,
+    payload
+  }
+}
+
+export const getPeopleEnrolledInInstitution = (params?: string) => (dispatch: Function): ReduxAction => {
+  let token = '';
+
+  dispatch(peopleEnrolledInInstitution({ status: 'pending' }));
+  callNetworkStatusCheckerFor(peopleEnrolledInInstitution);
+
+  if (cookieEnabled) {
+    token = JSON.parse(localStorage?.kanyimuta ?? {})?.token ?? null;
+  }
+
+  axios({
+    url: `https://${baseUrl}/institution/people?limit=30`,
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+    .then((response: any) => {
+      
+      console.log('people enrolled:', response.data);
+      if (!response.data.error) {
+        dispatch(peopleEnrolledInInstitution({ status: 'fulfilled', err: false, data: response.data.people }));
+      }
+      else {
+      
+        dispatch(peopleEnrolledInInstitution({ status: 'fulfilled', err: true, data: [] }));
+      }
+    }).catch(logError);
+
+  return {
+    type: GET_PEOPLE_ENROLLED_IN_INSTITUTION
+  }
+}
 
 export const setActiveChat = (payload: Chat): ReduxAction => {
   return {

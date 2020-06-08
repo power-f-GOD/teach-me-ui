@@ -14,6 +14,9 @@ export const CONVO_CHAT_TYPE = 'conversation';
 export const ROOM_CHAT_TYPE = 'classroom';
 export const SET_CHATS_MESSAGES = 'SET_ACTIVE_CHAT_MESSAGES';
 
+export const GET_PEOPLE_ENROLLED_IN_INSTITUTION = 'GET_PEOPLE_ENROLLED_IN_INSTITUTION';
+export const SET_PEOPLE_ENROLLED_IN_INSTITUTION = 'SET_PEOPLE_ENROLLED_IN_INSTITUTION';
+
 export const activeChatState: Chat = {
   name: 'Start a conversation',
   avatar: '',

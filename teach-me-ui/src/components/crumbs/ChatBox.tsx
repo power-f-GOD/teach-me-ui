@@ -20,7 +20,11 @@ import Badge from '@material-ui/core/Badge';
 
 import createMemo from '../../Memo';
 import { timestampFormatter, dispatch, getState } from '../../functions';
-import { setActiveChat, setChatsMessages } from '../../actions/chat';
+import {
+  setActiveChat,
+  setChatsMessages,
+  getPeopleEnrolledInInstitution
+} from '../../actions/chat';
 import { Chat, Message } from '../../constants/interfaces';
 import { CONVO_CHAT_TYPE, ROOM_CHAT_TYPE } from '../../constants/chat';
 import ChatLeftPane from './ChatLeftPane';
@@ -156,7 +160,7 @@ window.addEventListener('popstate', (e) => {
 });
 
 const ChatBox = (props: any) => {
-  const { activeChat } = props;
+  const { activeChat, peopleEnrolledInInstitution } = props;
   const {
     name: activeChatName,
     avatar: activeChatAvatar,
@@ -345,6 +349,7 @@ const ChatBox = (props: any) => {
   useEffect(() => {
     if (isOpen && !isMinimized) {
       document.body.style.overflow = 'hidden';
+      dispatch(getPeopleEnrolledInInstitution()(dispatch));
     } else {
       document.body.style.overflow = 'auto';
     }
@@ -362,7 +367,7 @@ const ChatBox = (props: any) => {
 
     const currentChat = _currentChat;
     const avatar = currentChat?.avatar ?? '';
-    
+
     dispatch(
       setActiveChat({
         name: name || activeChatName,
@@ -424,7 +429,7 @@ const ChatBox = (props: any) => {
 
           <Col
             as='section'
-            md={6}
+            md={activeChatId ? 6 : 9}
             className='chat-middle-pane d-flex flex-column p-0'>
             <Col as='header' className='chat-header d-flex p-0'>
               <Col as='span' className='colleague-name'>
@@ -561,12 +566,17 @@ const ChatBox = (props: any) => {
             </Col>
           </Col>
 
-          <Col
-            as='section'
-            md={3}
-            className='chat-right-pane d-flex flex-column p-0'>
-            <ChatRightPane participants={participants} type={activeChatType} />
-          </Col>
+          {activeChatId && (
+            <Col
+              as='section'
+              md={3}
+              className='chat-right-pane d-flex flex-column p-0'>
+              <ChatRightPane
+                participants={participants}
+                type={activeChatType}
+              />
+            </Col>
+          )}
         </Row>
 
         <IconButton
@@ -664,7 +674,8 @@ function OutgoingMsg(props: { message: Message } | any) {
 const mapStateToProps = (state: any) => {
   return {
     activeChat: state.activeChat,
-    chatsMessages: state.chatsMessages
+    chatsMessages: state.chatsMessages,
+    peopleEnrolledInInstitution: state.peopleEnrolledInInstitution
   };
 };
 

@@ -88,9 +88,6 @@ export const requestSignup = (data: SignupFormData) => (
           username,
           email,
           dob,
-          institution,
-          department,
-          level,
           displayName
         }).then(() => {
           dispatch(signup({ status: 'fulfilled' }));
@@ -106,7 +103,7 @@ export const requestSignup = (data: SignupFormData) => (
 
           //set token for user session and subsequent authentication
           if (navigator.cookieEnabled) {
-            localStorage.teachMe = JSON.stringify({
+            localStorage.kanyimuta = JSON.stringify({
               ..._data,
               displayName
             });
@@ -199,9 +196,6 @@ export const requestSignin = (data: SigninFormData) => (
         username,
         email,
         date_of_birth: dob,
-        institution,
-        department,
-        level,
         error,
         message
       } = _data;
@@ -215,13 +209,8 @@ export const requestSignin = (data: SigninFormData) => (
           username,
           email,
           dob,
-          institution,
-          department,
-          level,
           displayName
         }).then(() => {
-          dispatch(signin({ status: 'fulfilled' }));
-          dispatch(auth({ status: 'fulfilled', isAuthenticated: true }));
           dispatch(
             displaySnackbar({
               open: true,
@@ -233,7 +222,7 @@ export const requestSignin = (data: SigninFormData) => (
 
           //set token for user session and subsequent authentication
           if (navigator.cookieEnabled) {
-            localStorage.teachMe = JSON.stringify({
+            localStorage.kanyimuta = JSON.stringify({
               ..._data,
               displayName
             });
@@ -297,7 +286,7 @@ export const verifyAuth = () => (dispatch: Function): ReduxAction => {
   dispatch(auth({ status: 'pending' }));
 
   let userData = navigator.cookieEnabled
-    ? JSON.parse(localStorage.teachMe ?? '{}')
+    ? JSON.parse(localStorage.kanyimuta ?? '{}')
     : null;
 
   if (userData?.token) {
@@ -323,8 +312,8 @@ export const requestSignout = () => (dispatch: Function): ReduxAction => {
   setTimeout(() => dispatch(signout({ status: 'pending' })), 200);
 
   if (navigator.cookieEnabled) {
-    localStorage.teachMe = JSON.stringify({
-      ...JSON.parse(localStorage.teachMe ?? '{}'),
+    localStorage.kanyimuta = JSON.stringify({
+      ...JSON.parse(localStorage.kanyimuta ?? '{}'),
       id: null,
       token: null
     });
