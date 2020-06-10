@@ -1,12 +1,5 @@
 @import 'constants';
 
-.debugger {
-  border: none;
-  * {
-    border: none;
-  }
-}
-
 $chat-text-color: #333;
 $chat-header-min-height: 3.35rem;
 
@@ -123,7 +116,7 @@ $chat-header-min-height: 3.35rem;
   }
 }
 
-[class*='PrivateTabIndicator'] {
+[class*='MuiTabs-indicator'] {
   background-color: $theme-secondary-v6;
 }
 

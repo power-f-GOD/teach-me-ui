@@ -49,6 +49,40 @@ body {
         background: $theme-secondary-v6;
       }
     }
+
+    .small-bar {
+      &::-webkit-scrollbar {
+        width: 0.4em;
+      }
+    }
+
+    .primary-bar {
+      &::-webkit-scrollbar-thumb {
+        background: $theme-primary-v6;
+      }
+    }
+
+    .secondary-bar {
+      &::-webkit-scrollbar-thumb {
+        background: $theme-secondary-v6;
+      }
+    }
+
+    .tertiary-bar {
+      &::-webkit-scrollbar-thumb {
+        background: $theme-tertiary-v6;
+      }
+    }
+
+    .rounded-bar {
+      &::-webkit-scrollbar-track {
+        border-radius: 1rem;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        border-radius: 1rem;
+      }
+    }
   }
 }
 
