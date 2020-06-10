@@ -5,7 +5,8 @@ import {
   activeChatState,
   SET_CHATS_MESSAGES,
   chatsMessagesState,
-  SET_PEOPLE_ENROLLED_IN_INSTITUTION
+  SET_PEOPLE_ENROLLED_IN_INSTITUTION,
+  NEW_CONVO
 } from '../constants/chat';
 import {
   Chat,
@@ -15,11 +16,25 @@ import {
 } from '../constants/interfaces';
 import { statusPropsState } from '../constants';
 
-export const peopleEnrolledInInstitution = (
+export const usersEnrolledInInstitution = (
   state: SearchState = { ...statusPropsState, data: [] },
   action: ReduxAction
 ) => {
   if (action.type === SET_PEOPLE_ENROLLED_IN_INSTITUTION) {
+    return {
+      ...state,
+      ...action.payload
+    };
+  }
+
+  return state;
+};
+
+export const newConversation = (
+  state: SearchState = { ...statusPropsState, data: [] },
+  action: ReduxAction
+) => {
+  if (action.type === NEW_CONVO) {
     return {
       ...state,
       ...action.payload

@@ -32,6 +32,7 @@ export interface StatusPropsState {
 
 export interface SearchState extends StatusPropsState {
   data?: any[];
+  [key: string]: any;
 }
 
 export interface SignupPropsState {
@@ -111,7 +112,7 @@ export interface Message {
 }
 
 export interface Chat {
-  name: string;
+  displayName: string;
   type?: 'conversation' | 'classroom';
   avatar: string;
   id: string;
@@ -125,10 +126,27 @@ export interface ChatData {
 }
 
 export interface AnchorInfo {
-  name?: string;
+  displayName?: string;
   id: string;
   messages: Message[];
   avatar: string;
-  info?: any;
+  info?: Info;
   type?: 'conversation' | 'classroom'
+}
+
+export interface Info {
+  username: string;
+  institution: string;
+  department: string;
+  level: string;
+}
+
+export interface UserEnrolledData {
+  firstname: string;
+  lastname: string;
+  id: string;
+  username: string;
+  institution: string;
+  department: string;
+  level: string;
 }

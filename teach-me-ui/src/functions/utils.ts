@@ -163,8 +163,8 @@ export const timestampFormatter = (
     ? new Date(String(_timestamp)).toLocaleTimeString()
     : _timestamp;
 
-  if (timestamp) {
-    if (!/^\d\d:\d\d:\d\d$/.test(String(timestamp)) && !Number(timestamp)) {
+  if (timestamp && !Number(_timestamp)) {
+    if (!/^\d\d:\d\d:\d\d$/.test(String(timestamp))) {
       console.error('Invalid timestamp format: ', timestamp);
       return String(timestamp);
     }
