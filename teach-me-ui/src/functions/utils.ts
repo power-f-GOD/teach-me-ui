@@ -17,7 +17,7 @@ import {
 
 export const { dispatch, getState } = store;
 
-export function promisedDispatch(action: ReduxAction) {
+export function promisedDispatch(action: ReduxAction): Promise<ReduxAction> {
   dispatch(action);
   return new Promise((resolve: Function) => {
     setTimeout(() => resolve(action), 200);
@@ -85,16 +85,18 @@ export function callNetworkStatusCheckerFor(action: Function) {
   }
 }
 
-export async function populateStateWithUserData(data: UserData) {
+export async function populateStateWithUserData(
+  data: UserData
+): Promise<ReduxAction> {
   const {
     firstname,
     lastname,
     username,
     email,
     dob,
-    institution,
-    department,
-    level,
+    // institution,
+    // department,
+    // level,
     displayName
   } = data;
 
@@ -105,15 +107,28 @@ export async function populateStateWithUserData(data: UserData) {
   dispatch(validateUsername({ value: username }));
   dispatch(validateEmail({ value: email }));
   dispatch(validateDob({ value: dob }));
-  dispatch(validateInstitution({ value: { keyword: institution } }));
-  dispatch(validateDepartment({ value: { keyword: department } }));
-  dispatch(validateLevel({ value: { keyword: level } }));
   dispatch(
-    signin({
-      status: 'fulfilled',
-      err: false
+    validateInstitution({
+      value: { keyword: '', uid: '' },
+      err: false,
+      helperText: ' '
     })
   );
+  dispatch(
+    validateDepartment({
+      value: { keyword: '', uid: '' },
+      err: false,
+      helperText: ' '
+    })
+  );
+  dispatch(
+    validateLevel({
+      value: { keyword: '', uid: '' },
+      err: false,
+      helperText: ' '
+    })
+  );
+  dispatch(signin({ status: 'fulfilled', err: false }));
   return promisedDispatch(auth({ status: 'fulfilled', isAuthenticated: true }));
 }
 
@@ -148,8 +163,8 @@ export const timestampFormatter = (
     ? new Date(String(_timestamp)).toLocaleTimeString()
     : _timestamp;
 
-  if (timestamp) {
-    if (!/^\d\d:\d\d:\d\d$/.test(String(timestamp)) && !Number(timestamp)) {
+  if (timestamp && !Number(_timestamp)) {
+    if (!/^\d\d:\d\d:\d\d$/.test(String(timestamp))) {
       console.error('Invalid timestamp format: ', timestamp);
       return String(timestamp);
     }

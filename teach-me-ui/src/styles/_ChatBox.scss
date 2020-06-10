@@ -59,7 +59,7 @@ $chat-header-min-height: 3.35rem;
 
 .chat-box-wrapper {
   $box-height: 100vh;
-  $box-width: 100vw;
+  $box-width: 100%;
 
   overflow: hidden;
   position: fixed;
@@ -96,7 +96,7 @@ $chat-header-min-height: 3.35rem;
 }
 
 .chat-left-pane {
-  background-color: $theme-primary-v4;
+  background-color: $theme-primary-v3;
   color: white;
   overflow: hidden;
 
@@ -105,12 +105,17 @@ $chat-header-min-height: 3.35rem;
   }
 }
 
+.tab-panel {
+  max-height: calc(99vh - #{$chat-header-min-height});
+  overflow-y: auto;
+}
+
 .tab-link {
   flex-grow: 1;
   padding: 0;
   font-weight: bold;
-  min-height: $chat-header-min-height + 0.165rem;
-  background: $theme-primary-v3;
+  min-height: $chat-header-min-height;
+  background: $theme-primary-v4;
 
   &:hover {
     color: white;
@@ -123,9 +128,8 @@ $chat-header-min-height: 3.35rem;
 }
 
 .tab-panel-item {
-  padding: 1rem;
   display: flex;
-  border-bottom: 0.075rem solid $theme-primary-v3;
+  // border-bottom: 0.075rem solid rgba(0, 0, 0, 0.05);
   cursor: pointer;
   text-decoration: none;
   color: lightblue;
@@ -139,13 +143,27 @@ $chat-header-min-height: 3.35rem;
     background-color: $theme-secondary-v5;
     color: white;
   }
+
+  &.active {
+    background-color: $theme-primary-v4;
+    color: white;
+    // font-weight: bold;
+  }
+
+  .colleague-name {
+    padding: 0.5rem;
+  }
 }
 
 .chat-right-pane {
   background-color: #eee;
 }
 
-.chat-header {
+.ChatBox header {
+ box-shadow: 0 0 1.5rem rgba(0,0,0,0.35);   
+}
+
+header.chat-header {
   flex-grow: 0.15;
   font-weight: bold;
   min-height: $chat-header-min-height;
@@ -155,12 +173,13 @@ $chat-header-min-height: 3.35rem;
 }
 
 .chat-avatar {
-  $size: 2.35rem;
+  $size: 2.25rem;
 
   height: $size;
   width: $size;
   border-radius: 50%;
   margin-right: 0.5rem !important;
+  color: $chat-text-color;
 
   + .MuiBadge-dot {
     $size: 0.75rem;
@@ -169,15 +188,19 @@ $chat-header-min-height: 3.35rem;
     border: 0.125rem solid white;
     height: $size;
     width: $size;
-    background-color: $success;
-    right: 32%;
+    right: 32%; 
+  }
+}
 
-    &.online {
-      background-color: $success;
-    }
-    &.offline {
-      background-color: #ccc;
-    }
+.online {
+  .MuiBadge-dot {
+    background-color: $success;
+  } 
+}
+
+.offline {
+  .MuiBadge-dot {
+    background-color: #bbb;
   }
 }
 
@@ -311,7 +334,7 @@ $msg-radius: 0.6rem;
   font-size: 0.7rem;
   text-align: right;
   line-height: 100%;
-  color: #777;
+  color: #555;
   margin: {
     top: -0.35rem;
     bottom: 0.15rem;
@@ -322,7 +345,7 @@ $msg-radius: 0.6rem;
     padding: {
       right: 0.35rem;
       bottom: 0.1rem;
-      left: 0.45rem;
+      left: 1rem;
     }
   }
 }
@@ -403,8 +426,13 @@ body.desktop {
       }
 
       &::-webkit-scrollbar-thumb {
-        background-color: #444;
         visibility: hidden;
+      }
+
+      &.grey-scrollbar {
+        &::-webkit-scrollbar-thumb {
+          background-color: #444;
+        }
       }
 
       &:hover {

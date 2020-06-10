@@ -4,9 +4,45 @@ import {
   // START_CONVERSATION,
   activeChatState,
   SET_CHATS_MESSAGES,
-  chatsMessagesState
+  chatsMessagesState,
+  SET_PEOPLE_ENROLLED_IN_INSTITUTION,
+  NEW_CONVO
 } from '../constants/chat';
-import { Chat, ReduxAction, ChatData } from '../constants/interfaces';
+import {
+  Chat,
+  ReduxAction,
+  ChatData,
+  SearchState
+} from '../constants/interfaces';
+import { statusPropsState } from '../constants';
+
+export const usersEnrolledInInstitution = (
+  state: SearchState = { ...statusPropsState, data: [] },
+  action: ReduxAction
+) => {
+  if (action.type === SET_PEOPLE_ENROLLED_IN_INSTITUTION) {
+    return {
+      ...state,
+      ...action.payload
+    };
+  }
+
+  return state;
+};
+
+export const newConversation = (
+  state: SearchState = { ...statusPropsState, data: [] },
+  action: ReduxAction
+) => {
+  if (action.type === NEW_CONVO) {
+    return {
+      ...state,
+      ...action.payload
+    };
+  }
+
+  return state;
+};
 
 export const activeChat = (
   state: Chat = activeChatState,
@@ -27,9 +63,9 @@ export const chatsMessages = (
   action: ReduxAction
 ): ChatData => {
   if (action.type === SET_CHATS_MESSAGES) {
-    return { 
+    return {
       ...state,
-      ...action.payload 
+      ...action.payload
     };
   }
 

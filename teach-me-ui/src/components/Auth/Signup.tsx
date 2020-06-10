@@ -327,7 +327,7 @@ const Signup = (props: SignupPropsState) => {
   const handleCreateDepartment = useCallback(() => {
     const capitalizedKeyword = department
       .value!.keyword!.split(' ')
-      .map((word) => word[0].toUpperCase() + word.slice(1))
+      .map((word) => /^(in|of|and|on)$/i.test(word) ? word.toLowerCase() : word[0].toUpperCase() + word.slice(1).toLowerCase())
       .join(' ');
 
     dispatch(
@@ -341,7 +341,7 @@ const Signup = (props: SignupPropsState) => {
   const handleCreateLevel = useCallback(() => {
     const capitalizedKeyword = level
       .value!.keyword!.split(' ')
-      .map((word) => word[0].toUpperCase() + word.slice(1))
+      .map((word) => word[0].toUpperCase() + word.slice(1).toLowerCase())
       .join(' ');
 
     dispatch(

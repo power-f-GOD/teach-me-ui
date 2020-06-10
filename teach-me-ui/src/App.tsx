@@ -12,6 +12,9 @@ import ProtectedRoute from './ProtectedRoute';
 import { dispatch } from './functions/utils';
 import { displaySnackbar } from './actions/misc';
 import { verifyAuth } from './actions/auth';
+import createMemo from './Memo';
+
+const Memo = createMemo();
 
 const App = (props: any) => {
   const { status: authStatus, isAuthenticated } = props.auth;
@@ -28,7 +31,15 @@ const App = (props: any) => {
           <ProtectedRoute
             path={
               isAuthenticated
-                ? ['/', '/index', '/home', '/about', '/support', '/profile', '/*']
+                ? [
+                    '/',
+                    '/index',
+                    '/home',
+                    '/about',
+                    '/support',
+                    '/profile',
+                    '/*'
+                  ]
                 : ['/home', '/profile']
             }
             exact
@@ -43,7 +54,7 @@ const App = (props: any) => {
           />
         </Switch>
       </BrowserRouter>
-      <SnackBar snackbar={snackbar} />
+      <Memo memoizedComponent={SnackBar} snackbar={snackbar} />
     </>
   );
 };

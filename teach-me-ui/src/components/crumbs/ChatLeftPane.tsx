@@ -1,5 +1,7 @@
 import React, { useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+
+import queryString from 'query-string';
 
 import Col from 'react-bootstrap/Col';
 
@@ -11,9 +13,11 @@ import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 
-import { setActiveChat } from '../../actions/chat';
+import { setActiveChat
+//  requestNewConversation 
+ } from '../../actions/chat';
 import { dispatch } from '../../functions/utils';
-import { Chat } from '../../constants/interfaces';
+import { Chat, UserEnrolledData } from '../../constants/interfaces';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -25,8 +29,21 @@ const [CV, CR] = ['Conversations', 'Classrooms'];
 
 const ChatLeftPane = (props: any) => {
   const [value, setValue] = React.useState<number>(0);
-  const { conversations, rooms } = props;
+  const { rooms, conversations: usersEnrolled } = props;
   const { pathname } = window.location;
+  const conversations: Chat[] =
+    usersEnrolled?.map(
+      (user: UserEnrolledData): Chat => {
+        const { firstname, lastname, id }: UserEnrolledData = user;
+        const conversation: Chat = {
+          displayName: `${firstname} ${lastname}`,
+          avatar: '',
+          id
+        };
+
+        return conversation;
+      }
+    ) ?? [];
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
@@ -35,6 +52,7 @@ const ChatLeftPane = (props: any) => {
   const handleChatClick = useCallback((chatInfo: Chat) => {
     return () => {
       dispatch(setActiveChat(chatInfo));
+      // dispatch(requestNewConversation(chatInfo.id)(dispatch));
     };
   }, []);
 
@@ -51,57 +69,63 @@ const ChatLeftPane = (props: any) => {
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
-        {conversations.map((conversation: Chat) => {
-          const _pathname = `${pathname}?chat=open&type=conversation&id=${conversation.id}&name=${conversation.name}`;
-          const chatInfo = {
-            ...conversation,
-            pathname: _pathname
-          };
+        {!!conversations[0]
+          ? conversations.map((conversation: Chat) => {
+              const { displayName, avatar, id } = conversation;
+              const _queryString = `${pathname}?chat=open&type=conversation&id=${id}&name=${displayName}`;
+              const chatInfo: Chat = {
+                ...conversation,
+                queryString: _queryString
+              };
 
-          return (
-            <Link
-              to={_pathname}
-              className='tab-panel-item p-0'
-              key={conversation.name}
-              onClick={handleChatClick({ ...chatInfo })}>
-              <Col as='span' className='colleague-name'>
-                <Badge
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right'
-                  }}
-                  color='primary'
-                  overlap='circle'
-                  variant='dot'>
-                  <Avatar
-                    component='span'
-                    className='chat-avatar mr-2'
-                    alt={conversation.name}
-                    src={`/images/${conversation.avatar}`}
-                  />
-                </Badge>{' '}
-                {conversation.name}
-              </Col>
-            </Link>
-          );
-        })}
+              return (
+                <NavLink
+                  to={_queryString}
+                  className='tab-panel-item p-0'
+                  key={id}
+                  isActive={(_match, location) => queryString.parse(location.search)?.id === id}
+                  onClick={handleChatClick({ ...chatInfo })}>
+                  <Col as='span' className='colleague-name'>
+                    <Badge
+                      anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right'
+                      }}
+                      // color='primary'
+                      className='offline'
+                      overlap='circle'
+                      variant='dot'>
+                      <Avatar
+                        component='span'
+                        className='chat-avatar mr-2'
+                        alt={displayName}
+                        src={`/images/${avatar ?? ''}`}
+                      />
+                    </Badge>{' '}
+                    {displayName}
+                  </Col>
+                </NavLink>
+              );
+            })
+          : ''}
       </TabPanel>
       <TabPanel value={value} index={1}>
         {rooms.map((room: Chat) => {
-          const _pathname = `${pathname}?chat=open&type=classroom&id=${room.id}&name=${room.name}`;
+          const _pathname = `${pathname}?chat=open&type=classroom&id=${room.id}&name=${room.displayName}`;
           const chatInfo = {
             ...room,
             pathname: _pathname
           };
 
           return (
-            <Link
+            <NavLink
               to={_pathname}
               className='tab-panel-item'
-              key={room.name}
+              key={room.displayName}
+              isActive={(_match, location) => queryString.parse(location.search)?.id === room.id}
               onClick={handleChatClick({ ...chatInfo })}>
-              {room.name}
-            </Link>
+              {room.displayName}
+            </NavLink>
           );
         })}
       </TabPanel>
@@ -118,7 +142,9 @@ function TabPanel(props: TabPanelProps) {
       role='tabpanel'
       hidden={value !== index}
       id={name}
-      className={`${name}-tab-panel ${value === index ? 'show' : 'hide'}`}
+      className={`tab-panel ${
+        value === index ? 'show' : 'hide'
+      } custom-scroll-bar`}
       aria-labelledby={index}
       {...other}>
       <Box>

@@ -57,10 +57,11 @@ export function handleSignupRequest() {
     } as ChangeEvent<HTMLInputElement>;
     const { target } = event;
 
-    handleSignupInputChange(event);
-
     switch (target.id) {
       case 'institution':
+        // event.target.dataset.uid = _institution.value?.uid;
+        handleSignupInputChange(event);
+
         if (
           !_institution.value!.uid &&
           !!matchingInstitutions!.data![0] &&
@@ -76,6 +77,9 @@ export function handleSignupRequest() {
           dispatch(actions.getMatchingInstitutions(target.value)(dispatch));
         break;
       case 'department':
+        // event.target.dataset.uid = _department.value?.uid;
+        handleSignupInputChange(event);
+
         if (/^[a-z\s?]+$/i.test(target.value))
           if (
             !_department.value!.uid &&
@@ -92,7 +96,10 @@ export function handleSignupRequest() {
             dispatch(actions.getMatchingDepartments(target.value)(dispatch));
         break;
       case 'level':
-        if (/^[a-z0-9\s?]+$/i.test(target.value))
+        // event.target.dataset.uid = _level.value?.uid;
+        handleSignupInputChange(event);
+
+        if (/^[a-z0-9\s?]+$/i.test(target.value)) {
           if (
             !_level.value!.uid &&
             !!matchingLevels!.data![0] &&
@@ -105,6 +112,10 @@ export function handleSignupRequest() {
               })
             );
           } else dispatch(actions.getMatchingLevels(target.value)(dispatch));
+        }
+        break;
+      default:
+        handleSignupInputChange(event);
     }
   }
 
@@ -129,7 +140,7 @@ export function handleSignupRequest() {
     password.err ||
     institution.err ||
     department.err ||
-    level.err
+    level.err || !level.uid
   ) {
     signupFormValidated = false;
   }
