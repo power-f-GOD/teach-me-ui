@@ -167,7 +167,7 @@ export const requestSignin = (data: SigninFormData) => (
   dispatch(signin({ status: 'pending' }));
   callNetworkStatusCheckerFor(signin);
 
-  let { id, password } = data;
+  let { id, password, persistSignIn } = data;
   let _id;
 
   if (/@/.test(id)) {
@@ -221,7 +221,7 @@ export const requestSignin = (data: SigninFormData) => (
           );
 
           //set token for user session and subsequent authentication
-          if (navigator.cookieEnabled) {
+          if (navigator.cookieEnabled && persistSignIn) {
             localStorage.kanyimuta = JSON.stringify({
               ..._data,
               displayName

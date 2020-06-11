@@ -15,6 +15,10 @@ export interface BasicInputState extends InputErrState {
   value?: string;
 }
 
+export interface CheckBoxState {
+  value?: boolean;
+}
+
 export interface AcademicInputState extends InputErrState {
   value?: { keyword?: string; uid?: string };
 }
@@ -66,12 +70,14 @@ export interface SignupFormData {
 export interface SigninPropsState {
   signinId: BasicInputState;
   signinPassword: BasicInputState;
+  persistSignIn: CheckBoxState;
   [key: string]: any;
 }
 
 export interface SigninFormData {
   id: string;
   password: string;
+  persistSignIn: boolean;
 }
 
 export interface SnackbarState {
@@ -131,7 +137,7 @@ export interface AnchorInfo {
   messages: Message[];
   avatar: string;
   info?: Info;
-  type?: 'conversation' | 'classroom'
+  type?: 'conversation' | 'classroom';
 }
 
 export interface Info {

@@ -18,7 +18,8 @@ import { handleSigninRequest, handleSigninInputChange } from '../../functions';
 
 export const refs: any = {
   idInput: React.createRef<HTMLInputElement>(),
-  passwordInput: React.createRef<HTMLInputElement>()
+  passwordInput: React.createRef<HTMLInputElement>(),
+  persistSignIn: React.createRef<HTMLInputElement>()
 };
 
 const Signin = (props: SigninPropsState) => {
@@ -140,9 +141,16 @@ const Signin = (props: SigninPropsState) => {
   );
 };
 
-const mapStateToProps = ({ signinId, signinPassword, signin, auth }: any) => {
+const mapStateToProps = ({
+  signinId,
+  persistSignIn,
+  signinPassword,
+  signin,
+  auth
+}: any) => {
   return {
     signinId,
+    persistSignIn,
     signinPassword,
     signin,
     auth
