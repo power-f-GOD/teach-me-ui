@@ -12,7 +12,6 @@ import Button from '@material-ui/core/Button';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Checkbox from '@material-ui/core/Checkbox';
 
 import { SigninPropsState } from '../../constants';
 import { handleSigninRequest, handleSigninInputChange } from '../../functions';
@@ -34,7 +33,7 @@ const Signin = (props: SigninPropsState) => {
           e.target.blur();
         }
       }
-    }
+    };
   }, []);
 
   if (isAuthenticated) {
@@ -105,21 +104,9 @@ const Signin = (props: SigninPropsState) => {
 
         <Box
           display='flex'
-          justifyContent='space-between'
+          justifyContent='flex-end'
           alignItems='center'
           component='div'>
-          <Box
-            component='label'
-            display='flex'
-            className='flex-basis-halved'
-            alignItems='center'>
-            <Checkbox
-              defaultChecked
-              color='primary'
-              inputProps={{ 'aria-label': 'remember me' }}
-            />
-            <Box component='div'>Remember me</Box>
-          </Box>
           <Box component='div' textAlign='right' marginLeft='10px'>
             <Link to='#!'>Forgot password?</Link>
           </Box>
