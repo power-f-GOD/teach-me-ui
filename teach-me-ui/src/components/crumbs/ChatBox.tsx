@@ -308,7 +308,7 @@ const ChatBox = (props: any) => {
   );
 
   const preventEnterNewLine = useCallback((e) => {
-    if (!e.shiftKey && e.key === 'Enter') {
+    if (!e.shiftKey && e.key === 'Enter' && !userDeviceIsMobile) {
       e.preventDefault();
     }
   }, []);
@@ -459,7 +459,7 @@ console.log('this is before the onmessage handler');
         <Row
           className={`chat-box-wrapper m-0 ${isMinimized ? 'minimize' : ''} ${
             isOpen ? '' : 'close'
-          } debugger`}>
+          }`}>
           <Col as='section' md={3} className='chat-left-pane d-flex p-0'>
             <ChatLeftPane rooms={rooms} conversations={usersEnrolledInInstitution.data!} />
           </Col>
