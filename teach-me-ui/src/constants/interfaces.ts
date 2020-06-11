@@ -70,14 +70,12 @@ export interface SignupFormData {
 export interface SigninPropsState {
   signinId: BasicInputState;
   signinPassword: BasicInputState;
-  persistSignIn: CheckBoxState;
   [key: string]: any;
 }
 
 export interface SigninFormData {
   id: string;
   password: string;
-  persistSignIn: boolean;
 }
 
 export interface SnackbarState {

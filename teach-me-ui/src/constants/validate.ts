@@ -87,6 +87,5 @@ export const signupProps: SignupPropsState = {
 
 export const signinProps: SigninPropsState = {
   signinId: { ...basicInputState },
-  signinPassword: { ...basicInputState },
-  persistSignIn: { ...checkBoxState }
+  signinPassword: { ...basicInputState }
 };
