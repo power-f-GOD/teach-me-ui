@@ -19,7 +19,8 @@ import { handleSigninRequest, handleSigninInputChange } from '../../functions';
 
 export const refs: any = {
   idInput: React.createRef<HTMLInputElement>(),
-  passwordInput: React.createRef<HTMLInputElement>()
+  passwordInput: React.createRef<HTMLInputElement>(),
+  persistSignIn: React.createRef<HTMLInputElement>()
 };
 
 const Signin = (props: SigninPropsState) => {
@@ -34,7 +35,7 @@ const Signin = (props: SigninPropsState) => {
           e.target.blur();
         }
       }
-    }
+    };
   }, []);
 
   if (isAuthenticated) {
@@ -114,7 +115,10 @@ const Signin = (props: SigninPropsState) => {
             className='flex-basis-halved'
             alignItems='center'>
             <Checkbox
-              defaultChecked
+              onChange={handleSigninInputChange}
+              checked={props.persistSignIn.value}
+              inputRef={refs.persistSignIn}
+              id='persist-signin'
               color='primary'
               inputProps={{ 'aria-label': 'remember me' }}
             />
@@ -153,9 +157,16 @@ const Signin = (props: SigninPropsState) => {
   );
 };
 
-const mapStateToProps = ({ signinId, signinPassword, signin, auth }: any) => {
+const mapStateToProps = ({
+  signinId,
+  persistSignIn,
+  signinPassword,
+  signin,
+  auth
+}: any) => {
   return {
     signinId,
+    persistSignIn,
     signinPassword,
     signin,
     auth
