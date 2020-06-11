@@ -6,19 +6,22 @@ import { SigninFormData } from '../constants';
 import {
   validateSigninId,
   validateSigninPassword,
-  requestSignin
+  requestSignin,
+  validatePersistSignIn
 } from '../actions';
 
 export function handleSigninInputChange({
   target
 }: ChangeEvent<HTMLInputElement>) {
-  const { id, value } = target;
+  const { id, value, checked } = target;
 
   switch (id) {
     case 'signin-id':
       return dispatch(validateSigninId({ value }));
     case 'signin-password':
       return dispatch(validateSigninPassword({ value }));
+    case 'persist-signin':
+      return dispatch(validatePersistSignIn({ value: checked }));
   }
 }
 
@@ -33,7 +36,7 @@ export function handleSigninRequest() {
     handleSigninInputChange(event);
   }
 
-  let { signinId, signinPassword }: any = getState();
+  let { signinId, signinPassword, persistSignIn }: any = getState();
 
   if (signinId.err || signinPassword.err) {
     signinFormValidated = false;
@@ -41,11 +44,12 @@ export function handleSigninRequest() {
 
   let formData: SigninFormData = {
     id: signinId.value,
-    password: signinPassword.value
+    password: signinPassword.value,
+    persistSignIn: persistSignIn.value
   };
 
   if (signinFormValidated) {
-    //dispatch signup user action here and signup user...
+    //dispatch signin user action here and signup user...
     dispatch(requestSignin({ ...formData })(dispatch));
   }
 }

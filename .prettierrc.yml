@@ -1,0 +1,6 @@
+jsxBracketSameLine: true
+jsxSingleQuote: true
+singleQuote: true
+htmlWhitespaceSensitivity: ignore
+trailingComma: none
+tabWidth: 2

@@ -8,6 +8,7 @@ import {
   PASSWORD_VALIDATE,
   ReduxAction,
   BasicInputState,
+  CheckBoxState,
   SIGNIN_ID_VALIDATE,
   SIGNIN_PASSWORD_VALIDATE,
   DOB_VALIDATE,
@@ -29,7 +30,8 @@ import {
   REQUEST_CREATE_LEVEL,
   CREATE_LEVEL,
   CreateLevelState,
-  createLevelState
+  createLevelState,
+  PERSIST_SIGNIN
 } from '../constants';
 import { logError, getState, callNetworkStatusCheckerFor } from '../functions';
 import { displaySnackbar } from './misc';
@@ -118,6 +120,13 @@ export const validateSigninPassword = (
 ): ReduxAction => {
   return {
     type: SIGNIN_PASSWORD_VALIDATE,
+    payload
+  };
+};
+
+export const validatePersistSignIn = (payload: CheckBoxState): ReduxAction => {
+  return {
+    type: PERSIST_SIGNIN,
     payload
   };
 };
