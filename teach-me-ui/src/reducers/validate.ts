@@ -27,7 +27,10 @@ import {
   CREATE_DEPARTMENT,
   CreateLevelState,
   createLevelState,
-  CREATE_LEVEL
+  CREATE_LEVEL,
+  CheckBoxState,
+  checkBoxState,
+  PERSIST_SIGNIN
 } from '../constants';
 
 export const firstname = (
@@ -402,5 +405,21 @@ export const signinPassword = (
     };
   }
 
+  return state;
+};
+
+export const persistSignIn = (
+  state: CheckBoxState = checkBoxState,
+  action: ReduxAction
+) => {
+  if (action.type === PERSIST_SIGNIN) {
+    let {
+      payload: { value }
+    } = action;
+
+    return {
+      value
+    };
+  }
   return state;
 };

@@ -2,6 +2,7 @@ import {
   SignupPropsState,
   BasicInputState,
   SigninPropsState,
+  CheckBoxState,
   AcademicInputState,
   InputErrState,
   SearchState,
@@ -43,6 +44,10 @@ export const basicInputState: BasicInputState = {
   ...inputErrState
 };
 
+export const checkBoxState: CheckBoxState = {
+  value: false
+};
+
 export const academicInputState: AcademicInputState = {
   value: { keyword: '', uid: '' },
   ...inputErrState
@@ -82,5 +87,6 @@ export const signupProps: SignupPropsState = {
 
 export const signinProps: SigninPropsState = {
   signinId: { ...basicInputState },
-  signinPassword: { ...basicInputState }
+  signinPassword: { ...basicInputState },
+  persistSignIn: { ...checkBoxState }
 };
