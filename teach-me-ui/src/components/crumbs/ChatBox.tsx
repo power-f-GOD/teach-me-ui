@@ -1,4 +1,11 @@
-import React, { useState, useCallback, useEffect, createRef, useRef } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  createRef,
+  useRef,
+  useMemo
+} from 'react';
 import { connect } from 'react-redux';
 
 import queryString from 'query-string';
@@ -25,10 +32,16 @@ import {
   setChatsMessages,
   getUsersEnrolledInInstitution
 } from '../../actions/chat';
-import { Chat, Message } from '../../constants/interfaces';
+import {
+  Chat,
+  Message,
+  AnchorInfo,
+  UserInfo
+} from '../../constants/interfaces';
 import { CONVO_CHAT_TYPE, ROOM_CHAT_TYPE } from '../../constants/chat';
 import ChatLeftPane from './ChatLeftPane';
 import { userDeviceIsMobile } from '../..';
+import ChatRightPane from './ChatRightPane';
 
 const msgBoxRef = createRef<HTMLInputElement>();
 const scrollViewRef = createRef<HTMLElement>();
@@ -42,52 +55,65 @@ const placeHolderChatName = 'Start a new Conversation';
 
 const rooms: Chat[] = [
   {
-    displayName: 'Room 1',
-    type: ROOM_CHAT_TYPE,
-    avatar: '',
-    get id() {
-      return this.displayName;
+    anchor: {
+      displayName: 'Room 1',
+      type: ROOM_CHAT_TYPE,
+      avatar: '',
+      get id() {
+        return this.displayName;
+      },
+      info: {}
     }
   },
   {
-    displayName: 'Room 2',
-    type: ROOM_CHAT_TYPE,
-    avatar: '',
-    get id() {
-      return this.displayName;
+    anchor: {
+      displayName: 'Room 2',
+      type: ROOM_CHAT_TYPE,
+      avatar: '',
+      get id() {
+        return this.displayName;
+      },
+      info: {}
     }
   },
   {
-    displayName: 'Room 3',
-    type: ROOM_CHAT_TYPE,
-    avatar: '',
-    get id() {
-      return this.displayName;
+    anchor: {
+      displayName: 'Room 3',
+      type: ROOM_CHAT_TYPE,
+      avatar: '',
+      get id() {
+        return this.displayName;
+      },
+      info: {}
     }
   }
 ];
 
 window.addEventListener('popstate', (e) => {
-  let { chat, name, id, type: _type } = queryString.parse(
+  let { chat, name: displayName, id, type: _type } = queryString.parse(
     window.location.search
   );
   let type: 'conversation' | 'classroom' =
     _type === CONVO_CHAT_TYPE ? CONVO_CHAT_TYPE : ROOM_CHAT_TYPE;
 
-  name = String(name ?? placeHolderChatName);
+  displayName = String(displayName ?? placeHolderChatName);
   id = String(id ?? '');
 
   const currentChat = getState().chatsMessages[id];
   const avatar = currentChat?.avatar ?? '';
+  const info = currentChat?.info ?? {};
 
   if (chat) {
     if (chat === 'open') {
       dispatch(
         setActiveChat({
-          displayName: name,
-          avatar,
-          type,
-          id,
+          anchor: {
+            displayName,
+            avatar,
+            type,
+            id,
+            info
+          },
           isOpen: true,
           isMinimized: false
         })
@@ -95,10 +121,13 @@ window.addEventListener('popstate', (e) => {
     } else {
       dispatch(
         setActiveChat({
-          displayName: name,
-          avatar,
-          type,
-          id,
+          anchor: {
+            displayName,
+            avatar,
+            type,
+            id,
+            info
+          },
           isOpen: true,
           isMinimized: true
         })
@@ -107,10 +136,13 @@ window.addEventListener('popstate', (e) => {
   } else {
     dispatch(
       setActiveChat({
-        displayName: name,
-        avatar,
-        id,
-        type: CONVO_CHAT_TYPE,
+        anchor: {
+          displayName,
+          avatar,
+          id,
+          type: CONVO_CHAT_TYPE,
+          info
+        },
         isOpen: false,
         isMinimized: false
       })
@@ -123,24 +155,35 @@ let token: string = '';
 
 if (cookieEnabled) {
   if (localStorage.kanyimuta) {
-    token = JSON.parse(localStorage.kanyimuta)?.token
+    token = JSON.parse(localStorage.kanyimuta)?.token;
   }
 }
 
 const ChatBox = (props: any) => {
-  const { activeChat, usersEnrolledInInstitution
-  // newConversation
-   } = props;
+  const {
+    activeChat,
+    usersEnrolledInInstitution
+    // newConversation
+  } = props;
+  const {
+    anchor: chatAnchor,
+    queryString: activeChatQString,
+    isOpen,
+    isMinimized
+  }: Chat = activeChat;
   const {
     displayName: activeChatName,
     avatar: activeChatAvatar,
-    queryString: activeChatQString,
     type: activeChatType,
-    isOpen,
     id: activeChatId,
-    isMinimized
-  }: Chat = activeChat;
+    info
+  } = chatAnchor;
   const { chatsMessages } = props;
+  const { username, institution, department, level } = info as UserInfo;
+  const activeChatInfo = useMemo(
+    () => ({ username, institution, department, level }),
+    [username, institution, department, level]
+  );
 
   let conversationId: any = useRef('');
   let socketUrl: any = useRef('');
@@ -154,14 +197,8 @@ const ChatBox = (props: any) => {
   const [msgBoxRowsMax, setMsgBoxRowsMax] = useState<number>(1);
 
   const handleMinimizeChatClick = useCallback(() => {
-    const {
-      name,
-      type,
-      avatar,
-      id,
-      isMinimized,
-      queryString: qString
-    } = activeChat;
+    const { anchor, isMinimized, queryString: qString }: Chat = activeChat;
+    const { displayName, type, avatar, id }: AnchorInfo = anchor;
     const queryString = qString!.replace(
       isMinimized ? 'chat=min' : 'chat=open',
       isMinimized ? 'chat=open' : 'chat=min'
@@ -169,36 +206,43 @@ const ChatBox = (props: any) => {
 
     dispatch(
       setActiveChat({
-        displayName: name,
-        type,
-        avatar,
-        id,
+        anchor: {
+          displayName,
+          type,
+          avatar,
+          id,
+          info: activeChatInfo
+        },
         isMinimized: !isMinimized,
         queryString
       })
     );
     window.history.replaceState({}, '', window.location.pathname + queryString);
-  }, [activeChat]);
+  }, [activeChat, activeChatInfo]);
 
   const handleCloseChatClick = useCallback(() => {
     const queryString = window.location.search;
-    const { name, type, avatar, id } = activeChat;
+    const { displayName, type, avatar, id }: AnchorInfo = chatAnchor;
 
     dispatch(
-      setActiveChat({ displayName: name, type, avatar, id, isOpen: false, queryString })
+      setActiveChat({
+        anchor: {
+          displayName,
+          type,
+          avatar,
+          id,
+          info: activeChatInfo
+        },
+        isOpen: false,
+        queryString
+      })
     );
     window.history.pushState({}, '', window.location.pathname);
-  }, [activeChat]);
+  }, [chatAnchor, activeChatInfo]);
 
   const handleOpenChatClick = useCallback(() => {
-    const {
-      displayName,
-      type,
-      avatar,
-      id,
-      isMinimized,
-      queryString: qString
-    } = activeChat;
+    const { anchor, isMinimized, queryString: qString }: Chat = activeChat;
+    const { displayName, type, avatar, id } = anchor;
     const queryString = /chat=/.test(String(qString))
       ? qString
       : `?chat=${
@@ -206,10 +250,20 @@ const ChatBox = (props: any) => {
         }&type=${type}&id=${id}&name=${displayName}`;
 
     dispatch(
-      setActiveChat({ displayName, type, avatar, id, isOpen: true, queryString })
+      setActiveChat({
+        anchor: {
+          displayName,
+          type,
+          avatar,
+          id,
+          info: activeChatInfo
+        },
+        isOpen: true,
+        queryString
+      })
     );
     window.history.pushState({}, '', window.location.pathname + queryString);
-  }, [activeChat]);
+  }, [activeChat, activeChatInfo]);
 
   const handleSendMsgClick = useCallback(() => {
     const msgBox = msgBoxRef.current!;
@@ -232,42 +286,33 @@ const ChatBox = (props: any) => {
         displayName: activeChatName,
         avatar: activeChatAvatar,
         id: activeChatId,
-        messages: [msg]
+        messages: [msg],
+        type: activeChatType,
+        info: activeChatInfo
       })
     );
     setScrollViewElevation('calc(19px - 1.25rem)');
 
     if (socket.current && socket.current.readyState === 1) {
       try {
-        socket.current.send(JSON.stringify({message: msg.text}));
+        socket.current.send(JSON.stringify({ message: msg.text }));
         console.log('message:', msg.text, 'was sent.');
-      } catch(e) {
+      } catch (e) {
         console.log('Error:', e, 'Message:', msg.text, 'failed to sent.');
       }
     }
-    // window.setTimeout(() => {
-    //   const timestamp = timestampFormatter();
-    //   const msg: Message = {
-    //     type: 'incoming',
-    //     text:
-    //       'A sample response from the end user via the server (web socket)...',
-    //     timestamp
-    //   };
-
-    //   dispatch(
-    //     setChatsMessages({
-    //       displayName: activeChatName,
-    //       avatar: activeChatAvatar,
-    //       messages: [msg],
-    //       id: activeChatId
-    //     })
-    //   );
-    // }, 2000);
-  }, [msgBoxRowsMax, activeChatName, activeChatAvatar, activeChatId]);
+  }, [
+    msgBoxRowsMax,
+    activeChatName,
+    activeChatAvatar,
+    activeChatId,
+    activeChatInfo,
+    activeChatType
+  ]);
 
   const handleMsgInputChange = useCallback(
     (e: any) => {
-      if ((!e.shiftKey && e.key === 'Enter') && !userDeviceIsMobile) {
+      if (!e.shiftKey && e.key === 'Enter' && !userDeviceIsMobile) {
         handleSendMsgClick();
         return false;
       } else if (
@@ -339,23 +384,29 @@ const ChatBox = (props: any) => {
 
   const _currentChat = chatsMessages[activeChatId];
   useEffect(() => {
-    const { search } = window.location;
-    let { chat, type: _type, id, name } = queryString.parse(search);
+    const search = window.location.search;
+    let { chat, type: _type, id, name: displayName } = queryString.parse(
+      search
+    );
     let type: 'conversation' | 'classroom' =
       _type === CONVO_CHAT_TYPE ? CONVO_CHAT_TYPE : ROOM_CHAT_TYPE;
 
-    name = String(name ?? placeHolderChatName);
+    displayName = String(displayName ?? placeHolderChatName);
     id = String(id ?? '');
 
     const currentChat = _currentChat;
     const avatar = currentChat?.avatar ?? '';
+    // const info = currentChat?.info ?? {};
 
     dispatch(
       setActiveChat({
-        displayName: name || activeChatName,
-        type: type || activeChatType,
-        avatar: avatar,
-        id: id || activeChatId,
+        anchor: {
+          displayName: displayName || activeChatName,
+          type: type || activeChatType,
+          avatar,
+          id: id || activeChatId,
+          info: activeChatInfo
+        },
         queryString: !!chat ? search : activeChatQString,
         isOpen: !!chat || isOpen
       })
@@ -366,6 +417,7 @@ const ChatBox = (props: any) => {
     activeChatAvatar,
     activeChatId,
     activeChatQString,
+    activeChatInfo,
     isOpen,
     _currentChat
   ]);
@@ -392,23 +444,31 @@ const ChatBox = (props: any) => {
           displayName: activeChatName,
           avatar: activeChatAvatar,
           id: activeChatId,
-          messages: [{ ...activeChatLastMessage[0], text: '' }]
+          messages: [{ ...activeChatLastMessage[0], text: '' }],
+          type: activeChatType,
+          info: activeChatInfo
         })
       );
     }
-  }, [activeChatName, activeChatAvatar, activeChatId]);
-  
+  }, [
+    activeChatName,
+    activeChatAvatar,
+    activeChatId,
+    activeChatInfo,
+    activeChatType
+  ]);
+
   useEffect(() => {
-    conversationId.current = '5ee00363d0f6230017a3ba1d';//newConversation.id;
+    conversationId.current = '5ee00363d0f6230017a3ba1d'; //newConversation.id;
 
     if (conversationId.current) {
       socketUrl.current = `wss://${baseUrl}/socket?pipe=chat&channel=${conversationId.current}&token=${token}`;
       socket!.current = new WebSocket(socketUrl.current);
-  // console.log('from effect1')//, conversationId, chatMessages);
+      // console.log('from effect1')//, conversationId, chatMessages);
 
       socket.current.addEventListener('open', () => {
-        console.log('socket connected!')
-      })
+        console.log('socket connected!');
+      });
 
       socket.current.addEventListener('error', (e: any) => {
         console.log('An error occurred while trying to connect.');
@@ -418,40 +478,51 @@ const ChatBox = (props: any) => {
 
   // const lastMessage = chatsMessages[activeChatId]?.messages?.slice(-1)[0] ?? {};
   useEffect(() => {
-  //, conversationId, chatMessages);
+    //, conversationId, chatMessages);
     // const lastMessage: Message = chatMessages?.messages?.slice(-1)[0] ?? {};
-console.log('this is before the onmessage handler');
+    console.log('this is before the onmessage handler');
     if (socket.current) {
-      
       socket.current.addEventListener('message', (e: any) => {
         const data = JSON.parse(e.data);
-        const {message, sender_id, date} = data;
+        const { message, sender_id, date } = data;
 
-      
-          const timestamp = timestampFormatter(date);
-          const msg: Message = {
-            type: 'incoming',
-            text: message,
-            timestamp
-          };
+        const timestamp = timestampFormatter(date);
+        const msg: Message = {
+          type: 'incoming',
+          text: message,
+          timestamp
+        };
 
-          if (sender_id !== activeChatId) {
-            msg.text = '';
-          }
-          
-          console.log('data from message listener:', data, sender_id, '...', activeChatId);
-          dispatch(
-            setChatsMessages({
-              displayName: activeChatName,
-              avatar: activeChatAvatar,
-              messages: [msg],
-              id: activeChatId
-            })
-          );
-        
+        if (sender_id !== activeChatId) {
+          msg.text = '';
+        }
+
+        console.log(
+          'data from message listener:',
+          data,
+          sender_id,
+          '...',
+          activeChatId
+        );
+        dispatch(
+          setChatsMessages({
+            displayName: activeChatName,
+            avatar: activeChatAvatar,
+            messages: [msg],
+            id: activeChatId,
+            type: activeChatType,
+            info: activeChatInfo
+          })
+        );
       });
     }
-  }, [activeChatName, activeChatAvatar, activeChatId]);
+  }, [
+    activeChatName,
+    activeChatAvatar,
+    activeChatId,
+    activeChatInfo,
+    activeChatType
+  ]);
 
   return (
     <Container fluid className='ChatBox p-0'>
@@ -461,7 +532,10 @@ console.log('this is before the onmessage handler');
             isOpen ? '' : 'close'
           }`}>
           <Col as='section' md={3} className='chat-left-pane d-flex p-0'>
-            <ChatLeftPane rooms={rooms} conversations={usersEnrolledInInstitution.data!} />
+            <ChatLeftPane
+              rooms={rooms}
+              conversations={usersEnrolledInInstitution.data!}
+            />
           </Col>
 
           <Col
@@ -608,10 +682,7 @@ console.log('this is before the onmessage handler');
               as='section'
               md={3}
               className='chat-right-pane d-flex flex-column p-0'>
-              <ChatRightPane
-                participants={[]}
-                type={activeChatType}
-              />
+              <ChatRightPane activeChat={activeChat} />
             </Col>
           )}
         </Row>
@@ -626,45 +697,6 @@ console.log('this is before the onmessage handler');
     </Container>
   );
 };
-
-function ChatRightPane(props: any) {
-  const { type: activeChatType } = props;
-  return (
-    <>
-      <Col
-        as='header'
-        className='chat-header d-flex flex-column justify-content-center'>
-        {activeChatType === CONVO_CHAT_TYPE ? 'User info' : 'Participants'}
-      </Col>
-
-      {/* <Col as='section' className='participants-container p-0'>
-        {activeChatType === ROOM_CHAT_TYPE &&
-          participants.map((participant: any, key: number) => {
-            return (
-              <Col as='span' className='colleague-name' key={key}>
-                <Badge
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right'
-                  }}
-                  color='primary'
-                  overlap='circle'
-                  variant='dot'>
-                  <Avatar
-                    component='span'
-                    className='chat-avatar mr-2'
-                    alt={participant.name}
-                    src={`/images/${participant.avatar}`}
-                  />
-                </Badge>{' '}
-                {participant.name}
-              </Col>
-            );
-          })}
-      </Col> */}
-    </>
-  );
-}
 
 function IncomingMsg(props: { message: Message } | any) {
   const { text, timestamp } = props.message;
