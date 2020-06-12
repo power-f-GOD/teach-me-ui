@@ -58,6 +58,7 @@ $chat-header-min-height: 3.35rem;
   position: fixed;
   width: $box-width;
   height: $box-height;
+  max-height: $box-height;
   box-shadow: 0 0.25rem 1.5rem rgba(0, 0, 0, 0.2);
   background-color: white;
   left: 0;
@@ -138,7 +139,7 @@ $chat-header-min-height: 3.35rem;
   }
 
   &.active {
-    background-color: $theme-primary-v4;
+    background-color: $theme-primary-v5;
     color: white;
     // font-weight: bold;
   }
@@ -153,7 +154,7 @@ $chat-header-min-height: 3.35rem;
 }
 
 .ChatBox header {
- box-shadow: 0 0 1.5rem rgba(0,0,0,0.35);   
+  box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.35);
 }
 
 header.chat-header {
@@ -181,14 +182,14 @@ header.chat-header {
     border: 0.125rem solid white;
     height: $size;
     width: $size;
-    right: 32%; 
+    right: 32%;
   }
 }
 
 .online {
   .MuiBadge-dot {
     background-color: $success;
-  } 
+  }
 }
 
 .offline {
@@ -403,6 +404,64 @@ $msg-radius: 0.6rem;
 
   > div {
     background: #eee;
+  }
+}
+
+// @import 'constants';
+
+.debugger {
+  $color: orange;
+
+  border: 1px solid $color;
+  border: none;
+
+  * {
+    border: 1px solid $color;
+    border: none;
+  }
+}
+
+.chat-right-pane {
+  background-color: #eee;
+
+  .chat-avatar {
+    $size: 7rem;
+
+    height: $size;
+    margin: 1rem 0;
+    width: $size;
+    font-size: 2.5rem;
+    background: $theme-primary-v5;
+    color: #eee;
+    border: 0.125rem solid #eee;
+  }
+
+  .display-name {
+    margin: 0.5rem 0;
+    font-weight: bold;
+  }
+
+  .username {
+    color: #777;
+  }
+
+  .info {
+    font-size: 0.9rem;
+  }
+
+  .status {
+    color: #777;
+    text-align: center;
+    font-size: 0.9rem;
+
+    .MuiSvgIcon-root {
+      color: inherit;
+      margin-left: auto;
+    }
+  }
+
+  .academic {
+    color: #666;
   }
 }
 
