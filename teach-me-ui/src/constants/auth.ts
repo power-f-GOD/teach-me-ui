@@ -9,7 +9,6 @@ export const SIGNOUT_USER = 'SIGNOUT_USER';
 export const AUTHENTICATE_USER = 'AUTHENTICATE_USER';
 export const VERIFY_AUTH = 'VERIFY_AUTH';
 export const SET_USER_DISPLAY_NAME = 'SET_USER_DISPLAY_NAME';
-export const PERSIST_SIGNIN = 'PERSIST_SIGNIN';
 
 export const authState: AuthState = {
   status: 'settled',
