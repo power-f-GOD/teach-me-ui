@@ -13,9 +13,10 @@ import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 
-import { setActiveChat
-//  requestNewConversation 
- } from '../../actions/chat';
+import {
+  setActiveChat
+  //  requestNewConversation
+} from '../../actions/chat';
 import { dispatch } from '../../functions/utils';
 import { Chat, UserEnrolledData } from '../../constants/interfaces';
 
@@ -34,18 +35,35 @@ const ChatLeftPane = (props: any) => {
   const conversations: Chat[] =
     usersEnrolled?.map(
       (user: UserEnrolledData): Chat => {
-        const { firstname, lastname, id }: UserEnrolledData = user;
+        const {
+          firstname,
+          lastname,
+          id,
+          username,
+          institution,
+          department,
+          level
+        }: UserEnrolledData = user;
         const conversation: Chat = {
-          displayName: `${firstname} ${lastname}`,
-          avatar: '',
-          id
+          anchor: {
+            displayName: `${firstname} ${lastname}`,
+            avatar: '',
+            id,
+            type: 'conversation',
+            info: {
+              username,
+              institution: institution || 'N/A',
+              department: department || 'N/A',
+              level: level || 'N/A'
+            }
+          }
         };
 
         return conversation;
       }
     ) ?? [];
 
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+  const handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
 
@@ -71,7 +89,8 @@ const ChatLeftPane = (props: any) => {
       <TabPanel value={value} index={0}>
         {!!conversations[0]
           ? conversations.map((conversation: Chat) => {
-              const { displayName, avatar, id } = conversation;
+              const { anchor } = conversation;
+              const { displayName, avatar, id } = anchor;
               const _queryString = `${pathname}?chat=open&type=conversation&id=${id}&name=${displayName}`;
               const chatInfo: Chat = {
                 ...conversation,
@@ -83,7 +102,9 @@ const ChatLeftPane = (props: any) => {
                   to={_queryString}
                   className='tab-panel-item p-0'
                   key={id}
-                  isActive={(_match, location) => queryString.parse(location.search)?.id === id}
+                  isActive={(_match, location) =>
+                    queryString.parse(location.search)?.id === id
+                  }
                   onClick={handleChatClick({ ...chatInfo })}>
                   <Col as='span' className='colleague-name'>
                     <Badge
@@ -111,20 +132,22 @@ const ChatLeftPane = (props: any) => {
       </TabPanel>
       <TabPanel value={value} index={1}>
         {rooms.map((room: Chat) => {
-          const _pathname = `${pathname}?chat=open&type=classroom&id=${room.id}&name=${room.displayName}`;
-          const chatInfo = {
+          const _pathname = `${pathname}?chat=open&type=classroom&id=${room.anchor.id}&name=${room.anchor.displayName}`;
+          const chatInfo: Chat = {
             ...room,
-            pathname: _pathname
+            queryString: _pathname
           };
 
           return (
             <NavLink
               to={_pathname}
               className='tab-panel-item'
-              key={room.displayName}
-              isActive={(_match, location) => queryString.parse(location.search)?.id === room.id}
+              key={room.anchor.displayName}
+              isActive={(_match, location) =>
+                queryString.parse(location.search)?.id === room.anchor.id
+              }
               onClick={handleChatClick({ ...chatInfo })}>
-              {room.displayName}
+              {room.anchor.displayName}
             </NavLink>
           );
         })}

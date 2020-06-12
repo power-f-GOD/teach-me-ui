@@ -118,10 +118,11 @@ export interface Message {
 }
 
 export interface Chat {
-  displayName: string;
-  type?: 'conversation' | 'classroom';
-  avatar: string;
-  id: string;
+  anchor: AnchorInfo;
+  // displayName: string;
+  // type?: 'conversation' | 'classroom';
+  // avatar: string;
+  // id: string;
   queryString?: string;
   isOpen?: boolean;
   isMinimized?: boolean;
@@ -132,19 +133,23 @@ export interface ChatData {
 }
 
 export interface AnchorInfo {
-  displayName?: string;
+  displayName: string;
   id: string;
-  messages: Message[];
+  messages?: Message[];
   avatar: string;
-  info?: Info;
-  type?: 'conversation' | 'classroom';
+  info?: UserInfo | RoomInfo;
+  type: 'conversation' | 'classroom';
 }
 
-export interface Info {
-  username: string;
-  institution: string;
-  department: string;
-  level: string;
+export interface UserInfo {
+  username?: string;
+  institution?: string;
+  department?: string;
+  level?: string;
+}
+
+export interface RoomInfo {
+  participants?: any[];
 }
 
 export interface UserEnrolledData {
