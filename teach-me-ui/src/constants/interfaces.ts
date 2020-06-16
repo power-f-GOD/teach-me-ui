@@ -1,3 +1,8 @@
+export interface NetworkAction {
+  name: string;
+  func: Function;
+}
+
 export interface ReduxAction {
   type: string;
   newState?: any;

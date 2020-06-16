@@ -129,7 +129,10 @@ export const getMatchingInstitutions = (keyword: string) => (
 ): ReduxAction => {
   clearTimeout(institutionSearchTimeout);
   dispatch(matchingInstitutions({ status: 'pending' }));
-  callNetworkStatusCheckerFor(matchingInstitutions);
+  callNetworkStatusCheckerFor({
+    name: 'matchingInstitutions',
+    func: matchingInstitutions
+  });
 
   if (keyword) {
     institutionSearchTimeout = window.setTimeout(() => {
@@ -194,7 +197,10 @@ export const getMatchingDepartments = (keyword: string) => (
 
   clearTimeout(departmentSearchTimeout);
   dispatch(matchingDepartments({ status: 'pending' }));
-  callNetworkStatusCheckerFor(matchingDepartments);
+  callNetworkStatusCheckerFor({
+    name: 'matchingDepartments',
+    func: matchingDepartments
+  });
 
   if (keyword) {
     departmentSearchTimeout = window.setTimeout(() => {
@@ -273,7 +279,10 @@ export const requestCreateDepartment = (
   const { department, institution } = payload;
 
   dispatch(createDepartment({ status: 'pending' }));
-  callNetworkStatusCheckerFor(createDepartment);
+  callNetworkStatusCheckerFor({
+    name: 'createDepartment',
+    func: createDepartment
+  });
 
   if (department && institution) {
     axios({
@@ -364,7 +373,7 @@ export const getMatchingLevels = (keyword: string) => (
 
   clearTimeout(levelSearchTimeout);
   dispatch(matchingLevels({ status: 'pending' }));
-  callNetworkStatusCheckerFor(matchingLevels);
+  callNetworkStatusCheckerFor({ name: 'matchingLevels', func: matchingLevels });
 
   if (keyword) {
     levelSearchTimeout = window.setTimeout(() => {
@@ -443,7 +452,7 @@ export const requestCreateLevel = (
   const { level, department } = payload;
 
   dispatch(createLevel({ status: 'pending' }));
-  callNetworkStatusCheckerFor(createLevel);
+  callNetworkStatusCheckerFor({ name: 'createLevel', func: createLevel });
 
   if (level && department) {
     axios({

@@ -2,7 +2,7 @@ import { cleanup } from '@testing-library/react';
 
 import {
   promisedDispatch,
-  callNetworkStatusCheckerFor,
+  // callNetworkStatusCheckerFor,
   populateStateWithUserData,
   logError
 } from '../../functions';
@@ -18,12 +18,12 @@ it('promisedDispatch dispatches an action which returns a promise that resolves 
   expect(promisedDispatch(action)).resolves.toBe(action);
 });
 
-it("callNetworkStatusChecker should be called with 'signin' or 'signup' as param and return undefined.", () => {
-  let mockFunc = jest.fn();
-  callNetworkStatusCheckerFor(mockFunc(signin, signup));
-  expect(mockFunc).toHaveBeenCalledWith(signin, signup);
-  expect(callNetworkStatusCheckerFor(signin)).toBeUndefined();
-});
+// it("callNetworkStatusChecker should be called with 'signin' or 'signup' as param and return undefined.", () => {
+//   let mockFunc = jest.fn();
+//   callNetworkStatusCheckerFor(mockFunc(signin, signup));
+//   expect(mockFunc).toHaveBeenCalledWith(signin, signup);
+//   expect(callNetworkStatusCheckerFor(signin)).toBeUndefined();
+// });
 
 it("populateStateWithUserData should be called with 'user data' as param and return a promise which resolves with undefined.", () => {
   let action: ReduxAction = {

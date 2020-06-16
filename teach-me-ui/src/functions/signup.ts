@@ -140,7 +140,7 @@ export function handleSignupRequest() {
     password.err ||
     institution.err ||
     department.err ||
-    level.err || !level.uid
+    level.err
   ) {
     signupFormValidated = false;
   }

@@ -55,7 +55,7 @@ export const requestSignup = (data: SignupFormData) => (
   email = email.toLowerCase();
 
   //check if user is online as lost network connection is not a failure state for Firebase db in order to give response to user
-  callNetworkStatusCheckerFor(signup);
+  callNetworkStatusCheckerFor({ name: 'signup', func: signup });
 
   axios({
     url: 'https://teach-me-services.herokuapp.com/api/v1/register',
@@ -165,7 +165,7 @@ export const requestSignin = (data: SigninFormData) => (
   dispatch: Function
 ): ReduxAction => {
   dispatch(signin({ status: 'pending' }));
-  callNetworkStatusCheckerFor(signin);
+  callNetworkStatusCheckerFor({ name: 'signin', func: signin });
 
   let { id, password } = data;
   let _id;
