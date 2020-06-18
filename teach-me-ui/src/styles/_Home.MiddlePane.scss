@@ -1,0 +1,59 @@
+.post-list-page {
+  background: #eee;
+}
+
+.middle-pane-col {
+  height: calc(100vh - 4rem);
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    width: 3px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #ccc;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #999;
+    border-radius: 3px;
+  }
+}
+
+.break-word {
+  word-wrap: break-word;
+}
+
+.compose-avatar {
+  border: 1.5px solid #00537e;
+}
+
+.more {
+  cursor: pointer;
+}
+
+.compose-question {
+  cursor: pointer;
+}
+
+.post-details {
+  cursor: pointer;
+  padding: 0 3px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.react-to-post {
+  cursor: pointer;
+  border-radius: 100px;
+  transition: all 0.3s;
+  user-select: none;
+  &:hover {
+    background: #ccc;
+  }
+}
+
+.debug {
+  border: 0.5px solid red;
+}
