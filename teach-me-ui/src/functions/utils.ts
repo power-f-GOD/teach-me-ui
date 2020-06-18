@@ -1,4 +1,4 @@
-import { ReduxAction, StatusPropsState, UserData } from '../constants';
+import { ReduxAction, StatusPropsState, UserData, NetworkAction } from '../constants';
 import store from '../appStore';
 import {
   signin,
@@ -26,7 +26,7 @@ export function promisedDispatch(action: ReduxAction): Promise<ReduxAction> {
 
 let timeoutToGiveFeedback: any;
 let timeoutToAbortNetworkAction: any;
-export function callNetworkStatusCheckerFor(action: Function) {
+export function callNetworkStatusCheckerFor(action: NetworkAction) {
   //clear timeout in case it's already been initialized by multiple submit actions
   clearTimeout(timeoutToGiveFeedback);
   clearTimeout(timeoutToAbortNetworkAction);
@@ -56,9 +56,9 @@ export function callNetworkStatusCheckerFor(action: Function) {
     callTimeoutToAbortNetworkAction(action);
   }, 12000);
 
-  function callTimeoutToAbortNetworkAction(action: Function) {
+  function callTimeoutToAbortNetworkAction(action: NetworkAction) {
     if (navigator.onLine && state[action.name]?.status === 'pending') {
-      dispatch(action({ ...errFeedback }));
+      dispatch(action.func({ ...errFeedback }));
       dispatch(
         displaySnackbar({
           open: true,
@@ -72,7 +72,7 @@ export function callNetworkStatusCheckerFor(action: Function) {
       state = getState();
 
       if (navigator.onLine && state[action.name].status === 'pending') {
-        dispatch(action({ ...abortionFeedback }));
+        dispatch(action.func({ ...abortionFeedback }));
         dispatch(
           displaySnackbar({
             open: true,

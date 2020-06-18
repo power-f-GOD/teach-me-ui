@@ -480,7 +480,7 @@ const ChatBox = (props: any) => {
   useEffect(() => {
     //, conversationId, chatMessages);
     // const lastMessage: Message = chatMessages?.messages?.slice(-1)[0] ?? {};
-    console.log('this is before the onmessage handler');
+    // console.log('this is before the onmessage handler');
     if (socket.current) {
       socket.current.addEventListener('message', (e: any) => {
         const data = JSON.parse(e.data);

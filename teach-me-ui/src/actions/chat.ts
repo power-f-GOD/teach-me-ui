@@ -37,7 +37,10 @@ export const getUsersEnrolledInInstitution = (params?: string) => (
   let token = '';
 
   dispatch(usersEnrolledInInstitution({ status: 'pending' }));
-  callNetworkStatusCheckerFor(usersEnrolledInInstitution);
+  callNetworkStatusCheckerFor({
+    name: 'usersEnrolledInInstitution',
+    func: usersEnrolledInInstitution
+  });
 
   if (cookieEnabled) {
     token = JSON.parse(localStorage?.kanyimuta ?? {})?.token ?? null;
