@@ -16,6 +16,28 @@ export interface InputErrState {
   helperText?: string;
 }
 
+export interface PostPropsState {
+  displayName: string;
+  username: string;
+  upvotes: number;
+  postBody: string;
+  downvotes: number;
+  noOfComments: number;
+  userAvatar: string;
+  reaction: 'upvote' | 'downvote' | 'neutral';
+}
+
+export interface TopicPropsState {
+  topic: string;
+  numberOfDiscussions: number;
+}
+
+export interface ReactButtonPropsState {
+  reactions: number;
+  type: 'upvote' | 'downvote';
+  reacted: 'upvote' | 'downvote' | 'neutral';
+}
+
 export interface BasicInputState extends InputErrState {
   value?: string;
 }
@@ -88,6 +110,11 @@ export interface SnackbarState {
   message?: string;
   severity?: 'error' | 'info' | 'success' | 'warning';
   autoHide?: boolean;
+}
+
+export interface ModalState {
+  open: boolean;
+  type?: 'CREATE_POST' | 'CREATE_COMMENT';
 }
 
 export interface UserData {
