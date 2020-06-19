@@ -7,7 +7,7 @@ import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 // add custom jest matchers from jest-dom
 import '@testing-library/jest-dom/extend-expect';
 
-import ReactButton from '../ReactButton';
+import ReactButton from '../../components/crumbs/ReactButton';
 
 test('loads and displays placeholder text', async () => {
   render(

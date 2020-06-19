@@ -7,8 +7,8 @@ import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 // add custom jest matchers from jest-dom
 import '@testing-library/jest-dom/extend-expect';
 
-import Post from '../Post';
-import { PostPropsState } from '../../../constants';
+import Post from '../../components/crumbs/Post';
+import { PostPropsState } from '../../constants';
 
 const post: PostPropsState = {
   displayName: 'Benjamin Chibuzor-Orie',
