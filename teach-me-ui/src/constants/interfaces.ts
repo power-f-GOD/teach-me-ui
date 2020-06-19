@@ -42,11 +42,7 @@ export interface BasicInputState extends InputErrState {
   value?: string;
 }
 
-export interface CheckBoxState {
-  value?: boolean;
-}
-
-export interface AcademicInputState extends InputErrState {
+export interface InstitutionInputState extends InputErrState {
   value?: { keyword?: string; uid?: string };
 }
 
@@ -73,9 +69,9 @@ export interface SignupPropsState {
   email: BasicInputState;
   dob: BasicInputState;
   password: BasicInputState;
-  institution: AcademicInputState;
-  department: AcademicInputState;
-  level: AcademicInputState;
+  institution: InstitutionInputState;
+  department: BasicInputState;
+  level: BasicInputState;
   matchingInstitutions: SearchState;
   matchingDepartments: SearchState;
   matchingLevels: SearchState;

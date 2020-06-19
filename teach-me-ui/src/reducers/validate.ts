@@ -8,7 +8,7 @@ import {
   PASSWORD_VALIDATE,
   ReduxAction,
   basicInputState,
-  academicInputState,
+  institutionInputState,
   BasicInputState,
   SIGNIN_ID_VALIDATE,
   SIGNIN_PASSWORD_VALIDATE,
@@ -19,15 +19,9 @@ import {
   POPULATE_MATCHING_INSTITUTIONS,
   SearchState,
   statusPropsState,
-  AcademicInputState,
+  InstitutionInputState,
   POPULATE_MATCHING_LEVELS,
-  POPULATE_MATCHING_DEPARTMENTS,
-  CreateDepartmentState,
-  createDepartmentState,
-  CREATE_DEPARTMENT,
-  CreateLevelState,
-  createLevelState,
-  CREATE_LEVEL
+  POPULATE_MATCHING_DEPARTMENTS
 } from '../constants';
 
 export const firstname = (
@@ -206,9 +200,9 @@ export const password = (
 };
 
 export const institution = (
-  state: AcademicInputState = academicInputState,
+  state: InstitutionInputState = institutionInputState,
   action: ReduxAction
-): AcademicInputState => {
+): InstitutionInputState => {
   if (action.type === INSTITUTION_VALIDATE) {
     let { payload } = action;
     let val = payload.value || state.value;
@@ -223,11 +217,14 @@ export const institution = (
     err = 'err' in payload ? payload.err : err;
     helperText = 'helperText' in payload ? payload.helperText : helperText;
 
-    return (produce({ ...state, ...payload }, (draft: AcademicInputState) => {
-      draft.value!.keyword = value;
-      draft.err = err;
-      draft.helperText = helperText;
-    }) as unknown) as AcademicInputState;
+    return (produce(
+      { ...state, ...payload },
+      (draft: InstitutionInputState) => {
+        draft.value!.keyword = value;
+        draft.err = err;
+        draft.helperText = helperText;
+      }
+    ) as unknown) as InstitutionInputState;
   }
 
   return state;
@@ -248,13 +245,12 @@ export const matchingInstitutions = (
 };
 
 export const department = (
-  state: AcademicInputState = academicInputState,
+  state: BasicInputState = basicInputState,
   action: ReduxAction
-): AcademicInputState => {
+): BasicInputState => {
   if (action.type === DEPARTMENT_VALIDATE) {
-    let { payload } = action;
-    let val = payload.value || state.value;
-    let value = val.keyword;
+    let payload: BasicInputState = action.payload;
+    let value = payload.value ?? state.value;
     let err = !value || !/^[a-z,\s]+$/i.test(value);
     let helperText = err
       ? !value
@@ -262,14 +258,16 @@ export const department = (
         : 'Invalid input.'
       : ' ';
 
-    err = 'err' in payload ? payload.err : err;
-    helperText = 'helperText' in payload ? payload.helperText : helperText;
+    err = ('err' in payload ? payload.err : err) as boolean;
+    helperText = ('helperText' in payload
+      ? payload.helperText
+      : helperText) as string;
 
-    return (produce({ ...state, ...payload }, (draft: AcademicInputState) => {
-      draft.value!.keyword = value;
+    return (produce({ ...state, ...payload }, (draft: BasicInputState) => {
+      draft.value = value;
       draft.err = err;
       draft.helperText = helperText;
-    }) as unknown) as AcademicInputState;
+    }) as unknown) as BasicInputState;
   }
 
   return state;
@@ -289,28 +287,13 @@ export const matchingDepartments = (
   return state;
 };
 
-export const createDepartment = (
-  state: CreateDepartmentState = createDepartmentState,
-  action: ReduxAction
-) => {
-  if (action.type === CREATE_DEPARTMENT) {
-    return {
-      ...state,
-      ...action.payload
-    };
-  }
-
-  return state;
-};
-
 export const level = (
-  state: AcademicInputState = academicInputState,
+  state: BasicInputState = basicInputState,
   action: ReduxAction
-): AcademicInputState => {
+): BasicInputState => {
   if (action.type === LEVEL_VALIDATE) {
-    let { payload } = action;
-    let val = payload.value || state.value;
-    let value = val.keyword;
+    let payload: BasicInputState = action.payload;
+    let value = payload.value ?? state.value;
     let err = !value || !/^([a-z0-9\s?]+)$/i.test(value);
     let helperText = err
       ? !value
@@ -318,14 +301,16 @@ export const level = (
         : 'Input not accepted.'
       : ' ';
 
-    err = 'err' in payload ? payload.err : err;
-    helperText = 'helperText' in payload ? payload.helperText : helperText;
+    err = ('err' in payload ? payload.err : err) as boolean;
+    helperText = ('helperText' in payload
+      ? payload.helperText
+      : helperText) as string;
 
-    return (produce({ ...state, ...payload }, (draft: AcademicInputState) => {
-      draft.value!.keyword = value;
+    return (produce({ ...state, ...payload }, (draft: BasicInputState) => {
+      draft.value = value;
       draft.err = err;
       draft.helperText = helperText;
-    }) as unknown) as AcademicInputState;
+    }) as unknown) as BasicInputState;
   }
 
   return state;
@@ -336,20 +321,6 @@ export const matchingLevels = (
   action: ReduxAction
 ) => {
   if (action.type === POPULATE_MATCHING_LEVELS) {
-    return {
-      ...state,
-      ...action.payload
-    };
-  }
-
-  return state;
-};
-
-export const createLevel = (
-  state: CreateLevelState = createLevelState,
-  action: ReduxAction
-) => {
-  if (action.type === CREATE_LEVEL) {
     return {
       ...state,
       ...action.payload

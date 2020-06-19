@@ -3,7 +3,7 @@ import { cleanup } from '@testing-library/react';
 import {
   ReduxAction,
   BasicInputState,
-  AcademicInputState,
+  InstitutionInputState,
   inputErrState
 } from '../../constants';
 import {
@@ -21,7 +21,7 @@ import {
 afterEach(cleanup);
 
 it("creates validate (inputs) action and should be called with its 'state props' and return action.", () => {
-  const mockInputState: BasicInputState | AcademicInputState = {
+  const mockInputState: BasicInputState | InstitutionInputState = {
     value: expect.any(String) || expect.any({ keyword: '', uid: '' }),
     err: expect.any(Boolean),
     helperText: expect.any(String)
@@ -39,7 +39,7 @@ it("creates validate (inputs) action and should be called with its 'state props'
     }
   };
   const validateMockFunc = jest.fn(
-    (payload: BasicInputState | AcademicInputState) => {
+    (payload: BasicInputState | InstitutionInputState) => {
       validateFirstname(<BasicInputState>payload);
       validateLastname(<BasicInputState>payload);
       validateUsername(<BasicInputState>payload);
@@ -47,9 +47,9 @@ it("creates validate (inputs) action and should be called with its 'state props'
       validateDob(<BasicInputState>payload);
       validatePassword(<BasicInputState>payload);
 
-      validateInstitution(payload as AcademicInputState);
-      validateDepartment(<AcademicInputState>payload);
-      validateLevel(<AcademicInputState>payload);
+      validateInstitution(payload as InstitutionInputState);
+      validateDepartment(<BasicInputState>payload);
+      validateLevel(<BasicInputState>payload);
     }
   );
 
@@ -77,13 +77,13 @@ it("creates validate (inputs) action and should be called with its 'state props'
   // validateAction.payload.value = academicInfoValue;
   // mockInputState.value = expect.any({ keyword: expect.any(String), uid: expect.any(String) });
 
-  expect(validateInstitution(mockInputState as AcademicInputState)).toMatchObject(
+  expect(validateInstitution(mockInputState as InstitutionInputState)).toMatchObject(
     validateAction
   );
-  expect(validateDepartment(<AcademicInputState>mockInputState)).toMatchObject(
+  expect(validateDepartment(<BasicInputState>mockInputState)).toMatchObject(
     validateAction
   );
-  expect(validateLevel(<AcademicInputState>mockInputState)).toMatchObject(
+  expect(validateLevel(<BasicInputState>mockInputState)).toMatchObject(
     validateAction
   );
 });

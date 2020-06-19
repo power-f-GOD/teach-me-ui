@@ -2,8 +2,7 @@ import {
   SignupPropsState,
   BasicInputState,
   SigninPropsState,
-  CheckBoxState,
-  AcademicInputState,
+  InstitutionInputState,
   InputErrState,
   SearchState,
   CreateDepartmentState,
@@ -44,11 +43,7 @@ export const basicInputState: BasicInputState = {
   ...inputErrState
 };
 
-export const checkBoxState: CheckBoxState = {
-  value: false
-};
-
-export const academicInputState: AcademicInputState = {
+export const institutionInputState: InstitutionInputState = {
   value: { keyword: '', uid: '' },
   ...inputErrState
 };
@@ -77,9 +72,9 @@ export const signupProps: SignupPropsState = {
   email: { ...basicInputState },
   dob: { ...basicInputState },
   password: { ...basicInputState },
-  institution: { ...academicInputState },
-  department: { ...academicInputState },
-  level: { ...academicInputState },
+  institution: { ...institutionInputState },
+  department: { ...basicInputState },
+  level: { ...basicInputState },
   matchingInstitutions: { ...searchState },
   matchingDepartments: { ...searchState },
   matchingLevels: { ...searchState }

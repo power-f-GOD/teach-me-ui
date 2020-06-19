@@ -4,13 +4,12 @@ import * as actions from '../actions/validate';
 import { getState, dispatch } from './utils';
 import { refs as signupRefs } from '../components/Auth/Signup';
 import { requestSignup } from '../actions';
-import { SignupFormData } from '../constants';
+import { SignupFormData, SignupPropsState } from '../constants';
 
 export function handleSignupInputChange({
   target
 }: ChangeEvent<HTMLInputElement>) {
   let { id, value } = target;
-  let uid = target.dataset?.uid;
 
   switch (id) {
     case 'firstname':
@@ -26,17 +25,15 @@ export function handleSignupInputChange({
     case 'password':
       return dispatch(actions.validatePassword({ value }));
     case 'institution':
+      let uid = target.dataset?.uid;
+
       return dispatch(
         actions.validateInstitution({ value: { keyword: value, uid } })
       );
     case 'department':
-      return dispatch(
-        actions.validateDepartment({ value: { keyword: value, uid } })
-      );
+      return dispatch(actions.validateDepartment({ value }));
     case 'level':
-      return dispatch(
-        actions.validateLevel({ value: { keyword: value, uid } })
-      );
+      return dispatch(actions.validateLevel({ value }));
   }
 }
 
@@ -44,11 +41,7 @@ export function handleSignupRequest() {
   let signupFormValidated = true;
   const {
     institution: _institution,
-    department: _department,
-    level: _level,
-    matchingInstitutions,
-    matchingDepartments,
-    matchingLevels
+    matchingInstitutions
   } = getState();
 
   for (const key in signupRefs) {
@@ -57,11 +50,10 @@ export function handleSignupRequest() {
     } as ChangeEvent<HTMLInputElement>;
     const { target } = event;
 
+    handleSignupInputChange(event);
+
     switch (target.id) {
       case 'institution':
-        // event.target.dataset.uid = _institution.value?.uid;
-        handleSignupInputChange(event);
-
         if (
           !_institution.value!.uid &&
           !!matchingInstitutions!.data![0] &&
@@ -70,48 +62,19 @@ export function handleSignupRequest() {
           dispatch(
             actions.validateInstitution({
               err: true,
-              helperText: 'You need to select an institution from the list.'
+              helperText: 'You need to select an institution from the dropdown.'
             })
           );
         } else
           dispatch(actions.getMatchingInstitutions(target.value)(dispatch));
         break;
       case 'department':
-        // event.target.dataset.uid = _department.value?.uid;
-        handleSignupInputChange(event);
-
         if (/^[a-z\s?]+$/i.test(target.value))
-          if (
-            !_department.value!.uid &&
-            !!matchingDepartments!.data![0] &&
-            target.value
-          ) {
-            dispatch(
-              actions.validateDepartment({
-                err: true,
-                helperText: 'You need to select a department from the list.'
-              })
-            );
-          } else
-            dispatch(actions.getMatchingDepartments(target.value)(dispatch));
+          dispatch(actions.getMatchingDepartments(target.value)(dispatch));
         break;
       case 'level':
-        // event.target.dataset.uid = _level.value?.uid;
-        handleSignupInputChange(event);
-
         if (/^[a-z0-9\s?]+$/i.test(target.value)) {
-          if (
-            !_level.value!.uid &&
-            !!matchingLevels!.data![0] &&
-            target.value
-          ) {
-            dispatch(
-              actions.validateLevel({
-                err: true,
-                helperText: 'You need to select a level from the list.'
-              })
-            );
-          } else dispatch(actions.getMatchingLevels(target.value)(dispatch));
+          dispatch(actions.getMatchingLevels(target.value)(dispatch));
         }
         break;
       default:
@@ -129,7 +92,7 @@ export function handleSignupRequest() {
     institution,
     department,
     level
-  }: any = getState();
+  } = (getState() as unknown) as SignupPropsState;
 
   if (
     firstname.err ||
@@ -146,15 +109,15 @@ export function handleSignupRequest() {
   }
 
   let formData: SignupFormData = {
-    firstname: firstname.value,
-    lastname: lastname.value,
-    username: username.value,
-    email: email.value,
-    dob: dob.value,
-    password: password.value,
-    institution: institution.value.uid,
-    department: department.value.uid,
-    level: level.value.uid
+    firstname: firstname.value as string,
+    lastname: lastname.value as string,
+    username: username.value as string,
+    email: email.value as string,
+    dob: dob.value as string,
+    password: password.value as string,
+    institution: institution.value!.uid as string,
+    department: department.value as string,
+    level: level.value as string
   };
 
   if (signupFormValidated) {
