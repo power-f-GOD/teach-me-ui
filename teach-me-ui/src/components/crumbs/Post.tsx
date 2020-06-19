@@ -7,7 +7,7 @@ import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 
 import ReactButton from './ReactButton';
-import { Numbers } from '../../helpers/index';
+import { bigNumberFormat } from '../../functions/utils';
 import { PostPropsState } from '../../constants/interfaces';
 
 const Post: React.FunctionComponent<PostPropsState> = (props) => {
@@ -72,7 +72,7 @@ const Post: React.FunctionComponent<PostPropsState> = (props) => {
           </Col>
           <Col className='d-flex align-items-center justify-content-center'>
             <Box className='post-details' fontSize='13px'>
-              {Numbers.format(props.noOfComments)} Comments
+              {bigNumberFormat(props.noOfComments)} Comments
             </Box>
           </Col>
         </Row>

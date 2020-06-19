@@ -2,7 +2,7 @@ import React from 'react';
 
 import Box from '@material-ui/core/Box';
 
-import { Numbers } from '../../helpers/index';
+import { bigNumberFormat } from '../../functions/utils';
 import { ReactButtonPropsState } from '../../constants/interfaces';
 
 const ReactButton: React.FunctionComponent<ReactButtonPropsState> = (props) => {
@@ -43,9 +43,9 @@ const ReactButton: React.FunctionComponent<ReactButtonPropsState> = (props) => {
             ? downVoteColor
             : '#555'
         }
-        padding='0 3px'
+        padding='0 5px'
         fontSize='13px'>
-        {Numbers.format(props.reactions)}
+        {bigNumberFormat(props.reactions)}
       </Box>
     </Box>
   );

@@ -16,15 +16,16 @@ if (navigator.cookieEnabled && localStorage.kanyimuta) {
 }
 
 const openCreatePostModal = (e: any) => {
-  displayModal(true, 'CREATE_POST');
+  displayModal(true, 'CREATE_POST', 'Create Post');
 };
 
-const Compose: React.FunctionComponent = (props) => {
+const Compose: React.FunctionComponent = () => {
   return (
     <Box
       className='post-list-page d-flex flex-column'
       borderRadius='5px'
       p={1}
+      pb={2}
       mb={1}>
       <Row className='container-fluid mx-auto align-items-center'>
         <Avatar
@@ -33,20 +34,15 @@ const Compose: React.FunctionComponent = (props) => {
           alt={displayName}
           src={`/images/${avatar}`}
         />
-        <Box component='div' fontSize='14px' fontWeight='bold' color='#555'>
-          {displayName}
-        </Box>
-      </Row>
-      <Row className='container-fluid mx-auto align-items-center'>
         <Box
-          className='compose-question'
+          className='compose-question flex-grow-1'
           py={1}
-          width='100%'
-          fontSize='19px'
+          fontSize='16px'
           color='#888'
           onClick={openCreatePostModal}
+          role='compose'
           px={2}>
-          What's on your mind?
+          What's on your mind {displayName.split(' ')[0]}?
         </Box>
       </Row>
     </Box>
