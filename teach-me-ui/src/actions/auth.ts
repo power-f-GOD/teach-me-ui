@@ -13,7 +13,8 @@ import {
   AuthState,
   VERIFY_AUTH,
   SIGNOUT_REQUEST,
-  SIGNOUT_USER
+  SIGNOUT_USER,
+  apiBaseURL as baseURL
 } from '../constants';
 import {
   validateEmail,
@@ -58,7 +59,8 @@ export const requestSignup = (data: SignupFormData) => (
   callNetworkStatusCheckerFor({ name: 'signup', func: signup });
 
   axios({
-    url: 'https://teach-me-services.herokuapp.com/api/v1/register',
+    url: '/auth/register',
+    baseURL,
     method: 'POST',
     data: {
       firstname,
@@ -67,7 +69,7 @@ export const requestSignup = (data: SignupFormData) => (
       email,
       date_of_birth,
       password,
-      institution,
+      institution_id: institution,
       department,
       level
     },
@@ -178,8 +180,8 @@ export const requestSignin = (data: SigninFormData) => (
 
   axios({
     method: 'POST',
-    url: '/login',
-    baseURL: 'https://teach-me-services.herokuapp.com/api/v1',
+    url: '/auth/login',
+    baseURL,
     data: {
       ..._id,
       password

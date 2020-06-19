@@ -41,7 +41,7 @@ export function callNetworkStatusCheckerFor(action: NetworkAction) {
     status: 'settled',
     err: true,
     statusText:
-      'Something seems to be wrong with your data connection. Contact your Service Provider.'
+      'Something, probably, seems to be wrong with your data connection. Try contact your Service Provider.'
   };
 
   //if after 12 seconds of sending request there's no response, throw a network error feedback to user
@@ -54,7 +54,7 @@ export function callNetworkStatusCheckerFor(action: NetworkAction) {
       );
 
     callTimeoutToAbortNetworkAction(action);
-  }, 12000);
+  }, 15000);
 
   function callTimeoutToAbortNetworkAction(action: NetworkAction) {
     if (navigator.onLine && state[action.name]?.status === 'pending') {
@@ -81,7 +81,7 @@ export function callNetworkStatusCheckerFor(action: NetworkAction) {
           })
         );
       }
-    }, 10000);
+    }, 15000);
   }
 }
 
@@ -111,21 +111,21 @@ export async function populateStateWithUserData(
     validateInstitution({
       value: { keyword: '', uid: '' },
       err: false,
-      helperText: ' '
+      helperText: ''
     })
   );
   dispatch(
     validateDepartment({
-      value: { keyword: '', uid: '' },
+      value: '',
       err: false,
-      helperText: ' '
+      helperText: ''
     })
   );
   dispatch(
     validateLevel({
-      value: { keyword: '', uid: '' },
+      value: '',
       err: false,
-      helperText: ' '
+      helperText: ''
     })
   );
   dispatch(signin({ status: 'fulfilled', err: false }));
@@ -152,7 +152,7 @@ export const logError = (action: Function) => (error: any) => {
       severity: 'error'
     })
   );
-  console.error('An error occured: ', message);
+  console.error('An error occured: ', error);
 };
 
 export const timestampFormatter = (
