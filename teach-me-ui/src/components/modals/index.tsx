@@ -2,11 +2,10 @@ import React from 'react';
 
 import Modal from '@material-ui/core/Modal';
 import Box from '@material-ui/core/Box';
+import Backdrop from '@material-ui/core/Backdrop';
+import Fade from '@material-ui/core/Fade';
 
 import CloseIcon from '@material-ui/icons/Close';
-
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 
 import { connect } from 'react-redux';
 
@@ -25,24 +24,38 @@ const ModalFrame = (props: any) => {
       modalBody = <CreatePost />;
   }
   return (
-    <Modal className='modal-wrapper' open={props.modal.open}>
-      <Box className='main-modal p-2'>
-        <Row className='container-fluid action-bar p-0 mx-auto'>
-          <Col onClick={removeModal}>
-            <Box
-              component='button'
-              bgcolor='transparent'
-              className='close-btn'
-              height='30px'
-              width='30px'
-              border='none'
-              borderRadius='50%'>
-              <CloseIcon />
-            </Box>
-          </Col>
-        </Row>
-        <Box padding='10px'>{modalBody}</Box>
-      </Box>
+    <Modal
+      onClose={removeModal}
+      className='modal-wrapper'
+      open={props.modal.open}
+      closeAfterTransition
+      BackdropComponent={Backdrop}
+      BackdropProps={{
+        timeout: 300,
+        style: {
+          background: '#ddd5'
+        }
+      }}>
+      <Fade in={props.modal.open}>
+        <Box className='main-modal'>
+          <div className=' d-flex container justify-content-between action-bar p-0'>
+            <span></span>
+            <h4 className='m-0 text-center'>{props.modal.title}</h4>
+            <div onClick={removeModal}>
+              <Box
+                component='button'
+                className='close-btn'
+                height='30px'
+                width='30px'
+                border='none'
+                borderRadius='50%'>
+                <CloseIcon />
+              </Box>
+            </div>
+          </div>
+          <Box padding='7px'>{modalBody}</Box>
+        </Box>
+      </Fade>
     </Modal>
   );
 };

@@ -1,4 +1,9 @@
-import { ReduxAction, StatusPropsState, UserData, NetworkAction } from '../constants';
+import {
+  ReduxAction,
+  StatusPropsState,
+  UserData,
+  NetworkAction
+} from '../constants';
 import store from '../appStore';
 import {
   signin,
@@ -189,4 +194,29 @@ export const timestampFormatter = (
   return withSeconds
     ? `${hour}:${minute}:${second} ${amOrPm}`
     : `${hour}:${minute} ${amOrPm}`;
+};
+
+export const bigNumberFormat: Function = (number: number): string => {
+  if (isNaN(number)) return `${number}`;
+
+  if (number < 9999) {
+    return `${number}`;
+  }
+
+  if (number < 1000000) {
+    return `${Math.floor(number / 1000)}K`;
+  }
+  if (number < 10000000) {
+    return `${(number / 1000000).toFixed(2)}M`;
+  }
+
+  if (number < 1000000000) {
+    return `${Math.floor(number / 1000000)}M`;
+  }
+
+  if (number < 1000000000000) {
+    return `${Math.floor(number / 1000000000)}B`;
+  }
+
+  return '1T+';
 };

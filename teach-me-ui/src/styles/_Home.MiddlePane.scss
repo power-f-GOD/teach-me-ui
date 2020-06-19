@@ -1,5 +1,5 @@
 .post-list-page {
-  background: #eee;
+  background: #fff;
 }
 
 .middle-pane-col {
@@ -33,6 +33,8 @@
 
 .compose-question {
   cursor: pointer;
+  background: #eee;
+  border-radius: 2em;
 }
 
 .post-details {
@@ -50,7 +52,7 @@
   transition: all 0.3s;
   user-select: none;
   &:hover {
-    background: #ccc;
+    background: #eee;
   }
 }
 

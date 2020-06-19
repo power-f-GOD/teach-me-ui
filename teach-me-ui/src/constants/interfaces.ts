@@ -115,6 +115,7 @@ export interface SnackbarState {
 export interface ModalState {
   open: boolean;
   type?: 'CREATE_POST' | 'CREATE_COMMENT';
+  title?: string;
 }
 
 export interface UserData {

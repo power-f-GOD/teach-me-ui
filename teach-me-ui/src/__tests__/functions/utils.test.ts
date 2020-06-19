@@ -2,12 +2,11 @@ import { cleanup } from '@testing-library/react';
 
 import {
   promisedDispatch,
-  // callNetworkStatusCheckerFor,
   populateStateWithUserData,
+  bigNumberFormat,
   logError
 } from '../../functions';
 import { ReduxAction, UserData } from '../../constants';
-import { signin, signup } from '../../actions';
 
 afterEach(cleanup);
 
@@ -16,6 +15,16 @@ it('promisedDispatch dispatches an action which returns a promise that resolves 
     type: 'SIGNIN_USER'
   };
   expect(promisedDispatch(action)).resolves.toBe(action);
+});
+
+it('[bigNumberFormat] should correctly format large and small numbers.', () => {
+  expect(bigNumberFormat(20000)).toBe('20K');
+  expect(bigNumberFormat(21500)).toBe('21K');
+  expect(bigNumberFormat(2000)).toBe('2000');
+  expect(bigNumberFormat(2254000)).toBe('2.25M');
+  expect(bigNumberFormat(22345130)).toBe('22M');
+  expect(bigNumberFormat(2130000000)).toBe('2B');
+  expect(bigNumberFormat(2130000000000)).toBe('1T+');
 });
 
 // it("callNetworkStatusChecker should be called with 'signin' or 'signup' as param and return undefined.", () => {
@@ -35,11 +44,7 @@ it("populateStateWithUserData should be called with 'user data' as param and ret
     displayName: 'John Doe',
     email: 'johndoe@gmail.com',
     username: 'johndoe',
-    dob: '12/12/2000',
-    password: '********',
-    institution: 'University of Nowhere',
-    department: 'A department',
-    level: '100'
+    dob: '12/12/2000'
   };
   let mockFunc = jest.fn();
   populateStateWithUserData(mockFunc(userData) || userData);
