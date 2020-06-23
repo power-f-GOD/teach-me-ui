@@ -151,7 +151,7 @@ export const getMatchingInstitutions = (keyword: string) => (
             dispatch(
               validateInstitution({
                 err: true,
-                helperText: "Institution doesn't match the records."
+                helperText: "Institution doesn't match our records."
               })
             );
             dispatch(

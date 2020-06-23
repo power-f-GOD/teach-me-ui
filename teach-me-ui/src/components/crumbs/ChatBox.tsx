@@ -16,7 +16,7 @@ import Col from 'react-bootstrap/Col';
 
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
-import ForumIcon from '@material-ui/icons/Forum';
+import ChatIcon from '@material-ui/icons/Chat';
 import WebAssetIcon from '@material-ui/icons/WebAsset';
 import CloseIcon from '@material-ui/icons/Close';
 import EmojiIcon from '@material-ui/icons/Mood';
@@ -691,7 +691,7 @@ const ChatBox = (props: any) => {
           className={`chat-button ${isOpen ? 'hide' : ''}`}
           onClick={handleOpenChatClick}
           aria-label='chat'>
-          <ForumIcon fontSize='inherit' />
+          <ChatIcon fontSize='inherit' />
         </IconButton>
       </Container>
     </Container>
