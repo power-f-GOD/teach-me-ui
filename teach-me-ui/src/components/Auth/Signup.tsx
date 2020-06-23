@@ -83,6 +83,52 @@ const Signup = (props: SignupPropsState) => {
   const [hideLevelsList, setHideLevelsList] = useState(Boolean);
   const { isAuthenticated } = auth;
 
+  const handleInstitutionChange = useCallback(
+    (e: any) => {
+      const { target } = e;
+
+      target.dataset.uid =
+        institution.value!.keyword !== target.value.trim()
+          ? ''
+          : institution.value!.uid;
+      handleSignupInputChange(e);
+      dispatch(getMatchingInstitutions(target.value)(dispatch));
+      setHideInstitutionsList(!target.value.trim() || !navigator.onLine);
+    },
+    [institution.value]
+  );
+
+  const handleDepartmentChange = useCallback(
+    (e: any) => {
+      const { target } = e;
+      const inputIsValid = /^[a-z\s?]+$/i.test(target.value);
+
+      e.target.dataset.uid =
+        department.value !== target.value.trim() ? '' : department.value;
+
+      handleSignupInputChange(e);
+      setHideDepartmentsList(!target.value.trim() || !navigator.onLine);
+
+      if (inputIsValid)
+        dispatch(getMatchingDepartments(target.value)(dispatch));
+    },
+    [department.value]
+  );
+
+  const handleLevelChange = useCallback(
+    (e: any) => {
+      const { target } = e;
+      const inputIsValid = /^[a-z0-9\s?]+$/i.test(target.value);
+
+      e.target.dataset.uid =
+        level.value !== target.value.trim() ? '' : level.value;
+      handleSignupInputChange(e);
+      setHideLevelsList(!target.value.trim() || !navigator.onLine);
+      if (inputIsValid) dispatch(getMatchingLevels(target.value)(dispatch));
+    },
+    [level.value]
+  );
+
   const capitalizeInput = useCallback((e: any) => {
     if (/first|last|department|level/.test(e.target.id) && e.target.value) {
       e.target.value = e.target.value
@@ -97,6 +143,37 @@ const Signup = (props: SignupPropsState) => {
     }
   }, []);
 
+  const triggerSearch = useCallback(
+    (e: any) => {
+      if (!e.target.value.trim()) return;
+
+      switch (e.target.id) {
+        case 'institution':
+          if (!institution.value!.uid) {
+            handleInstitutionChange(e);
+          } else setHideInstitutionsList(false);
+          break;
+        case 'department':
+          if (!department.value) {
+            handleDepartmentChange(e);
+          }
+          break;
+        case 'level':
+          if (!level.value) {
+            handleLevelChange(e);
+          } else setHideLevelsList(false);
+      }
+    },
+    [
+      institution.value,
+      department.value,
+      level.value,
+      handleInstitutionChange,
+      handleDepartmentChange,
+      handleLevelChange
+    ]
+  );
+
   const inputProps = useMemo(() => {
     return {
       onKeyPress: (e: any) => {
@@ -104,9 +181,10 @@ const Signup = (props: SignupPropsState) => {
           e.target.blur();
         }
       },
-      onBlur: capitalizeInput
+      onBlur: capitalizeInput,
+      onFocus: triggerSearch
     };
-  }, [capitalizeInput]);
+  }, [capitalizeInput, triggerSearch]);
 
   const inputAdorned = useMemo(() => {
     return {
@@ -123,7 +201,11 @@ const Signup = (props: SignupPropsState) => {
   }, [passwordVisible]);
 
   const matchingInstitutionsList = (
-    <ClickAwayListener onClickAway={() => setHideInstitutionsList(true)}>
+    <ClickAwayListener
+      onClickAway={() =>
+        document.activeElement?.id !== 'institution' &&
+        setHideInstitutionsList(true)
+      }>
       <List
         className={`search-list custom-scroll-bar ${
           institution.value?.keyword &&
@@ -154,7 +236,7 @@ const Signup = (props: SignupPropsState) => {
               const keyword = institution.value?.keyword!.trim();
               const highlighted = `${_institution.name.replace(
                 new RegExp(`(${keyword})`, 'i'),
-                `<span class='theme-secondary-darker'><b>$1</b></span>`
+                `<span class='theme-secondary-darker'>$1</span>`
               )}, ${country}`.replace(/<\/?script>/gi, '');
 
               return (
@@ -171,7 +253,11 @@ const Signup = (props: SignupPropsState) => {
   );
 
   const matchingDepartmentsList = (
-    <ClickAwayListener onClickAway={() => setHideDepartmentsList(true)}>
+    <ClickAwayListener
+      onClickAway={() =>
+        document.activeElement?.id !== 'department' &&
+        setHideDepartmentsList(true)
+      }>
       <List
         className={`search-list custom-scroll-bar ${
           department.value && !department.err && !hideDepartmentsList
@@ -201,7 +287,7 @@ const Signup = (props: SignupPropsState) => {
                   .trim()
                   .replace(
                     new RegExp(`(${department.value!.trim()})`, 'i'),
-                    `<span class='theme-secondary-darker'><b>$1</b></span>`
+                    `<span class='theme-secondary-darker'>$1</span>`
                   )}`.replace(/<\/?script>/gi, '');
 
                 return (
@@ -218,7 +304,10 @@ const Signup = (props: SignupPropsState) => {
   );
 
   const matchingLevelsList = (
-    <ClickAwayListener onClickAway={() => setHideLevelsList(true)}>
+    <ClickAwayListener
+      onClickAway={() =>
+        document.activeElement?.id !== 'level' && setHideLevelsList(true)
+      }>
       <List
         className={`search-list custom-scroll-bar ${
           level.value && !level.err && !hideLevelsList ? 'open' : 'close'
@@ -246,7 +335,7 @@ const Signup = (props: SignupPropsState) => {
                   .trim()
                   .replace(
                     new RegExp(`(${level.value!.trim()})`, 'i'),
-                    `<span class='theme-secondary-darker'><b>$1</b></span>`
+                    `<span class='theme-secondary-darker'>$1</span>`
                   )}`.replace(/<\/?script>/gi, '');
 
                 return (
@@ -260,52 +349,6 @@ const Signup = (props: SignupPropsState) => {
           ))}
       </List>
     </ClickAwayListener>
-  );
-
-  const handleInstitutionChange = useCallback(
-    (e: any) => {
-      const { target } = e;
-
-      target.dataset.uid =
-        institution.value!.keyword !== target.value.trim()
-          ? ''
-          : institution.value!.uid;
-      handleSignupInputChange(e);
-      dispatch(getMatchingInstitutions(target.value)(dispatch));
-      setHideInstitutionsList(!target.value || !navigator.onLine);
-    },
-    [institution.value]
-  );
-
-  const handleDepartmentChange = useCallback(
-    (e: any) => {
-      const { target } = e;
-      const inputIsValid = /^[a-z\s?]+$/i.test(target.value);
-
-      e.target.dataset.uid =
-        department.value !== target.value.trim() ? '' : department.value;
-
-      handleSignupInputChange(e);
-      setHideDepartmentsList(!target.value || !navigator.onLine);
-
-      if (inputIsValid)
-        dispatch(getMatchingDepartments(target.value)(dispatch));
-    },
-    [department.value]
-  );
-
-  const handleLevelChange = useCallback(
-    (e: any) => {
-      const { target } = e;
-      const inputIsValid = /^[a-z0-9\s?]+$/i.test(target.value);
-
-      e.target.dataset.uid =
-        level.value !== target.value.trim() ? '' : level.value;
-      handleSignupInputChange(e);
-      setHideLevelsList(!target.value || !navigator.onLine);
-      if (inputIsValid) dispatch(getMatchingLevels(target.value)(dispatch));
-    },
-    [level.value]
   );
 
   if (isAuthenticated) {

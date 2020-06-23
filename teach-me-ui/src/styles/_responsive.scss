@@ -29,6 +29,18 @@
   .app-bar-links {
     display: none;
   }
+
+  //Profile style(s)
+  .Profile {
+    .close-edit-button,
+    .edit-button {
+      right: 1.25rem;
+
+      [class*='Icon'] {
+        margin-right: 0.7rem;
+      }
+    }
+  }
 }
 
 @media screen and (max-width: 767px) {
@@ -79,22 +91,27 @@
     }
   }
 
-  // .chat-box-wrapper {
-  //   $full-length: 100%;
-
-  //   border-radius: 0;
-  //   overflow: hidden;
-  //   max-width: unset;
-  //   max-height: unset;
-  //   width: $full-length;
-  //   height: $full-length;
-  //   position: fixed !important;
-  //   left: 0.95rem;
-  // }
-  
   .scroll-view-msg-wrapper {
     max-width: 22rem;
-  } 
+  }
+
+  //Profile style(s)
+  .Profile {
+    .close-edit-button,
+    .edit-button {
+      right: 1.25rem;
+      transform: translateX(82%);
+      border-radius: 2rem 0 0 2rem;
+
+      [class*='Icon'] {
+        margin-right: 0.85rem;
+      }
+
+      &:hover {
+        transform: translateX(calc(2% + 1.25rem));
+      }
+    }
+  }
 }
 
 @media screen and (max-width: 599px) {
@@ -161,5 +178,5 @@
   //chat box style(s)
   .scroll-view-msg-wrapper {
     max-width: 75%;
-  } 
+  }
 }

@@ -7,8 +7,8 @@ body,
   width: 100%;
   margin: 0;
   font-size: 1rem;
-  color: $theme-tertiary-v2;
-  line-height: 1.35rem;
+  color: $theme-tertiary-v1;
+  line-height: 1.4rem;
 }
 
 body {
@@ -18,21 +18,19 @@ body {
 
 * {
   box-sizing: border-box;
-  font-family: 'Exo 2', 'Trebuchet MS', sans-serif !important;
-  // border: 1px solid deeppink;
-}
-
-.debugger {
-  &,
-  * {
-    border: 1px solid green;
-  }
+  font-family: 'Hind Madurai', 'Trebuchet MS', sans-serif !important;
+  // border: 1px solid deeppink; //DEBUGGER
+  font-weight: 400;
 }
 
 body {
   padding: 0 !important;
 
   &.desktop {
+    [class*=SwipeArea] {
+      display: none;
+    }
+
     &.custom-scroll-bar,
     .custom-scroll-bar,
     textarea,
@@ -146,6 +144,10 @@ h6 {
   }
 }
 
+path {
+  stroke-width: 0.0625rem !important;
+}
+
 hr {
   margin: 1.25rem 0;
   height: 0.2rem;
@@ -248,11 +250,6 @@ a {
 .MuiOutlinedInput-root {
   &:hover .MuiOutlinedInput-notchedOutline {
     border: 2px solid $theme-tertiary-v7;
-    border-color: linear-gradient(
-      to right,
-      $theme-primary-v4,
-      $theme-secondary
-    );
   }
 }
 
@@ -340,9 +337,10 @@ div {
 .MuiAlert-filledSuccess,
 .MuiAlert-filledError,
 .MuiAlert-filledInfo,
-.MuiAlert-filledWarning {
+.MuiAlert-filledWarning,
+.MuiAlert-message {
   font: {
-    weight: bold;
+    weight: 500;
     size: 0.95rem;
   }
   transition: background-color 0.35s !important;
