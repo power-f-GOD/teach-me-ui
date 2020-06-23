@@ -6,11 +6,12 @@ import Container from 'react-bootstrap/Container';
 
 import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
-// import CreateIcon from '@material-ui/icons/Create';
+import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
 // import LocationOnIcon from '@material-ui/icons/LocationOn';
 import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
 import SchoolOutlinedIcon from '@material-ui/icons/SchoolOutlined';
-// import MenuBookIcon from '@material-ui/icons/MenuBook';
+import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
+import Button from '@material-ui/core/Button';
 // import GroupIcon from '@material-ui/icons/Group';
 // import ForumIcon from '@material-ui/icons/Forum';
 // import PeopleOutlineIcon from '@material-ui/icons/PeopleOutline';
@@ -61,9 +62,27 @@ const academicInfo: _Info[] = [
 
 const Profile = () => {
   return (
-    <Box className='Profile fade-in' paddingY='5rem'>
+    <Box className='Profile fade-in pb-5' paddingTop='5rem'>
       <Container className='rows-wrapper custom-scroll-bar small-bar rounded-bar tertiary-bar p-0'>
         <Row as='section' className='m-0 px-3 flex-column mb-5'>
+          <Button
+            variant='contained'
+            size='large'
+            className='edit-button'
+            color='primary'
+            // onClick={handleEditClick}
+            >
+            <CreateOutlinedIcon fontSize='inherit' /> Edit Profile  
+          </Button>
+          <Button
+            variant='contained'
+            size='large'
+            className='close-edit-button'
+            color='primary'
+            // onClick={handleEditClick}
+            >
+            <CloseOutlinedIcon fontSize='inherit' /> Cancel Edit  
+          </Button>
           <Col className='p-0 d-flex justify-content-center'>
             <Avatar
               component='span'
@@ -82,7 +101,7 @@ const Profile = () => {
               @{username}
             </Col>
             <Col as='span' className='status p-0 px-3 d-block'>
-              {/* <CreateIcon className='mr-2' /> */}
+              {/* <CreateOutlinedIcon className='mr-2' /> */}
               Currently creating some amazing sturvs...
             </Col>
           </Col>

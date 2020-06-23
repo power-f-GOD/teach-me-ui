@@ -18,15 +18,19 @@ body {
 
 * {
   box-sizing: border-box;
-  font-family: 'Hind', 'Trebuchet MS', sans-serif !important;
+  font-family: 'Hind Madurai', 'Trebuchet MS', sans-serif !important;
   // border: 1px solid deeppink; //DEBUGGER
-  font-weight: 200;
+  font-weight: 400;
 }
 
 body {
   padding: 0 !important;
 
   &.desktop {
+    [class*=SwipeArea] {
+      display: none;
+    }
+
     &.custom-scroll-bar,
     .custom-scroll-bar,
     textarea,
@@ -333,9 +337,10 @@ div {
 .MuiAlert-filledSuccess,
 .MuiAlert-filledError,
 .MuiAlert-filledInfo,
-.MuiAlert-filledWarning {
+.MuiAlert-filledWarning,
+.MuiAlert-message {
   font: {
-    weight: bold;
+    weight: 500;
     size: 0.95rem;
   }
   transition: background-color 0.35s !important;

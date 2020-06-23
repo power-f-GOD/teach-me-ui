@@ -3,6 +3,7 @@
 .Profile {
   // @include debugger($color: green);
   background-color: #eee;
+  min-height: 100vh;
 
   &::before {
     @include before-or-after(
@@ -26,6 +27,36 @@
     // color: white;
   }
 
+  .close-edit-button,
+  .edit-button {
+    // $size: 3rem;
+
+    // height: $size;
+    padding: 0.55rem 0.85rem;
+    position: fixed;
+    // width: 9rem;
+    top: 8rem;
+    right: calc(50vw - 34rem);
+    z-index: 1;
+    background-color: $theme-tertiary-v1 !important;
+    transition: 0.3s;
+    // color: inherit;
+
+    [class*='Icon'] {
+      font-size: 1.5rem;
+      margin-right: 0.7rem;
+    }
+
+    path {
+      fill: white;
+      stroke: $theme-tertiary-v1;
+    }
+  }
+
+  .close-edit-button {
+    top: 12rem;
+  }
+
   .profile-avatar {
     $size: 8rem;
 
@@ -47,6 +78,7 @@
 
   .MuiSvgIcon-root {
     color: $theme-primary-v4;
+    font-size: 2.5rem;
   }
 
   .status {
@@ -54,13 +86,13 @@
     font-weight: 500;
   }
 
-  [class*=card-container] {
+  [class*='card-container'] {
     display: flex;
     justify-content: center;
     padding: 0 1.25rem;
   }
 
-  [class*=-info-card] {
+  [class*='-info-card'] {
     width: 100%;
     display: inline-block;
     max-width: 32rem;
@@ -78,7 +110,7 @@
   // }
 
   // .academic-info-card {
-    
+
   // }
 
   .card-title {
