@@ -2,16 +2,24 @@ import React from 'react';
 
 import Box from '@material-ui/core/Box';
 
-import { bigNumberFormat } from '../../functions/utils';
+import { bigNumberFormat, reactToPostFn } from '../../functions';
 import { ReactButtonPropsState } from '../../constants/interfaces';
+
+const reactToPost = (id: number, type: 'upvote' | 'neutral' | 'downvote') => (
+  e: any
+) => {
+  reactToPostFn(id, type);
+};
 
 const ReactButton: React.FunctionComponent<ReactButtonPropsState> = (props) => {
   const upVoteColor = props.reacted === 'upvote' ? 'green' : '#555';
   const downVoteColor = props.reacted === 'downvote' ? 'red' : '#555';
+
   return (
     <Box
       padding='5px 15px'
-      className='d-flex align-items-center react-to-post justify-content-center'>
+      className='d-flex align-items-center react-to-post justify-content-center'
+      onClick={reactToPost(props.id, props.type)}>
       <svg
         width='12'
         height='7'

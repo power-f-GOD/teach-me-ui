@@ -6,29 +6,44 @@ import Col from 'react-bootstrap/Col';
 import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 
+import Skeleton from 'react-loading-skeleton';
+
 import ReactButton from './ReactButton';
 import { bigNumberFormat } from '../../functions/utils';
 import { PostPropsState } from '../../constants/interfaces';
 
-const Post: React.FunctionComponent<PostPropsState> = (props) => {
+const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
   return (
     <Box className='post-list-page' borderRadius='5px' p={1} pb={0} mb={1}>
       <Row className='container-fluid mx-auto p-0 align-items-center'>
         <Col xs={1}>
-          <Avatar
-            component='span'
-            className='chat-avatar'
-            alt={props.displayName}
-            src={`/images/${props.userAvatar}`}
-          />
+          {props.displayName ? (
+            <Avatar
+              component='span'
+              className='chat-avatar'
+              alt={props.displayName}
+              src={`/images/${props.userAvatar}`}
+            />
+          ) : (
+            <Skeleton circle height={30} width={30} />
+          )}
         </Col>
         <Col xs={10} className='d-flex flex-column'>
-          <Box component='div' fontWeight='bold'>
-            {props.displayName}
-          </Box>
-          <Box component='div' color='#777'>
-            @{props.username}
-          </Box>
+          {props.displayName ? (
+            <>
+              <Box component='div' fontWeight='bold'>
+                {props.displayName}
+              </Box>
+              <Box component='div' color='#777'>
+                @{props.username}
+              </Box>
+            </>
+          ) : (
+            <>
+              <Skeleton width={150} />
+              <Skeleton width={100} />
+            </>
+          )}
         </Col>
         <Col xs={1}>
           <Box className='more' component='span' borderRadius='100px'>
@@ -49,34 +64,44 @@ const Post: React.FunctionComponent<PostPropsState> = (props) => {
           </Box>
         </Col>
       </Row>
-      <Row className='container-fluid  mx-auto'>
-        <Box component='div' pt={1} px={0} className='break-word'>
-          {props.postBody}
-        </Box>
-      </Row>
-      <Box py={1} mt={1} borderTop='1px solid #ddd'>
-        <Row>
-          <Col className='d-flex align-items-center justify-content-center'>
-            <ReactButton
-              reacted={props.reaction}
-              reactions={props.upvotes}
-              type='upvote'
-            />
-          </Col>
-          <Col className='d-flex align-items-center justify-content-center'>
-            <ReactButton
-              reacted={props.reaction}
-              reactions={props.downvotes}
-              type='downvote'
-            />
-          </Col>
-          <Col className='d-flex align-items-center justify-content-center'>
-            <Box className='post-details' fontSize='13px'>
-              {bigNumberFormat(props.noOfComments)} Comments
-            </Box>
-          </Col>
+      {props.postBody ? (
+        <Row className='container-fluid  mx-auto'>
+          <Box component='div' pt={1} px={0} className='break-word'>
+            {props.postBody}
+          </Box>
         </Row>
-      </Box>
+      ) : (
+        <Box p={2} pl={3}>
+          <Skeleton count={3} />
+        </Box>
+      )}
+      {props.displayName && (
+        <Box py={1} mt={1} borderTop='1px solid #ddd'>
+          <Row>
+            <Col className='d-flex align-items-center justify-content-center'>
+              <ReactButton
+                id={props.id as number}
+                reacted={props.reaction as 'neutral'}
+                reactions={props.upvotes as 0}
+                type='upvote'
+              />
+            </Col>
+            <Col className='d-flex align-items-center justify-content-center'>
+              <ReactButton
+                id={props.id as number}
+                reacted={props.reaction as 'neutral'}
+                reactions={props.downvotes as 0}
+                type='downvote'
+              />
+            </Col>
+            <Col className='d-flex align-items-center justify-content-center'>
+              <Box className='post-details' fontSize='13px'>
+                {bigNumberFormat(props.noOfComments)} Comments
+              </Box>
+            </Col>
+          </Row>
+        </Box>
+      )}
     </Box>
   );
 };

@@ -17,6 +17,7 @@ export interface InputErrState {
 }
 
 export interface PostPropsState {
+  id?: number;
   displayName: string;
   username: string;
   upvotes: number;
@@ -27,15 +28,27 @@ export interface PostPropsState {
   reaction: 'upvote' | 'downvote' | 'neutral';
 }
 
+export interface FetchPostsState {
+  status: 'pending' | 'rejected' | 'resolved';
+  error?: boolean;
+  message?: string;
+}
+
 export interface TopicPropsState {
   topic: string;
   numberOfDiscussions: number;
 }
 
 export interface ReactButtonPropsState {
+  id: number;
   reactions: number;
   type: 'upvote' | 'downvote';
   reacted: 'upvote' | 'downvote' | 'neutral';
+}
+
+export interface ReactPostState {
+  id: number;
+  type: 'upvote' | 'downvote' | 'neutral';
 }
 
 export interface BasicInputState extends InputErrState {

@@ -22,6 +22,14 @@ import {
 
 export const { dispatch, getState } = store;
 
+export const resultantReaction: Function = (
+  oldReaction: 'upvote' | 'downvote' | 'neutral',
+  newReaction: 'upvote' | 'downvote' | 'neutral'
+): 'upvote' | 'downvote' | 'neutral' => {
+  if (oldReaction === newReaction) return 'neutral';
+  return newReaction;
+};
+
 export function promisedDispatch(action: ReduxAction): Promise<ReduxAction> {
   dispatch(action);
   return new Promise((resolve: Function) => {
