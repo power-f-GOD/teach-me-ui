@@ -7,11 +7,46 @@ import {
   signupState,
   signinState,
   signoutState,
-  AuthState
+  AuthState,
+  AUTHENTICATE_USER,
+  ForgotPasswordStatusState,
+  forgotPasswordStatusState,
+  FORGOT_PASSWORD_PENDING,
+  FORGOT_PASSWORD_COMPLETED
 } from '../../constants';
-import { signin, signup, auth, signout } from '../../reducers/auth';
+import {
+  signin,
+  signup,
+  auth,
+  signout,
+  forgotPasswordStatus
+} from '../../reducers/auth';
 
 afterEach(cleanup);
+
+it("forgotPasswordStatus reducer should be called with 'state' and 'action' and return object of type ForgotPasswordStatusState", () => {
+  const mockForgotPasswordStatusState: ForgotPasswordStatusState = {
+    status: expect.stringMatching(/completed|pending/)
+  };
+
+  const action: ReduxAction = {
+    type: FORGOT_PASSWORD_COMPLETED
+  };
+
+  const forgotPasswordStatusMockFunc = jest.fn(
+    (state: ForgotPasswordStatusState, action: ReduxAction) =>
+      forgotPasswordStatus(state, action)
+  );
+
+  forgotPasswordStatusMockFunc(mockForgotPasswordStatusState, action);
+  expect(forgotPasswordStatusMockFunc).toHaveBeenCalledWith(
+    forgotPasswordStatusState,
+    action
+  );
+  expect(
+    forgotPasswordStatus(mockForgotPasswordStatusState, action)
+  ).toMatchObject(forgotPasswordStatusState);
+});
 
 it("auth reducers should be called with 'state' and 'action' params and return object of type StatusPropsState", () => {
   const mockSignState: StatusPropsState = {
@@ -24,7 +59,7 @@ it("auth reducers should be called with 'state' and 'action' params and return o
     status: expect.stringMatching(/settled|pending|fulfilled/)
   };
   const action: ReduxAction = {
-    type: 'AUTHENTICATE_USER',
+    type: AUTHENTICATE_USER,
     payload: { ...authState }
   };
   const signupMockFunc = jest.fn(

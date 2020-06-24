@@ -9,6 +9,9 @@ import {
   SIGNUP_USER,
   SIGNUP_REQUEST,
   SIGNIN_REQUEST,
+  FORGOT_PASSWORD_REQUEST,
+  FORGOT_PASSWORD_PENDING,
+  FORGOT_PASSWORD_COMPLETED,
   StatusPropsState,
   VERIFY_AUTH,
   AUTHENTICATE_USER,
@@ -18,6 +21,10 @@ import {
 import {
   requestSignin,
   requestSignup,
+  doForgotPassword,
+  doResetPassword,
+  forgotPasswordPending,
+  forgotPasswordCompleted,
   auth,
   signout,
   signup,
@@ -28,6 +35,74 @@ import {
 import { dispatch } from '../../functions/utils';
 
 afterEach(cleanup);
+
+it('creates forgotPasswordCompleted action and return action', () => {
+  const forgotPasswordCompletedAction: ReduxAction = {
+    type: FORGOT_PASSWORD_COMPLETED,
+    payload: {
+      status: 'completed'
+    }
+  };
+  const forgotPasswordCompletedMockFunc = jest.fn(() =>
+    forgotPasswordCompleted()
+  );
+
+  forgotPasswordCompletedMockFunc();
+  expect(forgotPasswordCompletedMockFunc).toHaveBeenCalledWith();
+  expect(forgotPasswordCompleted()).toMatchObject(
+    forgotPasswordCompletedAction
+  );
+});
+
+it('creates forgotPasswordPending action and return action', () => {
+  const forgotPasswordPendingAction: ReduxAction = {
+    type: FORGOT_PASSWORD_PENDING,
+    payload: {
+      status: 'pending'
+    }
+  };
+  const forgotPasswordPendingMockFunc = jest.fn(() => forgotPasswordPending());
+
+  forgotPasswordPendingMockFunc();
+  expect(forgotPasswordPendingMockFunc).toHaveBeenCalledWith();
+  expect(forgotPasswordPending()).toMatchObject(forgotPasswordPendingAction);
+});
+it("creates doResetPassword action and should be called with 'password, token, callback' and return action", () => {
+  const email: string = 'benjamincath@gmail.com';
+  const token: string = 'PASSWORD_RESET_TOKEN';
+  const callback = () => {};
+
+  const doResetPasswordAction: ReduxAction = {
+    type: FORGOT_PASSWORD_REQUEST
+  };
+  const doResetPasswordMockFunc = jest.fn(
+    (email: string, token: string, callback: Function) =>
+      doResetPassword(email, token, callback)(dispatch)
+  );
+
+  doResetPasswordMockFunc(email, token, callback);
+  expect(doResetPasswordMockFunc).toHaveBeenCalledWith(email, token, callback);
+  expect(doResetPassword(email, token, callback)(dispatch)).toMatchObject(
+    doResetPasswordAction
+  );
+});
+
+it("creates doForgotPassword action and should be called with 'email' and return action", () => {
+  const email: string = 'benjamincath@gmail.com';
+
+  const doForgotPasswordAction: ReduxAction = {
+    type: FORGOT_PASSWORD_REQUEST
+  };
+  const doForgotPasswordMockFunc = jest.fn((email: string) =>
+    doForgotPassword(email)(dispatch)
+  );
+
+  doForgotPasswordMockFunc(email);
+  expect(doForgotPasswordMockFunc).toHaveBeenCalledWith(email);
+  expect(doForgotPassword(email)(dispatch)).toMatchObject(
+    doForgotPasswordAction
+  );
+});
 
 it("creates signup request action and should be called with 'signup data' and return action.", () => {
   const mockSignupData: SignupFormData = {

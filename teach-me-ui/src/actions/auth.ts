@@ -4,6 +4,9 @@ import {
   ReduxAction,
   SIGNUP_REQUEST,
   SIGNUP_USER,
+  FORGOT_PASSWORD_PENDING,
+  FORGOT_PASSWORD_COMPLETED,
+  FORGOT_PASSWORD_REQUEST,
   SignupFormData,
   StatusPropsState,
   AUTHENTICATE_USER,
@@ -28,6 +31,91 @@ import {
   logError
 } from '../functions';
 import { displaySnackbar } from './misc';
+
+export const doForgotPassword = (email: string) => (
+  dispatch: Function
+): ReduxAction => {
+  dispatch(forgotPasswordPending());
+  axios({
+    url: '/auth/pass/reset/request',
+    baseURL,
+    method: 'POST',
+    data: {
+      email
+    },
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }).finally(() => {
+    dispatch(forgotPasswordCompleted());
+    dispatch(
+      displaySnackbar({
+        open: true,
+        message: 'Password reset link has been sent!',
+        severity: 'success',
+        autoHide: true
+      })
+    );
+  });
+  return {
+    type: FORGOT_PASSWORD_REQUEST
+  };
+};
+
+export const doResetPassword = (
+  password: string,
+  token: string,
+  callback: Function
+) => (dispatch: Function): ReduxAction => {
+  dispatch(forgotPasswordPending());
+  axios({
+    url: '/auth/pass/reset',
+    baseURL,
+    method: 'POST',
+    data: {
+      reset_token: token,
+      password
+    },
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }).then(({ data: _data }) => {
+    dispatch(forgotPasswordCompleted());
+    let message: string = '';
+    if (/(token .+ decoded|reset .+ expired)/.test(_data.message)) {
+      message = 'Password reset link has expired.';
+    } else if (/changed/.test(_data.message)) {
+      message = 'Password has been changed successfully';
+    } else {
+      message = _data.message;
+    }
+    dispatch(
+      displaySnackbar({
+        open: true,
+        message,
+        severity: _data.error ? 'error' : 'success',
+        autoHide: true
+      })
+    );
+    callback();
+  });
+  return {
+    type: FORGOT_PASSWORD_REQUEST
+  };
+};
+
+export const forgotPasswordPending = () => {
+  return {
+    type: FORGOT_PASSWORD_PENDING,
+    payload: { status: 'pending' }
+  };
+};
+export const forgotPasswordCompleted = () => {
+  return {
+    type: FORGOT_PASSWORD_COMPLETED,
+    payload: { status: 'completed' }
+  };
+};
 
 export const requestSignup = (data: SignupFormData) => (
   dispatch: Function

@@ -3,3 +3,4 @@ export * from './utils';
 export * from './signin';
 export * from './main';
 export * from './modals';
+export * from './forgotpassword';

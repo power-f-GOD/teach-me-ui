@@ -57,6 +57,10 @@ export interface StatusPropsState {
   statusText?: string;
 }
 
+export interface ForgotPasswordStatusState {
+  status?: 'pending' | 'completed';
+}
+
 export interface SearchState extends StatusPropsState {
   data?: any[];
   [key: string]: any;

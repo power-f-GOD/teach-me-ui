@@ -108,7 +108,7 @@ const Signin = (props: SigninPropsState) => {
           alignItems='center'
           component='div'>
           <Box component='div' textAlign='right' marginLeft='10px'>
-            <Link to='#!'>Forgot password?</Link>
+            <Link to='/forgot-password'>Forgot password?</Link>
           </Box>
         </Box>
 
