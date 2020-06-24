@@ -5,7 +5,8 @@ import React, {
   useCallback,
   useMemo,
   createRef,
-  ChangeEvent
+  ChangeEvent,
+  useEffect
 } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -130,8 +131,10 @@ const Signup = (props: SignupPropsState) => {
   );
 
   const capitalizeInput = useCallback((e: any) => {
-    if (/first|last|department|level/.test(e.target.id) && e.target.value) {
-      e.target.value = e.target.value
+    const { id, value } = e.target;
+
+    if (/first|last|department|level/.test(id) && value) {
+      e.target.value = value
         .split(' ')
         .map((word: string) =>
           /^(in|of|and|on)$/i.test(word)
@@ -139,9 +142,15 @@ const Signup = (props: SignupPropsState) => {
             : word[0].toUpperCase() + word.slice(1).toLowerCase()
         )
         .join(' ');
-      handleSignupInputChange(e);
+
+      if (id === 'department')
+        handleDepartmentChange(e);
+      else if (id === 'level') 
+        handleLevelChange(e);
+      else
+        handleSignupInputChange(e);
     }
-  }, []);
+  }, [handleDepartmentChange, handleLevelChange]);
 
   const triggerSearch = useCallback(
     (e: any) => {
@@ -156,7 +165,7 @@ const Signup = (props: SignupPropsState) => {
         case 'department':
           if (!department.value) {
             handleDepartmentChange(e);
-          }
+          } else setHideDepartmentsList(false);
           break;
         case 'level':
           if (!level.value) {
@@ -351,16 +360,16 @@ const Signup = (props: SignupPropsState) => {
     </ClickAwayListener>
   );
 
+  useEffect(() => () => window.scrollTo(0, 0), []);
+
   if (isAuthenticated) {
     return <Redirect to='/' />;
   }
 
   return (
-    <Grid
-      className='auth-form-wrapper fade-in'
-      container
-      justify='center'
-      direction='column'>
+    <Box
+      width='45rem'
+      className='auth-form-wrapper fade-in d-flex flex-column justify-content-center'>
       <Typography component='h2' variant='h6'>
         <Box marginY='0.5em' fontSize='1.25rem' fontWeight={900}>
           Basic info:
@@ -535,7 +544,7 @@ const Signup = (props: SignupPropsState) => {
                 label='Department'
                 size='medium'
                 value={department.value || ''}
-                className={department.value ? 'input-set' : 'not-set'}
+                className={department.value && institution.value!.uid ? 'input-set' : 'not-set'}
                 autoComplete='department'
                 inputRef={refs.departmentInput}
                 helperText={department.helperText}
@@ -569,7 +578,7 @@ const Signup = (props: SignupPropsState) => {
                 size='medium'
                 autoComplete='level'
                 value={level.value || ''}
-                className={level.value ? 'input-set' : 'not-set'}
+                className={level.value && institution.value!.uid ? 'input-set' : 'not-set'}
                 inputRef={refs.levelInput}
                 helperText={level.helperText}
                 fullWidth
@@ -611,7 +620,7 @@ const Signup = (props: SignupPropsState) => {
           Have a an account? <Link to='/signin'>Sign in here!</Link>
         </Typography>
       </Box>
-    </Grid>
+    </Box>
   );
 };
 

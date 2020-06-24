@@ -12,6 +12,8 @@ import LeftPane from './LeftPane';
 import ModalFrame from '../modals';
 
 const Home = () => {
+  React.useEffect(() => () => window.scrollTo(0, 0), []);
+
   return (
     <>
       <ModalFrame />

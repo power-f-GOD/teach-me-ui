@@ -39,6 +39,8 @@ let mockData: any = {
 };
 
 const Landing = () => {
+  React.useEffect(() => () => window.scrollTo(0, 0), []);
+  
   return (
     <Box className='fade-in'>
       <Box component='main' className='landing-main-box'>
