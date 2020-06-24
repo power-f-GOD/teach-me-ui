@@ -68,7 +68,7 @@ it('creates forgotPasswordPending action and return action', () => {
   expect(forgotPasswordPending()).toMatchObject(forgotPasswordPendingAction);
 });
 it("creates doResetPassword action and should be called with 'password, token, callback' and return action", () => {
-  const email: string = 'benjamincath@gmail.com';
+  const email: string = 'support@kanyimuta.com';
   const token: string = 'PASSWORD_RESET_TOKEN';
   const callback = () => {};
 
