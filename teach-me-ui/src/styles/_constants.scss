@@ -151,15 +151,30 @@ $app-max-width: 74rem;
   }
 }
 
-@mixin before-or-after($bg: $theme-primary-v8, $w: 100%, $h: 100%, $br: 0, $tr: 0.35s, $t: 0, $l: 0, $zi: -1) {
+@mixin before-or-after(
+  $bg: $theme-primary-v8,
+  $w: 100%,
+  $h: 100%,
+  $br: 0,
+  $tr: 0.35s,
+  $t: 0,
+  $l: 0,
+  $r: 0,
+  $b: 0,
+  $zi: -1,
+  $bs: none
+) {
   position: absolute;
   content: ' ';
   width: $w;
   height: $h;
   top: $t;
   left: $l;
+  right: $r;
+  bottom: $b;
   z-index: $zi;
   background: $bg;
   border-radius: $br;
+  box-shadow: $bs;
   transition: $tr;
 }
