@@ -19,6 +19,8 @@
 
   hr {
     height: 0.0625rem;
+    width: calc(100% - 0.8rem);
+    margin-left: 0.45rem;
     background: $theme-tertiary-v9;
   }
 
@@ -27,20 +29,69 @@
     // color: white;
   }
 
+  .edit-buttons-container {
+    // @include debugger();
+
+    position: fixed;
+    right: 0;
+    width: calc(50vw - 23.65rem);
+    z-index: 5;
+    top: 8rem;
+
+    &::before {
+      position: relative;
+      height: 0;
+
+      @include before-or-after(
+        $h: 5.25rem,
+        $r: 0,
+        $t: -1.16rem,
+        $br: 0.75rem 0 0 0.75rem,
+        $bg: transparent,
+        $bs: none
+      );
+    }
+
+    &.add-background {
+      &::before {
+        background: $theme-tertiary-v8;
+        box-shadow: 0 0 2.5rem rgba(0, 0, 0, 0.2);
+      }
+    }
+
+    &.enlarge {
+      &::before {
+        height: 9rem;
+      }
+
+      .close-edit-button {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .edit-button {
+        background-color: $theme-secondary-v4 !important;
+
+        path {
+          fill: white;
+          stroke: $theme-secondary;
+        }
+      }
+    }
+  }
+
   .close-edit-button,
   .edit-button {
-    // $size: 3rem;
-
-    // height: $size;
     padding: 0.55rem 0.85rem;
     position: fixed;
-    // width: 9rem;
     top: 8rem;
     right: calc(50vw - 34rem);
-    z-index: 1;
+    z-index: 2;
+    min-width: 9.25rem;
+    justify-content: flex-start;
     background-color: $theme-tertiary-v1 !important;
-    transition: 0.3s;
-    // color: inherit;
+    transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
     [class*='Icon'] {
       font-size: 1.5rem;
@@ -54,7 +105,11 @@
   }
 
   .close-edit-button {
-    top: 12rem;
+    z-index: 1;
+    top: 11.75rem;
+    transform: translateY(-3.75rem);
+    opacity: 0;
+    visibility: hidden;
   }
 
   .profile-avatar {
@@ -96,13 +151,52 @@
     width: 100%;
     display: inline-block;
     max-width: 32rem;
-    padding: 1.75rem;
+    position: relative;
+    overflow: hidden;
+    padding: 1.75rem 1.5rem;
     padding-bottom: 1.5rem;
     margin-bottom: 1.5rem;
     background-color: white;
     box-shadow: 0 0 2.5rem rgba(0, 0, 0, 0.2);
     border-radius: 0.75rem;
     color: $theme-tertiary-v2;
+
+    // @include debugger();
+  }
+
+  [class*='info-section-wrapper'] {
+    min-width: 200%;
+    display: flex;
+    position: relative;
+  }
+
+  [class*='-info-wrapper'],
+  [class*='-info-form'] {
+    width: 50%;
+    transition: 0.25s;
+  }
+
+  [class*='-info-wrapper'] {
+    opacity: 1;
+    position: relative;
+
+    &.hide {
+      position: absolute;
+      visibility: hidden;
+      opacity: 0;
+    }
+  }
+
+  [class*='-info-form'] {
+    position: absolute;
+    opacity: 0;
+    visibility: hidden;
+
+    &.show {
+      visibility: visible;
+      opacity: 1;
+      position: relative;
+    }
   }
 
   // .basic-info-card {
@@ -127,5 +221,10 @@
   .info-value {
     font-weight: 500;
     font-size: 1.1rem;
+  }
+
+  .MuiFormHelperText-root {
+    margin: 0 0.15rem;
+    min-height: 1.35rem;
   }
 }

@@ -97,18 +97,43 @@
 
   //Profile style(s)
   .Profile {
-    .close-edit-button,
-    .edit-button {
-      right: 1.25rem;
-      transform: translateX(82%);
-      border-radius: 2rem 0 0 2rem;
+    .edit-buttons-container {
+      &.enlarge {
+        &::before {
+          height: 9rem;
+        }
 
-      [class*='Icon'] {
-        margin-right: 0.85rem;
+        .close-edit-button {
+          transform: translateX(82%);
+          opacity: 1;
+          visibility: visible;
+
+          &:hover {
+            transform: translateX(calc(2% + 1.25rem));
+          }
+        }
       }
 
-      &:hover {
+      .close-edit-button,
+      .edit-button {
+        // right: 1.25rem;
+        transform: translateX(82%);
+        border-radius: 2rem 0 0 2rem;
+        transition: 0.3s;
+
+        [class*='Icon'] {
+          margin-right: 0.85rem;
+        }
+      }
+
+      .edit-button:hover {
         transform: translateX(calc(2% + 1.25rem));
+      }
+
+      .close-edit-button {
+        opacity: 1;
+        transform: translateX(130%);
+        visibility: hidden;
       }
     }
   }
@@ -173,6 +198,10 @@
       top: -10%;
       left: -60vw;
     }
+  }
+
+  .auth-form-wrapper {
+    width: 100%;
   }
 
   //chat box style(s)

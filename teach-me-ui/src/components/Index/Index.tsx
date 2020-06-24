@@ -12,6 +12,8 @@ import Footer from '../crumbs/Footer';
 import _404 from './_404';
 
 const Index = () => {
+  React.useEffect(() => () => window.scrollTo(0, 0), []);
+  
   return (
     <Grid className='index-root-grid custom-scroll-bar fade-in'>
       <Nav for='index' />
