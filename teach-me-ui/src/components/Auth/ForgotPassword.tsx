@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
@@ -34,11 +33,9 @@ const ForgotPassword = (props: any) => {
   }, []);
 
   return (
-    <Grid
-      className='auth-form-wrapper fade-in'
-      container
-      justify='center'
-      direction='column'>
+    <Box
+      width='25rem'
+      className='auth-form-wrapper fade-in d-flex flex-column justify-content-center'>
       <Typography component='h2' variant='h6'>
         <Box marginY='0.75em' fontSize='1.25rem' fontWeight={900}>
           Forgot Password
@@ -88,7 +85,7 @@ const ForgotPassword = (props: any) => {
           Back to <Link to='/signin'>Sign in</Link>
         </Typography>
       </Box>
-    </Grid>
+    </Box>
   );
 };
 
