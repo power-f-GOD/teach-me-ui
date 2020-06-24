@@ -4,6 +4,8 @@ import Nav from './crumbs/Nav';
 import Auth from './Auth/Auth';
 import Signin from './Auth/Signin';
 import Signup from './Auth/Signup';
+import ForgotPassword from './Auth/ForgotPassword';
+import ResetPassword from './Auth/ResetPassword';
 import Home from './Main/Home';
 import About from './Index/About';
 import Main from './Main/Main';
@@ -22,6 +24,8 @@ export {
   Auth,
   Signin,
   Signup,
+  ForgotPassword,
+  ResetPassword,
   Home,
   About,
   Main,

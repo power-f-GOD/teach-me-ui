@@ -4,11 +4,34 @@ import {
   promisedDispatch,
   populateStateWithUserData,
   bigNumberFormat,
-  logError
+  logError,
+  handleForgotPasswordRequest,
+  handleResetPasswordRequest,
+  validateEmailFn,
+  validateResetPasswordFn
 } from '../../functions';
 import { ReduxAction, UserData } from '../../constants';
 
 afterEach(cleanup);
+
+it('vaildateEmailFn is called with email and resolves to an action', () => {
+  expect(validateEmailFn('')).toBe(false);
+  expect(validateEmailFn('support@kanyimuta.com')).toBe(true);
+});
+
+it('handleForgotPasswordRequest is called with email and resolves to an action', () => {
+  expect(handleForgotPasswordRequest(expect.any(String))).toBe(undefined);
+});
+
+it('handleResetPasswordRequest is called with password, token and callback and resolves to an action', () => {
+  expect(
+    handleResetPasswordRequest(
+      expect.any(String),
+      expect.any(String),
+      expect.any(Function)
+    )
+  ).toBe(undefined);
+});
 
 it('promisedDispatch dispatches an action which returns a promise that resolves with the action dispatched.', () => {
   let action: ReduxAction = {

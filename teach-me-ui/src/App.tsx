@@ -46,7 +46,15 @@ const App = (props: any) => {
             component={Main}
             isAuthenticated={isAuthenticated}
           />
-          <Route path={['/signin', '/signup']} component={Auth} />
+          <Route
+            path={[
+              '/signin',
+              '/signup',
+              '/forgot-password',
+              '/password/reset/:token'
+            ]}
+            component={Auth}
+          />
           <Route
             path={['/', '/index', '/about', '/support', '/*']}
             exact

@@ -1,6 +1,7 @@
 import {
   ReduxAction,
   StatusPropsState,
+  BasicInputState,
   UserData,
   NetworkAction
 } from '../constants';
@@ -21,6 +22,26 @@ import {
 } from '../actions';
 
 export const { dispatch, getState } = store;
+
+export const validateEmailFn = (email: string) =>
+  !!email && /^\w+[\w\d.]*[\w\d]+@\w+\.[\w\d.]+[\w\d]$/.test(email);
+
+export const validateResetPasswordFn = (password: string) => {
+  const result: BasicInputState = {
+    value: password,
+    err: false,
+    helperText: ''
+  };
+  if (!password || password.length < 8) {
+    result.err = true;
+    result.helperText = 'Password should not be less than 8 characters.';
+  } else if (/^[A-Z]$|^[a-z]+$|^[0-9]+$/.test(password)) {
+    result.err = true;
+    result.helperText =
+      'Password weak. Consider combining alphanumerics/symbols.';
+  }
+  return result;
+};
 
 export function promisedDispatch(action: ReduxAction): Promise<ReduxAction> {
   dispatch(action);

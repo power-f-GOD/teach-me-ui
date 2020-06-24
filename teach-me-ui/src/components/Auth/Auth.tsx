@@ -6,7 +6,13 @@ import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
 
-import { Signin, Signup, Footer } from '../index';
+import {
+  Signin,
+  Signup,
+  Footer,
+  ForgotPassword,
+  ResetPassword
+} from '../index';
 
 const Auth = (props: any) => {
   const isSignup = /\/signup/.test(props.location.pathname);
@@ -52,6 +58,12 @@ const Auth = (props: any) => {
                 <Switch>
                   <Route path='/signin' component={Signin} />
                   <Route path='/signup' component={Signup} />
+                  <Route path='/forgot-password' component={ForgotPassword} />
+                  <Route
+                    exact
+                    path='/password/reset/:token'
+                    component={ResetPassword}
+                  />
                 </Switch>
               </Box>
             </Box>
