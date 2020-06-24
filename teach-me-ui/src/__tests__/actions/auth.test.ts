@@ -68,7 +68,7 @@ it('creates forgotPasswordPending action and return action', () => {
   expect(forgotPasswordPending()).toMatchObject(forgotPasswordPendingAction);
 });
 it("creates doResetPassword action and should be called with 'password, token, callback' and return action", () => {
-  const email: string = 'support@kanyimuta.com';
+  const password: string = 'Kanyimuta123$';
   const token: string = 'PASSWORD_RESET_TOKEN';
   const callback = () => {};
 
@@ -76,19 +76,23 @@ it("creates doResetPassword action and should be called with 'password, token, c
     type: FORGOT_PASSWORD_REQUEST
   };
   const doResetPasswordMockFunc = jest.fn(
-    (email: string, token: string, callback: Function) =>
-      doResetPassword(email, token, callback)(dispatch)
+    (password: string, token: string, callback: Function) =>
+      doResetPassword(password, token, callback)(dispatch)
   );
 
-  doResetPasswordMockFunc(email, token, callback);
-  expect(doResetPasswordMockFunc).toHaveBeenCalledWith(email, token, callback);
-  expect(doResetPassword(email, token, callback)(dispatch)).toMatchObject(
+  doResetPasswordMockFunc(password, token, callback);
+  expect(doResetPasswordMockFunc).toHaveBeenCalledWith(
+    password,
+    token,
+    callback
+  );
+  expect(doResetPassword(password, token, callback)(dispatch)).toMatchObject(
     doResetPasswordAction
   );
 });
 
 it("creates doForgotPassword action and should be called with 'email' and return action", () => {
-  const email: string = 'benjamincath@gmail.com';
+  const email: string = 'support@kanyimuta.com';
 
   const doForgotPasswordAction: ReduxAction = {
     type: FORGOT_PASSWORD_REQUEST
