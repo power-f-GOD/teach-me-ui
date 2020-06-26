@@ -130,27 +130,30 @@ const Signup = (props: SignupPropsState) => {
     [level.value]
   );
 
-  const capitalizeInput = useCallback((e: any) => {
-    const { id, value } = e.target;
+  const capitalizeInput = useCallback(
+    (e: any) => {
+      const { id, value } = e.target;
 
-    if (/first|last|department|level/.test(id) && value) {
-      e.target.value = value
-        .split(' ')
-        .map((word: string) =>
-          /^(in|of|and|on)$/i.test(word)
-            ? word.toLowerCase()
-            : word[0].toUpperCase() + word.slice(1).toLowerCase()
-        )
-        .join(' ');
+      if (/first|last|department|level/.test(id) && value) {
+        e.target.value = value
+          .split(' ')
+          .map((word: string) =>
+            /^(in|of|and|on)$/i.test(word)
+              ? word.toLowerCase()
+              : word[0].toUpperCase() + word.slice(1).toLowerCase()
+          )
+          .join(' ');
 
-      if (id === 'department')
-        handleDepartmentChange(e);
-      else if (id === 'level') 
-        handleLevelChange(e);
-      else
+        if (id === 'department') handleDepartmentChange(e);
+        else if (id === 'level') handleLevelChange(e);
+        else handleSignupInputChange(e);
+      } else if (/email|username/.test(id) && value) {
+        e.target.value = value.toLowerCase();
         handleSignupInputChange(e);
-    }
-  }, [handleDepartmentChange, handleLevelChange]);
+      }
+    },
+    [handleDepartmentChange, handleLevelChange]
+  );
 
   const triggerSearch = useCallback(
     (e: any) => {
@@ -544,7 +547,11 @@ const Signup = (props: SignupPropsState) => {
                 label='Department'
                 size='medium'
                 value={department.value || ''}
-                className={department.value && institution.value!.uid ? 'input-set' : 'not-set'}
+                className={
+                  department.value && institution.value!.uid
+                    ? 'input-set'
+                    : 'not-set'
+                }
                 autoComplete='department'
                 inputRef={refs.departmentInput}
                 helperText={department.helperText}
@@ -578,7 +585,11 @@ const Signup = (props: SignupPropsState) => {
                 size='medium'
                 autoComplete='level'
                 value={level.value || ''}
-                className={level.value && institution.value!.uid ? 'input-set' : 'not-set'}
+                className={
+                  level.value && institution.value!.uid
+                    ? 'input-set'
+                    : 'not-set'
+                }
                 inputRef={refs.levelInput}
                 helperText={level.helperText}
                 fullWidth

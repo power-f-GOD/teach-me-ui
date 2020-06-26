@@ -4,3 +4,4 @@ export * from './auth';
 export * from './misc';
 export * from './chat';
 export * from './modals';
+export * from './profile';

@@ -38,6 +38,7 @@ const App = (props: any) => {
                     '/about',
                     '/support',
                     '/profile',
+                    '/search',
                     '/*'
                   ]
                 : ['/home', '/profile']
@@ -56,7 +57,15 @@ const App = (props: any) => {
             component={Auth}
           />
           <Route
-            path={['/', '/index', '/about', '/support', '/*']}
+            path={[
+              '/',
+              '/index',
+              '/about',
+              '/support',
+              '/profile/*',
+              '/search',
+              '/*'
+            ]}
             exact
             component={Index}
           />

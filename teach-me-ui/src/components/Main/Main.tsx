@@ -12,6 +12,7 @@ import Profile from './Profile';
 import Loader from '../crumbs/Loader';
 import ChatBox from '../crumbs/ChatBox';
 import _404 from '../Index/_404';
+import Search from '../Index/Search';
 
 import createMemo from '../../Memo';
 import { getState } from '../../functions/utils';
@@ -49,6 +50,7 @@ const Main = (props: any) => {
         <Route path='/about' component={About} />
         <Route path='/support' component={Support} />
         <Route path='/profile' component={Profile} />
+        <Route path='/search' component={Search} />
         <Route component={_404} />
       </Switch>
 
