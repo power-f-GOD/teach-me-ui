@@ -184,7 +184,9 @@ const Profile = (props: any) => {
     window.addEventListener('scroll', trigger);
 
     return () => {
-      swipeArea.style.display = 'block';
+      if (swipeArea)
+        swipeArea.style.display = 'block';
+        
       window.removeEventListener('scroll', trigger);
       window.scrollTo(0, 0);
     };
