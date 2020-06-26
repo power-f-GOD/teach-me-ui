@@ -7,6 +7,7 @@ body,
   width: 100%;
   margin: 0;
   font-size: 1rem;
+  background: #eee;
   color: $theme-tertiary-v1;
   line-height: 1.4rem;
 }
@@ -26,8 +27,12 @@ body {
 body {
   padding: 0 !important;
 
+  [class*='SwipeArea'] {
+    width: 0.75rem !important;
+  }
+
   &.desktop {
-    [class*=SwipeArea] {
+    [class*='SwipeArea'] {
       display: none;
     }
 
@@ -93,6 +98,7 @@ body {
 
   > div {
     width: 100%;
+    background: #eee;
   }
 }
 
@@ -101,15 +107,11 @@ body {
   width: 100%;
   min-height: 100%;
   display: flex;
-  background: $theme-primary-v3;
+  background: $theme-primary-v3 !important;
   color: $theme-primary-v9;
   justify-content: center;
   align-items: center;
-  background-image: linear-gradient(
-    0deg,
-    $theme-primary-v3,
-    $theme-primary-v4
-  );
+  background-image: linear-gradient(0deg, $theme-primary-v3, $theme-primary-v4);
 }
 
 img {
@@ -364,6 +366,8 @@ div {
 
 .MuiSnackbar-root {
   max-width: $app-max-width / 2;
+  width: auto !important;
+  background: transparent !important;
 }
 
 .logo {

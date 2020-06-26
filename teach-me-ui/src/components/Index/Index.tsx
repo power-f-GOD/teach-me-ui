@@ -10,10 +10,12 @@ import Landing from './Landing';
 import Support from './Support';
 import Footer from '../crumbs/Footer';
 import _404 from './_404';
+import Search from './Search';
+import Profile from '../Main/Profile';
 
 const Index = () => {
   React.useEffect(() => () => window.scrollTo(0, 0), []);
-  
+
   return (
     <Grid className='index-root-grid custom-scroll-bar fade-in'>
       <Nav for='index' />
@@ -23,6 +25,8 @@ const Index = () => {
           <Route path={['/', '/index']} exact component={Landing} />
           <Route path='/about' component={About} />
           <Route path='/support' component={Support} />
+          <Route path='/search' component={Search} />
+          <Route path='/profile/*' component={Profile} />
           <Route component={_404} />
         </Switch>
       </Box>

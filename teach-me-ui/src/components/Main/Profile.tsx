@@ -5,6 +5,8 @@ import React, {
   createRef,
   useMemo
 } from 'react';
+import { Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -12,6 +14,7 @@ import Container from 'react-bootstrap/Container';
 
 import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
+import AddIcon from '@material-ui/icons/Add';
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
 import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 // import LocationOnIcon from '@material-ui/icons/LocationOn';
@@ -54,34 +57,6 @@ let [
   level
 ] = Array(8).fill('');
 
-if (navigator.cookieEnabled && localStorage.kanyimuta) {
-  userInfo = JSON.parse(localStorage.kanyimuta);
-  avatar = 'avatar-1.png';
-  displayName = userInfo.displayName;
-  username = userInfo.username;
-  email = userInfo.email;
-  dob = userInfo.date_of_birth.split('-').reverse().join('-');
-  institution = userInfo.institution;
-  department = userInfo.department;
-  level = userInfo.level;
-}
-
-const [firstname, lastname] = displayName.split(' ');
-
-const basicInfo: InfoProps[] = [
-  { name: 'Firstname', value: firstname },
-  { name: 'Lastname', value: lastname },
-  { name: 'Username', value: username },
-  { name: 'Date of birth', value: dob },
-  { name: 'Email', value: email }
-];
-
-const academicInfo: InfoProps[] = [
-  { name: 'Institution', value: institution },
-  { name: 'Department', value: department },
-  { name: 'Level', value: level }
-];
-
 export const refs: any = {
   firstnameInput: createRef<HTMLInputElement>(),
   lastnameInput: createRef<HTMLInputElement>(),
@@ -94,10 +69,45 @@ export const refs: any = {
   levelInput: createRef<HTMLInputElement>()
 };
 
-const basicInfoIds = ['firstname', 'lastname', 'username', 'dob', 'email'];
-const academicInfoIds = ['institution', 'department', 'level'];
+const Profile = (props: any) => {
+  if (navigator.cookieEnabled && localStorage.kanyimuta) {
+    userInfo = JSON.parse(localStorage.kanyimuta);
+    avatar = 'avatar-1.png';
+    displayName = userInfo.displayName;
+    username = '@' + userInfo.username;
+    email = userInfo.email;
+    dob = userInfo.date_of_birth.split('-').reverse().join('-');
+    institution = userInfo.institution;
+    department = userInfo.department;
+    level = userInfo.level;
+  }
 
-const Profile = () => {
+  const [firstname, lastname] = displayName.split(' ');
+
+  const basicInfo: InfoProps[] = [
+    { name: 'Firstname', value: firstname },
+    { name: 'Lastname', value: lastname },
+    { name: 'Username', value: username },
+    { name: 'Date of birth', value: dob },
+    { name: 'Email', value: email }
+  ];
+  const academicInfo: InfoProps[] = [
+    { name: 'Institution', value: institution },
+    { name: 'Department', value: department },
+    { name: 'Level', value: level }
+  ];
+
+  const basicInfoIds = ['firstname', 'lastname', 'username', 'dob', 'email'];
+  const academicInfoIds = ['institution', 'department', 'level'];
+
+  const { auth } = props;
+  const { isAuthenticated } = auth;
+  let userId = window.location.pathname.split('/').slice(-1)[0];
+  const isId = /^@\w+$/.test(userId);
+  userId = isId ? userId.toLowerCase() : username;
+  const isSelf = userId === username;
+  let selfView = isAuthenticated ? isSelf : false;
+
   const [passedThreshold, setPassedThreshold] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const inputProps = useMemo(() => {}, []);
@@ -148,49 +158,84 @@ const Profile = () => {
     setIsEditing(false);
   }, []);
 
-  useEffect(() => {
-    const trigger = () => setPassedThreshold(window.scrollY > 100);
+  // const handleAddColleagueClick = useCallback(() => {
 
+  // });
+
+  useEffect(() => {
+    if (!selfView) {
+      // academicInfo =
+      return () => {
+        window.scrollTo(0, 0);
+      };
+    }
+
+    const trigger = () => setPassedThreshold(window.scrollY > 50);
+    let swipeArea: any = null;
+
+    //hide M-UI's (invisible) swipeArea element for the sake of it not interfering with the edit buttons on the right when they're tapped on mobile devices
+    window.setTimeout(() => {
+      swipeArea = document.querySelector("[class*='SwipeArea']") as any;
+
+      if (swipeArea) {
+        swipeArea.style.display = 'none';
+      }
+    }, 200);
     window.addEventListener('scroll', trigger);
 
     return () => {
+      swipeArea.style.display = 'block';
       window.removeEventListener('scroll', trigger);
       window.scrollTo(0, 0);
     };
-  }, []);
+  }, [selfView]);
+
+  if (!isId) {
+    return <Redirect to={`/profile/${userId}`} />;
+  }
 
   return (
-    <Box className='Profile fade-in pb-5' paddingTop='5rem'>
+    <Box
+      className={`Profile ${selfView ? 'self-view' : ''} fade-in pb-5`}
+      paddingTop='5rem'>
       <Container className='rows-wrapper custom-scroll-bar small-bar rounded-bar tertiary-bar p-0'>
         <Row as='section' className='m-0 px-3 flex-column mb-5'>
           <Box
-            className={`edit-buttons-container ${isEditing ? 'enlarge' : ''} ${
-              passedThreshold ? 'add-background' : ''
+            className={`action-buttons-container ${
+              isEditing ? 'enlarge' : ''
+            } ${passedThreshold ? 'add-background' : ''} ${
+              selfView ? 'self-view' : ''
             }`}>
-            <Button
-              variant='contained'
-              size='large'
-              className='edit-button'
-              color='primary'
-              onClick={handleEditClick}>
-              {isEditing ? (
-                <>
-                  <SaveOutlinedIcon /> Save Edit
-                </>
-              ) : (
-                <>
-                  <CreateOutlinedIcon fontSize='inherit' /> Edit Profile
-                </>
-              )}
-            </Button>
-            <Button
-              variant='contained'
-              size='large'
-              className='close-edit-button'
-              color='primary'
-              onClick={handleCancelEditClick}>
-              <CloseOutlinedIcon fontSize='inherit' /> Cancel Edit
-            </Button>
+            {selfView ? (
+              <>
+                <Button
+                  variant='contained'
+                  size='large'
+                  className='edit-button'
+                  color='primary'
+                  onClick={handleEditClick}>
+                  {isEditing ? (
+                    <>
+                      <SaveOutlinedIcon /> Save Edit
+                    </>
+                  ) : (
+                    <>
+                      <CreateOutlinedIcon fontSize='inherit' /> Edit Profile
+                    </>
+                  )}
+                </Button>
+                <Button
+                  variant='contained'
+                  size='large'
+                  className='close-edit-button'
+                  color='primary'
+                  onClick={handleCancelEditClick}>
+                  <CloseOutlinedIcon fontSize='inherit' /> Cancel Edit
+                </Button>
+              </>
+            ) : (
+              ''
+            )}
           </Box>
 
           <Col className='p-0 d-flex justify-content-center'>
@@ -203,58 +248,78 @@ const Profile = () => {
           </Col>
           <Col className='d-flex flex-column p-0'>
             <Col as='span' className='display-name p-0 d-block my-1'>
-              {displayName}
+              {isSelf ? displayName : 'Another User'}
             </Col>
             <Col
               as='span'
               className='username p-0 d-flex justify-content-center mb-3'>
-              @{username}
+              {isSelf ? username : '@another_user'}
             </Col>
             <Col as='span' className='status p-0 px-3 d-block'>
               {/* <CreateOutlinedIcon className='mr-2' /> */}
               Currently creating some amazing sturvs...
             </Col>
           </Col>
+
+          {!selfView && (
+            <Col className='d-flex justify-content-center mt-4'>
+              {isAuthenticated && (
+                <Button
+                  variant='contained'
+                  size='large'
+                  className='add-colleague-button'
+                  color='primary'
+                  // onClick={handleEditClick}
+                >
+                  <AddIcon fontSize='inherit' /> Add Colleague
+                </Button>
+              )}
+            </Col>
+          )}
         </Row>
 
-        <Row as='section' className='info-rows-container m-0'>
-          <Col md={6} className='info-card-container py-0'>
-            <Row as='section' className='basic-info-card mx-0 flex-column'>
-              <Col className='info p-0 d-flex my-1'>
-                <Col className='py-0 px-2 d-flex justify-content-between align-items-center'>
-                  <Box component='h2' className='card-title mr-auto'>
-                    Basic info
-                  </Box>
-                  <AccountCircleOutlinedIcon className='' fontSize='large' />
+        <Row
+          as='section'
+          className='info-rows-container justify-content-center m-0'>
+          {selfView && (
+            <Col md={6} className='info-card-container py-0'>
+              <Row as='section' className='basic-info-card mx-0 flex-column'>
+                <Col className='info p-0 d-flex my-1'>
+                  <Col className='py-0 px-2 d-flex justify-content-between align-items-center'>
+                    <Box component='h2' className='card-title mr-auto'>
+                      Basic info
+                    </Box>
+                    <AccountCircleOutlinedIcon className='' fontSize='large' />
+                  </Col>
                 </Col>
-              </Col>
 
-              <hr />
+                <hr />
 
-              <Box className='basic-info-section-wrapper'>
-                <Row
-                  className={`basic-info-wrapper ${
-                    isEditing ? 'hide' : ''
-                  } mx-0`}>
-                  {basicInfo.map(({ name, value }: InfoProps) => (
-                    <Info name={name} value={value} key={name} />
-                  ))}
-                </Row>
+                <Box className='basic-info-section-wrapper'>
+                  <Row
+                    className={`basic-info-wrapper ${
+                      isEditing ? 'hide' : ''
+                    } mx-0`}>
+                    {basicInfo.map(({ name, value }: InfoProps) => (
+                      <Info name={name} value={value} key={name} />
+                    ))}
+                  </Row>
 
-                <form
-                  className={`basic-info-form mx-0 row ${
-                    isEditing ? 'show' : ''
-                  }`}
-                  noValidate
-                  autoComplete='on'
-                  onSubmit={(e: any) => e.preventDefault()}>
-                  {basicInfoInputsOptions.map((options, key) => (
-                    <InfoInput options={options} key={key} />
-                  ))}
-                </form>
-              </Box>
-            </Row>
-          </Col>
+                  <form
+                    className={`basic-info-form mx-0 row ${
+                      isEditing ? 'show' : ''
+                    }`}
+                    noValidate
+                    autoComplete='on'
+                    onSubmit={(e: any) => e.preventDefault()}>
+                    {basicInfoInputsOptions.map((options, key) => (
+                      <InfoInput options={options} key={key} />
+                    ))}
+                  </form>
+                </Box>
+              </Row>
+            </Col>
+          )}
 
           <Col md={6} className='info-card-container py-0'>
             <Row as='section' className='academic-info-card mx-0'>
@@ -338,4 +403,6 @@ function InfoInput(props: any) {
   );
 }
 
-export default Profile;
+const mapStateToProps = (state: any) => ({ auth: state.auth });
+
+export default connect(mapStateToProps)(Profile);

@@ -97,7 +97,7 @@
 
   //Profile style(s)
   .Profile {
-    .edit-buttons-container {
+    .action-buttons-container {
       &.enlarge {
         &::before {
           height: 9rem;
@@ -207,5 +207,17 @@
   //chat box style(s)
   .scroll-view-msg-wrapper {
     max-width: 75%;
+  }
+
+  //Profile page styles
+  .Profile {
+    [class*='card-container'] {
+      padding: 0 0.85rem;
+    }
+
+    [class*='-info-card'] {
+      padding: 1rem 0.85rem;
+      padding-bottom: 1rem;
+    }
   }
 }

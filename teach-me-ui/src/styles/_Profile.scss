@@ -5,11 +5,15 @@
   background-color: #eee;
   min-height: 100vh;
 
+  &.self-view {
+    &::before {
+      height: 30rem;
+    }
+  }
+
   &::before {
-    @include before-or-after(
-      $bg: linear-gradient(to top, #ccc, #777),
-      $h: 30rem
-    );
+    @include before-or-after($h: 33rem, $zi: 0);
+    background: linear-gradient(to top, #d8d8d8, #707070);
   }
 
   path {
@@ -29,12 +33,12 @@
     // color: white;
   }
 
-  .edit-buttons-container {
+  .action-buttons-container {
     // @include debugger();
 
     position: fixed;
     right: 0;
-    width: calc(50vw - 23.65rem);
+    width: calc(50vw - 25.65rem);
     z-index: 5;
     top: 8rem;
 
@@ -91,7 +95,7 @@
     min-width: 9.25rem;
     justify-content: flex-start;
     background-color: $theme-tertiary-v1 !important;
-    transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    transition: 0.3s;
 
     [class*='Icon'] {
       font-size: 1.5rem;
@@ -104,12 +108,37 @@
     }
   }
 
+  // @include debugger();
+
   .close-edit-button {
     z-index: 1;
     top: 11.75rem;
     transform: translateY(-3.75rem);
     opacity: 0;
     visibility: hidden;
+    transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .add-colleague-button {
+    padding: 0.55rem 0.85rem;
+    min-width: 9rem;
+    justify-content: center;
+    background-color: $theme-tertiary-v1 !important;
+    transition: 0.3s;
+
+    [class*='Icon'] {
+      font-size: 1.5rem;
+      margin-right: 0.5rem;
+    }
+
+    &.request-sent {
+      background: $theme-primary-v6 !important;
+    }
+
+    path {
+      fill: white;
+      stroke: transparent;
+    }
   }
 
   .profile-avatar {
@@ -158,7 +187,7 @@
     margin-bottom: 1.5rem;
     background-color: white;
     box-shadow: 0 0 2.5rem rgba(0, 0, 0, 0.2);
-    border-radius: 0.75rem;
+    border-radius: 1rem;
     color: $theme-tertiary-v2;
 
     // @include debugger();
