@@ -7,18 +7,8 @@ import {
 } from '../constants';
 import store from '../appStore';
 import {
-  signin,
-  auth,
-  setDisplayName,
-  validateEmail,
-  validateUsername,
-  validateLastname,
-  validateFirstname,
   displaySnackbar,
-  validateInstitution,
-  validateDepartment,
-  validateLevel,
-  validateDob
+  setUserData
 } from '../actions';
 
 export const { dispatch, getState } = store;
@@ -114,48 +104,7 @@ export function callNetworkStatusCheckerFor(action: NetworkAction) {
 export async function populateStateWithUserData(
   data: UserData
 ): Promise<ReduxAction> {
-  const {
-    firstname,
-    lastname,
-    username,
-    email,
-    dob,
-    // institution,
-    // department,
-    // level,
-    displayName
-  } = data;
-
-  //using same action creators for validation to set state values as it was used
-  await promisedDispatch(setDisplayName(displayName));
-  dispatch(validateFirstname({ value: firstname }));
-  dispatch(validateLastname({ value: lastname }));
-  dispatch(validateUsername({ value: username }));
-  dispatch(validateEmail({ value: email }));
-  dispatch(validateDob({ value: dob }));
-  dispatch(
-    validateInstitution({
-      value: { keyword: '', uid: '' },
-      err: false,
-      helperText: ''
-    })
-  );
-  dispatch(
-    validateDepartment({
-      value: '',
-      err: false,
-      helperText: ''
-    })
-  );
-  dispatch(
-    validateLevel({
-      value: '',
-      err: false,
-      helperText: ''
-    })
-  );
-  dispatch(signin({ status: 'fulfilled', err: false }));
-  return promisedDispatch(auth({ status: 'fulfilled', isAuthenticated: true }));
+  return await promisedDispatch(setUserData({ ...data }));
 }
 
 export const logError = (action: Function) => (error: any) => {
@@ -241,3 +190,83 @@ export const bigNumberFormat: Function = (number: number): string => {
 
   return '1T+';
 };
+
+// more performant (custom) timers utilizing window.requestAnimationFrame...
+
+const _requestAnimationFrame = _requestAnimationFrameWrapper();
+
+export function delay(
+  timeout: number,
+  clearCallback?: Function
+): Promise<number> {
+  if (isNaN(timeout))
+    throw Error(
+      "'delay' expects a time [number] in milliseconds as parameter."
+    );
+
+  return new Promise((resolve: Function) => {
+    let start = 0;
+    let id = _requestAnimationFrame(animate);
+    let clear = clearCallback ? clearCallback : () => false;
+
+    function animate(timestamp: number) {
+      if (!start) start = timestamp;
+      let timeElapsed = timestamp - start;
+
+      if (timeElapsed < timeout && !clear())
+        id = _requestAnimationFrame(animate);
+      else resolve(id);
+    }
+  });
+}
+
+export function interval(
+  callback: Function,
+  _interval: number,
+  clearCallback?: Function
+): Promise<number> {
+  if (isNaN(_interval))
+    throw Error(
+      "'interval' expects a time [number] in milliseconds as parameter."
+    );
+
+  return new Promise((resolve: Function) => {
+    let start = 0;
+    let id = _requestAnimationFrame(animate);
+    let clear = false;
+
+    function animate(timestamp: number) {
+      if (!start) start = timestamp;
+
+      let timeElapsed = timestamp - start;
+
+      if (!clear) id = _requestAnimationFrame(animate);
+      else resolve(id);
+
+      if (timeElapsed % _interval < 17 && timeElapsed > _interval) {
+        callback();
+        clear = clearCallback ? clearCallback() : false;
+      }
+    }
+  });
+}
+
+function _requestAnimationFrameWrapper() {
+  let previousTime = 0;
+
+  if (window.requestAnimationFrame) return window.requestAnimationFrame;
+  return (callback: Function) => {
+    /**
+     * Credit to Paul Irish (@ www.paulirish.com) for creating/providing this polyfill
+     */
+    let timestamp = new Date().getTime();
+    let timeout = Math.max(0, 16 - (timestamp - previousTime));
+    let id = setTimeout(() => {
+      callback(timestamp + timeout);
+    }, 16); //corrected this line from 'timeout' in actual polyfill to '16' as it made animation slow and jank
+
+    previousTime = timestamp + timeout;
+
+    return id;
+  };
+}

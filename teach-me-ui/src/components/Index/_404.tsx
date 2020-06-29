@@ -84,8 +84,8 @@ const _404 = () => {
           <path
             d='M422.8 0.699997V44.7'
             stroke='#D4DBE2'
-            stroke-width='0.25'
-            stroke-miterlimit='10'
+            strokeWidth='0.25'
+            strokeMiterlimit='10'
           />
           <path
             d='M430.6 61.6C430.3 65.8 426.6 69 422.3 68.7C418.1 68.4 414.9 64.7 415.2 60.4C415.5 56.2 419.2 53 423.5 53.3C427.7 53.7 430.9 57.4 430.6 61.6Z'
@@ -98,8 +98,8 @@ const _404 = () => {
           <path
             d='M79.7 0.699997V44.7'
             stroke='#D4DBE2'
-            stroke-width='0.25'
-            stroke-miterlimit='10'
+            strokeWidth='0.25'
+            strokeMiterlimit='10'
           />
           <path
             d='M87.5 61.6C87.2 65.8 83.5 69 79.2 68.7C75 68.4 71.8 64.7 72.1 60.4C72.4 56.2 76.1 53 80.4 53.3C84.7 53.7 87.8 57.4 87.5 61.6Z'
@@ -112,8 +112,8 @@ const _404 = () => {
           <path
             d='M0.799988 317H499.2'
             stroke='#A6AEBA'
-            stroke-width='0.5'
-            stroke-miterlimit='10'
+            strokeWidth='0.5'
+            strokeMiterlimit='10'
           />
           <path
             d='M182 163.9C182 163.9 183.5 160.1 186.3 156.8C189.1 153.4 193.3 147.9 193.3 147.9C193.3 147.9 191.3 151.9 188.5 156.4C185.7 160.8 182 163.9 182 163.9Z'
@@ -280,10 +280,10 @@ const _404 = () => {
               x2='300.162'
               y2='309.89'
               gradientUnits='userSpaceOnUse'>
-              <stop stop-color='#343A44' />
-              <stop offset='0.3009' stop-color='#232D3E' />
-              <stop offset='0.6391' stop-color='#182439' />
-              <stop offset='1' stop-color='#142138' />
+              <stop stopColor='#343A44' />
+              <stop offset='0.3009' stopColor='#232D3E' />
+              <stop offset='0.6391' stopColor='#182439' />
+              <stop offset='1' stopColor='#142138' />
             </linearGradient>
             <linearGradient
               id='paint1_linear'
@@ -292,10 +292,10 @@ const _404 = () => {
               x2='345.031'
               y2='304.296'
               gradientUnits='userSpaceOnUse'>
-              <stop stop-color='#343A44' />
-              <stop offset='0.3009' stop-color='#232D3E' />
-              <stop offset='0.6391' stop-color='#182439' />
-              <stop offset='1' stop-color='#142138' />
+              <stop stopColor='#343A44' />
+              <stop offset='0.3009' stopColor='#232D3E' />
+              <stop offset='0.6391' stopColor='#182439' />
+              <stop offset='1' stopColor='#142138' />
             </linearGradient>
             <linearGradient
               id='paint2_linear'
@@ -304,10 +304,10 @@ const _404 = () => {
               x2='458.686'
               y2='149.504'
               gradientUnits='userSpaceOnUse'>
-              <stop stop-color='#343A44' />
-              <stop offset='0.3009' stop-color='#232D3E' />
-              <stop offset='0.6391' stop-color='#182439' />
-              <stop offset='1' stop-color='#142138' />
+              <stop stopColor='#343A44' />
+              <stop offset='0.3009' stopColor='#232D3E' />
+              <stop offset='0.6391' stopColor='#182439' />
+              <stop offset='1' stopColor='#142138' />
             </linearGradient>
             <linearGradient
               id='paint3_linear'
@@ -316,10 +316,10 @@ const _404 = () => {
               x2='465.686'
               y2='214.184'
               gradientUnits='userSpaceOnUse'>
-              <stop stop-color='#343A44' />
-              <stop offset='0.3009' stop-color='#232D3E' />
-              <stop offset='0.6391' stop-color='#182439' />
-              <stop offset='1' stop-color='#142138' />
+              <stop stopColor='#343A44' />
+              <stop offset='0.3009' stopColor='#232D3E' />
+              <stop offset='0.6391' stopColor='#182439' />
+              <stop offset='1' stopColor='#142138' />
             </linearGradient>
           </defs>
         </svg>

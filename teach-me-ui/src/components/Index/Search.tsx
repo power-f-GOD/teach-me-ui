@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -12,9 +12,21 @@ import ListItem from '@material-ui/core/ListItem';
 import Avatar from '@material-ui/core/Avatar';
 import InputBase from '@material-ui/core/InputBase';
 import SearchIcon from '@material-ui/icons/Search';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
-const Search = () => {
-  const results: string[] = ['@powerofgod', '@nuelsoft', '@iambenkay'];
+import { ColleagueData } from '../../constants/interfaces';
+import { dispatch } from '../../functions/utils';
+import { triggerSearchKanyimuta } from '../../actions/search';
+
+const Search = (props: any) => {
+  const searchInputRef = useRef<HTMLInputElement>();
+  const { searchKanyimuta } = props;
+  const results: ColleagueData[] | any[] = searchKanyimuta.data;
+
+  const handleSearchChange = useCallback((e: any) => {
+    if (e.target.value.trim())
+      dispatch(triggerSearchKanyimuta(e.target.value)(dispatch));
+  }, []);
 
   return (
     <Box className='Search fade-in' paddingY='4.5rem'>
@@ -26,11 +38,17 @@ const Search = () => {
               <InputBase
                 placeholder='Search…'
                 className='search-input'
+                inputRef={searchInputRef}
                 inputProps={{ 'aria-label': 'search' }}
+                onChange={handleSearchChange}
               />
             </Box>
           </Row>
-
+          {searchKanyimuta.status === 'pending' && (
+            <Box className='mt-3'>
+              <LinearProgress color='primary' />
+            </Box>
+          )}
           <List
             className={`search-results-wrapper custom-scroll-bar`}
             aria-label='search results'>
@@ -45,16 +63,30 @@ const Search = () => {
                 // }}
               >
                 {(() => {
-                  const link = `/profile/${result}`;
-                  const keyword = result.trim();
+                  const keyword = searchInputRef.current?.value ?? '';
+                  let username = `@${result.username}`;
+                  const link = `/${username}`;
+                  let displayName = `${result.firstname} ${result.lastname}`.replace(
+                    new RegExp(`(${keyword})`, 'i'),
+                    `<span class='theme-secondary-darker'>$1</span>`
+                  );
+                  // let department = `${result.department}`.replace(
+                  //   new RegExp(`(${keyword})`, 'i'),
+                  //   `<span class='theme-secondary-darker'>$1</span>`
+                  // );
+                  // const keyword = searchInputRef.current?.value ?? '';
                   // const highlighted = `${_institution.name.replace(
                   //   new RegExp(`(${keyword})`, 'i'),
                   //   `<span class='theme-secondary-darker'>$1</span>`
                   // )}, ${country}`.replace(/<\/?script>/gi, '');
-                  const highlighted = `
-                    <div class='display-name'>John Doe</div>
-                    <div class='username'>${keyword}</div>
-                    <div class='department'>Computer Science</div>`;
+                  username = username.replace(
+                    new RegExp(`(${keyword})`, 'i'),
+                    `<span class='theme-secondary-darker'>$1</span>`
+                  );
+                  const person = `
+                    <div class='display-name'>${displayName}</div>
+                    <div class='username'>${username}</div>
+                    <div class='department'>${result.department}</div>`;
 
                   return (
                     <Link to={link} className='d-flex'>
@@ -62,12 +94,12 @@ const Search = () => {
                         component='span'
                         className='profile-avatar'
                         alt={'P'}
-                        src={`/images/${''}`}
+                        src={`/images/${result.avatar ?? ''}`}
                       />
                       <div
                         className=''
                         dangerouslySetInnerHTML={{
-                          __html: highlighted
+                          __html: person
                         }}></div>
                     </Link>
                   );
@@ -81,6 +113,6 @@ const Search = () => {
   );
 };
 
-const mapStateToProps = ({ searchResults }: any) => ({ searchResults });
+const mapStateToProps = ({ searchKanyimuta }: any) => ({ searchKanyimuta });
 
 export default connect(mapStateToProps)(Search);

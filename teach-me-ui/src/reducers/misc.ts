@@ -2,8 +2,11 @@ import {
   ReduxAction,
   snackbarState,
   SnackbarState,
+  userDataState,
+  UserData,
   DISPLAY_SNACK_BAR,
-  SET_USER_DISPLAY_NAME
+  SET_USER_DISPLAY_NAME,
+  POPULATE_STATE_WITH_USER_DATA
 } from '../constants';
 
 export const snackbar = (
@@ -20,4 +23,13 @@ export const displayName = (state: string = 'User', action: ReduxAction) => {
     return action.payload;
   }
   return state;
+};
+
+export const userData = (
+  state: UserData = userDataState,
+  action: ReduxAction
+): SnackbarState => {
+  return action.type === POPULATE_STATE_WITH_USER_DATA
+    ? { ...state, ...action.payload }
+    : state;
 };

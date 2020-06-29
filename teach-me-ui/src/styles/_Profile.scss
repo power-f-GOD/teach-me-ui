@@ -5,15 +5,22 @@
   background-color: #eee;
   min-height: 100vh;
 
-  &.self-view {
-    &::before {
-      height: 30rem;
-    }
+  &::before {
+    @include before-or-after(
+      linear-gradient(to top, #d8d8d8, #707070),
+      $w: calc(100vw + 60rem),
+      $h: 50rem,
+      $t: -15rem,
+      $l: -30rem,
+      $br: 0 0 50% 50%,
+      $zi: 0
+    );
   }
 
-  &::before {
-    @include before-or-after($h: 33rem, $zi: 0);
-    background: linear-gradient(to top, #d8d8d8, #707070);
+  &.self-view {
+    &::before {
+      transform: translateY(-2rem);
+    }
   }
 
   path {

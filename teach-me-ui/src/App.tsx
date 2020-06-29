@@ -37,11 +37,11 @@ const App = (props: any) => {
                     '/home',
                     '/about',
                     '/support',
-                    '/profile',
+                    '/@*',
                     '/search',
                     '/*'
                   ]
-                : ['/home', '/profile']
+                : ['/home', '/search', '/@*']
             }
             exact
             component={Main}
@@ -62,8 +62,6 @@ const App = (props: any) => {
               '/index',
               '/about',
               '/support',
-              '/profile/*',
-              '/search',
               '/*'
             ]}
             exact

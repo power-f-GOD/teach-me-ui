@@ -118,13 +118,21 @@ export interface ModalState {
   title?: string;
 }
 
-export interface UserData {
+export interface UserData extends SignupFormData {
+  avatar?: string;
+  id: string;
+  displayName: string;
+  token: string | null;
+}
+
+export interface ColleagueData {
   firstname: string;
   lastname: string;
   username: string;
-  email: string;
-  dob: string;
-  displayName: string;
+  institution: string;
+  department: string;
+  level: string;
+  id: string;
 }
 
 export interface CreateDepartmentState extends StatusPropsState {

@@ -64,7 +64,7 @@ const Signin = (props: SigninPropsState) => {
             label='Username or Email'
             type='email'
             defaultValue={
-              props.signinId.value || JSON.parse(localStorage.kanyimuta || '{}')?.email || ''
+              props.signinId.value || JSON.parse(localStorage.kanyimuta || '{}')?.username || ''
             }
             autoComplete='username'
             inputRef={refs.idInput}

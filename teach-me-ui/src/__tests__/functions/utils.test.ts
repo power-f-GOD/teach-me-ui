@@ -67,7 +67,12 @@ it("populateStateWithUserData should be called with 'user data' as param and ret
     displayName: 'John Doe',
     email: 'johndoe@gmail.com',
     username: 'johndoe',
-    dob: '12/12/2000'
+    dob: '12/12/2000',
+    institution: 'UNN',
+    department: 'COS',
+    level: '100',
+    id: '3fj9g0394ldg-sdf',
+    token: '5kkl30k3485k'
   };
   let mockFunc = jest.fn();
   populateStateWithUserData(mockFunc(userData) || userData);

@@ -23,6 +23,7 @@ import SchoolOutlinedIcon from '@material-ui/icons/SchoolOutlined';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import { UserData } from '../../constants/interfaces';
 // import GroupIcon from '@material-ui/icons/Group';
 // import ForumIcon from '@material-ui/icons/Forum';
 // import PeopleOutlineIcon from '@material-ui/icons/PeopleOutline';
@@ -45,18 +46,6 @@ interface InfoInputProps {
   inputProps: any;
 }
 
-let userInfo: any = {};
-let [
-  avatar,
-  displayName,
-  username,
-  email,
-  dob,
-  institution,
-  department,
-  level
-] = Array(8).fill('');
-
 export const refs: any = {
   firstnameInput: createRef<HTMLInputElement>(),
   lastnameInput: createRef<HTMLInputElement>(),
@@ -70,19 +59,22 @@ export const refs: any = {
 };
 
 const Profile = (props: any) => {
-  if (navigator.cookieEnabled && localStorage.kanyimuta) {
-    userInfo = JSON.parse(localStorage.kanyimuta);
-    avatar = 'avatar-1.png';
-    displayName = userInfo.displayName;
-    username = '@' + userInfo.username;
-    email = userInfo.email;
-    dob = userInfo.date_of_birth.split('-').reverse().join('-');
-    institution = userInfo.institution;
-    department = userInfo.department;
-    level = userInfo.level;
-  }
-
+  const { userData } = props;
+  const {
+    avatar,
+    displayName,
+    username: _username,
+    email,
+    dob: _dob,
+    institution,
+    department,
+    level
+  }: UserData = userData;
   const [firstname, lastname] = displayName.split(' ');
+  const dob = _dob.split('-').reverse().join('-');
+  const username = '@' + _username;
+  const { auth } = props;
+  const { isAuthenticated } = auth;
 
   const basicInfo: InfoProps[] = [
     { name: 'Firstname', value: firstname },
@@ -100,15 +92,13 @@ const Profile = (props: any) => {
   const basicInfoIds = ['firstname', 'lastname', 'username', 'dob', 'email'];
   const academicInfoIds = ['institution', 'department', 'level'];
 
-  const { auth } = props;
-  const { isAuthenticated } = auth;
   let userId = window.location.pathname.split('/').slice(-1)[0];
   const isId = /^@\w+$/.test(userId);
   userId = isId ? userId.toLowerCase() : username;
   const isSelf = userId === username;
   let selfView = isAuthenticated ? isSelf : false;
 
-  const [passedThreshold, setPassedThreshold] = useState<boolean>(false);
+  // const [passedThreshold, setPassedThreshold] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const inputProps = useMemo(() => {}, []);
 
@@ -123,7 +113,7 @@ const Profile = (props: any) => {
 
       return {
         id,
-        defaultValue: id === 'dob' ? dob : userInfo[id],
+        defaultValue: id === 'dob' ? dob : userData[id],
         error: false,
         helperText: ' ',
         inputRef: refs[`${id}Input`],
@@ -139,7 +129,7 @@ const Profile = (props: any) => {
 
       return {
         id,
-        defaultValue: userInfo[id],
+        defaultValue: userData[id],
         error: false,
         helperText: ' ',
         inputRef: refs[`${id}Input`],
@@ -170,7 +160,7 @@ const Profile = (props: any) => {
       };
     }
 
-    const trigger = () => setPassedThreshold(window.scrollY > 50);
+    // const trigger = () => setPassedThreshold(window.scrollY > 50);
     let swipeArea: any = null;
 
     //hide M-UI's (invisible) swipeArea element for the sake of it not interfering with the edit buttons on the right when they're tapped on mobile devices
@@ -181,19 +171,18 @@ const Profile = (props: any) => {
         swipeArea.style.display = 'none';
       }
     }, 200);
-    window.addEventListener('scroll', trigger);
+    // window.addEventListener('scroll', trigger);
 
     return () => {
-      if (swipeArea)
-        swipeArea.style.display = 'block';
-        
-      window.removeEventListener('scroll', trigger);
+      if (swipeArea) swipeArea.style.display = 'block';
+
+      // window.removeEventListener('scroll', trigger);
       window.scrollTo(0, 0);
     };
   }, [selfView]);
 
   if (!isId) {
-    return <Redirect to={`/profile/${userId}`} />;
+    return <Redirect to={`/${userId}`} />;
   }
 
   return (
@@ -205,39 +194,40 @@ const Profile = (props: any) => {
           <Box
             className={`action-buttons-container ${
               isEditing ? 'enlarge' : ''
-            } ${passedThreshold ? 'add-background' : ''} ${
-              selfView ? 'self-view' : ''
-            }`}>
-            {selfView ? (
-              <>
-                <Button
-                  variant='contained'
-                  size='large'
-                  className='edit-button'
-                  color='primary'
-                  onClick={handleEditClick}>
-                  {isEditing ? (
-                    <>
-                      <SaveOutlinedIcon /> Save Edit
-                    </>
-                  ) : (
-                    <>
-                      <CreateOutlinedIcon fontSize='inherit' /> Edit Profile
-                    </>
-                  )}
-                </Button>
-                <Button
-                  variant='contained'
-                  size='large'
-                  className='close-edit-button'
-                  color='primary'
-                  onClick={handleCancelEditClick}>
-                  <CloseOutlinedIcon fontSize='inherit' /> Cancel Edit
-                </Button>
-              </>
-            ) : (
-              ''
-            )}
+            } ${
+              /*passedThreshold*/ 'apiNotReady' && false ? 'add-background' : ''
+            } ${selfView ? 'self-view' : ''}`}>
+            {false &&
+              (selfView ? (
+                <>
+                  <Button
+                    variant='contained'
+                    size='large'
+                    className='edit-button'
+                    color='primary'
+                    onClick={handleEditClick}>
+                    {isEditing ? (
+                      <>
+                        <SaveOutlinedIcon /> Save Edit
+                      </>
+                    ) : (
+                      <>
+                        <CreateOutlinedIcon fontSize='inherit' /> Edit Profile
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    variant='contained'
+                    size='large'
+                    className='close-edit-button'
+                    color='primary'
+                    onClick={handleCancelEditClick}>
+                    <CloseOutlinedIcon fontSize='inherit' /> Cancel Edit
+                  </Button>
+                </>
+              ) : (
+                ''
+              ))}
           </Box>
 
           <Col className='p-0 d-flex justify-content-center'>
@@ -284,7 +274,7 @@ const Profile = (props: any) => {
           as='section'
           className='info-rows-container justify-content-center m-0'>
           {selfView && (
-            <Col md={6} className='info-card-container py-0'>
+            <Col lg={6} className='info-card-container py-0'>
               <Row as='section' className='basic-info-card mx-0 flex-column'>
                 <Col className='info p-0 d-flex my-1'>
                   <Col className='py-0 px-2 d-flex justify-content-between align-items-center'>
@@ -323,7 +313,7 @@ const Profile = (props: any) => {
             </Col>
           )}
 
-          <Col md={6} className='info-card-container py-0'>
+          <Col lg={6} className='info-card-container py-0'>
             <Row as='section' className='academic-info-card mx-0'>
               <Col className='info p-0 d-flex my-1'>
                 <Col className='py-0 px-2 d-flex justify-content-between align-items-center'>
@@ -405,6 +395,9 @@ function InfoInput(props: any) {
   );
 }
 
-const mapStateToProps = (state: any) => ({ auth: state.auth });
+const mapStateToProps = (state: any) => ({
+  auth: state.auth,
+  userData: state.userData
+});
 
 export default connect(mapStateToProps)(Profile);
