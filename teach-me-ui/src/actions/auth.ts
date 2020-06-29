@@ -97,7 +97,9 @@ export const doResetPassword = (
         autoHide: true
       })
     );
-    callback();
+    if (!_data.error) {
+      callback();
+    }
   });
   return {
     type: FORGOT_PASSWORD_REQUEST
