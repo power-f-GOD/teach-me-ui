@@ -17,7 +17,8 @@ import {
   VERIFY_AUTH,
   SIGNOUT_REQUEST,
   SIGNOUT_USER,
-  apiBaseURL as baseURL
+  apiBaseURL as baseURL,
+  UserData
 } from '../constants';
 import {
   validateEmail,
@@ -173,14 +174,17 @@ export const requestSignup = (data: SignupFormData) => (
 
       if (!error) {
         const displayName = `${firstname} ${lastname}`;
+        const dob = _data.date_of_birth;
+
+        delete _data.error;
+        delete _data.date_of_birth;
+
+        const userData: UserData = { ..._data };
 
         populateStateWithUserData({
-          firstname,
-          lastname,
-          username,
-          email,
-          dob,
-          displayName
+          ...userData,
+          displayName,
+          dob
         }).then(() => {
           dispatch(signup({ status: 'fulfilled' }));
           dispatch(auth({ status: 'settled', isAuthenticated: true }));
@@ -196,8 +200,9 @@ export const requestSignup = (data: SignupFormData) => (
           //set token for user session and subsequent authentication
           if (navigator.cookieEnabled) {
             localStorage.kanyimuta = JSON.stringify({
-              ..._data,
-              displayName
+              ...userData,
+              displayName,
+              dob
             });
           }
         });
@@ -282,27 +287,25 @@ export const requestSignin = (data: SigninFormData) => (
   })
     .then((response) => {
       const { data: _data } = response;
-      const {
-        firstname,
-        lastname,
-        username,
-        email,
-        date_of_birth: dob,
-        error,
-        message
-      } = _data;
+      const message = _data.message;
+      const error = _data.error;
 
       if (!error) {
-        const displayName = `${firstname} ${lastname}`;
+        const dob = _data.date_of_birth;
+        const displayName = `${_data.firstname} ${_data.lastname}`;
+
+        delete _data.error;
+        delete _data.date_of_birth;
+
+        const userData: UserData = { ..._data };
 
         populateStateWithUserData({
-          firstname,
-          lastname,
-          username,
-          email,
-          dob,
-          displayName
+          ...userData,
+          displayName,
+          dob
         }).then(() => {
+          dispatch(signin({ status: 'fulfilled' }));
+          dispatch(auth({ status: 'settled', isAuthenticated: true }));
           dispatch(
             displaySnackbar({
               open: true,
@@ -315,8 +318,9 @@ export const requestSignin = (data: SigninFormData) => (
           //set token for user session and subsequent authentication
           if (navigator.cookieEnabled) {
             localStorage.kanyimuta = JSON.stringify({
-              ..._data,
-              displayName
+              ...userData,
+              displayName,
+              dob
             });
           }
         });
@@ -382,7 +386,10 @@ export const verifyAuth = () => (dispatch: Function): ReduxAction => {
     : null;
 
   if (userData?.token) {
-    populateStateWithUserData({ ...userData });
+    populateStateWithUserData({ ...userData }).then(() => {
+      dispatch(auth({ status: 'fulfilled', isAuthenticated: true }));
+      dispatch(signin({ status: 'fulfilled', err: false }));
+    });
   } else {
     dispatch(auth({ status: 'fulfilled', isAuthenticated: false }));
     dispatch(signin({ status: 'fulfilled', err: true }));

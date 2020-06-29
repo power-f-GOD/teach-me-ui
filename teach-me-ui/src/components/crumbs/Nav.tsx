@@ -78,7 +78,7 @@ function MainNav(props: any) {
         <SearchIcon />
       </NavLink>
       <NavGeneralLinks />
-      <NavLink exact to='/profile' className='nav-link'>
+      <NavLink exact to='/@' className='nav-link'>
         <AccountIcon className='nav-icon' /> Profile
       </NavLink>
 

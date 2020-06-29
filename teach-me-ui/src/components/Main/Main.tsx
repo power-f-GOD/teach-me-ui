@@ -10,7 +10,7 @@ import About from '../Index/About';
 import Support from '../Index/Support';
 import Profile from './Profile';
 import Loader from '../crumbs/Loader';
-import ChatBox from '../crumbs/ChatBox';
+// import ChatBox from '../crumbs/ChatBox';
 import _404 from '../Index/_404';
 import Search from '../Index/Search';
 
@@ -26,7 +26,6 @@ const Main = (props: any) => {
     isOpen: chatIsOpen
   } = getState().activeChat;
   let queryString = activeChatQString!.split('?')[1] ?? '';
-
   queryString = chatIsOpen ? `?${queryString}` : '';
 
   if (chatIsOpen && !/chat=/.test(window.location.search)) {
@@ -38,7 +37,8 @@ const Main = (props: any) => {
   }
 
   if (/signin|signup/.test(props.location.pathname)) {
-    return <Redirect to='/' />;
+    //redirect to actual URL user was initially trying to access when wasn't authenticated
+    return <Redirect to={props.location.state?.from || { pathname: '/' }} />;
   }
 
   return (
@@ -49,12 +49,12 @@ const Main = (props: any) => {
         <Route path={['/', '/index', '/home']} exact component={Home} />
         <Route path='/about' component={About} />
         <Route path='/support' component={Support} />
-        <Route path='/profile' component={Profile} />
+        <Route path='/@*' component={Profile} />
         <Route path='/search' component={Search} />
         <Route component={_404} />
       </Switch>
 
-      <Memoize memoizedComponent={ChatBox} />
+      {/* <Memoize memoizedComponent={ChatBox} /> */}
     </Grid>
   );
 };

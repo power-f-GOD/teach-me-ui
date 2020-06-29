@@ -109,6 +109,7 @@ export const validateSigninPassword = (
     payload
   };
 };
+
 //use this to delay search in case user types very fast to ensure the right results display
 let institutionSearchTimeout: any = null;
 

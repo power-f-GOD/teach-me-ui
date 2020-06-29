@@ -4,10 +4,10 @@ import {
   SigninPropsState,
   InstitutionInputState,
   InputErrState,
-  SearchState,
   CreateDepartmentState,
   CreateLevelState
 } from './interfaces';
+import { searchState } from './misc';
 
 export const FIRSTNAME_VALIDATE = 'FIRSTNAME_VALIDATE';
 export const LASTNAME_VALIDATE = 'LASTNAME_VALIDATE';
@@ -46,13 +46,6 @@ export const basicInputState: BasicInputState = {
 export const institutionInputState: InstitutionInputState = {
   value: { keyword: '', uid: '' },
   ...inputErrState
-};
-
-export const searchState: SearchState = {
-  status: 'settled',
-  err: false,
-  statusText: ' ',
-  data: []
 };
 
 export const createDepartmentState: CreateDepartmentState = {
