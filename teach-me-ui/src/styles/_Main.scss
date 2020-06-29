@@ -1,9 +1,12 @@
 @import 'constants';
 
-.main-root-grid {
+.root-grid {
   height: auto;
   min-height: 100vh;
   flex-grow: 1;
+}
+.main-root-grid {
+  @extend .root-grid;
   background: #ccc !important;
 }
 
