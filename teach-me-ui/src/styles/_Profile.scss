@@ -3,6 +3,7 @@
 .Profile {
   // @include debugger($color: green);
   background-color: #eee;
+  position: relative;
   min-height: 100vh;
 
   &::before {
