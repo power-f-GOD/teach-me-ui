@@ -225,6 +225,9 @@ const Profile = (props: any) => {
   if (!isId) {
     return <Redirect to={`/${userId}`} />;
   }
+  else if (profileData.err || !profileData.data[0]) {
+    return <Redirect to='/404' />;
+  }
 
   if (status !== 'fulfilled') {
     //instead of this, you can use a React Skeleton loader; didn't have the time to add, so I deferred.
