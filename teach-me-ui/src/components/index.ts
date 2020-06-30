@@ -15,7 +15,7 @@ import _404 from './Index/_404';
 import Loader from './crumbs/Loader';
 import SnackBar from './crumbs/SnackBar';
 import ChatBox from './crumbs/ChatBox';
-import Search from './Index/Search';
+import Search from './Main/Search';
 import Footer from './crumbs/Footer';
 
 export {

@@ -38,15 +38,14 @@
   &::before {
     z-index: 1;
     height: 120%;
-    width: 100vw;
+    width: 180vw;
     top: -32.5%;
-    left: 0;
-    border-radius: 0;
+    left: -40vw;
     background: {
       image: url('/images/educational.png'),
         linear-gradient(135deg, $theme-primary-v3, $theme-primary);
       repeat: no-repeat;
-      position: 57vw 90%, center;
+      position: 97vw 90%, center;
       size: 28rem, 100vw;
     }
     box-shadow: 0 2.25rem 0 $theme-primary-v5,
@@ -55,11 +54,10 @@
 
   &::after {
     z-index: 0;
-    width: 100vw;
-    left: 0;
-    height: 120%;
-    top: 0;
-    border-radius: 0;
+    width: 200vw;
+    left: -50vw;
+    height: 150%;
+    top: -20%;
     background: {
       color: $theme-primary;
       image: linear-gradient(to left, $theme-primary-v4, $theme-primary-v5);
@@ -139,7 +137,7 @@
   flex-wrap: wrap;
   justify-content: space-between;
   text-align: center;
-  font-size: 1em;
+  font-size: 1.2em;
   margin: 1.5em 0 5em 0;
   line-height: 2em;
 

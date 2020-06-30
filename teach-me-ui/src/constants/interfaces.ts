@@ -122,7 +122,7 @@ export interface UserData extends SignupFormData {
   avatar?: string;
   id: string;
   displayName: string;
-  token: string | null;
+  token?: string | null;
 }
 
 export interface ColleagueData {
