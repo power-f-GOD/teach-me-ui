@@ -211,13 +211,17 @@
 
   //Profile page styles
   .Profile {
+    &::before {
+      width: calc(100vw + 50rem);
+      left: -25rem;
+    }
+
     [class*='card-container'] {
       padding: 0 0.85rem;
     }
 
     [class*='-info-card'] {
-      padding: 1rem 0.85rem;
-      padding-bottom: 1rem;
+      padding: 1.5rem 1rem;
     }
   }
 }
