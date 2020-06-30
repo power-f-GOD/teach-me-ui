@@ -26,7 +26,7 @@ const Nav = (props: any) => {
 
   return (
     <Box component='nav'>
-      <ElevationScroll {...props} forLandingPage={forLandingPage}>
+      <ElevationScroll {...props} forLandingPage={forLandingPage && !/404/.test(window.location.pathname)}>
         <AppBar position='fixed' className='mobile-width'>
           <Container>
             <Toolbar className='nav-toolbar'>
