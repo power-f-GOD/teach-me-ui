@@ -32,41 +32,51 @@ export const triggerSearchKanyimuta = (keyword: string) => (
   });
   dispatch(searchKanyimuta({ status: 'pending' }));
 
-  delay(200).then(() => {
-    axios({
-      url: `/people/find?keyword=${keyword}&limit=15`,
-      baseURL,
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-      .then(({ data }: any) => {
-        const { error, people } = data as {
-          error: boolean;
-          people: any[];
-        };
-
-        if (!error && !!people[0]) {
-          dispatch(
-            searchKanyimuta({
-              status: 'fulfilled',
-              err: false,
-              data: people
-            })
-          );
-        } else {
-          dispatch(
-            searchKanyimuta({
-              status: 'fulfilled',
-              err: true,
-              data: people
-            })
-          );
+  if (keyword) {
+    delay(200).then(() => {
+      axios({
+        url: `/people/find?keyword=${keyword}&limit=20`,
+        baseURL,
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`
         }
       })
-      .catch(logError(searchKanyimuta));
-  });
+        .then(({ data }: any) => {
+          const { error, people } = data as {
+            error: boolean;
+            people: any[];
+          };
+
+          if (!error && !!people[0]) {
+            dispatch(
+              searchKanyimuta({
+                status: 'fulfilled',
+                err: false,
+                data: people
+              })
+            );
+          } else {
+            dispatch(
+              searchKanyimuta({
+                status: 'fulfilled',
+                err: true,
+                data: people
+              })
+            );
+          }
+        })
+        .catch(logError(searchKanyimuta));
+    });
+  } else {
+    dispatch(
+      searchKanyimuta({
+        status: 'fulfilled',
+        err: false,
+        data: []
+      })
+    );
+  }
 
   return {
     type: TRIGGER_SEARCH_KANYIMUTA,

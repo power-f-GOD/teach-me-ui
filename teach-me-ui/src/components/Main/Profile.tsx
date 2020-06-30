@@ -17,16 +17,23 @@ import Avatar from '@material-ui/core/Avatar';
 import AddIcon from '@material-ui/icons/Add';
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
 import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
-// import LocationOnIcon from '@material-ui/icons/LocationOn';
 import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
 import SchoolOutlinedIcon from '@material-ui/icons/SchoolOutlined';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+
+import Loader from '../crumbs/Loader';
 import { UserData } from '../../constants/interfaces';
-// import GroupIcon from '@material-ui/icons/Group';
-// import ForumIcon from '@material-ui/icons/Forum';
-// import PeopleOutlineIcon from '@material-ui/icons/PeopleOutline';
+import { dispatch } from '../../functions';
+import {
+  getProfileData,
+  profileData as _profileData
+} from '../../actions/profile';
+
+/**
+ * Please, Do not delete any commented code; You can either uncomment them to use them or leave them as they are
+ */
 
 interface InfoProps {
   name: string;
@@ -58,43 +65,62 @@ export const refs: any = {
   levelInput: createRef<HTMLInputElement>()
 };
 
+let [
+  avatar,
+  firstname,
+  lastname,
+  displayName,
+  username,
+  email,
+  dob,
+  institution,
+  department,
+  level
+] = Array(10).fill('');
+
+let basicInfo: InfoProps[];
+let academicInfo: InfoProps[];
+
+const basicInfoIds = ['firstname', 'lastname', 'username', 'dob', 'email'];
+const academicInfoIds = ['institution', 'department', 'level'];
+
 const Profile = (props: any) => {
-  const { userData } = props;
-  const {
-    avatar,
-    displayName,
-    username: _username,
-    email,
-    dob: _dob,
-    institution,
-    department,
-    level
-  }: UserData = userData;
-  const [firstname, lastname] = displayName.split(' ');
-  const dob = _dob.split('-').reverse().join('-');
-  const username = '@' + _username;
+  const { profileData, userData } = props;
+  const data: UserData = profileData.data[0];
+  const { status } = profileData;
   const { auth } = props;
   const { isAuthenticated } = auth;
 
-  const basicInfo: InfoProps[] = [
+  avatar = data.avatar || 'avatar-1.png';
+  firstname = data.firstname || '';
+  lastname = data.lastname || '';
+  displayName = data.displayName || '';
+  email = data.email || '';
+  dob = data.dob?.split('-').reverse().join('-') || '';
+  institution = data.institution || '';
+  department = data.department || '';
+  level = data.level || '';
+
+  //username of currently authenticated user which will be used to check if the current profile data requested if for another user or currently authenticated in order to render the views accordingly
+  username = '@' + (userData.username || '');
+
+  basicInfo = [
     { name: 'Firstname', value: firstname },
     { name: 'Lastname', value: lastname },
     { name: 'Username', value: username },
     { name: 'Date of birth', value: dob },
     { name: 'Email', value: email }
   ];
-  const academicInfo: InfoProps[] = [
+  academicInfo = [
     { name: 'Institution', value: institution },
     { name: 'Department', value: department },
     { name: 'Level', value: level }
   ];
 
-  const basicInfoIds = ['firstname', 'lastname', 'username', 'dob', 'email'];
-  const academicInfoIds = ['institution', 'department', 'level'];
-
   let userId = window.location.pathname.split('/').slice(-1)[0];
   const isId = /^@\w+$/.test(userId);
   userId = isId ? userId.toLowerCase() : username;
+  // here is where the check is made to render the views accordingly
   const isSelf = userId === username;
   let selfView = isAuthenticated ? isSelf : false;
 
@@ -113,7 +139,7 @@ const Profile = (props: any) => {
 
       return {
         id,
-        defaultValue: id === 'dob' ? dob : userData[id],
+        defaultValue: id === 'dob' ? dob : profileData[id],
         error: false,
         helperText: ' ',
         inputRef: refs[`${id}Input`],
@@ -129,7 +155,7 @@ const Profile = (props: any) => {
 
       return {
         id,
-        defaultValue: userData[id],
+        defaultValue: profileData[id],
         error: false,
         helperText: ' ',
         inputRef: refs[`${id}Input`],
@@ -181,8 +207,28 @@ const Profile = (props: any) => {
     };
   }, [selfView]);
 
+  useEffect(() => {
+    dispatch(getProfileData(userId.replace('@', ''))(dispatch));
+
+    return () => {
+      //clean up after every unmount to prevent flash of profile page before load of profile data
+      dispatch(
+        _profileData({
+          status: 'settled',
+          err: false,
+          data: [{}]
+        })
+      );
+    };
+  }, [userId]);
+
   if (!isId) {
     return <Redirect to={`/${userId}`} />;
+  }
+
+  if (status !== 'fulfilled') {
+    //instead of this, you can use a React Skeleton loader; didn't have the time to add, so I deferred.
+    return <Loader />;
   }
 
   return (
@@ -240,12 +286,12 @@ const Profile = (props: any) => {
           </Col>
           <Col className='d-flex flex-column p-0'>
             <Col as='span' className='display-name p-0 d-block my-1'>
-              {isSelf ? displayName : 'Another User'}
+              {displayName}
             </Col>
             <Col
               as='span'
               className='username p-0 d-flex justify-content-center mb-3'>
-              {isSelf ? username : '@another_user'}
+              {userId}
             </Col>
             <Col as='span' className='status p-0 px-3 d-block'>
               {/* <CreateOutlinedIcon className='mr-2' /> */}
@@ -397,7 +443,8 @@ function InfoInput(props: any) {
 
 const mapStateToProps = (state: any) => ({
   auth: state.auth,
-  userData: state.userData
+  userData: state.userData,
+  profileData: state.profileData
 });
 
 export default connect(mapStateToProps)(Profile);

@@ -10,7 +10,7 @@ import Landing from './Landing';
 import Support from './Support';
 import Footer from '../crumbs/Footer';
 import _404 from './_404';
-import Search from './Search';
+import Search from '../Main/Search';
 import Profile from '../Main/Profile';
 
 const Index = () => {

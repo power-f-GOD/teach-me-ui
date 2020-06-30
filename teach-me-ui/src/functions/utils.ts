@@ -6,12 +6,10 @@ import {
   NetworkAction
 } from '../constants';
 import store from '../appStore';
-import {
-  displaySnackbar,
-  setUserData
-} from '../actions';
+import { displaySnackbar, setUserData } from '../actions';
 
-export const { dispatch, getState } = store;
+export const { getState } = store;
+export const dispatch = store.dispatch as Function;
 
 export const validateEmailFn = (email: string) =>
   !!email && /^\w+[\w\d.]*[\w\d]+@\w+\.[\w\d.]+[\w\d]$/.test(email);
