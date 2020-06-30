@@ -8,40 +8,8 @@
 }
 
 .nav-background {
-  background-color: $theme-color-primary-v4 !important;
-  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.45);
-}
-
-.search {
-  border-radius: 0.25em;
-  height: 2.75em;
-  align-items: center;
-  flex-wrap: nowrap;
-  align-self: center;
-  padding: 0 0.75em;
-  margin: 0 2.5em 0 0;
-  width: auto;
-  transition: 0.3s;
-  background: rgba(255, 255, 255, 0.075);
-
-  &:focus-within {
-    background: rgba(255, 255, 255, 0.125);
-  }
-}
-
-.search-input {
-  color: #bbb;
-  width: 8em;
-  transition: 0.3s;
-  margin-left: 0.5em;
-
-  &:focus-within {
-    width: 13em;
-
-    > input {
-      color: white;
-    }
-  }
+  background-color: $theme-primary-v4 !important;
+  box-shadow: 0 0rem 1.5rem rgba(0, 0, 0, 0.2);
 }
 
 .nav-toolbar {
@@ -94,14 +62,14 @@
     left: 0;
     z-index: -1;
     border-radius: 0.25em;
-    background-color: $theme-color-primary-v8;
+    background-color: $theme-primary-v8;
     transition: 0.35s;
   }
 
   &.active {
     &::before {
       width: 60% !important;
-      background: $theme-color-secondary;
+      background: $theme-secondary;
     }
 
     .nav-icon {
@@ -110,11 +78,11 @@
   }
 
   &:hover {
-    color: $theme-color-secondary-v8 !important;
+    color: $theme-secondary-v8 !important;
 
     &::before {
       width: 3em;
-      background-color: $theme-color-secondary-v7;
+      background-color: $theme-secondary-v7;
     }
 
     .nav-icon {
@@ -133,14 +101,14 @@
       max-width: unset;
       width: 100%;
       height: 180%;
-      background: $theme-color-primary-v6;
+      background: $theme-primary-v6;
     }
 
     &:hover {
       &::before {
         height: 100%;
         top: 0;
-        background-color: $theme-color-secondary;
+        background-color: $theme-secondary;
       }
     }
   }
@@ -202,7 +170,7 @@
   .MuiDrawer-paper {
     width: 60%;
     overflow-x: hidden;
-    background: $theme-color-primary-v3;
+    background: $theme-primary-v3;
     max-width: 300px;
   }
 }

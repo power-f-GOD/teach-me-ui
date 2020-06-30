@@ -1,5 +1,5 @@
 .fade-in {
-  animation: fadeIn 0.5s forwards ease;
+  animation: fadeIn 0.5s ease;
 }
 
 @keyframes fadeIn {
@@ -12,7 +12,7 @@
 }
 
 .fade-out {
-  animation: fadeOut 0.3s forwards ease;
+  animation: fadeOut 0.3s ease;
 }
 
 @keyframes fadeOut {
@@ -48,4 +48,31 @@
   to {
     transform: translateX(-100%);
   }
+}
+
+// .slide-up {
+
+// }
+
+@keyframes slideUp {
+  from {
+    transform: translateY(1rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.hide {
+  transition: 0.35s;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.show {
+  transition: 0.35s;
+  visibility: visible;
+  opacity: 1;
 }

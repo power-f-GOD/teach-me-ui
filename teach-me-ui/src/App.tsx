@@ -2,11 +2,19 @@ import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { Index, Auth, _404, Main, Loader, SnackBar } from './components';
+import Index from './components/Index/Index';
+import Auth from './components/Auth/Auth';
+import Main from './components/Main/Main';
+import Loader from './components/crumbs/Loader';
+import SnackBar from './components/crumbs/SnackBar';
 import ProtectedRoute from './ProtectedRoute';
+
 import { dispatch } from './functions/utils';
 import { displaySnackbar } from './actions/misc';
 import { verifyAuth } from './actions/auth';
+import createMemo from './Memo';
+
+const Memo = createMemo();
 
 const App = (props: any) => {
   const { status: authStatus, isAuthenticated } = props.auth;
@@ -23,23 +31,39 @@ const App = (props: any) => {
           <ProtectedRoute
             path={
               isAuthenticated
-                ? ['/', '/index', '/home', '/about', '/support', '/profile']
-                : ['/home', '/profile']
+                ? [
+                    '/',
+                    '/index',
+                    '/home',
+                    '/about',
+                    '/support',
+                    '/@*',
+                    '/search',
+                    '/*'
+                  ]
+                : ['/home', '/search']
             }
             exact
             component={Main}
             isAuthenticated={isAuthenticated}
           />
-          <Route path={['/signin', '/signup']} component={Auth} />
           <Route
-            path={['/', '/index', '/about', '/support']}
+            path={[
+              '/signin',
+              '/signup',
+              '/forgot-password',
+              '/password/reset/:token'
+            ]}
+            component={Auth}
+          />
+          <Route
+            path={['/', '/index', '/about', '/@*', '/support', '/*']}
             exact
             component={Index}
           />
-          <Route component={_404} />
         </Switch>
       </BrowserRouter>
-      <SnackBar snackbar={snackbar} />
+      <Memo memoizedComponent={SnackBar} snackbar={snackbar} />
     </>
   );
 };

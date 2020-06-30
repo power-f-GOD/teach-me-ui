@@ -5,7 +5,8 @@ import React, {
   useCallback,
   useMemo,
   createRef,
-  ChangeEvent
+  ChangeEvent,
+  useEffect
 } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -18,7 +19,6 @@ import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
-import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
@@ -42,14 +42,9 @@ import {
 } from '../../functions/signup';
 import { dispatch } from '../../functions';
 import {
-  validateInstitution,
   getMatchingInstitutions,
-  validateDepartment,
   getMatchingDepartments,
-  validateLevel,
-  getMatchingLevels,
-  requestCreateDepartment,
-  requestCreateLevel
+  getMatchingLevels
 } from '../../actions';
 
 export const refs: any = {
@@ -79,9 +74,7 @@ const Signup = (props: SignupPropsState) => {
     level,
     matchingInstitutions,
     matchingDepartments,
-    createDepartment,
     matchingLevels,
-    createLevel,
     signup,
     auth
   } = props;
@@ -89,9 +82,121 @@ const Signup = (props: SignupPropsState) => {
   const [hideInstitutionsList, setHideInstitutionsList] = useState(Boolean);
   const [hideDepartmentsList, setHideDepartmentsList] = useState(Boolean);
   const [hideLevelsList, setHideLevelsList] = useState(Boolean);
-  const [openDepartmentPopover, setOpenDepartmentPopover] = useState(Boolean);
-  const [openLevelPopover, setOpenLevelPopover] = useState(Boolean);
   const { isAuthenticated } = auth;
+
+  const handleInstitutionChange = useCallback(
+    (e: any) => {
+      const { target } = e;
+
+      target.dataset.uid =
+        institution.value!.keyword !== target.value.trim()
+          ? ''
+          : institution.value!.uid;
+      handleSignupInputChange(e);
+      dispatch(getMatchingInstitutions(target.value)(dispatch));
+      setHideInstitutionsList(!target.value.trim() || !navigator.onLine);
+    },
+    [institution.value]
+  );
+
+  const handleDepartmentChange = useCallback(
+    (e: any) => {
+      const { target } = e;
+      const inputIsValid = /^[a-z\s?]+$/i.test(target.value);
+
+      e.target.dataset.uid =
+        department.value !== target.value.trim() ? '' : department.value;
+
+      handleSignupInputChange(e);
+      setHideDepartmentsList(!target.value.trim() || !navigator.onLine);
+
+      if (inputIsValid)
+        dispatch(getMatchingDepartments(target.value)(dispatch));
+    },
+    [department.value]
+  );
+
+  const handleLevelChange = useCallback(
+    (e: any) => {
+      const { target } = e;
+      const inputIsValid = /^[a-z0-9\s?]+$/i.test(target.value);
+
+      e.target.dataset.uid =
+        level.value !== target.value.trim() ? '' : level.value;
+      handleSignupInputChange(e);
+      setHideLevelsList(!target.value.trim() || !navigator.onLine);
+      if (inputIsValid) dispatch(getMatchingLevels(target.value)(dispatch));
+    },
+    [level.value]
+  );
+
+  const capitalizeInput = useCallback(
+    (e: any) => {
+      const { id, value } = e.target;
+
+      if (/first|last|department|level/.test(id) && value) {
+        e.target.value = value
+          .split(' ')
+          .map((word: string) =>
+            /^(in|of|and|on)$/i.test(word)
+              ? word.toLowerCase()
+              : word[0].toUpperCase() + word.slice(1).toLowerCase()
+          )
+          .join(' ');
+
+        if (id === 'department') handleDepartmentChange(e);
+        else if (id === 'level') handleLevelChange(e);
+        else handleSignupInputChange(e);
+      } else if (/email|username/.test(id) && value) {
+        e.target.value = value.toLowerCase();
+        handleSignupInputChange(e);
+      }
+    },
+    [handleDepartmentChange, handleLevelChange]
+  );
+
+  const triggerSearch = useCallback(
+    (e: any) => {
+      if (!e.target.value.trim()) return;
+
+      switch (e.target.id) {
+        case 'institution':
+          if (!institution.value!.uid) {
+            handleInstitutionChange(e);
+          } else setHideInstitutionsList(false);
+          break;
+        case 'department':
+          if (!department.value) {
+            handleDepartmentChange(e);
+          } else setHideDepartmentsList(false);
+          break;
+        case 'level':
+          if (!level.value) {
+            handleLevelChange(e);
+          } else setHideLevelsList(false);
+      }
+    },
+    [
+      institution.value,
+      department.value,
+      level.value,
+      handleInstitutionChange,
+      handleDepartmentChange,
+      handleLevelChange
+    ]
+  );
+
+  const inputProps = useMemo(() => {
+    return {
+      onKeyPress: (e: any) => {
+        if (e.key === 'Enter') {
+          e.target.blur();
+        }
+      },
+      onBlur: capitalizeInput,
+      onFocus: triggerSearch
+    };
+  }, [capitalizeInput, triggerSearch]);
 
   const inputAdorned = useMemo(() => {
     return {
@@ -108,7 +213,11 @@ const Signup = (props: SignupPropsState) => {
   }, [passwordVisible]);
 
   const matchingInstitutionsList = (
-    <ClickAwayListener onClickAway={() => setHideInstitutionsList(true)}>
+    <ClickAwayListener
+      onClickAway={() =>
+        document.activeElement?.id !== 'institution' &&
+        setHideInstitutionsList(true)
+      }>
       <List
         className={`search-list custom-scroll-bar ${
           institution.value?.keyword &&
@@ -124,23 +233,22 @@ const Signup = (props: SignupPropsState) => {
             divider
             key={key}
             onClick={() => {
+              const institutionInput = refs.institutionInput.current;
+              const e = {
+                target: institutionInput
+              } as React.ChangeEvent<HTMLInputElement>;
+
+              institutionInput.dataset.uid = _institution._id;
+              institutionInput.value = _institution.name;
+              handleSignupInputChange(e);
               setHideInstitutionsList(true);
-              dispatch(
-                validateInstitution({
-                  value: {
-                    keyword: _institution.name,
-                    uid: _institution.id
-                  }
-                })
-              );
-              refs.institutionInput.current.dataset.uid = _institution.id;
             }}>
             {(() => {
-              const country = `<span class='theme-color-tertiary-lighter'>${_institution.country}</span>`;
+              const country = `<span class='theme-tertiary-lighter'>${_institution.country}</span>`;
               const keyword = institution.value?.keyword!.trim();
               const highlighted = `${_institution.name.replace(
                 new RegExp(`(${keyword})`, 'i'),
-                `<span class='theme-color-secondary-darker'>$1</span>`
+                `<span class='theme-secondary-darker'>$1</span>`
               )}, ${country}`.replace(/<\/?script>/gi, '');
 
               return (
@@ -157,39 +265,41 @@ const Signup = (props: SignupPropsState) => {
   );
 
   const matchingDepartmentsList = (
-    <ClickAwayListener onClickAway={() => setHideDepartmentsList(true)}>
+    <ClickAwayListener
+      onClickAway={() =>
+        document.activeElement?.id !== 'department' &&
+        setHideDepartmentsList(true)
+      }>
       <List
         className={`search-list custom-scroll-bar ${
-          department.value?.keyword && !department.err && !hideDepartmentsList
+          department.value && !department.err && !hideDepartmentsList
             ? 'open'
             : 'close'
         }`}
         aria-label='departments list'>
         {matchingDepartments?.data
           ?.slice(0, 15)
-          .map((_department, key: number) => (
+          .map((_department: string, key: number) => (
             <ListItem
               button
               divider
               key={key}
               onClick={() => {
+                const departmentInput = refs.departmentInput.current;
+                const e = {
+                  target: departmentInput
+                } as React.ChangeEvent<HTMLInputElement>;
+
                 setHideDepartmentsList(true);
-                dispatch(
-                  validateDepartment({
-                    value: {
-                      keyword: _department.name,
-                      uid: _department.id
-                    }
-                  })
-                );
-                refs.departmentInput.current.dataset.uid = _department.id;
+                departmentInput.value = _department;
+                handleSignupInputChange(e);
               }}>
               {(() => {
-                const highlighted = `${_department.name
+                const highlighted = `${_department
                   .trim()
                   .replace(
-                    new RegExp(`(${department.value?.keyword?.trim()})`, 'i'),
-                    `<span class='theme-color-secondary-darker'>$1</span>`
+                    new RegExp(`(${department.value!.trim()})`, 'i'),
+                    `<span class='theme-secondary-darker'>$1</span>`
                   )}`.replace(/<\/?script>/gi, '');
 
                 return (
@@ -206,152 +316,63 @@ const Signup = (props: SignupPropsState) => {
   );
 
   const matchingLevelsList = (
-    <ClickAwayListener onClickAway={() => setHideLevelsList(true)}>
+    <ClickAwayListener
+      onClickAway={() =>
+        document.activeElement?.id !== 'level' && setHideLevelsList(true)
+      }>
       <List
         className={`search-list custom-scroll-bar ${
-          level.value?.keyword && !level.err && !hideLevelsList
-            ? 'open'
-            : 'close'
+          level.value && !level.err && !hideLevelsList ? 'open' : 'close'
         }`}
         aria-label='institutions list'>
-        {matchingLevels?.data?.slice(0, 15).map((_level, key: number) => (
-          <ListItem
-            button
-            divider
-            key={key}
-            onClick={() => {
-              setHideLevelsList(true);
-              dispatch(
-                validateLevel({
-                  value: {
-                    keyword: _level.name,
-                    uid: _level.id
-                  }
-                })
-              );
-              refs.levelInput.current.dataset.uid = _level.id;
-            }}>
-            {(() => {
-              const highlighted = `${_level.name
-                .trim()
-                .replace(
-                  new RegExp(`(${level.value!.keyword!.trim()})`, 'i'),
-                  `<span class='theme-color-secondary-darker'>$1</span>`
-                )}`.replace(/<\/?script>/gi, '');
+        {matchingLevels?.data
+          ?.slice(0, 15)
+          .map((_level: string, key: number) => (
+            <ListItem
+              button
+              divider
+              key={key}
+              onClick={() => {
+                const levelInput = refs.levelInput.current;
+                const e = {
+                  target: levelInput
+                } as React.ChangeEvent<HTMLInputElement>;
 
-              return (
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: highlighted
-                  }}></span>
-              );
-            })()}
-          </ListItem>
-        ))}
+                setHideLevelsList(true);
+                levelInput.value = _level;
+                handleSignupInputChange(e);
+              }}>
+              {(() => {
+                const highlighted = `${_level
+                  .trim()
+                  .replace(
+                    new RegExp(`(${level.value!.trim()})`, 'i'),
+                    `<span class='theme-secondary-darker'>$1</span>`
+                  )}`.replace(/<\/?script>/gi, '');
+
+                return (
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: highlighted
+                    }}></span>
+                );
+              })()}
+            </ListItem>
+          ))}
       </List>
     </ClickAwayListener>
   );
 
-  const handleInstitutionChange = useCallback(
-    (e: any) => {
-      const { target } = e;
-
-      target.dataset.uid =
-        institution.value!.keyword !== target.value.trim()
-          ? ''
-          : institution.value!.uid;
-      handleSignupInputChange(e);
-      dispatch(getMatchingInstitutions(target.value)(dispatch));
-      setHideInstitutionsList(!target.value || !navigator.onLine);
-    },
-    [institution.value]
-  );
-
-  const institutionUid = institution.value!.uid;
-  const handleDepartmentChange = useCallback(
-    (e: any) => {
-      const { target } = e;
-      const inputIsValid = /^[a-z\s?]+$/i.test(target.value);
-
-      e.target.dataset.uid =
-        department.value!.keyword !== target.value.trim()
-          ? ''
-          : department.value!.uid;
-      handleSignupInputChange(e);
-      setHideDepartmentsList(!target.value || !navigator.onLine);
-      setOpenDepartmentPopover(
-        target.value.length > 2 &&
-          inputIsValid &&
-          !department.value!.uid &&
-          !!institutionUid
-      );
-
-      if (inputIsValid)
-        dispatch(getMatchingDepartments(target.value)(dispatch));
-    },
-    [department.value, institutionUid]
-  );
-
-  const departmentUid = department.value!.uid;
-  const handleLevelChange = useCallback(
-    (e: any) => {
-      const { target } = e;
-      const inputIsValid = /^[a-z0-9\s?]+$/i.test(target.value);
-
-      e.target.dataset.uid =
-        level.value!.keyword !== target.value.trim() ? '' : level.value!.uid;
-      handleSignupInputChange(e);
-      setHideLevelsList(!target.value || !navigator.onLine);
-      setOpenLevelPopover(
-        target.value.length > 2 &&
-          inputIsValid &&
-          !level.value?.uid &&
-          !!departmentUid
-      );
-
-      if (inputIsValid) dispatch(getMatchingLevels(target.value)(dispatch));
-    },
-    [level.value, departmentUid]
-  );
-
-  const handleCreateDepartment = useCallback(() => {
-    const capitalizedKeyword = department
-      .value!.keyword!.split(' ')
-      .map((word) => word[0].toUpperCase() + word.slice(1))
-      .join(' ');
-
-    dispatch(
-      requestCreateDepartment({
-        department: capitalizedKeyword,
-        institution: institution.value!.uid
-      })(dispatch)
-    );
-  }, [department.value, institution.value]);
-
-  const handleCreateLevel = useCallback(() => {
-    const capitalizedKeyword = level
-      .value!.keyword!.split(' ')
-      .map((word) => word[0].toUpperCase() + word.slice(1))
-      .join(' ');
-
-    dispatch(
-      requestCreateLevel({
-        level: capitalizedKeyword,
-        department: department.value!.uid
-      })(dispatch)
-    );
-  }, [level.value, department.value]);
+  useEffect(() => () => window.scrollTo(0, 0), []);
 
   if (isAuthenticated) {
     return <Redirect to='/' />;
   }
 
   return (
-    <Grid
-      className='auth-form-wrapper fade-in'
-      container
-      justify='center'
-      direction='column'>
+    <Box
+      width='45rem'
+      className='auth-form-wrapper fade-in d-flex flex-column justify-content-center'>
       <Typography component='h2' variant='h6'>
         <Box marginY='0.5em' fontSize='1.25rem' fontWeight={900}>
           Basic info:
@@ -378,6 +399,7 @@ const Signup = (props: SignupPropsState) => {
                 helperText={firstname.helperText}
                 fullWidth
                 onChange={handleSignupInputChange}
+                inputProps={inputProps}
               />
             </Box>
           </Grid>
@@ -396,6 +418,7 @@ const Signup = (props: SignupPropsState) => {
                 helperText={lastname.helperText}
                 fullWidth
                 onChange={handleSignupInputChange}
+                inputProps={inputProps}
               />
             </Box>
           </Grid>
@@ -417,6 +440,7 @@ const Signup = (props: SignupPropsState) => {
                 helperText={username.helperText}
                 fullWidth
                 onChange={handleSignupInputChange}
+                inputProps={inputProps}
               />
             </Box>
           </Grid>
@@ -436,6 +460,7 @@ const Signup = (props: SignupPropsState) => {
                 helperText={email.helperText}
                 fullWidth
                 onChange={handleSignupInputChange}
+                inputProps={inputProps}
               />
             </Box>
           </Grid>
@@ -463,6 +488,7 @@ const Signup = (props: SignupPropsState) => {
                 helperText={password.helperText}
                 fullWidth
                 onChange={handleSignupInputChange}
+                inputProps={inputProps}
                 InputProps={inputAdorned}
               />
             </Box>
@@ -497,6 +523,7 @@ const Signup = (props: SignupPropsState) => {
                 helperText={institution.helperText}
                 fullWidth
                 onChange={handleInstitutionChange}
+                inputProps={inputProps}
               />
               {matchingInstitutions.status === 'pending' && (
                 <LinearProgress color='primary' />
@@ -519,38 +546,23 @@ const Signup = (props: SignupPropsState) => {
                 id='department'
                 label='Department'
                 size='medium'
-                value={department.value!.keyword || ''}
-                className={department.value!.uid ? 'input-set' : 'not-set'}
+                value={department.value || ''}
+                className={
+                  department.value && institution.value!.uid
+                    ? 'input-set'
+                    : 'not-set'
+                }
                 autoComplete='department'
                 inputRef={refs.departmentInput}
                 helperText={department.helperText}
                 fullWidth
                 onChange={handleDepartmentChange}
+                inputProps={inputProps}
               />
               {matchingDepartments.status === 'pending' && (
                 <LinearProgress color='primary' />
               )}
               {matchingDepartmentsList}
-              <Button
-                id='create-department-button'
-                color='primary'
-                className={`signup-create-button ${
-                  openDepartmentPopover &&
-                  !matchingDepartments.data![0] &&
-                  matchingDepartments.status !== 'pending' &&
-                  createDepartment.status !== 'fulfilled'
-                    ? 'show'
-                    : 'hide'
-                }`}
-                onClick={handleCreateDepartment}>
-                {createDepartment.status === 'pending' ? (
-                  <CircularProgress color='inherit' size={22} />
-                ) : (
-                  <>
-                    <AddIcon color='inherit' fontSize='inherit' /> Create
-                  </>
-                )}
-              </Button>
             </Box>
           </Grid>
         </Grid>
@@ -572,37 +584,22 @@ const Signup = (props: SignupPropsState) => {
                 label='Level (E.g. 100, Freshman)'
                 size='medium'
                 autoComplete='level'
-                value={level.value?.keyword || ''}
-                className={level.value!.uid ? 'input-set' : 'not-set'}
+                value={level.value || ''}
+                className={
+                  level.value && institution.value!.uid
+                    ? 'input-set'
+                    : 'not-set'
+                }
                 inputRef={refs.levelInput}
                 helperText={level.helperText}
                 fullWidth
                 onChange={handleLevelChange}
+                inputProps={inputProps}
               />
               {matchingLevels.status === 'pending' && (
                 <LinearProgress color='primary' />
               )}
               {matchingLevelsList}
-              <Button
-                id='create-level-button'
-                color='primary'
-                className={`signup-create-button ${
-                  openLevelPopover &&
-                  !matchingLevels.data![0] &&
-                  matchingLevels.status !== 'pending' &&
-                  createLevel.status !== 'fulfilled'
-                    ? 'show'
-                    : 'hide'
-                }`}
-                onClick={handleCreateLevel}>
-                {createLevel.status === 'pending' ? (
-                  <CircularProgress color='inherit' size={22} />
-                ) : (
-                  <>
-                    <AddIcon color='inherit' fontSize='inherit' /> Create
-                  </>
-                )}
-              </Button>
             </Box>
           </Grid>
           <Grid item xs={12} sm={5} className='flex-basis-halved' key='button'>
@@ -634,7 +631,7 @@ const Signup = (props: SignupPropsState) => {
           Have a an account? <Link to='/signin'>Sign in here!</Link>
         </Typography>
       </Box>
-    </Grid>
+    </Box>
   );
 };
 

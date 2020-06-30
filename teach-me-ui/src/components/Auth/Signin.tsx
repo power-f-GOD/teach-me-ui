@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -12,7 +11,6 @@ import Button from '@material-ui/core/Button';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Checkbox from '@material-ui/core/Checkbox';
 
 import { SigninPropsState } from '../../constants';
 import { handleSigninRequest, handleSigninInputChange } from '../../functions';
@@ -27,16 +25,26 @@ const Signin = (props: SigninPropsState) => {
   const { isAuthenticated } = props.auth;
   const { from } = props.location?.state || { from: { pathname: '/' } };
 
+  const inputProps = useMemo(() => {
+    return {
+      onKeyPress: (e: any) => {
+        if (e.key === 'Enter') {
+          e.target.blur();
+        }
+      }
+    };
+  }, []);
+
+  React.useEffect(() => () => window.scrollTo(0, 0), []);
+
   if (isAuthenticated) {
     return <Redirect to={from} />;
   }
 
   return (
-    <Grid
-      className='auth-form-wrapper fade-in'
-      container
-      justify='center'
-      direction='column'>
+    <Box
+      width='25rem'
+      className='auth-form-wrapper fade-in d-flex flex-column justify-content-center'>
       <Typography component='h2' variant='h6'>
         <Box marginY='0.75em' fontSize='1.25rem' fontWeight={900}>
           Sign In
@@ -49,18 +57,21 @@ const Signin = (props: SigninPropsState) => {
         onSubmit={(e: any) => e.preventDefault()}>
         <Box component='div' marginY='0.45em'>
           <TextField
-            value={props.signinId.value}
             error={props.signinId.err}
             variant='outlined'
             id='signin-id'
             required
             label='Username or Email'
             type='email'
+            defaultValue={
+              props.signinId.value || JSON.parse(localStorage.kanyimuta || '{}')?.username || ''
+            }
             autoComplete='username'
             inputRef={refs.idInput}
             helperText={props.signinId.helperText}
             fullWidth
             onChange={handleSigninInputChange}
+            inputProps={inputProps}
           />
         </Box>
         <Box component='div' marginY='0.45em'>
@@ -77,6 +88,7 @@ const Signin = (props: SigninPropsState) => {
             helperText={props.signinPassword.helperText}
             fullWidth
             onChange={handleSigninInputChange}
+            inputProps={inputProps}
             InputProps={{
               endAdornment: (
                 <InputAdornment position='end'>
@@ -93,23 +105,11 @@ const Signin = (props: SigninPropsState) => {
 
         <Box
           display='flex'
-          justifyContent='space-between'
+          justifyContent='flex-end'
           alignItems='center'
           component='div'>
-          <Box
-            component='label'
-            display='flex'
-            className='flex-basis-halved'
-            alignItems='center'>
-            <Checkbox
-              defaultChecked
-              color='primary'
-              inputProps={{ 'aria-label': 'remember me' }}
-            />
-            <Box component='div'>Remember me</Box>
-          </Box>
           <Box component='div' textAlign='right' marginLeft='10px'>
-            <Link to='#!'>Forgot password?</Link>
+            <Link to='/forgot-password'>Forgot password?</Link>
           </Box>
         </Box>
 
@@ -137,7 +137,7 @@ const Signin = (props: SigninPropsState) => {
           New to Kanyimuta? <Link to='/signup'>Sign up here!</Link>
         </Typography>
       </Box>
-    </Grid>
+    </Box>
   );
 };
 

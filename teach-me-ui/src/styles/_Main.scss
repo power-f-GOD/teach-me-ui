@@ -1,14 +1,17 @@
 @import 'constants';
 
-.main-root-grid {
+.root-grid {
   height: auto;
   min-height: 100vh;
   flex-grow: 1;
-  background: white;
+}
+.main-root-grid {
+  @extend .root-grid;
+  background: #ccc !important;
 }
 
 .top-navbar {
-  background: $theme-color-primary-v4;
+  background: $theme-primary-v4;
   color: white;
 
   ul {
@@ -26,7 +29,7 @@
       }
 
       &:active {
-        color: $theme-color-primary-v4;
+        color: $theme-primary-v4;
       }
     }
   }

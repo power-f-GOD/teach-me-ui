@@ -1,34 +1,15 @@
 @import 'constants';
 
 footer {
-  color: $theme-color-tertiary-v4;
+  color: $theme-tertiary-v4;
   position: relative;
   z-index: 1;
-  margin-top: 4rem;
 
   .minor {
     padding: 4rem 0;
     text-transform: uppercase;
-
-    > * {
-      position: relative;
-      z-index: 1;
-    }
-
-    &::after {
-      background: #eee;
-      border: 1px solid #e4e4e4;
-      position: absolute;
-      z-index: -1;
-      height: 120%;
-      width: 180vw;
-      top: -12%;
-      left: -40vw;
-      bottom: 0;
-      right: 0;
-      border-radius: 50% 50% 0 0;
-      content: ' ';
-    }
+    border: 1px solid #e4e4e4;
+    background-color: #fff;
 
     section {
       flex-grow: 1;

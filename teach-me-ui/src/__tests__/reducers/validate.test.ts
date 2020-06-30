@@ -16,11 +16,11 @@ import {
 } from '../../reducers/validate';
 import {
   basicInputState,
-  academicInputState,
+  institutionInputState,
   BasicInputState,
   ReduxAction,
   SearchState,
-  AcademicInputState
+  InstitutionInputState
 } from '../../constants';
 
 afterEach(cleanup);
@@ -30,7 +30,7 @@ it("validate reducers should be called with 'state' and 'action' and return obje
     expect.any(String),
     expect.any({ keyword: '', uid: '' })
   ];
-  const mockInputState: BasicInputState | AcademicInputState = {
+  const mockInputState: BasicInputState | InstitutionInputState = {
     value: basicInputStateVal,
     err: expect.any(Boolean),
     helperText: expect.any(String)
@@ -58,15 +58,15 @@ it("validate reducers should be called with 'state' and 'action' and return obje
     dob(state, action)
   );
   const institutionMockFunc = jest.fn(
-    (state: AcademicInputState, action: ReduxAction) =>
+    (state: InstitutionInputState, action: ReduxAction) =>
       institution(state, action)
   );
   const departmentMockFunc = jest.fn(
-    (state: AcademicInputState, action: ReduxAction) =>
+    (state: BasicInputState, action: ReduxAction) =>
       department(state, action)
   );
   const levelMockFunc = jest.fn(
-    (state: AcademicInputState, action: ReduxAction) => level(state, action)
+    (state: BasicInputState, action: ReduxAction) => level(state, action)
   );
   const matchingInstitutionsMockFunc = jest.fn(
     (state: SearchState, action: ReduxAction) =>

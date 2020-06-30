@@ -1,6 +1,9 @@
 import {
   SIGNUP_USER,
+  FORGOT_PASSWORD_PENDING,
+  FORGOT_PASSWORD_COMPLETED,
   StatusPropsState,
+  ForgotPasswordStatusState,
   ReduxAction,
   signinState,
   SIGNIN_USER,
@@ -9,7 +12,8 @@ import {
   AUTHENTICATE_USER,
   AuthState,
   SIGNOUT_USER,
-  signoutState
+  signoutState,
+  forgotPasswordStatusState
 } from '../constants';
 
 export const signup = (
@@ -20,6 +24,22 @@ export const signup = (
     return {
       ...state,
       ...action.payload
+    };
+  }
+  return state;
+};
+
+export const forgotPasswordStatus = (
+  state: ForgotPasswordStatusState = forgotPasswordStatusState,
+  action: ReduxAction
+) => {
+  if (action.type === FORGOT_PASSWORD_PENDING) {
+    return {
+      status: 'pending'
+    };
+  } else if (action.type === FORGOT_PASSWORD_COMPLETED) {
+    return {
+      status: 'completed'
     };
   }
   return state;
@@ -60,5 +80,3 @@ export const signout = (
   }
   return state;
 };
-
-

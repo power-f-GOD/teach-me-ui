@@ -4,6 +4,9 @@ import {
   ReduxAction,
   SIGNUP_REQUEST,
   SIGNUP_USER,
+  FORGOT_PASSWORD_PENDING,
+  FORGOT_PASSWORD_COMPLETED,
+  FORGOT_PASSWORD_REQUEST,
   SignupFormData,
   StatusPropsState,
   AUTHENTICATE_USER,
@@ -13,7 +16,9 @@ import {
   AuthState,
   VERIFY_AUTH,
   SIGNOUT_REQUEST,
-  SIGNOUT_USER
+  SIGNOUT_USER,
+  apiBaseURL as baseURL,
+  UserData
 } from '../constants';
 import {
   validateEmail,
@@ -27,6 +32,93 @@ import {
   logError
 } from '../functions';
 import { displaySnackbar } from './misc';
+
+export const doForgotPassword = (email: string) => (
+  dispatch: Function
+): ReduxAction => {
+  dispatch(forgotPasswordPending());
+  axios({
+    url: '/auth/pass/reset/request',
+    baseURL,
+    method: 'POST',
+    data: {
+      email
+    },
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }).finally(() => {
+    dispatch(forgotPasswordCompleted());
+    dispatch(
+      displaySnackbar({
+        open: true,
+        message: 'Password reset link has been sent!',
+        severity: 'success',
+        autoHide: true
+      })
+    );
+  });
+  return {
+    type: FORGOT_PASSWORD_REQUEST
+  };
+};
+
+export const doResetPassword = (
+  password: string,
+  token: string,
+  callback: Function
+) => (dispatch: Function): ReduxAction => {
+  dispatch(forgotPasswordPending());
+  axios({
+    url: '/auth/pass/reset',
+    baseURL,
+    method: 'POST',
+    data: {
+      reset_token: token,
+      password
+    },
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }).then(({ data: _data }) => {
+    dispatch(forgotPasswordCompleted());
+    let message: string = '';
+    if (/(token .+ decoded|reset .+ expired)/.test(_data.message)) {
+      message = 'Password reset link has expired.';
+    } else if (/changed/.test(_data.message)) {
+      message = 'Password has been changed successfully';
+    } else {
+      message = _data.message;
+    }
+    dispatch(
+      displaySnackbar({
+        open: true,
+        message,
+        severity: _data.error ? 'error' : 'success',
+        autoHide: true
+      })
+    );
+    if (!_data.error) {
+      callback();
+    }
+  });
+  return {
+    type: FORGOT_PASSWORD_REQUEST
+  };
+};
+
+export const forgotPasswordPending = () => {
+  return {
+    type: FORGOT_PASSWORD_PENDING,
+    payload: { status: 'pending' }
+  };
+};
+export const forgotPasswordCompleted = () => {
+  return {
+    type: FORGOT_PASSWORD_COMPLETED,
+    payload: { status: 'completed' }
+  };
+};
 
 export const requestSignup = (data: SignupFormData) => (
   dispatch: Function
@@ -55,10 +147,11 @@ export const requestSignup = (data: SignupFormData) => (
   email = email.toLowerCase();
 
   //check if user is online as lost network connection is not a failure state for Firebase db in order to give response to user
-  callNetworkStatusCheckerFor(signup);
+  callNetworkStatusCheckerFor({ name: 'signup', func: signup });
 
   axios({
-    url: 'https://teach-me-services.herokuapp.com/api/v1/register',
+    url: '/auth/register',
+    baseURL,
     method: 'POST',
     data: {
       firstname,
@@ -67,7 +160,7 @@ export const requestSignup = (data: SignupFormData) => (
       email,
       date_of_birth,
       password,
-      institution,
+      institution_id: institution,
       department,
       level
     },
@@ -81,17 +174,17 @@ export const requestSignup = (data: SignupFormData) => (
 
       if (!error) {
         const displayName = `${firstname} ${lastname}`;
+        const dob = _data.date_of_birth;
+
+        delete _data.error;
+        delete _data.date_of_birth;
+
+        const userData: UserData = { ..._data };
 
         populateStateWithUserData({
-          firstname,
-          lastname,
-          username,
-          email,
-          dob,
-          institution,
-          department,
-          level,
-          displayName
+          ...userData,
+          displayName,
+          dob
         }).then(() => {
           dispatch(signup({ status: 'fulfilled' }));
           dispatch(auth({ status: 'settled', isAuthenticated: true }));
@@ -106,9 +199,10 @@ export const requestSignup = (data: SignupFormData) => (
 
           //set token for user session and subsequent authentication
           if (navigator.cookieEnabled) {
-            localStorage.teachMe = JSON.stringify({
-              ..._data,
-              displayName
+            localStorage.kanyimuta = JSON.stringify({
+              ...userData,
+              displayName,
+              dob
             });
           }
         });
@@ -168,7 +262,7 @@ export const requestSignin = (data: SigninFormData) => (
   dispatch: Function
 ): ReduxAction => {
   dispatch(signin({ status: 'pending' }));
-  callNetworkStatusCheckerFor(signin);
+  callNetworkStatusCheckerFor({ name: 'signin', func: signin });
 
   let { id, password } = data;
   let _id;
@@ -181,8 +275,8 @@ export const requestSignin = (data: SigninFormData) => (
 
   axios({
     method: 'POST',
-    url: '/login',
-    baseURL: 'https://teach-me-services.herokuapp.com/api/v1',
+    url: '/auth/login',
+    baseURL,
     data: {
       ..._id,
       password
@@ -193,35 +287,25 @@ export const requestSignin = (data: SigninFormData) => (
   })
     .then((response) => {
       const { data: _data } = response;
-      const {
-        firstname,
-        lastname,
-        username,
-        email,
-        date_of_birth: dob,
-        institution,
-        department,
-        level,
-        error,
-        message
-      } = _data;
+      const message = _data.message;
+      const error = _data.error;
 
       if (!error) {
-        const displayName = `${firstname} ${lastname}`;
+        const dob = _data.date_of_birth;
+        const displayName = `${_data.firstname} ${_data.lastname}`;
+
+        delete _data.error;
+        delete _data.date_of_birth;
+
+        const userData: UserData = { ..._data };
 
         populateStateWithUserData({
-          firstname,
-          lastname,
-          username,
-          email,
-          dob,
-          institution,
-          department,
-          level,
-          displayName
+          ...userData,
+          displayName,
+          dob
         }).then(() => {
           dispatch(signin({ status: 'fulfilled' }));
-          dispatch(auth({ status: 'fulfilled', isAuthenticated: true }));
+          dispatch(auth({ status: 'settled', isAuthenticated: true }));
           dispatch(
             displaySnackbar({
               open: true,
@@ -233,9 +317,10 @@ export const requestSignin = (data: SigninFormData) => (
 
           //set token for user session and subsequent authentication
           if (navigator.cookieEnabled) {
-            localStorage.teachMe = JSON.stringify({
-              ..._data,
-              displayName
+            localStorage.kanyimuta = JSON.stringify({
+              ...userData,
+              displayName,
+              dob
             });
           }
         });
@@ -297,11 +382,14 @@ export const verifyAuth = () => (dispatch: Function): ReduxAction => {
   dispatch(auth({ status: 'pending' }));
 
   let userData = navigator.cookieEnabled
-    ? JSON.parse(localStorage.teachMe ?? '{}')
+    ? JSON.parse(localStorage.kanyimuta ?? '{}')
     : null;
 
   if (userData?.token) {
-    populateStateWithUserData({ ...userData });
+    populateStateWithUserData({ ...userData }).then(() => {
+      dispatch(auth({ status: 'fulfilled', isAuthenticated: true }));
+      dispatch(signin({ status: 'fulfilled', err: false }));
+    });
   } else {
     dispatch(auth({ status: 'fulfilled', isAuthenticated: false }));
     dispatch(signin({ status: 'fulfilled', err: true }));
@@ -323,8 +411,8 @@ export const requestSignout = () => (dispatch: Function): ReduxAction => {
   setTimeout(() => dispatch(signout({ status: 'pending' })), 200);
 
   if (navigator.cookieEnabled) {
-    localStorage.teachMe = JSON.stringify({
-      ...JSON.parse(localStorage.teachMe ?? '{}'),
+    localStorage.kanyimuta = JSON.stringify({
+      ...JSON.parse(localStorage.kanyimuta ?? '{}'),
       id: null,
       token: null
     });

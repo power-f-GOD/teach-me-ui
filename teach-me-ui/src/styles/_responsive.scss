@@ -29,6 +29,18 @@
   .app-bar-links {
     display: none;
   }
+
+  //Profile style(s)
+  .Profile {
+    .close-edit-button,
+    .edit-button {
+      right: 1.25rem;
+
+      [class*='Icon'] {
+        margin-right: 0.7rem;
+      }
+    }
+  }
 }
 
 @media screen and (max-width: 767px) {
@@ -60,7 +72,7 @@
     .auth-container {
       min-height: inherit;
       background-color: white;
-      overflow-x: hidden;
+      // overflow-x: hidden;
 
       .form-section {
         padding: 2em 1em;
@@ -76,6 +88,53 @@
     &::after {
       width: 230vw !important;
       left: -65vw !important;
+    }
+  }
+
+  .scroll-view-msg-wrapper {
+    max-width: 22rem;
+  }
+
+  //Profile style(s)
+  .Profile {
+    .action-buttons-container {
+      &.enlarge {
+        &::before {
+          height: 9rem;
+        }
+
+        .close-edit-button {
+          transform: translateX(82%);
+          opacity: 1;
+          visibility: visible;
+
+          &:hover {
+            transform: translateX(calc(2% + 1.25rem));
+          }
+        }
+      }
+
+      .close-edit-button,
+      .edit-button {
+        // right: 1.25rem;
+        transform: translateX(82%);
+        border-radius: 2rem 0 0 2rem;
+        transition: 0.3s;
+
+        [class*='Icon'] {
+          margin-right: 0.85rem;
+        }
+      }
+
+      .edit-button:hover {
+        transform: translateX(calc(2% + 1.25rem));
+      }
+
+      .close-edit-button {
+        opacity: 1;
+        transform: translateX(130%);
+        visibility: hidden;
+      }
     }
   }
 }
@@ -138,6 +197,27 @@
       width: 220vw;
       top: -10%;
       left: -60vw;
+    }
+  }
+
+  .auth-form-wrapper {
+    width: 100%;
+  }
+
+  //chat box style(s)
+  .scroll-view-msg-wrapper {
+    max-width: 75%;
+  }
+
+  //Profile page styles
+  .Profile {
+    [class*='card-container'] {
+      padding: 0 0.85rem;
+    }
+
+    [class*='-info-card'] {
+      padding: 1rem 0.85rem;
+      padding-bottom: 1rem;
     }
   }
 }

@@ -5,25 +5,24 @@ import MuiAlert from '@material-ui/lab/Alert';
 import Slide from '@material-ui/core/Slide';
 import Fade from '@material-ui/core/Fade';
 
-import { promisedDispatch } from '../../functions';
-import { displaySnackbar } from '../../actions';
+import { promisedDispatch } from '../../functions/utils';
+import { displaySnackbar } from '../../actions/misc';
 import { userDeviceIsMobile } from '../../index';
 
 const SnackBar = (props: any) => {
   const { snackbar } = props;
   const { open, message, severity, autoHide } = snackbar;
-  const [closed = true, setClosed] = useState(Boolean);
+  const [closed, setClosed] = useState<boolean>(false);
   let timeout: any;
 
-  const handleClose = (event?: any, reason?: string) => {
+  const handleClose = (_event?: any, reason?: string) => {
     clearTimeout(timeout);
 
     if (reason === 'clickaway' && !autoHide) return;
-
+    
     setClosed(true);
     promisedDispatch(displaySnackbar({ open: false })).then(() => {
       timeout = setTimeout(() => setClosed(false), 400);
-      event = !!event; // did this just to avoid unused variable and self assigned errors by TS
     });
   };
 

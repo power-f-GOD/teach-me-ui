@@ -2,14 +2,36 @@ import { cleanup } from '@testing-library/react';
 
 import {
   promisedDispatch,
-  callNetworkStatusCheckerFor,
   populateStateWithUserData,
-  logError
+  bigNumberFormat,
+  logError,
+  handleForgotPasswordRequest,
+  handleResetPasswordRequest,
+  validateEmailFn,
+  validateResetPasswordFn
 } from '../../functions';
 import { ReduxAction, UserData } from '../../constants';
-import { signin, signup } from '../../actions';
 
 afterEach(cleanup);
+
+it('vaildateEmailFn is called with email and resolves to an action', () => {
+  expect(validateEmailFn('')).toBe(false);
+  expect(validateEmailFn('support@kanyimuta.com')).toBe(true);
+});
+
+it('handleForgotPasswordRequest is called with email and resolves to an action', () => {
+  expect(handleForgotPasswordRequest(expect.any(String))).toBe(undefined);
+});
+
+it('handleResetPasswordRequest is called with password, token and callback and resolves to an action', () => {
+  expect(
+    handleResetPasswordRequest(
+      expect.any(String),
+      expect.any(String),
+      expect.any(Function)
+    )
+  ).toBe(undefined);
+});
 
 it('promisedDispatch dispatches an action which returns a promise that resolves with the action dispatched.', () => {
   let action: ReduxAction = {
@@ -18,12 +40,22 @@ it('promisedDispatch dispatches an action which returns a promise that resolves 
   expect(promisedDispatch(action)).resolves.toBe(action);
 });
 
-it("callNetworkStatusChecker should be called with 'signin' or 'signup' as param and return undefined.", () => {
-  let mockFunc = jest.fn();
-  callNetworkStatusCheckerFor(mockFunc(signin, signup));
-  expect(mockFunc).toHaveBeenCalledWith(signin, signup);
-  expect(callNetworkStatusCheckerFor(signin)).toBeUndefined();
+it('[bigNumberFormat] should correctly format large and small numbers.', () => {
+  expect(bigNumberFormat(20000)).toBe('20K');
+  expect(bigNumberFormat(21500)).toBe('21K');
+  expect(bigNumberFormat(2000)).toBe('2000');
+  expect(bigNumberFormat(2254000)).toBe('2.25M');
+  expect(bigNumberFormat(22345130)).toBe('22M');
+  expect(bigNumberFormat(2130000000)).toBe('2B');
+  expect(bigNumberFormat(2130000000000)).toBe('1T+');
 });
+
+// it("callNetworkStatusChecker should be called with 'signin' or 'signup' as param and return undefined.", () => {
+//   let mockFunc = jest.fn();
+//   callNetworkStatusCheckerFor(mockFunc(signin, signup));
+//   expect(mockFunc).toHaveBeenCalledWith(signin, signup);
+//   expect(callNetworkStatusCheckerFor(signin)).toBeUndefined();
+// });
 
 it("populateStateWithUserData should be called with 'user data' as param and return a promise which resolves with undefined.", () => {
   let action: ReduxAction = {
@@ -36,10 +68,11 @@ it("populateStateWithUserData should be called with 'user data' as param and ret
     email: 'johndoe@gmail.com',
     username: 'johndoe',
     dob: '12/12/2000',
-    password: '********',
-    institution: 'University of Nowhere',
-    department: 'A department',
-    level: '100'
+    institution: 'UNN',
+    department: 'COS',
+    level: '100',
+    id: '3fj9g0394ldg-sdf',
+    token: '5kkl30k3485k'
   };
   let mockFunc = jest.fn();
   populateStateWithUserData(mockFunc(userData) || userData);

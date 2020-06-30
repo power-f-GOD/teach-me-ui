@@ -3,7 +3,11 @@ import { ChangeEvent } from 'react';
 import { refs as signinRefs } from '../components/Auth/Signin';
 import { getState, dispatch } from './utils';
 import { SigninFormData } from '../constants';
-import { validateSigninId, validateSigninPassword, requestSignin } from '../actions';
+import {
+  validateSigninId,
+  validateSigninPassword,
+  requestSignin
+} from '../actions';
 
 export function handleSigninInputChange({
   target
@@ -41,7 +45,7 @@ export function handleSigninRequest() {
   };
 
   if (signinFormValidated) {
-    //dispatch signup user action here and signup user...
+    //dispatch signin user action here and signup user...
     dispatch(requestSignin({ ...formData })(dispatch));
   }
 }

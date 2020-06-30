@@ -2,12 +2,12 @@ import {
   SignupPropsState,
   BasicInputState,
   SigninPropsState,
-  AcademicInputState,
+  InstitutionInputState,
   InputErrState,
-  SearchState,
   CreateDepartmentState,
   CreateLevelState
 } from './interfaces';
+import { searchState } from './misc';
 
 export const FIRSTNAME_VALIDATE = 'FIRSTNAME_VALIDATE';
 export const LASTNAME_VALIDATE = 'LASTNAME_VALIDATE';
@@ -43,16 +43,9 @@ export const basicInputState: BasicInputState = {
   ...inputErrState
 };
 
-export const academicInputState: AcademicInputState = {
+export const institutionInputState: InstitutionInputState = {
   value: { keyword: '', uid: '' },
   ...inputErrState
-};
-
-export const searchState: SearchState = {
-  status: 'settled',
-  err: false,
-  statusText: ' ',
-  data: []
 };
 
 export const createDepartmentState: CreateDepartmentState = {
@@ -72,9 +65,9 @@ export const signupProps: SignupPropsState = {
   email: { ...basicInputState },
   dob: { ...basicInputState },
   password: { ...basicInputState },
-  institution: { ...academicInputState },
-  department: { ...academicInputState },
-  level: { ...academicInputState },
+  institution: { ...institutionInputState },
+  department: { ...basicInputState },
+  level: { ...basicInputState },
   matchingInstitutions: { ...searchState },
   matchingDepartments: { ...searchState },
   matchingLevels: { ...searchState }
