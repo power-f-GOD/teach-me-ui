@@ -8,20 +8,14 @@
 
   &::before {
     @include before-or-after(
-      linear-gradient(to top, #d8d8d8, #707070),
-      $w: calc(100vw + 60rem),
+      linear-gradient(to top, #ccc, #707070),
+      $w: calc(100vw + 100rem),
       $h: 50rem,
-      $t: -15rem,
-      $l: -30rem,
+      $t: -32.5rem,
+      $l: -50rem,
       $br: 0 0 50% 50%,
       $zi: 0
     );
-  }
-
-  &.self-view {
-    &::before {
-      transform: translateY(-2rem);
-    }
   }
 
   path {
@@ -168,7 +162,7 @@
     $size: 8rem;
 
     height: $size;
-    margin: 2rem 0;
+    margin: 3.5rem 0;
     width: $size;
     font-size: 2.5rem;
     background: $theme-primary-v5;

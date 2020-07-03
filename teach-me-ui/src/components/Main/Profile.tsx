@@ -74,6 +74,25 @@ export const refs: any = {
   levelInput: createRef<HTMLInputElement>()
 };
 
+const cleanUp = (isUnmount: boolean) => {
+  let shouldCleanUp = /@/.test(window.location.pathname);
+
+  shouldCleanUp = isUnmount ? isUnmount : shouldCleanUp;
+
+  if (shouldCleanUp) {
+    dispatch(
+      _profileData({
+        status: 'settled',
+        err: false,
+        data: [{}]
+      })
+    );
+  }
+};
+
+window.addEventListener('popstate', () => cleanUp(false));
+window.addEventListener('pushstate', () => cleanUp(false));
+
 let [
   avatar,
   firstname,
@@ -253,7 +272,7 @@ const Profile = (props: any) => {
   department = data.department || '';
   level = data.level || '';
 
-  //username of currently authenticated user which will be used to check if the current profile data requested if for another user or currently authenticated in order to render the views accordingly
+  //username of currently authenticated user which will be used to check if the current profile data requested is for another user or currently authenticated user in order to render the views accordingly
   username = '@' + (userData.username || '');
 
   basicInfo = [
@@ -356,13 +375,7 @@ const Profile = (props: any) => {
 
     return () => {
       //clean up after every unmount to prevent flash of profile page before load of profile data
-      dispatch(
-        _profileData({
-          status: 'settled',
-          err: false,
-          data: [{}]
-        })
-      );
+      cleanUp(true);
     };
   }, [userId]);
 
