@@ -5,6 +5,8 @@ import React, {
   createRef,
   useMemo
 } from 'react';
+
+import { useApi } from '../../hooks';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -14,7 +16,9 @@ import Container from 'react-bootstrap/Container';
 
 import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
-import AddIcon from '@material-ui/icons/Add';
+import AddColleagueIcon from '@material-ui/icons/PersonAdd';
+import PendingIcon from '@material-ui/icons/RemoveCircle';
+import RejectIcon from '@material-ui/icons/Close';
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
 import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
@@ -22,15 +26,20 @@ import SchoolOutlinedIcon from '@material-ui/icons/SchoolOutlined';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import Loader from '../crumbs/Loader';
-import { UserData } from '../../constants/interfaces';
+import {
+  UserData,
+  DeepProfileProps,
+  useApiResponse
+} from '../../constants/interfaces';
 import { dispatch } from '../../functions';
+import { displaySnackbar } from '../../actions';
 import {
   getProfileData,
   profileData as _profileData
 } from '../../actions/profile';
-
 /**
  * Please, Do not delete any commented code; You can either uncomment them to use them or leave them as they are
  */
@@ -90,6 +99,149 @@ const Profile = (props: any) => {
   const { status } = profileData;
   const { auth } = props;
   const { isAuthenticated } = auth;
+  const token = (userData as UserData).token;
+
+  let userId = window.location.pathname.split('/').slice(-1)[0];
+  const isId = /^@\w+$/.test(userId);
+  userId = isId ? userId.toLowerCase() : username;
+  // here is where the check is made to render the views accordingly
+  const isSelf = userId === username;
+  let selfView = isAuthenticated ? isSelf : false;
+
+  const [addColleague, , addColleagueIsLoading] = useApi<any>(
+    {
+      endpoint: '/colleague/request',
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` }
+    },
+    { colleague: data.id }
+  );
+  const [
+    fetchDeepProfile,
+    deepProfileData,
+    deepProfileIsLoading
+  ]: useApiResponse<DeepProfileProps> = useApi<any>({
+    endpoint: `/deep/profile/${data.id}`,
+    method: 'GET',
+    headers: { Authorization: `Bearer ${token}` }
+  });
+
+  const [removeColleagueRequest, , removeColleagueIsLoading] = useApi<any>(
+    {
+      endpoint: '/colleague/request/remove',
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` }
+    },
+    { request_id: deepProfileData?.request_id }
+  );
+
+  const [acceptColleagueRequest, , acceptColleagueIsLoading] = useApi<any>(
+    {
+      endpoint: '/colleague/request/accept',
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` }
+    },
+    { request_id: deepProfileData?.request_id }
+  );
+
+  const [declineColleagueRequest, , declineColleagueIsLoading] = useApi<any>(
+    {
+      endpoint: '/colleague/request/decline',
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` }
+    },
+    { request_id: deepProfileData?.request_id }
+  );
+  const [unColleagueRequest, , unColleagueIsLoading] = useApi<any>(
+    {
+      endpoint: '/uncolleague',
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` }
+    },
+    { colleague: data.id }
+  );
+
+  useEffect(() => {
+    if (data.username !== undefined && !selfView) {
+      fetchDeepProfile().catch((e) => {
+        dispatch(
+          displaySnackbar({
+            open: true,
+            message: e.message,
+            severity: 'error',
+            autoHide: true
+          })
+        );
+      });
+    }
+  }, [data.username, selfView]);
+
+  const onColleagueActionClick = async (e: any) => {
+    switch (deepProfileData.status) {
+      case 'NOT_COLLEAGUES':
+        await addColleague().catch((e) => {
+          dispatch(
+            displaySnackbar({
+              open: true,
+              message: e.message,
+              severity: 'error',
+              autoHide: true
+            })
+          );
+        });
+        break;
+      case 'PENDING_REQUEST':
+        await removeColleagueRequest().catch((e) => {
+          dispatch(
+            displaySnackbar({
+              open: true,
+              message: e.message,
+              severity: 'error',
+              autoHide: true
+            })
+          );
+        });
+        break;
+      case 'AWAITING_REQUEST_ACTION':
+        const p =
+          e.target.id === 'decline'
+            ? acceptColleagueRequest()
+            : declineColleagueRequest();
+        await p.catch((e) => {
+          dispatch(
+            displaySnackbar({
+              open: true,
+              message: e.message,
+              severity: 'error',
+              autoHide: true
+            })
+          );
+        });
+        break;
+      case 'IS_COLLEAGUE':
+        await unColleagueRequest().catch((e) => {
+          dispatch(
+            displaySnackbar({
+              open: true,
+              message: e.message,
+              severity: 'error',
+              autoHide: true
+            })
+          );
+        });
+        break;
+    }
+    await fetchDeepProfile().catch((e) => {
+      dispatch(
+        displaySnackbar({
+          open: true,
+          message: e.message,
+          severity: 'error',
+          autoHide: true
+        })
+      );
+    });
+  };
 
   avatar = data.avatar || 'avatar-1.png';
   firstname = data.firstname || '';
@@ -117,17 +269,9 @@ const Profile = (props: any) => {
     { name: 'Level', value: level }
   ];
 
-  let userId = window.location.pathname.split('/').slice(-1)[0];
-  const isId = /^@\w+$/.test(userId);
-  userId = isId ? userId.toLowerCase() : username;
-  // here is where the check is made to render the views accordingly
-  const isSelf = userId === username;
-  let selfView = isAuthenticated ? isSelf : false;
-
   // const [passedThreshold, setPassedThreshold] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const inputProps = useMemo(() => {}, []);
-
   const handleBasicInputChange = useCallback(() => {}, []);
 
   const handleAcademicInputChange = useCallback(() => {}, []);
@@ -224,8 +368,7 @@ const Profile = (props: any) => {
 
   if (!isId) {
     return <Redirect to={`/${userId}`} />;
-  }
-  else if (profileData.err || !profileData.data[0]) {
+  } else if (profileData.err || !profileData.data[0]) {
     return <Redirect to='/404' />;
   }
 
@@ -304,16 +447,94 @@ const Profile = (props: any) => {
 
           {!selfView && (
             <Col className='d-flex justify-content-center mt-4'>
-              {isAuthenticated && (
-                <Button
-                  variant='contained'
-                  size='large'
-                  className='add-colleague-button'
-                  color='primary'
-                  // onClick={handleEditClick}
-                >
-                  <AddIcon fontSize='inherit' /> Add Colleague
-                </Button>
+              {isAuthenticated && deepProfileData !== null ? (
+                <>
+                  {deepProfileData.status === 'NOT_COLLEAGUES' && (
+                    <Button
+                      variant='contained'
+                      size='large'
+                      className='colleague-action-button'
+                      color='primary'
+                      onClick={onColleagueActionClick}>
+                      {addColleagueIsLoading || deepProfileIsLoading ? (
+                        <CircularProgress color='inherit' size={28} />
+                      ) : (
+                        <>
+                          <AddColleagueIcon fontSize='inherit' /> Add Colleague
+                        </>
+                      )}
+                    </Button>
+                  )}
+                  {deepProfileData.status === 'PENDING_REQUEST' && (
+                    <Button
+                      variant='contained'
+                      size='large'
+                      className='colleague-action-button'
+                      color='primary'
+                      onClick={onColleagueActionClick}>
+                      {removeColleagueIsLoading || deepProfileIsLoading ? (
+                        <CircularProgress color='inherit' size={28} />
+                      ) : (
+                        <>
+                          <PendingIcon fontSize='inherit' /> Cancel Request
+                        </>
+                      )}
+                    </Button>
+                  )}
+                  {deepProfileData.status === 'AWAITING_REQUEST_ACTION' && (
+                    <>
+                      <Button
+                        variant='contained'
+                        size='large'
+                        id='accept'
+                        className='colleague-action-button accept-request'
+                        color='primary'
+                        onClick={onColleagueActionClick}>
+                        {acceptColleagueIsLoading || deepProfileIsLoading ? (
+                          <CircularProgress color='inherit' size={28} />
+                        ) : (
+                          <>
+                            <AddColleagueIcon fontSize='inherit' /> Accept
+                            Request
+                          </>
+                        )}
+                      </Button>
+                      <Button
+                        variant='contained'
+                        size='large'
+                        id='decline'
+                        className='colleague-action-button decline-request'
+                        color='primary'
+                        onClick={onColleagueActionClick}>
+                        {declineColleagueIsLoading || deepProfileIsLoading ? (
+                          <CircularProgress color='inherit' size={28} />
+                        ) : (
+                          <>
+                            <RejectIcon fontSize='inherit' /> Decline
+                          </>
+                        )}
+                      </Button>
+                    </>
+                  )}
+                  {deepProfileData.status === 'IS_COLLEAGUE' && (
+                    <Button
+                      variant='contained'
+                      size='large'
+                      className='colleague-action-button'
+                      color='primary'
+                      onClick={onColleagueActionClick}>
+                      {unColleagueIsLoading || deepProfileIsLoading ? (
+                        <CircularProgress color='inherit' size={28} />
+                      ) : (
+                        <>
+                          <PendingIcon fontSize='inherit' /> Un-colleague
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </>
+              ) : (
+                <CircularProgress color='inherit' size={30} />
               )}
             </Col>
           )}
