@@ -121,7 +121,7 @@
     transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
 
-  .add-colleague-button {
+  .colleague-action-button {
     padding: 0.55rem 0.85rem;
     min-width: 9rem;
     justify-content: center;
@@ -133,12 +133,27 @@
       margin-right: 0.5rem;
     }
 
-    &.request-sent {
-      background: $theme-primary-v6 !important;
-    }
+    &.decline-request {
+      background: grey !important;
+      color: white;
 
+      path {
+        fill: white;
+        stroke: transparent;
+      }
+    }
+    &.accept-request {
+      margin: 0 0.7rem;
+      background: $theme-primary-v6 !important;
+      color: #fff;
+
+      path {
+        fill: #fff;
+        stroke: transparent;
+      }
+    }
     path {
-      fill: white;
+      fill: #fff;
       stroke: transparent;
     }
   }

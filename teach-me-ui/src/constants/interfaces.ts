@@ -41,6 +41,27 @@ export interface ReactButtonPropsState {
 export interface BasicInputState extends InputErrState {
   value?: string;
 }
+export interface ApiProps {
+  endpoint: string;
+  method: any;
+  headers?: HeaderProps;
+}
+
+export type useApiResponse<T> = [() => Promise<void>, T, boolean];
+
+interface HeaderProps {
+  [key: string]: any;
+}
+
+export interface DeepProfileProps {
+  status:
+    | 'IS_COLLEAGUE'
+    | 'PENDING_REQUEST'
+    | 'AWAITING_REQUEST_ACTION'
+    | 'NOT_COLLEAGUES';
+  mutual_colleagues?: number;
+  request_id?: string;
+}
 
 export interface InstitutionInputState extends InputErrState {
   value?: { keyword?: string; uid?: string };
