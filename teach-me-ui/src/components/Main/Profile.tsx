@@ -139,11 +139,15 @@ const Profile = (props: any) => {
     fetchDeepProfile,
     deepProfileData,
     deepProfileIsLoading
-  ]: useApiResponse<DeepProfileProps> = useApi<any>({
-    endpoint: `/deep/profile/${data.id}`,
-    method: 'GET',
-    headers: { Authorization: `Bearer ${token}` }
-  });
+  ]: useApiResponse<DeepProfileProps> = useApi<any>(
+    {
+      endpoint: `/deep/profile/${data.id}`,
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` }
+    },
+    undefined,
+    false
+  );
 
   const [removeColleagueRequest, , removeColleagueIsLoading] = useApi<any>(
     {
@@ -179,21 +183,6 @@ const Profile = (props: any) => {
     },
     { colleague: data.id }
   );
-
-  useEffect(() => {
-    if (data.username !== undefined && !selfView) {
-      fetchDeepProfile().catch((e) => {
-        dispatch(
-          displaySnackbar({
-            open: true,
-            message: e.message,
-            severity: 'error',
-            autoHide: true
-          })
-        );
-      });
-    }
-  }, [data.username, selfView]);
 
   const onColleagueActionClick = async (e: any) => {
     switch (deepProfileData.status) {

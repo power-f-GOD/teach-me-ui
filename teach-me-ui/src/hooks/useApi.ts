@@ -1,10 +1,11 @@
 import { ApiProps, apiBaseURL as baseURL, useApiResponse } from '../constants';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import Axios from 'axios';
 
 export default function useApi<T>(
   props: ApiProps,
-  body: T = {} as T
+  body: T = {} as T,
+  lazy: boolean = true
 ): useApiResponse<any> {
   const [data, setData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -27,5 +28,12 @@ export default function useApi<T>(
       setIsLoading(false);
     }
   }, [props, body]);
+  useEffect(() => {
+    console.log('I ran');
+    if (!lazy) {
+      callback();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lazy]);
   return [callback, data, isLoading];
 }
