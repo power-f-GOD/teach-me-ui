@@ -1,0 +1,44 @@
+.Notifications {
+  background: #ddd !important;
+  min-height: 100vh;
+  max-height: 900vh;
+  margin: 0;
+  overflow: scroll;
+  // @include debugger();
+
+  .notification-container {
+    margin-top: 1rem;
+    background: white;
+    padding: 1rem;
+    width: auto;
+    max-width: 100%;
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.2);
+
+    
+
+      &.hide {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+  
+
+  
+
+  .notification-result {
+    padding: 0.75rem 0.65rem;
+    margin-top: 0.5rem;
+    border-radius: 0.35rem;
+    display: block;
+
+    a {
+      text-decoration: none;
+      color: $theme-tertiary-v1;
+    }
+
+    
+
+    
+  }
+}

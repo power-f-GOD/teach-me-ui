@@ -15,6 +15,8 @@ import InfoIcon from '@material-ui/icons/InfoRounded';
 import HelpIcon from '@material-ui/icons/HelpRounded';
 import AccountIcon from '@material-ui/icons/AccountBoxRounded';
 import SearchIcon from '@material-ui/icons/Search';
+import Badge from '@material-ui/core/Badge';
+import NotificationsIcon from '@material-ui/icons/Notifications';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 
 import { handleSignoutRequest } from '../../functions';
@@ -46,7 +48,7 @@ const Nav = (props: any) => {
                 {forIndexPage ? (
                   <IndexNav {...props} />
                 ) : (
-                  <MainNav {...props} />
+                  <MainNavNotificationText {...props} />
                 )}
               </TemporaryDrawer>
             </Toolbar>
@@ -74,6 +76,7 @@ function IndexNav(props: any) {
 function MainNav(props: any) {
   return (
     <Box className={`nav-links-wrapper ${props?.className}`}>
+     
       <NavLink to='/search' className='nav-link'>
         <SearchIcon />
       </NavLink>
@@ -81,7 +84,39 @@ function MainNav(props: any) {
       <NavLink exact to='/@' className='nav-link'>
         <AccountIcon className='nav-icon' /> Profile
       </NavLink>
+      <NavLink to='/notifications' className='nav-link'>
+        <Badge badgeContent={4} color='secondary'>
+          <NotificationsIcon />
+        </Badge>
+      </NavLink> 
+      <Button
+        variant='contained'
+        className='nav-link'
+        size='medium'
+        id='signout-btn'
+        fullWidth
+        onClick={handleSignoutRequest}>
+        Sign Out <ArrowForward fontSize='inherit' />
+      </Button>
+    </Box>
+  );
+};
 
+// repetition of code, needs optimization
+function MainNavNotificationText(props: any) {
+  return (
+    <Box className={`nav-links-wrapper ${props?.className}`}>
+     
+      <NavLink to='/search' className='nav-link'>
+        <SearchIcon />
+      </NavLink>
+      <NavGeneralLinks />
+      <NavLink exact to='/@' className='nav-link'>
+        <AccountIcon className='nav-icon' /> Profile
+      </NavLink>
+      <NavLink to='/notifications' className='nav-link'>
+        Notifications
+      </NavLink> 
       <Button
         variant='contained'
         className='nav-link'
@@ -159,6 +194,11 @@ function TemporaryDrawer(props: any) {
       <NavLink to='/search' className='nav-link'>
         <SearchIcon />
       </NavLink>
+      <NavLink to='/notifications' className='nav-link'>
+        <Badge badgeContent={4} color='secondary'>
+          <NotificationsIcon />
+        </Badge>
+      </NavLink> 
       <IconButton
         edge='start'
         className='menu-button'
