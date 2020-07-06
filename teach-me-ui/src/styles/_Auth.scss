@@ -4,6 +4,7 @@
   overflow: hidden;
   width: 100%;
   min-height: inherit;
+  background: #eee;
 }
 
 .auth-main-box {
@@ -50,8 +51,9 @@
 .form-section {
   background: #fff;
   min-height: 100%;
-  justify-self: center;
   height: 100%;
+  width: auto;
+  max-width: 100%;
   padding: 2em 2.4rem;
   border-radius: 0.75em;
   border: 1px solid #eee;

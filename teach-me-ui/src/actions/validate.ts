@@ -109,6 +109,7 @@ export const validateSigninPassword = (
     payload
   };
 };
+
 //use this to delay search in case user types very fast to ensure the right results display
 let institutionSearchTimeout: any = null;
 
@@ -151,7 +152,7 @@ export const getMatchingInstitutions = (keyword: string) => (
             dispatch(
               validateInstitution({
                 err: true,
-                helperText: "Institution doesn't match the records."
+                helperText: "Institution doesn't match our records."
               })
             );
             dispatch(

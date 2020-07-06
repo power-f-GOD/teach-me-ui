@@ -4,6 +4,8 @@ import Nav from './crumbs/Nav';
 import Auth from './Auth/Auth';
 import Signin from './Auth/Signin';
 import Signup from './Auth/Signup';
+import ForgotPassword from './Auth/ForgotPassword';
+import ResetPassword from './Auth/ResetPassword';
 import Home from './Main/Home';
 import About from './Index/About';
 import Main from './Main/Main';
@@ -13,6 +15,7 @@ import _404 from './Index/_404';
 import Loader from './crumbs/Loader';
 import SnackBar from './crumbs/SnackBar';
 import ChatBox from './crumbs/ChatBox';
+import Search from './Main/Search';
 import Footer from './crumbs/Footer';
 
 export {
@@ -22,6 +25,8 @@ export {
   Auth,
   Signin,
   Signup,
+  ForgotPassword,
+  ResetPassword,
   Home,
   About,
   Main,
@@ -30,6 +35,7 @@ export {
   Loader,
   SnackBar,
   ChatBox,
+  Search,
   _404,
   Footer
 };

@@ -9,9 +9,11 @@ import Col from 'react-bootstrap/Col';
 import RightPane from './RightPane';
 import MiddlePane from './MiddlePane';
 import LeftPane from './LeftPane';
-import ModalFrame from '../modals';
+import ModalFrame from '../crumbs/modals';
 
 const Home = () => {
+  React.useEffect(() => () => window.scrollTo(0, 0), []);
+
   return (
     <>
       <ModalFrame />

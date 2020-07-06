@@ -6,10 +6,18 @@ import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
 
-import { Signin, Signup, Footer } from '../index';
+import {
+  Signin,
+  Signup,
+  Footer,
+  ForgotPassword,
+  ResetPassword
+} from '../index';
 
 const Auth = (props: any) => {
   const isSignup = /\/signup/.test(props.location.pathname);
+
+  React.useEffect(() => () => window.scrollTo(0, 0), []);
 
   return (
     <Grid
@@ -24,13 +32,11 @@ const Auth = (props: any) => {
             justify='center'
             direction='row'
             alignItems='center'>
-            <Box maxWidth={isSignup ? '820px' : '500px'}>
-              <Grid
+            <Box maxWidth='100%'>
+              <Box
+                width='auto'
                 component='section'
-                className='form-section custom-scroll-bar'
-                container
-                item
-                alignItems='center'>
+                className='form-section custom-scroll-bar'>
                 <Box marginY='1.5em' textAlign='center' width='100%'>
                   <Typography component='div' variant='h4' align='center'>
                     <Link to='/'>
@@ -52,8 +58,14 @@ const Auth = (props: any) => {
                 <Switch>
                   <Route path='/signin' component={Signin} />
                   <Route path='/signup' component={Signup} />
+                  <Route path='/forgot-password' component={ForgotPassword} />
+                  <Route
+                    exact
+                    path='/password/reset/:token'
+                    component={ResetPassword}
+                  />
                 </Switch>
-              </Grid>
+              </Box>
             </Box>
           </Grid>
         </Container>

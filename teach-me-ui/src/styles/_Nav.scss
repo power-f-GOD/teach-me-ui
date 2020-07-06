@@ -9,39 +9,7 @@
 
 .nav-background {
   background-color: $theme-primary-v4 !important;
-  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.3);
-}
-
-.search {
-  border-radius: 0.25em;
-  height: 2.75em;
-  align-items: center;
-  flex-wrap: nowrap;
-  align-self: center;
-  padding: 0 0.75em;
-  margin: 0 2.5em 0 0;
-  width: auto;
-  transition: 0.3s;
-  background: rgba(255, 255, 255, 0.075);
-
-  &:focus-within {
-    background: rgba(255, 255, 255, 0.125);
-  }
-}
-
-.search-input {
-  color: #bbb;
-  width: 8em;
-  transition: 0.3s;
-  margin-left: 0.5em;
-
-  &:focus-within {
-    width: 13em;
-
-    > input {
-      color: white;
-    }
-  }
+  box-shadow: 0 0rem 1.5rem rgba(0, 0, 0, 0.2);
 }
 
 .nav-toolbar {

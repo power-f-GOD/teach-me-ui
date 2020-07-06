@@ -5,11 +5,9 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import ArrowForward from '@material-ui/icons/ArrowForwardIosSharp';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
-import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/MenuRounded';
 import HomeIcon from '@material-ui/icons/HomeRounded';
@@ -28,26 +26,28 @@ const Nav = (props: any) => {
 
   return (
     <Box component='nav'>
-      <ElevationScroll {...props} forLandingPage={forLandingPage}>
+      <ElevationScroll {...props} forLandingPage={forLandingPage && !/404/.test(window.location.pathname)}>
         <AppBar position='fixed' className='mobile-width'>
           <Container>
             <Toolbar className='nav-toolbar'>
               <Link to='/'>
-                <Box component='h3' className='logo gradient'>Kanyimuta!</Box>
+                <Box component='h3' className='logo gradient'>
+                  Kanyimuta!
+                </Box>
               </Link>
 
               {forIndexPage ? (
                 <IndexNav {...props} className='app-bar-links' />
               ) : (
-                  <MainNav {...props} className='app-bar-links' />
-                )}
+                <MainNav {...props} className='app-bar-links' />
+              )}
 
               <TemporaryDrawer>
                 {forIndexPage ? (
                   <IndexNav {...props} />
                 ) : (
-                    <MainNav {...props} />
-                  )}
+                  <MainNav {...props} />
+                )}
               </TemporaryDrawer>
             </Toolbar>
           </Container>
@@ -60,7 +60,9 @@ const Nav = (props: any) => {
 function IndexNav(props: any) {
   return (
     <Box className={`nav-links-wrapper ${props?.className}`}>
-      <Search />
+      <NavLink to='/search' className='nav-link'>
+        <SearchIcon />
+      </NavLink>
       <NavGeneralLinks forIndex />
       <NavLink to='/signin' className='nav-link'>
         <ArrowForward fontSize='inherit' /> Sign in
@@ -72,9 +74,11 @@ function IndexNav(props: any) {
 function MainNav(props: any) {
   return (
     <Box className={`nav-links-wrapper ${props?.className}`}>
-      <Search />
+      <NavLink to='/search' className='nav-link'>
+        <SearchIcon />
+      </NavLink>
       <NavGeneralLinks />
-      <NavLink exact to='/profile' className='nav-link'>
+      <NavLink exact to='/@' className='nav-link'>
         <AccountIcon className='nav-icon' /> Profile
       </NavLink>
 
@@ -94,35 +98,26 @@ function MainNav(props: any) {
 function NavGeneralLinks(props: any) {
   return (
     <>
-      <NavLink exact to='/' isActive={(_, { pathname }) => ["/", "/home"].includes(pathname)} className='nav-link'>
+      <NavLink
+        exact
+        to='/'
+        isActive={(_, { pathname }) => ['/', '/home'].includes(pathname)}
+        className='nav-link'>
         <HomeIcon className='nav-icon' />
         Home
       </NavLink>
-      {props.forIndex && <NavLink to='/about' className='nav-link'>
-        <InfoIcon className='nav-icon' />
-        About
-      </NavLink>}
+      {props.forIndex && (
+        <NavLink to='/about' className='nav-link'>
+          <InfoIcon className='nav-icon' />
+          About
+        </NavLink>
+      )}
       <Box component='span' marginX='1.5em'></Box>
       <NavLink exact to='/support' className='nav-link'>
         <HelpIcon className='nav-icon' />
         Support
       </NavLink>
     </>
-  );
-}
-
-function Search() {
-  return (
-    <Grid container className='search'>
-      <SearchIcon />
-      <Grid item className='search-input-wrapper'>
-        <InputBase
-          placeholder='Search…'
-          className='search-input'
-          inputProps={{ 'aria-label': 'search' }}
-        />
-      </Grid>
-    </Grid>
   );
 }
 
@@ -161,7 +156,9 @@ function TemporaryDrawer(props: any) {
 
   return (
     <Box className='drawer'>
-      <Search />
+      <NavLink to='/search' className='nav-link'>
+        <SearchIcon />
+      </NavLink>
       <IconButton
         edge='start'
         className='menu-button'

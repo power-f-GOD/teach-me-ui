@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import Avatar from '@material-ui/core/Avatar';
 import CreateIcon from '@material-ui/icons/Create';
@@ -15,24 +16,18 @@ import Col from 'react-bootstrap/Col';
 
 import Box from '@material-ui/core/Box';
 
-let userInfo: any = {};
-let [avatar, displayName, username, institution, department] = [
-  '',
-  '',
-  '',
-  '',
-  ''
-];
+import { UserData } from '../../constants/interfaces';
 
-if (navigator.cookieEnabled && localStorage.kanyimuta) {
-  userInfo = JSON.parse(localStorage.kanyimuta);
-  displayName = userInfo.displayName;
-  username = userInfo.username;
-  institution = userInfo.institution;
-  department = userInfo.department;
-}
+const LeftPane = (props: any) => {
+  const { userData } = props;
+  const {
+    avatar,
+    displayName,
+    username,
+    institution,
+    department
+  }: UserData = userData;
 
-const LeftPane = () => {
   return (
     <Container as='section' className='left-pane p-2'>
       <Container className='rows-wrapper custom-scroll-bar small-bar rounded-bar tertiary-bar debugger'>
@@ -120,4 +115,6 @@ const LeftPane = () => {
   );
 };
 
-export default LeftPane;
+export default connect((state: any) => ({ userData: state.userData }))(
+  LeftPane
+);

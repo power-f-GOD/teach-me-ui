@@ -7,32 +7,35 @@ body,
   width: 100%;
   margin: 0;
   font-size: 1rem;
-  color: $theme-tertiary-v2;
-  line-height: 1.35rem;
+  background: #eee;
+  color: $theme-tertiary-v1;
+  line-height: 1.4rem;
 }
 
 body {
   position: relative;
-  overflow: auto;
+  overflow-x: hidden !important;
 }
 
 * {
   box-sizing: border-box;
-  font-family: 'Exo 2', 'Trebuchet MS', sans-serif !important;
-  // border: 1px solid deeppink;
-}
-
-.debugger {
-  &,
-  * {
-    border: 1px solid green;
-  }
+  font-family: 'Hind Madurai', 'Trebuchet MS', sans-serif !important;
+  // border: 1px solid deeppink; //DEBUGGER
+  font-weight: 400;
 }
 
 body {
   padding: 0 !important;
 
+  [class*='SwipeArea'] {
+    width: 0.75rem !important;
+  }
+
   &.desktop {
+    [class*='SwipeArea'] {
+      display: none;
+    }
+
     &.custom-scroll-bar,
     .custom-scroll-bar,
     textarea,
@@ -95,6 +98,7 @@ body {
 
   > div {
     width: 100%;
+    background: #eee;
   }
 }
 
@@ -102,16 +106,14 @@ body {
   height: 100vh;
   width: 100%;
   min-height: 100%;
+  position: relative;
+  z-index: 1500;
   display: flex;
-  background: $theme-primary-v3;
+  background: $theme-primary-v3 !important;
   color: $theme-primary-v9;
   justify-content: center;
   align-items: center;
-  background-image: linear-gradient(
-    0deg,
-    $theme-primary-v3,
-    $theme-primary-v4
-  );
+  background-image: linear-gradient(0deg, $theme-primary-v3, $theme-primary-v4);
 }
 
 img {
@@ -144,6 +146,10 @@ h6 {
   a {
     text-decoration: none;
   }
+}
+
+path {
+  stroke-width: 0.0625rem !important;
 }
 
 hr {
@@ -248,11 +254,6 @@ a {
 .MuiOutlinedInput-root {
   &:hover .MuiOutlinedInput-notchedOutline {
     border: 2px solid $theme-tertiary-v7;
-    border-color: linear-gradient(
-      to right,
-      $theme-primary-v4,
-      $theme-secondary
-    );
   }
 }
 
@@ -340,9 +341,10 @@ div {
 .MuiAlert-filledSuccess,
 .MuiAlert-filledError,
 .MuiAlert-filledInfo,
-.MuiAlert-filledWarning {
+.MuiAlert-filledWarning,
+.MuiAlert-message {
   font: {
-    weight: bold;
+    weight: 500;
     size: 0.95rem;
   }
   transition: background-color 0.35s !important;
@@ -366,6 +368,8 @@ div {
 
 .MuiSnackbar-root {
   max-width: $app-max-width / 2;
+  width: auto !important;
+  background: transparent !important;
 }
 
 .logo {
@@ -464,4 +468,8 @@ div {
 
 .theme-bgcolor-tertiary {
   background-color: $theme-tertiary;
+}
+
+[class*=theme-] {
+  font-weight: inherit;
 }

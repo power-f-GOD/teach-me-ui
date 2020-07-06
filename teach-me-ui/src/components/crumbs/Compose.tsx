@@ -10,6 +10,7 @@ import { displayModal } from '../../functions';
 let userInfo: any = {};
 let [avatar, displayName] = ['', ''];
 
+//you can now use the 'userData' props in state to get userInfo; for this component, you can mapToProps or better still, just pass the value you need to it as props from its parent
 if (navigator.cookieEnabled && localStorage.kanyimuta) {
   userInfo = JSON.parse(localStorage.kanyimuta);
   displayName = userInfo.displayName;

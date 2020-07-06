@@ -5,7 +5,8 @@ import React, {
   useCallback,
   useMemo,
   createRef,
-  ChangeEvent
+  ChangeEvent,
+  useEffect
 } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -83,19 +84,107 @@ const Signup = (props: SignupPropsState) => {
   const [hideLevelsList, setHideLevelsList] = useState(Boolean);
   const { isAuthenticated } = auth;
 
-  const capitalizeInput = useCallback((e: any) => {
-    if (/first|last|department|level/.test(e.target.id) && e.target.value) {
-      e.target.value = e.target.value
-        .split(' ')
-        .map((word: string) =>
-          /^(in|of|and|on)$/i.test(word)
-            ? word.toLowerCase()
-            : word[0].toUpperCase() + word.slice(1).toLowerCase()
-        )
-        .join(' ');
+  const handleInstitutionChange = useCallback(
+    (e: any) => {
+      const { target } = e;
+
+      target.dataset.uid =
+        institution.value!.keyword !== target.value.trim()
+          ? ''
+          : institution.value!.uid;
       handleSignupInputChange(e);
-    }
-  }, []);
+      dispatch(getMatchingInstitutions(target.value)(dispatch));
+      setHideInstitutionsList(!target.value.trim() || !navigator.onLine);
+    },
+    [institution.value]
+  );
+
+  const handleDepartmentChange = useCallback(
+    (e: any) => {
+      const { target } = e;
+      const inputIsValid = /^[a-z\s?]+$/i.test(target.value);
+
+      e.target.dataset.uid =
+        department.value !== target.value.trim() ? '' : department.value;
+
+      handleSignupInputChange(e);
+      setHideDepartmentsList(!target.value.trim() || !navigator.onLine);
+
+      if (inputIsValid)
+        dispatch(getMatchingDepartments(target.value)(dispatch));
+    },
+    [department.value]
+  );
+
+  const handleLevelChange = useCallback(
+    (e: any) => {
+      const { target } = e;
+      const inputIsValid = /^[a-z0-9\s?]+$/i.test(target.value);
+
+      e.target.dataset.uid =
+        level.value !== target.value.trim() ? '' : level.value;
+      handleSignupInputChange(e);
+      setHideLevelsList(!target.value.trim() || !navigator.onLine);
+      if (inputIsValid) dispatch(getMatchingLevels(target.value)(dispatch));
+    },
+    [level.value]
+  );
+
+  const capitalizeInput = useCallback(
+    (e: any) => {
+      const { id, value } = e.target;
+
+      if (/first|last|department|level/.test(id) && value) {
+        e.target.value = value
+          .split(' ')
+          .map((word: string) =>
+            /^(in|of|and|on)$/i.test(word)
+              ? word.toLowerCase()
+              : word[0].toUpperCase() + word.slice(1).toLowerCase()
+          )
+          .join(' ');
+
+        if (id === 'department') handleDepartmentChange(e);
+        else if (id === 'level') handleLevelChange(e);
+        else handleSignupInputChange(e);
+      } else if (/email|username/.test(id) && value) {
+        e.target.value = value.toLowerCase();
+        handleSignupInputChange(e);
+      }
+    },
+    [handleDepartmentChange, handleLevelChange]
+  );
+
+  const triggerSearch = useCallback(
+    (e: any) => {
+      if (!e.target.value.trim()) return;
+
+      switch (e.target.id) {
+        case 'institution':
+          if (!institution.value!.uid) {
+            handleInstitutionChange(e);
+          } else setHideInstitutionsList(false);
+          break;
+        case 'department':
+          if (!department.value) {
+            handleDepartmentChange(e);
+          } else setHideDepartmentsList(false);
+          break;
+        case 'level':
+          if (!level.value) {
+            handleLevelChange(e);
+          } else setHideLevelsList(false);
+      }
+    },
+    [
+      institution.value,
+      department.value,
+      level.value,
+      handleInstitutionChange,
+      handleDepartmentChange,
+      handleLevelChange
+    ]
+  );
 
   const inputProps = useMemo(() => {
     return {
@@ -104,9 +193,10 @@ const Signup = (props: SignupPropsState) => {
           e.target.blur();
         }
       },
-      onBlur: capitalizeInput
+      onBlur: capitalizeInput,
+      onFocus: triggerSearch
     };
-  }, [capitalizeInput]);
+  }, [capitalizeInput, triggerSearch]);
 
   const inputAdorned = useMemo(() => {
     return {
@@ -123,7 +213,11 @@ const Signup = (props: SignupPropsState) => {
   }, [passwordVisible]);
 
   const matchingInstitutionsList = (
-    <ClickAwayListener onClickAway={() => setHideInstitutionsList(true)}>
+    <ClickAwayListener
+      onClickAway={() =>
+        document.activeElement?.id !== 'institution' &&
+        setHideInstitutionsList(true)
+      }>
       <List
         className={`search-list custom-scroll-bar ${
           institution.value?.keyword &&
@@ -154,7 +248,7 @@ const Signup = (props: SignupPropsState) => {
               const keyword = institution.value?.keyword!.trim();
               const highlighted = `${_institution.name.replace(
                 new RegExp(`(${keyword})`, 'i'),
-                `<span class='theme-secondary-darker'><b>$1</b></span>`
+                `<span class='theme-secondary-darker'>$1</span>`
               )}, ${country}`.replace(/<\/?script>/gi, '');
 
               return (
@@ -171,7 +265,11 @@ const Signup = (props: SignupPropsState) => {
   );
 
   const matchingDepartmentsList = (
-    <ClickAwayListener onClickAway={() => setHideDepartmentsList(true)}>
+    <ClickAwayListener
+      onClickAway={() =>
+        document.activeElement?.id !== 'department' &&
+        setHideDepartmentsList(true)
+      }>
       <List
         className={`search-list custom-scroll-bar ${
           department.value && !department.err && !hideDepartmentsList
@@ -201,7 +299,7 @@ const Signup = (props: SignupPropsState) => {
                   .trim()
                   .replace(
                     new RegExp(`(${department.value!.trim()})`, 'i'),
-                    `<span class='theme-secondary-darker'><b>$1</b></span>`
+                    `<span class='theme-secondary-darker'>$1</span>`
                   )}`.replace(/<\/?script>/gi, '');
 
                 return (
@@ -218,7 +316,10 @@ const Signup = (props: SignupPropsState) => {
   );
 
   const matchingLevelsList = (
-    <ClickAwayListener onClickAway={() => setHideLevelsList(true)}>
+    <ClickAwayListener
+      onClickAway={() =>
+        document.activeElement?.id !== 'level' && setHideLevelsList(true)
+      }>
       <List
         className={`search-list custom-scroll-bar ${
           level.value && !level.err && !hideLevelsList ? 'open' : 'close'
@@ -246,7 +347,7 @@ const Signup = (props: SignupPropsState) => {
                   .trim()
                   .replace(
                     new RegExp(`(${level.value!.trim()})`, 'i'),
-                    `<span class='theme-secondary-darker'><b>$1</b></span>`
+                    `<span class='theme-secondary-darker'>$1</span>`
                   )}`.replace(/<\/?script>/gi, '');
 
                 return (
@@ -262,62 +363,16 @@ const Signup = (props: SignupPropsState) => {
     </ClickAwayListener>
   );
 
-  const handleInstitutionChange = useCallback(
-    (e: any) => {
-      const { target } = e;
-
-      target.dataset.uid =
-        institution.value!.keyword !== target.value.trim()
-          ? ''
-          : institution.value!.uid;
-      handleSignupInputChange(e);
-      dispatch(getMatchingInstitutions(target.value)(dispatch));
-      setHideInstitutionsList(!target.value || !navigator.onLine);
-    },
-    [institution.value]
-  );
-
-  const handleDepartmentChange = useCallback(
-    (e: any) => {
-      const { target } = e;
-      const inputIsValid = /^[a-z\s?]+$/i.test(target.value);
-
-      e.target.dataset.uid =
-        department.value !== target.value.trim() ? '' : department.value;
-
-      handleSignupInputChange(e);
-      setHideDepartmentsList(!target.value || !navigator.onLine);
-
-      if (inputIsValid)
-        dispatch(getMatchingDepartments(target.value)(dispatch));
-    },
-    [department.value]
-  );
-
-  const handleLevelChange = useCallback(
-    (e: any) => {
-      const { target } = e;
-      const inputIsValid = /^[a-z0-9\s?]+$/i.test(target.value);
-
-      e.target.dataset.uid =
-        level.value !== target.value.trim() ? '' : level.value;
-      handleSignupInputChange(e);
-      setHideLevelsList(!target.value || !navigator.onLine);
-      if (inputIsValid) dispatch(getMatchingLevels(target.value)(dispatch));
-    },
-    [level.value]
-  );
+  useEffect(() => () => window.scrollTo(0, 0), []);
 
   if (isAuthenticated) {
     return <Redirect to='/' />;
   }
 
   return (
-    <Grid
-      className='auth-form-wrapper fade-in'
-      container
-      justify='center'
-      direction='column'>
+    <Box
+      width='45rem'
+      className='auth-form-wrapper fade-in d-flex flex-column justify-content-center'>
       <Typography component='h2' variant='h6'>
         <Box marginY='0.5em' fontSize='1.25rem' fontWeight={900}>
           Basic info:
@@ -492,7 +547,11 @@ const Signup = (props: SignupPropsState) => {
                 label='Department'
                 size='medium'
                 value={department.value || ''}
-                className={department.value ? 'input-set' : 'not-set'}
+                className={
+                  department.value && institution.value!.uid
+                    ? 'input-set'
+                    : 'not-set'
+                }
                 autoComplete='department'
                 inputRef={refs.departmentInput}
                 helperText={department.helperText}
@@ -526,7 +585,11 @@ const Signup = (props: SignupPropsState) => {
                 size='medium'
                 autoComplete='level'
                 value={level.value || ''}
-                className={level.value ? 'input-set' : 'not-set'}
+                className={
+                  level.value && institution.value!.uid
+                    ? 'input-set'
+                    : 'not-set'
+                }
                 inputRef={refs.levelInput}
                 helperText={level.helperText}
                 fullWidth
@@ -568,7 +631,7 @@ const Signup = (props: SignupPropsState) => {
           Have a an account? <Link to='/signin'>Sign in here!</Link>
         </Typography>
       </Box>
-    </Grid>
+    </Box>
   );
 };
 

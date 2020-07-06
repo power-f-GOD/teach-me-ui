@@ -37,18 +37,27 @@ const App = (props: any) => {
                     '/home',
                     '/about',
                     '/support',
-                    '/profile',
+                    '/@*',
+                    '/search',
                     '/*'
                   ]
-                : ['/home', '/profile']
+                : ['/home', '/search']
             }
             exact
             component={Main}
             isAuthenticated={isAuthenticated}
           />
-          <Route path={['/signin', '/signup']} component={Auth} />
           <Route
-            path={['/', '/index', '/about', '/support', '/*']}
+            path={[
+              '/signin',
+              '/signup',
+              '/forgot-password',
+              '/password/reset/:token'
+            ]}
+            component={Auth}
+          />
+          <Route
+            path={['/', '/index', '/about', '/@*', '/support', '/*']}
             exact
             component={Index}
           />

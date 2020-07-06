@@ -16,7 +16,7 @@ import Col from 'react-bootstrap/Col';
 
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
-import ForumIcon from '@material-ui/icons/Forum';
+import ChatIcon from '@material-ui/icons/Chat';
 import WebAssetIcon from '@material-ui/icons/WebAsset';
 import CloseIcon from '@material-ui/icons/Close';
 import EmojiIcon from '@material-ui/icons/Mood';
@@ -38,6 +38,7 @@ import {
   AnchorInfo,
   UserInfo
 } from '../../constants/interfaces';
+import { apiBaseURL as baseURL } from '../../constants/misc';
 import { CONVO_CHAT_TYPE, ROOM_CHAT_TYPE } from '../../constants/chat';
 import ChatLeftPane from './ChatLeftPane';
 import { userDeviceIsMobile } from '../..';
@@ -150,21 +151,14 @@ window.addEventListener('popstate', (e) => {
   }
 });
 
-const baseUrl = 'teach-me-services.herokuapp.com/api/v1';
-let token: string = '';
-
-if (cookieEnabled) {
-  if (localStorage.kanyimuta) {
-    token = JSON.parse(localStorage.kanyimuta)?.token;
-  }
-}
-
 const ChatBox = (props: any) => {
   const {
     activeChat,
-    usersEnrolledInInstitution
+    usersEnrolledInInstitution,
+    userData
     // newConversation
   } = props;
+  const { token } = userData;
   const {
     anchor: chatAnchor,
     queryString: activeChatQString,
@@ -462,7 +456,7 @@ const ChatBox = (props: any) => {
     conversationId.current = '5ee00363d0f6230017a3ba1d'; //newConversation.id;
 
     if (conversationId.current) {
-      socketUrl.current = `wss://${baseUrl}/socket?pipe=chat&channel=${conversationId.current}&token=${token}`;
+      socketUrl.current = `wss://${baseURL}/socket?pipe=chat&channel=${conversationId.current}&token=${token}`;
       socket!.current = new WebSocket(socketUrl.current);
       // console.log('from effect1')//, conversationId, chatMessages);
 
@@ -474,7 +468,7 @@ const ChatBox = (props: any) => {
         console.log('An error occurred while trying to connect.');
       });
     }
-  }, []);
+  }, [token]);
 
   // const lastMessage = chatsMessages[activeChatId]?.messages?.slice(-1)[0] ?? {};
   useEffect(() => {
@@ -691,7 +685,7 @@ const ChatBox = (props: any) => {
           className={`chat-button ${isOpen ? 'hide' : ''}`}
           onClick={handleOpenChatClick}
           aria-label='chat'>
-          <ForumIcon fontSize='inherit' />
+          <ChatIcon fontSize='inherit' />
         </IconButton>
       </Container>
     </Container>
@@ -745,7 +739,8 @@ const mapStateToProps = (state: any) => {
     activeChat: state.activeChat,
     chatsMessages: state.chatsMessages,
     usersEnrolledInInstitution: state.usersEnrolledInInstitution,
-    newConversation: state.newConversation
+    newConversation: state.newConversation,
+    userData: state.userData
   };
 };
 

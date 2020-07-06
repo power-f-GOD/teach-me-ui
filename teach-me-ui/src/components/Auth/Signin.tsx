@@ -3,7 +3,6 @@ import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -36,16 +35,16 @@ const Signin = (props: SigninPropsState) => {
     };
   }, []);
 
+  React.useEffect(() => () => window.scrollTo(0, 0), []);
+
   if (isAuthenticated) {
     return <Redirect to={from} />;
   }
 
   return (
-    <Grid
-      className='auth-form-wrapper fade-in'
-      container
-      justify='center'
-      direction='column'>
+    <Box
+      width='25rem'
+      className='auth-form-wrapper fade-in d-flex flex-column justify-content-center'>
       <Typography component='h2' variant='h6'>
         <Box marginY='0.75em' fontSize='1.25rem' fontWeight={900}>
           Sign In
@@ -58,13 +57,15 @@ const Signin = (props: SigninPropsState) => {
         onSubmit={(e: any) => e.preventDefault()}>
         <Box component='div' marginY='0.45em'>
           <TextField
-            value={props.signinId.value}
             error={props.signinId.err}
             variant='outlined'
             id='signin-id'
             required
             label='Username or Email'
             type='email'
+            defaultValue={
+              props.signinId.value || JSON.parse(localStorage.kanyimuta || '{}')?.username || ''
+            }
             autoComplete='username'
             inputRef={refs.idInput}
             helperText={props.signinId.helperText}
@@ -108,7 +109,7 @@ const Signin = (props: SigninPropsState) => {
           alignItems='center'
           component='div'>
           <Box component='div' textAlign='right' marginLeft='10px'>
-            <Link to='#!'>Forgot password?</Link>
+            <Link to='/forgot-password'>Forgot password?</Link>
           </Box>
         </Box>
 
@@ -136,7 +137,7 @@ const Signin = (props: SigninPropsState) => {
           New to Kanyimuta? <Link to='/signup'>Sign up here!</Link>
         </Typography>
       </Box>
-    </Grid>
+    </Box>
   );
 };
 
