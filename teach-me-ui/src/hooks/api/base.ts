@@ -1,4 +1,8 @@
-import { ApiProps, apiBaseURL as baseURL, useApiResponse } from '../constants';
+import {
+  ApiProps,
+  apiBaseURL as baseURL,
+  useApiResponse
+} from '../../constants';
 import { useState, useCallback, useEffect } from 'react';
 import Axios from 'axios';
 
@@ -29,7 +33,6 @@ export default function useApi<T>(
     }
   }, [props, body]);
   useEffect(() => {
-    console.log('I ran');
     if (!lazy) {
       callback();
     }
