@@ -189,9 +189,8 @@ const Profile = (props: any) => {
     data.id,
     token
   );
-  console.log(selfView);
-  let acceptWasClicked = false,
-    declineWasClicked = false;
+  const [acceptWasClicked, setAcceptWasClicked] = useState(false);
+  const [declineWasClicked, setDeclineWasClicked] = useState(true);
   const onColleagueActionClick = async (e: any) => {
     switch (deepProfileData.status) {
       case 'NOT_COLLEAGUES':
@@ -220,11 +219,11 @@ const Profile = (props: any) => {
         break;
       case 'AWAITING_REQUEST_ACTION':
         if (e.target.id !== 'decline') {
-          acceptWasClicked = true;
-          declineWasClicked = false;
+          setAcceptWasClicked(true);
+          setDeclineWasClicked(false);
         } else {
-          acceptWasClicked = false;
-          declineWasClicked = true;
+          setAcceptWasClicked(false);
+          setDeclineWasClicked(true);
         }
         const p =
           e.target.id !== 'decline'
