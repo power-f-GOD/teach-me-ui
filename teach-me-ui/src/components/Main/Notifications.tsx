@@ -12,6 +12,7 @@ import { getNotificationRequest } from '../../actions';
 import PersonAddIcon from '@material-ui/icons/PersonAdd'
 import HowToRegIcon from '@material-ui/icons/HowToReg';
 import NotificationsIcon from '@material-ui/icons/Notifications'
+import moment from 'moment';
 
      
 const Notifications = (props: any) => {
@@ -24,22 +25,54 @@ const Notifications = (props: any) => {
   
 
   return getNotifications.status === 'pending' ? (
-    <h3>Getting Notifications...</h3>
+    <Box className='Notifications fade-in'>
+    <div className='Notifications-div'>
+
+      <Container className='d-flex flex-column justify-content-center'>
+        <Box className='notification-container mx-auto'>
+          <h3>Getting Notifications...</h3>
+
+        </Box>
+      </Container>
+
+    </div>
+    </Box>
   ) : (
-    <Box className='Notifications fade-in' paddingY='4.5rem'>
+    <Box className='Notifications fade-in'>
+    <div className='Notifications-div'>
+
       <Container className='d-flex flex-column justify-content-center'>
         <Box className='notification-container mx-auto'>
           
             {result.map((notification: any, key: number) => {
               const link = `/${notification.data.sender}`;
               const date = new Date(notification.date);
-              const aDay = 86400000;
-              const dateString = date.toDateString();
-              const formattedDate = Date.now() - notification.date < aDay
-                                    ? `${new Date( Date.now() - notification.date).getHours()} hours ago`
-                                    : Date.now() - notification.date < (aDay * 2)
-                                      ? `Yesterday at ${date.getHours()}:${date.getMinutes()}`
-                                      : `${dateString.substring(0, dateString.length - 5)}`
+              const formattedDate = ((dateTime) => {
+                if (!dateTime) {
+                  return null;
+                }
+              
+                const today = moment();
+              
+                const time = moment(dateTime);
+              
+                const diff = today.diff(time);
+              
+                const duration = moment.duration(diff);
+                if (duration.years() > 0) {
+                  return duration.years() > 1 ? duration.years() + ' years ago' : 'a year ago';
+                } else if (duration.weeks() > 0) {
+                  return duration.weeks() > 1 ? duration.weeks() + ' weeks ago'  : 'a week ago';
+                } else if (duration.days() > 0) {
+                  return duration.days() > 1 ? duration.days() + ' days ago' : 'a day ago';
+                } else if (duration.hours() > 0) {
+                  return duration.hours() > 1 ? duration.hours() + ' hours ago' : 'an hour ago';
+                } else if (duration.minutes() > 0) {
+                  return duration.minutes() > 1 ? duration.minutes() + ' minutes ago' : 'a minute ago';
+                } else if (duration.minutes() < 1) {
+                  return 'seconds ago';
+                }
+              })(date)
               const notificationMessage = `<div>${notification.message}</div>
                                           <div>${formattedDate}</div>`
               return (
@@ -61,6 +94,8 @@ const Notifications = (props: any) => {
             )})}
         </Box>
       </Container>    
+      </div>
+    
     </Box>
   )
   

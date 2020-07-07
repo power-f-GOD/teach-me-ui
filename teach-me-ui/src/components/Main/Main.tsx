@@ -9,7 +9,6 @@ import Home from './Home';
 import About from '../Index/About';
 import Support from '../Index/Support';
 import Profile from './Profile';
-import Notifications from './Notifications';
 import Loader from '../crumbs/Loader';
 // import ChatBox from '../crumbs/ChatBox';
 import _404 from '../Index/_404';
@@ -48,7 +47,6 @@ const Main = (props: any) => {
 
       <Switch>
         <Route path={['/', '/index', '/home']} exact component={Home} />
-        <Route path='/notifications' component={Notifications} />
         <Route path='/about' component={About} />
         <Route path='/support' component={Support} />
         <Route path='/@*' component={Profile} />

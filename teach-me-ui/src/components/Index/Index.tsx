@@ -12,7 +12,6 @@ import Footer from '../crumbs/Footer';
 import _404 from './_404';
 import Search from '../Main/Search';
 import Profile from '../Main/Profile';
-import Notifications from '../Main/Notifications';
 
 const Index = () => {
   React.useEffect(() => () => window.scrollTo(0, 0), []);
@@ -24,7 +23,7 @@ const Index = () => {
       <Box className='index-root-box'>
         <Switch>
           <Route path={['/', '/index']} exact component={Landing} />
-          <Route path='/notifications' component={Notifications} />
+          
           <Route path='/about' component={About} />
           <Route path='/support' component={Support} />
           <Route path='/search' component={Search} />
