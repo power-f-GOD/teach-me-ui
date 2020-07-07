@@ -15,7 +15,13 @@ import InfoIcon from '@material-ui/icons/InfoRounded';
 import HelpIcon from '@material-ui/icons/HelpRounded';
 import AccountIcon from '@material-ui/icons/AccountBoxRounded';
 import SearchIcon from '@material-ui/icons/Search';
+import Tooltip from "@material-ui/core/Tooltip";
+import Badge from '@material-ui/core/Badge';
+import NotificationsIcon from '@material-ui/icons/Notifications';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
+import Dropdown from 'react-bootstrap/Dropdown';
+
+import Notifications from '../Main/Notifications';
 
 import { handleSignoutRequest } from '../../functions';
 
@@ -46,7 +52,7 @@ const Nav = (props: any) => {
                 {forIndexPage ? (
                   <IndexNav {...props} />
                 ) : (
-                  <MainNav {...props} />
+                  <MainNavMenu {...props} />
                 )}
               </TemporaryDrawer>
             </Toolbar>
@@ -74,6 +80,7 @@ function IndexNav(props: any) {
 function MainNav(props: any) {
   return (
     <Box className={`nav-links-wrapper ${props?.className}`}>
+     
       <NavLink to='/search' className='nav-link'>
         <SearchIcon />
       </NavLink>
@@ -81,7 +88,22 @@ function MainNav(props: any) {
       <NavLink exact to='/@' className='nav-link'>
         <AccountIcon className='nav-icon' /> Profile
       </NavLink>
-
+      <Dropdown className='dropdownN'>
+        <Dropdown.Toggle  id="dropdown" as='p'>
+        <Tooltip
+          title="Notifications"
+          placement="bottom"
+        >
+          <Badge badgeContent={4} color='secondary'>
+            <NotificationsIcon />
+          </Badge>
+        </Tooltip>
+        </Dropdown.Toggle>
+        <Dropdown.Menu className='dropdown-contents'>
+          <Notifications />
+        </Dropdown.Menu>
+      </Dropdown>
+      <div style={{width: '1em'}}></div>
       <Button
         variant='contained'
         className='nav-link'
@@ -93,7 +115,32 @@ function MainNav(props: any) {
       </Button>
     </Box>
   );
-}
+};
+
+
+function MainNavMenu(props: any) {
+  return (
+    <Box className={`nav-links-wrapper ${props?.className}`}>
+     
+      <NavLink to='/search' className='nav-link'>
+        <SearchIcon />
+      </NavLink>
+      <NavGeneralLinks />
+      <NavLink exact to='/@' className='nav-link'>
+        <AccountIcon className='nav-icon' /> Profile
+      </NavLink>
+      <Button
+        variant='contained'
+        className='nav-link'
+        size='medium'
+        id='signout-btn'
+        fullWidth
+        onClick={handleSignoutRequest}>
+        Sign Out <ArrowForward fontSize='inherit' />
+      </Button>
+    </Box>
+  );
+};
 
 function NavGeneralLinks(props: any) {
   return (
@@ -159,6 +206,22 @@ function TemporaryDrawer(props: any) {
       <NavLink to='/search' className='nav-link'>
         <SearchIcon />
       </NavLink>
+      <Dropdown className='dropdownN'>
+        <Dropdown.Toggle  id="dropdown" as='p' >
+        <Tooltip
+          title="Notifications"
+          placement="bottom"
+        >
+          <Badge badgeContent={4} color='secondary'>
+            <NotificationsIcon />
+          </Badge>
+        </Tooltip>
+        </Dropdown.Toggle>
+        <Dropdown.Menu className='dropdown-contents'>
+          <Notifications />
+        </Dropdown.Menu>
+      </Dropdown> 
+      <div style={{width: '1em'}}></div>
       <IconButton
         edge='start'
         className='menu-button'

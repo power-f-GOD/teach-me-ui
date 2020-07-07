@@ -1,4 +1,4 @@
-import { SnackbarState, SearchState, UserData } from './interfaces';
+import { SnackbarState, SearchState, UserData, NotificationState } from './interfaces';
 
 export const apiBaseURL = 'https://teach-me-services.herokuapp.com/api/v1';
 
@@ -32,4 +32,10 @@ export const userDataState: UserData = {
   level: '',
   id: '',
   token: ''
+}
+
+export const notificationState: NotificationState = {
+  status: 'settled',
+  err: false,
+  data: []
 };
