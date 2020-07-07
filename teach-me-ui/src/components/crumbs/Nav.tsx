@@ -103,6 +103,7 @@ function MainNav(props: any) {
           <Notifications />
         </Dropdown.Menu>
       </Dropdown>
+      <div style={{width: '1em'}}></div>
       <Button
         variant='contained'
         className='nav-link'
@@ -220,6 +221,7 @@ function TemporaryDrawer(props: any) {
           <Notifications />
         </Dropdown.Menu>
       </Dropdown> 
+      <div style={{width: '1em'}}></div>
       <IconButton
         edge='start'
         className='menu-button'

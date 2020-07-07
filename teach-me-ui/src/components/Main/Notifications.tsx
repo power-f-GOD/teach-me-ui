@@ -17,15 +17,16 @@ import moment from 'moment';
      
 const Notifications = (props: any) => {
   const { getNotifications } = props;
+  
   useEffect(() => {
     dispatch(getNotificationRequest(Date.now())(dispatch))
   }, [])
 
   const result = getNotifications.data;
-  
+  // const lastDate = result[(result.length - 1)].date;
 
   return getNotifications.status === 'pending' ? (
-    <Box className='Notifications fade-in'>
+    <Box className='Notifications '>
     <div className='Notifications-div'>
 
       <Container className='d-flex flex-column justify-content-center'>
@@ -38,10 +39,14 @@ const Notifications = (props: any) => {
     </div>
     </Box>
   ) : (
-    <Box className='Notifications fade-in'>
+    <Box className='Notifications ' /*onScroll={
+      // if () {
+      //   dispatch(getNotificationRequest(lastDate)(dispatch))
+      //   }
+      }*/>
     <div className='Notifications-div'>
 
-      <Container className='d-flex flex-column justify-content-center'>
+      <Container className='d-flex flex-column justify-content-center notification-container1'>
         <Box className='notification-container mx-auto'>
           
             {result.map((notification: any, key: number) => {
@@ -60,18 +65,18 @@ const Notifications = (props: any) => {
               
                 const duration = moment.duration(diff);
                 if (duration.years() > 0) {
-                  return duration.years() > 1 ? duration.years() + ' years ago' : 'a year ago';
+                  return time.format('ll'); 
                 } else if (duration.weeks() > 0) {
-                  return duration.weeks() > 1 ? duration.weeks() + ' weeks ago'  : 'a week ago';
+                  return duration.weeks() > 1 ? time.format('ll') : 'a week ago';
                 } else if (duration.days() > 0) {
                   return duration.days() > 1 ? duration.days() + ' days ago' : 'a day ago';
                 } else if (duration.hours() > 0) {
                   return duration.hours() > 1 ? duration.hours() + ' hours ago' : 'an hour ago';
                 } else if (duration.minutes() > 0) {
                   return duration.minutes() > 1 ? duration.minutes() + ' minutes ago' : 'a minute ago';
-                } else if (duration.minutes() < 1) {
-                  return 'seconds ago';
-                }
+                } else if (duration.seconds() > 0) {
+                  return duration.seconds() > 1 ? duration.seconds() + 'seconds ago' : 'just now';
+                } 
               })(date)
               const notificationMessage = `<div>${notification.message}</div>
                                           <div>${formattedDate}</div>`
