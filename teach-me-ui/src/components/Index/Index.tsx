@@ -23,7 +23,6 @@ const Index = () => {
       <Box className='index-root-box'>
         <Switch>
           <Route path={['/', '/index']} exact component={Landing} />
-          
           <Route path='/about' component={About} />
           <Route path='/support' component={Support} />
           <Route path='/search' component={Search} />

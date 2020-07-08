@@ -221,18 +221,3 @@ export interface UserEnrolledData {
   department: string;
   level: string;
 }
-
-export interface NotificationState extends StatusPropsState {
-  data?: any[]
-  [key: string]: any
-}
-
-export interface NotificationData {
-  _id: string,
-  data: any,
-  date: any,
-  message: string,
-  type: string,
-  [key: string]: any
-}
-          

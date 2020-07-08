@@ -32,7 +32,7 @@ export const triggerSearchKanyimuta = (keyword: string) => (
   });
   dispatch(searchKanyimuta({ status: 'pending' }));
 
-  if (keyword) { 
+  if (keyword) {
     delay(200).then(() => {
       axios({
         url: `/people/find?keyword=${keyword}&limit=20`,
