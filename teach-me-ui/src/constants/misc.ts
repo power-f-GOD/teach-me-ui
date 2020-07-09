@@ -32,4 +32,4 @@ export const userDataState: UserData = {
   level: '',
   id: '',
   token: ''
-}
+};

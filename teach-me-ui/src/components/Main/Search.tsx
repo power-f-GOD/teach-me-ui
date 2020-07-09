@@ -58,41 +58,31 @@ const Search = (props: any) => {
               color='#aaa'
               textAlign='center'
               fontSize='1.5rem'>
-              <SearchIcon fontSize='large' /> <span>Search Kanyimuta...</span>
+              <SearchIcon fontSize='large' />{' '}
+              <span>
+                {searchKanyimuta.status === 'fulfilled'
+                  ? 'Searched and found nothing'
+                  : searchKanyimuta.status === 'pending'
+                  ? 'Making search...'
+                  : 'Search Kanyimuta...'}
+              </span>
             </Box>
           ) : (
             <List
               className={`search-results-wrapper custom-scroll-bar`}
               aria-label='search results'>
               {results.slice(0, 20).map((result, key) => (
-                <ListItem
-                  button
-                  divider
-                  key={key}
-                  className='search-result'
-                  // onClick={() => {
-                  //   setChoice(result);
-                  // }}
-                >
+                <ListItem button divider key={key} className='search-result'>
                   {(() => {
                     const keyword = searchInputRef.current?.value ?? '';
                     let username = `@${result.username}`;
                     const link = `/${username}`;
                     let displayName = `${result.firstname} ${result.lastname}`.replace(
-                      new RegExp(`(${keyword})`, 'i'),
+                      new RegExp(`(${keyword.trim()})`, 'i'),
                       `<span class='theme-secondary-darker'>$1</span>`
                     );
-                    // let department = `${result.department}`.replace(
-                    //   new RegExp(`(${keyword})`, 'i'),
-                    //   `<span class='theme-secondary-darker'>$1</span>`
-                    // );
-                    // const keyword = searchInputRef.current?.value ?? '';
-                    // const highlighted = `${_institution.name.replace(
-                    //   new RegExp(`(${keyword})`, 'i'),
-                    //   `<span class='theme-secondary-darker'>$1</span>`
-                    // )}, ${country}`.replace(/<\/?script>/gi, '');
                     username = username.replace(
-                      new RegExp(`(${keyword})`, 'i'),
+                      new RegExp(`(${keyword.trim()})`, 'i'),
                       `<span class='theme-secondary-darker'>$1</span>`
                     );
                     const person = `
