@@ -5,24 +5,89 @@
   background-color: #eee;
   position: relative;
   min-height: 100vh;
-
-  &::before {
-    @include before-or-after(
-      linear-gradient(to top, #d8d8d8, #707070),
-      $w: calc(100vw + 60rem),
-      $h: 50rem,
-      $t: -15rem,
-      $l: -30rem,
-      $br: 0 0 50% 50%,
-      $zi: 0
-    );
+  .details-card {
+    background-color: white;
+    border-radius: 0.5rem;
   }
+  .profile-top {
+    height: 15rem;
+    margin-top: 4rem;
+    width: 100%;
+    background-color: black;
+    position: relative;
+    background-color: #00537e;
+    .details-container {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      color: white;
+      padding: 0 2rem;
+      top: 0;
+      left: 0;
+      background: #0007;
+      width: 100%;
+      height: 100%;
+    }
+    .cover-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+    .profile-nav-bar {
+      background-color: white;
+      box-shadow: 0 0 2px #aaa;
+      padding: 0 1.2rem;
+      width: max-content;
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translate(-50%, 50%);
+      z-index: 1;
+      font-size: small;
+      border-radius: 0.4rem;
+      .more-btn {
+        background: #ccc !important;
+        color: #000;
+        box-shadow: none;
+        font-size: small !important;
+        padding: 0 !important;
+        margin: 0 0.3rem;
 
-  &.self-view {
-    &::before {
-      transform: translateY(-2rem);
+        [class*='Icon'] {
+          font-size: 1.8rem;
+        }
+        path {
+          fill: black;
+          stroke: transparent;
+        }
+      }
+      .nav-item {
+        height: 100%;
+        padding: 1rem;
+        margin: 0 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+
+        &.active {
+          color: #00537e;
+          border-bottom: 2px solid #00537e;
+        }
+      }
     }
   }
+  // &::before {
+  //   @include before-or-after(
+  //     linear-gradient(to top, #ccc, #707070),
+  //     $w: calc(100vw + 100rem),
+  //     $h: 50rem,
+  //     $t: -32.5rem,
+  //     $l: -50rem,
+  //     $br: 0 0 50% 50%,
+  //     $zi: 0
+  //   );
+  // }
 
   path {
     stroke: white;
@@ -127,24 +192,59 @@
     transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
 
-  .add-colleague-button {
-    padding: 0.55rem 0.85rem;
+  .colleague-action-button {
+    // padding: 0.55rem 0.85rem;
+    position: relative;
     min-width: 9rem;
     justify-content: center;
     background-color: $theme-tertiary-v1 !important;
     transition: 0.3s;
+    box-shadow: none;
+    font-size: small !important;
+    padding: 0 !important;
+    margin: 0.5rem 0.8rem;
 
     [class*='Icon'] {
       font-size: 1.5rem;
       margin-right: 0.5rem;
     }
 
-    &.request-sent {
-      background: $theme-primary-v6 !important;
-    }
+    &.decline-request {
+      background: grey !important;
+      color: white;
 
+      path {
+        fill: white;
+        stroke: transparent;
+      }
+    }
+    &.add-colleague {
+      background: #ccc !important;
+      color: #000;
+      path {
+        fill: black;
+        stroke: transparent;
+      }
+    }
+    &.cancel-request {
+      background: #ccc !important;
+      color: black;
+      path {
+        fill: black;
+        stroke: transparent;
+      }
+    }
+    &.accept-request {
+      background: $theme-primary-v6 !important;
+      color: #fff;
+
+      path {
+        fill: #fff;
+        stroke: transparent;
+      }
+    }
     path {
-      fill: white;
+      fill: #fff;
       stroke: transparent;
     }
   }
@@ -153,7 +253,7 @@
     $size: 8rem;
 
     height: $size;
-    margin: 2rem 0;
+    margin: 3.5rem 0;
     width: $size;
     font-size: 2.5rem;
     background: $theme-primary-v5;
@@ -161,11 +261,21 @@
     border: 0.125rem solid #eee;
   }
 
+  .profile-avatar-x {
+    @extend .profile-avatar;
+    margin: 0;
+    border: 0.1rem solid #eee;
+  }
+
   .display-name {
     margin: 0.5rem 0;
     font-weight: bold;
-    text-align: center;
-    font-size: 1.75rem;
+    font-size: 1.5rem;
+  }
+  .username {
+    margin: 0.5rem 0;
+    font-size: 1.3rem;
+    color: #ddd;
   }
 
   .MuiSvgIcon-root {
