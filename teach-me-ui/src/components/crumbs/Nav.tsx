@@ -78,6 +78,7 @@ function IndexNav(props: any) {
 }
 
 function MainNav(props: any) {
+  // const [navVisible, setNavVisible] = useState('hidden');
   return (
     <Box className={`nav-links-wrapper ${props?.className}`}>
      
@@ -88,19 +89,23 @@ function MainNav(props: any) {
       <NavLink exact to='/@' className='nav-link'>
         <AccountIcon className='nav-icon' /> Profile
       </NavLink>
-      <Dropdown className='dropdownN'>
+      <Dropdown className='dropdown' >
         <Dropdown.Toggle  id="dropdown" as='p'>
         <Tooltip
           title="Notifications"
           placement="bottom"
         >
-          <Badge badgeContent={4} color='secondary'>
+          <Badge badgeContent={4} color='secondary' >
             <NotificationsIcon />
           </Badge>
         </Tooltip>
         </Dropdown.Toggle>
         <Dropdown.Menu className='dropdown-contents'>
-          <Notifications />
+          <div>
+          <Dropdown.Item>
+            <Notifications /*visibility={navVisible}*//>
+          </Dropdown.Item>
+          </div>
         </Dropdown.Menu>
       </Dropdown>
       <div style={{width: '1em'}}></div>
