@@ -34,11 +34,11 @@ pipelines:
         artifacts:
           - teach-me-ui/packaged/**
           - teach-me-ui/coverage.tar.gz
-
+    
+    master:
     - step:
-          name: Deploy to Heroku
+          name: Deploy to Kanyimuta.com
           image: node:10.15.0
-          deployment: staging
           script:
             - tar --exclude='./node_modules' --exclude='./build' -czvf application-${BITBUCKET_BUILD_NUMBER}.tar.gz -C teach-me-ui .
             - pipe: atlassian/heroku-deploy:1.1.2
@@ -46,3 +46,16 @@ pipelines:
                 HEROKU_API_KEY: $HEROKU_API_KEY
                 HEROKU_APP_NAME: $HEROKU_APP_UI
                 ZIP_FILE: "application-${BITBUCKET_BUILD_NUMBER}.tar.gz"
+    
+    staging:
+    - step:
+          name: Deploy to Staging App
+          image: node:10.15.0
+          deployment: staging
+          script:
+            - tar --exclude='./node_modules' --exclude='./build' -czvf application-${BITBUCKET_BUILD_NUMBER}.tar.gz -C teach-me-ui .
+            - pipe: atlassian/heroku-deploy:1.1.2
+              variables:
+                HEROKU_API_KEY: $HEROKU_API_KEY
+                HEROKU_APP_NAME: "teach-me-ui-dev"
+                ZIP_FILE: "application-${BITBUCKET_BUILD_NUMBER}.tar.gz"  
