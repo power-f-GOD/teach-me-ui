@@ -9,6 +9,8 @@ const composeEnhancers =
 
 const store = initStore();
 
+export const dispatch = store.dispatch as Function;
+
 function initStore() {
   const store = createStore(reducers, composeEnhancers(applyMiddleware(thunk)));
 
