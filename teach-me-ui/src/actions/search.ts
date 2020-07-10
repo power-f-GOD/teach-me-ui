@@ -71,7 +71,7 @@ export const triggerSearchKanyimuta = (keyword: string) => (
   } else {
     dispatch(
       searchKanyimuta({
-        status: 'fulfilled',
+        status: 'settled',
         err: false,
         data: []
       })

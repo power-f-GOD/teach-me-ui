@@ -2,55 +2,48 @@ import axios from 'axios';
 
 import {
   ReduxAction,
-  Chat,
-  Message,
-  ChatData,
-  AnchorInfo,
-  SearchState
+  ChatState,
+  SearchState,
+  ConversationInfo,
+  ConversationMessages,
+  APIMessageResponse,
+  APIConversationResponse
 } from '../constants/interfaces';
 import {
   GET_PEOPLE_ENROLLED_IN_INSTITUTION,
   SET_PEOPLE_ENROLLED_IN_INSTITUTION,
-  SET_ACTIVE_CHAT,
-  REQUEST_NEW_CONVO,
-  NEW_CONVO,
-  SET_CHATS_MESSAGES
+  SET_CHAT_STATE,
+  GET_CONVERSATIONS,
+  SET_CONVERSATIONS,
+  GET_CONVERSATION_MESSAGES,
+  GET_CONVERSATION_INFO,
+  SET_CONVERSATION_INFO,
+  SET_CONVERSATION,
+  SET_CONVERSATION_MESSAGES
 } from '../constants/chat';
-import { logError, getState, callNetworkStatusCheckerFor } from '../functions';
+import { apiBaseURL as baseURL } from '../constants/misc';
+import {
+  logError,
+  getState,
+  callNetworkStatusCheckerFor
+  // delay
+} from '../functions';
 // import { displaySnackbar } from './misc';
-
-const baseUrl = 'teach-me-services.herokuapp.com/api/v1';
-const cookieEnabled = navigator.cookieEnabled;
-
-export const usersEnrolledInInstitution = (
-  payload: SearchState
-): ReduxAction => {
-  return {
-    type: SET_PEOPLE_ENROLLED_IN_INSTITUTION,
-    payload
-  };
-};
 
 export const getUsersEnrolledInInstitution = (params?: string) => (
   dispatch: Function
 ): ReduxAction => {
-  let token = '';
-
   dispatch(usersEnrolledInInstitution({ status: 'pending' }));
   callNetworkStatusCheckerFor({
     name: 'usersEnrolledInInstitution',
     func: usersEnrolledInInstitution
   });
 
-  if (cookieEnabled) {
-    token = JSON.parse(localStorage?.kanyimuta ?? {})?.token ?? null;
-  }
-
   axios({
-    url: `https://${baseUrl}/institution/people?limit=10`,
+    url: `${baseURL}/people/find?limit=10`,
     method: 'GET',
     headers: {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${getState().userData?.token}`
     }
   })
     .then((response: any) => {
@@ -79,106 +72,379 @@ export const getUsersEnrolledInInstitution = (params?: string) => (
   };
 };
 
-export const newConversation = (payload: SearchState): ReduxAction => {
+export const usersEnrolledInInstitution = (
+  payload: SearchState
+): ReduxAction => {
   return {
-    type: NEW_CONVO,
+    type: SET_PEOPLE_ENROLLED_IN_INSTITUTION,
     payload
   };
 };
 
-export const requestNewConversation = (conversationId?: string) => (
-  dispatch: Function
-): ReduxAction => {
-  let token = '';
-
-  dispatch(newConversation({ status: 'pending' }));
-  // callNetworkStatusCheckerFor(newConversation);
-
-  if (cookieEnabled) {
-    token = JSON.parse(localStorage?.kanyimuta ?? {})?.token ?? null;
-  }
+export const getConversations = () => (dispatch: Function): ReduxAction => {
+  dispatch(conversations({ status: 'pending' }));
+  callNetworkStatusCheckerFor({
+    name: 'conversations',
+    func: conversations
+  });
 
   axios({
-    url: `https://${baseUrl}/conversation/new`,
-    method: 'POST',
+    url: `${baseURL}/conversations?limit=10&offset=`,
+    method: 'GET',
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${getState().userData?.token}`,
       'Content-Type': 'application/json'
-    },
-    data: {
-      participants: [conversationId]
     }
   })
     .then((response: any) => {
-      console.log('new conversation:', response.data);
+      const { error, conversations: _conversations } = response.data;
 
-      if (!response.data.error) {
+      if (!error) {
         dispatch(
-          newConversation({
+          conversations({
             status: 'fulfilled',
             err: false,
-            id: response.data._id
+            data: [..._conversations]
           })
         );
       } else {
-        dispatch(newConversation({ status: 'fulfilled', err: true, data: [] }));
+        dispatch(conversations({ status: 'fulfilled', err: true, data: [] }));
       }
     })
-    .catch(logError(newConversation));
+    .catch(logError(conversations));
 
   return {
-    type: REQUEST_NEW_CONVO
+    type: GET_CONVERSATIONS
   };
 };
 
-export const setActiveChat = (payload: Chat): ReduxAction => {
+export const conversations = (payload: SearchState): ReduxAction => {
   return {
-    type: SET_ACTIVE_CHAT,
+    type: SET_CONVERSATIONS,
     payload
   };
 };
 
-export const setChatsMessages = (payload: AnchorInfo) => {
-  let { displayName, avatar, id, messages, info }: AnchorInfo = payload;
-  let activeChatData = getState().chatsMessages[id] ?? {};
-  let chatData: ChatData = {
-    [id]: { ...activeChatData, messages, displayName, avatar, id, info }
-  };
-  let chatMessages: Message[] = [];
+// export const conversationsMessages = (
+//   _payload: ConversationsMessages
+// ): ReduxAction => {
+//   const convoId = Object.keys(_payload).find((key) =>
+//     /\d\w?/.test(key)
+//   ) as string;
+//   const previousConvoMessages = getState().conversationsMessages[convoId];
+//   const previousMessages = previousConvoMessages
+//     ? [...previousConvoMessages]
+//     : [];
+//   const newConvoMessages = _payload[convoId];
+//   const newMessages = newConvoMessages ?? [];
+//   // console.log('previousMessages:', previousConvoMessages)
+//   //update previousMessages with newMessages;
+//   for (const i in newMessages) {
+//     let hasTimestamp = newMessages[i].time_stamp_id;
 
-  if (cookieEnabled) {
-    let storageChatsMessages = localStorage.chatsMessages;
+//     if (hasTimestamp) {
+//       for (const j in previousMessages) {
+//         let found = previousMessages[j].time_stamp_id;
 
-    if (storageChatsMessages) {
-      storageChatsMessages = JSON.parse(storageChatsMessages);
-      chatData[id] = { ...chatData[id], ...storageChatsMessages[id] };
-      chatMessages = storageChatsMessages[id]?.messages ?? [];
-    } else {
-      storageChatsMessages = {};
-      localStorage.chatsMessages = JSON.stringify({});
+//         if (hasTimestamp === found) {
+//           delete newMessages[i].time_stamp_id;
+//           previousMessages[j] = newMessages[i];
+//           break;
+//         } else if (+j === previousMessages.length - 1) {
+//           previousMessages.unshift(newMessages[i]);
+//         }
+//       }
+//     } else {
+//       previousMessages.push(newMessages[i]);
+//     }
+//   }
+
+//   const payload: ConversationsMessages = {
+//     ..._payload,
+//     [convoId]: [...previousMessages]
+//   };
+
+//   return {
+//     type: SET_CONVERSATION_MESSAGES,
+//     payload
+//   };
+// };
+
+export const getConversationInfo = (
+  associatedUsername: string,
+  conversationId?: string
+) => (dispatch: Function): ReduxAction => {
+  const type = 'ONE_TO_ONE'; //type ? type : 'ONE_TO_ONE';
+
+  //should be revisited when classroom conversations API is available
+  const url =
+    type === 'ONE_TO_ONE' ? `${baseURL}/profile/${associatedUsername}` : '';
+
+  dispatch(conversationInfo({ status: 'pending' }));
+  callNetworkStatusCheckerFor({
+    name: 'conversationInfo',
+    func: conversationInfo
+  });
+
+  axios({
+    url,
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${getState().userData?.token}`,
+      'Content-Type': 'application/json'
     }
+  })
+    .then(({ data }: any) => {
+      const _data = { ...data };
+      const { error, firstname, lastname } = _data;
 
-    if (payload.messages![0].text) {
-      chatMessages.push(payload.messages![0]);
-      storageChatsMessages[id] = {
-        ...chatData[id],
-        messages: chatMessages
+      delete _data.error;
+      delete _data.date_of_birth;
+      delete _data.email;
+
+      const conversationData: ConversationInfo['data'] = {
+        ..._data,
+        displayName: `${firstname} ${lastname}`,
+        avatar: 'avatar-1.png'
       };
-      localStorage.chatsMessages = JSON.stringify(storageChatsMessages);
-    }
-  } else {
-    chatMessages = activeChatData?.messages?.slice() ?? [];
 
-    if (payload.messages![0].text) chatMessages.push(payload.messages![0]);
+      if (!error) {
+        dispatch(
+          conversationInfo({
+            status: 'fulfilled',
+            err: false,
+            conversationId,
+            data: { ...conversationData }
+          })
+        );
+      } else {
+        dispatch(
+          conversationInfo({
+            status: 'fulfilled',
+            err: true,
+            conversationId,
+            data: {}
+          })
+        );
+      }
+    })
+    .catch(logError(conversationInfo));
+
+  return {
+    type: GET_CONVERSATION_INFO
+  };
+};
+
+export const conversationInfo = (payload: ConversationInfo): ReduxAction => {
+  return {
+    type: SET_CONVERSATION_INFO,
+    payload
+  };
+};
+
+export const getConversationMessages = (convoId: string) => (
+  dispatch: Function
+): ReduxAction => {
+  const token = getState().userData?.token;
+
+  dispatch(conversationMessages({ status: 'pending' }));
+  callNetworkStatusCheckerFor({
+    name: 'conversationMessages',
+    func: conversationMessages
+  });
+
+  axios({
+    url: `${baseURL}/conversations/${convoId}/messages?limit=20`,
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  })
+    .then(({ data }: any) => {
+      const { error } = data;
+      const messages: APIMessageResponse[] = data.messages;
+
+      if (!error) {
+        dispatch(
+          conversationMessages({
+            conversationId: convoId,
+            status: 'fulfilled',
+            err: false,
+            data: [...messages.reverse()]
+          })
+        );
+      } else {
+        dispatch(
+          conversationMessages({
+            conversationId: convoId,
+            status: 'fulfilled',
+            err: true,
+            data: []
+          })
+        );
+      }
+    })
+    .catch(logError(conversationMessages));
+
+  return {
+    type: GET_CONVERSATION_MESSAGES
+  };
+};
+
+export const conversationMessages = (payload: ConversationMessages) => {
+  let previousMessages = (getState().conversationMessages.data ??
+    []) as Partial<APIMessageResponse>[];
+
+  if (
+    payload.conversationId &&
+    previousMessages[0]?.conversation_id !== payload.conversationId
+  ) {
+    previousMessages = [];
+  }
+
+  if (payload.data!?.length > 0) {
+    let newMessage = payload.data![0];
+    let indexOfInitial: number = -1;
+    let initialMessage =
+      previousMessages?.find((message, i) => {
+        if (
+          message.time_stamp_id &&
+          message.time_stamp_id === newMessage.time_stamp_id
+        ) {
+          indexOfInitial = i;
+          return true;
+        }
+        return false;
+      }) ?? null;
+
+    if (initialMessage) {
+      delete newMessage.time_stamp_id;
+      previousMessages[indexOfInitial] = newMessage;
+    } else {
+      if (payload.data!.length === 1) {
+        previousMessages.push(...payload.data);
+      } else {
+        previousMessages.unshift(...payload.data);
+      }
+    }
   }
 
   return {
-    type: SET_CHATS_MESSAGES,
-    payload: {
-      [id]: {
-        ...chatData[id],
-        messages: chatMessages
-      }
-    }
+    type: SET_CONVERSATION_MESSAGES,
+    payload: { ...payload, data: [...previousMessages] }
   };
 };
+
+export const conversation = (conversationId: string): ReduxAction => {
+  const payload = (getState().conversations.data?.find(
+    (conversation: APIConversationResponse) =>
+      conversationId === conversation._id
+  ) ?? {}) as APIConversationResponse;
+
+  payload.avatar = payload.avatar ? payload.avatar : 'avatar-1.png';
+
+  return {
+    type: SET_CONVERSATION,
+    payload
+  };
+};
+
+// export const conversationMessages = (payload: Partial<APIMessageResponse>): ReduxAction => {
+//   return {
+//     type: SET_CONVERSATION_MESSAGES,
+//     payload
+//   }
+// }
+
+export const chatState = (payload: ChatState): ReduxAction => {
+  return {
+    type: SET_CHAT_STATE,
+    payload
+  };
+};
+
+// export const getChatMessages = (conversationId: string) => (
+//   dispatch: Function
+// ): ReduxAction => {
+//   dispatch(setChatMessages({ status: 'pending' }));
+//   callNetworkStatusCheckerFor({
+//     name: 'setChatMessages',
+//     func: setChatMessages
+//   });
+
+//   axios({
+//     url: `${baseURL}/conversations/${conversationId}/messages?limit=20`,
+//     method: 'GET',
+//     headers: {
+//       Authorization: `Bearer ${getState().userData?.token}`,
+//       'Content-Type': 'application/json'
+//     }
+//   })
+//     .then((response: any) => {
+//       const { error, messages } = response.data;
+
+//       if (!error) {
+//         dispatch(
+//           setChatMessages({
+//             status: 'fulfilled',
+//             err: false,
+//             data: [...messages]
+//           })
+//         );
+//       } else {
+//         dispatch(setChatMessages({ status: 'fulfilled', err: true, data: [] }));
+//       }
+//     })
+//     .catch(logError(setChatMessages));
+
+//   return {
+//     type: GET_CHATS_MESSAGES
+//   };
+// };
+// {
+//   let { displayName, avatar, id, messages, info }: AnchorInfo = payload;
+//   let activeChatData = getState().chatsMessages[id] ?? {};
+//   let chatData: ChatData = {
+//     [id]: { ...activeChatData, messages, displayName, avatar, id, info }
+//   };
+//   let chatMessages: Message[] = [];
+
+//   if (cookieEnabled) {
+//     let storageChatsMessages = localStorage.chatsMessages;
+
+//     if (storageChatsMessages) {
+//       storageChatsMessages = JSON.parse(storageChatsMessages);
+//       chatData[id] = { ...chatData[id], ...storageChatsMessages[id] };
+//       chatMessages = storageChatsMessages[id]?.messages ?? [];
+//     } else {
+//       storageChatsMessages = {};
+//       localStorage.chatsMessages = JSON.stringify({});
+//     }
+
+//     if (payload.messages![0].text) {
+//       chatMessages.push(payload.messages![0]);
+//       storageChatsMessages[id] = {
+//         ...chatData[id],
+//         messages: chatMessages
+//       };
+//       localStorage.chatsMessages = JSON.stringify(storageChatsMessages);
+//     }
+//   } else {
+//     chatMessages = activeChatData?.messages?.slice() ?? [];
+
+//     if (payload.messages![0].text) chatMessages.push(payload.messages![0]);
+//   }
+
+//   return {
+//     type: GET_CHAT_MESSAGES,
+//     payload: {
+//       [id]: {
+//         ...chatData[id],
+//         messages: chatMessages
+//       }
+//     }
+//   };
+// };
+
+// export const setChatMessages = (payload: Search) => {};

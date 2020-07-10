@@ -22,6 +22,7 @@
     "@types/material-ui": "^0.21.7",
     "@types/react-test-renderer": "^16.9.2",
     "@types/redux": "^3.6.0",
+    "@types/ws": "^7.2.6",
     "autoprefixer": "^9.8.0",
     "axios": "^0.19.2",
     "enzyme": "^3.11.0",
@@ -45,7 +46,8 @@
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "typescript-eslint": "0.0.1-alpha.0",
-    "worker-loader": "^2.0.0"
+    "worker-loader": "^2.0.0",
+    "ws": "^7.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",
