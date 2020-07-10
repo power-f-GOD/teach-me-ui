@@ -392,9 +392,11 @@ const Profile = (props: any) => {
     return <Redirect to='/404' />;
   }
 
+  // added deepProfileIsLoading to prevent showing the (circular) loading stuff on the (profile) buttons on page [component] (first) load
   if (
-    queryString.parse(location.search)?.chat !== 'open' &&
-    status !== 'fulfilled'
+    (queryString.parse(location.search)?.chat !== 'open' &&
+      status !== 'fulfilled') ||
+    deepProfileIsLoading
   ) {
     //instead of this, you can use a React Skeleton loader; didn't have the time to add, so I deferred.
     return <Loader />;
@@ -519,7 +521,7 @@ const Profile = (props: any) => {
                       <CircularProgress color='inherit' size={28} />
                     ) : (
                       <>
-                        <PendingIcon fontSize='inherit' /> Un-colleague
+                        <PendingIcon fontSize='inherit' /> Uncolleague
                       </>
                     )}
                   </Button>

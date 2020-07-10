@@ -63,7 +63,7 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
           return;
         }
 
-        dispatch(getConversationInfo(username));
+        dispatch(getConversationInfo(username)(dispatch));
         dispatch(getConversationMessages(convoId)(dispatch));
         dispatch(chatState(chatInfo));
         dispatch(conversation(convoId));

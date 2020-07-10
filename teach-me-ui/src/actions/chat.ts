@@ -7,7 +7,8 @@ import {
   ConversationInfo,
   ConversationMessages,
   APIMessageResponse,
-  APIConversationResponse
+  APIConversationResponse,
+  UserData
 } from '../constants/interfaces';
 import {
   GET_PEOPLE_ENROLLED_IN_INSTITUTION,
@@ -43,7 +44,7 @@ export const getUsersEnrolledInInstitution = (params?: string) => (
     url: `${baseURL}/people/find?limit=10`,
     method: 'GET',
     headers: {
-      Authorization: `Bearer ${getState().userData?.token}`
+      Authorization: `Bearer ${(getState().userData as UserData)?.token}`
     }
   })
     .then((response: any) => {

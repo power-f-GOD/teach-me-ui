@@ -9,7 +9,7 @@ import store from '../appStore';
 import { displaySnackbar, setUserData } from '../actions';
 import { userDeviceIsMobile } from '../';
 
-export const { dispatch, getState } = store as any;
+export const { dispatch, getState }: any = store;
 
 export const validateEmailFn = (email: string) =>
   !!email && /^\w+[\w\d.]*[\w\d]+@\w+\.[\w\d.]+[\w\d]$/.test(email);
