@@ -151,7 +151,14 @@ $chat-header-min-height: 3.35rem;
     > section:first-child {
       position: relative;
       &::before {
-        @include before-or-after($bg: #e2e2e2, $zi: 0, $h: 22.5rem, $w: calc(100% + 3rem), $t: -7rem, $l: -1.5rem);
+        @include before-or-after(
+          $bg: #ddd,
+          $zi: 0,
+          $h: 22.5rem,
+          $w: calc(100% + 3rem),
+          $t: -7rem,
+          $l: -1.5rem
+        );
       }
     }
 
