@@ -90,11 +90,8 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         queryString
       })
     );
-    window.history.replaceState(
-      {},
-      '',
-      window.location.origin + window.location.pathname.slice(1) + queryString
-    );
+    
+    window.history.replaceState({}, '', queryString);
   }, [_chatState]);
 
   const handleCloseChatClick = useCallback(() => {

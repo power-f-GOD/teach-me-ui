@@ -322,7 +322,10 @@ export const conversationMessages = (payload: ConversationMessages) => {
       delete newMessage.time_stamp_id;
       previousMessages[indexOfInitial] = newMessage;
     } else {
-      if (payload.data!.length === 1) {
+      if (
+        payload.data!?.length === 1 &&
+        payload.data![0]?.date! > previousMessages.slice(-1)[0]?.date!
+      ) {
         previousMessages.push(...payload.data);
       } else {
         previousMessages.unshift(...payload.data);
@@ -350,101 +353,9 @@ export const conversation = (conversationId: string): ReduxAction => {
   };
 };
 
-// export const conversationMessages = (payload: Partial<APIMessageResponse>): ReduxAction => {
-//   return {
-//     type: SET_CONVERSATION_MESSAGES,
-//     payload
-//   }
-// }
-
 export const chatState = (payload: ChatState): ReduxAction => {
   return {
     type: SET_CHAT_STATE,
     payload
   };
 };
-
-// export const getChatMessages = (conversationId: string) => (
-//   dispatch: Function
-// ): ReduxAction => {
-//   dispatch(setChatMessages({ status: 'pending' }));
-//   callNetworkStatusCheckerFor({
-//     name: 'setChatMessages',
-//     func: setChatMessages
-//   });
-
-//   axios({
-//     url: `${baseURL}/conversations/${conversationId}/messages?limit=20`,
-//     method: 'GET',
-//     headers: {
-//       Authorization: `Bearer ${getState().userData?.token}`,
-//       'Content-Type': 'application/json'
-//     }
-//   })
-//     .then((response: any) => {
-//       const { error, messages } = response.data;
-
-//       if (!error) {
-//         dispatch(
-//           setChatMessages({
-//             status: 'fulfilled',
-//             err: false,
-//             data: [...messages]
-//           })
-//         );
-//       } else {
-//         dispatch(setChatMessages({ status: 'fulfilled', err: true, data: [] }));
-//       }
-//     })
-//     .catch(logError(setChatMessages));
-
-//   return {
-//     type: GET_CHATS_MESSAGES
-//   };
-// };
-// {
-//   let { displayName, avatar, id, messages, info }: AnchorInfo = payload;
-//   let activeChatData = getState().chatsMessages[id] ?? {};
-//   let chatData: ChatData = {
-//     [id]: { ...activeChatData, messages, displayName, avatar, id, info }
-//   };
-//   let chatMessages: Message[] = [];
-
-//   if (cookieEnabled) {
-//     let storageChatsMessages = localStorage.chatsMessages;
-
-//     if (storageChatsMessages) {
-//       storageChatsMessages = JSON.parse(storageChatsMessages);
-//       chatData[id] = { ...chatData[id], ...storageChatsMessages[id] };
-//       chatMessages = storageChatsMessages[id]?.messages ?? [];
-//     } else {
-//       storageChatsMessages = {};
-//       localStorage.chatsMessages = JSON.stringify({});
-//     }
-
-//     if (payload.messages![0].text) {
-//       chatMessages.push(payload.messages![0]);
-//       storageChatsMessages[id] = {
-//         ...chatData[id],
-//         messages: chatMessages
-//       };
-//       localStorage.chatsMessages = JSON.stringify(storageChatsMessages);
-//     }
-//   } else {
-//     chatMessages = activeChatData?.messages?.slice() ?? [];
-
-//     if (payload.messages![0].text) chatMessages.push(payload.messages![0]);
-//   }
-
-//   return {
-//     type: GET_CHAT_MESSAGES,
-//     payload: {
-//       [id]: {
-//         ...chatData[id],
-//         messages: chatMessages
-//       }
-//     }
-//   };
-// };
-
-// export const setChatMessages = (payload: Search) => {};

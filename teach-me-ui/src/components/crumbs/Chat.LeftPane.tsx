@@ -35,7 +35,7 @@ interface TabPanelProps {
 
 interface ChatLeftPaneProps {
   conversations: SearchState;
-  rooms: ConversationInfo[];
+  rooms?: ConversationInfo[];
 }
 
 const [CV, CR] = ['Conversations', 'Classrooms'];
@@ -54,9 +54,15 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
 
   const handleChatClick = useCallback(
     (chatInfo: ChatState, extra: { convoId: string; username: string }) => {
-      return async () => {
+      return (e: any) => {
+        const { id, cid } = queryString.parse(window.location.search);
         const { convoId, username } = extra;
-        
+
+        if (cid === convoId || username === id) {
+          e.preventDefault();
+          return;
+        }
+
         dispatch(getConversationInfo(username));
         dispatch(getConversationMessages(convoId)(dispatch));
         dispatch(chatState(chatInfo));
@@ -104,7 +110,10 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
                 className='tab-panel-item p-0'
                 key={convoId}
                 isActive={(_match, location) =>
-                  queryString.parse(location.search)?.cid === convoId
+                  Boolean(
+                    convoId &&
+                      queryString.parse(location.search)?.cid === convoId
+                  )
                 }
                 onClick={handleChatClick(
                   { ..._chatState },

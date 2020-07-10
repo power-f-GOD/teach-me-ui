@@ -28,7 +28,6 @@ import {
   APIConversationResponse,
   APIMessageResponse
 } from '../../constants/interfaces';
-import { ONE_TO_MANY } from '../../constants/chat';
 import ChatLeftPane from './Chat.LeftPane';
 import ChatMiddlePane from './Chat.MiddlePane';
 import ChatRightPane from './Chat.RightPane';
@@ -45,39 +44,6 @@ interface ChatBoxProps {
   webSocket: WebSocket;
   [key: string]: any;
 }
-
-const rooms: ConversationInfo[] = [
-  {
-    data: {
-      avatar: '',
-      displayName: 'Room 1',
-      type: ONE_TO_MANY
-    },
-    get conversationId() {
-      return this.data!.displayName;
-    }
-  },
-  {
-    data: {
-      avatar: '',
-      displayName: 'Room 2',
-      type: ONE_TO_MANY
-    },
-    get conversationId() {
-      return this.data!.displayName;
-    }
-  },
-  {
-    data: {
-      avatar: '',
-      displayName: 'Room 3',
-      type: ONE_TO_MANY
-    },
-    get conversationId() {
-      return this.data!.displayName;
-    }
-  }
-];
 
 window.addEventListener('popstate', () => {
   let { chat } = queryString.parse(window.location.search);
@@ -102,18 +68,12 @@ const ChatBox = (props: ChatBoxProps) => {
     webSocket: socket
   } = props;
   const { isOpen, isMinimized, queryString: qString }: ChatState = _chatState;
-  const { _id: convoId } = _conversation;
-  const { username: convoUsername } = conversationInfo.data as Partial<
-    UserEnrolledData & APIConversationResponse
-  >;
+  const { _id: convoId, associated_username: convoUsername } = _conversation;
 
   const handleOpenChatClick = useCallback(() => {
-    const { isMinimized, queryString: chatQueryString }: ChatState = _chatState;
-    const queryString = /chat=/.test(String(chatQueryString))
-      ? chatQueryString
-      : `?chat=${isMinimized ? 'min' : 'open'}&id=${
-          convoUsername ?? placeHolderDisplayName
-        }&cid=${convoId ?? '0'}`;
+    const queryString = `?chat=open&id=${
+      convoUsername ?? placeHolderDisplayName
+    }&cid=${convoId ?? '0'}`;
 
     dispatch(
       chatState({
@@ -126,7 +86,7 @@ const ChatBox = (props: ChatBoxProps) => {
     if (!conversations.data![0]) {
       dispatch(getConversations()(dispatch));
     }
-  }, [_chatState, convoId, convoUsername, conversations.data]);
+  }, [convoId, convoUsername, conversations.data]);
 
   useEffect(() => {
     if (isOpen && !isMinimized) {
@@ -140,26 +100,26 @@ const ChatBox = (props: ChatBoxProps) => {
     const search = window.location.search;
     let { chat, id, cid } = queryString.parse(search);
 
-    chat = chat === 'open';
-
-    if (isOpen !== chat) {
+    if (chat) {
       dispatch(
         chatState({
           queryString: !!chat ? search : qString,
-          isOpen: !!chat || isOpen
+          isOpen: true,
+          isMinimized: chat === 'min'
         })
       );
     }
 
-    if (!conversations.data![0]) {
+    if (isOpen && !conversations.data![0]) {
       dispatch(getConversations()(dispatch));
     }
 
     if (cid && isNaN(cid)) {
       let infoStatus = conversationInfo.status;
       if (
-        infoStatus === 'settled' ||
-        (infoStatus === 'fulfilled' && convoId !== cid)
+        convoId &&
+        (infoStatus === 'settled' ||
+          (infoStatus === 'fulfilled' && convoId !== cid))
       ) {
         dispatch(getConversationInfo(id)(dispatch));
       }
@@ -170,8 +130,9 @@ const ChatBox = (props: ChatBoxProps) => {
 
       let msgStatus = _conversationMessages.status;
       if (
-        msgStatus === 'settled' ||
-        (msgStatus === 'fulfilled' && convoId !== cid)
+        convoId &&
+        (msgStatus === 'settled' ||
+          (msgStatus === 'fulfilled' && convoId !== cid))
       ) {
         dispatch(getConversationMessages(cid)(dispatch));
       }
@@ -193,6 +154,10 @@ const ChatBox = (props: ChatBoxProps) => {
 
       socket.addEventListener('error', (e: any) => {
         console.error('An error occurred while trying to connect Web Socket.');
+      });
+
+      socket.addEventListener('close', () => {
+        console.log('Socket disconnected!');
       });
     }
   }, [socket]);
@@ -219,7 +184,7 @@ const ChatBox = (props: ChatBoxProps) => {
           isOpen ? '' : 'close'
         }`}>
         <Col as='section' md={3} className='chat-left-pane p-0'>
-          <ChatLeftPane rooms={rooms} conversations={conversations} />
+          <ChatLeftPane conversations={conversations} />
         </Col>
 
         <Col
