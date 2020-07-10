@@ -6,38 +6,46 @@ import Col from 'react-bootstrap/Col';
 
 // import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
-import CreateIcon from '@material-ui/icons/Create';
 // import LocationOnIcon from '@material-ui/icons/LocationOn';
 import SchoolIcon from '@material-ui/icons/School';
-import MenuBookIcon from '@material-ui/icons/MenuBook';
-import ClassIcon from '@material-ui/icons/Class';
 
-import { CONVO_CHAT_TYPE } from '../../constants/chat';
-import { AnchorInfo, UserInfo } from '../../constants/interfaces';
+import { ONE_TO_ONE } from '../../constants/chat';
+import {
+  APIConversationResponse,
+  UserEnrolledData
+} from '../../constants/interfaces';
+import { InfoCard } from './Cards';
 
-const ChatRightPane = (props: any) => {
-  const anchor = props.activeChat.anchor;
+interface ChatRightPaneProps {
+  conversation: APIConversationResponse;
+  convoInfo: Partial<APIConversationResponse & UserEnrolledData>;
+}
+
+const ChatRightPane = ({ conversation, convoInfo }: ChatRightPaneProps) => {
   const {
-    displayName,
+    type,
+    conversation_name: displayName,
     avatar,
-    type: activeChatType,
-    info
-  }: AnchorInfo = anchor;
-  const userInfo = { ...info } as UserInfo;
-  // const roomInfo = {...info} as RoomInfo;
+    associated_username: username
+  } = conversation;
+  const {
+    institution,
+    department,
+    level
+  }: Partial<APIConversationResponse & UserEnrolledData> = convoInfo;
 
   return (
     <>
       <Col
         as='header'
         className='chat-header d-flex flex-column justify-content-center'>
-        {activeChatType === CONVO_CHAT_TYPE ? 'User info' : 'Participants'}
+        {type === ONE_TO_ONE ? 'User info' : 'Participants'}
       </Col>
-      {activeChatType === CONVO_CHAT_TYPE ? (
+      {type === ONE_TO_ONE ? (
         <Container
           as='section'
-          className='chat-right-pane custom-scroll-bar small-bar rounded-bar tertiary-bar p-3 debugger'>
-          <Row as='section' className='m-0 flex-column mb-4'>
+          className='user-info-container custom-scroll-bar small-bar rounded-bar tertiary-bar p-3 debugger'>
+          <Row as='section' className='m-0 flex-column mb-5'>
             <Col className='p-0 d-flex justify-content-center'>
               <Avatar
                 component='span'
@@ -55,30 +63,25 @@ const ChatRightPane = (props: any) => {
               <Col
                 as='span'
                 className='username p-0 d-flex justify-content-center mb-4'>
-                @{userInfo.username}
-              </Col>
-              <Col
-                as='span'
-                className='status p-0 px-3 d-flex  align-content-around'>
-                <CreateIcon className='mr-2' />
-                Currently creating some amazing sturvs...
+                @{username}
               </Col>
             </Col>
           </Row>
-          <Row as='section' className='academic m-0 flex-column'>
-            <Col as='span' className='info p-0 d-flex my-2  align-items-center'>
-              <SchoolIcon className='mr-2' />
-              {userInfo.institution}
-            </Col>
-            <Col as='span' className='info p-0 d-flex my-2  align-items-center'>
-              <MenuBookIcon className='mr-2' />
-              {userInfo.department}
-            </Col>
-            <Col as='span' className='info p-0 d-flex my-2  align-items-center'>
-              <ClassIcon className='mr-2' />
-              {userInfo.level}
-            </Col>
-          </Row>
+          <InfoCard
+            title='Academic Info'
+            icon={SchoolIcon}
+            data={[
+              {
+                name: 'institution',
+                value: institution as string
+              },
+              { name: 'department', value: department as string },
+              { name: 'level', value: level as string }
+            ]}
+            bgcolor='#fff'
+            boxShadow='none'
+            padding='0.25rem'
+          />
         </Container>
       ) : (
         ''

@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import Index from './components/Index/Index';
 import Auth from './components/Auth/Auth';
 import Main from './components/Main/Main';
-import Loader from './components/crumbs/Loader';
+import Loader from './components/crumbs/Loaders';
 import SnackBar from './components/crumbs/SnackBar';
 import ProtectedRoute from './ProtectedRoute';
 

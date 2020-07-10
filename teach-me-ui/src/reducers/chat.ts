@@ -1,23 +1,29 @@
+// import produce from 'immer';
+
 import {
-  SET_ACTIVE_CHAT,
+  SET_CHAT_STATE,
   // REQUEST_START_CONVERSATION,
   // START_CONVERSATION,
-  activeChatState,
-  SET_CHATS_MESSAGES,
-  chatsMessagesState,
+  chatStateProps,
   SET_PEOPLE_ENROLLED_IN_INSTITUTION,
-  NEW_CONVO
+  SET_CONVERSATIONS,
+  SET_CONVERSATION_MESSAGES,
+  SET_CONVERSATION_INFO,
+  SET_CONVERSATION
 } from '../constants/chat';
 import {
-  Chat,
+  ChatState,
   ReduxAction,
-  ChatData,
-  SearchState
+  SearchState,
+  ConversationsMessages,
+  ConversationInfo,
+  APIConversationResponse,
+  UserEnrolledData
 } from '../constants/interfaces';
-import { statusPropsState } from '../constants';
+import { statusPropsState, searchState } from '../constants';
 
 export const usersEnrolledInInstitution = (
-  state: SearchState = { ...statusPropsState, data: [] },
+  state: SearchState = { ...searchState },
   action: ReduxAction
 ) => {
   if (action.type === SET_PEOPLE_ENROLLED_IN_INSTITUTION) {
@@ -30,11 +36,11 @@ export const usersEnrolledInInstitution = (
   return state;
 };
 
-export const newConversation = (
-  state: SearchState = { ...statusPropsState, data: [] },
+export const conversations = (
+  state: SearchState = { ...searchState },
   action: ReduxAction
 ) => {
-  if (action.type === NEW_CONVO) {
+  if (action.type === SET_CONVERSATIONS) {
     return {
       ...state,
       ...action.payload
@@ -44,11 +50,11 @@ export const newConversation = (
   return state;
 };
 
-export const activeChat = (
-  state: Chat = activeChatState,
+export const conversationsMessages = (
+  state: ConversationsMessages = {},
   action: ReduxAction
-): Chat => {
-  if (action.type === SET_ACTIVE_CHAT) {
+): ConversationsMessages => {
+  if (action.type === SET_CONVERSATION_MESSAGES) {
     return {
       ...state,
       ...action.payload
@@ -58,11 +64,50 @@ export const activeChat = (
   return state;
 };
 
-export const chatsMessages = (
-  state: ChatData = chatsMessagesState,
+export const conversationInfo = (
+  state: ConversationInfo = { ...statusPropsState, data: {} },
   action: ReduxAction
-): ChatData => {
-  if (action.type === SET_CHATS_MESSAGES) {
+): ConversationInfo => {
+  if (action.type === SET_CONVERSATION_INFO) {
+    return {
+      ...state,
+      ...action.payload
+    };
+  }
+
+  return state;
+};
+
+export const conversation = (
+  state: Partial<APIConversationResponse & UserEnrolledData> = {},
+  action: ReduxAction
+): Partial<APIConversationResponse & UserEnrolledData> => {
+  if (action.type === SET_CONVERSATION) {
+    return {
+      ...state,
+      ...action.payload
+    };
+  }
+
+  return state;
+};
+
+export const conversationMessages = (
+  state: SearchState = { ...searchState },
+  action: ReduxAction
+): SearchState => {
+  if (action.type === SET_CONVERSATION_MESSAGES) {
+    return { ...state, ...action.payload };
+  }
+
+  return state;
+};
+
+export const chatState = (
+  state: ChatState = chatStateProps,
+  action: ReduxAction
+): ChatState => {
+  if (action.type === SET_CHAT_STATE) {
     return {
       ...state,
       ...action.payload

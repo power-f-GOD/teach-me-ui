@@ -23,7 +23,7 @@ import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 
-import Loader from '../crumbs/Loader';
+import Loader from '../crumbs/Loaders';
 import { UserData } from '../../constants/interfaces';
 import { dispatch } from '../../functions';
 import {

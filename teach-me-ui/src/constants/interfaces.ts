@@ -1,3 +1,7 @@
+export type Partial<T> = {
+  [P in keyof T]?: T[P];
+};
+
 export interface NetworkAction {
   name: string;
   func: Function;
@@ -63,7 +67,7 @@ export interface ForgotPasswordStatusState {
 
 export interface SearchState extends StatusPropsState {
   data?: any[];
-  [key: string]: any;
+  // [key: string]: any;
 }
 
 export interface SignupPropsState {
@@ -148,20 +152,11 @@ export interface CreateLevelState extends StatusPropsState {
 // ChatBox interfaces...
 
 //you should eventually make all the Message props required
-export interface Message {
-  type: 'incoming' | 'outgoing';
-  text: string;
-  timestamp: string | number;
-  senderId?: string | number;
-  id?: string | number;
+export interface Message extends Partial<APIMessageResponse> {
+  timestamp?: string | number;
 }
 
-export interface Chat {
-  anchor: AnchorInfo;
-  // displayName: string;
-  // type?: 'conversation' | 'classroom';
-  // avatar: string;
-  // id: string;
+export interface ChatState {
   queryString?: string;
   isOpen?: boolean;
   isMinimized?: boolean;
@@ -192,6 +187,8 @@ export interface RoomInfo {
 }
 
 export interface UserEnrolledData {
+  avatar?: string;
+  displayName: string;
   firstname: string;
   lastname: string;
   id: string;
@@ -199,4 +196,46 @@ export interface UserEnrolledData {
   institution: string;
   department: string;
   level: string;
+}
+
+export interface ConversationsMessages extends StatusPropsState {
+  [convoId: string]: any;
+}
+
+export interface ConversationMessages extends Omit<SearchState, 'data'> {
+  conversationId?: string;
+  data?: Partial<APIMessageResponse>[];
+}
+
+export interface ConversationInfo extends Omit<SearchState, 'data'> {
+  conversationId?: string;
+  data?: Partial<UserEnrolledData & APIConversationResponse>;
+}
+
+export interface APIMessageResponse {
+  deleted: boolean;
+  seen_by: string[];
+  created_at: number;
+  _id: string;
+  conversation_id: string;
+  message: string;
+  date: number;
+  sender_id: string;
+  time_stamp_id?: string;
+  __v: number;
+  pipe: string;
+}
+
+export interface APIConversationResponse {
+  avatar?: string;
+  participants: string[];
+  created_at: number;
+  last_activity: number;
+  _id: string;
+  creator: 'SYSTEM' | string;
+  type: 'ONE_TO_ONE' | string;
+  __v: number;
+  friendship: string;
+  conversation_name: string;
+  associated_username: string;
 }
