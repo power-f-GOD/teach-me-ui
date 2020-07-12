@@ -7,8 +7,9 @@ import React, {
 } from 'react';
 
 import * as api from '../../hooks/api';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { Switch, Route } from 'react-router';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -31,13 +32,14 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 import Loader from '../crumbs/Loader';
 import Img from '../crumbs/Img';
+import ColleagueView from '../crumbs/ColleagueView';
+import ProfileFeeds from '../crumbs/ProfileFeeds';
 import {
   UserData,
   DeepProfileProps,
   useApiResponse
 } from '../../constants/interfaces';
 import { dispatch } from '../../functions';
-import { displaySnackbar } from '../../actions';
 import {
   getProfileData,
   profileData as _profileData
@@ -122,9 +124,9 @@ const Profile = (props: any) => {
   const { isAuthenticated } = auth;
   const token = (userData as UserData).token as string;
 
-  let userId = window.location.pathname.split('/').slice(-1)[0];
-  const isId = /^@\w+$/.test(userId);
-  userId = isId ? userId.toLowerCase() : username;
+  let userId = props.match.params[0].split('/')[0];
+  const isId = /^@\w+$/.test('@' + userId);
+  userId = isId ? '@' + userId.toLowerCase() : username;
   // here is where the check is made to render the views accordingly
   const isSelf = userId === username;
   let selfView = isAuthenticated ? isSelf : false;
@@ -141,24 +143,10 @@ const Profile = (props: any) => {
 
   useEffect(() => {
     if (data.id && isAuthenticated && !selfView) {
-      fetchDeepProfile().catch((e) => {
-        dispatch(
-          displaySnackbar({
-            open: true,
-            message: e.message,
-            severity: 'error',
-            autoHide: true
-          })
-        );
-      });
+      fetchDeepProfile();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data.id]);
-
-  const [activeTab, setActiveTab] = useState<string>('1');
-  const onTabChange = (e: any) => {
-    setActiveTab(e.target.id);
-  };
 
   const [
     removeColleagueRequest,
@@ -190,79 +178,34 @@ const Profile = (props: any) => {
     token
   );
   const [acceptWasClicked, setAcceptWasClicked] = useState(false);
-  const [declineWasClicked, setDeclineWasClicked] = useState(true);
+  const [declineWasClicked, setDeclineWasClicked] = useState(false);
   const onColleagueActionClick = async (e: any) => {
     switch (deepProfileData.status) {
       case 'NOT_COLLEAGUES':
-        await addColleague().catch((e) => {
-          dispatch(
-            displaySnackbar({
-              open: true,
-              message: e.message,
-              severity: 'error',
-              autoHide: true
-            })
-          );
-        });
+        await addColleague();
         break;
       case 'PENDING_REQUEST':
-        await removeColleagueRequest().catch((e) => {
-          dispatch(
-            displaySnackbar({
-              open: true,
-              message: e.message,
-              severity: 'error',
-              autoHide: true
-            })
-          );
-        });
+        await removeColleagueRequest();
         break;
       case 'AWAITING_REQUEST_ACTION':
         if (e.target.id !== 'decline') {
-          setAcceptWasClicked(true);
-          setDeclineWasClicked(false);
-        } else {
           setAcceptWasClicked(false);
           setDeclineWasClicked(true);
+        } else {
+          setAcceptWasClicked(true);
+          setDeclineWasClicked(false);
         }
-        const p =
-          e.target.id !== 'decline'
-            ? acceptColleagueRequest()
-            : declineColleagueRequest();
-        await p.catch((e) => {
-          dispatch(
-            displaySnackbar({
-              open: true,
-              message: e.message,
-              severity: 'error',
-              autoHide: true
-            })
-          );
-        });
+        e.target.id !== 'decline'
+          ? await acceptColleagueRequest()
+          : await declineColleagueRequest();
         break;
       case 'IS_COLLEAGUE':
-        await unColleague().catch((e) => {
-          dispatch(
-            displaySnackbar({
-              open: true,
-              message: e.message,
-              severity: 'error',
-              autoHide: true
-            })
-          );
-        });
+        await unColleague();
         break;
     }
-    await fetchDeepProfile().catch((e) => {
-      dispatch(
-        displaySnackbar({
-          open: true,
-          message: e.message,
-          severity: 'error',
-          autoHide: true
-        })
-      );
-    });
+    await fetchDeepProfile();
+    setAcceptWasClicked(false);
+    setDeclineWasClicked(false);
   };
 
   avatar = data.avatar || 'avatar-1.png';
@@ -314,7 +257,7 @@ const Profile = (props: any) => {
       };
     });
 
-  const academicInfoInputsOptions: InfoInputProps[] = Array(3)
+  const academicInfoInputsOptions: Array<InfoInputProps> = Array(3)
     .fill({})
     .map((_, idx) => {
       const id = academicInfoIds[idx];
@@ -417,18 +360,22 @@ const Profile = (props: any) => {
           </Col>
         </Box>
         <div className='profile-nav-bar d-flex align-items-center'>
-          <div
-            id='1'
-            onClick={onTabChange}
-            className={`nav-item ${activeTab === '1' ? 'active' : ''}`}>
-            WALL
-          </div>
-          <div
-            id='2'
-            onClick={onTabChange}
-            className={`nav-item ${activeTab === '2' ? 'active' : ''}`}>
-            COLLEAGUES
-          </div>
+          <Link to={`/${userId}`}>
+            <div
+              className={`nav-item ${
+                !/colleagues/.test(props.match.params[0]) ? 'active' : ''
+              }`}>
+              WALL
+            </div>
+          </Link>
+          <Link to={`/${userId}/colleagues`}>
+            <div
+              className={`nav-item ${
+                /colleagues/.test(props.match.params[0]) ? 'active' : ''
+              }`}>
+              COLLEAGUES
+            </div>
+          </Link>
           {!selfView &&
             (isAuthenticated && deepProfileData !== null ? (
               <>
@@ -451,7 +398,7 @@ const Profile = (props: any) => {
                 {deepProfileData.status === 'PENDING_REQUEST' && (
                   <Button
                     variant='contained'
-                    size='large'
+                    size='small'
                     className='colleague-action-button cancel-request'
                     color='primary'
                     onClick={onColleagueActionClick}>
@@ -468,13 +415,14 @@ const Profile = (props: any) => {
                   <>
                     <Button
                       variant='contained'
-                      size='large'
+                      size='small'
                       id='accept'
                       className='colleague-action-button accept-request'
                       color='primary'
                       onClick={onColleagueActionClick}>
-                      {acceptColleagueRequestIsLoading ||
-                      (acceptWasClicked && deepProfileIsLoading) ? (
+                      {acceptWasClicked &&
+                      (acceptColleagueRequestIsLoading ||
+                        deepProfileIsLoading) ? (
                         <CircularProgress color='inherit' size={28} />
                       ) : (
                         <>
@@ -484,13 +432,14 @@ const Profile = (props: any) => {
                     </Button>
                     <Button
                       variant='contained'
-                      size='large'
+                      size='small'
                       id='decline'
                       className='colleague-action-button decline-request'
                       color='primary'
                       onClick={onColleagueActionClick}>
-                      {declineColleagueRequestIsLoading ||
-                      (declineWasClicked && deepProfileIsLoading) ? (
+                      {declineWasClicked &&
+                      (declineColleagueRequestIsLoading ||
+                        deepProfileIsLoading) ? (
                         <CircularProgress color='inherit' size={28} />
                       ) : (
                         <>
@@ -593,7 +542,6 @@ const Profile = (props: any) => {
                     <Info name={name} value={value} key={name} />
                   ))}
                 </Row>
-
                 <form
                   className={`basic-info-form mx-0 row ${
                     isEditing ? 'show' : ''
@@ -641,6 +589,10 @@ const Profile = (props: any) => {
             </Row>
           </Box>
         </Col>
+        <Switch>
+          <Route path={`/@*/colleagues`} exact component={ColleagueView} />
+          <Route path={`/@*`} exact component={ProfileFeeds} />
+        </Switch>
       </Row>
       <Container className='rows-wrapper custom-scroll-bar small-bar rounded-bar tertiary-bar p-0'>
         <Row as='section' className='m-0 px-3 flex-column mb-5'>

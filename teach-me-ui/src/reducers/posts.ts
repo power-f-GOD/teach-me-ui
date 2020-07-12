@@ -50,9 +50,9 @@ const reactToPost = (
   state: Array<PostPropsState>,
   reaction: ReactPostState
 ): Array<PostPropsState> => {
-  return state.map((post, i) => {
+  return state.map((post) => {
     const resolvedReaction = resultantReaction(post.reaction, reaction.type);
-    return i === reaction.id
+    return (post.id as string) === reaction.id
       ? {
           ...post,
           reaction: resolvedReaction,

@@ -8,6 +8,7 @@ import * as modals from './modals';
 import * as posts from './posts';
 import * as search from './search';
 import * as profile from './profile';
+import * as colleague from './colleague';
 
 export default combineReducers({
   ...validate,
@@ -17,5 +18,6 @@ export default combineReducers({
   ...modals,
   ...posts,
   ...search,
-  ...profile
+  ...profile,
+  ...colleague
 });

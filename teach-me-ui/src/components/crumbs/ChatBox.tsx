@@ -458,7 +458,6 @@ const ChatBox = (props: any) => {
     if (conversationId.current) {
       socketUrl.current = `wss://${baseURL}/socket?pipe=chat&channel=${conversationId.current}&token=${token}`;
       socket!.current = new WebSocket(socketUrl.current);
-      // console.log('from effect1')//, conversationId, chatMessages);
 
       socket.current.addEventListener('open', () => {
         console.log('socket connected!');

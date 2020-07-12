@@ -16,26 +16,20 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
   return (
     <Box className='post-list-page' borderRadius='5px' p={1} pb={0} mb={1}>
       <Row className='container-fluid mx-auto p-0 align-items-center'>
-        <Col xs={1}>
-          {props.displayName ? (
-            <Avatar
-              component='span'
-              className='chat-avatar'
-              alt={props.displayName}
-              src={`/images/${props.userAvatar}`}
-            />
-          ) : (
-            <Skeleton circle height={30} width={30} />
-          )}
-        </Col>
-        <Col xs={10} className='d-flex flex-column'>
-          {props.displayName ? (
+        <Avatar
+          component='span'
+          className='chat-avatar'
+          alt={props.sender_name}
+          src={`/images/${props.userAvatar}`}
+        />
+        <Col className='d-flex flex-column bio-post'>
+          {props.sender_name ? (
             <>
               <Box component='div' fontWeight='bold'>
-                {props.displayName}
+                {props.sender_name}
               </Box>
               <Box component='div' color='#777'>
-                @{props.username}
+                @{props.sender_username}
               </Box>
             </>
           ) : (
@@ -45,7 +39,7 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
             </>
           )}
         </Col>
-        <Col xs={1}>
+        <Col className='more-post-btn'>
           <Box className='more' component='span' borderRadius='100px'>
             <svg
               width='20'
@@ -64,10 +58,10 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
           </Box>
         </Col>
       </Row>
-      {props.postBody ? (
+      {props.text ? (
         <Row className='container-fluid  mx-auto'>
           <Box component='div' pt={1} px={0} className='break-word'>
-            {props.postBody}
+            {props.text}
           </Box>
         </Row>
       ) : (
@@ -75,12 +69,37 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
           <Skeleton count={3} />
         </Box>
       )}
-      {props.displayName && (
+      {props.sec_type === 'REPLY' && (
+        <Box className='quoted-post'>
+          <Row className='container-fluid px-2 mx-auto p-0 align-items-center'>
+            <Avatar
+              component='span'
+              className='chat-avatar'
+              alt={props.sender_name}
+              src={`/images/${props.userAvatar}`}
+            />
+            <Col className='d-flex flex-grow-1 flex-column'>
+              <Box component='div' fontWeight='bold'>
+                {props.parent?.sender_name}
+              </Box>
+              <Box component='div' color='#777'>
+                @{props.parent?.sender_username}
+              </Box>
+            </Col>
+          </Row>
+          <Row className='container-fluid  mx-auto'>
+            <Box component='div' pt={1} px={0} className='break-word'>
+              {props.parent?.text}
+            </Box>
+          </Row>
+        </Box>
+      )}
+      {props.sender_name && (
         <Box py={1} mt={1} borderTop='1px solid #ddd'>
           <Row>
             <Col className='d-flex align-items-center justify-content-center'>
               <ReactButton
-                id={props.id as number}
+                id={props.id as string}
                 reacted={props.reaction as 'neutral'}
                 reactions={props.upvotes as 0}
                 type='upvote'
@@ -88,7 +107,7 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
             </Col>
             <Col className='d-flex align-items-center justify-content-center'>
               <ReactButton
-                id={props.id as number}
+                id={props.id as string}
                 reacted={props.reaction as 'neutral'}
                 reactions={props.downvotes as 0}
                 type='downvote'
@@ -96,7 +115,7 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
             </Col>
             <Col className='d-flex align-items-center justify-content-center'>
               <Box className='post-details' fontSize='13px'>
-                {bigNumberFormat(props.noOfComments)} Comments
+                {bigNumberFormat(props.replies)} Comments
               </Box>
             </Col>
           </Row>

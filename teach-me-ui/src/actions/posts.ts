@@ -8,10 +8,14 @@ import {
   FETCHED_POSTS,
   PostPropsState,
   ReactPostState,
-  FetchPostsState
+  FetchPostsState,
+  apiBaseURL as baseURL,
+  UserData
 } from '../constants';
 
-import preloadedState from '../preloadedState.json';
+import { getState } from '../functions';
+
+import Axios from 'axios';
 
 export const createPost = (payload: PostPropsState): ReduxAction => {
   return { type: CREATE_POST, payload };
@@ -23,11 +27,22 @@ export const reactToPost = (payload: ReactPostState): ReduxAction => {
 
 export const fetchPosts: Function = () => (dispatch: Function) => {
   dispatch(fetchPostsStarted());
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve(preloadedState);
-    }, 2500);
+  const userData = getState().userData as UserData;
+  const token = userData.token as string;
+  Axios({
+    url: `/feed`,
+    baseURL,
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
   })
+    .then((res) => {
+      if (res.data.error) {
+        throw new Error(res.data.message);
+      }
+      return res.data.posts;
+    })
     .then((state) => {
       dispatch(fetchedPosts(state as Array<PostPropsState>));
       dispatch(

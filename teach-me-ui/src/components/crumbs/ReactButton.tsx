@@ -5,7 +5,7 @@ import Box from '@material-ui/core/Box';
 import { bigNumberFormat, reactToPostFn } from '../../functions';
 import { ReactButtonPropsState } from '../../constants/interfaces';
 
-const reactToPost = (id: number, type: 'upvote' | 'neutral' | 'downvote') => (
+const reactToPost = (id: string, type: 'upvote' | 'neutral' | 'downvote') => (
   e: any
 ) => {
   reactToPostFn(id, type);

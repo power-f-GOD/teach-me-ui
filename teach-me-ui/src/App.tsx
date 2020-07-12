@@ -57,7 +57,15 @@ const App = (props: any) => {
             component={Auth}
           />
           <Route
-            path={['/', '/index', '/about', '/@*', '/support', '/*']}
+            path={[
+              '/',
+              '/index',
+              '/about',
+              '/@:userId',
+              '/@:userId/colleagues',
+              '/support',
+              '/*'
+            ]}
             exact
             component={Index}
           />

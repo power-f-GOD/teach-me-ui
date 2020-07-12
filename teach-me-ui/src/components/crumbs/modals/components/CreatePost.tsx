@@ -8,9 +8,9 @@ import Row from 'react-bootstrap/Row';
 
 import { connect } from 'react-redux';
 
-import { PostPropsState } from '../../../constants';
-import { createPost } from '../../../actions';
-import { displayModal } from '../../../functions';
+import { PostPropsState } from '../../../../constants';
+import { createPost } from '../../../../actions';
+import { displayModal } from '../../../../functions';
 
 let userInfo: any = {};
 let [avatar, displayName, username] = ['', '', ''];
@@ -30,17 +30,7 @@ const CreatePost = (props: any) => {
   };
 
   const onPostSubmit = (e: any) => {
-    const postData: PostPropsState = {
-      displayName: displayName,
-      userAvatar: avatar,
-      downvotes: 0,
-      postBody: post,
-      noOfComments: 0,
-      upvotes: 0,
-      reaction: 'neutral',
-      username: username
-    };
-    props.addPost(postData);
+    // send post
     displayModal(false);
   };
   return (
@@ -54,6 +44,7 @@ const CreatePost = (props: any) => {
         />
         <div className='d-flex flex-column justify-content-center flex-grow-1'>
           <span>{displayName}</span>
+          <small>{username}</small>
         </div>
       </Row>
       <form>

@@ -20,10 +20,10 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
       <Compose />
       {props.fetchPostStatus.status === 'resolved' &&
         props.posts.map((post: PostPropsState, i: number) => (
-          <Post {...post} id={i} key={i} />
+          <Post {...post} key={i} />
         ))}
       {props.fetchPostStatus.status === 'pending' &&
-        Array.from({ length: 4 }).map(() => <Post />)}
+        Array.from({ length: 4 }).map((_, i) => <Post key={i} />)}
     </Container>
   );
 };
