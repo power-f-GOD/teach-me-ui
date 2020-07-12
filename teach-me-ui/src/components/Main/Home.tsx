@@ -6,9 +6,9 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import RightPane from './RightPane';
-import MiddlePane from './MiddlePane';
-import LeftPane from './LeftPane';
+import RightPane from './Home.RightPane';
+import MiddlePane from './Home.MiddlePane';
+import LeftPane from './Home.LeftPane';
 import ModalFrame from '../crumbs/modals';
 
 const Home = () => {

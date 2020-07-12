@@ -9,7 +9,7 @@ import Loader from './components/crumbs/Loader';
 import SnackBar from './components/crumbs/SnackBar';
 import ProtectedRoute from './ProtectedRoute';
 
-import { dispatch } from './functions/utils';
+import { dispatch } from './appStore';
 import { displaySnackbar } from './actions/misc';
 import { verifyAuth } from './actions/auth';
 import createMemo from './Memo';

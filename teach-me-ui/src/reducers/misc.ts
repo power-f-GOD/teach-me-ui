@@ -6,7 +6,8 @@ import {
   UserData,
   DISPLAY_SNACK_BAR,
   SET_USER_DISPLAY_NAME,
-  POPULATE_STATE_WITH_USER_DATA
+  POPULATE_STATE_WITH_USER_DATA,
+  INIT_WEB_SOCKET
 } from '../constants';
 
 export const snackbar = (
@@ -32,4 +33,11 @@ export const userData = (
   return action.type === POPULATE_STATE_WITH_USER_DATA
     ? { ...state, ...action.payload }
     : state;
+};
+
+export const webSocket = (state: any = null, action: ReduxAction) => {
+  if (action.type === INIT_WEB_SOCKET) {
+    return action.payload;
+  }
+  return state;
 };

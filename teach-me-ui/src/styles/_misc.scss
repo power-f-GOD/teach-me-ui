@@ -20,7 +20,6 @@ body {
 * {
   box-sizing: border-box;
   font-family: 'Hind Madurai', 'Trebuchet MS', sans-serif !important;
-  // border: 1px solid deeppink; //DEBUGGER
   font-weight: 400;
 }
 
@@ -98,7 +97,7 @@ body {
 
   > div {
     width: 100%;
-    background: #eee;
+    background: #ccc;
   }
 }
 
@@ -368,6 +367,7 @@ div {
 
 .MuiSnackbar-root {
   max-width: $app-max-width / 2;
+  display: block;
   width: auto !important;
   background: transparent !important;
 }

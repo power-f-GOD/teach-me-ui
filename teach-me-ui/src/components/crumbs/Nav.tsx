@@ -15,10 +15,11 @@ import InfoIcon from '@material-ui/icons/InfoRounded';
 import HelpIcon from '@material-ui/icons/HelpRounded';
 import AccountIcon from '@material-ui/icons/AccountBoxRounded';
 import SearchIcon from '@material-ui/icons/Search';
-import Tooltip from "@material-ui/core/Tooltip";
-import Badge from '@material-ui/core/Badge';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
+import Badge from '@material-ui/core/Badge';
+import Tooltip from '@material-ui/core/Tooltip';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+
 import Dropdown from 'react-bootstrap/Dropdown';
 
 import Notifications from '../Main/Notifications';
@@ -52,7 +53,7 @@ const Nav = (props: any) => {
                 {forIndexPage ? (
                   <IndexNav {...props} />
                 ) : (
-                  <MainNavMenu {...props} />
+                  <MainNav {...props} />
                 )}
               </TemporaryDrawer>
             </Toolbar>
@@ -78,29 +79,33 @@ function IndexNav(props: any) {
 }
 
 function MainNav(props: any) {
+  // const [navVisible, setNavVisible] = useState('hidden');
   return (
     <Box className={`nav-links-wrapper ${props?.className}`}>
-     
       <NavLink to='/search' className='nav-link'>
         <SearchIcon />
       </NavLink>
       <NavGeneralLinks />
-      <NavLink exact to='/@' className='nav-link'>
+      <NavLink exact to='/@' isActive={(_, location) => /\/@\w+/.test(location.pathname)} className='nav-link'>
         <AccountIcon className='nav-icon' /> Profile
       </NavLink>
-      <Dropdown className='dropdownN'>
+      <Dropdown className='dropdown' >
         <Dropdown.Toggle  id="dropdown" as='p'>
         <Tooltip
           title="Notifications"
           placement="bottom"
         >
-          <Badge badgeContent={4} color='secondary'>
+          <Badge badgeContent={4} color='secondary' >
             <NotificationsIcon />
           </Badge>
         </Tooltip>
         </Dropdown.Toggle>
         <Dropdown.Menu className='dropdown-contents'>
-          <Notifications />
+          <div>
+          <Dropdown.Item>
+            <Notifications /*visibility={navVisible}*//>
+          </Dropdown.Item>
+          </div>
         </Dropdown.Menu>
       </Dropdown>
       <div style={{width: '1em'}}></div>
@@ -118,29 +123,18 @@ function MainNav(props: any) {
 };
 
 
-function MainNavMenu(props: any) {
-  return (
-    <Box className={`nav-links-wrapper ${props?.className}`}>
-     
-      <NavLink to='/search' className='nav-link'>
-        <SearchIcon />
-      </NavLink>
-      <NavGeneralLinks />
-      <NavLink exact to='/@' className='nav-link'>
-        <AccountIcon className='nav-icon' /> Profile
-      </NavLink>
-      <Button
-        variant='contained'
-        className='nav-link'
-        size='medium'
-        id='signout-btn'
-        fullWidth
-        onClick={handleSignoutRequest}>
-        Sign Out <ArrowForward fontSize='inherit' />
-      </Button>
-    </Box>
-  );
-};
+//       <Button
+//         variant='contained'
+//         className='nav-link'
+//         size='medium'
+//         id='signout-btn'
+//         fullWidth
+//         onClick={handleSignoutRequest}>
+//         Sign Out <ArrowForward fontSize='inherit' />
+//       </Button>
+//     </Box>
+//   );
+// }
 
 function NavGeneralLinks(props: any) {
   return (
@@ -206,22 +200,6 @@ function TemporaryDrawer(props: any) {
       <NavLink to='/search' className='nav-link'>
         <SearchIcon />
       </NavLink>
-      <Dropdown className='dropdownN'>
-        <Dropdown.Toggle  id="dropdown" as='p' >
-        <Tooltip
-          title="Notifications"
-          placement="bottom"
-        >
-          <Badge badgeContent={4} color='secondary'>
-            <NotificationsIcon />
-          </Badge>
-        </Tooltip>
-        </Dropdown.Toggle>
-        <Dropdown.Menu className='dropdown-contents'>
-          <Notifications />
-        </Dropdown.Menu>
-      </Dropdown> 
-      <div style={{width: '1em'}}></div>
       <IconButton
         edge='start'
         className='menu-button'

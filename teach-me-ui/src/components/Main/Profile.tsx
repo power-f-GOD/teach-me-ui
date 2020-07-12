@@ -6,6 +6,8 @@ import React, {
   useMemo
 } from 'react';
 
+import queryString from 'query-string';
+
 import * as api from '../../hooks/api';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -93,7 +95,6 @@ const cleanUp = (isUnmount: boolean) => {
 };
 
 window.addEventListener('popstate', () => cleanUp(false));
-window.addEventListener('pushstate', () => cleanUp(false));
 
 let [
   avatar,
@@ -118,11 +119,11 @@ const Profile = (props: any) => {
   const { profileData, userData } = props;
   const data: UserData = profileData.data[0];
   const { status } = profileData;
-  const { auth } = props;
+  const { auth, location } = props;
   const { isAuthenticated } = auth;
   const token = (userData as UserData).token as string;
 
-  let userId = window.location.pathname.split('/').slice(-1)[0];
+  let userId = location.pathname.split('/').slice(-1)[0];
   const isId = /^@\w+$/.test(userId);
   userId = isId ? userId.toLowerCase() : username;
   // here is where the check is made to render the views accordingly
@@ -374,24 +375,33 @@ const Profile = (props: any) => {
   }, [selfView]);
 
   useEffect(() => {
-    dispatch(getProfileData(userId.replace('@', ''))(dispatch));
+    //use this (and its deps) to trigger getProfileData on window popstate
+    if (/@\w+$/.test(location.pathname)) {
+      dispatch(getProfileData(userId.replace('@', ''))(dispatch));
+    }
 
     return () => {
       //clean up after every unmount to prevent flash of profile page before load of profile data
       cleanUp(true);
     };
-  }, [userId]);
+  }, [userId, isId, location]);
 
   if (!isId) {
-    return <Redirect to={`/${userId}`} />;
+    return <Redirect to={`/${username}`} />;
   } else if (profileData.err || !profileData.data[0]) {
     return <Redirect to='/404' />;
   }
 
-  if (status !== 'fulfilled') {
+  // added deepProfileIsLoading to prevent showing the (circular) loading stuff on the (profile) buttons on page [component] (first) load
+  if (
+    (queryString.parse(location.search)?.chat !== 'open' &&
+      status !== 'fulfilled') ||
+    deepProfileIsLoading
+  ) {
     //instead of this, you can use a React Skeleton loader; didn't have the time to add, so I deferred.
     return <Loader />;
   }
+
   return (
     <Box className={`Profile ${selfView ? 'self-view' : ''} fade-in`}>
       <Box component='div' className='profile-top'>
@@ -511,7 +521,7 @@ const Profile = (props: any) => {
                       <CircularProgress color='inherit' size={28} />
                     ) : (
                       <>
-                        <PendingIcon fontSize='inherit' /> Un-colleague
+                        <PendingIcon fontSize='inherit' /> Uncolleague
                       </>
                     )}
                   </Button>

@@ -14,7 +14,7 @@ import Profile from './Main/Profile';
 import _404 from './Index/_404';
 import Loader from './crumbs/Loader';
 import SnackBar from './crumbs/SnackBar';
-import ChatBox from './crumbs/ChatBox';
+import Chat from './crumbs/Chat';
 import Search from './Main/Search';
 import Footer from './crumbs/Footer';
 
@@ -34,7 +34,7 @@ export {
   Profile,
   Loader,
   SnackBar,
-  ChatBox,
+  Chat,
   Search,
   _404,
   Footer
