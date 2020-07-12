@@ -29,7 +29,8 @@ import {
 import {
   callNetworkStatusCheckerFor,
   populateStateWithUserData,
-  logError
+  logError,
+  delay
 } from '../functions';
 import { displaySnackbar } from './misc';
 
@@ -408,7 +409,7 @@ export function auth(payload: AuthState): ReduxAction {
 }
 
 export const requestSignout = () => (dispatch: Function): ReduxAction => {
-  setTimeout(() => dispatch(signout({ status: 'pending' })), 200);
+  delay(200).then(() => dispatch(signout({ status: 'pending' })));
 
   if (navigator.cookieEnabled) {
     localStorage.kanyimuta = JSON.stringify({
@@ -418,7 +419,7 @@ export const requestSignout = () => (dispatch: Function): ReduxAction => {
     });
   }
 
-  setTimeout(() => {
+  delay(300).then(() => {
     dispatch(auth({ status: 'fulfilled', isAuthenticated: false }));
     dispatch(
       signout({
@@ -434,7 +435,7 @@ export const requestSignout = () => (dispatch: Function): ReduxAction => {
         autoHide: true
       })
     );
-  }, 300);
+  });
 
   return {
     type: SIGNOUT_REQUEST

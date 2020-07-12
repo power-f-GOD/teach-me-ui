@@ -78,7 +78,7 @@ function MainNav(props: any) {
         <SearchIcon />
       </NavLink>
       <NavGeneralLinks />
-      <NavLink exact to='/@' className='nav-link'>
+      <NavLink exact to='/@' isActive={(_, location) => /\/@\w+/.test(location.pathname)} className='nav-link'>
         <AccountIcon className='nav-icon' /> Profile
       </NavLink>
 
