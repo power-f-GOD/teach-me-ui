@@ -13,8 +13,20 @@ import { bigNumberFormat } from '../../functions/utils';
 import { PostPropsState } from '../../constants/interfaces';
 
 const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
+  let extra: string | null = null;
+  if (props._extra) {
+    switch (props._extra.type) {
+      case 'UPVOTE':
+        extra = `${props._extra?.colleague_name} upvoted this post`;
+        break;
+      case 'DOWNVOTE':
+        extra = `${props._extra?.colleague_name} downvoted this post`;
+    }
+  }
+
   return (
     <Box className='post-list-page' borderRadius='5px' p={1} pb={0} mb={1}>
+      {props._extra && <small className='small-text'>{extra}</small>}
       <Row className='container-fluid mx-auto p-0 align-items-center'>
         <Avatar
           component='span'
@@ -69,7 +81,7 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
           <Skeleton count={3} />
         </Box>
       )}
-      {props.sec_type === 'REPLY' && (
+      {props.sec_type === 'REPOST' && (
         <Box className='quoted-post'>
           <Row className='container-fluid px-2 mx-auto p-0 align-items-center'>
             <Avatar

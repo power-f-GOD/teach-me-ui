@@ -35,7 +35,7 @@ export interface PostPropsState {
   reposts: number;
   posted_at: number;
   _extra?: {
-    type: string;
+    type: 'UPVOTE' | 'DOWNVOTE';
     colleague_id: string;
     colleague_name: string;
     colleague_username: string;

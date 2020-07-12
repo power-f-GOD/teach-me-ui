@@ -26,7 +26,7 @@ export default () => {
   };
   return (
     <Col className='col-8'>
-      <Box className='details-card'>
+      <Box className='details-card colleague-container'>
         <div className='colleague-nav'>
           <div
             id='1'

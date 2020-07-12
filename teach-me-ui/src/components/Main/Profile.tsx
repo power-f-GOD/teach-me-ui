@@ -41,7 +41,7 @@ import {
   DeepProfileProps,
   useApiResponse
 } from '../../constants/interfaces';
-import { dispatch } from '../../functions';
+import { dispatch, getState } from '../../functions';
 import {
   getProfileData,
   profileData as _profileData
@@ -81,8 +81,10 @@ export const refs: any = {
 };
 
 const cleanUp = (isUnmount: boolean) => {
-  let shouldCleanUp = /@/.test(window.location.pathname);
-
+  let shouldCleanUp =
+    /@/.test(window.location.pathname) &&
+    (getState().profileData.data[0] as UserData).username !==
+      window.location.pathname.split('/')[1].replace('@', '');
   shouldCleanUp = isUnmount ? isUnmount : shouldCleanUp;
 
   if (shouldCleanUp) {
@@ -125,9 +127,9 @@ const Profile = (props: any) => {
   const { isAuthenticated } = auth;
   const token = (userData as UserData).token as string;
 
-  let userId = location.pathname.split('/').slice(-1)[0];
-  const isId = /^@\w+$/.test(userId);
-  userId = isId ? userId.toLowerCase() : username;
+  let userId = props.match.params[0].split('/')[0];
+  const isId = /^@\w+$/.test('@' + userId);
+  userId = isId ? '@' + userId.toLowerCase() : username;
   // here is where the check is made to render the views accordingly
   const isSelf = userId === username;
   let selfView = isAuthenticated ? isSelf : false;
@@ -143,11 +145,11 @@ const Profile = (props: any) => {
   ]: useApiResponse<DeepProfileProps> = api.useFetchDeepProfile(data.id, token);
 
   useEffect(() => {
-    if (data.id && isAuthenticated && !selfView) {
+    if (data.id && !selfView) {
       fetchDeepProfile();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data.id]);
+  }, [data.id, selfView]);
 
   const [
     removeColleagueRequest,
@@ -318,23 +320,27 @@ const Profile = (props: any) => {
   }, [selfView]);
 
   useEffect(() => {
-    //use this (and its deps) to trigger getProfileData on window popstate
-    if (/@\w+$/.test(location.pathname)) {
-      dispatch(getProfileData(userId.replace('@', ''))(dispatch));
-    }
+    cleanUp(true);
+    dispatch(getProfileData(userId.replace('@', ''))(dispatch));
+  }, [userId, profileData.username]);
 
-    return () => {
-      //clean up after every unmount to prevent flash of profile page before load of profile data
-      cleanUp(true);
-    };
-  }, [userId, isId, location]);
+  // useEffect(() => {
+  //   //use this (and its deps) to trigger getProfileData on window popstate
+  //   // if (/@\w+/.test(location.pathname)) {
+  //   //   dispatch(getProfileData(userId.replace('@', ''))(dispatch));
+  //   // }
+
+  //   return () => {
+  //     //clean up after every unmount to prevent flash of profile page before load of profile data
+  //     cleanUp(true);
+  //   };
+  // }, [userId, isId, location.pathname]);
 
   if (!isId) {
     return <Redirect to={`/${username}`} />;
   } else if (profileData.err || !profileData.data[0]) {
     return <Redirect to='/404' />;
   }
-
   // added deepProfileIsLoading to prevent showing the (circular) loading stuff on the (profile) buttons on page [component] (first) load
   if (
     (queryString.parse(location.search)?.chat !== 'open' &&
@@ -600,8 +606,12 @@ const Profile = (props: any) => {
           </Box>
         </Col>
         <Switch>
-          <Route path={`/@*/colleagues`} exact component={ColleagueView} />
-          <Route path={`/@*`} exact component={ProfileFeeds} />
+          <Route
+            path={`/@:userId/colleagues`}
+            exact
+            component={ColleagueView}
+          />
+          <Route path={`/@:userId`} exact component={ProfileFeeds} />
         </Switch>
       </Row>
       <Container className='rows-wrapper custom-scroll-bar small-bar rounded-bar tertiary-bar p-0'>
