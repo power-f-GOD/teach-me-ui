@@ -31,7 +31,7 @@ export const useFetchDeepProfile = (
 export const useRemoveColleagueRequest = (
   request_id: string,
   token: string
-): useApiResponse<string> => {
+): useApiResponse<any> => {
   const [...r] = useApi<any>(
     {
       endpoint: '/colleague/request/remove',
@@ -46,7 +46,7 @@ export const useRemoveColleagueRequest = (
 export const useAcceptColleagueRequest = (
   request_id: string,
   token: string
-): useApiResponse<string> => {
+): useApiResponse<any> => {
   const [...r] = useApi<any>(
     {
       endpoint: '/colleague/request/accept',
@@ -61,7 +61,7 @@ export const useAcceptColleagueRequest = (
 export const useDeclineColleagueRequest = (
   request_id: string,
   token: string
-): useApiResponse<string> => {
+): useApiResponse<any> => {
   const [...r] = useApi<any>(
     {
       endpoint: '/colleague/request/decline',
@@ -76,7 +76,7 @@ export const useDeclineColleagueRequest = (
 export const useUnColleague = (
   id: string,
   token: string
-): useApiResponse<string> => {
+): useApiResponse<any> => {
   const [...r] = useApi<any>(
     {
       endpoint: '/uncolleague',
@@ -84,6 +84,21 @@ export const useUnColleague = (
       headers: { Authorization: `Bearer ${token}` }
     },
     { colleague: id }
+  );
+  return r;
+};
+
+export const useFetchColleagueRequests = (
+  token: string
+): useApiResponse<any> => {
+  const [...r]: useApiResponse<any> = useApi<any>(
+    {
+      endpoint: '/colleague/requests',
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` }
+    },
+    undefined,
+    false
   );
   return r;
 };

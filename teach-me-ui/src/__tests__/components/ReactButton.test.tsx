@@ -12,9 +12,14 @@ import ReactButton from '../../components/crumbs/ReactButton';
 test('loads and displays placeholder text', async () => {
   render(
     <>
-      <ReactButton type='upvote' reactions={15002} reacted='upvote' />
-      <ReactButton type='upvote' reactions={1500200} reacted='neutral' />
-      <ReactButton type='downvote' reactions={150020} reacted='downvote' />
+      <ReactButton id='1' type='upvote' reactions={15002} reacted='upvote' />
+      <ReactButton id='2' type='upvote' reactions={1500200} reacted='neutral' />
+      <ReactButton
+        id='3'
+        type='downvote'
+        reactions={150020}
+        reacted='downvote'
+      />
     </>
   );
   expect(screen.getByText(/15K/)).toHaveStyle('color: green');

@@ -34,6 +34,10 @@ const Index = () => {
             ? <Route path='/notifications' component={Notifications} />
             : <Route component={_404} />
           }
+          <Route
+            path={['/@:userId', '/@:userId/colleagues']}
+            component={Profile}
+          />
           <Route component={_404} />
         </Switch>
       </Box>
