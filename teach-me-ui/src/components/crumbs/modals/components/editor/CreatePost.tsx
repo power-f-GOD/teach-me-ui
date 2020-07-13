@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
@@ -8,12 +8,19 @@ import Row from 'react-bootstrap/Row';
 
 import { connect } from 'react-redux';
 
-import { PostPropsState } from '../../../../constants';
-import { createPost } from '../../../../actions';
-import { displayModal } from '../../../../functions';
+import { PostPropsState } from '../../../../../constants';
+import { createPost } from '../../../../../actions';
+import { displayModal } from '../../../../../functions'; 
+
+import { convertToRaw, EditorState, RichUtils } from 'draft-js';
+import Editor from 'draft-js-plugins-editor';
+import mentions from './mentions';
 
 let userInfo: any = {};
 let [avatar, displayName, username] = ['', '', ''];
+
+const mentionPlugin = createMentionPlugin();
+const { MentionSuggestions } = mentionPlugin;
 
 //you can now use the 'userData' props in state to get userInfo; for this component, you can mapToProps or better still, just pass the value you need to it as props from its parent
 if (navigator.cookieEnabled && localStorage.kanyimuta) {
@@ -24,15 +31,40 @@ if (navigator.cookieEnabled && localStorage.kanyimuta) {
 
 const CreatePost = (props: any) => {
   const [post, setPost] = useState<string>('');
+  const [editorState, setEditorState] = useState<any>('');
+  const editor = useRef<any | null>();
+
 
   const onPostChange = (e: any) => {
-    setPost(e.target.value);
+    setPost(e.current.value);
   };
 
   const onPostSubmit = (e: any) => {
     // send post
+    onPostChange(editor);
     displayModal(false);
   };
+
+  const onChange = (editorState: any) => {
+    setEditorState(editorState);
+  };
+
+  const handleKeyCommand = ( command: any, editorState: any ) => {
+    let newState;
+    newState = RichUtils.handleKeyCommand( editorState, command );
+    if ( newState ) {
+      onChange(newState);
+      return 'handled';
+    }
+    return 'non-handled';
+  };
+
+  const [ suggestions, setSuggestions ] = useState();
+  const onSearchChange = ({ value }: any) => {
+    setSuggestions(defaultSuggestionsFilter(value, mentions));
+  }
+
+
   return (
     <Box p={1} pt={0}>
       <Row className='container-fluid p-0 mx-auto'>
@@ -49,13 +81,17 @@ const CreatePost = (props: any) => {
       </Row>
       <form>
         <div>
-          <textarea
+          <Editor
+            editorState={editorState}
+            ref={editor}
             autoFocus
             className='compose-message'
-            onChange={onPostChange}
-            value={post}
+            onChange={onChange}
+            // value={post}
             placeholder="What's on your mind?"
           />
+          <MentionSuggestions
+            onSearchChange={onSearchChange}
         </div>
         <Row className='d-flex mx-auto mt-1'>
           <Button
@@ -69,6 +105,8 @@ const CreatePost = (props: any) => {
     </Box>
   );
 };
+
+
 
 const mapDispatchToProps = (dispatch: Function) => ({
   addPost(post: PostPropsState) {
