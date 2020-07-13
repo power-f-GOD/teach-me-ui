@@ -13,7 +13,7 @@ import _404 from './_404';
 import Search from '../Main/Search';
 import Profile from '../Main/Profile';
 
-const Index = () => {
+const Index = (props: any) => {
   React.useEffect(() => () => window.scrollTo(0, 0), []);
 
   return (

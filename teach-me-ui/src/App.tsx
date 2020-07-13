@@ -37,7 +37,8 @@ const App = (props: any) => {
                     '/home',
                     '/about',
                     '/support',
-                    '/@*',
+                    '/@:userId',
+                    '/@:userId/colleagues',
                     '/search',
                     '/*'
                   ]
@@ -56,6 +57,7 @@ const App = (props: any) => {
             ]}
             component={Auth}
           />
+          {/* Is this still in use? */}
           <Route
             path={[
               '/',
@@ -69,6 +71,7 @@ const App = (props: any) => {
             exact
             component={Index}
           />
+          {/* Is it? */}
         </Switch>
       </BrowserRouter>
       <Memo memoizedComponent={SnackBar} snackbar={snackbar} />

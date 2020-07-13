@@ -33,7 +33,7 @@ const Main = (props: any) => {
     dispatch(initWebSocket(userData.token as string));
 
     return () => {
-        dispatch(closeWebSocket());
+      dispatch(closeWebSocket());
     };
   }, [userData.token]);
 
@@ -58,7 +58,7 @@ const Main = (props: any) => {
         <Route path={['/', '/index', '/home']} exact component={Home} />
         <Route path='/about' component={About} />
         <Route path='/support' component={Support} />
-        <Route path='/@*' component={Profile} />
+        <Route path='/@:userId' component={Profile} />
         <Route path='/search' component={Search} />
         <Route component={_404} />
       </Switch>
