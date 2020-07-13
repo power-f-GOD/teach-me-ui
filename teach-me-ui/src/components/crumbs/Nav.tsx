@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
+import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
@@ -53,7 +54,7 @@ const Nav = (props: any) => {
                 {forIndexPage ? (
                   <IndexNav {...props} />
                 ) : (
-                  <MainNav {...props} />
+                  <MainNavMenu {...props} />
                 )}
               </TemporaryDrawer>
             </Toolbar>
@@ -80,6 +81,14 @@ function IndexNav(props: any) {
 
 function MainNav(props: any) {
   // const [navVisible, setNavVisible] = useState('hidden');
+  const SignOut = withStyles({
+    root: {
+      height: '3.1rem'
+    }
+  })(Button);
+
+  const mq = window.matchMedia( "(max-width: 600px)" );
+
   return (
     <Box className={`nav-links-wrapper ${props?.className}`}>
       <NavLink to='/search' className='nav-link'>
@@ -89,26 +98,63 @@ function MainNav(props: any) {
       <NavLink exact to='/@' isActive={(_, location) => /\/@\w+/.test(location.pathname)} className='nav-link'>
         <AccountIcon className='nav-icon' /> Profile
       </NavLink>
-      <Dropdown className='dropdown' >
-        <Dropdown.Toggle  id="dropdown" as='p'>
-        <Tooltip
-          title="Notifications"
-          placement="bottom"
-        >
-          <Badge badgeContent={4} color='secondary' >
-            <NotificationsIcon />
-          </Badge>
-        </Tooltip>
-        </Dropdown.Toggle>
-        <Dropdown.Menu className='dropdown-contents'>
-          <div>
-          <Dropdown.Item>
-            <Notifications /*visibility={navVisible}*//>
-          </Dropdown.Item>
-          </div>
-        </Dropdown.Menu>
-      </Dropdown>
+      {mq.matches
+        ? <NavLink to='/notifications'style={{marginTop: '0.7em', color: 'white'}}>
+            <Tooltip
+              title="Notifications"
+              placement="bottom"
+            >
+              <Badge badgeContent={4} color='secondary' >
+                <NotificationsIcon />
+              </Badge>
+            </Tooltip>
+          </NavLink>
+        
+        : <Dropdown className='dropdown' >
+            <Dropdown.Toggle  id="dropdown" as='p' on>
+            <Tooltip
+              title="Notifications"
+              placement="bottom"
+            >
+              <Badge badgeContent={4} color='secondary' >
+                <NotificationsIcon />
+              </Badge>
+            </Tooltip>
+            </Dropdown.Toggle>
+            <Dropdown.Menu className='dropdown-contents'>
+              
+              <Dropdown.Item>
+                <Notifications />
+              </Dropdown.Item>
+              
+            </Dropdown.Menu>
+          </Dropdown>
+      }
       <div style={{width: '1em'}}></div>
+      <SignOut
+        variant='contained'
+        className='nav-link'
+        size='medium'
+        id='signout-btn'
+        fullWidth
+        onClick={handleSignoutRequest}>
+        Sign Out <ArrowForward fontSize='inherit' />
+      </SignOut>
+    </Box>
+  );
+};
+
+function MainNavMenu(props: any) {
+  // const [navVisible, setNavVisible] = useState('hidden');
+  return (
+    <Box className={`nav-links-wrapper ${props?.className}`}>
+      <NavLink to='/search' className='nav-link'>
+        <SearchIcon />
+      </NavLink>
+      <NavGeneralLinks />
+      <NavLink exact to='/@' isActive={(_, location) => /\/@\w+/.test(location.pathname)} className='nav-link'>
+        <AccountIcon className='nav-icon' /> Profile
+      </NavLink>
       <Button
         variant='contained'
         className='nav-link'
@@ -121,8 +167,6 @@ function MainNav(props: any) {
     </Box>
   );
 };
-
-
 //       <Button
 //         variant='contained'
 //         className='nav-link'
@@ -195,11 +239,46 @@ function TemporaryDrawer(props: any) {
     setOpen(open);
   };
 
+  const mq = window.matchMedia( "(max-width: 600px)" );
+
   return (
     <Box className='drawer'>
       <NavLink to='/search' className='nav-link'>
         <SearchIcon />
       </NavLink>
+      {mq.matches
+        ? <NavLink to='/notifications'style={{marginTop: '0.7em', color: 'white'}}>
+            <Tooltip
+              title="Notifications"
+              placement="bottom"
+            >
+              <Badge badgeContent={4} color='secondary' >
+                <NotificationsIcon />
+              </Badge>
+            </Tooltip>
+          </NavLink>
+        
+        : <Dropdown className='dropdown' >
+            <Dropdown.Toggle  id="dropdown" as='p' on>
+            <Tooltip
+              title="Notifications"
+              placement="bottom"
+            >
+              <Badge badgeContent={4} color='secondary' >
+                <NotificationsIcon />
+              </Badge>
+            </Tooltip>
+            </Dropdown.Toggle>
+            <Dropdown.Menu className='dropdown-contents'>
+              
+              <Dropdown.Item>
+                <Notifications />
+              </Dropdown.Item>
+              
+            </Dropdown.Menu>
+          </Dropdown>
+      }
+      <div style={{width: '1em'}}></div>
       <IconButton
         edge='start'
         className='menu-button'

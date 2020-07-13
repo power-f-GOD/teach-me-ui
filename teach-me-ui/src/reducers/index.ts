@@ -7,6 +7,7 @@ import * as chat from './chat';
 import * as modals from './modals';
 import * as search from './search';
 import * as profile from './profile';
+import * as notifications from './notifications';
 
 export default combineReducers({
   ...validate,
@@ -15,5 +16,6 @@ export default combineReducers({
   ...chat,
   ...modals,
   ...search,
-  ...profile
+  ...profile,
+  ...notifications
 });

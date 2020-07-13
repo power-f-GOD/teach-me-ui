@@ -12,9 +12,12 @@ import Footer from '../crumbs/Footer';
 import _404 from './_404';
 import Search from '../Main/Search';
 import Profile from '../Main/Profile';
+import Notifications from '../Main/Notifications';
 
 const Index = () => {
   React.useEffect(() => () => window.scrollTo(0, 0), []);
+  const mq = window.matchMedia( "(max-width: 600px)" );
+
 
   return (
     <Grid className='index-root-grid custom-scroll-bar fade-in'>
@@ -27,6 +30,10 @@ const Index = () => {
           <Route path='/support' component={Support} />
           <Route path='/search' component={Search} />
           <Route path='/@*' component={Profile} />
+          {mq.matches
+            ? <Route path='/notifications' component={Notifications} />
+            : <Route component={_404} />
+          }
           <Route component={_404} />
         </Switch>
       </Box>

@@ -1,17 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import Container from 'react-bootstrap/Container';
+// import Dropdown from 'react-bootstrap/Dropdown';
+
 
 import Box from '@material-ui/core/Box';
 import ListItem from '@material-ui/core/ListItem';
+// import RejectIcon from '@material-ui/icons/Close';
+// import AddColleagueIcon from '@material-ui/icons/PersonAdd';
+// import Button from '@material-ui/core/Button';
+// import { withStyles } from '@material-ui/core/styles';
+
 
 import { dispatch } from '../../functions/utils';
 import { getNotificationRequest } from '../../actions';
 import PersonAddIcon from '@material-ui/icons/PersonAdd'
 import HowToRegIcon from '@material-ui/icons/HowToReg';
-import NotificationsIcon from '@material-ui/icons/Notifications'
+import NotificationsIcon from '@material-ui/icons/Notifications';
+// import CircularProgress from '@material-ui/core/CircularProgress';
 import moment from 'moment';
 
      
@@ -33,7 +41,7 @@ const Notifications = (props: any) => {
 
       <Container className='d-flex flex-column justify-content-center'>
         <Box className='notification-container mx-auto'>
-          <h3>Getting Notifications...</h3>
+          <h2 style={{ color: 'black', marginLeft: '2rem'}}>{/*Getting notifications...*/}</h2>
 
         </Box>
       </Container>
@@ -53,9 +61,10 @@ const Notifications = (props: any) => {
 
       <Container className='d-flex flex-column justify-content-center notification-container1'>
         <Box className='notification-container mx-auto'>
+          <h2 style={{ paddingLeft: '1rem', color: 'black' }}><b>Notifications</b></h2>
           
             {result.map((notification: any, key: number) => {
-              const link = `/${notification.data.sender}`;
+              // const link = `/${notification.data.sender}`;
               const date = new Date(notification.date);
               const formattedDate = ((dateTime) => {
                 if (!dateTime) {
@@ -84,10 +93,36 @@ const Notifications = (props: any) => {
                 } 
               })(date)
               const notificationMessage = `<div>${notification.message}</div>
-                                          <div>${formattedDate}</div>`
+                                          <div style="color: rgb(0, 115, 160)">${formattedDate}</div>`;
+
+              // const BootstrapButton = withStyles({
+              //   root: {
+              //     boxShadow: 'none',
+              //     textTransform: 'none',
+              //     fontSize: 'inherit',
+              //     padding: '6px 12px',
+              //     // border: '1px solid',
+              //     borderRadius: '5px',
+              //     // lineHeight: 1.5,
+              //     backgroundColor: '#ff0000',
+              //     // borderColor: '#0063cc',
+              //     width: '6rem',
+              //     height: '2rem',
+              //     '&:hover': {
+              //       backgroundColor: '#0069d9',
+              //       // borderColor: '#0062cc',
+              //       // boxShadow: 'none',
+              //     },
+                  
+              //     // '&:focus': {
+              //     //   boxShadow: '0 0 0 0.2rem rgba(0,123,255,.5)',
+              //     // },
+              //   },
+              // })(Button);
+                                          
               return (
-                <ListItem button divider key={key} className='notification-result'>
-                  <Link to= {link} className='d-flex'>
+                <ListItem  key={key} className='notification-result'>
+                  <div style={{ color: 'black' }} className='d-flex'>
                   {notification.type === 'COLLEAGUE_REQUEST'
                   ? <PersonAddIcon fontSize='large'/>
                   : notification.type === 'COLLEAGUE_REQUEST_ACCEPTANCE'
@@ -98,8 +133,20 @@ const Notifications = (props: any) => {
                     style={{paddingLeft: '0.7em'}}
                     dangerouslySetInnerHTML={{
                       __html: notificationMessage
-                    }}></div>
-                  </Link>
+                    }}>
+                  </div> 
+                  </div>
+                    {/* {notification.type === 'COLLEAGUE_REQUEST'
+                    ? <div style={{ display: 'block', marginLeft: '2.8rem'}}>
+                        <BootstrapButton variant="contained" color="primary"  className=''>
+                          <AddColleagueIcon fontSize='inherit' /> Accept
+                        </BootstrapButton>
+                        <BootstrapButton variant="contained" color="primary"  className=''>
+                          <RejectIcon fontSize='inherit' /> Decline
+                        </BootstrapButton>
+                      </div>
+                    : <React.Fragment></React.Fragment> */}
+                    
                 </ListItem>
             )})}
         </Box>
