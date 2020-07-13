@@ -22,7 +22,7 @@ export interface InputErrState {
 
 export interface PostPropsState {
   userAvatar: string;
-  reaction: 'upvote' | 'downvote' | 'neutral';
+  reaction: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL';
   sender_id: string;
   sender_name: string;
   sender_username: string;
@@ -64,13 +64,13 @@ export interface TopicPropsState {
 export interface ReactButtonPropsState {
   id: string;
   reactions: number;
-  type: 'upvote' | 'downvote';
-  reacted: 'upvote' | 'downvote' | 'neutral';
+  type: 'UPVOTE' | 'DOWNVOTE';
+  reacted: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL';
 }
 
 export interface ReactPostState {
   id: string;
-  type: 'upvote' | 'downvote' | 'neutral';
+  type: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL';
 }
 
 export interface BasicInputState extends InputErrState {
