@@ -1,0 +1,4 @@
+{
+  "debug.javascript.codelens.npmScripts": "never",
+  "debug.javascript.automaticallyTunnelRemoteServer": false
+}

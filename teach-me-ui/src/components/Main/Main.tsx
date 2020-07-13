@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -22,20 +22,31 @@ import { initWebSocket, closeWebSocket } from '../../actions/misc';
 const Memoize = createMemo();
 
 const Main = (props: any) => {
-  const { signout, userData } = props;
-  // const {
-  //   queryString: qString,
-  //   isOpen: chatIsOpen
-  // }: ChatState = chatState;
-  // let queryString = qString!.split('?')[1] ?? '';
-  // queryString = chatIsOpen ? `?${queryString}` : '';
-  React.useEffect(() => {
+  const { signout, userData, webSocket: socket } = props;
+
+  useEffect(() => {
     dispatch(initWebSocket(userData.token as string));
 
     return () => {
-        dispatch(closeWebSocket());
+      dispatch(closeWebSocket());
     };
   }, [userData.token]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.addEventListener('open', () => {
+        console.log('Socket connected!');
+      });
+
+      socket.addEventListener('error', (e: any) => {
+        console.error('An error occurred while trying to connect Web Socket.');
+      });
+
+      socket.addEventListener('close', () => {
+        console.log('Socket closed!');
+      });
+    }
+  }, [socket]);
 
   if (!/chat=/.test(window.location.search)) {
     window.history.replaceState({}, '', window.location.pathname);
@@ -71,7 +82,8 @@ const Main = (props: any) => {
 const mapStateToProps = (state: any) => {
   return {
     signout: state.signout,
-    userData: state.userData
+    userData: state.userData,
+    webSocket: state.webSocket
   };
 };
 
