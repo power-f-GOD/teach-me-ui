@@ -26,7 +26,10 @@ const Index = () => {
           <Route path='/about' component={About} />
           <Route path='/support' component={Support} />
           <Route path='/search' component={Search} />
-          <Route path='/@*' component={Profile} />
+          <Route
+            path={['/@:userId', '/@:userId/colleagues']}
+            component={Profile}
+          />
           <Route component={_404} />
         </Switch>
       </Box>

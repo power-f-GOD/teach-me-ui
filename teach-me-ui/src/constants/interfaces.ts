@@ -21,14 +21,39 @@ export interface InputErrState {
 }
 
 export interface PostPropsState {
-  displayName: string;
-  username: string;
-  upvotes: number;
-  postBody: string;
-  downvotes: number;
-  noOfComments: number;
   userAvatar: string;
   reaction: 'upvote' | 'downvote' | 'neutral';
+  sender_id: string;
+  sender_name: string;
+  sender_username: string;
+  sec_type?: 'REPOST' | 'REPLY';
+  text: string;
+  id: string;
+  upvotes: number;
+  downvotes: number;
+  replies: number;
+  reposts: number;
+  posted_at: number;
+  _extra?: {
+    type: 'UPVOTE' | 'DOWNVOTE';
+    colleague_id: string;
+    colleague_name: string;
+    colleague_username: string;
+  };
+  parent?: {
+    sec_type?: 'REPOST' | 'REPLY';
+    text: string;
+    id: string;
+    sender_id: string;
+    sender_name: string;
+    sender_username: string;
+  };
+}
+
+export interface FetchPostsState {
+  status: 'pending' | 'rejected' | 'resolved';
+  error?: boolean;
+  message?: string;
 }
 
 export interface TopicPropsState {
@@ -37,9 +62,15 @@ export interface TopicPropsState {
 }
 
 export interface ReactButtonPropsState {
+  id: string;
   reactions: number;
   type: 'upvote' | 'downvote';
   reacted: 'upvote' | 'downvote' | 'neutral';
+}
+
+export interface ReactPostState {
+  id: string;
+  type: 'upvote' | 'downvote' | 'neutral';
 }
 
 export interface BasicInputState extends InputErrState {
@@ -55,6 +86,27 @@ export type useApiResponse<T> = [() => Promise<void>, T, boolean];
 
 interface HeaderProps {
   [key: string]: any;
+}
+
+export interface ColleagueRequestProps {
+  sender: ColleagueRequestSender;
+  request: ColleagueRequest;
+}
+
+interface ColleagueRequestSender {
+  firstname: string;
+  date_of_birth: string;
+  id: string;
+  email: string;
+  lastname: string;
+  username: string;
+  department: string;
+  level: string;
+}
+
+interface ColleagueRequest {
+  date: number;
+  id: string;
 }
 
 export interface DeepProfileProps {

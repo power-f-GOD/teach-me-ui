@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
@@ -6,16 +6,33 @@ import Button from '@material-ui/core/Button';
 
 import Row from 'react-bootstrap/Row';
 
+import { connect } from 'react-redux';
+
+import { PostPropsState } from '../../../../constants';
+import { createPost } from '../../../../actions';
+import { displayModal } from '../../../../functions';
+
 let userInfo: any = {};
-let [avatar, displayName] = ['', ''];
+let [avatar, displayName, username] = ['', '', ''];
 
 //you can now use the 'userData' props in state to get userInfo; for this component, you can mapToProps or better still, just pass the value you need to it as props from its parent
 if (navigator.cookieEnabled && localStorage.kanyimuta) {
   userInfo = JSON.parse(localStorage.kanyimuta);
   displayName = userInfo.displayName;
+  username = userInfo.username;
 }
 
-const CreatePost = () => {
+const CreatePost = (props: any) => {
+  const [post, setPost] = useState<string>('');
+
+  const onPostChange = (e: any) => {
+    setPost(e.target.value);
+  };
+
+  const onPostSubmit = (e: any) => {
+    // send post
+    displayModal(false);
+  };
   return (
     <Box p={1} pt={0}>
       <Row className='container-fluid p-0 mx-auto'>
@@ -27,27 +44,36 @@ const CreatePost = () => {
         />
         <div className='d-flex flex-column justify-content-center flex-grow-1'>
           <span>{displayName}</span>
+          <small>{username}</small>
         </div>
       </Row>
-      <div>
-        <Box
-          className='compose-message'
-          component='textarea'
-          fontSize='14px'
-          fontWeight='bold'
-          width='100%'
-          height='250px'
-          color='black'
-          placeholder="What's on your mind?"
-        />
-      </div>
-      <Row className='d-flex mx-auto mt-1'>
-        <Button color='primary' className='post-button flex-grow-1'>
-          Post
-        </Button>
-      </Row>
+      <form>
+        <div>
+          <textarea
+            autoFocus
+            className='compose-message'
+            onChange={onPostChange}
+            value={post}
+            placeholder="What's on your mind?"
+          />
+        </div>
+        <Row className='d-flex mx-auto mt-1'>
+          <Button
+            onClick={onPostSubmit}
+            color={post.length > 0 ? 'primary' : 'default'}
+            className='post-button p-0 flex-grow-1'>
+            Post
+          </Button>
+        </Row>
+      </form>
     </Box>
   );
 };
 
-export default CreatePost;
+const mapDispatchToProps = (dispatch: Function) => ({
+  addPost(post: PostPropsState) {
+    dispatch(createPost(post));
+  }
+});
+
+export default connect(undefined, mapDispatchToProps)(CreatePost);
