@@ -225,7 +225,7 @@ export interface CreateLevelState extends StatusPropsState {
 // ChatBox interfaces...
 
 //you should eventually make all the Message props required
-export interface Message extends Partial<APIMessageResponse> {
+export interface MessageProps extends Partial<APIMessageResponse> {
   timestamp?: string | number;
 }
 
@@ -242,7 +242,7 @@ export interface ChatData {
 export interface AnchorInfo {
   displayName: string;
   id: string;
-  messages?: Message[];
+  messages?: MessageProps[];
   avatar: string;
   info?: UserInfo | RoomInfo;
   type: 'conversation' | 'classroom';
