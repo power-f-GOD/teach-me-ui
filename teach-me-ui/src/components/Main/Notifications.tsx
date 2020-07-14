@@ -50,7 +50,7 @@ const Notifications = (props: any) => {
     </Box>
     </div>
   ) : (
-    <div style={{ visibility: visibility}}>
+    // <div style={{ visibility: visibility}}>
 
     <Box className='Notifications ' /*onScroll={
       // if () {
@@ -61,7 +61,7 @@ const Notifications = (props: any) => {
 
       <Container className='d-flex flex-column justify-content-center notification-container1'>
         <Box className='notification-container mx-auto'>
-          <h2 style={{ paddingLeft: '1rem', color: 'black' }}><b>Notifications</b></h2>
+          <h2 style={{ paddingLeft: '1rem', color: 'black', fontWeight: 700 }}>Notifications</h2>
           
             {result.map((notification: any, key: number) => {
               // const link = `/${notification.data.sender}`;
@@ -160,7 +160,6 @@ const Notifications = (props: any) => {
       </div>
     
     </Box>
-    </div>
   )
   
 }
