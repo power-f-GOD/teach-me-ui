@@ -1,32 +1,14 @@
-
 pipelines:
   default:
-    - step: 
+    - step:
         name: Build Front end
         image: node:10.15.0
         script:
           - cd teach-me-ui
           - npm install
-          - npm test -- --coverage --coverageDirectory=output/coverage/jest  
+          - npm test -- --coverage --coverageDirectory=output/coverage/jest
           - tar -czvf coverage.tar.gz output/coverage/jest
-          - npm run build
-          - mkdir packaged
-          - tar -czvf packaged/package-${BITBUCKET_BUILD_NUMBER}.tar.gz -C build . 
-          - cd ..
-        artifacts:
-          - teach-me-ui/packaged/**
-          - teach-me-ui/coverage.tar.gz
-
-  branches:
-    master:
-    - step: 
-        name: Build Front end
-        image: node:10.15.0
-        script:
-          - cd teach-me-ui
-          - npm install
-          - npm test -- --coverage --coverageDirectory=output/coverage/jest  
-          - tar -czvf coverage.tar.gz output/coverage/jest
+          - npm run autoprefix:r
           - npm run build
           - mkdir packaged
           - tar -czvf packaged/package-${BITBUCKET_BUILD_NUMBER}.tar.gz -C build .
@@ -34,7 +16,26 @@ pipelines:
         artifacts:
           - teach-me-ui/packaged/**
           - teach-me-ui/coverage.tar.gz
-    - step:
+
+  branches:
+    master:
+      - step:
+          name: Build Front end
+          image: node:10.15.0
+          script:
+            - cd teach-me-ui
+            - npm install
+            - npm test -- --coverage --coverageDirectory=output/coverage/jest
+            - tar -czvf coverage.tar.gz output/coverage/jest
+            - npm run autoprefix:r
+            - npm run build
+            - mkdir packaged
+            - tar -czvf packaged/package-${BITBUCKET_BUILD_NUMBER}.tar.gz -C build .
+            - cd ..
+          artifacts:
+            - teach-me-ui/packaged/**
+            - teach-me-ui/coverage.tar.gz
+      - step:
           name: Deploy to Kanyimuta.com
           image: node:10.15.0
           script:
@@ -43,25 +44,26 @@ pipelines:
               variables:
                 HEROKU_API_KEY: $HEROKU_API_KEY
                 HEROKU_APP_NAME: $HEROKU_APP_UI
-                ZIP_FILE: "application-${BITBUCKET_BUILD_NUMBER}.tar.gz"
-    
+                ZIP_FILE: 'application-${BITBUCKET_BUILD_NUMBER}.tar.gz'
+
     staging:
-    - step: 
-        name: Build Front end
-        image: node:10.15.0
-        script:
-          - cd teach-me-ui
-          - npm install
-          - npm test -- --coverage --coverageDirectory=output/coverage/jest  
-          - tar -czvf coverage.tar.gz output/coverage/jest
-          - npm run build
-          - mkdir packaged
-          - tar -czvf packaged/package-${BITBUCKET_BUILD_NUMBER}.tar.gz -C build .
-          - cd ..
-        artifacts:
-          - teach-me-ui/packaged/**
-          - teach-me-ui/coverage.tar.gz
-    - step:
+      - step:
+          name: Build Front end
+          image: node:10.15.0
+          script:
+            - cd teach-me-ui
+            - npm install
+            - npm test -- --coverage --coverageDirectory=output/coverage/jest
+            - tar -czvf coverage.tar.gz output/coverage/jest
+            - npm run autoprefix:r
+            - npm run build
+            - mkdir packaged
+            - tar -czvf packaged/package-${BITBUCKET_BUILD_NUMBER}.tar.gz -C build .
+            - cd ..
+          artifacts:
+            - teach-me-ui/packaged/**
+            - teach-me-ui/coverage.tar.gz
+      - step:
           name: Deploy to Staging App
           image: node:10.15.0
           deployment: staging
@@ -70,5 +72,5 @@ pipelines:
             - pipe: atlassian/heroku-deploy:1.1.2
               variables:
                 HEROKU_API_KEY: $HEROKU_API_KEY
-                HEROKU_APP_NAME: "teach-me-ui-dev"
-                ZIP_FILE: "application-${BITBUCKET_BUILD_NUMBER}.tar.gz"  
+                HEROKU_APP_NAME: 'teach-me-ui-dev'
+                ZIP_FILE: 'application-${BITBUCKET_BUILD_NUMBER}.tar.gz'
