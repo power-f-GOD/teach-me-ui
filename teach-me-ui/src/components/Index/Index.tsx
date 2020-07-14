@@ -16,7 +16,7 @@ import Notifications from '../Main/Notifications';
 
 const Index = (props: any) => {
   React.useEffect(() => () => window.scrollTo(0, 0), []);
-  const mq = window.matchMedia( "(max-width: 600px)" );
+
 
 
   return (
@@ -30,7 +30,7 @@ const Index = (props: any) => {
           <Route path='/support' component={Support} />
           <Route path='/search' component={Search} />
           <Route path='/@*' component={Profile} />
-          {mq.matches
+          {window.matchMedia( "(max-width: 600px)" ).matches
             ? <Route path='/notifications' component={Notifications} />
             : <Route component={_404} />
           }

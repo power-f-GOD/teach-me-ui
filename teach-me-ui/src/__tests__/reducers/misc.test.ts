@@ -9,6 +9,9 @@ import {
 } from '../../constants';
 import { displayName, snackbar } from '../../reducers/misc';
 
+// importing jest mock for mediaqueries
+import '../__mocks__/matchMedia.mock';
+
 afterEach(cleanup);
 
 it("misc reducers should be called with 'state' and 'action' params and return value of initial state type.", () => {
