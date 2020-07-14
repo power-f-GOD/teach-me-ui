@@ -38,7 +38,6 @@ import {
 } from '../../functions/utils';
 import { placeHolderDisplayName } from './Chat';
 import { displaySnackbar } from '../../actions';
-import { ContentSort } from 'material-ui/svg-icons';
 // import { Skeleton, DISPLAY_INFO } from './Loaders';
 
 const Memoize = createMemo();
