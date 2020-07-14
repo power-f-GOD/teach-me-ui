@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, Component} from 'react';
 
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
@@ -14,13 +14,14 @@ import { displayModal } from '../../../../../functions';
 
 import { convertToRaw, EditorState, RichUtils } from 'draft-js';
 import Editor from 'draft-js-plugins-editor';
+import createMentionPlugin, { defaultSuggestionsFilter } from 'draft-js-mention-plugin';
+import 'draft-js-mention-plugin/lib/plugin.css';
 import mentions from './mentions';
 
 let userInfo: any = {};
 let [avatar, displayName, username] = ['', '', ''];
 
-const mentionPlugin = createMentionPlugin();
-const { MentionSuggestions } = mentionPlugin;
+
 
 //you can now use the 'userData' props in state to get userInfo; for this component, you can mapToProps or better still, just pass the value you need to it as props from its parent
 if (navigator.cookieEnabled && localStorage.kanyimuta) {
@@ -29,11 +30,25 @@ if (navigator.cookieEnabled && localStorage.kanyimuta) {
   username = userInfo.username;
 }
 
+// message for you ben
+// hopefully you will see this
+// so when this was not working,
+// i created a simple class component,
+// it is commented under this whole code
+// from the draft-js, they only use class components
+// i used dummy text and links in the mentions file cause i had already done this 
+// before emmanuel created the end point
+
 const CreatePost = (props: any) => {
   const [post, setPost] = useState<string>('');
-  const [editorState, setEditorState] = useState<any>('');
+  const [editorState, setEditorState] = useState<any>(EditorState.createEmpty());
+  const [ suggestions, setSuggestions ] = useState(mentions);
   const editor = useRef<any | null>();
 
+  const mentionPlugin = createMentionPlugin();
+  const { MentionSuggestions } = mentionPlugin;
+
+  const plugins = [mentionPlugin];
 
   const onPostChange = (e: any) => {
     setPost(e.current.value);
@@ -59,11 +74,16 @@ const CreatePost = (props: any) => {
     return 'non-handled';
   };
 
-  const [ suggestions, setSuggestions ] = useState();
+  
   const onSearchChange = ({ value }: any) => {
     setSuggestions(defaultSuggestionsFilter(value, mentions));
   }
 
+  const onAddMention = () => {};
+
+  const focus = () => {
+    editor.current.focus();
+  };
 
   return (
     <Box p={1} pt={0}>
@@ -80,19 +100,21 @@ const CreatePost = (props: any) => {
         </div>
       </Row>
       <form>
-        <div>
-          <Editor
-            editorState={editorState}
-            ref={editor}
-            autoFocus
-            className='compose-message'
-            onChange={onChange}
-            // value={post}
-            placeholder="What's on your mind?"
-          />
-          <MentionSuggestions
-            onSearchChange={onSearchChange}
-        </div>
+        <div className='editor' onClick={focus}>
+        <Editor
+          editorState={editorState}
+          onChange={onChange}
+          // className='compose-message'
+          // value={post}
+          plugins={plugins}
+          ref={editor}
+        />
+        <MentionSuggestions
+          onSearchChange={onSearchChange}
+          suggestions={suggestions}
+          onAddMention={onAddMention}
+        />
+      </div>
         <Row className='d-flex mx-auto mt-1'>
           <Button
             onClick={onPostSubmit}
@@ -115,3 +137,61 @@ const mapDispatchToProps = (dispatch: Function) => ({
 });
 
 export default connect(undefined, mapDispatchToProps)(CreatePost);
+
+
+// export default class SimpleMentionEditor extends Component {
+//   mentionPlugin: any;
+//   editor: any;
+
+//   constructor(props: any) {
+//     super(props);
+
+//     this.mentionPlugin = createMentionPlugin();
+//   }
+
+//   state = {
+//     editorState: EditorState.createEmpty(),
+//     suggestions: mentions,
+//   };
+
+//   onChange = (editorState: any) => {
+//     this.setState({
+//       editorState,
+//     });
+//   };
+
+//   onSearchChange = ({ value }: any) => {
+//     this.setState({
+//       suggestions: defaultSuggestionsFilter(value, mentions),
+//     });
+//   };
+
+//   onAddMention = () => {
+//     // get the mention object selected
+//   }
+
+//   focus = () => {
+//     this.editor.focus();
+//   };
+
+//   render() {
+//     const { MentionSuggestions } = this.mentionPlugin;
+//     const plugins = [this.mentionPlugin];
+
+//     return (
+//       <div className='editor' onClick={this.focus}>
+//         <Editor
+//           editorState={this.state.editorState}
+//           onChange={this.onChange}
+//           plugins={plugins}
+//           ref={(element) => { this.editor = element; }}
+//         />
+//         <MentionSuggestions
+//           onSearchChange={this.onSearchChange}
+//           suggestions={this.state.suggestions}
+//           onAddMention={this.onAddMention}
+//         />
+//       </div>
+//     );
+//   }
+// }
