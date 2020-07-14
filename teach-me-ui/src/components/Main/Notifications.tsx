@@ -25,7 +25,7 @@ import moment from 'moment';
      
 const Notifications = (props: any) => {
   const { getNotifications } = props;
-  const [ visibility, setVisibility ] = useState<"hidden" | "-moz-initial" | "inherit" | "initial" | "revert" | "unset" | "collapse" | "visible" | undefined>('hidden')
+  const [ visibility, setVisibility ] = useState<any | undefined>('hidden')
   useEffect(() => {
     dispatch(getNotificationRequest(Date.now())(dispatch));
     return function() {setVisibility('hidden')}
