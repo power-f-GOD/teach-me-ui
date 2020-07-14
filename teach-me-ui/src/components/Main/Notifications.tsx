@@ -57,7 +57,7 @@ const Notifications = (props: any) => {
 
       <Container className='d-flex flex-column justify-content-center notification-container1'>
         <Box className='notification-container mx-auto'>
-          <h2 style={{ paddingLeft: '1rem', color: 'black', fontWeight: 600 }}>Notifications</h2>
+          <h2 className='notification-text'>Notifications</h2>
           
             {result.map((notification: any, key: number) => {
               // const link = `/${notification.data.sender}`;

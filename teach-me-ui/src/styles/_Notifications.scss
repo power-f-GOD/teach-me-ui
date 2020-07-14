@@ -39,6 +39,11 @@
   margin: 0;
   // height: 50px !important;
   
+  .notification-text {
+    padding-left: 1rem;
+    color: black;
+    font-weight: 600  
+  }
 
   .notification-container {
     overflow: scroll;
@@ -95,6 +100,9 @@
     padding: 0em !important;
     // height: 5
 
+      .notification-text {
+        padding-left: 0.4rem;
+      }
       .notification-result {
         margin-bottom: 0.3em;
         padding: 0.3rem 0.2rem
