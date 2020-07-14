@@ -1,5 +1,8 @@
 import { cleanup } from '@testing-library/react';
 
+// importing jest mock for mediaqueries
+import '../__mocks__/matchMedia.mock';
+
 import {
   ReduxAction,
   SignupFormData,

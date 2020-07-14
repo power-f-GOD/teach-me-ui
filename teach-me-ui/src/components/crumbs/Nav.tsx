@@ -111,7 +111,7 @@ function MainNav(props: any) {
           </NavLink>
         
         : <Dropdown className='dropdown' >
-            <Dropdown.Toggle  id="dropdown" as='p' on>
+            <Dropdown.Toggle  id='dropdown' as='p' on='true'>
             <Tooltip
               title="Notifications"
               placement="bottom"
@@ -259,7 +259,7 @@ function TemporaryDrawer(props: any) {
           </NavLink>
         
         : <Dropdown className='dropdown' >
-            <Dropdown.Toggle  id="dropdown" as='p' on>
+            <Dropdown.Toggle  id="dropdown" as='p' on='true'>
             <Tooltip
               title="Notifications"
               placement="bottom"
@@ -269,6 +269,7 @@ function TemporaryDrawer(props: any) {
               </Badge>
             </Tooltip>
             </Dropdown.Toggle>
+
             <Dropdown.Menu className='dropdown-contents'>
               
               <Dropdown.Item>

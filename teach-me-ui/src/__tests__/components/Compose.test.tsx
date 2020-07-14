@@ -1,6 +1,9 @@
 // import dependencies
 import React from 'react';
 
+// importing jest mock for mediaqueries
+import '../__mocks__/matchMedia.mock';
+
 // import react-testing methods
 import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 

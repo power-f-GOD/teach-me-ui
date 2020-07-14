@@ -3,6 +3,9 @@ import { cleanup } from '@testing-library/react';
 import { ReduxAction, ModalState, modalState } from '../../constants';
 import { hideModal, showModal } from '../../actions';
 
+// import jest mocks for media queries
+import '../__mocks__/matchMedia.mock';
+
 afterEach(cleanup);
 
 it("creates modals (inputs) action and should be called with its 'state props' and return action.", () => {

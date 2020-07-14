@@ -1,6 +1,8 @@
 .dropdown-contents {
   margin-top: 1.4rem;
+  transition: all 0s !important;
 }
+
 
 ::-webkit-scrollbar {
   width: 7px;
@@ -46,7 +48,7 @@
     background: white;
     // padding: 0.4rem;
     width: 23rem;
-    height: 90.2vh;
+    height: 85vh;
     // max-height: 35rem !important;
     max-width: 100%;
     border-radius: 0.5rem;
@@ -81,6 +83,10 @@
 }
 
 @media only screen and (max-width: 600px) {
+    .notification-result {
+      margin-bottom: 0.3em
+    }
+
     .Notifications {
       background: transparent;
       // min-height: 100vh;
@@ -98,6 +104,8 @@
         margin: 0em !important;
         padding: 0em !important;
       }
+
+      
 
       .notification-container {
         height: auto !important;

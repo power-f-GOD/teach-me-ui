@@ -18,7 +18,7 @@ export const getNotifications = (payload: NotificationState) => {
   };
 };
 
-export const getNotificationRequest = (date: number) => (
+export const getNotificationsRequest = (date: number) => (
   dispatch: Function
 ): ReduxAction => {
   
@@ -74,4 +74,4 @@ export const getNotificationRequest = (date: number) => (
     type: GET_NOTIFICATIONS_REQUEST,
     newState: date
   };
-};
+}; 

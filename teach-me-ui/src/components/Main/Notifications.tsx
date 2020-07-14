@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import Container from 'react-bootstrap/Container';
 // import Dropdown from 'react-bootstrap/Dropdown';
 
-
+import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import ListItem from '@material-ui/core/ListItem';
 // import RejectIcon from '@material-ui/icons/Close';
@@ -15,10 +15,10 @@ import ListItem from '@material-ui/core/ListItem';
 
 
 import { dispatch } from '../../functions/utils';
-import { getNotificationRequest } from '../../actions';
-import PersonAddIcon from '@material-ui/icons/PersonAdd'
-import HowToRegIcon from '@material-ui/icons/HowToReg';
-import NotificationsIcon from '@material-ui/icons/Notifications';
+import { getNotificationsRequest } from '../../actions';
+// import PersonAddIcon from '@material-ui/icons/PersonAdd'
+// import HowToRegIcon from '@material-ui/icons/HowToReg';
+// import NotificationsIcon from '@material-ui/icons/Notifications';
 // import CircularProgress from '@material-ui/core/CircularProgress';
 import moment from 'moment';
 
@@ -27,7 +27,7 @@ const Notifications = (props: any) => {
   const { getNotifications } = props;
   const [ visibility, setVisibility ] = useState<any | undefined>('hidden')
   useEffect(() => {
-    dispatch(getNotificationRequest(Date.now())(dispatch));
+    dispatch(getNotificationsRequest(Date.now())(dispatch));
     return function() {setVisibility('hidden')}
   }, [])
 
@@ -70,7 +70,7 @@ const Notifications = (props: any) => {
                 if (!dateTime) {
                   return null;
                 }
-              
+                
                 const today = moment();
               
                 const time = moment(dateTime);
@@ -92,8 +92,13 @@ const Notifications = (props: any) => {
                   return duration.seconds() > 1 ? duration.seconds() + 'seconds ago' : 'just now';
                 } 
               })(date)
-              const notificationMessage = `<div>${notification.message}</div>
-                                          <div style="color: rgb(0, 115, 160)">${formattedDate}</div>`;
+              // const icon = notification.type === 'COLLEAGUE_REQUEST'
+              //             ? <PersonAddIcon fontSize='inherit'/>
+              //             : notification.type === 'COLLEAGUE_REQUEST_ACCEPTANCE'
+              //               ? <HowToRegIcon fontSize='inherit'/>
+              //               : <NotificationsIcon fontSize='inherit'/>
+              const notificationMessage = `<div>${notification.message}
+                                           <p style="margin: 0 ; padding: 0; border: 0;color: rgb(0, 115, 160)">${formattedDate}</p></div>`;
 
               // const BootstrapButton = withStyles({
               //   root: {
@@ -119,23 +124,25 @@ const Notifications = (props: any) => {
               //     // },
               //   },
               // })(Button);
-                                          
+                              
               return (
                 <ListItem  key={key} className='notification-result'>
                   <div style={{ color: 'black' }} className='d-flex'>
-                  {notification.type === 'COLLEAGUE_REQUEST'
-                  ? <PersonAddIcon fontSize='large'/>
-                  : notification.type === 'COLLEAGUE_REQUEST_ACCEPTANCE'
-                    ? <HowToRegIcon fontSize='large'/>
-                    : <NotificationsIcon fontSize='large'/>}
+                  <Avatar
+                    component='span'
+                    className='profile-avatar-x profile-photo'
+                    src={'/images/avatar-1.png'}
+                  />
+                  
                   <div
                     className=''
-                    style={{paddingLeft: '0.7em'}}
+                    style={{paddingLeft: '0.4em'}}
                     dangerouslySetInnerHTML={{
                       __html: notificationMessage
                     }}>
-                  </div> 
                   </div>
+                  
+                  </div> 
                     {/* {notification.type === 'COLLEAGUE_REQUEST'
                     ? <div style={{ display: 'block', marginLeft: '2.8rem'}}>
                         <BootstrapButton variant="contained" color="primary"  className=''>
@@ -146,7 +153,6 @@ const Notifications = (props: any) => {
                         </BootstrapButton>
                       </div>
                     : <React.Fragment></React.Fragment> */}
-                    
                 </ListItem>
             )})}
         </Box>
