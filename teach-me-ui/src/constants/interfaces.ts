@@ -34,20 +34,36 @@ export interface PostPropsState {
   replies: number;
   reposts: number;
   posted_at: number;
-  _extra?: {
-    type: 'UPVOTE' | 'DOWNVOTE';
-    colleague_id: string;
-    colleague_name: string;
-    colleague_username: string;
-  };
-  parent?: {
-    sec_type?: 'REPOST' | 'REPLY';
-    text: string;
-    id: string;
-    sender_id: string;
-    sender_name: string;
-    sender_username: string;
-  };
+  _extra?: PostExtraProps;
+  parent?: PostParentProps;
+}
+
+interface PostExtraProps {
+  type: 'UPVOTE' | 'DOWNVOTE';
+  colleague_id: string;
+  colleague_name: string;
+  colleague_username: string;
+}
+
+interface PostParentProps {
+  sec_type?: 'REPOST' | 'REPLY';
+  text: string;
+  id: string;
+  sender_id: string;
+  sender_name: string;
+  sender_username: string;
+  upvotes: number;
+  downvotes: number;
+  replies: number;
+  reaction: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL';
+  reposts: number;
+}
+
+export interface SocketProps {
+  pipe: 'POST_REACTION' | 'POST_REPLY';
+  post_id: string;
+  reaction?: 'UPVOTE' | 'DOWNVOTE';
+  interaction?: 'SEEN' | 'ENGAGED';
 }
 
 export interface FetchPostsState {

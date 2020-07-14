@@ -238,6 +238,12 @@ header.chat-header {
   }
 }
 
+.post-avatar {
+  @extend .chat-avatar;
+
+  margin-right: 0 !important;
+}
+
 .online {
   .MuiBadge-dot {
     background-color: $success;

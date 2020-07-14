@@ -50,28 +50,19 @@ const reactToPost = (
   state: Array<PostPropsState>,
   reaction: ReactPostState
 ): Array<PostPropsState> => {
-  return state.map((post) => {
-    const resolvedReaction = resultantReaction(post.reaction, reaction.type);
+  return state.map((post): any => {
     return (post.id as string) === reaction.id
       ? {
           ...post,
-          reaction: resolvedReaction,
-          downvotes:
-            post.reaction === 'DOWNVOTE' && resolvedReaction === 'NEUTRAL'
-              ? post.downvotes - 1
-              : resolvedReaction === 'DOWNVOTE'
-              ? post.downvotes + 1
-              : post.downvotes === 0
-              ? 0
-              : post.downvotes - 1,
-          upvotes:
-            post.reaction === 'UPVOTE' && resolvedReaction === 'NEUTRAL'
-              ? post.upvotes - 1
-              : resolvedReaction === 'UPVOTE'
-              ? post.upvotes + 1
-              : post.upvotes === 0
-              ? 0
-              : post.upvotes - 1
+          reaction: resultantReaction(post.reaction, reaction.type)
+        }
+      : (post.parent?.id as string) === reaction.id
+      ? {
+          ...post,
+          parent: {
+            ...post.parent,
+            reaction: resultantReaction(post.parent?.reaction, reaction.type)
+          }
         }
       : post;
   });

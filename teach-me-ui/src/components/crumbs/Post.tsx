@@ -14,13 +14,21 @@ import ReactButton from './ReactButton';
 import { bigNumberFormat } from '../../functions/utils';
 import { PostPropsState } from '../../constants/interfaces';
 
+export const processPostFn = (post: string) =>
+  post.split(/(\s(?=[#@])|(?=< [#@]\w+)\s)/).map((w, i) => {
+    return /(^@|^#)/.test(w) ? (
+      <Link key={i} to={`/${w}`}>
+        {w}
+      </Link>
+    ) : (
+      w
+    );
+  });
+
 const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
   let extra: string | null = null;
   if (props.sec_type === 'REPOST') {
     extra = `${props.sender_name} reposted`;
-  }
-  if (props.sec_type === 'REPLY') {
-    extra = `${props.sender_name} replied`;
   }
   if (props._extra) {
     switch (props._extra.type) {
@@ -32,49 +40,57 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
         break;
     }
   }
-
-  const processed = props.text
-    ?.split(/(\s(?=[#@])|(?=< [#@]\w+)\s)/)
-    .map((w, i) => {
-      return /(^@|^#)/.test(w) ? (
-        <Link key={i} to={`/${w}`}>
-          {w}
-        </Link>
-      ) : (
-        w
-      );
-    });
+  if (props.sec_type === 'REPLY') {
+    extra = `${props.sender_name} replied`;
+  }
 
   return (
     <Box
       className='post-list-page'
       borderRadius='5px'
-      p={1}
+      p={0}
+      pt={1}
+      pl={1}
       pb={props.sec_type === 'REPLY' ? 1 : 0}
       mb={1}>
       {((props._extra && props.sec_type !== 'REPLY') ||
         (props.sec_type === 'REPOST' && !props.text)) && (
         <small className='small-text'>{extra}</small>
       )}
-      {props.sec_type === 'REPLY' && !props._extra && (
+      {props.sec_type === 'REPLY' && (
         <small className='small-text'>{extra}</small>
       )}
-      <Row className='container-fluid mx-auto p-0 align-items-center'>
+      <Row
+        className={`container-fluid mx-auto ${
+          props.sec_type === 'REPLY' ? 'pt-0' : ''
+        } align-items-center p-2`}>
         <Avatar
           component='span'
-          className='chat-avatar'
-          alt={props.text ? props.sender_name : props.parent?.sender_name}
+          className='post-avatar'
+          alt={
+            props.sec_type === 'REPLY'
+              ? props.parent?.sender_name
+              : props.text
+              ? props.sender_name
+              : props.parent?.sender_name
+          }
           src={`/images/${props.userAvatar}`}
         />
         <Col className='d-flex flex-column bio-post'>
           {props.sender_name ? (
             <>
               <Box component='div' fontWeight='bold'>
-                {props.text ? props.sender_name : props.parent?.sender_name}
+                {props.sec_type === 'REPLY'
+                  ? props.parent?.sender_name
+                  : props.text
+                  ? props.sender_name
+                  : props.parent?.sender_name}
               </Box>
               <Box component='div' color='#777'>
                 @
-                {props.text
+                {props.sec_type === 'REPLY'
+                  ? props.parent?.sender_username
+                  : props.text
                   ? props.sender_username
                   : props.parent?.sender_username}
               </Box>
@@ -107,8 +123,14 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
       </Row>
       {props.sender_name ? (
         <Row className='container-fluid  mx-auto'>
-          <Box component='div' pt={1} px={0} className='break-word'>
-            {props.text ? processed : props.parent?.text}
+          <Box component='div' pt={1} px={0} ml={5} className='break-word'>
+            {processPostFn(
+              (props.sec_type === 'REPLY'
+                ? props.parent?.text
+                : props.text
+                ? props.text
+                : props.parent?.text) as string
+            )}
           </Box>
         </Row>
       ) : (
@@ -121,7 +143,7 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
           <Row className='container-fluid px-2 mx-auto p-0 align-items-center'>
             <Avatar
               component='span'
-              className='chat-avatar'
+              className='post-avatar'
               alt={props.sender_name}
               src={`/images/${props.userAvatar}`}
             />
@@ -136,27 +158,95 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
           </Row>
           <Row className='container-fluid  mx-auto'>
             <Box component='div' pt={1} px={0} className='break-word'>
-              {props.parent?.text}
+              {processPostFn(props.parent?.text as string)}
             </Box>
           </Row>
         </Box>
       )}
       {props.sender_name && (
-        <Box py={1} mt={1} borderTop='1px solid #ddd'>
-          <Row>
+        <Box py={1} mt={1} borderBottom='.5px solid #ddd'>
+          <Row className='ml-3'>
             <Col className='d-flex align-items-center justify-content-center'>
               <ReactButton
-                id={props.id as string}
-                reacted={props.reaction as 'NEUTRAL'}
-                reactions={props.upvotes as 0}
+                id={
+                  (props.sec_type === 'REPLY'
+                    ? props.parent?.id
+                    : props.text
+                    ? props.id
+                    : (props.parent?.id as string)) as string
+                }
+                reacted={
+                  (props.sec_type === 'REPLY'
+                    ? (props.parent?.reaction as 'NEUTRAL')
+                    : props.text
+                    ? (props.reaction as 'NEUTRAL')
+                    : (props.parent?.reaction as 'NEUTRAL')) as 'NEUTRAL'
+                }
+                reactions={((): number => {
+                  const upvotes: number = (props.sec_type === 'REPLY'
+                    ? (props.parent?.upvotes as number)
+                    : props.text
+                    ? (props.upvotes as number)
+                    : (props.parent?.upvotes as number)) as number;
+
+                  const reaction:
+                    | 'UPVOTE'
+                    | 'DOWNVOTE'
+                    | 'NEUTRAL' = (props.sec_type === 'REPLY'
+                    ? (props.parent?.reaction as 'NEUTRAL')
+                    : props.text
+                    ? (props.reaction as 'NEUTRAL')
+                    : (props.parent?.reaction as 'NEUTRAL')) as
+                    | 'NEUTRAL'
+                    | 'UPVOTE'
+                    | 'DOWNVOTE';
+
+                  return reaction === 'UPVOTE'
+                    ? (upvotes as number) + 1
+                    : (upvotes as number);
+                })()}
                 type='UPVOTE'
               />
             </Col>
             <Col className='d-flex align-items-center justify-content-center'>
               <ReactButton
-                id={props.id as string}
-                reacted={props.reaction as 'NEUTRAL'}
-                reactions={props.downvotes as 0}
+                id={
+                  (props.sec_type === 'REPLY'
+                    ? props.parent?.id
+                    : props.text
+                    ? props.id
+                    : (props.parent?.id as string)) as string
+                }
+                reacted={
+                  (props.sec_type === 'REPLY'
+                    ? (props.parent?.reaction as 'NEUTRAL')
+                    : props.text
+                    ? (props.reaction as 'NEUTRAL')
+                    : (props.parent?.reaction as 'NEUTRAL')) as 'NEUTRAL'
+                }
+                reactions={((): number => {
+                  const downvotes: number = (props.sec_type === 'REPLY'
+                    ? (props.parent?.downvotes as number)
+                    : props.text
+                    ? (props.downvotes as number)
+                    : (props.parent?.downvotes as number)) as number;
+
+                  const reaction:
+                    | 'UPVOTE'
+                    | 'DOWNVOTE'
+                    | 'NEUTRAL' = (props.sec_type === 'REPLY'
+                    ? (props.parent?.reaction as 'NEUTRAL')
+                    : props.text
+                    ? (props.reaction as 'NEUTRAL')
+                    : (props.parent?.reaction as 'NEUTRAL')) as
+                    | 'NEUTRAL'
+                    | 'UPVOTE'
+                    | 'DOWNVOTE';
+
+                  return reaction === 'DOWNVOTE'
+                    ? (downvotes as number) + 1
+                    : (downvotes as number);
+                })()}
                 type='DOWNVOTE'
               />
             </Col>
@@ -210,11 +300,11 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
         </Box>
       )}
       {props.sec_type === 'REPLY' && (
-        <Box className='inner-comment'>
+        <Box className='inner-comment pl-5'>
           <Row className='container-fluid px-2 mx-auto p-0 align-items-center'>
             <Avatar
               component='span'
-              className='chat-avatar'
+              className='post-avatar'
               alt={props.sender_name}
               src={`/images/${props.userAvatar}`}
             />
@@ -228,18 +318,22 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
             </Col>
           </Row>
           <Row className='container-fluid  mx-auto'>
-            <Box component='div' pt={1} px={0} className='break-word'>
-              {props.text}
+            <Box component='div' pt={1} px={0} ml={5} className='break-word'>
+              {processPostFn(props.text as string)}
             </Box>
           </Row>
           {props.sender_name && (
-            <Box py={1} mt={1} borderTop='1px solid #ddd'>
-              <Row>
+            <Box py={1} mt={1}>
+              <Row className='ml-3'>
                 <Col className='d-flex align-items-center justify-content-center'>
                   <ReactButton
                     id={props.id as string}
                     reacted={props.reaction as 'NEUTRAL'}
-                    reactions={props.upvotes as 0}
+                    reactions={
+                      (props.reaction as string) === 'UPVOTE'
+                        ? (props.upvotes as number) + 1
+                        : (props.upvotes as number) + 0
+                    }
                     type='UPVOTE'
                   />
                 </Col>
@@ -247,7 +341,11 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
                   <ReactButton
                     id={props.id as string}
                     reacted={props.reaction as 'NEUTRAL'}
-                    reactions={props.downvotes as 0}
+                    reactions={
+                      (props.reaction as string) === 'DOWNVOTE'
+                        ? (props.downvotes as number) + 1
+                        : (props.downvotes as number) + 0
+                    }
                     type='DOWNVOTE'
                   />
                 </Col>
