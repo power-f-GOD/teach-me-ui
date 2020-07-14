@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 // import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -25,17 +25,14 @@ import moment from 'moment';
      
 const Notifications = (props: any) => {
   const { getNotifications } = props;
-  const [ visibility, setVisibility ] = useState<any | undefined>('hidden')
+  
   useEffect(() => {
     dispatch(getNotificationsRequest(Date.now())(dispatch));
-    return function() {setVisibility('hidden')}
   }, [])
 
   const result = getNotifications.data;
   // const lastDate = result[(result.length - 1)].date;
-  setTimeout(()=>{setVisibility('visible')}, 600);
   return getNotifications.status === 'pending' ? (
-    <div style={{ visibility: visibility}}>
     <Box className='Notifications '>
     <div className='Notifications-div'>
 
@@ -48,7 +45,6 @@ const Notifications = (props: any) => {
 
     </div>
     </Box>
-    </div>
   ) : (
     // <div style={{ visibility: visibility}}>
 
