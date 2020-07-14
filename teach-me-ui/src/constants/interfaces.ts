@@ -20,39 +20,40 @@ export interface InputErrState {
   helperText?: string;
 }
 
-export interface PostPropsState {
-  postBody: string;
-  displayName: string;
-  noOfComments: number;
-  username: string;
-  userAvatar: string;
-  reaction: 'upvote' | 'downvote' | 'neutral';
-  sender_id?: string;
-  sender_name?: string;
-  sender_username?: string;
-  sec_type?: 'REPOST' | 'REPLY';
-  text?: string;
-  id?: string;
-  upvotes: number;
-  downvotes: number;
-  replies?: number;
-  reposts?: number;
-  posted_at?: number;
-  _extra?: {
-    type: 'UPVOTE' | 'DOWNVOTE';
-    colleague_id: string;
-    colleague_name: string;
-    colleague_username: string;
-  };
-  parent?: {
-    sec_type?: 'REPOST' | 'REPLY';
-    text: string;
-    id: string;
-    sender_id: string;
-    sender_name: string;
-    sender_username: string;
-  };
-}
+export type PostPropsState = any
+// export interface PostPropsState {
+//   postBody: string;
+//   displayName: string;
+//   noOfComments: number;
+//   username: string;
+//   userAvatar: string;
+//   reaction: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL';
+//   sender_id: string;
+//   sender_name: string;
+//   sender_username: string;
+//   sec_type?: 'REPOST' | 'REPLY';
+//   text?: string;
+//   id?: string;
+//   upvotes: number;
+//   downvotes: number;
+//   replies?: number;
+//   reposts?: number;
+//   posted_at?: number;
+//   _extra?: {
+//     type: 'UPVOTE' | 'DOWNVOTE';
+//     colleague_id: string;
+//     colleague_name: string;
+//     colleague_username: string;
+//   };
+//   parent?: {
+//     sec_type?: 'REPOST' | 'REPLY';
+//     text: string;
+//     id: string;
+//     sender_id: string;
+//     sender_name: string;
+//     sender_username: string;
+//   };
+// }
 
 export interface FetchPostsState {
   status: 'pending' | 'rejected' | 'resolved';
@@ -68,13 +69,13 @@ export interface TopicPropsState {
 export interface ReactButtonPropsState {
   id: string;
   reactions: number;
-  type: 'upvote' | 'downvote';
-  reacted: 'upvote' | 'downvote' | 'neutral';
+  type: 'UPVOTE' | 'DOWNVOTE';
+  reacted: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL';
 }
 
 export interface ReactPostState {
   id: string;
-  type: 'upvote' | 'downvote' | 'neutral';
+  type: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL';
 }
 
 export interface BasicInputState extends InputErrState {

@@ -26,7 +26,7 @@ const post: PostPropsState = {
   text:
     'Where do people go when they die? Same place they were before they were born!',
   userAvatar: 'avatar-2.png',
-  reaction: 'downvote'
+  reaction: 'DOWNVOTE'
 };
 
 test('loads and displays placeholder text', async () => {

@@ -14,7 +14,7 @@ import Search from '../Main/Search';
 import Profile from '../Main/Profile';
 import Notifications from '../Main/Notifications';
 
-const Index = () => {
+const Index = (props: any) => {
   React.useEffect(() => () => window.scrollTo(0, 0), []);
   const mq = window.matchMedia( "(max-width: 600px)" );
 

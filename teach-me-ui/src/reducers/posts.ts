@@ -21,7 +21,7 @@ export const posts = (
   if (action.type === CREATE_POST) return createPost(state, action.payload);
   else if (action.type === REACT_TO_POST)
     return reactToPost(state, action.payload);
-  else if (action.type === FETCHED_POSTS) return [...action.payload, ...state];
+  else if (action.type === FETCHED_POSTS) return [...action.payload];
   else return state;
 };
 
@@ -57,17 +57,17 @@ const reactToPost = (
           ...post,
           reaction: resolvedReaction,
           downvotes:
-            post.reaction === 'downvote' && resolvedReaction === 'neutral'
+            post.reaction === 'DOWNVOTE' && resolvedReaction === 'NEUTRAL'
               ? post.downvotes - 1
-              : resolvedReaction === 'downvote'
+              : resolvedReaction === 'DOWNVOTE'
               ? post.downvotes + 1
               : post.downvotes === 0
               ? 0
               : post.downvotes - 1,
           upvotes:
-            post.reaction === 'upvote' && resolvedReaction === 'neutral'
+            post.reaction === 'UPVOTE' && resolvedReaction === 'NEUTRAL'
               ? post.upvotes - 1
-              : resolvedReaction === 'upvote'
+              : resolvedReaction === 'UPVOTE'
               ? post.upvotes + 1
               : post.upvotes === 0
               ? 0

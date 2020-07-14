@@ -32,10 +32,10 @@ export const validateResetPasswordFn = (password: string) => {
 };
 
 export const resultantReaction: Function = (
-  oldReaction: 'upvote' | 'downvote' | 'neutral',
-  newReaction: 'upvote' | 'downvote' | 'neutral'
-): 'upvote' | 'downvote' | 'neutral' => {
-  if (oldReaction === newReaction) return 'neutral';
+  oldReaction: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL',
+  newReaction: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL'
+): 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL' => {
+  if (oldReaction === newReaction) return 'NEUTRAL';
   return newReaction;
 };
 
