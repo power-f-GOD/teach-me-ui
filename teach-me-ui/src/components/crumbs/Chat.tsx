@@ -148,29 +148,12 @@ const ChatBox = (props: ChatBoxProps) => {
 
   useEffect(() => {
     if (socket) {
-      socket.addEventListener('open', () => {
-        console.log('Socket connected!');
-      });
-
-      socket.addEventListener('error', (e: any) => {
-        console.error('An error occurred while trying to connect Web Socket.');
-      });
-
-      socket.addEventListener('close', () => {
-        console.log('Socket disconnected!');
-      });
-    }
-  }, [socket]);
-
-  useEffect(() => {
-    if (socket) {
       socket.addEventListener('message', (e: any) => {
         const message = JSON.parse(e.data) as APIMessageResponse;
         const { pipe } = message;
 
         if (pipe === 'CHAT_NEW_MESSAGE') {
           // console.log(message);
-
           dispatch(conversationMessages({ data: [{ ...message }] }));
         }
       });
