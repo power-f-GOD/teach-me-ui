@@ -23,9 +23,6 @@ import {
   InstitutionInputState
 } from '../../constants';
 
-// importing jest mock for mediaqueries
-import '../__mocks__/matchMedia.mock';
-
 afterEach(cleanup);
 
 it("validate reducers should be called with 'state' and 'action' and return object of type InputPropsState", () => {

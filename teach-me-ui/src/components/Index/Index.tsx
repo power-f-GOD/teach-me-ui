@@ -1,6 +1,9 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 
+// importing jest mock for mediaqueries
+import '../../__tests__/__mocks__/matchMedia.mock.js';
+
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 

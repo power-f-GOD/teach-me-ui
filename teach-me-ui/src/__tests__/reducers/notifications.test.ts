@@ -9,9 +9,6 @@ import {
 } from '../../constants';
 import { getNotifications } from '../../reducers/notifications';
 
-// importing jest mock for mediaqueries
-import '../__mocks__/matchMedia.mock';
-
 afterEach(cleanup);
 
 it("notifications reducers should be called with 'state' and 'action' params and return value of initial state type.", () => {
