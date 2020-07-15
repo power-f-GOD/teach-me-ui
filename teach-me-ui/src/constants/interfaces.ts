@@ -20,29 +20,23 @@ export interface InputErrState {
   helperText?: string;
 }
 
-export type PostPropsState = any;
-
-// there seem to be something wrong with the shape of this interface, its not corresponding to the data it is used on
-// so i just used the type above instead to get my code working, the author of this interface should please look into it
-
-
-// export interface PostPropsState {
-//   userAvatar: string;
-//   reaction: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL';
-//   sender_id: string;
-//   sender_name: string;
-//   sender_username: string;
-//   sec_type?: 'REPOST' | 'REPLY';
-//   text: string;
-//   id: string;
-//   upvotes: number;
-//   downvotes: number;
-//   replies: number;
-//   reposts: number;
-//   posted_at: number;
-//   _extra?: PostExtraProps;
-//   parent?: PostParentProps;
-// }
+export interface PostPropsState {
+  userAvatar: string;
+  reaction: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL';
+  sender_id: string;
+  sender_name: string;
+  sender_username: string;
+  sec_type?: 'REPOST' | 'REPLY';
+  text: string;
+  id: string;
+  upvotes: number;
+  downvotes: number;
+  replies: number;
+  reposts: number;
+  posted_at: number;
+  _extra?: PostExtraProps;
+  parent?: PostParentProps;
+}
 
 interface PostExtraProps {
   type: 'UPVOTE' | 'DOWNVOTE';
