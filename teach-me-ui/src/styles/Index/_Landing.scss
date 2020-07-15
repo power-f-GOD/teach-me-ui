@@ -1,0 +1,155 @@
+@import '../constants';
+
+.Landing {
+  position: relative;
+
+  * {
+    position: relative;
+    z-index: 2;
+  }
+}
+
+.landing-splash-box {
+  height: 100vh;
+  max-height: 45rem;
+  min-height: 40rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  color: #eee;
+  background-color: $theme-primary-v9;
+  position: relative;
+  background: transparent;
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  &::before,
+  &::after {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    border-radius: 0 0 50% 50%;
+    content: ' ';
+  }
+
+  &::before {
+    z-index: 1;
+    height: 120%;
+    width: 180vw;
+    top: -32.5%;
+    left: -40vw;
+    background: {
+      image: url('/images/educational.png'),
+        linear-gradient(135deg, $theme-primary-v3, $theme-primary);
+      repeat: no-repeat;
+      position: 97vw 90%, center;
+      size: 28rem, 100vw;
+    }
+    box-shadow: 0 2.25rem 0 $theme-primary-v5,
+      0 2.5rem 1.5rem 0 rgba(0, 0, 0, 0.35);
+  }
+
+  &::after {
+    z-index: 0;
+    width: 200vw;
+    left: -50vw;
+    height: 150%;
+    top: -20%;
+    background: {
+      color: $theme-primary;
+      image: linear-gradient(to left, $theme-primary-v4, $theme-primary-v5);
+      position: center;
+      size: 100vw;
+    }
+  }
+}
+
+.landing-splash-links-box {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 20rem;
+
+  a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    text-shadow: none;
+    padding: 0.65em 1.85em;
+    border-radius: 1.75em;
+    height: unset;
+    min-width: 12rem;
+    max-width: 16rem;
+    margin: 1em 1.5em 0 0;
+    color: white !important;
+    border: 1.5px solid white !important;
+    transition: 0.35s;
+
+    &:first-child {
+      width: 100%;
+      position: relative;
+      border: none !important;
+
+      &.animate {
+        animation: ripple 2.25s infinite ease-out;
+      }
+
+      @keyframes ripple {
+        from {
+          box-shadow: 0 0 0 0.05em white, 0 0 0 0.75em $theme-primary-v7;
+        }
+        to {
+          box-shadow: 0 0 0em 3em rgba(0, 0, 0, 0), 0 0 0 3em rgba(0, 0, 0, 0);
+        }
+      }
+    }
+
+    &:last-child {
+      color: #ddd;
+      border-color: #ddd;
+      background-color: inherit;
+    }
+
+    &:hover {
+      color: white;
+      padding-left: 2.5rem;
+      padding-right: 2.5rem;
+      background-color: $theme-secondary-v5;
+    }
+  }
+}
+
+.landing-text-section {
+  padding: 0;
+}
+
+.card-section-row {
+  display: flex;
+  justify-content: center;
+  padding: 0 !important;
+}
+
+.card-section-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  text-align: center;
+  font-size: 1.2em;
+  margin: 1.5em 0 5em 0;
+  line-height: 2em;
+
+  .MuiCard-root {
+    flex-grow: 1;
+    width: 27.5%;
+    margin: 1.25em;
+    min-width: 16em;
+  }
+}
+
+.card-image {
+  width: 12rem;
+  border-radius: 50%;
+}

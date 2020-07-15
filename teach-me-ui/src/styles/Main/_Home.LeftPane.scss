@@ -1,0 +1,58 @@
+.left-pane {
+  background-color: #fff;
+
+  .rows-wrapper {
+    height: 100%;
+    overflow: auto;
+    padding: 0.75rem;
+  }
+
+  .chat-avatar {
+    $size: 5rem;
+
+    height: $size;
+    margin: 1rem 0;
+    width: $size;
+    font-size: 2.5rem;
+    background: $theme-primary-v5;
+    // margin-right: 0.5rem !important;
+    color: #eee;
+    border: 0.125rem solid #eee;
+  }
+
+  .display-name {
+    margin: 0.5rem 0;
+    font-weight: bold;
+  }
+
+  .username {
+    color: #777;
+  }
+
+  .MuiSvgIcon-root {
+    color: $theme-primary-v4;
+  }
+
+  .info {
+    font-size: 0.9rem;
+  }
+
+  .status {
+    color: #777;
+    text-align: center;
+    font-size: 0.9rem;
+
+    .MuiSvgIcon-root {
+      color: inherit;
+      margin-left: auto;
+    }
+  }
+
+  .academic {
+    color: #666;
+
+    .MuiSvgIcon-root {
+      color: $theme-primary-v6;
+    }
+  }
+}

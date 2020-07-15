@@ -1,0 +1,33 @@
+@import '../constants';
+
+.root-grid {
+  height: auto;
+  min-height: 100vh;
+  flex-grow: 1;
+  background: #eee !important;
+}
+
+.top-navbar {
+  background: $theme-primary-v4;
+  color: white;
+
+  ul {
+    display: flex;
+    color: white;
+    justify-content: space-around;
+    align-items: center;
+    list-style-type: none;
+    margin: 0;
+    height: 3.5rem;
+
+    a {
+      &:hover {
+        color: white;
+      }
+
+      &:active {
+        color: $theme-primary-v4;
+      }
+    }
+  }
+}
