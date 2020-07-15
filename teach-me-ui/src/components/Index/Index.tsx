@@ -1,9 +1,6 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 
-// importing jest mock for mediaqueries
-import '../../__tests__/__mocks__/matchMedia.mock.js';
-
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 
@@ -20,7 +17,7 @@ import Notifications from '../Main/Notifications';
 const Index = (props: any) => {
   React.useEffect(() => () => window.scrollTo(0, 0), []);
 
-
+  const mq = window.matchMedia( "(max-width: 600px)" );
 
   return (
     <Grid className='index-root-grid custom-scroll-bar fade-in'>
@@ -33,10 +30,12 @@ const Index = (props: any) => {
           <Route path='/support' component={Support} />
           <Route path='/search' component={Search} />
           <Route path='/@*' component={Profile} />
-          {window.matchMedia( "(max-width: 600px)" ).matches
+
+          {mq.matches
             ? <Route path='/notifications' component={Notifications} />
             : <Route component={_404} />
           }
+          
           <Route
             path={['/@:userId', '/@:userId/colleagues']}
             component={Profile}

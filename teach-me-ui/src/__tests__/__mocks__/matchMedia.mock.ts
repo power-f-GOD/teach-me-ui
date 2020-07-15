@@ -1,4 +1,4 @@
-test.skip('Workaround', () => 1)
+test.skip('Workaround', () => 1);
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,

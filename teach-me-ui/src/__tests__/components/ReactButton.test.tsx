@@ -1,3 +1,6 @@
+// importing jest mock for mediaqueries
+import '../__mocks__/matchMedia.mock.ts';
+
 // import dependencies
 import React from 'react';
 
@@ -8,6 +11,7 @@ import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
 import ReactButton from '../../components/crumbs/ReactButton';
+
 
 test('loads and displays placeholder text', async () => {
   render(

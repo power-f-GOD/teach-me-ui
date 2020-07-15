@@ -1,3 +1,6 @@
+// importing jest mock for mediaqueries
+import '../__mocks__/matchMedia.mock.ts';
+
 // import dependencies
 import React from 'react';
 
@@ -9,6 +12,7 @@ import '@testing-library/jest-dom/extend-expect';
 
 import Post from '../../components/crumbs/Post';
 import { PostPropsState } from '../../constants';
+
 
 const post: PostPropsState = {
   sender_id: '1',

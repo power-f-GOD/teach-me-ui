@@ -80,7 +80,6 @@ function IndexNav(props: any) {
 }
 
 function MainNav(props: any) {
-  // const [navVisible, setNavVisible] = useState('hidden');
   const SignOut = withStyles({
     root: {
       height: '3.1rem'
@@ -98,38 +97,36 @@ function MainNav(props: any) {
       <NavLink exact to='/@' isActive={(_, location) => /\/@\w+/.test(location.pathname)} className='nav-link'>
         <AccountIcon className='nav-icon' /> Profile
       </NavLink>
-      {mq.matches
-        ? <NavLink to='/notifications'style={{marginTop: '0.7em', color: 'white'}}>
-            <Tooltip
-              title="Notifications"
-              placement="bottom"
-            >
-              <Badge badgeContent={4} color='secondary' >
-                <NotificationsIcon />
-              </Badge>
-            </Tooltip>
-          </NavLink>
-        
-        : <Dropdown className='dropdown' >
-            <Dropdown.Toggle  id='dropdown' as='p' on='true'>
-            <Tooltip
-              title="Notifications"
-              placement="bottom"
-            >
-              <Badge badgeContent={4} color='secondary' >
-                <NotificationsIcon />
-              </Badge>
-            </Tooltip>
-            </Dropdown.Toggle>
-            <Dropdown.Menu className='dropdown-contents'>
-              
-              <Dropdown.Item>
+
+        {mq.matches
+          ? <NavLink to='/notifications'style={{marginTop: '0.7em', color: 'white'}}>
+              <Tooltip
+                title="Notifications"
+                placement="bottom"
+              >
+                <Badge badgeContent={4} color='secondary' >
+                  <NotificationsIcon />
+                </Badge>
+              </Tooltip>
+            </NavLink>
+          
+          : <Dropdown className='dropdown' >
+              <Dropdown.Toggle  id='dropdown' as='p' on='true'>
+              <Tooltip
+                title="Notifications"
+                placement="bottom"
+              >
+                <Badge badgeContent={4} color='secondary' >
+                  <NotificationsIcon />
+                </Badge>
+              </Tooltip>
+              </Dropdown.Toggle>
+              <Dropdown.Menu className='dropdown-contents'>
                 <Notifications />
-              </Dropdown.Item>
-              
-            </Dropdown.Menu>
-          </Dropdown>
-      }
+              </Dropdown.Menu>
+            </Dropdown>
+        }
+        
       <div style={{width: '1em'}}></div>
       <SignOut
         variant='contained'
@@ -145,7 +142,6 @@ function MainNav(props: any) {
 };
 
 function MainNavMenu(props: any) {
-  // const [navVisible, setNavVisible] = useState('hidden');
   return (
     <Box className={`nav-links-wrapper ${props?.className}`}>
       <NavLink to='/search' className='nav-link'>
@@ -167,18 +163,6 @@ function MainNavMenu(props: any) {
     </Box>
   );
 };
-//       <Button
-//         variant='contained'
-//         className='nav-link'
-//         size='medium'
-//         id='signout-btn'
-//         fullWidth
-//         onClick={handleSignoutRequest}>
-//         Sign Out <ArrowForward fontSize='inherit' />
-//       </Button>
-//     </Box>
-//   );
-// }
 
 function NavGeneralLinks(props: any) {
   return (
@@ -246,6 +230,7 @@ function TemporaryDrawer(props: any) {
       <NavLink to='/search' className='nav-link'>
         <SearchIcon />
       </NavLink>
+
       {mq.matches
         ? <NavLink to='/notifications'style={{marginTop: '0.7em', color: 'white'}}>
             <Tooltip
@@ -271,14 +256,11 @@ function TemporaryDrawer(props: any) {
             </Dropdown.Toggle>
 
             <Dropdown.Menu className='dropdown-contents'>
-              
-              <Dropdown.Item>
-                <Notifications />
-              </Dropdown.Item>
-              
+              <Notifications />
             </Dropdown.Menu>
           </Dropdown>
       }
+
       <div style={{width: '1em'}}></div>
       <IconButton
         edge='start'
