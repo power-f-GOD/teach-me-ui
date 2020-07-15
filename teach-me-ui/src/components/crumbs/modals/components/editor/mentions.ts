@@ -7,7 +7,6 @@ const mentions = [
   {
     name: 'Julian Krispel-Samsel',
     link: 'https://twitter.com/juliandoesstuff',
-    avatar: 'https://avatars2.githubusercontent.com/u/1188186?v=3&s=400',
   },
   {
     name: 'Jyoti Puri',
