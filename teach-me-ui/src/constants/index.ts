@@ -6,4 +6,5 @@ export * from './chat';
 export * from './modals';
 export * from './posts';
 export * from './profile';
+export * from './notifications';
 export * from './colleague';

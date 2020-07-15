@@ -1,3 +1,6 @@
+//importing jest mock for mediaqueries
+import '../__mocks__/matchMedia.mock.ts';
+
 import { cleanup } from '@testing-library/react';
 
 import {
@@ -6,6 +9,7 @@ import {
   DISPLAY_SNACK_BAR,
   SET_USER_DISPLAY_NAME
 } from '../../constants';
+
 
 import { displaySnackbar, setDisplayName } from '../../actions';
 

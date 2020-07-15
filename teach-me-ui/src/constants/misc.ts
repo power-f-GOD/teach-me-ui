@@ -1,4 +1,4 @@
-import { SnackbarState, SearchState, UserData } from './interfaces';
+import { SnackbarState, SearchState, UserData, NotificationState } from './interfaces';
 
 export const apiBaseURL = 'https://teach-me-services.herokuapp.com/api/v1';
 // export const apiBaseURL = 'http://d9b9e98ebbc3.ngrok.io/api/v1';
@@ -21,6 +21,12 @@ export const searchState: SearchState = {
   status: 'settled',
   err: false,
   statusText: ' ',
+  data: []
+};
+
+export const notificationState: NotificationState = {
+  status: 'settled',
+  err: false,
   data: []
 };
 
