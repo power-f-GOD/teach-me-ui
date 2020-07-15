@@ -20,40 +20,51 @@ export interface InputErrState {
   helperText?: string;
 }
 
-export type PostPropsState = any
-// export interface PostPropsState {
-//   postBody: string;
-//   displayName: string;
-//   noOfComments: number;
-//   username: string;
-//   userAvatar: string;
-//   reaction: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL';
-//   sender_id: string;
-//   sender_name: string;
-//   sender_username: string;
-//   sec_type?: 'REPOST' | 'REPLY';
-//   text?: string;
-//   id?: string;
-//   upvotes: number;
-//   downvotes: number;
-//   replies?: number;
-//   reposts?: number;
-//   posted_at?: number;
-//   _extra?: {
-//     type: 'UPVOTE' | 'DOWNVOTE';
-//     colleague_id: string;
-//     colleague_name: string;
-//     colleague_username: string;
-//   };
-//   parent?: {
-//     sec_type?: 'REPOST' | 'REPLY';
-//     text: string;
-//     id: string;
-//     sender_id: string;
-//     sender_name: string;
-//     sender_username: string;
-//   };
-// }
+export interface PostPropsState {
+  userAvatar: string;
+  reaction: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL';
+  sender_id: string;
+  sender_name: string;
+  sender_username: string;
+  sec_type?: 'REPOST' | 'REPLY';
+  text: string;
+  id: string;
+  upvotes: number;
+  downvotes: number;
+  replies: number;
+  reposts: number;
+  posted_at: number;
+  _extra?: PostExtraProps;
+  parent?: PostParentProps;
+}
+
+interface PostExtraProps {
+  type: 'UPVOTE' | 'DOWNVOTE';
+  colleague_id: string;
+  colleague_name: string;
+  colleague_username: string;
+}
+
+interface PostParentProps {
+  sec_type?: 'REPOST' | 'REPLY';
+  text: string;
+  id: string;
+  sender_id: string;
+  sender_name: string;
+  sender_username: string;
+  upvotes: number;
+  downvotes: number;
+  replies: number;
+  reaction: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL';
+  reposts: number;
+}
+
+export interface SocketProps {
+  pipe: 'POST_REACTION' | 'POST_REPLY';
+  post_id: string;
+  reaction?: 'UPVOTE' | 'DOWNVOTE';
+  interaction?: 'SEEN' | 'ENGAGED';
+}
 
 export interface FetchPostsState {
   status: 'pending' | 'rejected' | 'resolved';
@@ -230,7 +241,7 @@ export interface CreateLevelState extends StatusPropsState {
 // ChatBox interfaces...
 
 //you should eventually make all the Message props required
-export interface Message extends Partial<APIMessageResponse> {
+export interface MessageProps extends Partial<APIMessageResponse> {
   timestamp?: string | number;
 }
 
@@ -247,7 +258,7 @@ export interface ChatData {
 export interface AnchorInfo {
   displayName: string;
   id: string;
-  messages?: Message[];
+  messages?: MessageProps[];
   avatar: string;
   info?: UserInfo | RoomInfo;
   type: 'conversation' | 'classroom';

@@ -188,7 +188,8 @@ function TabPanel(props: TabPanelProps) {
   const name = (value === 0 ? CV : CR).toLowerCase();
 
   return (
-    <section
+    <Box
+      component='section'
       role='tabpanel'
       hidden={value !== index}
       id={name}
@@ -198,7 +199,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={index}
       {...other}>
       <Box>{children}</Box>
-    </section>
+    </Box>
   );
 }
 
