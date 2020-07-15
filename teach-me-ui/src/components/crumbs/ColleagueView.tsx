@@ -18,7 +18,7 @@ import {
 } from '../../hooks/api';
 import { UserData, ColleagueRequestProps } from '../../constants';
 
-export default () => {
+export default (props: any) => {
   const [active, setActive] = useState<'1' | '2'>('1');
 
   const onTabClick = (e: any) => {

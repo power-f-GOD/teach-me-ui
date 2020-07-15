@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -17,25 +17,37 @@ import Search from './Search';
 import createMemo from '../../Memo';
 import { dispatch } from '../../functions/utils';
 import { initWebSocket, closeWebSocket } from '../../actions/misc';
+import Notifications from './Notifications';
 // import { ChatState } from '../../constants';
 
 const Memoize = createMemo();
 
 const Main = (props: any) => {
-  const { signout, userData } = props;
-  // const {
-  //   queryString: qString,
-  //   isOpen: chatIsOpen
-  // }: ChatState = chatState;
-  // let queryString = qString!.split('?')[1] ?? '';
-  // queryString = chatIsOpen ? `?${queryString}` : '';
-  React.useEffect(() => {
+  const { signout, userData, webSocket: socket } = props;
+
+  useEffect(() => {
     dispatch(initWebSocket(userData.token as string));
 
     return () => {
-        dispatch(closeWebSocket());
+      dispatch(closeWebSocket());
     };
   }, [userData.token]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.addEventListener('open', () => {
+        console.log('Socket connected!');
+      });
+
+      socket.addEventListener('error', (e: any) => {
+        console.error('An error occurred while trying to connect Web Socket.');
+      });
+
+      socket.addEventListener('close', () => {
+        console.log('Socket closed!');
+      });
+    }
+  }, [socket]);
 
   if (!/chat=/.test(window.location.search)) {
     window.history.replaceState({}, '', window.location.pathname);
@@ -49,6 +61,8 @@ const Main = (props: any) => {
     //redirect to actual URL user was initially trying to access when wasn't authenticated
     return <Redirect to={props.location.state?.from || { pathname: '/' }} />;
   }
+  const mq = window.matchMedia( "(max-width: 600px)" );
+
 
   return (
     <Grid className='main-root-grid fade-in'>
@@ -58,8 +72,12 @@ const Main = (props: any) => {
         <Route path={['/', '/index', '/home']} exact component={Home} />
         <Route path='/about' component={About} />
         <Route path='/support' component={Support} />
-        <Route path='/@*' component={Profile} />
+        <Route path='/@:userId' component={Profile} />
         <Route path='/search' component={Search} />
+        {mq.matches
+          ? <Route path='/notifications' component={Notifications} />
+          : <Route component={_404} />
+        }
         <Route component={_404} />
       </Switch>
 
@@ -71,7 +89,8 @@ const Main = (props: any) => {
 const mapStateToProps = (state: any) => {
   return {
     signout: state.signout,
-    userData: state.userData
+    userData: state.userData,
+    webSocket: state.webSocket
   };
 };
 

@@ -10,7 +10,8 @@ import {
   ReactPostState,
   FetchPostsState,
   apiBaseURL as baseURL,
-  UserData
+  UserData,
+  SocketProps
 } from '../constants';
 
 import { getState } from '../functions';
@@ -23,6 +24,20 @@ export const createPost = (payload: PostPropsState): ReduxAction => {
 
 export const reactToPost = (payload: ReactPostState): ReduxAction => {
   return { type: REACT_TO_POST, payload };
+};
+
+export const sendReactionToServer = (payload: SocketProps) => (
+  dispatch: Function
+) => {
+  dispatch(
+    reactToPost({ id: payload.post_id, type: payload.reaction as 'NEUTRAL' })
+  );
+
+  const socket: WebSocket = getState().webSocket as WebSocket;
+  socket.addEventListener('message', (event) => {
+    console.log(event);
+  });
+  socket.send(JSON.stringify(payload));
 };
 
 export const fetchPosts: Function = () => (dispatch: Function) => {

@@ -1,11 +1,17 @@
-import { reactToPost, fetchPosts } from '../actions';
+import { sendReactionToServer, fetchPosts } from '../actions';
 import { dispatch } from './utils';
 
 export const reactToPostFn = (
   id: string,
-  type: 'upvote' | 'downvote' | 'neutral'
+  type: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL'
 ) => {
-  dispatch(reactToPost({ type, id }));
+  dispatch(
+    sendReactionToServer({
+      post_id: id,
+      reaction: type as 'UPVOTE' | 'DOWNVOTE',
+      pipe: 'POST_REACTION'
+    })
+  );
 };
 
 export const fetchPostsFn = () => {

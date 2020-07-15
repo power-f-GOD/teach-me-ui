@@ -9,9 +9,8 @@ import React, {
 import queryString from 'query-string';
 
 import * as api from '../../hooks/api';
-import { Redirect, Link } from 'react-router-dom';
+import { Redirect, Link, Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Switch, Route } from 'react-router';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -127,7 +126,7 @@ const Profile = (props: any) => {
   const { isAuthenticated } = auth;
   const token = (userData as UserData).token as string;
 
-  let userId = props.match.params[0].split('/')[0];
+  let { userId } = props.match.params;
   const isId = /^@\w+$/.test('@' + userId);
   userId = isId ? '@' + userId.toLowerCase() : username;
   // here is where the check is made to render the views accordingly
@@ -379,7 +378,7 @@ const Profile = (props: any) => {
           <Link to={`/${userId}`}>
             <div
               className={`nav-item ${
-                !/colleagues/.test(props.match.params[0]) ? 'active' : ''
+                !/colleagues/.test(props.location.pathname) ? 'active' : ''
               }`}>
               WALL
             </div>
@@ -387,7 +386,7 @@ const Profile = (props: any) => {
           <Link to={`/${userId}/colleagues`}>
             <div
               className={`nav-item ${
-                /colleagues/.test(props.match.params[0]) ? 'active' : ''
+                /colleagues/.test(props.location.pathname) ? 'active' : ''
               }`}>
               COLLEAGUES
             </div>
@@ -606,12 +605,8 @@ const Profile = (props: any) => {
           </Box>
         </Col>
         <Switch>
-          <Route
-            path={`/@:userId/colleagues`}
-            exact
-            component={ColleagueView}
-          />
-          <Route path={`/@:userId`} exact component={ProfileFeeds} />
+          <Route path='/@:userId/colleagues' exact component={ColleagueView} />
+          <Route path='/@:userId' exact component={ProfileFeeds} />
         </Switch>
       </Row>
       <Container className='rows-wrapper custom-scroll-bar small-bar rounded-bar tertiary-bar p-0'>

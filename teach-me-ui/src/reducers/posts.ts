@@ -21,7 +21,7 @@ export const posts = (
   if (action.type === CREATE_POST) return createPost(state, action.payload);
   else if (action.type === REACT_TO_POST)
     return reactToPost(state, action.payload);
-  else if (action.type === FETCHED_POSTS) return [...action.payload, ...state];
+  else if (action.type === FETCHED_POSTS) return [...action.payload];
   else return state;
 };
 
@@ -50,28 +50,19 @@ const reactToPost = (
   state: Array<PostPropsState>,
   reaction: ReactPostState
 ): Array<PostPropsState> => {
-  return state.map((post) => {
-    const resolvedReaction = resultantReaction(post.reaction, reaction.type);
+  return state.map((post): any => {
     return (post.id as string) === reaction.id
       ? {
           ...post,
-          reaction: resolvedReaction,
-          downvotes:
-            post.reaction === 'downvote' && resolvedReaction === 'neutral'
-              ? post.downvotes - 1
-              : resolvedReaction === 'downvote'
-              ? post.downvotes + 1
-              : post.downvotes === 0
-              ? 0
-              : post.downvotes - 1,
-          upvotes:
-            post.reaction === 'upvote' && resolvedReaction === 'neutral'
-              ? post.upvotes - 1
-              : resolvedReaction === 'upvote'
-              ? post.upvotes + 1
-              : post.upvotes === 0
-              ? 0
-              : post.upvotes - 1
+          reaction: resultantReaction(post.reaction, reaction.type)
+        }
+      : (post.parent?.id as string) === reaction.id
+      ? {
+          ...post,
+          parent: {
+            ...post.parent,
+            reaction: resultantReaction(post.parent?.reaction, reaction.type)
+          }
         }
       : post;
   });

@@ -13,10 +13,13 @@ import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 import IconButton from '@material-ui/core/IconButton';
 import Box from '@material-ui/core/Box';
+import DoneIcon from '@material-ui/icons/Done';
+import DoneAllIcon from '@material-ui/icons/DoneAll';
+import ScheduleIcon from '@material-ui/icons/Schedule';
 
 import {
   ChatState,
-  Message,
+  MessageProps,
   APIConversationResponse,
   APIMessageResponse,
   UserData,
@@ -90,7 +93,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         queryString
       })
     );
-    
+
     window.history.replaceState({}, '', queryString);
   }, [_chatState]);
 
@@ -109,7 +112,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
 
   const handleSendMsgClick = useCallback(() => {
     const msgBox = msgBoxRef.current!;
-    const msg: Message = {
+    const msg: MessageProps = {
       message: msgBox.value.trim(),
       time_stamp_id: String(Date.now()),
       pipe: 'CHAT_NEW_MESSAGE',
@@ -283,13 +286,17 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         className='chat-scroll-view custom-scroll-bar grey-scrollbar'
         style={{ marginBottom: scrollViewElevation }}>
         {!!convoMessages[0] && _conversationMessages.status === 'fulfilled' ? (
-          convoMessages.map((message, key: number) =>
-            message.sender_id && message.sender_id !== userData.id ? (
-              <IncomingMsg message={message} key={key} />
-            ) : (
-              <OutgoingMsg message={message} key={key} />
-            )
-          )
+          convoMessages.map((message, key: number) => (
+            <Message
+              message={message}
+              type={
+                message.sender_id && message.sender_id !== userData.id
+                  ? 'incoming'
+                  : 'outgoing'
+              }
+              key={key}
+            />
+          ))
         ) : (
           <Box
             className='theme-tertiary-lighter d-flex align-items-center justify-content-center'
@@ -351,43 +358,37 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   );
 };
 
-function IncomingMsg(props: { message: Partial<APIMessageResponse> }) {
-  let { message: text, date } = props.message;
-  let timestamp = timestampFormatter(date);
+function Message(props: {
+  message: Partial<APIMessageResponse>;
+  type: 'incoming' | 'outgoing';
+}) {
+  const { type, message } = props;
+  const { message: text, date } = message;
+  const timestamp_id = message.time_stamp_id;
+  const seen_by = message.seen_by;
+  const timestamp = timestampFormatter(date);
 
   return (
-    <Container className='incoming-msg-container p-0 m-0'>
+    <Container
+      className={`${
+        type === 'incoming' ? 'incoming' : 'outgoing'
+      } msg-container p-0 m-0`}>
       <Col
         as='div'
-        className='incoming-msg-wrapper scroll-view-msg-wrapper d-inline-flex flex-column justify-content-end p-0'>
+        className='msg-wrapper scroll-view-msg-wrapper d-inline-flex flex-column justify-content-end p-0'>
         <Col as='span' className='scroll-view-msg d-block'>
           {text}
         </Col>
         <Col as='span' className='chat-timestamp-wrapper d-block p-0'>
-          <Col as='span' className='chat-timestamp d-inline-block m-0'>
-            {timestamp}
-          </Col>
-        </Col>
-      </Col>
-    </Container>
-  );
-}
-
-function OutgoingMsg(props: { message: Partial<APIMessageResponse> }) {
-  let { message: text, date } = props.message;
-  let timestamp = timestampFormatter(date);
-
-  return (
-    <Container className='outgoing-msg-container p-0 m-0'>
-      <Col
-        as='div'
-        className='outgoing-msg-wrapper scroll-view-msg-wrapper d-inline-flex flex-column justify-content-end p-0'>
-        <Col as='span' className='scroll-view-msg d-block'>
-          {text}
-        </Col>
-        <Col as='span' className='chat-timestamp-wrapper d-block p-0'>
-          <Col as='span' className='chat-timestamp d-inline-block m-0'>
-            {timestamp}
+          <Col as='span' className='chat-timestamp d-inline-block'>
+            {timestamp}{' '}
+            {timestamp_id ? (
+              <ScheduleIcon />
+            ) : !!seen_by![0] ? (
+              <DoneAllIcon className={'read'} />
+            ) : (
+              <DoneIcon />
+            )}
           </Col>
         </Col>
       </Col>

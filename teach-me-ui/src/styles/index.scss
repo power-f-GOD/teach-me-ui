@@ -1,19 +1,28 @@
+
 @import 'misc';
-@import 'Nav';
-@import '_Index';
-@import 'Landing';
-@import 'Auth';
-@import 'Main';
-@import 'Home';
-@import 'Home.LeftPane';
-@import 'Home.MiddlePane';
-@import 'Home.RightPane';
-@import 'Editor';
-@import '404';
-@import 'Profile';
-@import 'Search';
-@import 'Footer';
-@import 'Chat';
-@import 'crumbs';
-@import 'responsive';
 @import 'animation';
+
+@import 'Index/Index';
+@import 'Index/Landing';
+@import 'Index/404';
+
+@import 'Auth/Auth';
+
+@import 'Main/Main';
+@import 'Main/Home';
+@import 'Main/Home.LeftPane';
+@import 'Main/Home.MiddlePane';
+@import 'Main/Home.RightPane';
+@import 'Main/Profile';
+@import 'Main/Search';
+@import 'Notifications';
+
+@import 'crumbs/Chat';
+@import 'crumbs/Chat.LeftPane';
+@import 'crumbs/Chat.MiddlePane';
+@import 'crumbs/Chat.RightPane';
+@import 'crumbs/Nav';
+@import 'crumbs/Footer';
+@import 'crumbs/crumbs';
+
+@import 'responsive';

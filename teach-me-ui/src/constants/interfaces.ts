@@ -22,7 +22,7 @@ export interface InputErrState {
 
 export interface PostPropsState {
   userAvatar: string;
-  reaction: 'upvote' | 'downvote' | 'neutral';
+  reaction: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL';
   sender_id: string;
   sender_name: string;
   sender_username: string;
@@ -34,20 +34,36 @@ export interface PostPropsState {
   replies: number;
   reposts: number;
   posted_at: number;
-  _extra?: {
-    type: 'UPVOTE' | 'DOWNVOTE';
-    colleague_id: string;
-    colleague_name: string;
-    colleague_username: string;
-  };
-  parent?: {
-    sec_type?: 'REPOST' | 'REPLY';
-    text: string;
-    id: string;
-    sender_id: string;
-    sender_name: string;
-    sender_username: string;
-  };
+  _extra?: PostExtraProps;
+  parent?: PostParentProps;
+}
+
+interface PostExtraProps {
+  type: 'UPVOTE' | 'DOWNVOTE';
+  colleague_id: string;
+  colleague_name: string;
+  colleague_username: string;
+}
+
+interface PostParentProps {
+  sec_type?: 'REPOST' | 'REPLY';
+  text: string;
+  id: string;
+  sender_id: string;
+  sender_name: string;
+  sender_username: string;
+  upvotes: number;
+  downvotes: number;
+  replies: number;
+  reaction: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL';
+  reposts: number;
+}
+
+export interface SocketProps {
+  pipe: 'POST_REACTION' | 'POST_REPLY';
+  post_id: string;
+  reaction?: 'UPVOTE' | 'DOWNVOTE';
+  interaction?: 'SEEN' | 'ENGAGED';
 }
 
 export interface FetchPostsState {
@@ -64,13 +80,13 @@ export interface TopicPropsState {
 export interface ReactButtonPropsState {
   id: string;
   reactions: number;
-  type: 'upvote' | 'downvote';
-  reacted: 'upvote' | 'downvote' | 'neutral';
+  type: 'UPVOTE' | 'DOWNVOTE';
+  reacted: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL';
 }
 
 export interface ReactPostState {
   id: string;
-  type: 'upvote' | 'downvote' | 'neutral';
+  type: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL';
 }
 
 export interface BasicInputState extends InputErrState {
@@ -225,7 +241,7 @@ export interface CreateLevelState extends StatusPropsState {
 // ChatBox interfaces...
 
 //you should eventually make all the Message props required
-export interface Message extends Partial<APIMessageResponse> {
+export interface MessageProps extends Partial<APIMessageResponse> {
   timestamp?: string | number;
 }
 
@@ -242,7 +258,7 @@ export interface ChatData {
 export interface AnchorInfo {
   displayName: string;
   id: string;
-  messages?: Message[];
+  messages?: MessageProps[];
   avatar: string;
   info?: UserInfo | RoomInfo;
   type: 'conversation' | 'classroom';
@@ -311,4 +327,18 @@ export interface APIConversationResponse {
   friendship: string;
   conversation_name: string;
   associated_username: string;
+}
+
+export interface NotificationState extends StatusPropsState {
+  data?: any[]
+  [key: string]: any
+}
+
+export interface NotificationData {
+  _id: string,
+  data: any,
+  date: any,
+  message: string,
+  type: string,
+  [key: string]: any
 }
