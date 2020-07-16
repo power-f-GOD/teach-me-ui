@@ -189,21 +189,7 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
                     ? (props.upvotes as number)
                     : (props.parent?.upvotes as number)) as number;
 
-                  const reaction:
-                    | 'UPVOTE'
-                    | 'DOWNVOTE'
-                    | 'NEUTRAL' = (props.sec_type === 'REPLY'
-                    ? (props.parent?.reaction as 'NEUTRAL')
-                    : props.text
-                    ? (props.reaction as 'NEUTRAL')
-                    : (props.parent?.reaction as 'NEUTRAL')) as
-                    | 'NEUTRAL'
-                    | 'UPVOTE'
-                    | 'DOWNVOTE';
-
-                  return reaction === 'UPVOTE'
-                    ? (upvotes as number) + 1
-                    : (upvotes as number);
+                  return upvotes as number;
                 })()}
                 type='UPVOTE'
               />
@@ -231,21 +217,7 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
                     ? (props.downvotes as number)
                     : (props.parent?.downvotes as number)) as number;
 
-                  const reaction:
-                    | 'UPVOTE'
-                    | 'DOWNVOTE'
-                    | 'NEUTRAL' = (props.sec_type === 'REPLY'
-                    ? (props.parent?.reaction as 'NEUTRAL')
-                    : props.text
-                    ? (props.reaction as 'NEUTRAL')
-                    : (props.parent?.reaction as 'NEUTRAL')) as
-                    | 'NEUTRAL'
-                    | 'UPVOTE'
-                    | 'DOWNVOTE';
-
-                  return reaction === 'DOWNVOTE'
-                    ? (downvotes as number) + 1
-                    : (downvotes as number);
+                  return downvotes as number;
                 })()}
                 type='DOWNVOTE'
               />
@@ -270,7 +242,13 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
                 </svg>
 
                 <Box padding='0 5px' fontSize='13px'>
-                  {bigNumberFormat(props.reposts)}
+                  {bigNumberFormat(
+                    (props.sec_type === 'REPLY'
+                      ? (props.parent?.reposts as number)
+                      : props.text
+                      ? (props.reposts as number)
+                      : (props.parent?.reposts as number)) as number
+                  )}
                 </Box>
               </Box>
             </Col>
@@ -292,7 +270,13 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
                 </svg>
 
                 <Box padding='0 5px' fontSize='13px'>
-                  {bigNumberFormat(props.replies)}
+                  {bigNumberFormat(
+                    (props.sec_type === 'REPLY'
+                      ? (props.parent?.replies as number)
+                      : props.text
+                      ? (props.replies as number)
+                      : (props.parent?.replies as number)) as number
+                  )}
                 </Box>
               </Box>
             </Col>
@@ -329,11 +313,7 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
                   <ReactButton
                     id={props.id as string}
                     reacted={props.reaction as 'NEUTRAL'}
-                    reactions={
-                      (props.reaction as string) === 'UPVOTE'
-                        ? (props.upvotes as number) + 1
-                        : (props.upvotes as number) + 0
-                    }
+                    reactions={props.upvotes as number}
                     type='UPVOTE'
                   />
                 </Col>
@@ -341,11 +321,7 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
                   <ReactButton
                     id={props.id as string}
                     reacted={props.reaction as 'NEUTRAL'}
-                    reactions={
-                      (props.reaction as string) === 'DOWNVOTE'
-                        ? (props.downvotes as number) + 1
-                        : (props.downvotes as number) + 0
-                    }
+                    reactions={props.downvotes as number}
                     type='DOWNVOTE'
                   />
                 </Col>
