@@ -42,7 +42,7 @@ const ChatRightPane = ({ conversation, convoInfo }: ChatRightPaneProps) => {
       {type === ONE_TO_ONE ? (
         <Container
           as='section'
-          className='user-info-container custom-scroll-bar small-bar rounded-bar tertiary-bar p-3 debugger'>
+          className='user-info-container custom-scroll-bar small-bar grey-scrollbar p-3 debugger'>
           <Row as='section' className='m-0 flex-column mb-5'>
             <Col className='p-0 d-flex justify-content-center'>
               <Avatar
