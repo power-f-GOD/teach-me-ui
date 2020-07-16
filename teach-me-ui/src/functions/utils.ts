@@ -3,7 +3,8 @@ import {
   StatusPropsState,
   BasicInputState,
   UserData,
-  NetworkAction
+  NetworkAction,
+  Reaction
 } from '../constants';
 import store from '../appStore';
 import { displaySnackbar, setUserData } from '../actions';
@@ -32,9 +33,9 @@ export const validateResetPasswordFn = (password: string) => {
 };
 
 export const resultantReaction: Function = (
-  oldReaction: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL',
-  newReaction: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL'
-): 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL' => {
+  oldReaction: Reaction,
+  newReaction: Reaction
+): Reaction => {
   if (oldReaction === newReaction) return 'NEUTRAL';
   return newReaction;
 };
