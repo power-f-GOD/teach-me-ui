@@ -20,15 +20,12 @@ import {
   GET_CONVERSATION_INFO,
   SET_CONVERSATION_INFO,
   SET_CONVERSATION,
-  SET_CONVERSATION_MESSAGES
+  SET_CONVERSATION_MESSAGES,
+  CHAT_MESSAGE_DELIVERED,
+  CHAT_READ_RECEIPT
 } from '../constants/chat';
 import { apiBaseURL as baseURL } from '../constants/misc';
-import {
-  logError,
-  getState,
-  callNetworkStatusCheckerFor
-  // delay
-} from '../functions';
+import { logError, getState, callNetworkStatusCheckerFor } from '../functions';
 // import { displaySnackbar } from './misc';
 
 export const getUsersEnrolledInInstitution = (params?: string) => (
@@ -265,6 +262,40 @@ export const getConversationMessages = (convoId: string) => (
     .then(({ data }: any) => {
       const { error } = data;
       const messages: APIMessageResponse[] = data.messages;
+      const userId = (getState().userData as UserData)!.id;
+      const socket = getState().webSocket as WebSocket;
+      const convoId = (getState().conversation as APIConversationResponse)._id;
+      const chatState = getState().chatState as ChatState;
+
+      if (socket && socket.readyState === 1) {
+        for (let i = messages.length - 1; i >= 0; i--) {
+          let message = messages[i];
+
+          if (message.sender_id !== userId) {
+            if (!message.delivered_to!.includes(userId)) {
+              socket.send(
+                JSON.stringify({
+                  message_id: message._id,
+                  pipe: CHAT_MESSAGE_DELIVERED
+                })
+              );
+            }
+
+            if (!message.seen_by!.includes(userId)) {
+              if (convoId === message.conversation_id) {
+                if (chatState.isOpen && !chatState.isMinimized) {
+                  socket.send(
+                    JSON.stringify({
+                      message_id: message._id,
+                      pipe: CHAT_READ_RECEIPT
+                    })
+                  );
+                }
+              }
+            }
+          }
+        }
+      }
 
       if (!error) {
         dispatch(
@@ -294,42 +325,81 @@ export const getConversationMessages = (convoId: string) => (
 };
 
 export const conversationMessages = (payload: ConversationMessages) => {
-  let previousMessages = (getState().conversationMessages.data ??
-    []) as Partial<APIMessageResponse>[];
+  let [previousMessages, convoId] = [
+    (getState().conversationMessages.data ?? []) as Partial<
+      APIMessageResponse
+    >[],
+    (getState().conversation as Partial<APIConversationResponse>)._id
+  ];
 
-  if (
-    payload.conversationId &&
-    previousMessages[0]?.conversation_id !== payload.conversationId
-  ) {
-    previousMessages = [];
-  }
+  if (!payload.pipe) {
+    if (payload.data && payload.data![0]?.conversation_id === convoId) {
+      if (payload.data!?.length > 0) {
+        let newMessage = payload.data![0];
+        let indexOfInitial: number = -1;
+        let initialMessage =
+          previousMessages?.find((message, i) => {
+            if (
+              message.timestamp_id &&
+              message.timestamp_id === newMessage.timestamp_id
+            ) {
+              indexOfInitial = i;
+              return true;
+            }
+            return false;
+          }) ?? null;
 
-  if (payload.data!?.length > 0) {
-    let newMessage = payload.data![0];
-    let indexOfInitial: number = -1;
-    let initialMessage =
-      previousMessages?.find((message, i) => {
-        if (
-          message.time_stamp_id &&
-          message.time_stamp_id === newMessage.time_stamp_id
-        ) {
-          indexOfInitial = i;
-          return true;
+        if (initialMessage) {
+          delete newMessage.timestamp_id;
+          previousMessages[indexOfInitial] = newMessage;
+        } else {
+          if (
+            payload.data!?.length === 1 &&
+            payload.data![0]?.date! >= previousMessages.slice(-1)[0]?.date!
+          ) {
+            previousMessages.push(...payload.data);
+          } else {
+            previousMessages.unshift(...payload.data);
+          }
         }
-        return false;
-      }) ?? null;
-
-    if (initialMessage) {
-      delete newMessage.time_stamp_id;
-      previousMessages[indexOfInitial] = newMessage;
+      }
     } else {
-      if (
-        payload.data!?.length === 1 &&
-        payload.data![0]?.date! > previousMessages.slice(-1)[0]?.date!
-      ) {
-        previousMessages.push(...payload.data);
-      } else {
-        previousMessages.unshift(...payload.data);
+      previousMessages = [...(payload.data ?? [])];
+    }
+  } else if (payload.data) {
+    const msg_id = payload.data![0]._id;
+
+    if (payload.pipe === CHAT_MESSAGE_DELIVERED) {
+      const deliveeId = payload.data![0].delivered_to![0];
+      let indexOfInitial = -1;
+      let initialMessage =
+        previousMessages?.find((message, i) => {
+          if (message._id === msg_id) {
+            indexOfInitial = i;
+            return true;
+          }
+          return false;
+        }) ?? null;
+
+      if (initialMessage && !initialMessage.delivered_to!.includes(deliveeId)) {
+        initialMessage.delivered_to?.push(deliveeId);
+        previousMessages[indexOfInitial] = initialMessage;
+      }
+    } else if (payload.pipe === CHAT_READ_RECEIPT) {
+      const seerId = payload.data![0].seen_by![0];
+      let indexOfInitial = -1;
+      let initialMessage =
+        previousMessages?.find((message, i) => {
+          if (message._id === msg_id) {
+            indexOfInitial = i;
+            return true;
+          }
+          return false;
+        }) ?? null;
+
+      if (initialMessage && !initialMessage.seen_by!.includes(seerId)) {
+        initialMessage.seen_by?.push(seerId);
+        previousMessages[indexOfInitial] = initialMessage;
       }
     }
   }

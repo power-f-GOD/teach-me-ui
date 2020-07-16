@@ -209,6 +209,10 @@
     max-width: 75%;
   }
 
+  .ChatBox .chat-right-pane.d-flex {
+    display: none !important;
+  }
+
   //Profile page styles
   .Profile {
     &::before {
