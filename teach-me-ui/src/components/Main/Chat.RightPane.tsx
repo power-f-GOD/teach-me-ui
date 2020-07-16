@@ -4,9 +4,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-// import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
-// import LocationOnIcon from '@material-ui/icons/LocationOn';
 import SchoolIcon from '@material-ui/icons/School';
 
 import { ONE_TO_ONE } from '../../constants/chat';
@@ -14,7 +12,7 @@ import {
   APIConversationResponse,
   UserEnrolledData
 } from '../../constants/interfaces';
-import { InfoCard } from './Cards';
+import { InfoCard } from '../crumbs/Cards';
 
 interface ChatRightPaneProps {
   conversation: APIConversationResponse;

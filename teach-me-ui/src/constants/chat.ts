@@ -1,8 +1,4 @@
-import {
-  // StatusPropsState,
-  ChatState,
-  ChatData
-} from './interfaces';
+import { ChatState, ChatData } from './interfaces';
 
 export const SET_CHAT_STATE = 'SET_CHAT_STATE';
 
@@ -28,6 +24,11 @@ export const SET_PEOPLE_ENROLLED_IN_INSTITUTION =
 
 export const GET_CONVERSATIONS = 'GET_CONVERSATIONS';
 export const SET_CONVERSATIONS = 'SET_CONVERSATIONS';
+
+export const CHAT_NEW_MESSAGE = 'CHAT_NEW_MESSAGE';
+export const CHAT_MESSAGE_DELIVERED = 'CHAT_MESSAGE_DELIVERED';
+export const CHAT_TYPING = 'CHAT_TYPING';
+export const CHAT_READ_RECEIPT = 'CHAT_READ_RECEIPT';
 
 export const chatStateProps: ChatState = {
   queryString: window.location.pathname,

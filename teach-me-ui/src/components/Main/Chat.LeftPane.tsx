@@ -12,11 +12,7 @@ import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 
-import {
-  chatState,
-  getConversationInfo
-  //  requestNewConversation
-} from '../../actions/chat';
+import { chatState, getConversationInfo } from '../../actions/chat';
 import { dispatch } from '../../functions/utils';
 import {
   ChatState,
@@ -24,13 +20,18 @@ import {
   APIConversationResponse,
   SearchState
 } from '../../constants/interfaces';
-import { Skeleton, DISPLAY_INFO } from './Loader';
-import { getConversationMessages, conversation } from '../../actions/chat';
+import { Skeleton, DISPLAY_INFO } from '../crumbs/Loader';
+import {
+  getConversationMessages,
+  conversation,
+  conversationInfo
+} from '../../actions/chat';
 
 interface TabPanelProps {
   children?: React.ReactNode;
   index: any;
   value: any;
+  [key: string]: any;
 }
 
 interface ChatLeftPaneProps {
@@ -63,6 +64,7 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
           return;
         }
 
+        dispatch(conversationInfo({ user_typing: '' }));
         dispatch(getConversationInfo(username)(dispatch));
         dispatch(getConversationMessages(convoId)(dispatch));
         dispatch(chatState(chatInfo));
@@ -84,9 +86,14 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
           <Tab label={CR} {...allyProps(1)} />
         </Tabs>
       </AppBar>
-      <TabPanel value={value} index={0}>
+      <TabPanel
+        value={value}
+        index={0}
+        style={{
+          overflowY: conversations.status === 'pending' ? 'hidden' : 'auto'
+        }}>
         {conversations.status === 'pending' ? (
-          Array(7)
+          Array(10)
             .fill('')
             .map((_, key) => <Skeleton type={DISPLAY_INFO} key={key} />)
         ) : !!convos[0] ? (
@@ -107,7 +114,7 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
             return (
               <NavLink
                 to={_queryString}
-                className='tab-panel-item p-0'
+                className='tab-panel-item'
                 key={convoId}
                 isActive={(_match, location) =>
                   Boolean(
@@ -125,7 +132,6 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
                       vertical: 'bottom',
                       horizontal: 'right'
                     }}
-                    // color='primary'
                     className='offline'
                     overlap='circle'
                     variant='dot'>

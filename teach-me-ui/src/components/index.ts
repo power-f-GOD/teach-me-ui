@@ -14,7 +14,7 @@ import Profile from './Main/Profile';
 import _404 from './Index/_404';
 import Loader from './crumbs/Loader';
 import SnackBar from './crumbs/SnackBar';
-import Chat from './crumbs/Chat';
+import Chat from './Main/Chat';
 import Search from './Main/Search';
 import Footer from './crumbs/Footer';
 
