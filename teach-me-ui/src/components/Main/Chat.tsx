@@ -17,7 +17,8 @@ import {
   getConversations,
   getConversationMessages,
   conversation,
-  getConversationInfo
+  getConversationInfo,
+  conversationInfo
 } from '../../actions/chat';
 import {
   ChatState,
@@ -28,6 +29,12 @@ import {
   APIConversationResponse,
   APIMessageResponse
 } from '../../constants/interfaces';
+import {
+  CHAT_NEW_MESSAGE,
+  CHAT_MESSAGE_DELIVERED,
+  CHAT_TYPING,
+  CHAT_READ_RECEIPT
+} from '../../constants/chat';
 import ChatLeftPane from './Chat.LeftPane';
 import ChatMiddlePane from './Chat.MiddlePane';
 import ChatRightPane from './Chat.RightPane';
@@ -57,13 +64,15 @@ window.addEventListener('popstate', () => {
   );
 });
 
+let userTypingTimeout: any = null;
+
 const ChatBox = (props: ChatBoxProps) => {
   const {
     conversation: _conversation,
     conversations,
     chatState: _chatState,
     conversationMessages: _conversationMessages,
-    conversationInfo,
+    conversationInfo: _conversationInfo,
     userData,
     webSocket: socket
   } = props;
@@ -115,7 +124,7 @@ const ChatBox = (props: ChatBoxProps) => {
     }
 
     if (cid && isNaN(cid)) {
-      let infoStatus = conversationInfo.status;
+      let infoStatus = _conversationInfo.status;
       if (
         convoId &&
         (infoStatus === 'settled' ||
@@ -138,7 +147,7 @@ const ChatBox = (props: ChatBoxProps) => {
       }
     }
   }, [
-    conversationInfo.status,
+    _conversationInfo.status,
     conversations.data,
     convoId,
     qString,
@@ -148,17 +157,89 @@ const ChatBox = (props: ChatBoxProps) => {
 
   useEffect(() => {
     if (socket) {
-      socket.addEventListener('message', (e: any) => {
+      socket.onmessage = (e: any) => {
+        const cid = queryString.parse(window.location.search).cid;
         const message = JSON.parse(e.data) as APIMessageResponse;
-        const { pipe } = message;
+        const {
+          pipe,
+          delivered_to,
+          conversation_id,
+          _id,
+          sender_id,
+          user_id,
+          seen_by
+        } = message;
 
-        if (pipe === 'CHAT_NEW_MESSAGE') {
-          // console.log(message);
-          dispatch(conversationMessages({ data: [{ ...message }] }));
+        switch (pipe) {
+          case CHAT_NEW_MESSAGE:
+            if (sender_id !== userData.id) {
+              if (delivered_to && !delivered_to!?.includes(userData.id)) {
+                socket.send(
+                  JSON.stringify({
+                    message_id: _id,
+                    pipe: CHAT_MESSAGE_DELIVERED
+                  })
+                );
+              }
+
+              if (
+                isOpen &&
+                !isMinimized &&
+                cid === conversation_id &&
+                seen_by &&
+                !seen_by!?.includes(userData.id)
+              ) {
+                socket.send(
+                  JSON.stringify({
+                    message_id: message._id,
+                    pipe: CHAT_READ_RECEIPT
+                  })
+                );
+              }
+            }
+
+            if (convoId && conversation_id === cid) {
+              dispatch(conversationMessages({ data: [{ ...message }] }));
+            }
+            break;
+          case CHAT_MESSAGE_DELIVERED:
+            if (delivered_to && convoId && conversation_id === cid) {
+              const deliveeId: any = delivered_to;
+
+              dispatch(
+                conversationMessages({
+                  pipe: CHAT_MESSAGE_DELIVERED,
+                  data: [{ delivered_to: [deliveeId], _id }]
+                })
+              );
+            }
+            break;
+          case CHAT_READ_RECEIPT:
+            if (seen_by && convoId && conversation_id === cid) {
+              const seerId: any = seen_by;
+
+              dispatch(
+                conversationMessages({
+                  pipe: CHAT_READ_RECEIPT,
+                  data: [{ seen_by: [seerId], _id }]
+                })
+              );
+            }
+            break;
+          case CHAT_TYPING:
+            clearTimeout(userTypingTimeout);
+
+            if (user_id && cid === conversation_id) {
+              dispatch(conversationInfo({ user_typing: user_id }));
+              userTypingTimeout = window.setTimeout(() => {
+                dispatch(conversationInfo({ user_typing: '' }));
+              }, 750);
+            }
+            break;
         }
-      });
+      };
     }
-  }, [socket]);
+  }, [socket, convoId, userData.id, isMinimized, isOpen]);
 
   return (
     <Container fluid className='ChatBox p-0'>
@@ -179,7 +260,7 @@ const ChatBox = (props: ChatBoxProps) => {
             conversationMessages={_conversationMessages}
             chatState={_chatState}
             userData={userData}
-            conversationInfo={conversationInfo}
+            conversationInfo={_conversationInfo}
             webSocket={socket}
           />
         </Col>
@@ -192,7 +273,7 @@ const ChatBox = (props: ChatBoxProps) => {
             <ChatRightPane
               conversation={_conversation}
               convoInfo={
-                conversationInfo.data as Partial<
+                _conversationInfo.data as Partial<
                   APIConversationResponse & UserEnrolledData
                 >
               }
