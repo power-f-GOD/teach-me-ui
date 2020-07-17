@@ -15,19 +15,20 @@ import { displayModal, dispatch } from '../../../../functions';
 import { EditorState } from 'draft-js';
 import createHashtagPlugin from 'draft-js-hashtag-plugin';
 import Editor from 'draft-js-plugins-editor';
-import createMentionPlugin, { defaultSuggestionsFilter } from 'draft-js-mention-plugin';
+import createMentionPlugin, {
+  defaultSuggestionsFilter
+} from 'draft-js-mention-plugin';
 import 'draft-js-mention-plugin/lib/plugin.css';
-import { useSubmitPost, useFetchMentions } from '../../../../hooks/api';
+import { useSubmitPost } from '../../../../hooks/api';
 
 const cookieEnabled = navigator.cookieEnabled;
-  
-  let token = ''
-  if (cookieEnabled) {
-    token = JSON.parse(localStorage?.kanyimuta ?? {})?.token ?? null;
-  };
+
+let token = '';
+if (cookieEnabled) {
+  token = JSON.parse(localStorage?.kanyimuta ?? "{}")?.token ?? null;
+}
 
 // let initialMentions = useFetchMentions('', token);
-
 
 let userInfo: any = {};
 let [avatar, displayName, username] = ['', '', ''];
@@ -43,18 +44,20 @@ const mentionPlugin = createMentionPlugin({
   mentionPrefix: '@'
 });
 const hashtagPlugin = createHashtagPlugin();
-    
 
 const CreatePost = (props: any) => {
-  
   const { suggestMentions } = props;
   const results: ColleagueData[] | any[] = suggestMentions.data;
   const [post, setPost] = useState<any>('');
+  const [submitPost, , submitPostLoading] = useSubmitPost(post, token);
+
   const [editorState, setEditorState] = useState<any>(
     EditorState.createEmpty()
   );
- 
-  const [suggestions, setSuggestions] = useState<any | undefined>(/*initialMentions*/);
+
+  const [suggestions, setSuggestions] = useState<
+    any | undefined
+  >(/*initialMentions*/);
 
   const editor = useRef<any | null>(null);
 
@@ -69,23 +72,23 @@ const CreatePost = (props: any) => {
   let mentions = [];
   const onPostSubmit = (e: any) => {
     const text = editor.current.value;
+
     // send post
-    // onPostChange({
-    //   text: editor.current.value,
-    //   mentions: undefined,
-    //   hashtags: undefined
-    // });
-    console.log(text)
-    
+    onPostChange({
+      text: editor.current.value,
+      mentions: undefined,
+      hashtags: undefined  
+    });
+
+    submitPost();
+
+    console.log(text);
+
     displayModal(false);
   };
 
-
   const onSearchChange = ({ value }: any) => {
-
     dispatch(triggerSuggestMentions(value)(dispatch));
-
-
 
     if (suggestMentions.status === 'pending') {
       setSuggestions([]);
@@ -95,13 +98,16 @@ const CreatePost = (props: any) => {
       } else {
         let mentions = [];
         for (let mention of results) {
-          mentions.push({name: mention.username, link: `/@${mention.username}`, avatar: '/images/avatar-1.png'})
+          mentions.push({
+            name: mention.username,
+            link: `/@${mention.username}`,
+            avatar: '/images/avatar-1.png'
+          });
         }
         setSuggestions(defaultSuggestionsFilter(value, mentions));
         console.log(mentions);
       }
     }
-
   };
 
   const onAddMention = (mention: any) => {
@@ -132,16 +138,12 @@ const CreatePost = (props: any) => {
       </Row>
       <form>
         <div className='editor' onClick={focus}>
-          <Editor
-            editorState={editorState}
-            onChange={onChange}
-            ref={editor}
-          />
-          <MentionSuggestions
+          <Editor editorState={editorState} onChange={onChange} ref={editor} />
+          {/* <MentionSuggestions
             onSearchChange={onSearchChange}
             suggestions={suggestions}
             onAddMention={onAddMention}
-          />
+          /> */}
         </div>
         <Row className='d-flex mx-auto mt-1'>
           <Button
