@@ -6,6 +6,7 @@ export const FETCH_POST_STARTED = 'FETCH_POST_STARTED';
 export const FETCH_POST_RESOLVED = 'FETCH_POST_RESOLVED';
 export const FETCH_POST_REJECTED = 'FETCH_POST_REJECTED';
 export const FETCHED_POSTS = 'FETCHED_POSTS';
+export const UPDATE_POST = 'UPDATE_POST';
 
 export const fetchPostsState: FetchPostsState = {
   status: 'pending'

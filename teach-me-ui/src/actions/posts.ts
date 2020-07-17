@@ -3,6 +3,7 @@ import {
   CREATE_POST,
   REACT_TO_POST,
   FETCH_POST_REJECTED,
+  UPDATE_POST,
   FETCH_POST_RESOLVED,
   FETCH_POST_STARTED,
   FETCHED_POSTS,
@@ -11,7 +12,9 @@ import {
   FetchPostsState,
   apiBaseURL as baseURL,
   UserData,
-  SocketProps
+  SocketProps,
+  PostReactionResult,
+  Reaction
 } from '../constants';
 
 import { getState } from '../functions';
@@ -22,6 +25,10 @@ export const createPost = (payload: PostPropsState): ReduxAction => {
   return { type: CREATE_POST, payload };
 };
 
+export const updatePost = (payload: PostReactionResult): ReduxAction => {
+  return { type: UPDATE_POST, payload };
+};
+
 export const reactToPost = (payload: ReactPostState): ReduxAction => {
   return { type: REACT_TO_POST, payload };
 };
@@ -30,14 +37,28 @@ export const sendReactionToServer = (payload: SocketProps) => (
   dispatch: Function
 ) => {
   dispatch(
-    reactToPost({ id: payload.post_id, type: payload.reaction as 'NEUTRAL' })
+    reactToPost({ id: payload.post_id, type: payload.reaction as Reaction })
   );
+  const posts: Array<PostPropsState> = getState().posts;
 
+  const post = posts.find((post: PostPropsState) =>
+    (post.id as string) === payload.post_id
+      ? post
+      : (post.parent?.id as string) === payload.post_id
+      ? post.parent
+      : undefined
+  );
+  if (post === undefined) return;
   const socket: WebSocket = getState().webSocket as WebSocket;
   socket.addEventListener('message', (event) => {
-    console.log(event);
+    try {
+      const data = JSON.parse(event.data);
+      if (data.pipe === 'POST_REACTION') {
+        dispatch(updatePost(data as PostReactionResult));
+      }
+    } catch (e) {}
   });
-  socket.send(JSON.stringify(payload));
+  socket.send(JSON.stringify({ ...payload, reaction: post?.reaction }));
 };
 
 export const fetchPosts: Function = () => (dispatch: Function) => {

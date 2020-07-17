@@ -22,7 +22,7 @@ export interface InputErrState {
 
 export interface PostPropsState {
   userAvatar: string;
-  reaction: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL';
+  reaction: Reaction;
   sender_id: string;
   sender_name: string;
   sender_username: string;
@@ -55,16 +55,24 @@ interface PostParentProps {
   upvotes: number;
   downvotes: number;
   replies: number;
-  reaction: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL';
+  reaction: Reaction;
   reposts: number;
 }
 
 export interface SocketProps {
   pipe: 'POST_REACTION' | 'POST_REPLY';
   post_id: string;
-  reaction?: 'UPVOTE' | 'DOWNVOTE';
+  reaction?: Reaction;
   interaction?: 'SEEN' | 'ENGAGED';
 }
+
+export interface PostReactionResult {
+  downvotes: number;
+  upvotes: number;
+  id: string;
+}
+
+export type Reaction = 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL';
 
 export interface FetchPostsState {
   status: 'pending' | 'rejected' | 'resolved';
@@ -81,12 +89,12 @@ export interface ReactButtonPropsState {
   id: string;
   reactions: number;
   type: 'UPVOTE' | 'DOWNVOTE';
-  reacted: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL';
+  reacted: Reaction;
 }
 
 export interface ReactPostState {
   id: string;
-  type: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL';
+  type: Reaction;
 }
 
 export interface BasicInputState extends InputErrState {
@@ -156,7 +164,6 @@ export interface ForgotPasswordStatusState {
 
 export interface SearchState extends StatusPropsState {
   data?: any[];
-  // [key: string]: any;
 }
 
 export interface SignupPropsState {
@@ -293,10 +300,16 @@ export interface ConversationsMessages extends StatusPropsState {
 
 export interface ConversationMessages extends Omit<SearchState, 'data'> {
   conversationId?: string;
+  pipe?:
+    | 'CHAT_NEW_MESSAGE'
+    | 'CHAT_MESSAGE_DELIVERED'
+    | 'CHAT_TYPING'
+    | 'CHAT_READ_RECEIPT';
   data?: Partial<APIMessageResponse>[];
 }
 
 export interface ConversationInfo extends Omit<SearchState, 'data'> {
+  user_typing?: string;
   conversationId?: string;
   data?: Partial<UserEnrolledData & APIConversationResponse>;
 }
@@ -304,15 +317,17 @@ export interface ConversationInfo extends Omit<SearchState, 'data'> {
 export interface APIMessageResponse {
   deleted: boolean;
   seen_by: string[];
+  delivered_to: string[];
   created_at: number;
   _id: string;
   conversation_id: string;
   message: string;
   date: number;
   sender_id: string;
-  time_stamp_id?: string;
+  timestamp_id?: string;
   __v: number;
   pipe: string;
+  user_id?: string;
 }
 
 export interface APIConversationResponse {
@@ -330,17 +345,17 @@ export interface APIConversationResponse {
 }
 
 export interface NotificationState extends StatusPropsState {
-  data?: any[]
-  [key: string]: any
+  data?: any[];
+  [key: string]: any;
 }
 
 export interface NotificationData {
-  _id: string,
-  data: any,
-  date: any,
-  message: string,
-  type: string,
-  [key: string]: any
+  _id: string;
+  data: any;
+  date: any;
+  message: string;
+  type: string;
+  [key: string]: any;
 }
 
 export interface MentionState extends StatusPropsState {

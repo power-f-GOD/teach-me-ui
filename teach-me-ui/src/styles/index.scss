@@ -15,12 +15,12 @@
 @import 'Main/Home.RightPane';
 @import 'Main/Profile';
 @import 'Main/Search';
+@import 'Main/Chat';
+@import 'Main/Chat.LeftPane';
+@import 'Main/Chat.MiddlePane';
+@import 'Main/Chat.RightPane';
 @import 'Main/Notifications';
 
-@import 'crumbs/Chat';
-@import 'crumbs/Chat.LeftPane';
-@import 'crumbs/Chat.MiddlePane';
-@import 'crumbs/Chat.RightPane';
 @import 'crumbs/Nav';
 @import 'crumbs/Footer';
 @import 'crumbs/crumbs';
