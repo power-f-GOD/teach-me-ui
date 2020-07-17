@@ -33,7 +33,8 @@ export const useSubmitPost = (
   post: any,
   token: string
 ): useApiResponse<any> => {
-  const { text, mentions, hashtags } = post as {
+  console.log(token, post);
+  const { text } = post as {
     text: string;
     mentions: Array<string> | undefined;
     hashtags: Array<string> | undefined;
