@@ -357,3 +357,12 @@ export interface NotificationData {
   type: string;
   [key: string]: any;
 }
+
+export interface MentionState extends StatusPropsState {
+  data?: any[]
+  [key: string]: any
+}
+
+export interface MentionData extends ColleagueData {
+  [index: string]: any
+}
