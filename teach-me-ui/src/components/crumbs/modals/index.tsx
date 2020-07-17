@@ -10,7 +10,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
 
 import { displayModal } from '../../../functions';
-import CreatePost from './components/editor/CreatePost';
+import CreatePost from './components/CreatePost';
 
 const removeModal = (event: any) => {
   displayModal(false);

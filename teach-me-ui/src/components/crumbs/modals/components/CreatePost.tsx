@@ -1,4 +1,4 @@
-import React, { useState, useRef, Component } from 'react';
+import React, { useState, useRef } from 'react';
 
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
@@ -8,17 +8,26 @@ import Row from 'react-bootstrap/Row';
 
 import { connect } from 'react-redux';
 
-import { PostPropsState } from '../../../../../constants';
-import { createPost } from '../../../../../actions';
-import { displayModal } from '../../../../../functions';
+import { PostPropsState, ColleagueData } from '../../../../constants';
+import { createPost, triggerSuggestMentions } from '../../../../actions';
+import { displayModal, dispatch } from '../../../../functions';
 
-import { convertToRaw, EditorState, RichUtils } from 'draft-js';
+import { EditorState } from 'draft-js';
+import createHashtagPlugin from 'draft-js-hashtag-plugin';
 import Editor from 'draft-js-plugins-editor';
-import createMentionPlugin, {
-  defaultSuggestionsFilter
-} from 'draft-js-mention-plugin';
+import createMentionPlugin, { defaultSuggestionsFilter } from 'draft-js-mention-plugin';
 import 'draft-js-mention-plugin/lib/plugin.css';
-import mentions from './mentions';
+import { useSubmitPost, useFetchMentions } from '../../../../hooks/api';
+
+const cookieEnabled = navigator.cookieEnabled;
+  
+  let token = ''
+  if (cookieEnabled) {
+    token = JSON.parse(localStorage?.kanyimuta ?? {})?.token ?? null;
+  };
+
+// let initialMentions = useFetchMentions('', token);
+
 
 let userInfo: any = {};
 let [avatar, displayName, username] = ['', '', ''];
@@ -30,52 +39,81 @@ if (navigator.cookieEnabled && localStorage.kanyimuta) {
   username = userInfo.username;
 }
 
-const mentionPlugin = createMentionPlugin();
+const mentionPlugin = createMentionPlugin({
+  mentionPrefix: '@'
+});
+const hashtagPlugin = createHashtagPlugin();
+    
 
 const CreatePost = (props: any) => {
-  const [post, setPost] = useState<string>('');
+  
+  const { suggestMentions } = props;
+  const results: ColleagueData[] | any[] = suggestMentions.data;
+  const [post, setPost] = useState<any>('');
   const [editorState, setEditorState] = useState<any>(
     EditorState.createEmpty()
   );
-  const [suggestions, setSuggestions] = useState(mentions);
+ 
+  const [suggestions, setSuggestions] = useState<any | undefined>(/*initialMentions*/);
+
   const editor = useRef<any | null>(null);
 
   const { MentionSuggestions } = mentionPlugin;
 
-  const plugins = [mentionPlugin];
+  // const plugins = [mentionPlugin, hashtagPlugin];
 
-  const onPostChange = (e: any) => {
-    setPost(e.current.value);
+  const onPostChange = (value: any) => {
+    setPost(value);
   };
 
+  let mentions = [];
   const onPostSubmit = (e: any) => {
+    const text = editor.current.value;
     // send post
-    onPostChange(editor);
+    // onPostChange({
+    //   text: editor.current.value,
+    //   mentions: undefined,
+    //   hashtags: undefined
+    // });
+    console.log(text)
+    
     displayModal(false);
+  };
+
+
+  const onSearchChange = ({ value }: any) => {
+
+    dispatch(triggerSuggestMentions(value)(dispatch));
+
+
+
+    if (suggestMentions.status === 'pending') {
+      setSuggestions([]);
+    } else if (suggestMentions.status === 'fulfilled') {
+      if (!results[0]) {
+        setSuggestions([]);
+      } else {
+        let mentions = [];
+        for (let mention of results) {
+          mentions.push({name: mention.username, link: `/@${mention.username}`, avatar: '/images/avatar-1.png'})
+        }
+        setSuggestions(defaultSuggestionsFilter(value, mentions));
+        console.log(mentions);
+      }
+    }
+
+  };
+
+  const onAddMention = (mention: any) => {
+    mentions.push(mention.name);
+  };
+
+  const focus = () => {
+    editor.current.focus();
   };
 
   const onChange = (editorState: any) => {
     setEditorState(editorState);
-  };
-
-  const handleKeyCommand = (command: any, editorState: any) => {
-    let newState;
-    newState = RichUtils.handleKeyCommand(editorState, command);
-    if (newState) {
-      onChange(newState);
-      return 'handled';
-    }
-    return 'non-handled';
-  };
-
-  const onSearchChange = ({ value }: any) => {
-    setSuggestions(defaultSuggestionsFilter(value, mentions));
-  };
-
-  const onAddMention = () => {};
-
-  const focus = () => {
-    editor.current.focus();
   };
 
   return (
@@ -97,9 +135,6 @@ const CreatePost = (props: any) => {
           <Editor
             editorState={editorState}
             onChange={onChange}
-            // className='compose-message'
-            // value={post}
-            plugins={plugins}
             ref={editor}
           />
           <MentionSuggestions
@@ -127,4 +162,6 @@ const mapDispatchToProps = (dispatch: Function) => ({
   }
 });
 
-export default connect(undefined, mapDispatchToProps)(CreatePost);
+const mapStateToProps = ({ suggestMentions }: any) => ({ suggestMentions });
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreatePost);
