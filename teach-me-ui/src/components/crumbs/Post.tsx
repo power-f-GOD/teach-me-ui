@@ -15,6 +15,7 @@ import { bigNumberFormat } from '../../functions/utils';
 import { PostPropsState } from '../../constants/interfaces';
 
 export const processPostFn = (post: string) =>
+  post &&
   post.split(/(\s(?=[#@])|(?=< [#@]\w+)\s)/).map((w, i) => {
     return /(^@|^#)/.test(w) ? (
       <Link key={i} to={`/${w}`}>
@@ -144,8 +145,8 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
             <Avatar
               component='span'
               className='post-avatar'
-              alt={props.sender_name}
-              src={`/images/${props.userAvatar}`}
+              alt={props.parent?.sender_name}
+              src={`/images/${props.parent?.userAvatar}`}
             />
             <Col className='d-flex flex-grow-1 flex-column'>
               <Box component='div' fontWeight='bold'>
