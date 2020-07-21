@@ -290,3 +290,65 @@ function _requestAnimationFrameWrapper() {
     return id;
   };
 }
+
+export const convertColleagueArrayToMentionFormat = (colleagueArray: any) => {
+  let mentionArray: any[] = [];
+  for (let colleague of colleagueArray ) {
+    mentionArray.push({ 
+      name: colleague.username, 
+      link: `/@${colleague.username}`,
+      avatar: '/images/avatar-1.png'
+    });
+  };
+  return mentionArray;
+};
+
+export const getMentionsFromText = (text: string): string[] => {
+  let mentions: string[] = [];
+  const checkTextForMention = (text1: string) => {
+    let startOfMention = text1.indexOf('@');
+    if (startOfMention !== -1) {
+      let newText = text1.substring(startOfMention + 1);
+      let endOfMention = newText.search(/[^A-Za-z0-9_]/);
+      if (endOfMention === -1) {
+        let mention = newText;
+        if (mention.length > 0) {
+          mentions.push(mention);
+        };
+      } else {
+        let mention = newText.substring(0, endOfMention);
+        if (mention.length > 0) {
+          mentions.push(mention);
+        };
+        checkTextForMention(newText)
+      };
+    };
+  };
+  checkTextForMention(text)
+  return mentions;
+};
+
+export const getHashtagsFromText = (text: string): string[] => {
+  let hashtags: string[] = [];
+  const checkTextForHashtag = (text1: string) => {
+    let startOfHashtag = text1.indexOf('#');
+    if (startOfHashtag !== -1) {
+      let newText = text1.substring(startOfHashtag + 1);
+      let endOfHashtag = newText.search(/[^A-Za-z0-9_]/);
+      if (endOfHashtag === -1) {
+        let hashtag = newText;
+        if (hashtag.length > 1) {
+          hashtags.push(`#${hashtag}`);
+        };
+      } else {
+        let hashtag = newText.substring(0, endOfHashtag);
+        if (hashtag.length > 1) {
+          hashtags.push(`#${hashtag}`);
+        };
+        checkTextForHashtag(newText)
+      };
+    };
+  };
+  checkTextForHashtag(text)
+  return hashtags;
+};

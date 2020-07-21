@@ -8,7 +8,6 @@ import * as modals from './modals';
 import * as posts from './posts';
 import * as search from './search';
 import * as profile from './profile';
-import * as mentions from './mentions';
 import * as colleague from './colleague';
 import * as notifications from './notifications';
 
@@ -21,7 +20,6 @@ export default combineReducers({
   ...posts,
   ...search,
   ...profile,
-  ...mentions,
   ...colleague,
   ...notifications
 });

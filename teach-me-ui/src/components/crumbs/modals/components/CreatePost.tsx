@@ -3,32 +3,24 @@ import React, { useState, useRef } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import Row from 'react-bootstrap/Row';
 
-import { connect } from 'react-redux';
+import { 
+  displayModal, 
+  getMentionsFromText, 
+  getHashtagsFromText 
+} from '../../../../functions';
 
-import { PostPropsState } from '../../../../constants';
-import { createPost } from '../../../../actions';
-import { displayModal } from '../../../../functions';
-
-// import { EditorState } from 'draft-js';
-// import createHashtagPlugin from 'draft-js-hashtag-plugin';
-// import Editor from 'draft-js-plugins-editor';
-// import createMentionPlugin, {
-//   defaultSuggestionsFilter
-// } from 'draft-js-mention-plugin';
+import { EditorState, convertToRaw } from 'draft-js';
+import 'draft-js/dist/Draft.css';
+import Editor from 'draft-js-plugins-editor';
 import 'draft-js-mention-plugin/lib/plugin.css';
-import { useSubmitPost } from '../../../../hooks/api';
+import createHashtagPlugin from 'draft-js-hashtag-plugin';
+import createMentionPlugin, { defaultSuggestionsFilter } from 'draft-js-mention-plugin';
 
-const cookieEnabled = navigator.cookieEnabled;
-
-let token = '';
-if (cookieEnabled) {
-  token = JSON.parse(localStorage?.kanyimuta ?? '{}')?.token ?? null;
-}
-
-// let initialMentions = useFetchMentions('', token);
+import { useSubmitPost, useGetFormattedMentionsWithKeyword} from '../../../../hooks/api';
 
 let userInfo: any = {};
 let [avatar, displayName, username] = ['', '', ''];
@@ -40,89 +32,65 @@ if (navigator.cookieEnabled && localStorage.kanyimuta) {
   username = userInfo.username;
 }
 
-// const mentionPlugin = createMentionPlugin({
-//   mentionPrefix: '@'
-// });
-// const hashtagPlugin = createHashtagPlugin();
+const mentionPlugin = createMentionPlugin({
+  mentionPrefix: '@'
+});
+const hashtagPlugin = createHashtagPlugin();
 
 const CreatePost = (props: any) => {
-  // const { suggestMentions } = props;
-  // const results: ColleagueData[] | any[] = suggestMentions.data;
+
+
+  const [mentionsKeyword, setMentionsKeyword] = useState<any>('');
   const [post, setPost] = useState<any>('');
-  const [submitPost, postResult, ] = useSubmitPost(post, token);
+  const [getMentions, ] = useGetFormattedMentionsWithKeyword(mentionsKeyword);
+  const [submitPost, , isSubmitting] = useSubmitPost(post);
 
-  // const [ , setEditorState] = useState<any>(
-  //   EditorState.createEmpty()
-  // );
+  const [editorState, setEditorState] = useState<any>(
+    EditorState.createEmpty()
+  );
 
-  // const [, setSuggestions] = useState<
-  //   any | undefined
-  // >(/*initialMentions*/);
+  const [suggestions, setSuggestions] = useState<any>([]);
 
-  const editor = useRef<any | null>(null);
-
-  // const { MentionSuggestions } = mentionPlugin;
-
-  // const plugins = [mentionPlugin, hashtagPlugin];
-
-  const onPostChange = (value: any) => {
-    setPost({ text: value.target.value });
+  const editor = useRef<any>();
+  
+  const onPostChange = (post: string) => {
+    setPost({ text: post, mentions: getMentionsFromText(post), hashtags: getHashtagsFromText(post)});
   };
 
-  // let mentions = [];
+  const onChange = (editorState: any) => {
+    const blocks = convertToRaw(editorState.getCurrentContent()).blocks;
+    const value = blocks.map(block => (!block.text.trim() && '\n') || block.text).join('\n');
+    setEditorState(editorState);
+    onPostChange(value);
+  }
+  
   const onPostSubmit = (e: any) => {
-    // const text = editor.current.value;
-
-    // send post
-    // onPostChange({
-    //   text: editor.current.value,
-    //   mentions: undefined,
-    //   hashtags: undefined
-    // });
-
-    console.log(post);
-
-    submitPost().then(() => {
-      console.log(postResult);
-      displayModal(false);
+    if (textInFirstBlockInEditor) {
+      submitPost().then((data: any) => {
+        if (!isSubmitting) {
+          console.log(data);
+          displayModal(false);
+        }
+      });
+    }
+  };
+    
+  const onSearchChange = async ({ value }: any) => {
+    setMentionsKeyword(value)
+    console.log(value, 'mentionskeyword')
+    getMentions().then((mentions: any[] | undefined) => {
+      console.log(mentions);
+      setSuggestions(defaultSuggestionsFilter(value, mentions));
     });
   };
-
-  // const onSearchChange = ({ value }: any) => {
-  //   dispatch(triggerSuggestMentions(value)(dispatch));
-
-  //   if (suggestMentions.status === 'pending') {
-  //     setSuggestions([]);
-  //   } else if (suggestMentions.status === 'fulfilled') {
-  //     if (!results[0]) {
-  //       setSuggestions([]);
-  //     } else {
-  //       let mentions = [];
-  //       for (let mention of results) {
-  //         mentions.push({
-  //           name: mention.username,
-  //           link: `/@${mention.username}`,
-  //           avatar: '/images/avatar-1.png'
-  //         });
-  //       }
-  //       setSuggestions(defaultSuggestionsFilter(value, mentions));
-  //       console.log(mentions);
-  //     }
-  //   }
-  // };
-
-  // const onAddMention = (mention: any) => {
-  //   mentions.push(mention.name);
-  // };
-
+    
   const focus = () => {
     editor.current.focus();
   };
-
-  // const onChange = (editorState: any) => {
-  //   setEditorState(editorState);
-  // };
-
+      
+  const { MentionSuggestions } = mentionPlugin;
+  const plugins = [mentionPlugin, hashtagPlugin];
+  let textInFirstBlockInEditor = (convertToRaw(editorState.getCurrentContent()).blocks)[0].text.length;
   return (
     <Box p={1} pt={0}>
       <Row className='container-fluid p-0 mx-auto'>
@@ -138,21 +106,37 @@ const CreatePost = (props: any) => {
         </div>
       </Row>
       <form>
-        <div className='editor' onClick={focus} ref={editor}>
-          <textarea onChange={onPostChange} />
-          {/* <Editor editorState={editorState} onChange={onChange} ref={editor} /> */}
-          {/* <MentionSuggestions
+        <div 
+          className='editor' 
+          onClick={focus} 
+          ref={editor}
+        >
+          <Editor 
+            placeholder={`What's on your mind, ${displayName.split(' ')[0]}?`}
+            editorState={editorState} 
+            onChange={onChange} 
+            plugins={plugins}
+            ref={editor} 
+          />
+          <MentionSuggestions
             onSearchChange={onSearchChange}
             suggestions={suggestions}
-            onAddMention={onAddMention}
-          /> */}
+          />
         </div>
         <Row className='d-flex mx-auto mt-1'>
           <Button
+            onLoad={focus}
             onClick={onPostSubmit}
-            color={post.length > 0 ? 'primary' : 'default'}
+            color={textInFirstBlockInEditor
+              ? 'primary' 
+              : 'default'
+            }
             className='post-button p-0 flex-grow-1'>
-            Post
+            {
+              isSubmitting 
+              ? <CircularProgress size={28} color='inherit'/> 
+              : 'Post'
+            }
           </Button>
         </Row>
       </form>
@@ -160,12 +144,5 @@ const CreatePost = (props: any) => {
   );
 };
 
-const mapDispatchToProps = (dispatch: Function) => ({
-  addPost(post: PostPropsState) {
-    dispatch(createPost(post));
-  }
-});
 
-const mapStateToProps = ({ suggestMentions }: any) => ({ suggestMentions });
-
-export default connect(mapStateToProps, mapDispatchToProps)(CreatePost);
+export default CreatePost;

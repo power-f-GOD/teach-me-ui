@@ -1,6 +1,5 @@
 import {
   ReduxAction,
-  CREATE_POST,
   REACT_TO_POST,
   FETCH_POST_REJECTED,
   UPDATE_POST,
@@ -21,9 +20,9 @@ import { getState } from '../functions';
 
 import Axios from 'axios';
 
-export const createPost = (payload: PostPropsState): ReduxAction => {
-  return { type: CREATE_POST, payload };
-};
+// export const createPost = (payload: PostPropsState): ReduxAction => {
+//   return { type: CREATE_POST, payload };
+// };
 
 export const updatePost = (payload: PostReactionResult): ReduxAction => {
   return { type: UPDATE_POST, payload };
