@@ -93,7 +93,7 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
           overflowY: conversations.status === 'pending' ? 'hidden' : 'auto'
         }}>
         {conversations.status === 'pending' ? (
-          Array(10)
+          Array(Math.floor(window.innerHeight / 70))
             .fill('')
             .map((_, key) => <Skeleton type={DISPLAY_INFO} key={key} />)
         ) : !!convos[0] ? (
@@ -200,7 +200,7 @@ function TabPanel(props: TabPanelProps) {
       hidden={value !== index}
       id={name}
       className={`tab-panel ${
-        value === index ? 'show' : 'hide'
+        value === index ? 'animate-show' : ''
       } custom-scroll-bar`}
       aria-labelledby={index}
       {...other}>

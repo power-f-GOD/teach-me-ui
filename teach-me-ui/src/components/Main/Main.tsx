@@ -65,7 +65,7 @@ const Main = (props: any) => {
 
 
   return (
-    <Grid className='main-root-grid fade-in'>
+    <Grid className='Main fade-in'>
       <Memoize memoizedComponent={Nav} for='main' />
 
       <Switch>

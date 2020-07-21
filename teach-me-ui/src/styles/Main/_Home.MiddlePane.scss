@@ -62,7 +62,8 @@
   border-radius: 100px;
   transition: all 0.3s;
   user-select: none;
-  &:hover {
+
+  &:hover, &:focus {
     background: #eee;
   }
 }

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, createRef } from 'react';
 import { connect } from 'react-redux';
 
 import queryString from 'query-string';
@@ -10,7 +10,7 @@ import Col from 'react-bootstrap/Col';
 import IconButton from '@material-ui/core/IconButton';
 import ChatIcon from '@material-ui/icons/Chat';
 
-import { dispatch } from '../../functions';
+import { dispatch, delay } from '../../functions';
 import {
   chatState,
   conversationMessages,
@@ -52,19 +52,27 @@ interface ChatBoxProps {
   [key: string]: any;
 }
 
+let userTypingTimeout: any = null;
+const chatBoxWrapperRef = createRef<any>();
+
 window.addEventListener('popstate', () => {
   let { chat } = queryString.parse(window.location.search);
 
-  dispatch(
-    chatState({
-      queryString: window.location.search,
-      isOpen: /min|open/.test(chat),
-      isMinimized: chat === 'min'
-    })
-  );
-});
+  //for the sake of the smooth animation
+  if (/min|open/.test(chat) && chatBoxWrapperRef.current) {
+    chatBoxWrapperRef.current.style.display = 'flex';
+  }
 
-let userTypingTimeout: any = null;
+  delay(5).then(() => {
+    dispatch(
+      chatState({
+        queryString: window.location.search,
+        isOpen: /min|open/.test(chat),
+        isMinimized: chat === 'min'
+      })
+    );
+  });
+});
 
 const ChatBox = (props: ChatBoxProps) => {
   const {
@@ -84,26 +92,75 @@ const ChatBox = (props: ChatBoxProps) => {
       convoUsername ?? placeHolderDisplayName
     }&cid=${convoId ?? '0'}`;
 
-    dispatch(
-      chatState({
-        isOpen: true,
-        queryString
-      })
-    );
-    window.history.pushState({}, '', window.location.pathname + queryString);
-
-    if (!conversations.data![0]) {
-      dispatch(getConversations()(dispatch));
+    if (chatBoxWrapperRef.current) {
+      chatBoxWrapperRef.current.style.display = 'flex';
     }
+
+    delay(5).then(() => {
+      dispatch(
+        chatState({
+          isOpen: true,
+          queryString
+        })
+      );
+      window.history.pushState({}, '', window.location.pathname + queryString);
+
+      if (!conversations.data![0]) {
+        dispatch(getConversations()(dispatch));
+      }
+    });
   }, [convoId, convoUsername, conversations.data]);
+
+  const handleChatTransitionEnd = useCallback(
+    (e: any) => {
+      const { currentTarget } = e;
+
+      delay(400).then(() => {
+        if (!isOpen && !/chat=/.test(window.location.search)) {
+          currentTarget.style.display = 'none';
+        }
+      });
+    },
+    [isOpen]
+  );
+
+  useEffect(() => {
+    if (chatBoxWrapperRef.current) {
+      chatBoxWrapperRef.current.style.display = 'flex';
+    }
+  }, []);
 
   useEffect(() => {
     if (isOpen && !isMinimized) {
       document.body.style.overflow = 'hidden';
+      document.querySelectorAll('.Main > *').forEach((component: any) => {
+        if (!component.classList.contains('ChatBox')) {
+          delay(350).then(() => {
+            component.inert = true;
+          });
+        }
+      });
     } else {
       document.body.style.overflow = 'auto';
+      document.querySelectorAll('.Main > *').forEach((component: any) => {
+        if (!component.classList.contains('ChatBox')) {
+          component.inert = false;
+        }
+      });
     }
   }, [isOpen, isMinimized]);
+
+  useEffect(() => {
+    const chatBoxWrapper = chatBoxWrapperRef.current;
+
+    if (chatBoxWrapper) {
+      chatBoxWrapper.addEventListener(
+        'transitionend',
+        handleChatTransitionEnd,
+        { once: true }
+      );
+    }
+  }, [handleChatTransitionEnd]);
 
   useEffect(() => {
     const search = window.location.search;
@@ -244,8 +301,9 @@ const ChatBox = (props: ChatBoxProps) => {
   return (
     <Container fluid className='ChatBox p-0'>
       <Row
+        ref={chatBoxWrapperRef}
         className={`chat-box-wrapper m-0 ${isMinimized ? 'minimize' : ''} ${
-          isOpen ? '' : 'close'
+          isOpen ? 'open' : 'close'
         }`}>
         <Col as='section' md={3} className='chat-left-pane p-0'>
           <ChatLeftPane conversations={conversations} />

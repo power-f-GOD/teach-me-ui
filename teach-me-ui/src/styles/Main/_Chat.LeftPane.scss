@@ -5,8 +5,8 @@ $convo-spacer: 0.55rem;
   color: white;
   overflow: hidden;
 
-  .show {
-    animation: slideUp 0.5s ease;
+  .animate-show {
+    animation: slideUp 0.5s;
   }
 
   header {
@@ -18,11 +18,16 @@ $convo-spacer: 0.55rem;
     margin-bottom: $convo-spacer;
     transition: 0.35s;
     border-radius: 0.45rem;
-    background: rgba(0, 0, 0, 0.25);
+    background: rgba(0, 0, 0, 0.1);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
 
     .chat-avatar {
-      background-color: rgba(0, 0, 0, 0.35);
-      animation: glow 2s infinite;
+      background-color: rgba(0, 0, 0, 0.4);
+      animation: glow 2.25s infinite;
     }
 
     .chat-display-name {
@@ -30,8 +35,8 @@ $convo-spacer: 0.55rem;
       flex-grow: 1;
       max-width: 20rem;
       height: 0.8rem;
-      background-color: rgba(0, 0, 0, 0.35);
-      animation: glow 2s infinite;
+      background-color: rgba(0, 0, 0, 0.4);
+      animation: glow 2.25s infinite;
     }
   }
 
@@ -58,7 +63,7 @@ $convo-spacer: 0.55rem;
   min-height: $chat-header-min-height;
   background: $theme-primary-v4;
 
-  &:hover {
+  &:hover, &:focus {
     color: white;
     background: $theme-secondary-v6;
   }
@@ -83,7 +88,7 @@ $convo-spacer: 0.55rem;
     color: lightblue;
   }
 
-  &:hover {
+  &:hover, &:focus {
     .colleague-name {
       background-color: $theme-secondary-v5;
       color: white;
