@@ -80,7 +80,7 @@ const CreatePost = (props: any) => {
     console.log(value, 'mentionskeyword')
     getMentions().then((mentions: any[] | undefined) => {
       console.log(mentions);
-      setSuggestions(defaultSuggestionsFilter(value, mentions));
+      setSuggestions(defaultSuggestionsFilter(value, mentions)); 
     });
   };
     
