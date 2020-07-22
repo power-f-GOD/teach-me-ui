@@ -3,8 +3,6 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import HttpsRedirect from 'react-https-redirect';
 
-import "wicg-inert";
-
 import { StylesProvider } from '@material-ui/core/styles';
 
 import './styles/bootstrap-grid.min.css';

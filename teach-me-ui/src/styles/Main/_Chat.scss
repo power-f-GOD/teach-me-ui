@@ -62,16 +62,10 @@ $chat-header-min-height: 3.75rem;
   top: 0;
   display: none;
   right: 0;
-  transition: 0.35s;
+  transition: 0.4s;
 
   &.minimize {
     transform: translateY(calc(100% - #{$chat-header-min-height}));
-
-    header {
-      ~ section {
-        display: none;
-      }
-    }
   }
 
   &.open {
@@ -81,6 +75,14 @@ $chat-header-min-height: 3.75rem;
   &.close {
     transform: scale(0.95);
     opacity: 0;
+  }
+
+  &.visible {
+    display: flex;
+  }
+
+  &.hidden {
+    display: none;
   }
 }
 

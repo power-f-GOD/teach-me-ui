@@ -223,7 +223,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
           () => {
             scrollView.scrollTop += 100;
           },
-          16,
+          5,
           () =>
             scrollView.scrollTop >=
             scrollView.scrollHeight - scrollView.offsetHeight - 50
