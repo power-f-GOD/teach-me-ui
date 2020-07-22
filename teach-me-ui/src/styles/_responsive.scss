@@ -108,7 +108,8 @@
           opacity: 1;
           visibility: visible;
 
-          &:hover {
+          &:hover,
+          &:focus {
             transform: translateX(calc(2% + 1.25rem));
           }
         }
@@ -126,8 +127,11 @@
         }
       }
 
-      .edit-button:hover {
-        transform: translateX(calc(2% + 1.25rem));
+      .edit-button {
+        &:hover,
+        &:focus {
+          transform: translateX(calc(2% + 1.25rem));
+        }
       }
 
       .close-edit-button {

@@ -100,13 +100,11 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   }, [_chatState]);
 
   const handleCloseChatClick = useCallback(() => {
-    const queryString = window.location.search;
-
     dispatch(
       chatState({
         isMinimized: false,
         isOpen: false,
-        queryString
+        queryString: ''
       })
     );
     window.history.pushState({}, '', window.location.pathname);
@@ -225,7 +223,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
           () => {
             scrollView.scrollTop += 100;
           },
-          16,
+          5,
           () =>
             scrollView.scrollTop >=
             scrollView.scrollHeight - scrollView.offsetHeight - 50
@@ -326,7 +324,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
           component: Col,
           ref: scrollViewRef
         }}
-        component='section'
+        as='section'
         className='chat-scroll-view custom-scroll-bar grey-scrollbar'
         style={{ marginBottom: scrollViewElevation }}>
         {!!convoMessages[0] && _conversationMessages.status === 'fulfilled' ? (
@@ -364,7 +362,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
 
       <Col
         as='section'
-        className={`chat-msg-box d-flex p-0 ${!convoId ? 'hide' : 'show'}`}>
+        className={`chat-msg-box p-0 ${!convoId ? 'hide' : 'show'}`}>
         <Col as='span' className='emoji-wrapper p-0'>
           <IconButton
             className='emoji-button d-none'

@@ -20,6 +20,14 @@
 
   a {
     text-decoration: none;
+
+    &:first-child {
+      &:focus {
+        .logo {
+          transform: scale(1.075);
+        }
+      }
+    }
   }
 
   .logo {
@@ -77,7 +85,7 @@
     }
   }
 
-  &:hover {
+  &:hover, &:focus {
     color: $theme-secondary-v8 !important;
 
     &::before {
@@ -104,7 +112,7 @@
       background: $theme-primary-v6;
     }
 
-    &:hover {
+    &:hover, &:focus {
       &::before {
         height: 100%;
         top: 0;
@@ -134,7 +142,7 @@
     margin: 0 0.5em;
     margin-top: 0.5em;
 
-    &:hover {
+    &:hover, &:focus {
       border-bottom-color: transparent;
     }
 
@@ -148,7 +156,7 @@
         height: 100%;
       }
 
-      &:hover {
+      &:hover, &:focus {
         &::before {
           width: 100%;
         }

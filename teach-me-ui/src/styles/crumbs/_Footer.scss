@@ -20,7 +20,9 @@ footer {
       color: inherit;
       transition: 0.3s, font-weight 0s;
 
-      &:hover {
+      &:hover,
+      &:focus {
+        text-decoration: underline;
         padding-left: 0.25em;
         color: #111;
         font-weight: bold;
@@ -51,9 +53,12 @@ footer {
     .web-address {
       text-transform: lowercase;
 
-      a:hover {
-        padding-left: unset;
-        font-weight: unset;
+      a {
+        &:hover,
+        &:focus {
+          padding-left: unset;
+          font-weight: unset;
+        }
       }
     }
   }

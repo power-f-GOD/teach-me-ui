@@ -36,48 +36,53 @@ $chat-header-min-height: 3.75rem;
   box-shadow: 0 0 1rem rgba(0, 0, 0, 0.35);
   transition: 0.3s;
 
-  &:hover {
+  &:hover,
+  &:focus {
     background-color: $theme-secondary-v4;
   }
 
   &.hide {
     transform: scale(0);
-    visibility: hidden;
+    // visibility: hidden;
   }
 }
 
 .chat-box-wrapper {
-  $box-height: 100vh;
+  $box-height: 100%;
   $box-width: 100%;
 
   overflow: hidden;
   position: fixed;
   width: $box-width;
-  height: 100%; //$box-height;
-  max-height: $box-height;
+  height: $box-height;
+  max-height: 100vh;
   box-shadow: 0 0.25rem 1.5rem rgba(0, 0, 0, 0.2);
   background-color: white;
   left: 0;
   top: 0;
+  display: none;
   right: 0;
-  transition: 0.35s;
+  transition: 0.4s;
 
   &.minimize {
     transform: translateY(calc(100% - #{$chat-header-min-height}));
+  }
 
-    header {
-      ~ section {
-        transition: 0.35s;
-        visibility: hidden;
-        opacity: 0;
-      }
-    }
+  &.open {
+    animation: openChat 0.35s;
   }
 
   &.close {
-    transform: scale(0.9);
+    transform: scale(0.95);
     opacity: 0;
-    visibility: hidden;
+  }
+
+  &.visible {
+    display: flex;
+  }
+
+  &.hidden {
+    display: none;
   }
 }
 
@@ -166,7 +171,8 @@ body.desktop {
         }
       }
 
-      &:hover {
+      &:hover,
+      &:focus {
         &::-webkit-scrollbar-thumb {
           visibility: visible;
         }
