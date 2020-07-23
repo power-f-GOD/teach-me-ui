@@ -108,7 +108,6 @@ const CreatePost = (props: any) => {
     if (state.post.text) {
       submitPost().then((data: any) => {
         if (!isSubmitting) {
-          console.log(data);
           displayModal(false);
         }
       });
@@ -150,7 +149,7 @@ const CreatePost = (props: any) => {
         >
           <textarea 
             autoFocus
-            rows={10}
+            rows={9}
             id="post-input" 
             onChange={(e: any) => {
               onChange(e)

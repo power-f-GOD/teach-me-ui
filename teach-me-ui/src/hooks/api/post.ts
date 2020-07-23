@@ -41,7 +41,6 @@ export const useSubmitPost = (post: any): useApiResponse<any> => {
     },
     post
   );
-  console.log(post);
   return r;
 };
 
