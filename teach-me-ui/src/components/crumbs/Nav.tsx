@@ -25,7 +25,8 @@ import Dropdown from 'react-bootstrap/Dropdown';
 
 import Notifications from '../Main/Notifications';
 
-import { handleSignoutRequest } from '../../functions';
+import { handleSignoutRequest, getState } from '../../functions';
+import { UserData } from '../../constants';
 
 const Nav = (props: any) => {
   const forIndexPage = /index/i.test(props.for);
@@ -34,7 +35,11 @@ const Nav = (props: any) => {
 
   return (
     <Box component='nav'>
-      <ElevationScroll {...props} forLandingPage={forLandingPage && !/404/.test(window.location.pathname)}>
+      <ElevationScroll
+        {...props}
+        forLandingPage={
+          forLandingPage && !/404/.test(window.location.pathname)
+        }>
         <AppBar position='fixed' className='mobile-width'>
           <Container>
             <Toolbar className='nav-toolbar'>
@@ -86,48 +91,48 @@ function MainNav(props: any) {
     }
   })(Button);
 
-  const mq = window.matchMedia( "(max-width: 600px)" );
-
+  const mq = window.matchMedia('(max-width: 600px)');
+  const username = (getState().userData as UserData).username;
   return (
     <Box className={`nav-links-wrapper ${props?.className}`}>
       <NavLink to='/search' className='nav-link'>
         <SearchIcon />
       </NavLink>
       <NavGeneralLinks />
-      <NavLink exact to='/@' isActive={(_, location) => /\/@\w+/.test(location.pathname)} className='nav-link'>
+      <NavLink
+        exact
+        to={`/@${username}`}
+        isActive={(_, location) => /\/@\w+/.test(location.pathname)}
+        className='nav-link'>
         <AccountIcon className='nav-icon' /> Profile
       </NavLink>
 
-        {mq.matches
-          ? <NavLink to='/notifications'style={{marginTop: '0.7em', color: 'white'}}>
-              <Tooltip
-                title="Notifications"
-                placement="bottom"
-              >
-                <Badge badgeContent={4} color='secondary' >
-                  <NotificationsIcon />
-                </Badge>
-              </Tooltip>
-            </NavLink>
-          
-          : <Dropdown className='dropdown' >
-              <Dropdown.Toggle  id='dropdown' as='p' on='true'>
-              <Tooltip
-                title="Notifications"
-                placement="bottom"
-              >
-                <Badge badgeContent={4} color='secondary' >
-                  <NotificationsIcon />
-                </Badge>
-              </Tooltip>
-              </Dropdown.Toggle>
-              <Dropdown.Menu className='dropdown-contents'>
-                <Notifications />
-              </Dropdown.Menu>
-            </Dropdown>
-        }
-        
-      <div style={{width: '1em'}}></div>
+      {mq.matches ? (
+        <NavLink
+          to='/notifications'
+          style={{ marginTop: '0.7em', color: 'white' }}>
+          <Tooltip title='Notifications' placement='bottom'>
+            <Badge badgeContent={4} color='secondary'>
+              <NotificationsIcon />
+            </Badge>
+          </Tooltip>
+        </NavLink>
+      ) : (
+        <Dropdown className='dropdown'>
+          <Dropdown.Toggle id='dropdown' as='p' on='true'>
+            <Tooltip title='Notifications' placement='bottom'>
+              <Badge badgeContent={4} color='secondary'>
+                <NotificationsIcon />
+              </Badge>
+            </Tooltip>
+          </Dropdown.Toggle>
+          <Dropdown.Menu className='dropdown-contents'>
+            <Notifications />
+          </Dropdown.Menu>
+        </Dropdown>
+      )}
+
+      <div style={{ width: '1em' }}></div>
       <SignOut
         variant='contained'
         className='nav-link'
@@ -139,16 +144,21 @@ function MainNav(props: any) {
       </SignOut>
     </Box>
   );
-};
+}
 
 function MainNavMenu(props: any) {
+  const username = (getState().userData as UserData).username;
   return (
     <Box className={`nav-links-wrapper ${props?.className}`}>
       <NavLink to='/search' className='nav-link'>
         <SearchIcon />
       </NavLink>
       <NavGeneralLinks />
-      <NavLink exact to='/@' isActive={(_, location) => /\/@\w+/.test(location.pathname)} className='nav-link'>
+      <NavLink
+        exact
+        to={`/@${username}`}
+        isActive={(_, location) => /\/@\w+/.test(location.pathname)}
+        className='nav-link'>
         <AccountIcon className='nav-icon' /> Profile
       </NavLink>
       <Button
@@ -162,7 +172,7 @@ function MainNavMenu(props: any) {
       </Button>
     </Box>
   );
-};
+}
 
 function NavGeneralLinks(props: any) {
   return (
@@ -223,7 +233,7 @@ function TemporaryDrawer(props: any) {
     setOpen(open);
   };
 
-  const mq = window.matchMedia( "(max-width: 600px)" );
+  const mq = window.matchMedia('(max-width: 600px)');
 
   return (
     <Box className='drawer'>
@@ -231,37 +241,33 @@ function TemporaryDrawer(props: any) {
         <SearchIcon />
       </NavLink>
 
-      {mq.matches
-        ? <NavLink to='/notifications'style={{marginTop: '0.7em', color: 'white'}}>
-            <Tooltip
-              title="Notifications"
-              placement="bottom"
-            >
-              <Badge badgeContent={4} color='secondary' >
+      {mq.matches ? (
+        <NavLink
+          to='/notifications'
+          style={{ marginTop: '0.7em', color: 'white' }}>
+          <Tooltip title='Notifications' placement='bottom'>
+            <Badge badgeContent={4} color='secondary'>
+              <NotificationsIcon />
+            </Badge>
+          </Tooltip>
+        </NavLink>
+      ) : (
+        <Dropdown className='dropdown'>
+          <Dropdown.Toggle id='dropdown' as='p' on='true'>
+            <Tooltip title='Notifications' placement='bottom'>
+              <Badge badgeContent={4} color='secondary'>
                 <NotificationsIcon />
               </Badge>
             </Tooltip>
-          </NavLink>
-        
-        : <Dropdown className='dropdown' >
-            <Dropdown.Toggle  id="dropdown" as='p' on='true'>
-            <Tooltip
-              title="Notifications"
-              placement="bottom"
-            >
-              <Badge badgeContent={4} color='secondary' >
-                <NotificationsIcon />
-              </Badge>
-            </Tooltip>
-            </Dropdown.Toggle>
+          </Dropdown.Toggle>
 
-            <Dropdown.Menu className='dropdown-contents'>
-              <Notifications />
-            </Dropdown.Menu>
-          </Dropdown>
-      }
+          <Dropdown.Menu className='dropdown-contents'>
+            <Notifications />
+          </Dropdown.Menu>
+        </Dropdown>
+      )}
 
-      <div style={{width: '1em'}}></div>
+      <div style={{ width: '1em' }}></div>
       <IconButton
         edge='start'
         className='menu-button'

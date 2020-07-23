@@ -67,6 +67,14 @@
   .not-set fieldset {
     border-right: 0.175rem solid $error;
   }
+
+  a:first-of-type {
+    &:focus {
+      .logo {
+        transform: scale(1.075);
+      }
+    }
+  }
 }
 
 .academic-info-input-wrapper {
@@ -137,7 +145,8 @@ button.signup-create-button {
     visibility: hidden;
   }
 
-  &:hover {
+  &:hover,
+  &:focus {
     background-color: $theme-secondary-v4 !important;
   }
 }

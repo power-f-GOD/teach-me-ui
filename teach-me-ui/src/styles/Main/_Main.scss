@@ -21,7 +21,7 @@
     height: 3.5rem;
 
     a {
-      &:hover {
+      &:hover, &:focus {
         color: white;
       }
 

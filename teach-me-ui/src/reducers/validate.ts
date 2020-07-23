@@ -83,13 +83,13 @@ export const username = (
   if (action.type === USERNAME_VALIDATE) {
     let { payload } = action;
     let value = payload.value || state.value;
-    let err = !value || /\d+|\W+/.test(value);
+    let err = !value || !/^[a-z0-9_]+$/i.test(value);
     let helperText = err
       ? !value
         ? 'Username required.'
-        : 'Username not accepted. Use letters, underscores only.'
+        : 'Username not accepted. Use letters, numbers, underscores only.'
       : ' ';
-
+ 
     err = 'err' in payload ? payload.err : err;
     helperText = 'helperText' in payload ? payload.helperText : helperText;
 

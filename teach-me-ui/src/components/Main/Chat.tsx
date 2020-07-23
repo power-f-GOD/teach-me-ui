@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, createRef } from 'react';
 import { connect } from 'react-redux';
 
 import queryString from 'query-string';
@@ -10,7 +10,7 @@ import Col from 'react-bootstrap/Col';
 import IconButton from '@material-ui/core/IconButton';
 import ChatIcon from '@material-ui/icons/Chat';
 
-import { dispatch } from '../../functions';
+import { dispatch, delay } from '../../functions';
 import {
   chatState,
   conversationMessages,
@@ -52,19 +52,27 @@ interface ChatBoxProps {
   [key: string]: any;
 }
 
+let userTypingTimeout: any = null;
+const chatBoxWrapperRef = createRef<any>();
+
 window.addEventListener('popstate', () => {
   let { chat } = queryString.parse(window.location.search);
 
-  dispatch(
-    chatState({
-      queryString: window.location.search,
-      isOpen: /min|open/.test(chat),
-      isMinimized: chat === 'min'
-    })
-  );
-});
+  //for the sake of the smooth animation
+  if (/min|open/.test(chat) && chatBoxWrapperRef.current) {
+    chatBoxWrapperRef.current.style.display = 'flex';
+  }
 
-let userTypingTimeout: any = null;
+  delay(5).then(() => {
+    dispatch(
+      chatState({
+        queryString: window.location.search,
+        isOpen: /min|open/.test(chat),
+        isMinimized: chat === 'min'
+      })
+    );
+  });
+});
 
 const ChatBox = (props: ChatBoxProps) => {
   const {
@@ -79,17 +87,26 @@ const ChatBox = (props: ChatBoxProps) => {
   const { isOpen, isMinimized, queryString: qString }: ChatState = _chatState;
   const { _id: convoId, associated_username: convoUsername } = _conversation;
 
+  const [visibilityState, setVisibilityState] = React.useState<
+    'visible' | 'hidden'
+  >('hidden');
+
   const handleOpenChatClick = useCallback(() => {
     const queryString = `?chat=open&id=${
       convoUsername ?? placeHolderDisplayName
     }&cid=${convoId ?? '0'}`;
 
-    dispatch(
-      chatState({
-        isOpen: true,
-        queryString
-      })
-    );
+    setVisibilityState('visible');
+
+    //delay till chatBox display property is set for animation to work
+    delay(5).then(() => {
+      dispatch(
+        chatState({
+          isOpen: true,
+          queryString
+        })
+      );
+    });
     window.history.pushState({}, '', window.location.pathname + queryString);
 
     if (!conversations.data![0]) {
@@ -97,26 +114,92 @@ const ChatBox = (props: ChatBoxProps) => {
     }
   }, [convoId, convoUsername, conversations.data]);
 
+  const handleChatTransitionEnd = useCallback(
+    (e: any) => {
+      const { currentTarget } = e;
+
+      window.setTimeout(() => {
+        if (!isOpen && !/chat=/.test(window.location.search)) {
+          setVisibilityState('hidden');
+        }
+
+        if (isOpen) {
+          if (isMinimized) {
+            currentTarget
+              .querySelectorAll('header ~ section')
+              .forEach((section: any) => {
+                section.inert = true;
+              });
+          } else {
+            currentTarget
+              .querySelectorAll('header ~ section')
+              .forEach((section: any) => {
+                section.inert = false;
+              });
+          }
+        }
+      }, 400);
+    },
+    [isOpen, isMinimized]
+  );
+
+  useEffect(() => {
+    if (/chat=open/.test(window.location.search)) {
+      setVisibilityState('visible');
+    } else if (isMinimized) {
+      setVisibilityState('visible')
+    }
+  }, [isMinimized]);
+
   useEffect(() => {
     if (isOpen && !isMinimized) {
       document.body.style.overflow = 'hidden';
+      window.setTimeout(() => {
+        document.querySelectorAll('.Main > *').forEach((component: any) => {
+          if (!component.classList.contains('ChatBox')) {
+            component.inert = true;
+          }
+        });
+      }, 800);
     } else {
       document.body.style.overflow = 'auto';
+      window.setTimeout(() => {
+        document.querySelectorAll('.Main > *').forEach((component: any) => {
+          if (!component.classList.contains('ChatBox')) {
+            component.inert = false;
+          }
+        });
+      }, 600);
     }
   }, [isOpen, isMinimized]);
+
+  useEffect(() => {
+    const chatBoxWrapper = chatBoxWrapperRef.current;
+
+    if (chatBoxWrapper) {
+      chatBoxWrapper.addEventListener(
+        'transitionend',
+        handleChatTransitionEnd,
+        { once: true }
+      );
+    }
+  }, [handleChatTransitionEnd]);
 
   useEffect(() => {
     const search = window.location.search;
     let { chat, id, cid } = queryString.parse(search);
 
     if (chat) {
-      dispatch(
-        chatState({
-          queryString: !!chat ? search : qString,
-          isOpen: true,
-          isMinimized: chat === 'min'
-        })
-      );
+      //delay till chatBox display property is set for animation to work
+      delay(5).then(() => {
+        dispatch(
+          chatState({
+            queryString: !!chat ? search : qString,
+            isOpen: true,
+            isMinimized: chat === 'min'
+          })
+        );
+      });
     }
 
     if (isOpen && !conversations.data![0]) {
@@ -244,9 +327,10 @@ const ChatBox = (props: ChatBoxProps) => {
   return (
     <Container fluid className='ChatBox p-0'>
       <Row
+        ref={chatBoxWrapperRef}
         className={`chat-box-wrapper m-0 ${isMinimized ? 'minimize' : ''} ${
-          isOpen ? '' : 'close'
-        }`}>
+          isOpen ? 'open' : 'close'
+        } ${visibilityState}`}>
         <Col as='section' md={3} className='chat-left-pane p-0'>
           <ChatLeftPane conversations={conversations} />
         </Col>

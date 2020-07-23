@@ -184,6 +184,7 @@ $msg-radius: 0.6rem;
 .chat-msg-box {
   $height: 3.25rem;
 
+  display: flex;
   flex-grow: 0.3;
   min-height: $height;
   max-height: $height;

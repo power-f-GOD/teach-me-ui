@@ -52,6 +52,7 @@ interface PostParentProps {
   sender_id: string;
   sender_name: string;
   sender_username: string;
+  userAvatar: string;
   upvotes: number;
   downvotes: number;
   replies: number;
@@ -359,10 +360,10 @@ export interface NotificationData {
 }
 
 export interface MentionState extends StatusPropsState {
-  data?: any[]
-  [key: string]: any
+  data?: any[];
+  [key: string]: any;
 }
 
 export interface MentionData extends ColleagueData {
-  [index: string]: any
+  [index: string]: any;
 }
