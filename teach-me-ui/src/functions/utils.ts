@@ -312,12 +312,12 @@ export const getMentionsFromText = (text: string): string[] => {
       let endOfMention = newText.search(/[^A-Za-z0-9_]/);
       if (endOfMention === -1) {
         let mention = newText;
-        if (mention.length > 0) {
+        if (mention) {
           mentions.push(mention);
         };
       } else {
         let mention = newText.substring(0, endOfMention);
-        if (mention.length > 0) {
+        if (mention) {
           mentions.push(mention);
         };
         checkTextForMention(newText)

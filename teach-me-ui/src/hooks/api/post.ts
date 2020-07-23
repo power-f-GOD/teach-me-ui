@@ -33,19 +33,15 @@ export const useFetchHashtags = (keyword: string,): useApiResponse<any> => {
 };
 
 export const useSubmitPost = (post: any): useApiResponse<any> => {
-  const { text, mentions, hashtags } = post as {
-    text: string;
-    mentions: Array<string> | undefined;
-    hashtags: Array<string> | undefined;
-  };
   const [...r] = useApi<any>(
     {
       endpoint: '/post/make',
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` }
     },
-    { text, mentions, hashtags }
+    post
   );
+  console.log(post);
   return r;
 };
 
