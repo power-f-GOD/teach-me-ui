@@ -3,32 +3,20 @@ import React, { useState, useRef } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
+import InputTrigger from 'react-input-trigger';
 
 import Row from 'react-bootstrap/Row';
 
-import { connect } from 'react-redux';
+import { 
+  displayModal, 
+  getMentionsFromText, 
+  getHashtagsFromText 
+} from '../../../../functions';
 
-import { PostPropsState } from '../../../../constants';
-import { createPost } from '../../../../actions';
-import { displayModal } from '../../../../functions';
-
-// import { EditorState } from 'draft-js';
-// import createHashtagPlugin from 'draft-js-hashtag-plugin';
-// import Editor from 'draft-js-plugins-editor';
-// import createMentionPlugin, {
-//   defaultSuggestionsFilter
-// } from 'draft-js-mention-plugin';
-import 'draft-js-mention-plugin/lib/plugin.css';
-import { useSubmitPost } from '../../../../hooks/api';
-
-const cookieEnabled = navigator.cookieEnabled;
-
-let token = '';
-if (cookieEnabled) {
-  token = JSON.parse(localStorage?.kanyimuta ?? '{}')?.token ?? null;
-}
-
-// let initialMentions = useFetchMentions('', token);
+import { useStyles } from '../../../../constants';
+import { useSubmitPost/*, useGetFormattedMentionsWithKeyword*/} from '../../../../hooks/api';
 
 let userInfo: any = {};
 let [avatar, displayName, username] = ['', '', ''];
@@ -40,89 +28,92 @@ if (navigator.cookieEnabled && localStorage.kanyimuta) {
   username = userInfo.username;
 }
 
-// const mentionPlugin = createMentionPlugin({
-//   mentionPrefix: '@'
-// });
-// const hashtagPlugin = createHashtagPlugin();
-
 const CreatePost = (props: any) => {
-  // const { suggestMentions } = props;
-  // const results: ColleagueData[] | any[] = suggestMentions.data;
-  const [post, setPost] = useState<any>('');
-  const [submitPost, postResult, ] = useSubmitPost(post, token);
 
-  // const [ , setEditorState] = useState<any>(
-  //   EditorState.createEmpty()
-  // );
+  const avatarSizes = useStyles()
+  const [state, setState] = useState<any>({
+    mentionsKeyword: '',
+    post: {
+      text: '',
+      mentions: [],
+      hashtags: []
+    },
+    top: 0,
+    left: 0,
+    showSuggestor: false,
+    mentions: []
 
-  // const [, setSuggestions] = useState<
-  //   any | undefined
-  // >(/*initialMentions*/);
+  })
+  // const getMentions = useGetFormattedMentionsWithKeyword(state.mentionsKeyword)[0];
+  const [submitPost, , isSubmitting] = useSubmitPost(state.post);
 
-  const editor = useRef<any | null>(null);
+  const editor = useRef<any>()
 
-  // const { MentionSuggestions } = mentionPlugin;
+  const toggleSuggestor = (metaInformation: any) => {
+    const { hookType, cursor } = metaInformation;
 
-  // const plugins = [mentionPlugin, hashtagPlugin];
+    if (hookType === 'start') {
+      setState({
+        ...state,
+        showSuggestor: true,
+        left: cursor.left,
 
-  const onPostChange = (value: any) => {
-    setPost({ text: value.target.value });
+        // we need to add the cursor height so that the dropdown doesn't overlap with the `@`.
+        top: (Number(cursor.top) + Number(cursor.height))
+      });
+
+    }
+      
+    if (hookType === 'cancel') {
+      // reset the state
+      
+      setState({
+        ...state,
+        showSuggestor: false,
+        left: 0,
+
+        // we need to add the cursor height so that the dropdown doesn't overlap with the `@`.
+        top: 0
+      });
+    };
   };
 
-  // let mentions = [];
-  const onPostSubmit = (e: any) => {
-    // const text = editor.current.value;
+  // const handleMentionInput = (metaInformation: any) => {
 
-    // send post
-    // onPostChange({
-    //   text: editor.current.value,
-    //   mentions: undefined,
-    //   hashtags: undefined
-    // });
+  //   setState({
+  //     mentionsKeyword: metaInformation.text
+  //   });
 
-    console.log(post);
+  //   getMentions().then((data: any[]) => {
+  //     setState({ 
+  //       ...state,
+  //       mentions: data
+  //     });
+  //   });
+  // } 
 
-    submitPost().then(() => {
-      console.log(postResult);
-      displayModal(false);
+  const onChange = (e: any) => {
+    const post = e.target.value;
+    setState({
+      ...state,
+      post: { 
+        text: post, 
+        mentions: getMentionsFromText(post), 
+        hashtags: getHashtagsFromText(post)
+      }
     });
+  }
+  
+  const onPostSubmit = (e: any) => {
+    if (state.post.text) {
+      submitPost().then((data: any) => {
+        if (!isSubmitting) {
+          displayModal(false);
+        }
+      });
+    }
   };
-
-  // const onSearchChange = ({ value }: any) => {
-  //   dispatch(triggerSuggestMentions(value)(dispatch));
-
-  //   if (suggestMentions.status === 'pending') {
-  //     setSuggestions([]);
-  //   } else if (suggestMentions.status === 'fulfilled') {
-  //     if (!results[0]) {
-  //       setSuggestions([]);
-  //     } else {
-  //       let mentions = [];
-  //       for (let mention of results) {
-  //         mentions.push({
-  //           name: mention.username,
-  //           link: `/@${mention.username}`,
-  //           avatar: '/images/avatar-1.png'
-  //         });
-  //       }
-  //       setSuggestions(defaultSuggestionsFilter(value, mentions));
-  //       console.log(mentions);
-  //     }
-  //   }
-  // };
-
-  // const onAddMention = (mention: any) => {
-  //   mentions.push(mention.name);
-  // };
-
-  const focus = () => {
-    editor.current.focus();
-  };
-
-  // const onChange = (editorState: any) => {
-  //   setEditorState(editorState);
-  // };
-
+      
   return (
     <Box p={1} pt={0}>
       <Row className='container-fluid p-0 mx-auto'>
@@ -138,21 +129,76 @@ const CreatePost = (props: any) => {
         </div>
       </Row>
       <form>
-        <div className='editor' onClick={focus} ref={editor}>
-          <textarea onChange={onPostChange} />
-          {/* <Editor editorState={editorState} onChange={onChange} ref={editor} /> */}
-          {/* <MentionSuggestions
-            onSearchChange={onSearchChange}
-            suggestions={suggestions}
-            onAddMention={onAddMention}
-          /> */}
+      <div
+        id='suggestion-container'
+      >
+        <InputTrigger
+          trigger={{
+            keyCode: 50,
+            shiftKey: true,
+          }}
+          onStart={(metaData: any) => {
+            toggleSuggestor(metaData);
+          }}
+          onCancel={(metaData: any) => {
+            toggleSuggestor(metaData);
+          }}
+          // onType={(metaData: any) => { 
+          //   handleMentionInput(metaData); 
+          // }}
+        >
+          <textarea 
+            autoFocus
+            rows={9}
+            id="post-input" 
+            onChange={(e: any) => {
+              onChange(e)
+            }}
+            placeholder={`What's on your mind, ${displayName.split(' ')[0]}`}
+            ref={editor}
+          >
+          </textarea>
+        </InputTrigger>
+        <div
+          id="suggestor-dropdown"
+          style={{
+            display: state.showSuggestor ? "block" : "none",
+            top: state.top || 0,
+            left: state.left || 0,
+          }}
+        >
+          {
+            state.mentions?.map((mention: any, key: number) => (
+              <div
+                key={key}
+                style={{
+                  padding: '10px 20px'
+                }}  
+              >
+                <Avatar
+                  className={avatarSizes.small}
+                  component='span'
+                  src={`${mention.avatar}`}
+                />
+                { mention.name }
+              </div>
+            ))  
+          }
         </div>
+      </div>
         <Row className='d-flex mx-auto mt-1'>
           <Button
             onClick={onPostSubmit}
-            color={post.length > 0 ? 'primary' : 'default'}
+            color={state.post.text
+              ? 'primary' 
+              : 'default'
+            }
             className='post-button p-0 flex-grow-1'>
-            Post
+            {
+              isSubmitting 
+              ? <CircularProgress size={28} color='inherit'/> 
+              : 'Post'
+            }
           </Button>
         </Row>
       </form>
@@ -160,12 +206,5 @@ const CreatePost = (props: any) => {
   );
 };
 
-const mapDispatchToProps = (dispatch: Function) => ({
-  addPost(post: PostPropsState) {
-    dispatch(createPost(post));
-  }
-});
 
-const mapStateToProps = ({ suggestMentions }: any) => ({ suggestMentions });
-
-export default connect(mapStateToProps, mapDispatchToProps)(CreatePost);
+export default CreatePost;

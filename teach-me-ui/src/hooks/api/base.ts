@@ -36,6 +36,7 @@ export default function useApi<T>(
         throw new Error(res.data.message);
       }
       setData(res.data);
+      return res.data;
     } catch (e) {
       if (!Axios.isCancel(e)) {
         dispatch(
