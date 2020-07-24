@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 
 import Container from 'react-bootstrap/Container';
-// import Row from 'react-bootstrap/Row';
+import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import WebAssetIcon from '@material-ui/icons/WebAsset';
@@ -16,6 +16,7 @@ import Box from '@material-ui/core/Box';
 import DoneIcon from '@material-ui/icons/Done';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import ScheduleIcon from '@material-ui/icons/Schedule';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 import {
   ChatState,
@@ -24,7 +25,8 @@ import {
   APIMessageResponse,
   UserData,
   ConversationInfo,
-  SearchState
+  SearchState,
+  Partial
 } from '../../constants/interfaces';
 import createMemo from '../../Memo';
 import { userDeviceIsMobile } from '../../';
@@ -82,6 +84,11 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   const [msgBoxCurrentHeight, setMsgBoxCurrentHeight] = useState<number>(
     msgBoxInitHeight
   );
+  const [selectedMessages, setSelectedMessages] = useState<{
+    [index: number]: string | null;
+  }>({});
+  const [clearSelections, setClearSelections] = useState<boolean>(false);
+  const numOfSelectedMessages = Object.keys(selectedMessages).length;
 
   const handleMinimizeChatClick = useCallback(() => {
     const { isMinimized, queryString: qString }: ChatState = _chatState;
@@ -140,7 +147,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
             autoHide: false,
             severity: 'info',
             message:
-              "Couldn't send message. You seem to be offline. We'll try to reconnect then you can try again."
+              "Couldn't send message. Seems you are/were offline. We'll try to reconnect then you can try sending message again."
           })
         );
         dispatch(initWebSocket(userData.token as string));
@@ -207,6 +214,33 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
     [socket, convoId, msgBoxCurrentHeight, msgBoxRowsMax, handleSendMsgClick]
   );
 
+  const handleMessageSelection = useCallback(
+    (id: string | null, index: number) => {
+      setClearSelections(false);
+      setSelectedMessages((prev) => {
+        const newState = { ...prev, ...{ [index]: id } };
+
+        if (!id) {
+          delete newState[index];
+        }
+
+        return newState;
+      });
+    },
+    []
+  );
+
+  const handleClearSelections = useCallback(
+    (value: boolean) => () => {
+      setClearSelections(value);
+
+      if (value) {
+        setSelectedMessages({});
+      }
+    },
+    []
+  );
+
   useEffect(() => {
     setScrollView(scrollViewRef.current);
 
@@ -223,7 +257,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
           () => {
             scrollView.scrollTop += 100;
           },
-          5,
+          16,
           () =>
             scrollView.scrollTop >=
             scrollView.scrollHeight - scrollView.offsetHeight - 50
@@ -237,7 +271,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   return (
     <>
       <Col as='header' className='chat-header d-flex p-0'>
-        {
+        <Box className='d-flex title-control-wrapper'>
           <Col as='span' className='colleague-name'>
             {type === 'ONE_TO_ONE' ? (
               <>
@@ -291,32 +325,63 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
               </>
             )}
           </Col>
-        }
 
-        <Col as='span' className='controls p-0'>
-          <Col xs={6} as='span' className='minimize-wrapper'>
-            <IconButton
-              className='minimize-button'
-              onClick={handleMinimizeChatClick}
-              aria-label='minimize chat box'>
-              {!isMinimized ? (
-                <Col as='span' className='minimize-icon'>
-                  ─
+          <Col as='span' className='controls p-0'>
+            <Col xs={6} as='span' className='minimize-wrapper'>
+              <IconButton
+                className='minimize-button'
+                onClick={handleMinimizeChatClick}
+                aria-label='minimize chat box'>
+                {!isMinimized ? (
+                  <Col as='span' className='minimize-icon'>
+                    ─
+                  </Col>
+                ) : (
+                  <WebAssetIcon fontSize='inherit' />
+                )}
+              </IconButton>
+            </Col>
+            <Col xs={6} as='span' className='close-wrapper'>
+              <IconButton
+                className='close-button'
+                onClick={handleCloseChatClick}
+                aria-label='close chat box'>
+                <CloseIcon fontSize='inherit' />
+              </IconButton>
+            </Col>
+          </Col>
+        </Box>
+
+        <Row
+          className={`message-actions-container ${
+            numOfSelectedMessages ? 'open' : ''
+          } m-0`}>
+          <Box className='action-wrapper text-left'>
+            {
+              <>
+                <IconButton
+                  className='clear-selection-button ml-2'
+                  onClick={handleClearSelections(true)}
+                  aria-label='cancel action button'>
+                  <CloseIcon />
+                </IconButton>
+                <Col as='span' className='ml-2 px-0'>
+                  {numOfSelectedMessages
+                    ? `${numOfSelectedMessages} selected`
+                    : 'Cleared'}
                 </Col>
-              ) : (
-                <WebAssetIcon fontSize='inherit' />
-              )}
-            </IconButton>
-          </Col>
-          <Col xs={6} as='span' className='close-wrapper'>
+              </>
+            }
+          </Box>
+          <Box className='action-wrapper text-right'>
             <IconButton
-              className='close-button'
-              onClick={handleCloseChatClick}
-              aria-label='close chat box'>
-              <CloseIcon fontSize='inherit' />
+              className='delete-button d-none mr-2'
+              // onClick={handleDeleteMessageClick}
+              aria-label='delete message'>
+              <DeleteIcon />
             </IconButton>
-          </Col>
-        </Col>
+          </Box>
+        </Row>
       </Col>
 
       <Memoize
@@ -328,19 +393,40 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         className='chat-scroll-view custom-scroll-bar grey-scrollbar'
         style={{ marginBottom: scrollViewElevation }}>
         {!!convoMessages[0] && _conversationMessages.status === 'fulfilled' ? (
-          convoMessages.map((message, key: number) => (
-            <Message
-              message={message}
-              type={
-                message.sender_id && message.sender_id !== userData.id
-                  ? 'incoming'
-                  : 'outgoing'
-              }
-              userId={userData.id}
-              participants={conversation.participants}
-              key={key}
-            />
-          ))
+          convoMessages.map((message, key: number) => {
+            const type =
+              message.sender_id && message.sender_id !== userData.id
+                ? 'incoming'
+                : 'outgoing';
+            const prevSenderId = (convoMessages[key - 1] ?? {}).sender_id;
+            const nextSenderId = (convoMessages[key + 1] ?? {}).sender_id;
+            const isFirstOfStack = prevSenderId !== message.sender_id;
+            const isOnlyOfStack =
+              prevSenderId !== message.sender_id &&
+              nextSenderId !== message.sender_id;
+            const isMiddleOfStack =
+              prevSenderId === message.sender_id &&
+              nextSenderId === message.sender_id;
+            const isLastOfStack = nextSenderId !== message.sender_id;
+            const className = `${isFirstOfStack ? 'first ' : ''}${
+              isOnlyOfStack ? 'only ' : ''
+            }${isLastOfStack ? 'last ' : ''}${isMiddleOfStack ? 'middle' : ''}`;
+
+            return (
+              <Message
+                message={message}
+                type={type}
+                clearSelections={clearSelections}
+                index={key}
+                className={className}
+                userId={userData.id}
+                participants={conversation.participants}
+                handleClearSelections={handleClearSelections}
+                handleMessageSelection={handleMessageSelection}
+                key={key}
+              />
+            );
+          })
         ) : (
           <Box
             className='theme-tertiary-lighter d-flex align-items-center justify-content-center'
@@ -406,10 +492,32 @@ function Message(props: {
   message: Partial<APIMessageResponse>;
   type: 'incoming' | 'outgoing';
   userId: string;
+  index: number;
+  className: string;
+  clearSelections: boolean;
   participants: string[];
+  handleMessageSelection: Function;
+  handleClearSelections: Function;
 }) {
-  const { type, message, participants, userId } = props;
-  const { message: text, date, timestamp_id, delivered_to, seen_by } = message;
+  const {
+    type,
+    message,
+    participants,
+    userId,
+    index,
+    className,
+    clearSelections,
+    handleMessageSelection,
+    handleClearSelections
+  } = props;
+  const {
+    message: text,
+    date,
+    timestamp_id,
+    delivered_to,
+    seen_by,
+    _id: id
+  } = message;
   const timestamp = timestampFormatter(date);
   const isDelivered =
     type === 'outgoing' &&
@@ -422,33 +530,74 @@ function Message(props: {
       .filter((id) => id !== userId)
       .every((participant) => seen_by?.includes(participant));
 
-  // if (type === 'outgoing')
-  // console.log('delivered:', isDelivered, 'seen:', isSeen)
+  const [selected, setSelected] = useState<boolean | null>(null);
+
+  const handleMessageDblClick = useCallback(
+    (e: any) => {
+      if (type === 'incoming') return;
+      handleClearSelections(false);
+      setSelected((prev) => !prev);
+    },
+    [type, handleClearSelections]
+  );
+
+  useEffect(() => {
+    if (type === 'outgoing' && selected !== null) {
+      handleMessageSelection(selected ? id : null, index);
+    }
+  }, [
+    selected,
+    id,
+    index,
+    type,
+    handleMessageSelection,
+    handleClearSelections
+  ]);
+
+  useEffect(() => {
+    if (type === 'outgoing' && selected !== null && clearSelections) {
+      setSelected(false);
+      handleMessageSelection(null, index);
+    }
+  }, [selected, clearSelections, index, type, handleMessageSelection]);
+
+  useEffect(
+    () => () => {
+      if (type === 'outgoing') {
+        setSelected(false);
+        handleMessageSelection(null, index);
+      }
+    },
+    [index, type, handleMessageSelection]
+  );
 
   return (
     <Container
-      className={`${
-        type === 'incoming' ? 'incoming' : 'outgoing'
-      } msg-container p-0 m-0`}>
+      className={`${type === 'incoming' ? 'incoming' : 'outgoing'} ${
+        selected ? 'selected' : ''
+      } msg-container ${className} p-0 m-0`}
+      onDoubleClick={handleMessageDblClick}>
       <Col
         as='div'
-        className='msg-wrapper scroll-view-msg-wrapper d-inline-flex flex-column justify-content-end p-0'>
-        <Col as='span' className='scroll-view-msg d-block'>
+        className='msg-wrapper scroll-view-msg-wrapper d-inline-flex flex-column justify-content-end'>
+        <Box>
+          {/* <Col as='span' className='scroll-view-msg'> */}
           {text}
-        </Col>
-        <Col as='span' className='chat-timestamp-wrapper d-block p-0'>
-          <Col as='span' className='chat-timestamp d-inline-block'>
-            {timestamp}{' '}
-            {type !== 'incoming' &&
-              (timestamp_id ? (
-                <ScheduleIcon />
-              ) : isSeen || isDelivered ? (
-                <DoneAllIcon className={isSeen ? 'read' : ''} />
-              ) : (
-                <DoneIcon />
-              ))}
+          {/* </Col> */}
+          <Col as='span' className='chat-timestamp-wrapper p-0'>
+            <Col as='span' className='chat-timestamp d-inline-block'>
+              {timestamp}{' '}
+              {type !== 'incoming' &&
+                (timestamp_id ? (
+                  <ScheduleIcon />
+                ) : isSeen || isDelivered ? (
+                  <DoneAllIcon className={isSeen ? 'read' : ''} />
+                ) : (
+                  <DoneIcon />
+                ))}
+            </Col>
           </Col>
-        </Col>
+        </Box>
       </Col>
     </Container>
   );

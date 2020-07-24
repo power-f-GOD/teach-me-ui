@@ -47,7 +47,6 @@
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "typescript-eslint": "0.0.1-alpha.0",
-    "wicg-inert": "^3.0.3",
     "worker-loader": "^2.0.0"
   },
   "devDependencies": {
