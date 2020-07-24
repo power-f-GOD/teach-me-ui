@@ -31,7 +31,7 @@ const LeftPane = (props: any) => {
   return (
     <Container as='section' className='left-pane p-2'>
       <Container className='rows-wrapper custom-scroll-bar small-bar rounded-bar tertiary-bar debugger'>
-        <Row as='section' className='m-0 flex-column mb-4'>
+        <Row as='section' className='m-0 flex-column mb-4 safari-fix-d-block'>
           <Col className='p-0 d-flex justify-content-center'>
             <Avatar
               component='span'
@@ -59,7 +59,7 @@ const LeftPane = (props: any) => {
             </Col>
           </Col>
         </Row>
-        <Row as='section' className='m-0 flex-column mb-4'>
+        <Row as='section' className='m-0 flex-column mb-4 safari-fix-d-block'>
           <Col className='info p-0 d-flex my-1'>
             <PeopleOutlineIcon className='mr-2' fontSize='large' />
             <Col
@@ -100,7 +100,9 @@ const LeftPane = (props: any) => {
             </Col>
           </Col>
         </Row>
-        <Row as='section' className='academic m-0 flex-column'>
+        <Row
+          as='section'
+          className='academic m-0 flex-column safari-fix-d-block'>
           <Col as='span' className='info p-0 d-flex my-1  align-items-center'>
             <SchoolIcon className='mr-2' fontSize='large' />
             {institution}
