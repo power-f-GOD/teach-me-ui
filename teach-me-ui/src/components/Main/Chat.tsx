@@ -56,11 +56,17 @@ let userTypingTimeout: any = null;
 const chatBoxWrapperRef = createRef<any>();
 
 window.addEventListener('popstate', () => {
-  let { chat } = queryString.parse(window.location.search);
+  let { chat, cid } = queryString.parse(window.location.search);
 
   //for the sake of the smooth animation
   if (/min|open/.test(chat) && chatBoxWrapperRef.current) {
     chatBoxWrapperRef.current.style.display = 'flex';
+  }
+
+  if (!isNaN(cid)) {
+    dispatch(conversationInfo({ status: 'settled', data: {} }));
+    dispatch(conversation(''));
+    dispatch(conversationMessages({ status: 'settled', data: [] }));
   }
 
   delay(5).then(() => {
@@ -177,7 +183,7 @@ const ChatBox = (props: ChatBoxProps) => {
   useEffect(() => {
     if (isOpen && !isMinimized) {
       document.body.style.overflow = 'hidden';
-      delay(800).then(() => {
+      delay(400).then(() => {
         document.querySelectorAll('.Main > *').forEach((component: any) => {
           if (!/ChatBox/.test(component.className)) {
             component.inert = true;
@@ -186,7 +192,7 @@ const ChatBox = (props: ChatBoxProps) => {
       });
     } else {
       document.body.style.overflow = 'auto';
-      delay(600).then(() => {
+      delay(450).then(() => {
         document.querySelectorAll('.Main > *').forEach((component: any) => {
           if (!/ChatBox/.test(component.className)) {
             component.inert = false;
@@ -202,7 +208,7 @@ const ChatBox = (props: ChatBoxProps) => {
 
     if (chat) {
       //delay till chatBox display property is set for animation to work
-      delay(5).then(() => {
+      delay(500).then(() => {
         dispatch(
           chatState({
             queryString: !!chat ? search : qString,
@@ -217,7 +223,7 @@ const ChatBox = (props: ChatBoxProps) => {
       dispatch(getConversations()(dispatch));
     }
 
-    if (cid && isNaN(cid)) {
+    if ((cid && isNaN(cid))) {
       let infoStatus = _conversationInfo.status;
       if (
         convoId &&
