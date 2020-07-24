@@ -113,7 +113,7 @@
       background-color: inherit;
     }
 
-    &:hover {
+    &:hover, &:focus {
       color: white;
       padding-left: 2.5rem;
       padding-right: 2.5rem;

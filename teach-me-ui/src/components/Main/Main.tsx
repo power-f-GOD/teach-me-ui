@@ -10,7 +10,7 @@ import About from '../Index/About';
 import Support from '../Index/Support';
 import Profile from './Profile';
 import Loader from '../crumbs/Loader';
-import Chat from '../crumbs/Chat';
+import Chat from './Chat';
 import _404 from '../Index/_404';
 import Search from './Search';
 
@@ -65,7 +65,7 @@ const Main = (props: any) => {
 
 
   return (
-    <Grid className='main-root-grid fade-in'>
+    <Grid className='Main fade-in'>
       <Memoize memoizedComponent={Nav} for='main' />
 
       <Switch>

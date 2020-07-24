@@ -1,0 +1,113 @@
+$convo-spacer: 0.55rem;
+
+.chat-left-pane {
+  background-color: $theme-primary-v3;
+  color: white;
+  overflow: hidden;
+
+  .animate-show {
+    animation: slideUp 0.5s;
+  }
+
+  header {
+    box-shadow: none;
+  }
+
+  .skeleton-loader {
+    padding: 0.75rem 0.5rem;
+    margin-bottom: $convo-spacer;
+    transition: 0.35s;
+    border-radius: 0.45rem;
+    background: rgba(0, 0, 0, 0.1);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+
+    .chat-avatar {
+      background-color: rgba(0, 0, 0, 0.4);
+      animation: glow 2.25s infinite;
+    }
+
+    .chat-display-name {
+      border-radius: 1rem;
+      flex-grow: 1;
+      max-width: 20rem;
+      height: 0.8rem;
+      background-color: rgba(0, 0, 0, 0.4);
+      animation: glow 2.25s infinite;
+    }
+  }
+
+  @keyframes glow {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
+  }
+}
+
+.tab-panel {
+  padding: $convo-spacer;
+  max-height: calc(100vh - #{$chat-header-min-height});
+  overflow-y: auto;
+}
+
+.tab-link {
+  flex-grow: 1;
+  padding: 0;
+  font-weight: bold;
+  min-height: $chat-header-min-height;
+  background: $theme-primary-v4;
+
+  &:hover, &:focus {
+    color: white;
+    background: $theme-secondary-v6;
+  }
+}
+
+[class*='MuiTabs-indicator'] {
+  background-color: $theme-secondary-v6;
+}
+
+.tab-panel-item {
+  margin-bottom: $convo-spacer;
+  display: flex;
+  cursor: pointer;
+  text-decoration: none;
+  color: lightblue;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &:visited {
+    color: lightblue;
+  }
+
+  &:hover, &:focus {
+    .colleague-name {
+      background-color: $theme-secondary-v5;
+      color: white;
+    }
+  }
+
+  &.active {
+    
+
+    .colleague-name {
+      background-color: $theme-primary-v5;
+      color: white;
+    }
+  }
+
+  .colleague-name {
+    padding: 0.75rem 0.5rem;
+    transition: 0.35s;
+    border-radius: 0.45rem;
+    background: rgba(0, 0, 0, 0.25);
+  }
+}

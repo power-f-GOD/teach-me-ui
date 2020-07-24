@@ -33,11 +33,13 @@ import {
   dispatch,
   // timestampFormatter,
   delay,
+  interval,
   preventEnterNewLine,
   timestampFormatter
 } from '../../functions/utils';
 import { placeHolderDisplayName } from './Chat';
-import { displaySnackbar } from '../../actions';
+import { displaySnackbar, initWebSocket } from '../../actions';
+import { CHAT_TYPING } from '../../constants/chat';
 // import { Skeleton, DISPLAY_INFO } from './Loaders';
 
 const Memoize = createMemo();
@@ -60,6 +62,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
     conversationMessages: _conversationMessages,
     chatState: _chatState,
     userData,
+    conversationInfo: _conversationInfo,
     webSocket: socket
   } = props;
   const convoMessages = _conversationMessages.data as Partial<
@@ -93,18 +96,15 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         queryString
       })
     );
-
     window.history.replaceState({}, '', queryString);
   }, [_chatState]);
 
   const handleCloseChatClick = useCallback(() => {
-    const queryString = window.location.search;
-
     dispatch(
       chatState({
         isMinimized: false,
         isOpen: false,
-        queryString
+        queryString: ''
       })
     );
     window.history.pushState({}, '', window.location.pathname);
@@ -114,7 +114,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
     const msgBox = msgBoxRef.current!;
     const msg: MessageProps = {
       message: msgBox.value.trim(),
-      time_stamp_id: String(Date.now()),
+      timestamp_id: String(Date.now()),
       pipe: 'CHAT_NEW_MESSAGE',
       date: Date.now(),
       conversation_id: convoId
@@ -133,6 +133,17 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         setScrollViewElevation('calc(19px - 1.25rem)');
         socket.send(JSON.stringify(msg));
         // console.log('message:', msg, 'was sent.');
+      } else {
+        dispatch(
+          displaySnackbar({
+            open: true,
+            autoHide: false,
+            severity: 'info',
+            message:
+              "Couldn't send message. You seem to be offline. We'll try to reconnect then you can try again."
+          })
+        );
+        dispatch(initWebSocket(userData.token as string));
       }
     } catch (e) {
       dispatch(
@@ -146,10 +157,16 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
       );
       console.error('Error:', e, 'Message:', msg, 'failed to send.');
     }
-  }, [msgBoxRowsMax, convoId, socket]);
+  }, [msgBoxRowsMax, convoId, socket, userData.token]);
 
   const handleMsgInputChange = useCallback(
     (e: any) => {
+      if (socket && socket.readyState === 1) {
+        socket.send(
+          JSON.stringify({ conversation_id: convoId, pipe: CHAT_TYPING })
+        );
+      }
+
       if (!e.shiftKey && e.key === 'Enter' && !userDeviceIsMobile) {
         handleSendMsgClick();
         return false;
@@ -187,7 +204,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
       setScrollViewElevation(`calc(${elevation}px - ${remValue}rem)`);
       setMsgBoxCurrentHeight(elevation);
     },
-    [msgBoxCurrentHeight, msgBoxRowsMax, handleSendMsgClick]
+    [socket, convoId, msgBoxCurrentHeight, msgBoxRowsMax, handleSendMsgClick]
   );
 
   useEffect(() => {
@@ -199,9 +216,21 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   }, [scrollView]);
 
   useEffect(() => {
-    // console.log('convoMessages:', convoMessages)
-    if (!!convoMessages && scrollView) {
-      scrollView.scrollTop = scrollView.scrollHeight;
+    if (convoMessages && scrollView) {
+      // animate (to prevent flicker) if scrollView is at very top else don't animate
+      if (scrollView.scrollTop < scrollView.scrollHeight - 300) {
+        interval(
+          () => {
+            scrollView.scrollTop += 100;
+          },
+          5,
+          () =>
+            scrollView.scrollTop >=
+            scrollView.scrollHeight - scrollView.offsetHeight - 50
+        );
+      } else {
+        scrollView.scrollTop = scrollView.scrollHeight;
+      }
     }
   }, [convoMessages, scrollView]);
 
@@ -227,8 +256,21 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
                     src={`/images/${avatar}`}
                   />
                 </Badge>{' '}
-                <Col as='span' className='ml-2 p-0'>
-                  {displayName ?? placeHolderDisplayName}
+                <Col as='span' className='ml-1 p-0'>
+                  <Col
+                    as='span'
+                    className={`display-name ${
+                      _conversationInfo.user_typing ? '' : 'status-hidden'
+                    } p-0`}>
+                    {displayName ?? placeHolderDisplayName}
+                  </Col>
+                  <Col
+                    as='span'
+                    className={`status ${
+                      _conversationInfo.user_typing ? 'show' : ''
+                    } p-0`}>
+                    typing...
+                  </Col>
                 </Col>
               </>
             ) : !convoId ? (
@@ -282,7 +324,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
           component: Col,
           ref: scrollViewRef
         }}
-        component='section'
+        as='section'
         className='chat-scroll-view custom-scroll-bar grey-scrollbar'
         style={{ marginBottom: scrollViewElevation }}>
         {!!convoMessages[0] && _conversationMessages.status === 'fulfilled' ? (
@@ -294,6 +336,8 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
                   ? 'incoming'
                   : 'outgoing'
               }
+              userId={userData.id}
+              participants={conversation.participants}
               key={key}
             />
           ))
@@ -318,10 +362,10 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
 
       <Col
         as='section'
-        className={`chat-msg-box d-flex p-0 ${!convoId ? 'hide' : 'show'}`}>
+        className={`chat-msg-box p-0 ${!convoId ? 'hide' : 'show'}`}>
         <Col as='span' className='emoji-wrapper p-0'>
           <IconButton
-            className='emoji-button'
+            className='emoji-button d-none'
             // onClick={toggleDrawer(true)}
             aria-label='insert emoji'>
             <EmojiIcon fontSize='inherit' />
@@ -361,12 +405,25 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
 function Message(props: {
   message: Partial<APIMessageResponse>;
   type: 'incoming' | 'outgoing';
+  userId: string;
+  participants: string[];
 }) {
-  const { type, message } = props;
-  const { message: text, date } = message;
-  const timestamp_id = message.time_stamp_id;
-  const seen_by = message.seen_by;
+  const { type, message, participants, userId } = props;
+  const { message: text, date, timestamp_id, delivered_to, seen_by } = message;
   const timestamp = timestampFormatter(date);
+  const isDelivered =
+    type === 'outgoing' &&
+    participants
+      .filter((id) => id !== userId)
+      .every((participant) => delivered_to?.includes(participant));
+  const isSeen =
+    type === 'outgoing' &&
+    participants
+      .filter((id) => id !== userId)
+      .every((participant) => seen_by?.includes(participant));
+
+  // if (type === 'outgoing')
+  // console.log('delivered:', isDelivered, 'seen:', isSeen)
 
   return (
     <Container
@@ -382,13 +439,14 @@ function Message(props: {
         <Col as='span' className='chat-timestamp-wrapper d-block p-0'>
           <Col as='span' className='chat-timestamp d-inline-block'>
             {timestamp}{' '}
-            {timestamp_id ? (
-              <ScheduleIcon />
-            ) : !!seen_by![0] ? (
-              <DoneAllIcon className={'read'} />
-            ) : (
-              <DoneIcon />
-            )}
+            {type !== 'incoming' &&
+              (timestamp_id ? (
+                <ScheduleIcon />
+              ) : isSeen || isDelivered ? (
+                <DoneAllIcon className={isSeen ? 'read' : ''} />
+              ) : (
+                <DoneIcon />
+              ))}
           </Col>
         </Col>
       </Col>

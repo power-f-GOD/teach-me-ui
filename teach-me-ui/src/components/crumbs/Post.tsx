@@ -145,8 +145,8 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
             <Avatar
               component='span'
               className='post-avatar'
-              alt={props.sender_name}
-              src={`/images/${props.userAvatar}`}
+              alt={props.parent?.sender_name}
+              src={`/images/${props.parent?.userAvatar}`}
             />
             <Col className='d-flex flex-grow-1 flex-column'>
               <Box component='div' fontWeight='bold'>
