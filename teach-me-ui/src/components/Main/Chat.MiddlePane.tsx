@@ -76,7 +76,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
     avatar,
     conversation_name: displayName
   } = conversation;
-  const { isMinimized, isOpen }: ChatState = _chatState;
+  const { isMinimized }: ChatState = _chatState;
 
   const [scrollView, setScrollView] = useState<HTMLElement | null>(null);
   const [scrollViewElevation, setScrollViewElevation] = React.useState(String);
@@ -106,8 +106,10 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
     window.history.replaceState({}, '', queryString);
   }, [_chatState]);
 
+  const clickTimeout: any = useRef();
   const handleCloseChatClick = useCallback(() => {
-    if (isOpen && _conversationMessages.status !== 'pending') {
+    clearTimeout(clickTimeout.current);
+    clickTimeout.current = window.setTimeout(() => {
       dispatch(
         chatState({
           isMinimized: false,
@@ -116,8 +118,8 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         })
       );
       window.history.pushState({}, '', window.location.pathname);
-    }
-  }, [isOpen, _conversationMessages.status]);
+    }, 300);
+  }, []);
 
   const handleSendMsgClick = useCallback(() => {
     const msgBox = msgBoxRef.current!;

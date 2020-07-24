@@ -181,25 +181,23 @@ const ChatBox = (props: ChatBoxProps) => {
   }, [isMinimized]);
 
   useEffect(() => {
-    if (isOpen && !isMinimized) {
-      document.body.style.overflow = 'hidden';
-      delay(400).then(() => {
+    delay(400).then(() => {
+      if (isOpen && !isMinimized) {
+        document.body.style.overflow = 'hidden';
         document.querySelectorAll('.Main > *').forEach((component: any) => {
           if (!/ChatBox/.test(component.className)) {
             component.inert = true;
           }
         });
-      });
-    } else {
-      document.body.style.overflow = 'auto';
-      delay(450).then(() => {
+      } else {
+        document.body.style.overflow = 'auto';
         document.querySelectorAll('.Main > *').forEach((component: any) => {
           if (!/ChatBox/.test(component.className)) {
             component.inert = false;
           }
         });
-      });
-    }
+      }
+    });
   }, [isOpen, isMinimized]);
 
   useEffect(() => {
@@ -223,7 +221,7 @@ const ChatBox = (props: ChatBoxProps) => {
       dispatch(getConversations()(dispatch));
     }
 
-    if ((cid && isNaN(cid))) {
+    if (cid && isNaN(cid)) {
       let infoStatus = _conversationInfo.status;
       if (
         convoId &&
