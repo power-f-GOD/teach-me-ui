@@ -118,7 +118,7 @@ const ChatBox = (props: ChatBoxProps) => {
     (e: any) => {
       const { currentTarget } = e;
 
-      window.setTimeout(() => {
+      delay(400).then(() => {
         if (!isOpen && !/chat=/.test(window.location.search)) {
           setVisibilityState('hidden');
         }
@@ -138,52 +138,63 @@ const ChatBox = (props: ChatBoxProps) => {
               });
           }
         }
-      }, 400);
+      });
     },
     [isOpen, isMinimized]
   );
 
   useEffect(() => {
-    if (/chat=open/.test(window.location.search)) {
-      setVisibilityState('visible');
-    } else if (isMinimized) {
-      setVisibilityState('visible')
+    const chatBoxWrapper = chatBoxWrapperRef.current;
+
+    if (chatBoxWrapper) {
+      try {
+        chatBoxWrapper.addEventListener(
+          'transitionend',
+          handleChatTransitionEnd,
+          { once: true }
+        );
+      } catch (err) {
+        chatBoxWrapper.removeEventListener(
+          'transitionend',
+          handleChatTransitionEnd
+        );
+        chatBoxWrapper.addEventListener(
+          'transitionend',
+          handleChatTransitionEnd
+        );
+      }
+    }
+  }, [handleChatTransitionEnd]);
+
+  useEffect(() => {
+    const timeout = isMinimized ? 500 : 5;
+
+    if (/chat=open/.test(window.location.search) || isMinimized) {
+      delay(timeout).then(() => setVisibilityState('visible'));
     }
   }, [isMinimized]);
 
   useEffect(() => {
     if (isOpen && !isMinimized) {
       document.body.style.overflow = 'hidden';
-      window.setTimeout(() => {
+      delay(800).then(() => {
         document.querySelectorAll('.Main > *').forEach((component: any) => {
-          if (!component.classList.contains('ChatBox')) {
+          if (!/ChatBox/.test(component.className)) {
             component.inert = true;
           }
         });
-      }, 800);
+      });
     } else {
       document.body.style.overflow = 'auto';
-      window.setTimeout(() => {
+      delay(600).then(() => {
         document.querySelectorAll('.Main > *').forEach((component: any) => {
-          if (!component.classList.contains('ChatBox')) {
+          if (!/ChatBox/.test(component.className)) {
             component.inert = false;
           }
         });
-      }, 600);
+      });
     }
   }, [isOpen, isMinimized]);
-
-  useEffect(() => {
-    const chatBoxWrapper = chatBoxWrapperRef.current;
-
-    if (chatBoxWrapper) {
-      chatBoxWrapper.addEventListener(
-        'transitionend',
-        handleChatTransitionEnd,
-        { once: true }
-      );
-    }
-  }, [handleChatTransitionEnd]);
 
   useEffect(() => {
     const search = window.location.search;
@@ -202,7 +213,7 @@ const ChatBox = (props: ChatBoxProps) => {
       });
     }
 
-    if (isOpen && !conversations.data![0]) {
+    if ((isOpen || chat === 'open') && !conversations.data![0]) {
       dispatch(getConversations()(dispatch));
     }
 
@@ -329,7 +340,7 @@ const ChatBox = (props: ChatBoxProps) => {
       <Row
         ref={chatBoxWrapperRef}
         className={`chat-box-wrapper m-0 ${isMinimized ? 'minimize' : ''} ${
-          isOpen ? 'open' : 'close'
+          isOpen ? '' : 'close'
         } ${visibilityState}`}>
         <Col as='section' md={3} className='chat-left-pane p-0'>
           <ChatLeftPane conversations={conversations} />

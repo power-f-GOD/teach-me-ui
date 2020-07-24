@@ -43,7 +43,6 @@ $chat-header-min-height: 3.75rem;
 
   &.hide {
     transform: scale(0);
-    // visibility: hidden;
   }
 }
 
@@ -68,10 +67,6 @@ $chat-header-min-height: 3.75rem;
     transform: translateY(calc(100% - #{$chat-header-min-height}));
   }
 
-  &.open {
-    animation: openChat 0.35s;
-  }
-
   &.close {
     transform: scale(0.95);
     opacity: 0;
@@ -91,11 +86,11 @@ $chat-header-min-height: 3.75rem;
 }
 
 header.chat-header {
-  flex-grow: 0.15;
+  position: relative;
   font-weight: bold;
+  overflow: hidden;
   min-height: $chat-header-min-height;
   max-height: $chat-header-min-height;
-  height: $chat-header-min-height !important;
   box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.1);
 }
 

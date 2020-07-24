@@ -24,7 +24,6 @@ $convo-spacer: 0.55rem;
       margin-bottom: 0;
     }
 
-
     .chat-avatar {
       background-color: rgba(0, 0, 0, 0.4);
       animation: glow 2.25s infinite;
@@ -63,7 +62,8 @@ $convo-spacer: 0.55rem;
   min-height: $chat-header-min-height;
   background: $theme-primary-v4;
 
-  &:hover, &:focus {
+  &:hover,
+  &:focus {
     color: white;
     background: $theme-secondary-v6;
   }
@@ -88,7 +88,8 @@ $convo-spacer: 0.55rem;
     color: lightblue;
   }
 
-  &:hover, &:focus {
+  &:hover,
+  &:focus {
     .colleague-name {
       background-color: $theme-secondary-v5;
       color: white;
@@ -96,8 +97,6 @@ $convo-spacer: 0.55rem;
   }
 
   &.active {
-    
-
     .colleague-name {
       background-color: $theme-primary-v5;
       color: white;
