@@ -14,15 +14,19 @@ import ReactButton from './ReactButton';
 import { bigNumberFormat } from '../../functions/utils';
 import { PostPropsState } from '../../constants/interfaces';
 
+// /(\s(?=[#@])|(?<=[#@]\w+)\s)/;
+
 export const processPostFn = (post: string) =>
   post &&
-  post.split(/(\s(?=[#@])|(?<=[#@]\w+)\s)/).map((w, i) => {
+  post.split(' ').map((w, i) => {
     return /(^@|^#)/.test(w) ? (
-      <Link key={i} to={`/${w}`}>
-        {w}
-      </Link>
+      <>
+        <Link key={i} to={`/${w}`}>
+          {w}
+        </Link>{' '}
+      </>
     ) : (
-      w
+      <>{w} </>
     );
   });
 
