@@ -15,6 +15,7 @@ import { bigNumberFormat } from '../../functions/utils';
 import { PostPropsState } from '../../constants/interfaces';
 
 export const processPostFn = (post: string) =>
+  post &&
   post.split(/(\s(?=[#@])|(?=< [#@]\w+)\s)/).map((w, i) => {
     return /(^@|^#)/.test(w) ? (
       <Link key={i} to={`/${w}`}>
