@@ -1,4 +1,10 @@
 .chat-middle-pane {
+  // @include debugger();
+
+  .title-control-wrapper {
+    flex-grow: 1;
+  }
+
   .display-name {
     font-weight: 600;
     font-size: 1.1rem;
@@ -36,18 +42,44 @@
     height: 100%;
   }
 }
- 
+
+.message-actions-container {
+  // @include debugger();
+
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  z-index: 2;
+  margin: 0;
+  transform: translateY(100%);
+  transition: 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+
+  &.open {
+    transform: translateY(0);
+  }
+
+  * {
+    font-weight: 600 !important;
+  }
+}
+
 .chat-scroll-view {
-  padding: 0.9rem;
-  overflow: auto;
+  padding: 0.75rem 1.15rem;
+  overflow-x: hidden;
   transition: 0.15s;
 }
 
 $incoming-outgoing-spacing: 1rem;
 $msgs-spacing: 0.125rem;
-$msg-radius: 0.6rem;
+$msg-radius: 1.25rem;
 
 .scroll-view-msg-wrapper {
+  padding: 0.55rem 0.7rem;
+  text-align: left;
   width: auto;
   max-width: 75%;
 
@@ -57,7 +89,7 @@ $msg-radius: 0.6rem;
     background: transparent;
     height: 0;
     width: 0;
-    border: $msg-radius solid transparent;
+    border: $msg-radius - 0.5rem solid transparent;
     border-top-color: inherit;
     z-index: 0;
   }
@@ -72,89 +104,172 @@ $msg-radius: 0.6rem;
 }
 
 .msg-container {
-  // @include debugger($color: blue);
+  position: relative;
+  user-select: none;
+  cursor: pointer;
+
+  &::after {
+    @include before-or-after(
+      $tr: 0.2s,
+      $zi: unset,
+      $w: calc(100% + 4rem),
+      $h: calc(100% + 0.125rem),
+      $l: -2rem,
+      $t: unset,
+      $b: -0.0625rem,
+      $bg: rgba($prim-r + 50, $prim-g + 50, $prim-b + 50, 0.35)
+    );
+    opacity: 0;
+    transform: translateY(0.25rem);
+  }
+
+  &.selected {
+    &::after {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .msg-wrapper {
+    transition: 0.35s;
+  }
+
+  $br: 0.35rem;
 
   &.incoming {
-    .msg-wrapper {
-      $bg-color: lightblue; //$theme-secondary-v9;
+    margin: 0;
 
-      margin: 0;
+    .msg-wrapper {
+      $bg-color: $theme-tertiary-v9;
+
       background: $bg-color;
-      border-radius: 0 $msg-radius $msg-radius;
 
       &::before {
         border-top-color: $bg-color;
         top: 0;
-        left: -$msg-radius;
+        left: -$msg-radius + 0.5rem;
       }
     }
 
-    + .incoming.msg-container .msg-wrapper {
-      margin-top: $msgs-spacing;
-      border-radius: $msg-radius;
+    &.first {
+      .msg-wrapper {
+        border-radius: 0 $msg-radius $msg-radius $br;
+      }
+    }
 
-      &::before {
-        border: none;
+    &.only {
+      .msg-wrapper {
+        border-radius: $br $msg-radius $msg-radius;
+      }
+    }
+
+    &.middle {
+      .msg-wrapper {
+        border-radius: $br $msg-radius $msg-radius $br;
+      }
+    }
+
+    &.last {
+      .msg-wrapper {
+        border-radius: $br $msg-radius $msg-radius;
+      }
+    }
+
+    + .incoming.msg-container {
+      margin-top: $msgs-spacing !important;
+
+      .msg-wrapper {
+        &::before {
+          border: none;
+        }
       }
     }
   }
 
-  &.incoming + .outgoing.msg-container .msg-wrapper {
-    margin-top: $incoming-outgoing-spacing;
+  &.incoming + .outgoing.msg-container {
+    // .msg-wrapper {
+    margin-top: $incoming-outgoing-spacing !important;
   }
 
   &.outgoing {
     text-align: right;
+    margin: 0;
 
     .msg-wrapper {
       $bg-color: $theme-secondary-v9;
 
-      margin: 0;
       background: $bg-color;
-      border-radius: $msg-radius 0 $msg-radius $msg-radius;
       align-self: flex-end;
 
       &::before {
         top: 0;
         border-top-color: $bg-color;
-        right: -$msg-radius;
+        right: -$msg-radius + 0.5rem;
       }
     }
 
-    + .outgoing.msg-container .msg-wrapper {
-      margin-top: $msgs-spacing;
-      border-radius: $msg-radius;
+    &.first {
+      .msg-wrapper {
+        border-radius: $msg-radius 0 $br $msg-radius;
+      }
+    }
 
-      &::before {
-        border: none;
+    &.only {
+      .msg-wrapper {
+        border-radius: $msg-radius $br $msg-radius $msg-radius;
+      }
+    }
+
+    &.middle {
+      .msg-wrapper {
+        border-radius: $msg-radius $br $br $msg-radius;
+      }
+    }
+
+    &.last {
+      .msg-wrapper {
+        border-radius: $msg-radius $br $msg-radius $msg-radius;
+      }
+    }
+
+    + .outgoing.msg-container {
+      margin-top: $msgs-spacing !important;
+
+      .msg-wrapper {
+        &::before {
+          border: none;
+        }
       }
     }
   }
 
-  &.outgoing + .incoming.msg-container .msg-wrapper {
-    margin-top: $incoming-outgoing-spacing;
+  &.outgoing + .incoming.msg-container {
+    // .msg-wrapper {
+    margin-top: $incoming-outgoing-spacing !important;
   }
 }
 
 .chat-timestamp-wrapper {
   font-size: 0.75rem;
   text-align: right;
-  line-height: 100%;
-  color: #555;
+  width: auto;
+  float: right;
+  line-height: 250%;
+  color: #777;
   margin: {
-    top: -0.35rem;
-    bottom: 0.15rem;
+    right: -0.45rem;
+    bottom: -0.75rem;
   }
 
   .chat-timestamp {
     padding: 0;
     padding: {
       right: 0.35rem;
-      bottom: 0.1rem;
-      left: 1rem;
+      left: 0.65rem;
     }
+    white-space: pre;
 
-    [class*=Icon] {
+    [class*='Icon'] {
       font-size: 1.05rem;
       margin-bottom: -0.25rem;
       margin-left: 0.1rem;

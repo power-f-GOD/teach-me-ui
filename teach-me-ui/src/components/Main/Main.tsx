@@ -11,14 +11,14 @@ import Support from '../Index/Support';
 import Profile from './Profile';
 import Loader from '../crumbs/Loader';
 import Chat from './Chat';
-import _404 from '../Index/_404';
 import Search from './Search';
+import Notifications from './Notifications';
+import _404 from '../Index/_404';
 
 import createMemo from '../../Memo';
 import { dispatch } from '../../functions/utils';
 import { initWebSocket, closeWebSocket } from '../../actions/misc';
-import Notifications from './Notifications';
-// import { ChatState } from '../../constants';
+
 
 const Memoize = createMemo();
 
@@ -61,8 +61,6 @@ const Main = (props: any) => {
     //redirect to actual URL user was initially trying to access when wasn't authenticated
     return <Redirect to={props.location.state?.from || { pathname: '/' }} />;
   }
-  const mq = window.matchMedia( "(max-width: 600px)" );
-
 
   return (
     <Grid className='Main fade-in'>
@@ -74,10 +72,7 @@ const Main = (props: any) => {
         <Route path='/support' component={Support} />
         <Route path='/@:userId' component={Profile} />
         <Route path='/search' component={Search} />
-        {mq.matches
-          ? <Route path='/notifications' component={Notifications} />
-          : <Route component={_404} />
-        }
+        <Route path='/notifications' component={Notifications} />
         <Route component={_404} />
       </Switch>
 

@@ -84,7 +84,7 @@ export const conversation = (
 ): Partial<APIConversationResponse & UserEnrolledData> => {
   if (action.type === SET_CONVERSATION) {
     return {
-      ...state,
+      ...(Object.keys(action.payload).length ? state : {}),
       ...action.payload
     };
   }

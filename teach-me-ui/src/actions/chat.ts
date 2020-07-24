@@ -267,37 +267,37 @@ export const getConversationMessages = (convoId: string) => (
       const convoId = (getState().conversation as APIConversationResponse)._id;
       const chatState = getState().chatState as ChatState;
 
-      if (socket && socket.readyState === 1) {
-        for (let i = messages.length - 1; i >= 0; i--) {
-          let message = messages[i];
+      if (!error) {
+        if (socket && socket.readyState === 1) {
+          for (let i = messages.length - 1; i >= 0; i--) {
+            let message = messages[i];
 
-          if (message.sender_id !== userId) {
-            if (!message.delivered_to!.includes(userId)) {
-              socket.send(
-                JSON.stringify({
-                  message_id: message._id,
-                  pipe: CHAT_MESSAGE_DELIVERED
-                })
-              );
-            }
+            if (message.sender_id !== userId) {
+              if (!message.delivered_to!.includes(userId)) {
+                socket.send(
+                  JSON.stringify({
+                    message_id: message._id,
+                    pipe: CHAT_MESSAGE_DELIVERED
+                  })
+                );
+              }
 
-            if (!message.seen_by!.includes(userId)) {
-              if (convoId === message.conversation_id) {
-                if (chatState.isOpen && !chatState.isMinimized) {
-                  socket.send(
-                    JSON.stringify({
-                      message_id: message._id,
-                      pipe: CHAT_READ_RECEIPT
-                    })
-                  );
+              if (!message.seen_by!.includes(userId)) {
+                if (convoId === message.conversation_id) {
+                  if (chatState.isOpen && !chatState.isMinimized) {
+                    socket.send(
+                      JSON.stringify({
+                        message_id: message._id,
+                        pipe: CHAT_READ_RECEIPT
+                      })
+                    );
+                  }
                 }
               }
             }
           }
         }
-      }
 
-      if (!error) {
         dispatch(
           conversationMessages({
             conversationId: convoId,
@@ -417,6 +417,11 @@ export const conversation = (conversationId: string): ReduxAction => {
   ) ?? {}) as APIConversationResponse;
 
   payload.avatar = payload.avatar ? payload.avatar : 'avatar-1.png';
+
+  //make payload an empty object in order for hack to work in corresponding reducer
+  if (!payload._id) {
+    delete payload.avatar;
+  }
 
   return {
     type: SET_CONVERSATION,

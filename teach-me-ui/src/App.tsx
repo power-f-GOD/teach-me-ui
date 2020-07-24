@@ -40,9 +40,10 @@ const App = (props: any) => {
                     '/@:userId',
                     '/@:userId/colleagues',
                     '/search',
+                    '/notifications',
                     '/*'
                   ]
-                : ['/home', '/search']
+                : ['/home', '/search', '/notifications']
             }
             exact
             component={Main}
