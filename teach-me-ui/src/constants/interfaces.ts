@@ -1,3 +1,7 @@
+export type Partial<T> = {
+  [P in keyof T]?: T[P];
+};
+
 export interface NetworkAction {
   name: string;
   func: Function;
@@ -17,14 +21,64 @@ export interface InputErrState {
 }
 
 export interface PostPropsState {
-  displayName: string;
-  username: string;
-  upvotes: number;
-  postBody: string;
-  downvotes: number;
-  noOfComments: number;
   userAvatar: string;
-  reaction: 'upvote' | 'downvote' | 'neutral';
+  reaction: Reaction;
+  sender_id: string;
+  sender_name: string;
+  sender_username: string;
+  sec_type?: 'REPOST' | 'REPLY';
+  text: string;
+  id: string;
+  upvotes: number;
+  downvotes: number;
+  replies: number;
+  reposts: number;
+  posted_at: number;
+  _extra?: PostExtraProps;
+  parent?: PostParentProps;
+}
+
+interface PostExtraProps {
+  type: 'UPVOTE' | 'DOWNVOTE';
+  colleague_id: string;
+  colleague_name: string;
+  colleague_username: string;
+}
+
+interface PostParentProps {
+  sec_type?: 'REPOST' | 'REPLY';
+  text: string;
+  id: string;
+  sender_id: string;
+  sender_name: string;
+  sender_username: string;
+  userAvatar: string;
+  upvotes: number;
+  downvotes: number;
+  replies: number;
+  reaction: Reaction;
+  reposts: number;
+}
+
+export interface SocketProps {
+  pipe: 'POST_REACTION' | 'POST_REPLY';
+  post_id: string;
+  reaction?: Reaction;
+  interaction?: 'SEEN' | 'ENGAGED';
+}
+
+export interface PostReactionResult {
+  downvotes: number;
+  upvotes: number;
+  id: string;
+}
+
+export type Reaction = 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL';
+
+export interface FetchPostsState {
+  status: 'pending' | 'rejected' | 'resolved';
+  error?: boolean;
+  message?: string;
 }
 
 export interface TopicPropsState {
@@ -33,13 +87,61 @@ export interface TopicPropsState {
 }
 
 export interface ReactButtonPropsState {
+  id: string;
   reactions: number;
-  type: 'upvote' | 'downvote';
-  reacted: 'upvote' | 'downvote' | 'neutral';
+  type: 'UPVOTE' | 'DOWNVOTE';
+  reacted: Reaction;
+}
+
+export interface ReactPostState {
+  id: string;
+  type: Reaction;
 }
 
 export interface BasicInputState extends InputErrState {
   value?: string;
+}
+export interface ApiProps {
+  endpoint: string;
+  method: any;
+  headers?: HeaderProps;
+}
+
+export type useApiResponse<T> = [() => Promise<void>, T, boolean];
+
+interface HeaderProps {
+  [key: string]: any;
+}
+
+export interface ColleagueRequestProps {
+  sender: ColleagueRequestSender;
+  request: ColleagueRequest;
+}
+
+interface ColleagueRequestSender {
+  firstname: string;
+  date_of_birth: string;
+  id: string;
+  email: string;
+  lastname: string;
+  username: string;
+  department: string;
+  level: string;
+}
+
+interface ColleagueRequest {
+  date: number;
+  id: string;
+}
+
+export interface DeepProfileProps {
+  status:
+    | 'IS_COLLEAGUE'
+    | 'PENDING_REQUEST'
+    | 'AWAITING_REQUEST_ACTION'
+    | 'NOT_COLLEAGUES';
+  mutual_colleagues?: number;
+  request_id?: string;
 }
 
 export interface InstitutionInputState extends InputErrState {
@@ -63,7 +165,6 @@ export interface ForgotPasswordStatusState {
 
 export interface SearchState extends StatusPropsState {
   data?: any[];
-  [key: string]: any;
 }
 
 export interface SignupPropsState {
@@ -148,20 +249,11 @@ export interface CreateLevelState extends StatusPropsState {
 // ChatBox interfaces...
 
 //you should eventually make all the Message props required
-export interface Message {
-  type: 'incoming' | 'outgoing';
-  text: string;
-  timestamp: string | number;
-  senderId?: string | number;
-  id?: string | number;
+export interface MessageProps extends Partial<APIMessageResponse> {
+  timestamp?: string | number;
 }
 
-export interface Chat {
-  anchor: AnchorInfo;
-  // displayName: string;
-  // type?: 'conversation' | 'classroom';
-  // avatar: string;
-  // id: string;
+export interface ChatState {
   queryString?: string;
   isOpen?: boolean;
   isMinimized?: boolean;
@@ -174,7 +266,7 @@ export interface ChatData {
 export interface AnchorInfo {
   displayName: string;
   id: string;
-  messages?: Message[];
+  messages?: MessageProps[];
   avatar: string;
   info?: UserInfo | RoomInfo;
   type: 'conversation' | 'classroom';
@@ -192,6 +284,8 @@ export interface RoomInfo {
 }
 
 export interface UserEnrolledData {
+  avatar?: string;
+  displayName: string;
   firstname: string;
   lastname: string;
   id: string;
@@ -199,4 +293,77 @@ export interface UserEnrolledData {
   institution: string;
   department: string;
   level: string;
+}
+
+export interface ConversationsMessages extends StatusPropsState {
+  [convoId: string]: any;
+}
+
+export interface ConversationMessages extends Omit<SearchState, 'data'> {
+  conversationId?: string;
+  pipe?:
+    | 'CHAT_NEW_MESSAGE'
+    | 'CHAT_MESSAGE_DELIVERED'
+    | 'CHAT_TYPING'
+    | 'CHAT_READ_RECEIPT';
+  data?: Partial<APIMessageResponse>[];
+}
+
+export interface ConversationInfo extends Omit<SearchState, 'data'> {
+  user_typing?: string;
+  conversationId?: string;
+  data?: Partial<UserEnrolledData & APIConversationResponse>;
+}
+
+export interface APIMessageResponse {
+  deleted: boolean;
+  seen_by: string[];
+  delivered_to: string[];
+  created_at: number;
+  _id: string;
+  conversation_id: string;
+  message: string;
+  date: number;
+  sender_id: string;
+  timestamp_id?: string;
+  __v: number;
+  pipe: string;
+  user_id?: string;
+}
+
+export interface APIConversationResponse {
+  avatar?: string;
+  participants: string[];
+  created_at: number;
+  last_activity: number;
+  _id: string;
+  creator: 'SYSTEM' | string;
+  type: 'ONE_TO_ONE' | string;
+  __v: number;
+  friendship: string;
+  conversation_name: string;
+  associated_username: string;
+}
+
+export interface NotificationState extends StatusPropsState {
+  data?: any[];
+  [key: string]: any;
+}
+
+export interface NotificationData {
+  _id: string;
+  data: any;
+  date: any;
+  message: string;
+  type: string;
+  [key: string]: any;
+}
+
+export interface MentionState extends StatusPropsState {
+  data?: any[];
+  [key: string]: any;
+}
+
+export interface MentionData extends ColleagueData {
+  [index: string]: any;
 }

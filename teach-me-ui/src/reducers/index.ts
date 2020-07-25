@@ -5,8 +5,11 @@ import * as auth from './auth';
 import * as misc from './misc';
 import * as chat from './chat';
 import * as modals from './modals';
+import * as posts from './posts';
 import * as search from './search';
 import * as profile from './profile';
+import * as colleague from './colleague';
+import * as notifications from './notifications';
 
 export default combineReducers({
   ...validate,
@@ -14,6 +17,9 @@ export default combineReducers({
   ...misc,
   ...chat,
   ...modals,
+  ...posts,
   ...search,
-  ...profile
+  ...profile,
+  ...colleague,
+  ...notifications
 });

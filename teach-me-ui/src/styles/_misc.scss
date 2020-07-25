@@ -20,8 +20,8 @@ body {
 * {
   box-sizing: border-box;
   font-family: 'Hind Madurai', 'Trebuchet MS', sans-serif !important;
-  // border: 1px solid deeppink; //DEBUGGER
   font-weight: 400;
+  outline: none;
 }
 
 body {
@@ -98,7 +98,7 @@ body {
 
   > div {
     width: 100%;
-    background: #eee;
+    background: #ccc;
   }
 }
 
@@ -106,6 +106,8 @@ body {
   height: 100vh;
   width: 100%;
   min-height: 100%;
+  position: relative;
+  z-index: 1500;
   display: flex;
   background: $theme-primary-v3 !important;
   color: $theme-primary-v9;
@@ -178,7 +180,8 @@ a {
     border: 2px solid white;
     transition: 0.3s;
 
-    &:hover {
+    &:hover,
+    &:focus {
       color: $theme-secondary;
       background-color: white;
     }
@@ -227,7 +230,8 @@ a {
         );
       }
 
-      &:hover {
+      &:hover,
+      &:focus {
         &::before {
           transform: translateX(100%);
         }
@@ -250,8 +254,11 @@ a {
 }
 
 .MuiOutlinedInput-root {
-  &:hover .MuiOutlinedInput-notchedOutline {
-    border: 2px solid $theme-tertiary-v7;
+  &:hover,
+  &:focus {
+    .MuiOutlinedInput-notchedOutline {
+      border: 2px solid $theme-tertiary-v7;
+    }
   }
 }
 
@@ -366,6 +373,7 @@ div {
 
 .MuiSnackbar-root {
   max-width: $app-max-width / 2;
+  display: block;
   width: auto !important;
   background: transparent !important;
 }
@@ -391,6 +399,7 @@ div {
     size: 1.5rem;
     weight: 500;
   }
+  transition: 0.3s;
 
   &.light-blue {
     background: $theme-primary;
@@ -415,6 +424,18 @@ div {
   }
   background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
 }
 
 .theme-primary {
@@ -468,6 +489,6 @@ div {
   background-color: $theme-tertiary;
 }
 
-[class*=theme-] {
+[class*='theme-'] {
   font-weight: inherit;
 }

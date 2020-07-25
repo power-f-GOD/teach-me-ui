@@ -1,41 +1,36 @@
-import {
-  // StatusPropsState,
-  Chat,
-  ChatData
-} from './interfaces';
+import { ChatState, ChatData } from './interfaces';
 
-export const SET_ACTIVE_CHAT = 'SET_ACTIVE_CHAT';
+export const SET_CHAT_STATE = 'SET_CHAT_STATE';
 
 export const REQUEST_START_CONVERSATION = 'START_CONVERSATION';
 export const START_CONVERSATION = 'START_CONVERSATION';
 export const REQUEST_SEND_MESSAGE = 'REQUEST_SEND_MESSAGE';
 export const SEND_MESSAGE = 'SEND_MESSAGE';
 
-export const CONVO_CHAT_TYPE = 'conversation';
-export const ROOM_CHAT_TYPE = 'classroom';
-export const SET_CHATS_MESSAGES = 'SET_ACTIVE_CHAT_MESSAGES';
+export const ONE_TO_ONE = 'ONE_TO_ONE';
+export const ONE_TO_MANY = 'ONE_TO_MANY';
+
+export const GET_CONVERSATION_MESSAGES = 'GET_CHAT_MESSAGES';
+export const SET_CONVERSATION_MESSAGES = 'SET_CHATS_MESSAGES';
+export const GET_CONVERSATION_INFO = 'GET_CONVERSATION_INFO';
+export const SET_CONVERSATION_INFO = 'SET_CONVERSATION_INFO';
+export const SET_CONVERSATION = 'SET_CONVERSATION';
+// export const SET_CONVERSATION_MESSAGES = 'SET_CONVERSATION_MESSAGES';
 
 export const GET_PEOPLE_ENROLLED_IN_INSTITUTION =
   'GET_PEOPLE_ENROLLED_IN_INSTITUTION';
 export const SET_PEOPLE_ENROLLED_IN_INSTITUTION =
   'SET_PEOPLE_ENROLLED_IN_INSTITUTION';
 
-export const REQUEST_NEW_CONVO = '';
-export const NEW_CONVO = '';
+export const GET_CONVERSATIONS = 'GET_CONVERSATIONS';
+export const SET_CONVERSATIONS = 'SET_CONVERSATIONS';
 
-export const activeChatState: Chat = {
-  anchor: {
-    displayName: 'Start a conversation',
-    avatar: '',
-    type: CONVO_CHAT_TYPE,
-    id: '',
-    info: {
-      username: '',
-      institution: '',
-      department: '',
-      level: ''
-    }
-  },
+export const CHAT_NEW_MESSAGE = 'CHAT_NEW_MESSAGE';
+export const CHAT_MESSAGE_DELIVERED = 'CHAT_MESSAGE_DELIVERED';
+export const CHAT_TYPING = 'CHAT_TYPING';
+export const CHAT_READ_RECEIPT = 'CHAT_READ_RECEIPT';
+
+export const chatStateProps: ChatState = {
   queryString: window.location.pathname,
   isOpen: false,
   isMinimized: false

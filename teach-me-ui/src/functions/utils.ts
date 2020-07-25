@@ -3,13 +3,14 @@ import {
   StatusPropsState,
   BasicInputState,
   UserData,
-  NetworkAction
+  NetworkAction,
+  Reaction
 } from '../constants';
 import store from '../appStore';
 import { displaySnackbar, setUserData } from '../actions';
+import { userDeviceIsMobile } from '../';
 
-export const { getState } = store;
-export const dispatch = store.dispatch as Function;
+export const { dispatch, getState }: any = store;
 
 export const validateEmailFn = (email: string) =>
   !!email && /^\w+[\w\d.]*[\w\d]+@\w+\.[\w\d.]+[\w\d]$/.test(email);
@@ -29,6 +30,14 @@ export const validateResetPasswordFn = (password: string) => {
       'Password weak. Consider combining alphanumerics/symbols.';
   }
   return result;
+};
+
+export const resultantReaction: Function = (
+  oldReaction: Reaction,
+  newReaction: Reaction
+): Reaction => {
+  if (oldReaction === newReaction) return 'NEUTRAL';
+  return newReaction;
 };
 
 export function promisedDispatch(action: ReduxAction): Promise<ReduxAction> {
@@ -132,17 +141,24 @@ export const timestampFormatter = (
   _timestamp?: string | number,
   withSeconds?: boolean
 ): string => {
-  let timestamp = Number(_timestamp)
-    ? new Date(String(_timestamp)).toLocaleTimeString()
-    : _timestamp;
+  let timestamp = new Date(Number(_timestamp)).toLocaleTimeString();
 
-  if (timestamp && !Number(_timestamp)) {
-    if (!/^\d\d:\d\d:\d\d$/.test(String(timestamp))) {
-      console.error('Invalid timestamp format: ', timestamp);
+  if (timestamp) {
+    if (!Number(_timestamp) && !/^\d\d:\d\d:\d\d$/.test(String(timestamp))) {
       return String(timestamp);
     }
   } else {
     timestamp = new Date().toLocaleTimeString();
+  }
+
+  // let is12hour = ;
+
+  if (/(a|p)m/i.test(timestamp)) {
+    timestamp = timestamp.replace(/:\d\d\s?(\w)/, ' $1');
+
+    let [hr, remnant] = timestamp.split(':');
+
+    return `${+hr < 10 ? '0' + hr : hr}:${remnant}`;
   }
 
   let [hour, minute, second] = String(timestamp).split(':');
@@ -187,6 +203,12 @@ export const bigNumberFormat: Function = (number: number): string => {
   }
 
   return '1T+';
+};
+
+export const preventEnterNewLine = (e: any) => {
+  if (!e.shiftKey && e.key === 'Enter' && !userDeviceIsMobile) {
+    e.preventDefault();
+  }
 };
 
 // more performant (custom) timers utilizing window.requestAnimationFrame...
@@ -268,3 +290,65 @@ function _requestAnimationFrameWrapper() {
     return id;
   };
 }
+
+export const convertColleagueArrayToMentionFormat = (colleagueArray: any) => {
+  let mentionArray: any[] = [];
+  for (let colleague of colleagueArray ) {
+    mentionArray.push({ 
+      name: colleague.username, 
+      link: `/@${colleague.username}`,
+      avatar: '/images/avatar-1.png'
+    });
+  };
+  return mentionArray;
+};
+
+export const getMentionsFromText = (text: string): string[] => {
+  let mentions: string[] = [];
+  const checkTextForMention = (text1: string) => {
+    let startOfMention = text1.indexOf('@');
+    if (startOfMention !== -1) {
+      let newText = text1.substring(startOfMention + 1);
+      let endOfMention = newText.search(/[^A-Za-z0-9_]/);
+      if (endOfMention === -1) {
+        let mention = newText;
+        if (mention) {
+          mentions.push(mention);
+        };
+      } else {
+        let mention = newText.substring(0, endOfMention);
+        if (mention) {
+          mentions.push(mention);
+        };
+        checkTextForMention(newText)
+      };
+    };
+  };
+  checkTextForMention(text)
+  return mentions;
+};
+
+export const getHashtagsFromText = (text: string): string[] => {
+  let hashtags: string[] = [];
+  const checkTextForHashtag = (text1: string) => {
+    let startOfHashtag = text1.indexOf('#');
+    if (startOfHashtag !== -1) {
+      let newText = text1.substring(startOfHashtag + 1);
+      let endOfHashtag = newText.search(/[^A-Za-z0-9_]/);
+      if (endOfHashtag === -1) {
+        let hashtag = newText;
+        if (hashtag.length > 1) {
+          hashtags.push(`#${hashtag}`);
+        };
+      } else {
+        let hashtag = newText.substring(0, endOfHashtag);
+        if (hashtag.length > 1) {
+          hashtags.push(`#${hashtag}`);
+        };
+        checkTextForHashtag(newText)
+      };
+    };
+  };
+  checkTextForHashtag(text)
+  return hashtags;
+};

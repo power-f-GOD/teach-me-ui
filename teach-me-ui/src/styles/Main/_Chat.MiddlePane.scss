@@ -1,0 +1,366 @@
+.chat-middle-pane {
+  // @include debugger();
+
+  .title-control-wrapper {
+    flex-grow: 1;
+  }
+
+  .display-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: flex;
+    transform: translateY(0.15rem);
+    transition: 0.35s ease-out;
+
+    &.status-hidden {
+      transform: translateY(0.7rem);
+    }
+  }
+
+  .status {
+    color: $theme-tertiary-v6;
+    font-size: 0.95rem;
+    opacity: 0;
+    transition: 0.35s;
+
+    &.show {
+      opacity: 1;
+    }
+  }
+}
+
+.minimize-wrapper,
+.close-wrapper {
+  button {
+    padding: 0.5rem;
+    font-size: 1.35rem !important;
+  }
+
+  .minimize-icon {
+    line-height: 100%;
+    padding: 0.05rem 0.2rem;
+    height: 100%;
+  }
+}
+
+.message-actions-container {
+  // @include debugger();
+
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  z-index: 2;
+  margin: 0;
+  transform: translateY(100%);
+  transition: 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+
+  &.open {
+    transform: translateY(0);
+  }
+
+  * {
+    font-weight: 600 !important;
+  }
+}
+
+.chat-scroll-view {
+  padding: 0.75rem 1.15rem;
+  overflow-x: hidden;
+  transition: 0.15s;
+}
+
+$incoming-outgoing-spacing: 1rem;
+$msgs-spacing: 0.125rem;
+$msg-radius: 1.25rem;
+
+.scroll-view-msg-wrapper {
+  padding: 0.55rem 0.7rem;
+  text-align: left;
+  width: auto;
+  max-width: 75%;
+
+  &::before {
+    position: absolute;
+    content: ' ';
+    background: transparent;
+    height: 0;
+    width: 0;
+    border: $msg-radius - 0.5rem solid transparent;
+    border-top-color: inherit;
+    z-index: 0;
+  }
+}
+
+.scroll-view-msg {
+  padding: 0.5rem 0.65rem;
+  font-size: 0.95rem;
+  text-align: left;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.msg-container {
+  position: relative;
+  user-select: none;
+  cursor: pointer;
+
+  &::after {
+    @include before-or-after(
+      $tr: 0.2s,
+      $zi: unset,
+      $w: calc(100% + 4rem),
+      $h: calc(100% + 0.125rem),
+      $l: -2rem,
+      $t: unset,
+      $b: -0.0625rem,
+      $bg: rgba($prim-r + 50, $prim-g + 50, $prim-b + 50, 0.35)
+    );
+    opacity: 0;
+    transform: translateY(0.25rem);
+  }
+
+  &.selected {
+    &::after {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .msg-wrapper {
+    transition: 0.35s;
+  }
+
+  $br: 0.35rem;
+
+  &.incoming {
+    margin: 0;
+
+    .msg-wrapper {
+      $bg-color: $theme-tertiary-v9;
+
+      background: $bg-color;
+
+      &::before {
+        border-top-color: $bg-color;
+        top: 0;
+        left: -$msg-radius + 0.5rem;
+      }
+    }
+
+    &.first {
+      .msg-wrapper {
+        border-radius: 0 $msg-radius $msg-radius $br;
+      }
+    }
+
+    &.only {
+      .msg-wrapper {
+        border-radius: $br $msg-radius $msg-radius;
+      }
+    }
+
+    &.middle {
+      .msg-wrapper {
+        border-radius: $br $msg-radius $msg-radius $br;
+      }
+    }
+
+    &.last {
+      .msg-wrapper {
+        border-radius: $br $msg-radius $msg-radius;
+      }
+    }
+
+    + .incoming.msg-container {
+      margin-top: $msgs-spacing !important;
+
+      .msg-wrapper {
+        &::before {
+          border: none;
+        }
+      }
+    }
+  }
+
+  &.incoming + .outgoing.msg-container {
+    // .msg-wrapper {
+    margin-top: $incoming-outgoing-spacing !important;
+  }
+
+  &.outgoing {
+    text-align: right;
+    margin: 0;
+
+    .msg-wrapper {
+      $bg-color: $theme-secondary-v9;
+
+      background: $bg-color;
+      align-self: flex-end;
+
+      &::before {
+        top: 0;
+        border-top-color: $bg-color;
+        right: -$msg-radius + 0.5rem;
+      }
+    }
+
+    &.first {
+      .msg-wrapper {
+        border-radius: $msg-radius 0 $br $msg-radius;
+      }
+    }
+
+    &.only {
+      .msg-wrapper {
+        border-radius: $msg-radius $br $msg-radius $msg-radius;
+      }
+    }
+
+    &.middle {
+      .msg-wrapper {
+        border-radius: $msg-radius $br $br $msg-radius;
+      }
+    }
+
+    &.last {
+      .msg-wrapper {
+        border-radius: $msg-radius $br $msg-radius $msg-radius;
+      }
+    }
+
+    + .outgoing.msg-container {
+      margin-top: $msgs-spacing !important;
+
+      .msg-wrapper {
+        &::before {
+          border: none;
+        }
+      }
+    }
+  }
+
+  &.outgoing + .incoming.msg-container {
+    // .msg-wrapper {
+    margin-top: $incoming-outgoing-spacing !important;
+  }
+}
+
+.chat-timestamp-wrapper {
+  font-size: 0.75rem;
+  text-align: right;
+  width: auto;
+  float: right;
+  line-height: 250%;
+  color: #777;
+  margin: {
+    right: -0.45rem;
+    bottom: -0.75rem;
+  }
+
+  .chat-timestamp {
+    padding: 0;
+    padding: {
+      right: 0.35rem;
+      left: 0.65rem;
+    }
+    white-space: pre;
+
+    [class*='Icon'] {
+      font-size: 1.05rem;
+      margin-bottom: -0.25rem;
+      margin-left: 0.1rem;
+      color: rgba(0, 0, 0, 0.35);
+      transition: 0.3s;
+
+      &.read {
+        color: rgba(0, 135, 180, 1);
+        animation: scale 0.75s;
+      }
+
+      @keyframes scale {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.35);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+    }
+  }
+}
+
+.chat-msg-box {
+  $height: 3.25rem;
+
+  display: flex;
+  flex-grow: 0.3;
+  min-height: $height;
+  max-height: $height;
+  background-color: white;
+}
+
+.msg-box-wrapper,
+.emoji-wrapper,
+.send-wrapper {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+}
+
+.emoji-wrapper,
+.send-wrapper {
+  z-index: 1;
+  justify-content: center !important;
+
+  button {
+    padding: 0.5rem;
+    font-size: 1.35rem !important;
+  }
+}
+
+.msg-box-wrapper {
+  min-width: calc(100% - 6.5rem);
+}
+
+.MuiOutlinedInput-multiline {
+  border: none;
+  padding: 0.5em;
+  background-color: #f4f4f4;
+
+  * {
+    border: none !important;
+  }
+}
+
+.msg-box {
+  position: absolute;
+  bottom: 0.4rem;
+
+  &::before {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: -3.25rem;
+    content: ' ';
+    background: white;
+    height: calc(100% + 0.35rem);
+    width: calc(100% + 6.5rem);
+    z-index: 0;
+  }
+
+  > div.MuiInputBase-root {
+    background: #eee;
+    border-radius: 1.25rem;
+    padding: {
+      left: 1rem;
+      right: 1rem;
+    }
+  }
+}

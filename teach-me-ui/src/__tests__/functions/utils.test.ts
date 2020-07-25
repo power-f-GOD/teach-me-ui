@@ -1,5 +1,8 @@
 import { cleanup } from '@testing-library/react';
 
+// importing jest mock for mediaqueries
+import '../__mocks__/matchMedia.mock.ts';
+
 import {
   promisedDispatch,
   populateStateWithUserData,
@@ -59,7 +62,7 @@ it('[bigNumberFormat] should correctly format large and small numbers.', () => {
 
 it("populateStateWithUserData should be called with 'user data' as param and return a promise which resolves with undefined.", () => {
   let action: ReduxAction = {
-    type: 'SIGNUP_USER'
+    type: 'POPULATE_STATE_WITH_USER_DATA'
   };
   let userData: UserData = {
     firstname: 'John',

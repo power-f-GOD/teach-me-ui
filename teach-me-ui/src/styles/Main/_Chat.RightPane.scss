@@ -1,0 +1,69 @@
+.chat-right-pane {
+  background-color: #eee;
+  max-height: 100vh;
+
+  .user-info-container {
+    overflow-x: hidden;
+
+    > section:first-child {
+      position: relative;
+      &::before {
+        @include before-or-after(
+          $bg: #ddd,
+          $zi: 0,
+          $h: 22.5rem,
+          $w: calc(100% + 3rem),
+          $t: -7rem,
+          $l: -1.5rem
+        );
+
+        // background: {
+        //   image: url('/images/avatar-1.png');
+        //   size: cover;
+        //   position: center;
+        // };
+      }
+    }
+
+    .chat-avatar {
+      $size: 7rem;
+
+      height: $size;
+      margin: 1.5rem 0;
+      width: $size;
+      font-size: 2.5rem;
+      background: $theme-primary-v5;
+      color: #eee;
+      border: 0.125rem solid #eee;
+    }
+
+    .display-name {
+      margin: 0.5rem 0;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .username {
+      color: #555;
+    }
+
+    .info {
+      font-size: 0.9rem;
+    }
+
+    .status {
+      color: #777;
+      text-align: center;
+      font-size: 0.9rem;
+
+      .MuiSvgIcon-root {
+        color: inherit;
+        margin-left: auto;
+      }
+    }
+
+    .academic {
+      color: #666;
+    }
+  }
+}

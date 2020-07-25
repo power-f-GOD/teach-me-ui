@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -10,26 +10,47 @@ import About from '../Index/About';
 import Support from '../Index/Support';
 import Profile from './Profile';
 import Loader from '../crumbs/Loader';
-// import ChatBox from '../crumbs/ChatBox';
-import _404 from '../Index/_404';
+import Chat from './Chat';
 import Search from './Search';
+import Notifications from './Notifications';
+import _404 from '../Index/_404';
 
 import createMemo from '../../Memo';
-import { getState } from '../../functions/utils';
+import { dispatch } from '../../functions/utils';
+import { initWebSocket, closeWebSocket } from '../../actions/misc';
+
 
 const Memoize = createMemo();
 
 const Main = (props: any) => {
-  const { signout } = props;
-  const {
-    queryString: activeChatQString,
-    isOpen: chatIsOpen
-  }: any = getState().activeChat;
-  let queryString = activeChatQString!.split('?')[1] ?? '';
-  queryString = chatIsOpen ? `?${queryString}` : '';
+  const { signout, userData, webSocket: socket } = props;
 
-  if (chatIsOpen && !/chat=/.test(window.location.search)) {
-    window.history.replaceState({}, '', window.location.pathname + queryString);
+  useEffect(() => {
+    dispatch(initWebSocket(userData.token as string));
+
+    return () => {
+      dispatch(closeWebSocket());
+    };
+  }, [userData.token]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.addEventListener('open', () => {
+        console.log('Socket connected!');
+      });
+
+      socket.addEventListener('error', (e: any) => {
+        console.error('An error occurred while trying to connect Web Socket.');
+      });
+
+      socket.addEventListener('close', () => {
+        console.log('Socket closed!');
+      });
+    }
+  }, [socket]);
+
+  if (!/chat=/.test(window.location.search)) {
+    window.history.replaceState({}, '', window.location.pathname);
   }
 
   if (signout.status === 'pending') {
@@ -42,26 +63,29 @@ const Main = (props: any) => {
   }
 
   return (
-    <Grid className='main-root-grid fade-in'>
+    <Grid className='Main fade-in'>
       <Memoize memoizedComponent={Nav} for='main' />
 
       <Switch>
         <Route path={['/', '/index', '/home']} exact component={Home} />
         <Route path='/about' component={About} />
         <Route path='/support' component={Support} />
-        <Route path='/@*' component={Profile} />
+        <Route path='/@:userId' component={Profile} />
         <Route path='/search' component={Search} />
+        <Route path='/notifications' component={Notifications} />
         <Route component={_404} />
       </Switch>
 
-      {/* <Memoize memoizedComponent={ChatBox} /> */}
+      <Memoize memoizedComponent={Chat} />
     </Grid>
   );
 };
 
-const mapStateToProps = ({ signout }: any) => {
+const mapStateToProps = (state: any) => {
   return {
-    signout
+    signout: state.signout,
+    userData: state.userData,
+    webSocket: state.webSocket
   };
 };
 

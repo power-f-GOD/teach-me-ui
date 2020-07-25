@@ -13,7 +13,7 @@ import _404 from './_404';
 import Search from '../Main/Search';
 import Profile from '../Main/Profile';
 
-const Index = () => {
+const Index = (props: any) => {
   React.useEffect(() => () => window.scrollTo(0, 0), []);
 
   return (
@@ -26,7 +26,10 @@ const Index = () => {
           <Route path='/about' component={About} />
           <Route path='/support' component={Support} />
           <Route path='/search' component={Search} />
-          <Route path='/@*' component={Profile} />
+          <Route
+            path={['/@:userId', '/@:userId/colleagues']}
+            component={Profile}
+          />
           <Route component={_404} />
         </Switch>
       </Box>

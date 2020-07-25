@@ -16,8 +16,10 @@ import HelpIcon from '@material-ui/icons/HelpRounded';
 import AccountIcon from '@material-ui/icons/AccountBoxRounded';
 import SearchIcon from '@material-ui/icons/Search';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
+import NotificationsIcon from '@material-ui/icons/Notifications';
 
-import { handleSignoutRequest } from '../../functions';
+import { handleSignoutRequest, getState } from '../../functions';
+import { UserData } from '../../constants';
 
 const Nav = (props: any) => {
   const forIndexPage = /index/i.test(props.for);
@@ -26,7 +28,11 @@ const Nav = (props: any) => {
 
   return (
     <Box component='nav'>
-      <ElevationScroll {...props} forLandingPage={forLandingPage && !/404/.test(window.location.pathname)}>
+      <ElevationScroll
+        {...props}
+        forLandingPage={
+          forLandingPage && !/404/.test(window.location.pathname)
+        }>
         <AppBar position='fixed' className='mobile-width'>
           <Container>
             <Toolbar className='nav-toolbar'>
@@ -46,7 +52,7 @@ const Nav = (props: any) => {
                 {forIndexPage ? (
                   <IndexNav {...props} />
                 ) : (
-                  <MainNav {...props} />
+                  <MainNavMenu {...props} />
                 )}
               </TemporaryDrawer>
             </Toolbar>
@@ -72,16 +78,55 @@ function IndexNav(props: any) {
 }
 
 function MainNav(props: any) {
+  const username = (getState().userData as UserData).username;
+
   return (
     <Box className={`nav-links-wrapper ${props?.className}`}>
       <NavLink to='/search' className='nav-link'>
         <SearchIcon />
       </NavLink>
       <NavGeneralLinks />
-      <NavLink exact to='/@' className='nav-link'>
+      <NavLink
+        exact
+        to={`/@${username}`}
+        isActive={(_, location) => /\/@\w+/.test(location.pathname)}
+        className='nav-link'>
         <AccountIcon className='nav-icon' /> Profile
       </NavLink>
 
+      <NavLink to='/notifications' className='nav-link'>
+        <NotificationsIcon />
+      </NavLink>
+
+      <Button
+        variant='contained'
+        className='nav-link'
+        size='medium'
+        id='signout-btn'
+        fullWidth
+        onClick={handleSignoutRequest}>
+        Sign Out <ArrowForward fontSize='inherit' />
+      </Button>
+    </Box>
+  );
+}
+
+function MainNavMenu(props: any) {
+  const username = (getState().userData as UserData).username;
+
+  return (
+    <Box className={`nav-links-wrapper ${props?.className}`}>
+      <NavLink to='/search' className='nav-link'>
+        <SearchIcon />
+      </NavLink>
+      <NavGeneralLinks />
+      <NavLink
+        exact
+        to={`/@${username}`}
+        isActive={(_, location) => /\/@\w+/.test(location.pathname)}
+        className='nav-link'>
+        <AccountIcon className='nav-icon' /> Profile
+      </NavLink>
       <Button
         variant='contained'
         className='nav-link'
@@ -159,6 +204,11 @@ function TemporaryDrawer(props: any) {
       <NavLink to='/search' className='nav-link'>
         <SearchIcon />
       </NavLink>
+
+      <NavLink to='/notifications' className='nav-link'>
+        <NotificationsIcon />
+      </NavLink>
+
       <IconButton
         edge='start'
         className='menu-button'

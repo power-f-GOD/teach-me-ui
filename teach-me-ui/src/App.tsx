@@ -9,7 +9,7 @@ import Loader from './components/crumbs/Loader';
 import SnackBar from './components/crumbs/SnackBar';
 import ProtectedRoute from './ProtectedRoute';
 
-import { dispatch } from './functions/utils';
+import { dispatch } from './appStore';
 import { displaySnackbar } from './actions/misc';
 import { verifyAuth } from './actions/auth';
 import createMemo from './Memo';
@@ -37,11 +37,13 @@ const App = (props: any) => {
                     '/home',
                     '/about',
                     '/support',
-                    '/@*',
+                    '/@:userId',
+                    '/@:userId/colleagues',
                     '/search',
+                    '/notifications',
                     '/*'
                   ]
-                : ['/home', '/search']
+                : ['/home', '/search', '/notifications']
             }
             exact
             component={Main}
@@ -56,11 +58,21 @@ const App = (props: any) => {
             ]}
             component={Auth}
           />
+          {/* Is this still in use? */}
           <Route
-            path={['/', '/index', '/about', '/@*', '/support', '/*']}
+            path={[
+              '/',
+              '/index',
+              '/about',
+              '/@:userId',
+              '/@:userId/colleagues',
+              '/support',
+              '/*'
+            ]}
             exact
             component={Index}
           />
+          {/* Is it? */}
         </Switch>
       </BrowserRouter>
       <Memo memoizedComponent={SnackBar} snackbar={snackbar} />
