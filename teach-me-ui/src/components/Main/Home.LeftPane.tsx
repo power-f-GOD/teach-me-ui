@@ -31,8 +31,8 @@ const LeftPane = (props: any) => {
   return (
     <Container as='section' className='left-pane p-2'>
       <Container className='rows-wrapper custom-scroll-bar small-bar rounded-bar tertiary-bar debugger'>
-        <Row as='section' className='m-0 flex-column mb-4 safari-fix-d-block'>
-          <Col className='p-0 d-flex justify-content-center'>
+        <Row as='section' className='m-0 flex-column mb-4 d-block'>
+          <Col className='p-0 d-flex safari-fix-d-block justify-content-center'>
             <Avatar
               component='span'
               className='chat-avatar'
@@ -40,7 +40,7 @@ const LeftPane = (props: any) => {
               src={`/images/${avatar}`}
             />
           </Col>
-          <Col className='d-flex flex-column p-0'>
+          <Col className='flex-column p-0 safari-fix-d-block'>
             <Col
               as='span'
               className='display-name p-0 d-flex justify-content-center my-1'>
@@ -53,13 +53,13 @@ const LeftPane = (props: any) => {
             </Col>
             <Col
               as='span'
-              className='status p-0 px-3 d-flex  align-content-around'>
+              className='status p-0 px-3 d-flex safari-fix-d-block align-content-around'>
               <CreateIcon className='mr-2' />
               Currently creating some amazing sturvs...
             </Col>
           </Col>
         </Row>
-        <Row as='section' className='m-0 flex-column mb-4 safari-fix-d-block'>
+        <Row as='section' className='m-0 flex-column mb-4 d-block'>
           <Col className='info p-0 d-flex my-1'>
             <PeopleOutlineIcon className='mr-2' fontSize='large' />
             <Col
@@ -100,9 +100,7 @@ const LeftPane = (props: any) => {
             </Col>
           </Col>
         </Row>
-        <Row
-          as='section'
-          className='academic m-0 flex-column safari-fix-d-block'>
+        <Row as='section' className='academic m-0 flex-column d-block'>
           <Col as='span' className='info p-0 d-flex my-1  align-items-center'>
             <SchoolIcon className='mr-2' fontSize='large' />
             {institution}

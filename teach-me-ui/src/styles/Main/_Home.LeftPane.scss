@@ -1,15 +1,14 @@
 .left-pane {
   background-color: #fff;
 
-  .safari-fix-d-block {
-    display: block !important;
-  }
   .rows-wrapper {
     height: 100%;
     overflow: auto;
     padding: 0.75rem;
   }
-
+  .safari-fix-d-block {
+    display: block !important;
+  }
   .chat-avatar {
     $size: 5rem;
 
