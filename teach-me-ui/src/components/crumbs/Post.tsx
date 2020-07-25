@@ -108,7 +108,7 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
           )}
         </Col>
         <Col className='more-post-btn'>
-          <Box className='more' component='span' borderRadius='100px'>
+          <Box className='more d-none' component='span' borderRadius='100px'>
             <svg
               width='20'
               height='6'
@@ -171,7 +171,7 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
       {props.sender_name && (
         <Box py={1} mt={1} borderBottom='.5px solid #ddd'>
           <Row className='ml-3'>
-            <Col className='d-flex align-items-center justify-content-center'>
+            <Col xs={3} className='ml-auto d-flex align-items-center justify-content-center'>
               <ReactButton
                 id={
                   (props.sec_type === 'REPLY'
@@ -199,7 +199,7 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
                 type='UPVOTE'
               />
             </Col>
-            <Col className='d-flex align-items-center justify-content-center'>
+            <Col xs={3} className='d-flex align-items-center justify-content-center'>
               <ReactButton
                 id={
                   (props.sec_type === 'REPLY'
@@ -227,7 +227,7 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
                 type='DOWNVOTE'
               />
             </Col>
-            <Col className='d-flex align-items-center justify-content-center'>
+            <Col className='d-none align-items-center justify-content-center'>
               <Box
                 padding='5px 15px'
                 className='d-flex align-items-center react-to-post justify-content-center'
@@ -257,7 +257,7 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
                 </Box>
               </Box>
             </Col>
-            <Col className='d-flex align-items-center justify-content-center'>
+            <Col className='d-none align-items-center justify-content-center'>
               <Box
                 padding='5px 15px'
                 className='d-flex align-items-center react-to-post justify-content-center'
@@ -314,7 +314,7 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
           {props.sender_name && (
             <Box py={1} mt={1}>
               <Row className='ml-3'>
-                <Col className='d-flex align-items-center justify-content-center'>
+                <Col xs={3} className='ml-auto d-flex align-items-center justify-content-center'>
                   <ReactButton
                     id={props.id as string}
                     reacted={props.reaction as 'NEUTRAL'}
@@ -322,7 +322,7 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
                     type='UPVOTE'
                   />
                 </Col>
-                <Col className='d-flex align-items-center justify-content-center'>
+                <Col xs={3} className='d-flex align-items-center justify-content-center'>
                   <ReactButton
                     id={props.id as string}
                     reacted={props.reaction as 'NEUTRAL'}
@@ -330,7 +330,7 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
                     type='DOWNVOTE'
                   />
                 </Col>
-                <Col className='d-flex align-items-center justify-content-center'>
+                <Col className='d-none align-items-center justify-content-center'>
                   <Box
                     padding='5px 15px'
                     className='d-flex align-items-center react-to-post justify-content-center'
@@ -354,7 +354,7 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
                     </Box>
                   </Box>
                 </Col>
-                <Col className='d-flex align-items-center justify-content-center'>
+                <Col className='d-none align-items-center justify-content-center'>
                   <Box
                     padding='5px 15px'
                     className='d-flex align-items-center react-to-post justify-content-center'

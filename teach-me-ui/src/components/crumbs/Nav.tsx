@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
-import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
@@ -17,13 +16,7 @@ import HelpIcon from '@material-ui/icons/HelpRounded';
 import AccountIcon from '@material-ui/icons/AccountBoxRounded';
 import SearchIcon from '@material-ui/icons/Search';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
-import Badge from '@material-ui/core/Badge';
-import Tooltip from '@material-ui/core/Tooltip';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-
-import Dropdown from 'react-bootstrap/Dropdown';
-
-import Notifications from '../Main/Notifications';
 
 import { handleSignoutRequest, getState } from '../../functions';
 import { UserData } from '../../constants';
@@ -85,14 +78,8 @@ function IndexNav(props: any) {
 }
 
 function MainNav(props: any) {
-  const SignOut = withStyles({
-    root: {
-      height: '3.1rem'
-    }
-  })(Button);
-
-  const mq = window.matchMedia('(max-width: 600px)');
   const username = (getState().userData as UserData).username;
+
   return (
     <Box className={`nav-links-wrapper ${props?.className}`}>
       <NavLink to='/search' className='nav-link'>
@@ -107,33 +94,11 @@ function MainNav(props: any) {
         <AccountIcon className='nav-icon' /> Profile
       </NavLink>
 
-      {mq.matches ? (
-        <NavLink
-          to='/notifications'
-          style={{ marginTop: '0.7em', color: 'white' }}>
-          <Tooltip title='Notifications' placement='bottom'>
-            <Badge badgeContent={4} color='secondary'>
-              <NotificationsIcon />
-            </Badge>
-          </Tooltip>
-        </NavLink>
-      ) : (
-        <Dropdown className='dropdown'>
-          <Dropdown.Toggle id='dropdown' as='p' on='true'>
-            <Tooltip title='Notifications' placement='bottom'>
-              <Badge badgeContent={4} color='secondary'>
-                <NotificationsIcon />
-              </Badge>
-            </Tooltip>
-          </Dropdown.Toggle>
-          <Dropdown.Menu className='dropdown-contents'>
-            <Notifications />
-          </Dropdown.Menu>
-        </Dropdown>
-      )}
+      <NavLink to='/notifications' className='nav-link'>
+        <NotificationsIcon />
+      </NavLink>
 
-      <div style={{ width: '1em' }}></div>
-      <SignOut
+      <Button
         variant='contained'
         className='nav-link'
         size='medium'
@@ -141,13 +106,14 @@ function MainNav(props: any) {
         fullWidth
         onClick={handleSignoutRequest}>
         Sign Out <ArrowForward fontSize='inherit' />
-      </SignOut>
+      </Button>
     </Box>
   );
 }
 
 function MainNavMenu(props: any) {
   const username = (getState().userData as UserData).username;
+
   return (
     <Box className={`nav-links-wrapper ${props?.className}`}>
       <NavLink to='/search' className='nav-link'>
@@ -233,41 +199,16 @@ function TemporaryDrawer(props: any) {
     setOpen(open);
   };
 
-  const mq = window.matchMedia('(max-width: 600px)');
-
   return (
     <Box className='drawer'>
       <NavLink to='/search' className='nav-link'>
         <SearchIcon />
       </NavLink>
 
-      {mq.matches ? (
-        <NavLink
-          to='/notifications'
-          style={{ marginTop: '0.7em', color: 'white' }}>
-          <Tooltip title='Notifications' placement='bottom'>
-            <Badge badgeContent={4} color='secondary'>
-              <NotificationsIcon />
-            </Badge>
-          </Tooltip>
-        </NavLink>
-      ) : (
-        <Dropdown className='dropdown'>
-          <Dropdown.Toggle id='dropdown' as='p' on='true'>
-            <Tooltip title='Notifications' placement='bottom'>
-              <Badge badgeContent={4} color='secondary'>
-                <NotificationsIcon />
-              </Badge>
-            </Tooltip>
-          </Dropdown.Toggle>
+      <NavLink to='/notifications' className='nav-link'>
+        <NotificationsIcon />
+      </NavLink>
 
-          <Dropdown.Menu className='dropdown-contents'>
-            <Notifications />
-          </Dropdown.Menu>
-        </Dropdown>
-      )}
-
-      <div style={{ width: '1em' }}></div>
       <IconButton
         edge='start'
         className='menu-button'
