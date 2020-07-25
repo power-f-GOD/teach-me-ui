@@ -33,7 +33,6 @@ import { userDeviceIsMobile } from '../../';
 import { chatState, conversationMessages } from '../../actions/chat';
 import {
   dispatch,
-  // timestampFormatter,
   delay,
   interval,
   preventEnterNewLine,
@@ -42,7 +41,6 @@ import {
 import { placeHolderDisplayName } from './Chat';
 import { displaySnackbar, initWebSocket } from '../../actions';
 import { CHAT_TYPING } from '../../constants/chat';
-// import { Skeleton, DISPLAY_INFO } from './Loaders';
 
 const Memoize = createMemo();
 
@@ -76,7 +74,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
     avatar,
     conversation_name: displayName
   } = conversation;
-  const { isMinimized }: ChatState = _chatState;
+  const { isMinimized, isOpen }: ChatState = _chatState;
 
   const [scrollView, setScrollView] = useState<HTMLElement | null>(null);
   const [scrollViewElevation, setScrollViewElevation] = React.useState(String);
@@ -108,6 +106,10 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
 
   const clickTimeout: any = useRef();
   const handleCloseChatClick = useCallback(() => {
+    if (!isOpen || _conversationMessages.status === 'pending') {
+      return;
+    }
+
     clearTimeout(clickTimeout.current);
     clickTimeout.current = window.setTimeout(() => {
       dispatch(
@@ -119,7 +121,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
       );
       window.history.pushState({}, '', window.location.pathname);
     }, 300);
-  }, []);
+  }, [isOpen, _conversationMessages.status]);
 
   const handleSendMsgClick = useCallback(() => {
     const msgBox = msgBoxRef.current!;
@@ -585,9 +587,7 @@ function Message(props: {
         as='div'
         className='msg-wrapper scroll-view-msg-wrapper d-inline-flex flex-column justify-content-end'>
         <Box>
-          {/* <Col as='span' className='scroll-view-msg'> */}
           {text}
-          {/* </Col> */}
           <Col as='span' className='chat-timestamp-wrapper p-0'>
             <Col as='span' className='chat-timestamp d-inline-block'>
               {timestamp}{' '}

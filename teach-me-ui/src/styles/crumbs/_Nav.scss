@@ -1,6 +1,8 @@
 @import '../constants';
 
 .MuiAppBar-root {
+  // @include debugger();
+
   background-color: transparent !important;
   transition: 0.5s;
   width: 100%;
@@ -40,18 +42,15 @@
 }
 
 .nav-icon {
-  margin-right: 0.25em;
-  opacity: 0.15;
   transition: 0.35s;
-  display: none;
 }
 
 .nav-link {
   box-shadow: none;
   display: inline-flex;
   align-items: center;
-  margin: 0 1em;
-  padding: 0.5em;
+  margin: 0 0.5em;
+  padding: 0.75em;
   color: #f0f0f0 !important;
   background: unset;
   text-transform: uppercase !important;
@@ -79,10 +78,6 @@
       width: 60% !important;
       background: $theme-secondary;
     }
-
-    .nav-icon {
-      opacity: 0.85;
-    }
   }
 
   &:hover, &:focus {
@@ -91,10 +86,6 @@
     &::before {
       width: 3em;
       background-color: $theme-secondary-v7;
-    }
-
-    .nav-icon {
-      opacity: unset;
     }
   }
 
@@ -119,6 +110,10 @@
         background-color: $theme-secondary;
       }
     }
+  }
+
+  .nav-label {
+    display: none;
   }
 }
 
@@ -161,6 +156,10 @@
           width: 100%;
         }
       }
+    }
+
+    .nav-label {
+      display: inline;
     }
   }
 

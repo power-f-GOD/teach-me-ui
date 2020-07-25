@@ -32,7 +32,7 @@ const LeftPane = (props: any) => {
     <Container as='section' className='left-pane p-2'>
       <Container className='rows-wrapper custom-scroll-bar small-bar rounded-bar tertiary-bar debugger'>
         <Row as='section' className='m-0 flex-column mb-4 d-block'>
-          <Col className='p-0 d-flex safari-fix-d-block justify-content-center'>
+          <Col className='p-0 d-flex safari-fix-d-block text-center justify-content-center'>
             <Avatar
               component='span'
               className='chat-avatar'

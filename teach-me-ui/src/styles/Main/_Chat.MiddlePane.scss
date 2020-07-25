@@ -80,6 +80,7 @@ $msg-radius: 1.25rem;
 .scroll-view-msg-wrapper {
   padding: 0.55rem 0.7rem;
   text-align: left;
+  white-space: pre-wrap;
   width: auto;
   max-width: 75%;
 
@@ -99,7 +100,6 @@ $msg-radius: 1.25rem;
   padding: 0.5rem 0.65rem;
   font-size: 0.95rem;
   text-align: left;
-  white-space: pre-wrap;
   word-break: break-word;
 }
 
@@ -131,7 +131,7 @@ $msg-radius: 1.25rem;
   }
 
   .msg-wrapper {
-    transition: 0.35s;
+    transition: 0.85s;
   }
 
   $br: 0.35rem;
@@ -277,7 +277,7 @@ $msg-radius: 1.25rem;
       transition: 0.3s;
 
       &.read {
-        color: rgba(0, 135, 180, 1);
+        color: rgba(25, 160, 205, 1);
         animation: scale 0.75s;
       }
 
