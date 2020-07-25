@@ -84,32 +84,6 @@ const ChatRightPane = ({ conversation, convoInfo }: ChatRightPaneProps) => {
       ) : (
         ''
       )}
-
-      {/* <Col as='section' className='participants-container p-0'>
-        {activeChatType === ROOM_CHAT_TYPE &&
-          participants.map((participant: any, key: number) => {
-            return (
-              <Col as='span' className='colleague-name' key={key}>
-                <Badge
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right'
-                  }}
-                  color='primary'
-                  overlap='circle'
-                  variant='dot'>
-                  <Avatar
-                    component='span'
-                    className='chat-avatar mr-2'
-                    alt={participant.name}
-                    src={`/images/${participant.avatar}`}
-                  />
-                </Badge>{' '}
-                {participant.name}
-              </Col>
-            );
-          })}
-      </Col> */}
     </>
   );
 };

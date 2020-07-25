@@ -1,6 +1,6 @@
 .left-pane {
   background-color: #fff;
-
+  
   .rows-wrapper {
     height: 100%;
     overflow: auto;
@@ -16,8 +16,8 @@
     margin: 1rem 0;
     width: $size;
     font-size: 2.5rem;
+    display: inline-block;
     background: $theme-primary-v5;
-    // margin-right: 0.5rem !important;
     color: #eee;
     border: 0.125rem solid #eee;
   }

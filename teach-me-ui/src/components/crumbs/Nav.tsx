@@ -10,13 +10,13 @@ import ArrowForward from '@material-ui/icons/ArrowForwardIosSharp';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/MenuRounded';
-import HomeIcon from '@material-ui/icons/HomeRounded';
-import InfoIcon from '@material-ui/icons/InfoRounded';
-import HelpIcon from '@material-ui/icons/HelpRounded';
-import AccountIcon from '@material-ui/icons/AccountBoxRounded';
 import SearchIcon from '@material-ui/icons/Search';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import NotificationsIcon from '@material-ui/icons/Notifications';
+import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
+import InfoRoundedIcon from '@material-ui/icons/InfoRounded';
+import HelpRoundedIcon from '@material-ui/icons/HelpRounded';
+import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 
 import { handleSignoutRequest, getState } from '../../functions';
 import { UserData } from '../../constants';
@@ -85,18 +85,22 @@ function MainNav(props: any) {
       <NavLink to='/search' className='nav-link'>
         <SearchIcon />
       </NavLink>
+
       <NavGeneralLinks />
+
       <NavLink
         exact
         to={`/@${username}`}
         isActive={(_, location) => /\/@\w+/.test(location.pathname)}
         className='nav-link'>
-        <AccountIcon className='nav-icon' /> Profile
+        <AccountCircleRoundedIcon className='nav-icon' />
       </NavLink>
 
       <NavLink to='/notifications' className='nav-link'>
         <NotificationsIcon />
       </NavLink>
+
+      <Box component='span' marginX='1em' />
 
       <Button
         variant='contained'
@@ -118,15 +122,31 @@ function MainNavMenu(props: any) {
     <Box className={`nav-links-wrapper ${props?.className}`}>
       <NavLink to='/search' className='nav-link'>
         <SearchIcon />
+        <Box component='span' className='nav-label ml-3'>
+          Search
+        </Box>
       </NavLink>
+
       <NavGeneralLinks />
+
       <NavLink
         exact
         to={`/@${username}`}
         isActive={(_, location) => /\/@\w+/.test(location.pathname)}
         className='nav-link'>
-        <AccountIcon className='nav-icon' /> Profile
+        <AccountCircleRoundedIcon className='nav-icon' />{' '}
+        <Box component='span' className='nav-label ml-3'>
+          Profile
+        </Box>
       </NavLink>
+
+      <NavLink to='/notifications' className='nav-link'>
+        <NotificationsIcon />
+        <Box component='span' className='nav-label ml-3'>
+          Notifications
+        </Box>
+      </NavLink>
+
       <Button
         variant='contained'
         className='nav-link'
@@ -148,19 +168,25 @@ function NavGeneralLinks(props: any) {
         to='/'
         isActive={(_, { pathname }) => ['/', '/home'].includes(pathname)}
         className='nav-link'>
-        <HomeIcon className='nav-icon' />
-        Home
+        <HomeRoundedIcon className='nav-icon' />
+        <Box component='span' className='nav-label ml-3'>
+          Home
+        </Box>
       </NavLink>
       {props.forIndex && (
-        <NavLink to='/about' className='nav-link'>
-          <InfoIcon className='nav-icon' />
-          About
+        <NavLink to='/about' className='nav-link d-none'>
+          <InfoRoundedIcon className='nav-icon' />
+          <Box component='span' className='nav-label ml-3'>
+            About
+          </Box>
         </NavLink>
       )}
-      <Box component='span' marginX='1.5em'></Box>
-      <NavLink exact to='/support' className='nav-link'>
-        <HelpIcon className='nav-icon' />
-        Support
+      <Box component='span' marginX='1.5em' />
+      <NavLink exact to='/support' className='nav-link d-none'>
+        <HelpRoundedIcon className='nav-icon' />
+        <Box component='span' className='nav-label ml-3'>
+          Support
+        </Box>
       </NavLink>
     </>
   );
@@ -203,10 +229,6 @@ function TemporaryDrawer(props: any) {
     <Box className='drawer'>
       <NavLink to='/search' className='nav-link'>
         <SearchIcon />
-      </NavLink>
-
-      <NavLink to='/notifications' className='nav-link'>
-        <NotificationsIcon />
       </NavLink>
 
       <IconButton
