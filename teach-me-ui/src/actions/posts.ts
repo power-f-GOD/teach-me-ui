@@ -6,6 +6,8 @@ import {
   FETCH_POST_RESOLVED,
   FETCH_POST_STARTED,
   FETCHED_POSTS,
+  REPLY_TO_POST,
+  SEND_REPLY_TO_SERVER,
   PostPropsState,
   ReactPostState,
   FetchPostsState,
@@ -13,10 +15,11 @@ import {
   UserData,
   SocketProps,
   PostReactionResult,
-  Reaction
+  Reaction,
+  ReplyState
 } from '../constants';
 
-import { getState } from '../functions';
+import { getState, callNetworkStatusCheckerFor, logError } from '../functions';
 
 import Axios from 'axios';
 
@@ -24,11 +27,91 @@ import Axios from 'axios';
 //   return { type: CREATE_POST, payload };
 // };
 
+
+
+
+
+
+
+
+
+export const replyToPost = (payload: ReplyState) => {
+  return {
+    type: REPLY_TO_POST,
+    payload
+  };
+};
+
+export const sendReplyToServer = (payload: SocketProps) =>  (
+  dispatch: Function
+) => {
+  callNetworkStatusCheckerFor({
+    name: 'replyToPost',
+    func: replyToPost
+  });
+
+  dispatch(
+    replyToPost({ 
+      status: 'pending'
+    })
+  )
+  const posts: Array<PostPropsState> = getState().posts;
+
+  const post = posts.find((post: PostPropsState) =>
+    (post.id as string) === payload.post_id
+      ? post
+      : (post.parent?.id as string) === payload.post_id
+      ? post.parent
+      : undefined
+  );
+
+  if (post === undefined) return;
+
+  const socket: WebSocket = getState().webSocket as WebSocket;
+  socket.addEventListener('message', (event) => {
+    try {
+      const data = JSON.parse(event.data);
+      const error = data.error;
+
+      if (data.pipe === 'POST_REPLY') {
+        if (!error ) {
+          dispatch(
+            replyToPost({
+              status: 'fulfilled',
+              error: false,
+              data
+            })
+          );
+        } else {
+          dispatch(
+            replyToPost({
+              status: 'fulfilled',
+              error: true,
+              data
+            })
+          );
+        }
+      }
+    } catch (e) {logError(replyToPost)};
+  });
+  socket.send(JSON.stringify({ ...payload }));
+  return {
+    type: SEND_REPLY_TO_SERVER
+  }
+};
+
+
+
+
+
+
+
+
 export const updatePost = (payload: PostReactionResult): ReduxAction => {
   return { type: UPDATE_POST, payload };
 };
 
-export const reactToPost = (payload: ReactPostState): ReduxAction => {
+const reactToPost = (payload: ReactPostState): ReduxAction => {
   return { type: REACT_TO_POST, payload };
 };
 

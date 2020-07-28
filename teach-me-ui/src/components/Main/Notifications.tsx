@@ -101,7 +101,7 @@ const Notifications = (props: any) => {
                         : 'a minute ago';
                     } else if (duration.seconds() > 0) {
                       return duration.seconds() > 1
-                        ? duration.seconds() + 'seconds ago'
+                        ? duration.seconds() + ' seconds ago'
                         : 'just now';
                     }
                   })(date);

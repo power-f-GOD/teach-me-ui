@@ -52,12 +52,13 @@ interface PostParentProps {
   sender_id: string;
   sender_name: string;
   sender_username: string;
-  userAvatar: string;
+  userAvatar?: string;
   upvotes: number;
   downvotes: number;
   replies: number;
-  reaction: Reaction;
+  reaction?: Reaction;
   reposts: number;
+  posted_at?: number;
 }
 
 export interface SocketProps {
@@ -65,6 +66,8 @@ export interface SocketProps {
   post_id: string;
   reaction?: Reaction;
   interaction?: 'SEEN' | 'ENGAGED';
+  hashtags?: string[];
+  mentions?: string[];
 }
 
 export interface PostReactionResult {
@@ -366,4 +369,30 @@ export interface MentionState extends StatusPropsState {
 
 export interface MentionData extends ColleagueData {
   [index: string]: any;
+}
+
+export interface Post {
+  text: string;
+  mentions: Array<string>;
+  hashtags: Array<string>;
+}
+
+export interface ReplyProps extends Post {
+  pipe: 'POST_REPLY';
+  post_id?: string;  
+}
+
+export interface ReplyResult extends ReplyProps {
+  error: boolean;
+  sec_type: "REPLY";
+  id: string;
+  text: string;
+  parent: PostParentProps;
+  action_count: number;
+}
+
+export interface ReplyState {
+  error?: boolean;
+  data?: ReplyResult
+  status: 'settled' | 'pending' | 'fulfilled';
 }

@@ -1,5 +1,25 @@
-import { sendReactionToServer, fetchPosts } from '../actions';
+import { 
+  sendReactionToServer, 
+  sendReplyToServer, 
+  fetchPosts 
+} from '../actions';
+
 import { dispatch } from './utils';
+
+import { Post } from '../constants';
+
+export const replyToPostFn = (
+  id: string,
+  reply: Post
+) => {
+  dispatch(
+    sendReplyToServer({
+      ...reply,
+      pipe: 'POST_REPLY',
+      post_id: id,
+    })
+  )
+}
 
 export const reactToPostFn = (
   id: string,
