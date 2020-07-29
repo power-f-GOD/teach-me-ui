@@ -11,21 +11,21 @@ import {
   SEND_REPLY_TO_SERVER, 
   ReduxAction, 
   SocketProps,
-  ReplyProps
 } from '../../constants';
+
+import { dispatch } from '../../appStore';
 
 
 afterEach(cleanup);
 
 it("sends reply of a post to the sever", () => {
-  const mockReplyProps: ReplyProps = {
+  const mockReplyProps: SocketProps = {
     text: expect.any(String),
     mentions: expect.any(Array),
     hashtags: expect.any(Array),
     pipe: 'POST_REPLY',
     post_id: expect.any(String)
   };
-  const mockDate = expect.any(Number)
   
   const mockReplyState: ReplyState = {
     status: expect.any(String),
@@ -54,5 +54,5 @@ it("sends reply of a post to the sever", () => {
   sendReplyToServerMockFunc(mockReplyProps);
   expect(sendReplyToServerMockFunc).toHaveBeenCalledWith(mockReplyProps);
   expect(actions.replyToPost(mockReplyState)).toMatchObject(replyToPostAction);
-  expect(actions.sendReactionToServer(mockReplyProps)).toMatchObject(sendReplyToServerAction);
+  // expect(actions.sendReplyToServer(mockReplyProps)(dispatch)).toMatchObject(sendReplyToServerAction);
 });

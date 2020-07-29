@@ -293,15 +293,7 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
               </Box>
             </Col>
           </Row>
-          
-
-
-          
-            <CreateReply post_id={`${props.id}`}/>
-           
-
-
-
+          <CreateReply post_id={`${props.id}`}/>
         </Box>
       )}
       {props.sec_type === 'REPLY' && (

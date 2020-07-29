@@ -68,6 +68,7 @@ export interface SocketProps {
   interaction?: 'SEEN' | 'ENGAGED';
   hashtags?: string[];
   mentions?: string[];
+  text?: string;
 }
 
 export interface PostReactionResult {

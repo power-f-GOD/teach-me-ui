@@ -27,14 +27,6 @@ import Axios from 'axios';
 //   return { type: CREATE_POST, payload };
 // };
 
-
-
-
-
-
-
-
-
 export const replyToPost = (payload: ReplyState) => {
   return {
     type: REPLY_TO_POST,
@@ -99,13 +91,6 @@ export const sendReplyToServer = (payload: SocketProps) =>  (
     type: SEND_REPLY_TO_SERVER
   }
 };
-
-
-
-
-
-
-
 
 export const updatePost = (payload: PostReactionResult): ReduxAction => {
   return { type: UPDATE_POST, payload };
