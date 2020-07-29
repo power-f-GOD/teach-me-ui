@@ -1,0 +1,58 @@
+// importing jest mock for mediaqueries
+import '../__mocks__/matchMedia.mock.ts';
+
+import { cleanup } from '@testing-library/react';
+
+import * as actions from '../../actions/posts';
+
+import { 
+  ReplyState, 
+  REPLY_TO_POST, 
+  SEND_REPLY_TO_SERVER, 
+  ReduxAction, 
+  SocketProps,
+  ReplyProps
+} from '../../constants';
+
+
+afterEach(cleanup);
+
+it("sends reply of a post to the sever", () => {
+  const mockReplyProps: ReplyProps = {
+    text: expect.any(String),
+    mentions: expect.any(Array),
+    hashtags: expect.any(Array),
+    pipe: 'POST_REPLY',
+    post_id: expect.any(String)
+  };
+  const mockDate = expect.any(Number)
+  
+  const mockReplyState: ReplyState = {
+    status: expect.any(String),
+    error: expect.any(Boolean),
+    data: expect.any(Object)
+  }
+  const replyToPostAction: ReduxAction = {
+    type: REPLY_TO_POST,
+    payload: {
+      status: expect.any(String),
+      error: expect.any(Boolean),
+      data: expect.any(Object)
+    }
+  };
+
+  const sendReplyToServerAction: ReduxAction = {
+    type: SEND_REPLY_TO_SERVER
+  };
+
+  const sendReplyToServerMockFunc = jest.fn((payload: SocketProps) => {
+    return (dispatch: Function) => {
+      actions.replyToPost(mockReplyState);
+    }
+  });
+
+  sendReplyToServerMockFunc(mockReplyProps);
+  expect(sendReplyToServerMockFunc).toHaveBeenCalledWith(mockReplyProps);
+  expect(actions.replyToPost(mockReplyState)).toMatchObject(replyToPostAction);
+  expect(actions.sendReactionToServer(mockReplyProps)).toMatchObject(sendReplyToServerAction);
+});

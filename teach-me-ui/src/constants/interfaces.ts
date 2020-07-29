@@ -379,7 +379,7 @@ export interface Post {
 
 export interface ReplyProps extends Post {
   pipe: 'POST_REPLY';
-  post_id?: string;  
+  post_id: string;  
 }
 
 export interface ReplyResult extends ReplyProps {
