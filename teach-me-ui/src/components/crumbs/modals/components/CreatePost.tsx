@@ -1,4 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { 
+  useState, 
+  useRef, 
+  ChangeEvent, 
+  MouseEvent 
+} from 'react';
 
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
@@ -15,8 +20,15 @@ import {
   getHashtagsFromText 
 } from '../../../../functions';
 
-import { useStyles } from '../../../../constants';
-import { useSubmitPost/*, useGetFormattedMentionsWithKeyword*/} from '../../../../hooks/api';
+import { 
+  useStyles, 
+  PostEditorState 
+} from '../../../../constants';
+
+import { 
+  useSubmitPost,
+  /*useGetFormattedMentionsWithKeyword*/
+} from '../../../../hooks/api';
 
 let userInfo: any = {};
 let [avatar, displayName, username] = ['', '', ''];
@@ -28,10 +40,10 @@ if (navigator.cookieEnabled && localStorage.kanyimuta) {
   username = userInfo.username;
 }
 
-const CreatePost = (props: any) => {
+const CreatePost: React.FC = () => {
 
   const avatarSizes = useStyles()
-  const [state, setState] = useState<any>({
+  const [state, setState] = useState<PostEditorState>({
     mentionsKeyword: '',
     post: {
       text: '',
@@ -47,7 +59,7 @@ const CreatePost = (props: any) => {
   // const getMentions = useGetFormattedMentionsWithKeyword(state.mentionsKeyword)[0];
   const [submitPost, , isSubmitting] = useSubmitPost(state.post);
 
-  const editor = useRef<any>()
+  const editor = useRef<HTMLTextAreaElement | any>()
 
   const toggleSuggestor = (metaInformation: any) => {
     const { hookType, cursor } = metaInformation;
@@ -92,7 +104,7 @@ const CreatePost = (props: any) => {
   //   });
   // } 
 
-  const onChange = (e: any) => {
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const post = e.target.value;
     setState({
       ...state,
@@ -104,7 +116,7 @@ const CreatePost = (props: any) => {
     });
   }
   
-  const onPostSubmit = (e: any) => {
+  const onPostSubmit = (e: MouseEvent<HTMLButtonElement>) => {
     if (state.post.text) {
       submitPost().then((data: any) => {
         if (!isSubmitting) {

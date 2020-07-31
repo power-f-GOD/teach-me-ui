@@ -397,3 +397,10 @@ export interface ReplyState {
   data?: ReplyResult
   status: 'settled' | 'pending' | 'fulfilled';
 }
+
+export interface PostEditorState {
+  post: Post;
+  mentionsKeyword: string;
+  mentions: any[];
+  [key: string]: any
+}
