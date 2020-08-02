@@ -20,13 +20,11 @@ export const processPostFn = (post: string) =>
   post &&
   post.split(' ').map((w, i) => {
     return /(^@|^#)/.test(w) ? (
-      <>
-        <Link key={i} to={`/${w}`}>
-          {w}
-        </Link>{' '}
-      </>
+      <Box component='span' key={i}>
+        <Link to={`/${w}`}>{w}</Link>{' '}
+      </Box>
     ) : (
-      <>{w} </>
+      <React.Fragment key={i}>{w} </React.Fragment>
     );
   });
 

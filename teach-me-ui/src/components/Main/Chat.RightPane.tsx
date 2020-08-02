@@ -44,22 +44,20 @@ const ChatRightPane = ({ conversation, convoInfo }: ChatRightPaneProps) => {
           as='section'
           className='user-info-container custom-scroll-bar small-bar grey-scrollbar p-3 debugger'>
           <Row as='section' className='m-0 flex-column mb-5'>
-            <Col className='p-0 d-flex justify-content-center'>
+            <Col className='p-0 text-center'>
               <Avatar
                 component='span'
-                className='chat-avatar'
+                className='chat-avatar d-inline-block'
                 alt={displayName}
                 src={`/images/${avatar}`}
               />
             </Col>
-            <Col className='d-flex flex-column p-0'>
+            <Col className='p-0 text-center'>
               <Col
-                as='span'
                 className='display-name p-0 d-flex justify-content-center my-1'>
                 {displayName}
               </Col>
               <Col
-                as='span'
                 className='username p-0 d-flex justify-content-center mb-4'>
                 @{username}
               </Col>
