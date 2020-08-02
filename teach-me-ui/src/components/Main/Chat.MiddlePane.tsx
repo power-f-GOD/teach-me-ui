@@ -36,13 +36,15 @@ import {
   delay,
   interval,
   preventEnterNewLine,
-  timestampFormatter
+  timestampFormatter,
+  dateStringMapFormatter
 } from '../../functions/utils';
 import { placeHolderDisplayName } from './Chat';
 import { displaySnackbar, initWebSocket } from '../../actions';
 import { CHAT_TYPING } from '../../constants/chat';
 
 const Memoize = createMemo();
+const aDayInMs = 86400000;
 
 interface ChatMiddlePaneProps {
   conversation: APIConversationResponse;
@@ -86,6 +88,8 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
     [index: number]: string | null;
   }>({});
   const [clearSelections, setClearSelections] = useState<boolean>(false);
+
+  const today = new Date().toDateString();
   const numOfSelectedMessages = Object.keys(selectedMessages).length;
 
   const handleMinimizeChatClick = useCallback(() => {
@@ -400,37 +404,68 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         style={{ marginBottom: scrollViewElevation }}>
         {!!convoMessages[0] && _conversationMessages.status === 'fulfilled' ? (
           convoMessages.map((message, key: number) => {
+            const prevDate = new Date(
+              Number(convoMessages[key - 1]?.date)
+            ).toDateString();
+            const nextDate = new Date(
+              Number(convoMessages[key + 1]?.date)
+            ).toDateString();
+            const selfDate = new Date(Number(message.date)).toDateString();
+            const selfSentToday = selfDate === today;
+            const selfSentYesterday =
+              (Math.abs(
+                (new Date(today) as any) - (new Date(selfDate) as any)
+              ) as any) /
+                aDayInMs ===
+              1;
+            const prevAndSelfSentSameDay = prevDate === selfDate;
+            const nextAndSelfSentSameDay = nextDate === selfDate;
+            const shouldRenderDate = !prevAndSelfSentSameDay;
+
             const type =
               message.sender_id && message.sender_id !== userData.id
                 ? 'incoming'
                 : 'outgoing';
             const prevSenderId = (convoMessages[key - 1] ?? {}).sender_id;
             const nextSenderId = (convoMessages[key + 1] ?? {}).sender_id;
-            const isFirstOfStack = prevSenderId !== message.sender_id;
+            const isFirstOfStack =
+              prevSenderId !== message.sender_id || !prevAndSelfSentSameDay;
             const isOnlyOfStack =
-              prevSenderId !== message.sender_id &&
-              nextSenderId !== message.sender_id;
+              (prevSenderId !== message.sender_id &&
+                nextSenderId !== message.sender_id) ||
+              (!nextAndSelfSentSameDay && !prevAndSelfSentSameDay);
             const isMiddleOfStack =
               prevSenderId === message.sender_id &&
-              nextSenderId === message.sender_id;
-            const isLastOfStack = nextSenderId !== message.sender_id;
+              nextSenderId === message.sender_id &&
+              nextAndSelfSentSameDay &&
+              prevAndSelfSentSameDay;
+            const isLastOfStack =
+              nextSenderId !== message.sender_id || !nextAndSelfSentSameDay;
             const className = `${isFirstOfStack ? 'first ' : ''}${
               isOnlyOfStack ? 'only ' : ''
             }${isLastOfStack ? 'last ' : ''}${isMiddleOfStack ? 'middle' : ''}`;
 
             return (
-              <Message
-                message={message}
-                type={type}
-                clearSelections={clearSelections}
-                index={key}
-                className={className}
-                userId={userData.id}
-                participants={conversation.participants}
-                handleClearSelections={handleClearSelections}
-                handleMessageSelection={handleMessageSelection}
-                key={key}
-              />
+              <React.Fragment key={key}>
+                {shouldRenderDate && (
+                  <ChatDate
+                    timestamp={Number(message.date)}
+                    sentToday={selfSentToday}
+                    sentYesterday={selfSentYesterday}
+                  />
+                )}
+                <Message
+                  message={message}
+                  type={type}
+                  clearSelections={clearSelections}
+                  index={key}
+                  className={className}
+                  userId={userData.id}
+                  participants={conversation.participants}
+                  handleClearSelections={handleClearSelections}
+                  handleMessageSelection={handleMessageSelection}
+                />
+              </React.Fragment>
             );
           })
         ) : (
@@ -604,6 +639,32 @@ function Message(props: {
         </Box>
       </Col>
     </Container>
+  );
+}
+
+function ChatDate({
+  timestamp,
+  sentToday,
+  sentYesterday
+}: {
+  timestamp: number;
+  sentToday: boolean;
+  sentYesterday: boolean;
+}) {
+  if (isNaN(timestamp)) {
+    return <></>;
+  }
+
+  return (
+    <Box className='chat-date-wrapper text-center my-4' position='relative'>
+      <Box component='span' className='chat-date d-inline-block'>
+        {sentToday
+          ? 'Today'
+          : sentYesterday
+          ? 'Yesterday'
+          : dateStringMapFormatter(timestamp, true)}
+      </Box>
+    </Box>
   );
 }
 

@@ -1,4 +1,4 @@
-$convo-spacer: 0.55rem;
+$convo-spacer: 0.35rem;
 
 .chat-left-pane {
   background-color: $theme-primary-v3;
@@ -17,7 +17,7 @@ $convo-spacer: 0.55rem;
     padding: 0.75rem 0.5rem;
     margin-bottom: $convo-spacer;
     transition: 0.35s;
-    border-radius: 0.45rem;
+    border-radius: $convo-spacer;
     background: rgba(0, 0, 0, 0.1);
 
     &:last-child {
@@ -106,7 +106,7 @@ $convo-spacer: 0.55rem;
   .colleague-name {
     padding: 0.75rem 0.5rem;
     transition: 0.35s;
-    border-radius: 0.45rem;
+    border-radius: $convo-spacer;
     background: rgba(0, 0, 0, 0.25);
   }
 }

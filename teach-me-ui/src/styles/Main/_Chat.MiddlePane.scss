@@ -81,6 +81,7 @@ $msg-radius: 1.25rem;
   padding: 0.55rem 0.7rem;
   text-align: left;
   white-space: pre-wrap;
+  word-break: break-word;
   width: auto;
   max-width: 75%;
 
@@ -99,8 +100,6 @@ $msg-radius: 1.25rem;
 .scroll-view-msg {
   padding: 0.5rem 0.65rem;
   font-size: 0.95rem;
-  text-align: left;
-  word-break: break-word;
 }
 
 .msg-container {
@@ -120,7 +119,7 @@ $msg-radius: 1.25rem;
       $bg: rgba($prim-r + 50, $prim-g + 50, $prim-b + 50, 0.35)
     );
     opacity: 0;
-    transform: translateY(0.25rem);
+    transform: translateY(0.3rem);
   }
 
   &.selected {
@@ -254,7 +253,7 @@ $msg-radius: 1.25rem;
   text-align: right;
   width: auto;
   float: right;
-  line-height: 250%;
+  line-height: 220%;
   color: #777;
   margin: {
     right: -0.45rem;
@@ -265,9 +264,9 @@ $msg-radius: 1.25rem;
     padding: 0;
     padding: {
       right: 0.35rem;
-      left: 0.65rem;
+      left: 0.75rem;
     }
-    white-space: pre;
+    white-space: nowrap;
 
     [class*='Icon'] {
       font-size: 1.05rem;
@@ -294,6 +293,33 @@ $msg-radius: 1.25rem;
       }
     }
   }
+}
+
+.chat-date-wrapper {
+  
+
+  &::before {
+    @include before-or-after(
+      $h: 0.0625rem,
+      $t: calc(50% - 0.0625rem),
+      $br: 0.25rem,
+      $bg: $theme-tertiary-v9,
+      $zi: unset
+    );
+  }
+}
+
+.chat-date {
+  background: $theme-tertiary-v2;
+  padding: 0.25rem 1rem;
+  border-radius: 2rem;
+  position: relative;
+  z-index: 1;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: white;
+  border: 0.5rem solid white;
+  user-select: none;
 }
 
 .chat-msg-box {
