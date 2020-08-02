@@ -26,10 +26,10 @@
     }
 
     .chat-avatar {
-      $size: 7rem;
+      $size: 8rem;
 
       height: $size;
-      margin: 1.5rem 0;
+      margin: 1.25rem 0;
       width: $size;
       font-size: 2.5rem;
       background: $theme-primary-v5;
@@ -38,7 +38,7 @@
     }
 
     .display-name {
-      margin: 0.5rem 0;
+      margin: 0.25rem 0;
       font-size: 1.5rem;
       font-weight: bold;
     }
