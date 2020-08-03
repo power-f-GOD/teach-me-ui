@@ -33,7 +33,8 @@ import {
   CHAT_NEW_MESSAGE,
   CHAT_MESSAGE_DELIVERED,
   CHAT_TYPING,
-  CHAT_READ_RECEIPT
+  CHAT_READ_RECEIPT,
+  CHAT_MESSAGE_DELETED
 } from '../../constants/chat';
 import ChatLeftPane from './Chat.LeftPane';
 import ChatMiddlePane from './Chat.MiddlePane';
@@ -265,7 +266,8 @@ const ChatBox = (props: ChatBoxProps) => {
           _id,
           sender_id,
           user_id,
-          seen_by
+          seen_by,
+          deleted
         } = message;
 
         switch (pipe) {
@@ -332,6 +334,16 @@ const ChatBox = (props: ChatBoxProps) => {
               userTypingTimeout = window.setTimeout(() => {
                 dispatch(conversationInfo({ user_typing: '' }));
               }, 750);
+            }
+            break;
+          case CHAT_MESSAGE_DELETED:
+            if (deleted && convoId && conversation_id === cid) {
+              dispatch(
+                conversationMessages({
+                  pipe: CHAT_MESSAGE_DELETED,
+                  data: [{ deleted: true, _id }]
+                })
+              );
             }
             break;
         }
