@@ -97,7 +97,9 @@ const cleanUp = (isUnmount: boolean) => {
   }
 };
 
-window.addEventListener('popstate', () => cleanUp(false));
+window.addEventListener('popstate', () => {
+  cleanUp(false);
+});
 
 let [
   avatar,
@@ -126,6 +128,19 @@ const Profile = (props: any) => {
   const { isAuthenticated } = auth;
   const token = (userData as UserData).token as string;
 
+  avatar = data.avatar || 'avatar-1.png';
+  firstname = data.firstname || '';
+  lastname = data.lastname || '';
+  displayName = data.displayName || '';
+  email = data.email || '';
+  dob = data.dob?.split('-').reverse().join('-') || '';
+  institution = data.institution || '';
+  department = data.department || '';
+  level = data.level || '';
+
+  //username of currently authenticated user which will be used to check if the current profile data requested is for another user or currently authenticated user in order to render the views accordingly
+  username = '@' + (userData.username || '');
+
   let { userId } = props.match.params;
   const isId = /^@\w+$/.test('@' + userId);
   userId = isId ? '@' + userId.toLowerCase() : username;
@@ -144,11 +159,12 @@ const Profile = (props: any) => {
   ]: useApiResponse<DeepProfileProps> = api.useFetchDeepProfile(data.id, token);
 
   useEffect(() => {
+    console.log('deep profile: ', data.id, data.username);
     if (data.id && !selfView) {
       fetchDeepProfile();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data.id, selfView]);
+  }, [data.id, selfView, username]);
 
   const [
     removeColleagueRequest,
@@ -209,19 +225,6 @@ const Profile = (props: any) => {
     setAcceptWasClicked(false);
     setDeclineWasClicked(false);
   };
-
-  avatar = data.avatar || 'avatar-1.png';
-  firstname = data.firstname || '';
-  lastname = data.lastname || '';
-  displayName = data.displayName || '';
-  email = data.email || '';
-  dob = data.dob?.split('-').reverse().join('-') || '';
-  institution = data.institution || '';
-  department = data.department || '';
-  level = data.level || '';
-
-  //username of currently authenticated user which will be used to check if the current profile data requested is for another user or currently authenticated user in order to render the views accordingly
-  username = '@' + (userData.username || '');
 
   basicInfo = [
     { name: 'Firstname', value: firstname },
@@ -321,6 +324,10 @@ const Profile = (props: any) => {
   useEffect(() => {
     cleanUp(true);
     dispatch(getProfileData(userId.replace('@', ''))(dispatch));
+
+    return () => {
+      cleanUp(true);
+    };
   }, [userId, profileData.username]);
 
   // useEffect(() => {
