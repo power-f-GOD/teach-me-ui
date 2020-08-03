@@ -305,7 +305,8 @@ export interface ConversationMessages extends Omit<SearchState, 'data'> {
     | 'CHAT_NEW_MESSAGE'
     | 'CHAT_MESSAGE_DELIVERED'
     | 'CHAT_TYPING'
-    | 'CHAT_READ_RECEIPT';
+    | 'CHAT_READ_RECEIPT'
+    | 'CHAT_MESSAGE_DELETED';
   data?: Partial<APIMessageResponse>[];
 }
 

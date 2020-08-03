@@ -1,4 +1,4 @@
-import { ChatState, ChatData } from './interfaces';
+import { ChatState } from './interfaces';
 
 export const SET_CHAT_STATE = 'SET_CHAT_STATE';
 
@@ -17,6 +17,9 @@ export const SET_CONVERSATION_INFO = 'SET_CONVERSATION_INFO';
 export const SET_CONVERSATION = 'SET_CONVERSATION';
 // export const SET_CONVERSATION_MESSAGES = 'SET_CONVERSATION_MESSAGES';
 
+export const REQUEST_DELETE_MESSAGE = 'REQUEST_DELETE_MESSAGE';
+export const DELETE_MESSAGE = 'DELETE_MESSAGE';
+
 export const GET_PEOPLE_ENROLLED_IN_INSTITUTION =
   'GET_PEOPLE_ENROLLED_IN_INSTITUTION';
 export const SET_PEOPLE_ENROLLED_IN_INSTITUTION =
@@ -29,25 +32,10 @@ export const CHAT_NEW_MESSAGE = 'CHAT_NEW_MESSAGE';
 export const CHAT_MESSAGE_DELIVERED = 'CHAT_MESSAGE_DELIVERED';
 export const CHAT_TYPING = 'CHAT_TYPING';
 export const CHAT_READ_RECEIPT = 'CHAT_READ_RECEIPT';
+export const CHAT_MESSAGE_DELETED = 'CHAT_MESSAGE_DELETED';
 
 export const chatStateProps: ChatState = {
   queryString: window.location.pathname,
   isOpen: false,
   isMinimized: false
-};
-
-export const chatsMessagesState: ChatData = {
-  id: {
-    displayName: '',
-    id: '',
-    messages: [],
-    avatar: '',
-    type: 'conversation',
-    info: {
-      username: '',
-      institution: '',
-      department: '',
-      level: ''
-    }
-  }
 };
