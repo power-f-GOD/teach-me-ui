@@ -60,12 +60,26 @@ interface PostParentProps {
   reposts: number;
 }
 
-export interface SocketProps {
-  pipe: 'POST_REACTION' | 'POST_REPLY';
+export interface SocketProps extends SocketStruct {
   post_id: string;
   reaction?: Reaction;
   interaction?: 'SEEN' | 'ENGAGED';
 }
+
+interface SocketStruct {
+  pipe: SocketPipe;
+}
+
+export type SocketPipe =
+  | 'POST_REACTION'
+  | 'POST_REPLY'
+  | 'POST_INTERACTION'
+  | 'POST_REPOST'
+  | 'CHAT_NEW_MESSAGE'
+  | 'CHAT_MESSAGE_DELETED'
+  | 'CHAT_READ_RECEIPT'
+  | 'CHAT_MESSAGE_DELIVERED'
+  | 'CHAT_TYPING';
 
 export interface PostReactionResult {
   downvotes: number;
@@ -308,12 +322,7 @@ export interface ConversationsMessages extends StatusPropsState {
 
 export interface ConversationMessages extends Omit<SearchState, 'data'> {
   conversationId?: string;
-  pipe?:
-    | 'CHAT_NEW_MESSAGE'
-    | 'CHAT_MESSAGE_DELIVERED'
-    | 'CHAT_TYPING'
-    | 'CHAT_READ_RECEIPT'
-    | 'CHAT_MESSAGE_DELETED';
+  pipe?: SocketPipe;
   data?: Partial<APIMessageResponse>[];
 }
 
@@ -335,7 +344,7 @@ export interface APIMessageResponse {
   sender_id: string;
   timestamp_id?: string;
   __v: number;
-  pipe: string;
+  pipe: SocketPipe;
   user_id?: string;
 }
 

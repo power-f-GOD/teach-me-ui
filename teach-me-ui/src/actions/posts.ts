@@ -49,14 +49,6 @@ export const sendReactionToServer = (payload: SocketProps) => (
   );
   if (post === undefined) return;
   const socket: WebSocket = getState().webSocket as WebSocket;
-  socket.addEventListener('message', (event) => {
-    try {
-      const data = JSON.parse(event.data);
-      if (data.pipe === 'POST_REACTION') {
-        dispatch(updatePost(data as PostReactionResult));
-      }
-    } catch (e) {}
-  });
   socket.send(JSON.stringify({ ...payload, reaction: post?.reaction }));
 };
 
