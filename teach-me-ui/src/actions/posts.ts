@@ -60,12 +60,16 @@ export const sendReactionToServer = (payload: SocketProps) => (
   socket.send(JSON.stringify({ ...payload, reaction: post?.reaction }));
 };
 
-export const fetchPosts: Function = () => (dispatch: Function) => {
+export const fetchPosts: Function = (
+  type: 'FEED' | 'WALL',
+  userId?: string
+) => (dispatch: Function) => {
   dispatch(fetchPostsStarted());
+  const isWall = type === 'WALL' && !!userId;
   const userData = getState().userData as UserData;
   const token = userData.token as string;
   Axios({
-    url: `/feed`,
+    url: isWall ? `/profile/${userId}/posts` : '/feed',
     baseURL,
     method: 'GET',
     headers: {
