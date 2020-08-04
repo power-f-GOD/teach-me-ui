@@ -128,8 +128,7 @@
   //     $zi: 0
   //   );
   // }
-
-  path {
+  path:not(.pathignore) {
     stroke: white;
     fill: $theme-primary-v6;
   }

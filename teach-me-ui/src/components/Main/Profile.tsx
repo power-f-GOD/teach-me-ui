@@ -133,6 +133,7 @@ const Profile = (props: any) => {
   lastname = data.lastname || '';
   displayName = data.displayName || '';
   email = data.email || '';
+  email = email + '';
   dob = data.dob?.split('-').reverse().join('-') || '';
   institution = data.institution || '';
   department = data.department || '';
@@ -159,7 +160,6 @@ const Profile = (props: any) => {
   ]: useApiResponse<DeepProfileProps> = api.useFetchDeepProfile(data.id, token);
 
   useEffect(() => {
-    console.log('deep profile: ', data.id, data.username);
     if (data.id && !selfView) {
       fetchDeepProfile();
     }
@@ -229,9 +229,9 @@ const Profile = (props: any) => {
   basicInfo = [
     { name: 'Firstname', value: firstname },
     { name: 'Lastname', value: lastname },
-    { name: 'Username', value: username },
-    { name: 'Date of birth', value: dob },
-    { name: 'Email', value: email }
+    { name: 'Username', value: username }
+    // { name: 'Date of birth', value: dob },
+    // { name: 'Email', value: email }
   ];
   academicInfo = [
     { name: 'Institution', value: institution },
