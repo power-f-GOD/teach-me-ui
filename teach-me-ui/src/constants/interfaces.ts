@@ -113,6 +113,13 @@ interface HeaderProps {
   [key: string]: any;
 }
 
+export interface ColleagueProps {
+  firstname: string;
+  lastname: string;
+  id: string;
+  username: string;
+}
+
 export interface ColleagueRequestProps {
   sender: ColleagueRequestSender;
   request: ColleagueRequest;

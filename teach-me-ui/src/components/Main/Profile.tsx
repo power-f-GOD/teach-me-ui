@@ -40,11 +40,8 @@ import {
   DeepProfileProps,
   useApiResponse
 } from '../../constants/interfaces';
-import { dispatch, getState } from '../../functions';
-import {
-  getProfileData,
-  profileData as _profileData
-} from '../../actions/profile';
+import { dispatch, cleanUp } from '../../functions';
+import { getProfileData } from '../../actions';
 /**
  * Please, Do not delete any commented code; You can either uncomment them to use them or leave them as they are
  */
@@ -77,24 +74,6 @@ export const refs: any = {
   institutionInput: createRef<HTMLInputElement>(),
   departmentInput: createRef<HTMLInputElement>(),
   levelInput: createRef<HTMLInputElement>()
-};
-
-const cleanUp = (isUnmount: boolean) => {
-  let shouldCleanUp =
-    /@/.test(window.location.pathname) &&
-    (getState().profileData.data[0] as UserData).username !==
-      window.location.pathname.split('/')[1].replace('@', '');
-  shouldCleanUp = isUnmount ? isUnmount : shouldCleanUp;
-
-  if (shouldCleanUp) {
-    dispatch(
-      _profileData({
-        status: 'settled',
-        err: false,
-        data: [{}]
-      })
-    );
-  }
 };
 
 window.addEventListener('popstate', () => {
@@ -320,7 +299,6 @@ const Profile = (props: any) => {
       window.scrollTo(0, 0);
     };
   }, [selfView]);
-
   useEffect(() => {
     cleanUp(true);
     dispatch(getProfileData(userId.replace('@', ''))(dispatch));
@@ -329,18 +307,6 @@ const Profile = (props: any) => {
       cleanUp(true);
     };
   }, [userId, profileData.username]);
-
-  // useEffect(() => {
-  //   //use this (and its deps) to trigger getProfileData on window popstate
-  //   // if (/@\w+/.test(location.pathname)) {
-  //   //   dispatch(getProfileData(userId.replace('@', ''))(dispatch));
-  //   // }
-
-  //   return () => {
-  //     //clean up after every unmount to prevent flash of profile page before load of profile data
-  //     cleanUp(true);
-  //   };
-  // }, [userId, isId, location.pathname]);
 
   if (!isId) {
     return <Redirect to={`/${username}`} />;
@@ -390,14 +356,16 @@ const Profile = (props: any) => {
               WALL
             </div>
           </Link>
-          <Link to={`/${userId}/colleagues`}>
-            <div
-              className={`nav-item ${
-                /colleagues/.test(props.location.pathname) ? 'active' : ''
-              }`}>
-              COLLEAGUES
-            </div>
-          </Link>
+          {selfView && (
+            <Link to={`/${userId}/colleagues`}>
+              <div
+                className={`nav-item ${
+                  /colleagues/.test(props.location.pathname) ? 'active' : ''
+                }`}>
+                COLLEAGUES
+              </div>
+            </Link>
+          )}
           {!selfView &&
             (isAuthenticated && deepProfileData !== null ? (
               <>
@@ -612,8 +580,15 @@ const Profile = (props: any) => {
           </Box>
         </Col>
         <Switch>
-          <Route path='/@:userId/colleagues' exact component={ColleagueView} />
+          {selfView && (
+            <Route
+              path='/@:userId/colleagues'
+              exact
+              component={ColleagueView}
+            />
+          )}
           <Route path='/@:userId' exact component={ProfileFeeds} />
+          <Redirect to={`/@${data.username}`} />
         </Switch>
       </Row>
       <Container className='rows-wrapper custom-scroll-bar small-bar rounded-bar tertiary-bar p-0'>

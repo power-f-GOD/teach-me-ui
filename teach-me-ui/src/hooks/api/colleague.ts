@@ -102,3 +102,16 @@ export const useFetchColleagueRequests = (
   );
   return r;
 };
+
+export const useFetchColleagues = (token: string): useApiResponse<any> => {
+  const r: useApiResponse<any> = useApi<any>(
+    {
+      endpoint: '/colleagues/find',
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` }
+    },
+    undefined,
+    false
+  );
+  return r;
+};

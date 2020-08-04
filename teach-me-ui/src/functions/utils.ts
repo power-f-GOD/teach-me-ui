@@ -7,10 +7,32 @@ import {
   Reaction
 } from '../constants';
 import store from '../appStore';
-import { displaySnackbar, setUserData } from '../actions';
+import {
+  displaySnackbar,
+  setUserData,
+  profileData as _profileData
+} from '../actions';
 import { userDeviceIsMobile } from '../';
 
 export const { dispatch, getState }: any = store;
+
+export const cleanUp = (isUnmount: boolean) => {
+  let shouldCleanUp =
+    /@/.test(window.location.pathname) &&
+    (getState().profileData.data[0] as UserData).username !==
+      window.location.pathname.split('/')[1].replace('@', '');
+  shouldCleanUp = isUnmount ? isUnmount : shouldCleanUp;
+
+  if (shouldCleanUp) {
+    dispatch(
+      _profileData({
+        status: 'settled',
+        err: false,
+        data: [{}]
+      })
+    );
+  }
+};
 
 export const validateEmailFn = (email: string) =>
   !!email && /^\w+[\w\d.]*[\w\d]+@\w+\.[\w\d.]+[\w\d]$/.test(email);
