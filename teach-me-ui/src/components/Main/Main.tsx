@@ -19,7 +19,7 @@ import createMemo from '../../Memo';
 import { dispatch } from '../../functions/utils';
 import { initWebSocket, closeWebSocket } from '../../actions/misc';
 
-import socketRouter from '../../socket.router/index';
+import socketRouter from '../../socket.router';
 
 const Memoize = createMemo();
 

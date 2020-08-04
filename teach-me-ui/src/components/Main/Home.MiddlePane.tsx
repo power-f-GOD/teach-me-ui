@@ -25,7 +25,7 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
   const isSelf =
     !!username && !!profileUsername && profileUsername === username;
   let selfView = isAuthenticated ? isSelf : false;
-
+  let inProfile = /@\w+/.test(window.location.pathname);
   useEffect(() => {
     const type = props.type || 'FEED';
     const userId = (profile as UserData).id || undefined;
@@ -34,7 +34,7 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
   }, []);
   return (
     <Container className='middle-pane' fluid>
-      {selfView && <Compose />}
+      {(selfView || !inProfile) && <Compose />}
       {props.fetchPostStatus.status === 'resolved' &&
         props.posts.map((post: PostPropsState, i: number) => (
           <Post {...post} key={i} />
