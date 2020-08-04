@@ -1,6 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 
-import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
@@ -13,9 +12,6 @@ import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 import IconButton from '@material-ui/core/IconButton';
 import Box from '@material-ui/core/Box';
-import DoneIcon from '@material-ui/icons/Done';
-import DoneAllIcon from '@material-ui/icons/DoneAll';
-import ScheduleIcon from '@material-ui/icons/Schedule';
 import DeleteIcon from '@material-ui/icons/Delete';
 
 import {
@@ -35,13 +31,12 @@ import {
   dispatch,
   delay,
   interval,
-  preventEnterNewLine,
-  timestampFormatter,
-  dateStringMapFormatter
+  preventEnterNewLine
 } from '../../functions/utils';
 import { placeHolderDisplayName } from './Chat';
 import { displaySnackbar, initWebSocket } from '../../actions';
-import { CHAT_TYPING } from '../../constants/chat';
+import { CHAT_TYPING, CHAT_MESSAGE_DELETED } from '../../constants/chat';
+import { Message, ChatDate } from './Chat.crumbs';
 
 const Memoize = createMemo();
 const aDayInMs = 86400000;
@@ -91,6 +86,32 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
 
   const today = new Date().toDateString();
   const numOfSelectedMessages = Object.keys(selectedMessages).length;
+
+  const displayConnectInfoAndReconnect = useCallback(() => {
+    dispatch(
+      displaySnackbar({
+        open: true,
+        autoHide: false,
+        severity: 'info',
+        message:
+          "Something went wrong. Seems you are/were offline. We'll try to reconnect then you can perform action again."
+      })
+    );
+    dispatch(initWebSocket(userData.token as string));
+  }, [userData.token]);
+
+  const displaySocketErrInfo = useCallback((e: any) => {
+    dispatch(
+      displaySnackbar({
+        open: true,
+        autoHide: false,
+        severity: 'error',
+        message:
+          'An error occurred. Could not establish connection with server.'
+      })
+    );
+    console.error('An error occurred. Error:', e);
+  }, []);
 
   const handleMinimizeChatClick = useCallback(() => {
     const { isMinimized, queryString: qString }: ChatState = _chatState;
@@ -151,30 +172,18 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         socket.send(JSON.stringify(msg));
         // console.log('message:', msg, 'was sent.');
       } else {
-        dispatch(
-          displaySnackbar({
-            open: true,
-            autoHide: false,
-            severity: 'info',
-            message:
-              "Couldn't send message. Seems you are/were offline. We'll try to reconnect then you can try sending message again."
-          })
-        );
-        dispatch(initWebSocket(userData.token as string));
+        displayConnectInfoAndReconnect();
       }
     } catch (e) {
-      dispatch(
-        displaySnackbar({
-          open: true,
-          autoHide: false,
-          severity: 'error',
-          message:
-            'Send message failed. Could not establish connection with server.'
-        })
-      );
-      console.error('Error:', e, 'Message:', msg, 'failed to send.');
+      displaySocketErrInfo(e);
     }
-  }, [msgBoxRowsMax, convoId, socket, userData.token]);
+  }, [
+    msgBoxRowsMax,
+    convoId,
+    socket,
+    displayConnectInfoAndReconnect,
+    displaySocketErrInfo
+  ]);
 
   const handleMsgInputChange = useCallback(
     (e: any) => {
@@ -225,10 +234,13 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   );
 
   const handleMessageSelection = useCallback(
-    (id: string | null, index: number) => {
+    (id: string | null, index: string) => {
       setClearSelections(false);
       setSelectedMessages((prev) => {
-        const newState = { ...prev, ...{ [index]: id } };
+        const newState: { [key: string]: string } = {
+          ...prev,
+          ...{ [index]: id }
+        };
 
         if (!id) {
           delete newState[index];
@@ -240,16 +252,33 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
     []
   );
 
-  const handleClearSelections = useCallback(
-    (value: boolean) => () => {
-      setClearSelections(value);
+  const handleClearSelections = useCallback(() => {
+    setClearSelections(true);
+    delay(10).then(() => setSelectedMessages({}));
+  }, []);
 
-      if (value) {
-        setSelectedMessages({});
+  const handleDeleteMessage = useCallback(() => {
+    for (const id in selectedMessages) {
+      try {
+        if (socket && socket.readyState === 1) {
+          socket.send(
+            JSON.stringify({ message_id: id, pipe: CHAT_MESSAGE_DELETED })
+          );
+          handleClearSelections();
+        } else {
+          displayConnectInfoAndReconnect();
+        }
+      } catch (e) {
+        displaySocketErrInfo(e);
       }
-    },
-    []
-  );
+    }
+  }, [
+    selectedMessages,
+    socket,
+    handleClearSelections,
+    displayConnectInfoAndReconnect,
+    displaySocketErrInfo
+  ]);
 
   useEffect(() => {
     setScrollView(scrollViewRef.current);
@@ -260,7 +289,12 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   }, [scrollView]);
 
   useEffect(() => {
-    if (convoMessages && scrollView) {
+    if (
+      convoMessages &&
+      scrollView &&
+      (scrollView.scrollTop === 0 ||
+        scrollView.scrollTop > scrollView.scrollHeight - 500)
+    ) {
       // animate (to prevent flicker) if scrollView is at very top else don't animate
       if (scrollView.scrollTop < scrollView.scrollHeight - 300) {
         interval(
@@ -280,7 +314,10 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
 
   return (
     <>
-      <Col as='header' className='chat-header d-flex p-0'>
+      <Memoize
+        memoizedComponent={Col}
+        as='header'
+        className='chat-header d-flex p-0'>
         <Box className='d-flex title-control-wrapper'>
           <Col as='span' className='colleague-name'>
             {type === 'ONE_TO_ONE' ? (
@@ -371,7 +408,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
               <>
                 <IconButton
                   className='clear-selection-button ml-2'
-                  onClick={handleClearSelections(true)}
+                  onClick={handleClearSelections}
                   aria-label='cancel action button'>
                   <CloseIcon />
                 </IconButton>
@@ -385,14 +422,14 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
           </Box>
           <Box className='action-wrapper text-right'>
             <IconButton
-              className='delete-button d-none mr-2'
-              // onClick={handleDeleteMessageClick}
+              className='delete-button mr-2'
+              onClick={handleDeleteMessage}
               aria-label='delete message'>
               <DeleteIcon />
             </IconButton>
           </Box>
         </Row>
-      </Col>
+      </Memoize>
 
       <Memoize
         memoizedComponent={{
@@ -421,6 +458,9 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
             const prevAndSelfSentSameDay = prevDate === selfDate;
             const nextAndSelfSentSameDay = nextDate === selfDate;
             const shouldRenderDate = !prevAndSelfSentSameDay;
+            const delayBtwMsgs =
+              message.date! - (convoMessages[key - 1]?.date ?? message.date!) >=
+              300000;
 
             const type =
               message.sender_id && message.sender_id !== userData.id
@@ -441,9 +481,11 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
               prevAndSelfSentSameDay;
             const isLastOfStack =
               nextSenderId !== message.sender_id || !nextAndSelfSentSameDay;
-            const className = `${isFirstOfStack ? 'first ' : ''}${
-              isOnlyOfStack ? 'only ' : ''
-            }${isLastOfStack ? 'last ' : ''}${isMiddleOfStack ? 'middle' : ''}`;
+            const className = `${delayBtwMsgs ? 'mt-2 ' : ''}${
+              isFirstOfStack ? 'first ' : ''
+            }${isOnlyOfStack ? 'only ' : ''}${isLastOfStack ? 'last ' : ''}${
+              isMiddleOfStack ? 'middle' : ''
+            }`;
 
             return (
               <React.Fragment key={key}>
@@ -454,15 +496,20 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
                     sentYesterday={selfSentYesterday}
                   />
                 )}
-                <Message
+                <Memoize
+                  memoizedComponent={Message}
                   message={message}
                   type={type}
-                  clearSelections={clearSelections}
-                  index={key}
+                  clearSelections={
+                    message._id! in selectedMessages && clearSelections
+                      ? true
+                      : false
+                  }
+                  deleted={message.deleted}
+                  id={message._id}
                   className={className}
                   userId={userData.id}
                   participants={conversation.participants}
-                  handleClearSelections={handleClearSelections}
                   handleMessageSelection={handleMessageSelection}
                 />
               </React.Fragment>
@@ -487,7 +534,8 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         )}
       </Memoize>
 
-      <Col
+      <Memoize
+        memoizedComponent={Col}
         as='section'
         className={`chat-msg-box p-0 ${!convoId ? 'hide' : 'show'}`}>
         <Col as='span' className='emoji-wrapper p-0'>
@@ -524,148 +572,9 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
             <SendIcon fontSize='inherit' />
           </IconButton>
         </Col>
-      </Col>
+      </Memoize>
     </>
   );
 };
-
-function Message(props: {
-  message: Partial<APIMessageResponse>;
-  type: 'incoming' | 'outgoing';
-  userId: string;
-  index: number;
-  className: string;
-  clearSelections: boolean;
-  participants: string[];
-  handleMessageSelection: Function;
-  handleClearSelections: Function;
-}) {
-  const {
-    type,
-    message,
-    participants,
-    userId,
-    index,
-    className,
-    clearSelections,
-    handleMessageSelection,
-    handleClearSelections
-  } = props;
-  const {
-    message: text,
-    date,
-    timestamp_id,
-    delivered_to,
-    seen_by,
-    _id: id
-  } = message;
-  const timestamp = timestampFormatter(date);
-  const isDelivered =
-    type === 'outgoing' &&
-    participants
-      ?.filter((id) => id !== userId)
-      .every((participant) => delivered_to?.includes(participant));
-  const isSeen =
-    type === 'outgoing' &&
-    participants
-      ?.filter((id) => id !== userId)
-      .every((participant) => seen_by?.includes(participant));
-
-  const [selected, setSelected] = useState<boolean | null>(null);
-
-  const handleMessageDblClick = useCallback(
-    (e: any) => {
-      if (type === 'incoming') return;
-      handleClearSelections(false);
-      setSelected((prev) => !prev);
-    },
-    [type, handleClearSelections]
-  );
-
-  useEffect(() => {
-    if (type === 'outgoing' && selected !== null) {
-      handleMessageSelection(selected ? id : null, index);
-    }
-  }, [
-    selected,
-    id,
-    index,
-    type,
-    handleMessageSelection,
-    handleClearSelections
-  ]);
-
-  useEffect(() => {
-    if (type === 'outgoing' && selected !== null && clearSelections) {
-      setSelected(false);
-      handleMessageSelection(null, index);
-    }
-  }, [selected, clearSelections, index, type, handleMessageSelection]);
-
-  useEffect(
-    () => () => {
-      if (type === 'outgoing') {
-        setSelected(false);
-        handleMessageSelection(null, index);
-      }
-    },
-    [index, type, handleMessageSelection]
-  );
-
-  return (
-    <Container
-      className={`${type === 'incoming' ? 'incoming' : 'outgoing'} ${
-        selected ? 'selected' : ''
-      } msg-container ${className} p-0 m-0`}
-      onDoubleClick={handleMessageDblClick}>
-      <Col
-        as='div'
-        className='msg-wrapper scroll-view-msg-wrapper d-inline-flex flex-column justify-content-end'>
-        <Box>
-          {text}
-          <Col as='span' className='chat-timestamp-wrapper p-0'>
-            <Col as='span' className='chat-timestamp d-inline-block'>
-              {timestamp}{' '}
-              {type !== 'incoming' &&
-                (timestamp_id ? (
-                  <ScheduleIcon />
-                ) : isSeen || isDelivered ? (
-                  <DoneAllIcon className={isSeen ? 'read' : ''} />
-                ) : (
-                  <DoneIcon />
-                ))}
-            </Col>
-          </Col>
-        </Box>
-      </Col>
-    </Container>
-  );
-}
-
-function ChatDate({
-  timestamp,
-  sentToday,
-  sentYesterday
-}: {
-  timestamp: number;
-  sentToday: boolean;
-  sentYesterday: boolean;
-}) {
-  if (isNaN(timestamp)) {
-    return <></>;
-  }
-
-  return (
-    <Box className='chat-date-wrapper text-center my-4' position='relative'>
-      <Box component='span' className='chat-date d-inline-block'>
-        {sentToday
-          ? 'Today'
-          : sentYesterday
-          ? 'Yesterday'
-          : dateStringMapFormatter(timestamp, true)}
-      </Box>
-    </Box>
-  );
-}
 
 export default ChatMiddlePane;

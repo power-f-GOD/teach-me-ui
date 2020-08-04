@@ -107,6 +107,16 @@ $msg-radius: 1.25rem;
   user-select: none;
   cursor: pointer;
 
+  &.deleted {
+    font-style: italic;
+    color: $theme-tertiary-v5;
+    font-size: 0.9rem;
+
+    .msg-wrapper {
+      transition: border-radius 0.85s;
+    }
+  }
+
   &::after {
     @include before-or-after(
       $tr: 0.2s,
@@ -175,7 +185,7 @@ $msg-radius: 1.25rem;
     }
 
     + .incoming.msg-container {
-      margin-top: $msgs-spacing !important;
+      margin-top: $msgs-spacing;
 
       .msg-wrapper {
         &::before {
@@ -187,7 +197,7 @@ $msg-radius: 1.25rem;
 
   &.incoming + .outgoing.msg-container {
     // .msg-wrapper {
-    margin-top: $incoming-outgoing-spacing !important;
+    margin-top: $incoming-outgoing-spacing;
   }
 
   &.outgoing {
@@ -232,7 +242,7 @@ $msg-radius: 1.25rem;
     }
 
     + .outgoing.msg-container {
-      margin-top: $msgs-spacing !important;
+      margin-top: $msgs-spacing;
 
       .msg-wrapper {
         &::before {
@@ -244,7 +254,7 @@ $msg-radius: 1.25rem;
 
   &.outgoing + .incoming.msg-container {
     // .msg-wrapper {
-    margin-top: $incoming-outgoing-spacing !important;
+    margin-top: $incoming-outgoing-spacing;
   }
 }
 
@@ -255,6 +265,7 @@ $msg-radius: 1.25rem;
   float: right;
   line-height: 220%;
   color: #777;
+  font-style: normal;
   margin: {
     right: -0.45rem;
     bottom: -0.75rem;
@@ -310,7 +321,7 @@ $msg-radius: 1.25rem;
 }
 
 .chat-date {
-  background: $theme-tertiary-v2;
+  background: $theme-primary-v6;
   padding: 0.25rem 1rem;
   border-radius: 2rem;
   position: relative;
