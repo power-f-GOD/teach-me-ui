@@ -1,4 +1,11 @@
-import { SnackbarState, SearchState, UserData, NotificationState, MentionState } from './interfaces';
+import { 
+  SnackbarState, 
+  SearchState, 
+  UserData, 
+  NotificationState, 
+  MentionState, 
+  ReplyState 
+} from './interfaces';
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -52,6 +59,12 @@ export const userDataState: UserData = {
   level: '',
   id: '',
   token: ''
+};
+
+export const replyState: ReplyState = {
+  status: 'settled',
+  error: false,
+  data: undefined
 };
 
 export const useStyles = makeStyles((theme: any) => ({

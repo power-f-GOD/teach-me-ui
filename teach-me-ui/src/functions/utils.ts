@@ -6,6 +6,7 @@ import {
   NetworkAction,
   Reaction
 } from '../constants';
+
 import store from '../appStore';
 import {
   displaySnackbar,
@@ -13,6 +14,9 @@ import {
   profileData as _profileData
 } from '../actions';
 import { userDeviceIsMobile } from '../';
+
+import moment from 'moment';
+
 
 export const { dispatch, getState }: any = store;
 
@@ -375,6 +379,40 @@ export const getHashtagsFromText = (text: string): string[] => {
   return hashtags;
 };
 
+export const formatDate = (dateTime: Date) => {
+  if (!dateTime) {
+    return null;
+  }
+
+  const today = moment();
+  const time = moment(dateTime);
+  const diff = today.diff(time);
+  const duration = moment.duration(diff);
+
+  if (duration.years() > 0) {
+    return time.format('ll');
+  } else if (duration.weeks() > 0) {
+    return duration.weeks() > 1
+      ? time.format('ll')
+      : 'a week ago';
+  } else if (duration.days() > 0) {
+    return duration.days() > 1
+      ? duration.days() + ' days ago'
+      : 'a day ago';
+  } else if (duration.hours() > 0) {
+    return duration.hours() > 1
+      ? duration.hours() + ' hours ago'
+      : 'an hour ago';
+  } else if (duration.minutes() > 0) {
+    return duration.minutes() > 1
+      ? duration.minutes() + ' minutes ago'
+      : 'a minute ago';
+  } else if (duration.seconds() > 0) {
+    return duration.seconds() > 1
+      ? duration.seconds() + ' seconds ago'
+      : 'just now';
+  }
+};
 export const dateStringMapFormatter = (
   timestamp: number,
   includeDay?: boolean,

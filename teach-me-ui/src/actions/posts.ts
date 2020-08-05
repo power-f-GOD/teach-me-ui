@@ -6,6 +6,8 @@ import {
   FETCH_POST_RESOLVED,
   FETCH_POST_STARTED,
   FETCHED_POSTS,
+  REPLY_TO_POST,
+  SEND_REPLY_TO_SERVER,
   PostPropsState,
   ReactPostState,
   FetchPostsState,
@@ -13,10 +15,11 @@ import {
   UserData,
   SocketProps,
   PostReactionResult,
-  Reaction
+  Reaction,
+  ReplyState
 } from '../constants';
 
-import { getState } from '../functions';
+import { getState, callNetworkStatusCheckerFor } from '../functions';
 
 import Axios from 'axios';
 
@@ -24,11 +27,38 @@ import Axios from 'axios';
 //   return { type: CREATE_POST, payload };
 // };
 
+export const replyToPost = (payload: ReplyState) => {
+  return {
+    type: REPLY_TO_POST,
+    payload
+  };
+};
+
+export const sendReplyToServer = (payload: SocketProps) =>  (
+  dispatch: Function
+) => {
+  callNetworkStatusCheckerFor({
+    name: 'replyToPost',
+    func: replyToPost
+  });
+
+  dispatch(
+    replyToPost({ 
+      status: 'pending'
+    })
+  )
+  const socket: WebSocket = getState().webSocket as WebSocket;
+  socket.send(JSON.stringify({ ...payload }));
+  return {
+    type: SEND_REPLY_TO_SERVER
+  }
+};
+
 export const updatePost = (payload: PostReactionResult): ReduxAction => {
   return { type: UPDATE_POST, payload };
 };
 
-export const reactToPost = (payload: ReactPostState): ReduxAction => {
+const reactToPost = (payload: ReactPostState): ReduxAction => {
   return { type: REACT_TO_POST, payload };
 };
 

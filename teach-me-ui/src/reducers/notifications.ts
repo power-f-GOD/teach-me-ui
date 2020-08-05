@@ -1,6 +1,5 @@
 import { 
   GET_NOTIFICATIONS,
-   
   ReduxAction,
   NotificationState,
   notificationState,

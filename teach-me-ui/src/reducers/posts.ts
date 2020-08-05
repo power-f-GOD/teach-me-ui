@@ -1,4 +1,5 @@
 import {
+  replyState,
   ReduxAction,
   CREATE_POST,
   REACT_TO_POST,
@@ -12,7 +13,9 @@ import {
   FetchPostsState,
   fetchPostsState,
   PostReactionResult,
-  Reaction
+  Reaction,
+  REPLY_TO_POST,
+  ReplyState
 } from '../constants';
 
 import { resultantReaction } from '../functions';
@@ -131,4 +134,17 @@ const updatePost = (
         }
       : post;
   });
+};
+
+export const replyToPost = (
+  state: ReplyState = replyState,
+  action: ReduxAction
+) => {
+  if (action.type === REPLY_TO_POST) {
+    return {
+      ...state,
+      ...action.payload
+    };
+  };
+  return state;
 };

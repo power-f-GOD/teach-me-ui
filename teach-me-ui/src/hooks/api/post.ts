@@ -1,7 +1,10 @@
 import { useCallback } from 'react';
 
 import useApi from './base';
-import { useApiResponse } from '../../constants';
+import { 
+  useApiResponse, 
+  Post 
+} from '../../constants';
 
 const cookieEnabled = navigator.cookieEnabled;
 
@@ -32,7 +35,7 @@ export const useFetchHashtags = (keyword: string,): useApiResponse<any> => {
   return r;
 };
 
-export const useSubmitPost = (post: any): useApiResponse<any> => {
+export const useSubmitPost = (post: Post): useApiResponse<any> => {
   const [...r] = useApi<any>(
     {
       endpoint: '/post/make',
