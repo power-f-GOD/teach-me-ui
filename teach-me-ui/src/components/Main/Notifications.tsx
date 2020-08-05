@@ -1,5 +1,5 @@
 import React, { 
-  useState,
+  // useState,
   useEffect 
 } from 'react';
 // import { Link } from 'react-router-dom';
@@ -33,10 +33,10 @@ const Notifications = (props: any) => {
     )
   }, []);
 
-  const [state, setState] = useState({
-    result: getNotifications.data,
-    lastDate: 0
-  });
+  // const [state, setState] = useState({
+  //   result: getNotifications.data,
+  //   lastDate: 0
+  // });
   /* <Dropdown className='dropdown'>
           <Dropdown.Toggle id='dropdown' as='p' on='true'>
             <Tooltip title='Notifications' placement='bottom'>
@@ -46,15 +46,13 @@ const Notifications = (props: any) => {
           
         </Dropdown> */
 
-  const apiResult = getNotifications.data;
-  setState({
-    ...state,
-    result: apiResult
-  });
-  setState({
-    ...state,
-    lastDate: apiResult[(apiResult.length - 1)].date,
-  });
+  // const apiResult = getNotifications.data;
+  // setState({
+  //   ...state,
+  //   result: apiResult
+  //   lastDate: apiResult[(apiResult.length - 1)].date,
+  // });
+  let result = getNotifications.data;
   return (
     <Box className='dropdown-contents' marginTop='7rem'>
       {getNotifications.status === 'pending' ? (
@@ -84,8 +82,8 @@ const Notifications = (props: any) => {
               <Box className='notification-container mx-auto'>
                 <h2 className='notification-text'>Notifications</h2>
 
-                {state.result[0].message
-                  ? state.result.map((notification: any, key: number) => {
+                {result[0]
+                  ? result.map((notification: any, key: number) => {
                       // const link = `/${notification.data.sender}`;
                       const date = new Date(notification.date);
                       const notificationDate = formatDate(date);

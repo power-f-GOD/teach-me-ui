@@ -21,9 +21,15 @@ import CreateReply from './CreateReply';
 export const processPostFn = (post: string) =>
   post &&
   post.split(' ').map((w, i) => {
-    return /(^@|^#)/.test(w) ? (
+    return /(^@)/.test(w) ? (
       <>
         <Link key={i} to={`/${w}`}>
+          {w}
+        </Link>{' '}
+      </>
+    ) : /(^#)/.test(w) ? (
+      <>
+        <Link key={i} to={'/search'}>
           {w}
         </Link>{' '}
       </>
