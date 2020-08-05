@@ -8,15 +8,35 @@ import {
 } from '../constants';
 
 import store from '../appStore';
-
-import { displaySnackbar, setUserData } from '../actions';
-
+import {
+  displaySnackbar,
+  setUserData,
+  profileData as _profileData
+} from '../actions';
 import { userDeviceIsMobile } from '../';
 
 import moment from 'moment';
 
 
 export const { dispatch, getState }: any = store;
+
+export const cleanUp = (isUnmount: boolean) => {
+  let shouldCleanUp =
+    /@/.test(window.location.pathname) &&
+    (getState().profileData.data[0] as UserData).username !==
+      window.location.pathname.split('/')[1].replace('@', '');
+  shouldCleanUp = isUnmount ? isUnmount : shouldCleanUp;
+
+  if (shouldCleanUp) {
+    dispatch(
+      _profileData({
+        status: 'settled',
+        err: false,
+        data: [{}]
+      })
+    );
+  }
+};
 
 export const validateEmailFn = (email: string) =>
   !!email && /^\w+[\w\d.]*[\w\d]+@\w+\.[\w\d.]+[\w\d]$/.test(email);
@@ -299,13 +319,13 @@ function _requestAnimationFrameWrapper() {
 
 export const convertColleagueArrayToMentionFormat = (colleagueArray: any) => {
   let mentionArray: any[] = [];
-  for (let colleague of colleagueArray ) {
-    mentionArray.push({ 
-      name: colleague.username, 
+  for (let colleague of colleagueArray) {
+    mentionArray.push({
+      name: colleague.username,
       link: `/@${colleague.username}`,
       avatar: '/images/avatar-1.png'
     });
-  };
+  }
   return mentionArray;
 };
 
@@ -320,17 +340,17 @@ export const getMentionsFromText = (text: string): string[] => {
         let mention = newText;
         if (mention) {
           mentions.push(mention);
-        };
+        }
       } else {
         let mention = newText.substring(0, endOfMention);
         if (mention) {
           mentions.push(mention);
-        };
-        checkTextForMention(newText)
-      };
-    };
+        }
+        checkTextForMention(newText);
+      }
+    }
   };
-  checkTextForMention(text)
+  checkTextForMention(text);
   return mentions;
 };
 
@@ -345,17 +365,17 @@ export const getHashtagsFromText = (text: string): string[] => {
         let hashtag = newText;
         if (hashtag.length > 1) {
           hashtags.push(`#${hashtag}`);
-        };
+        }
       } else {
         let hashtag = newText.substring(0, endOfHashtag);
         if (hashtag.length > 1) {
           hashtags.push(`#${hashtag}`);
-        };
-        checkTextForHashtag(newText)
-      };
-    };
+        }
+        checkTextForHashtag(newText);
+      }
+    }
   };
-  checkTextForHashtag(text)
+  checkTextForHashtag(text);
   return hashtags;
 };
 
@@ -392,4 +412,83 @@ export const formatDate = (dateTime: Date) => {
       ? duration.seconds() + ' seconds ago'
       : 'just now';
   }
+};
+export const dateStringMapFormatter = (
+  timestamp: number,
+  includeDay?: boolean,
+  includeYear?: boolean
+) => {
+  if (isNaN(timestamp)) {
+    return timestamp;
+  }
+
+  const dateString = new Date(timestamp).toDateString();
+  let [day, month, date, year] = dateString.split(' ');
+
+  switch (true) {
+    case /sun/i.test(day):
+      day = 'Sunday';
+      break;
+    case /mon/i.test(day):
+      day = 'Monday';
+      break;
+    case /tue/i.test(day):
+      day = 'Tuesday';
+      break;
+    case /wed/i.test(day):
+      day = 'Wednesday';
+      break;
+    case /thu/i.test(day):
+      day = 'Thursday';
+      break;
+    case /fri/i.test(day):
+      day = 'Friday';
+      break;
+    case /sat/i.test(day):
+      day = 'Saturday';
+      break;
+  }
+
+  switch (true) {
+    case /jan/i.test(month):
+      month = 'January';
+      break;
+    case /feb/i.test(month):
+      month = 'February';
+      break;
+    case /mar/i.test(month):
+      month = 'March';
+      break;
+    case /apr/i.test(month):
+      month = 'April';
+      break;
+    case /may/i.test(month):
+      month = 'May';
+      break;
+    case /jun/i.test(month):
+      month = 'June';
+      break;
+    case /jul/i.test(month):
+      month = 'July';
+      break;
+    case /aug/i.test(month):
+      month = 'August';
+      break;
+    case /sep/i.test(month):
+      month = 'September';
+      break;
+    case /oct/i.test(month):
+      month = 'October';
+      break;
+    case /nov/i.test(month):
+      month = 'November';
+      break;
+    case /dec/i.test(month):
+      month = 'December';
+      break;
+  }
+
+  return `${includeDay ? day + ' - ' : ''}${month} ${date}${
+    includeYear ? ', ' + year : ''
+  }`;
 };

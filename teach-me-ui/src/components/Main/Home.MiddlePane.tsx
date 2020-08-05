@@ -5,19 +5,36 @@ import Container from 'react-bootstrap/Container';
 import Post from '../crumbs/Post';
 import Compose from '../crumbs/Compose';
 
-import { PostPropsState } from '../../constants';
+import { PostPropsState, UserData } from '../../constants';
 
 import { fetchPostsFn } from '../../functions';
 
 import { connect } from 'react-redux';
 
 const MiddlePane: React.FunctionComponent = (props: any) => {
+  const {
+    auth: { isAuthenticated },
+    profileData: {
+      data: [profile]
+    }
+  } = props;
+  const username = props.userData.username || '';
+
+  let profileUsername = profile.username || '';
+  // here is where the check is made to render the views accordingly
+  const isSelf =
+    !!username && !!profileUsername && profileUsername === username;
+  let selfView = isAuthenticated ? isSelf : false;
+
   useEffect(() => {
-    fetchPostsFn();
+    const type = props.type || 'FEED';
+    const userId = (profile as UserData).id || undefined;
+    fetchPostsFn(type, userId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <Container className='middle-pane' fluid>
-      <Compose />
+      {selfView && <Compose />}
       {props.fetchPostStatus.status === 'resolved' &&
         props.posts.map((post: PostPropsState, i: number) => (
           <Post {...post} key={i} />
@@ -28,9 +45,16 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
   );
 };
 
-const mapStateToProps = ({ posts, fetchPostStatus }: any) => ({
+const mapStateToProps = (
+  { posts, fetchPostStatus, profileData, auth, userData }: any,
+  ownProps: any
+) => ({
+  ...ownProps,
+  auth,
   posts,
-  fetchPostStatus
+  fetchPostStatus,
+  profileData,
+  userData
 });
 
 export default connect(mapStateToProps)(MiddlePane);

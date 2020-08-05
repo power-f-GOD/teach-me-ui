@@ -40,7 +40,7 @@ export function initWebSocket(token: string): ReduxAction {
     if (socket.readyState === 1)
       socket.send(
         JSON.stringify({
-          pipe: 'POLL_SERVER',
+          pipe: 'PING',
           message: 'Ping!',
           time_stamp_id: Date.now()
         })

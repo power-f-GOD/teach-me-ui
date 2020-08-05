@@ -34,6 +34,6 @@ export const reactToPostFn = (
   );
 };
 
-export const fetchPostsFn = () => {
-  dispatch(fetchPosts());
+export const fetchPostsFn = (type: 'FEED' | 'WALL', userId?: string) => {
+  dispatch(fetchPosts(type, userId));
 };
