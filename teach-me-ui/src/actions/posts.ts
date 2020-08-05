@@ -19,7 +19,7 @@ import {
   ReplyState
 } from '../constants';
 
-import { getState, callNetworkStatusCheckerFor, logError } from '../functions';
+import { getState, callNetworkStatusCheckerFor } from '../functions';
 
 import Axios from 'axios';
 
@@ -47,45 +47,7 @@ export const sendReplyToServer = (payload: SocketProps) =>  (
       status: 'pending'
     })
   )
-  const posts: Array<PostPropsState> = getState().posts;
-
-  const post = posts.find((post: PostPropsState) =>
-    (post.id as string) === payload.post_id
-      ? post
-      : (post.parent?.id as string) === payload.post_id
-      ? post.parent
-      : undefined
-  );
-
-  if (post === undefined) return;
-
   const socket: WebSocket = getState().webSocket as WebSocket;
-  socket.addEventListener('message', (event) => {
-    try {
-      const data = JSON.parse(event.data);
-      const error = data.error;
-
-      if (data.pipe === 'POST_REPLY') {
-        if (!error ) {
-          dispatch(
-            replyToPost({
-              status: 'fulfilled',
-              error: false,
-              data
-            })
-          );
-        } else {
-          dispatch(
-            replyToPost({
-              status: 'fulfilled',
-              error: true,
-              data
-            })
-          );
-        }
-      }
-    } catch (e) {logError(replyToPost)};
-  });
   socket.send(JSON.stringify({ ...payload }));
   return {
     type: SEND_REPLY_TO_SERVER

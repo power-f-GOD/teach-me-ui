@@ -11,10 +11,12 @@ import Skeleton from 'react-loading-skeleton';
 import { Link } from 'react-router-dom';
 
 import ReactButton from './ReactButton';
-import { bigNumberFormat } from '../../functions/utils';
+import { bigNumberFormat, dispatch } from '../../functions/utils';
 import { PostPropsState } from '../../constants/interfaces';
 
 import CreateReply from './CreateReply';
+
+import { triggerSearchKanyimuta } from '../../actions/search';
 
 // /(\s(?=[#@])|(?<=[#@]\w+)\s)/;
 
@@ -29,7 +31,10 @@ export const processPostFn = (post: string) =>
       </Box>
     ) : /(^#)[A-Za-z0-9_]+$/.test(w) ? (
       <Box component='span' key={i}>
-        <Link key={i} to={'/search'}>
+        <Link key={i} to={(location => {
+          dispatch(triggerSearchKanyimuta(w)(dispatch));
+          return '/search';
+        })}>
           {w}
         </Link>{' '}
       </Box>
