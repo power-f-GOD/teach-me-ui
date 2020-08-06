@@ -33,7 +33,7 @@ export const processPostFn = (post: string) =>
       <Box component='span' key={i}>
         <Link key={i} to={(location => {
           dispatch(triggerSearchKanyimuta(w)(dispatch));
-          return '/search';
+          return `/search/${w.substring(1)}`;
         })}>
           {w}
         </Link>{' '}

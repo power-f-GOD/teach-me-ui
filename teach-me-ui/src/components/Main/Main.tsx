@@ -72,7 +72,9 @@ const Main = (props: any) => {
         <Route path='/about' component={About} />
         <Route path='/support' component={Support} />
         <Route path='/@:userId' component={Profile} />
-        <Route path='/search' component={Search} />
+        <Route 
+            path={['/search/:query', '/search']} 
+            component={Search} />
         <Route path='/notifications' component={Notifications} />
         <Route component={_404} />
       </Switch>

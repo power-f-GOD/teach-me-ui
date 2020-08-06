@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -22,9 +22,16 @@ const Search = (props: any) => {
   const searchInputRef = useRef<HTMLInputElement>();
   const { searchKanyimuta } = props;
   const results: ColleagueData[] | any[] = searchKanyimuta.data;
+  const hashtag = props.match.params.query
+    ? `#${props.match.params.query}`
+    : undefined
+
+  const [keyword, setKeyword] = useState<string | undefined>(hashtag || '');
 
   const handleSearchChange = useCallback((e: any) => {
-    dispatch(triggerSearchKanyimuta(e.target.value.trim())(dispatch));
+    const value = e.target.value.trim();
+    setKeyword(value)
+    dispatch(triggerSearchKanyimuta(value)(dispatch));
   }, []);
 
   return (
@@ -35,6 +42,7 @@ const Search = (props: any) => {
             <SearchIcon />
             <Box className='search-input-wrapper'>
               <InputBase
+                value={keyword}
                 placeholder='Search…'
                 className='search-input'
                 inputRef={searchInputRef}
