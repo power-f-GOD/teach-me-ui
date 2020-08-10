@@ -11,22 +11,31 @@ import Skeleton from 'react-loading-skeleton';
 import { Link } from 'react-router-dom';
 
 import ReactButton from './ReactButton';
-import { bigNumberFormat } from '../../functions/utils';
+import { bigNumberFormat, dispatch } from '../../functions/utils';
 import { PostPropsState } from '../../constants/interfaces';
 
 import CreateReply from './CreateReply';
 
-// import { triggerSearchKanyimuta } from '../../actions/search';
+import { triggerSearchKanyimuta } from '../../actions/search';
 
 export const processPostFn = (post: string) =>
   post &&
   post.split(' ').map((w, i) => {
-    return /(^@|^#)[A-Za-z0-9]+[,.!]*$/.test(w) ? (
+    return /(^@)[A-Za-z0-9_]+[,.!]*$/.test(w) ? (
       <Box component='span' key={i}>
         <Link to={`/${/[,.!]+$/.test(w) ? w.slice(0, -1) : w}`}>{`${
           /[,.!]+$/.test(w) ? w.slice(0, -1) : w
         }`}</Link>
         {`${/[,.!]+$/.test(w) ? w.slice(-1) : ''}`}{' '}
+      </Box>
+    ) : /(^#)[A-Za-z0-9_]+[,.!]*$/.test(w) ? (
+      <Box component='span' key={i}>
+        <Link to={(location => {
+          dispatch(triggerSearchKanyimuta(w)(dispatch));
+          return `/search/${w.substring(1)}`;
+        })}>
+        {w}
+        </Link>{' '}
       </Box>
     ) : (
       <React.Fragment key={i}>{w} </React.Fragment>
