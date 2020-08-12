@@ -93,7 +93,7 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
           overflowY: conversations.status === 'pending' ? 'hidden' : 'auto'
         }}>
         {conversations.status === 'pending' ? (
-          Array(Math.floor(window.innerHeight / 70))
+          Array(Math.floor(window.innerHeight / 60))
             .fill('')
             .map((_, key) => <Skeleton type={DISPLAY_INFO} key={key} />)
         ) : !!convos[0] ? (

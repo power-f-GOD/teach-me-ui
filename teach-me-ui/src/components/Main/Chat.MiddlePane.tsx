@@ -187,48 +187,70 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
 
   const handleMsgInputChange = useCallback(
     (e: any) => {
+      const scrollView = scrollViewRef.current!;
+      const elevation = e.target.offsetHeight;
+      const chatBoxMaxHeight = msgBoxInitHeight * msgBoxRowsMax;
+      const remValue = elevation > msgBoxInitHeight * 4 ? 1.25 : 1.25;
+
       if (socket && socket.readyState === 1) {
         socket.send(
           JSON.stringify({ conversation_id: convoId, pipe: CHAT_TYPING })
         );
       }
 
-      if (!e.shiftKey && e.key === 'Enter' && !userDeviceIsMobile) {
-        handleSendMsgClick();
-        return false;
-      } else if (
-        (e.shiftKey && e.key === 'Enter') ||
-        e.target.scrollHeight > msgBoxInitHeight
-      ) {
-        setMsgBoxRowsMax(msgBoxRowsMax < 6 ? msgBoxRowsMax + 1 : msgBoxRowsMax);
+      
+      if (e.key === 'Enter') {
+        
+
+        if (!e.shiftKey && !userDeviceIsMobile) {
+          handleSendMsgClick();
+          return false;
+        } else if (e.shiftKey || e.target.scrollHeight > msgBoxInitHeight) {
+          setMsgBoxRowsMax(
+            msgBoxRowsMax < 6 ? msgBoxRowsMax + 1 : msgBoxRowsMax
+          );
+
+        }
+        console.log(scrollView.scrollTop)
+        delay(1).then(() => {
+          
+          if (scrollView.scrollTop > scrollView.scrollHeight - 700) {
+            
+            scrollView.scrollTop += 38;
+            delay(200).then(() => {
+              console.log('was called', scrollView.scrollTop)
+            })
+            
+          }
+        });
       }
 
-      const scrollView = scrollViewRef.current!;
-      const elevation = e.target.offsetHeight;
-      const chatBoxMaxHeight = msgBoxInitHeight * msgBoxRowsMax;
-      const remValue = elevation > msgBoxInitHeight * 4 ? 1.25 : 1.25;
+      setScrollViewElevation(`calc(${elevation}px - ${remValue}rem)`);
+      setMsgBoxCurrentHeight(elevation);
 
-      if (elevation <= chatBoxMaxHeight) {
+      if (
+        elevation <= chatBoxMaxHeight + 19 &&
+        scrollView.scrollTop > scrollView.scrollHeight - 700
+      ) {
+        
         if (elevation > msgBoxCurrentHeight) {
+          console.log('another call made')
           //makes sure right amount of scrollTop is set when scrollView scroll position is at the very bottom
-          delay(200).then(() => {
-            if (
+          delay(1).then(() => {
+            if (true ||
               scrollView.scrollHeight -
                 scrollView.offsetHeight -
                 msgBoxInitHeight * 2 <=
               scrollView.scrollTop
             ) {
-              scrollView.scrollTop += 19;
+              scrollView.scrollTop -= 220;
             }
           });
-          scrollView.scrollTop += 19;
+          scrollView.scrollTop = scrollView.scrollHeight;// 22;
         } else if (elevation < msgBoxCurrentHeight) {
           scrollView.scrollTop -= 19;
         }
       }
-
-      setScrollViewElevation(`calc(${elevation}px - ${remValue}rem)`);
-      setMsgBoxCurrentHeight(elevation);
     },
     [socket, convoId, msgBoxCurrentHeight, msgBoxRowsMax, handleSendMsgClick]
   );
@@ -293,7 +315,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
       convoMessages &&
       scrollView &&
       (scrollView.scrollTop === 0 ||
-        scrollView.scrollTop > scrollView.scrollHeight - 500)
+        scrollView.scrollTop > scrollView.scrollHeight - 700)
     ) {
       // animate (to prevent flicker) if scrollView is at very top else don't animate
       if (scrollView.scrollTop < scrollView.scrollHeight - 300) {
