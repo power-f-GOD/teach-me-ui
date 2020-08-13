@@ -81,6 +81,8 @@ export type SocketPipe =
   | 'POST_REPOST'
   | 'CHAT_NEW_MESSAGE'
   | 'CHAT_MESSAGE_DELETED'
+  | 'CHAT_MESSAGE_DELETED_FOR'
+  | 'ONLINE_STATUS'
   | 'CHAT_READ_RECEIPT'
   | 'CHAT_MESSAGE_DELIVERED'
   | 'CHAT_TYPING';
@@ -361,6 +363,7 @@ export interface APIConversationResponse {
   creator: 'SYSTEM' | string;
   type: 'ONE_TO_ONE' | string;
   __v: number;
+  last_message: APIMessageResponse;
   friendship: string;
   conversation_name: string;
   associated_username: string;
@@ -397,12 +400,12 @@ export interface Post {
 
 export interface ReplyProps extends Post {
   pipe: 'POST_REPLY';
-  post_id: string;  
+  post_id: string;
 }
 
 export interface ReplyResult extends ReplyProps {
   error: boolean;
-  sec_type: "REPLY";
+  sec_type: 'REPLY';
   id: string;
   text: string;
   parent: PostParentProps;
@@ -411,7 +414,7 @@ export interface ReplyResult extends ReplyProps {
 
 export interface ReplyState {
   error?: boolean;
-  data?: ReplyResult
+  data?: ReplyResult;
   status: 'settled' | 'pending' | 'fulfilled';
 }
 
@@ -419,5 +422,5 @@ export interface PostEditorState {
   post: Post;
   mentionsKeyword: string;
   mentions: any[];
-  [key: string]: any
+  [key: string]: any;
 }

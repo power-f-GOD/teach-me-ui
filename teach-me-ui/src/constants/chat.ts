@@ -33,6 +33,7 @@ export const CHAT_MESSAGE_DELIVERED = 'CHAT_MESSAGE_DELIVERED';
 export const CHAT_TYPING = 'CHAT_TYPING';
 export const CHAT_READ_RECEIPT = 'CHAT_READ_RECEIPT';
 export const CHAT_MESSAGE_DELETED = 'CHAT_MESSAGE_DELETED';
+export const CHAT_MESSAGE_DELETED_FOR = 'CHAT_MESSAGE_DELETED_FOR';
 
 export const chatStateProps: ChatState = {
   queryString: window.location.pathname,

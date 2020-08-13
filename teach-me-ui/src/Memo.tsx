@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function createMemo() {
-  return React.memo((props: any) => {
+  return React.memo((props: {memoizedComponent: any; [key:string]: any;}) => {
     let Component = props.memoizedComponent.component;
     let ref;
     let _props;

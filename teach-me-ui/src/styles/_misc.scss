@@ -189,8 +189,15 @@ a {
   &[class*='Primary'] {
     min-height: 2.5rem;
     border-radius: 0.25rem;
-    background-color: $theme-secondary !important;
-    color: white;
+
+    &[class*='contained'] {
+      background-color: $theme-secondary !important;
+      color: white;
+    }
+
+    &[class*='text'] {
+      color: $theme-secondary;
+    }
 
     &.major-button {
       overflow: hidden;
