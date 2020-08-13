@@ -78,7 +78,7 @@ $convo-spacer: 0.35rem;
   display: flex;
   cursor: pointer;
   text-decoration: none;
-  color: lightblue;
+  color: #bbb;
 
   &:last-child {
     margin-bottom: 0;
@@ -94,6 +94,9 @@ $convo-spacer: 0.35rem;
       background-color: $theme-secondary-v5;
       color: white;
     }
+    .display-name {
+      color: white !important;
+    }
   }
 
   &.active {
@@ -101,12 +104,61 @@ $convo-spacer: 0.35rem;
       background-color: $theme-primary-v6;
       color: white;
     }
+    .display-name {
+      color: white !important;
+    }
   }
 
   .colleague-name {
     padding: 0.75rem 0.5rem;
     transition: 0.35s;
+
     border-radius: $convo-spacer;
     background: rgba(0, 0, 0, 0.25);
+  }
+
+  .display-name-wrapper {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    // @include debugger();
+  }
+
+  .display-name {
+    font-weight: bold;
+    display: inline-block;
+    overflow: hidden;
+    color: #ddd;
+    white-space: nowrap;
+    max-width: calc(100% - 4.5rem);
+    text-overflow: ellipsis;
+  }
+
+  .chat-timestamp-wrapper {
+    color: inherit;
+    margin: {
+      top: 0.15rem;
+      right: 0.25rem;
+    }
+    line-height: normal;
+
+    .chat-timestamp {
+      padding: 0;
+    }
+  }
+
+  .last-message {
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 97%;
+    text-overflow: ellipsis;
+
+    [class*='Icon'] {
+      color: inherit;
+
+      &.read {
+        color: $theme-primary-v9;
+      }
+    }
   }
 }

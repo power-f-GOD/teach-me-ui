@@ -40,6 +40,7 @@ import {
 import ChatLeftPane from './Chat.LeftPane';
 import ChatMiddlePane from './Chat.MiddlePane';
 import ChatRightPane from './Chat.RightPane';
+import { ONLINE_STATUS } from '../../constants';
 
 export const placeHolderDisplayName = 'Start a new Conversation';
 
@@ -351,6 +352,9 @@ const ChatBox = (props: ChatBoxProps) => {
               );
             }
             break;
+          case ONLINE_STATUS:
+            // console.log(ONLINE_STATUS, message);
+            break;
         }
       };
     }
@@ -364,7 +368,7 @@ const ChatBox = (props: ChatBoxProps) => {
           isOpen ? '' : 'close'
         } ${visibilityState}`}>
         <Col as='section' md={3} className='chat-left-pane p-0'>
-          <ChatLeftPane conversations={conversations} />
+          <ChatLeftPane conversations={conversations} userData={userData} />
         </Col>
 
         <Col

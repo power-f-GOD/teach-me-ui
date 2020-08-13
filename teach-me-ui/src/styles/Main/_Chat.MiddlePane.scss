@@ -138,7 +138,7 @@ $msg-radius: 1.25rem;
   }
 
   .msg-wrapper {
-    transition: 0.85s;
+    transition: 0.5s;
   }
 
   $br: 0.35rem;
@@ -254,6 +254,11 @@ $msg-radius: 1.25rem;
     // .msg-wrapper {
     margin-top: $incoming-outgoing-spacing;
   }
+
+  [class*='Icon'] {
+    margin-bottom: -0.175rem;
+    font-size: 1.1rem;
+  }
 }
 
 .chat-timestamp-wrapper {
@@ -276,37 +281,10 @@ $msg-radius: 1.25rem;
       left: 0.75rem;
     }
     white-space: nowrap;
-
-    [class*='Icon'] {
-      font-size: 1.05rem;
-      margin-bottom: -0.25rem;
-      margin-left: 0.1rem;
-      color: rgba(0, 0, 0, 0.35);
-      transition: 0.3s;
-
-      &.read {
-        color: rgba(25, 160, 205, 1);
-        animation: scale 0.75s;
-      }
-
-      @keyframes scale {
-        0% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.35);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-    }
   }
 }
 
 .chat-date-wrapper {
-  
-
   &::before {
     @include before-or-after(
       $h: 0.0625rem,
@@ -377,16 +355,16 @@ $msg-radius: 1.25rem;
 .msg-box {
   position: absolute;
   bottom: 0.4rem;
-  z-index: 3;
+  z-index: 1;
 
   &::before {
     position: absolute;
-    bottom: 0;
+    bottom: -0.35rem;
     right: 0;
     left: -3.25rem;
     content: ' ';
     background: white;
-    height: calc(100% + 0.35rem);
+    height: calc(100% + 0.7rem);
     width: calc(100% + 6.5rem);
     z-index: 0;
   }

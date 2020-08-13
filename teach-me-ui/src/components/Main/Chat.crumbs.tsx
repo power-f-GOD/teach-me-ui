@@ -49,24 +49,13 @@ export const Message = (props: {
   } = props;
   const {
     message: text,
-    date,
+    date: timestamp,
     timestamp_id,
     delivered_to,
     seen_by,
     _id: id,
     deleted
   } = message;
-  const timestamp = timestampFormatter(date);
-  const isDelivered =
-    type === 'outgoing' &&
-    participants
-      ?.filter((id) => id !== userId)
-      .every((participant) => delivered_to?.includes(participant));
-  const isSeen =
-    type === 'outgoing' &&
-    participants
-      ?.filter((id) => id !== userId)
-      .every((participant) => seen_by?.includes(participant));
 
   const [selected, setSelected] = useState<boolean | null>(null);
 
@@ -123,24 +112,85 @@ export const Message = (props: {
           ) : (
             text
           )}
-          <Col as='span' className='chat-timestamp-wrapper p-0'>
-            <Col as='span' className='chat-timestamp d-inline-block'>
-              {timestamp}{' '}
-              {type !== 'incoming' &&
-                !deleted &&
-                (timestamp_id ? (
-                  <ScheduleIcon />
-                ) : isSeen || isDelivered ? (
-                  <DoneAllIcon className={isSeen ? 'read' : ''} />
-                ) : (
-                  <DoneIcon />
-                ))}
-            </Col>
-          </Col>
+          <ChatTimestamp
+            timestamp={timestamp}
+            chatStatus={
+              <ChatStatus
+                type={type}
+                deleted={deleted}
+                timestamp_id={timestamp_id}
+                seen_by={seen_by}
+                delivered_to={delivered_to}
+                userId={userId}
+                participants={participants}
+              />
+            }
+          />
         </Box>
       </Col>
     </Container>
   );
+};
+
+export const ChatTimestamp = (props: {
+  timestamp: number | string;
+  chatStatus?: React.ReactFragment;
+}) => {
+  const { timestamp, chatStatus } = props;
+
+  return (
+    <Col as='span' className='chat-timestamp-wrapper p-0'>
+      <Col as='span' className='chat-timestamp d-inline-block'>
+        {typeof timestamp === 'string'
+          ? timestamp
+          : timestampFormatter(timestamp)}{' '}
+        {chatStatus ? chatStatus : ''}
+      </Col>
+    </Col>
+  );
+};
+
+export const ChatStatus = (props: {
+  type: string;
+  deleted: boolean;
+  timestamp_id?: string;
+  seen_by: string[];
+  delivered_to: string[];
+  userId: string;
+  participants: string[];
+}) => {
+  const {
+    type,
+    deleted,
+    timestamp_id,
+    seen_by,
+    delivered_to,
+    userId,
+    participants
+  } = props;
+  const isDelivered =
+    type === 'outgoing' &&
+    participants
+      ?.filter((id) => id !== userId)
+      .every((participant) => delivered_to?.includes(participant));
+  const isSeen =
+    type === 'outgoing' &&
+    participants
+      ?.filter((id) => id !== userId)
+      .every((participant) => seen_by?.includes(participant));
+
+  const element =
+    type !== 'incoming' &&
+    !deleted &&
+    (timestamp_id ? (
+      <ScheduleIcon />
+    ) : isSeen || isDelivered ? (
+      <DoneAllIcon className={isSeen ? 'read' : ''} />
+    ) : (
+      <DoneIcon />
+    ));
+
+  return element ? <>{element}</> : <></>;
 };
 
 export const ChatDate = ({
@@ -191,7 +241,7 @@ export default function ConfirmDialog(props: {
           color='primary'
           variant='text'
           className='ml-auto my-2 mr-2'>
-          Delete For Self
+          Delete for Self
         </Button>
         <Button
           onClick={handleClose('CANCEL')}
@@ -207,7 +257,7 @@ export default function ConfirmDialog(props: {
             className='ml-auto my-2 mr-2'
             variant='text'
             color='primary'>
-            Delete For All
+            Delete for All
           </Button>
         )}
       </DialogActions>
