@@ -7,22 +7,35 @@ import Box from '@material-ui/core/Box';
 import DoneIcon from '@material-ui/icons/Done';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import ScheduleIcon from '@material-ui/icons/Schedule';
+import BlockIcon from '@material-ui/icons/Block';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
-import { APIMessageResponse, Partial } from '../../constants/interfaces';
+import { APIMessageResponse } from '../../constants/interfaces';
 import {
   timestampFormatter,
   dateStringMapFormatter
 } from '../../functions/utils';
 
+export interface SelectedMessageValue {
+  id: string;
+  deleted: boolean;
+  type: string;
+}
+
+export type ActionChoice = 'DELETE_FOR_ME' | 'CANCEL' | 'DELETE_FOR_EVERYONE';
+
 export const Message = (props: {
-  message: Partial<APIMessageResponse>;
+  message: APIMessageResponse;
   type: 'incoming' | 'outgoing';
   userId: string;
   className: string;
-  deleted: boolean;
   clearSelections: boolean;
+  canSelectByClick: boolean;
   participants: string[];
-  handleMessageSelection: Function;
+  handleMessageSelection(id: string | null, value: SelectedMessageValue): void;
 }) => {
   const {
     type,
@@ -31,7 +44,7 @@ export const Message = (props: {
     userId,
     className,
     clearSelections,
-    deleted,
+    canSelectByClick,
     handleMessageSelection
   } = props;
   const {
@@ -40,7 +53,8 @@ export const Message = (props: {
     timestamp_id,
     delivered_to,
     seen_by,
-    _id: id
+    _id: id,
+    deleted
   } = message;
   const timestamp = timestampFormatter(date);
   const isDelivered =
@@ -56,35 +70,33 @@ export const Message = (props: {
 
   const [selected, setSelected] = useState<boolean | null>(null);
 
-  const handleMessageDblClick = useCallback(
-    (e: any) => {
-      if (type === 'incoming') return;
-      setSelected((prev) => !prev);
-    },
-    [type]
-  );
+  const handleSelectMessage = useCallback((e: any) => {
+    setSelected((prev) => !prev);
+  }, []);
 
   useEffect(() => {
-    if (type === 'outgoing' && selected !== null) {
-      handleMessageSelection(selected ? id : null, id);
+    if (selected !== null) {
+      handleMessageSelection(selected ? String(id) : null, {
+        id,
+        deleted,
+        type
+      });
     }
-  }, [selected, id, type, handleMessageSelection]);
+  }, [selected, deleted, id, type, handleMessageSelection]);
 
   useEffect(() => {
-    if (type === 'outgoing' && selected !== null && clearSelections) {
+    if (selected !== null && clearSelections) {
       setSelected(false);
-      handleMessageSelection(null, id);
+      handleMessageSelection(null, { id, deleted, type });
     }
-  }, [selected, clearSelections, id, type, handleMessageSelection]);
+  }, [selected, clearSelections, id, deleted, type, handleMessageSelection]);
 
   useEffect(
     () => () => {
-      if (type === 'outgoing') {
-        setSelected(false);
-        handleMessageSelection(null, id);
-      }
+      setSelected(false);
+      handleMessageSelection(null, { id, deleted, type });
     },
-    [id, type, handleMessageSelection]
+    [id, type, deleted, handleMessageSelection]
   );
 
   return (
@@ -92,16 +104,25 @@ export const Message = (props: {
       className={`${type === 'incoming' ? 'incoming' : 'outgoing'} ${
         selected ? 'selected' : ''
       } msg-container ${className} ${deleted ? 'deleted' : ''} p-0 mx-0`}
-      onDoubleClick={deleted ? undefined : handleMessageDblClick}>
+      onDoubleClick={handleSelectMessage}
+      onClick={canSelectByClick ? handleSelectMessage : undefined}>
       <Col
         as='div'
         className='msg-wrapper scroll-view-msg-wrapper d-inline-flex flex-column justify-content-end'>
         <Box>
-          {deleted
-            ? type === 'outgoing'
-              ? 'You deleted this message'
-              : 'User changed mind about this message'
-            : text}
+          {deleted ? (
+            type === 'outgoing' ? (
+              <>
+                <BlockIcon fontSize='inherit' /> You deleted this message
+              </>
+            ) : (
+              <>
+                <BlockIcon fontSize='inherit' /> User thought to delete message
+              </>
+            )
+          ) : (
+            text
+          )}
           <Col as='span' className='chat-timestamp-wrapper p-0'>
             <Col as='span' className='chat-timestamp d-inline-block'>
               {timestamp}{' '}
@@ -147,3 +168,49 @@ export const ChatDate = ({
     </Box>
   );
 };
+
+export default function ConfirmDialog(props: {
+  open: boolean;
+  action(choice: ActionChoice): any;
+  canDeleteForEveryone: boolean;
+}) {
+  const { open, action, canDeleteForEveryone } = props;
+
+  const handleClose = (choice: ActionChoice) => () => action(choice);
+  return (
+    <Dialog
+      open={open}
+      onClose={handleClose('CANCEL')}
+      aria-labelledby='alert-dialog-title'>
+      <DialogTitle id='alert-dialog-title'>Delete Message?</DialogTitle>
+      <DialogActions
+        className='text-right d-flex flex-column'
+        style={{ minWidth: '19rem' }}>
+        <Button
+          onClick={handleClose('DELETE_FOR_ME')}
+          color='primary'
+          variant='text'
+          className='ml-auto my-2 mr-2'>
+          Delete For Self
+        </Button>
+        <Button
+          onClick={handleClose('CANCEL')}
+          color='primary'
+          variant='text'
+          className='ml-auto my-2 mr-2'
+          autoFocus>
+          Cancel
+        </Button>
+        {canDeleteForEveryone && (
+          <Button
+            onClick={handleClose('DELETE_FOR_EVERYONE')}
+            className='ml-auto my-2 mr-2'
+            variant='text'
+            color='primary'>
+            Delete For All
+          </Button>
+        )}
+      </DialogActions>
+    </Dialog>
+  );
+}

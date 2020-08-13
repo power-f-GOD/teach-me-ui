@@ -1,4 +1,5 @@
 {
   "debug.javascript.codelens.npmScripts": "never",
-  "debug.javascript.automaticallyTunnelRemoteServer": false
+  "debug.javascript.automaticallyTunnelRemoteServer": false,
+  "editor.fontSize": 13
 }

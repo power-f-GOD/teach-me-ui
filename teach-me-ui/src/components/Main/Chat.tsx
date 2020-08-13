@@ -34,7 +34,8 @@ import {
   CHAT_MESSAGE_DELIVERED,
   CHAT_TYPING,
   CHAT_READ_RECEIPT,
-  CHAT_MESSAGE_DELETED
+  CHAT_MESSAGE_DELETED,
+  CHAT_MESSAGE_DELETED_FOR
 } from '../../constants/chat';
 import ChatLeftPane from './Chat.LeftPane';
 import ChatMiddlePane from './Chat.MiddlePane';
@@ -337,10 +338,14 @@ const ChatBox = (props: ChatBoxProps) => {
             }
             break;
           case CHAT_MESSAGE_DELETED:
+          case CHAT_MESSAGE_DELETED_FOR:
             if (deleted && convoId && conversation_id === cid) {
               dispatch(
                 conversationMessages({
-                  pipe: CHAT_MESSAGE_DELETED,
+                  pipe:
+                    pipe === CHAT_MESSAGE_DELETED
+                      ? CHAT_MESSAGE_DELETED
+                      : CHAT_MESSAGE_DELETED_FOR,
                   data: [{ deleted: true, _id }]
                 })
               );

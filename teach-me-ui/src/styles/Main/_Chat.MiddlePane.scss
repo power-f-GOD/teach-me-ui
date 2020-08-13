@@ -70,7 +70,6 @@
 .chat-scroll-view {
   padding: 0.75rem 1.15rem;
   overflow-x: hidden;
-  transition: 0.15s;
 }
 
 $incoming-outgoing-spacing: 1rem;
@@ -109,8 +108,7 @@ $msg-radius: 1.25rem;
 
   &.deleted {
     font-style: italic;
-    color: $theme-tertiary-v5;
-    font-size: 0.9rem;
+    color: $theme-tertiary-v6;
 
     .msg-wrapper {
       transition: border-radius 0.85s;
@@ -379,6 +377,7 @@ $msg-radius: 1.25rem;
 .msg-box {
   position: absolute;
   bottom: 0.4rem;
+  z-index: 3;
 
   &::before {
     position: absolute;
