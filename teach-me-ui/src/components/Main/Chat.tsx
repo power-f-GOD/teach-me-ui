@@ -41,6 +41,7 @@ import ChatLeftPane from './Chat.LeftPane';
 import ChatMiddlePane from './Chat.MiddlePane';
 import ChatRightPane from './Chat.RightPane';
 import { ONLINE_STATUS } from '../../constants';
+import createMemo from '../../Memo';
 
 export const placeHolderDisplayName = 'Start a new Conversation';
 
@@ -56,7 +57,10 @@ interface ChatBoxProps {
 }
 
 let userTypingTimeout: any = null;
+
 const chatBoxWrapperRef = createRef<any>();
+
+const Memoize = createMemo();
 
 window.addEventListener('popstate', () => {
   let { chat, cid } = queryString.parse(window.location.search);
@@ -368,14 +372,19 @@ const ChatBox = (props: ChatBoxProps) => {
           isOpen ? '' : 'close'
         } ${visibilityState}`}>
         <Col as='section' md={3} className='chat-left-pane p-0'>
-          <ChatLeftPane conversations={conversations} userData={userData} />
+          <Memoize
+            memoizedComponent={ChatLeftPane}
+            conversations={conversations}
+            userData={userData}
+          />
         </Col>
 
         <Col
           as='section'
           md={convoUsername ? 6 : 9}
           className='chat-middle-pane d-flex flex-column p-0'>
-          <ChatMiddlePane
+          <Memoize
+            memoizedComponent={ChatMiddlePane}
             conversation={_conversation}
             conversationMessages={_conversationMessages}
             chatState={_chatState}
@@ -390,7 +399,8 @@ const ChatBox = (props: ChatBoxProps) => {
             as='section'
             md={3}
             className='chat-right-pane d-flex flex-column p-0'>
-            <ChatRightPane
+            <Memoize
+              memoizedComponent={ChatRightPane as React.FC}
               conversation={_conversation}
               convoInfo={
                 _conversationInfo.data as Partial<
