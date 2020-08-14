@@ -85,7 +85,8 @@ export type SocketPipe =
   | 'ONLINE_STATUS'
   | 'CHAT_READ_RECEIPT'
   | 'CHAT_MESSAGE_DELIVERED'
-  | 'CHAT_TYPING';
+  | 'CHAT_TYPING'
+  | 'PING_USER';
 
 export interface PostReactionResult {
   downvotes: number;
@@ -370,7 +371,10 @@ export interface APIConversationResponse {
 }
 
 export interface NotificationState extends StatusPropsState {
-  data?: any[];
+  data?: {
+    notifications?: any[];
+    entities?: any
+  };
   [key: string]: any;
 }
 

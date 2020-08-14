@@ -15,7 +15,7 @@ it("notifications reducers should be called with 'state' and 'action' params and
   const mockNotificationState: NotificationState = {
     status: expect.any(String),
     err: expect.any(Boolean),
-    data: expect.any(Array)
+    data: expect.any(Object)
   };
 
   const getNotificationsAction: ReduxAction = {
@@ -23,7 +23,7 @@ it("notifications reducers should be called with 'state' and 'action' params and
     payload: {
       status: expect.any(String),
       err: expect.any(Boolean),
-      data: expect.any(Array)
+      data: expect.any(Object)
     }
   };
 

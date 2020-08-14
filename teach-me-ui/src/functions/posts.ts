@@ -8,11 +8,11 @@ import { dispatch } from './utils';
 
 import { Post } from '../constants';
 
-export const replyToPostFn = (
+export const replyToPostFn = async (
   id: string,
   reply: Post
 ) => {
-  dispatch(
+  await dispatch(
     sendReplyToServer({
       ...reply,
       pipe: 'POST_REPLY',

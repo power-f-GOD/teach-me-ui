@@ -38,7 +38,10 @@ export const searchState: SearchState = {
 export const notificationState: NotificationState = {
   status: 'settled',
   err: false,
-  data: []
+  data: {
+    notifications: [],
+    entities:{}
+  }
 };
 
 export const mentionState: MentionState = {

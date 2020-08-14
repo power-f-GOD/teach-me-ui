@@ -492,3 +492,17 @@ export const dateStringMapFormatter = (
     includeYear ? ', ' + year : ''
   }`;
 };
+
+export const formatNotification = (entities: any, text: string) => {
+  const text1 = text.replace('\n', ' ');
+  let string = '';
+  text1.split(' ').map((w) => {
+    /(^{{)[A-Za-z0-9-]+(}}$)/.test(w) 
+    ? entities[w.substring(2, w.length - 2)].action
+      ? string = string.concat(` <a style="color: rgb(0, 115, 160)" href='${entities[w.substring(2, w.length - 2)].action}'>${entities[w.substring(2, w.length - 2)].subject}</a>`)
+      : string = string.concat(` ${entities[w.substring(2, w.length - 2)].subject}`)
+    : string = string.concat(` ${w}`)
+    return true;
+  })
+  return string;
+}
