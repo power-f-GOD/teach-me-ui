@@ -21,7 +21,8 @@ import { triggerSearchKanyimuta } from '../../actions/search';
 export const processPostFn = (post: string) =>
   post &&
   post.split(' ').map((w, i) => {
-    return /(^@)[A-Za-z0-9_]+[,.!]*$/.test(w) ? (
+    w = w.replace(/ /gi, '');
+    return /(^@)[A-Za-z0-9_]+[,.!?]*$/.test(w) ? (
       <Box component='span' key={i}>
         <Link to={`/${/[,.!]+$/.test(w) ? w.slice(0, -1) : w}`}>{`${
           /[,.!]+$/.test(w) ? w.slice(0, -1) : w
@@ -30,12 +31,21 @@ export const processPostFn = (post: string) =>
       </Box>
     ) : /(^#)[A-Za-z0-9_]+[,.!]*$/.test(w) ? (
       <Box component='span' key={i}>
-        <Link to={(location => {
-          dispatch(triggerSearchKanyimuta(w)(dispatch));
-          return `/search/${w.substring(1)}`;
-        })}>
-        {w}
+        <Link
+          to={(location) => {
+            dispatch(triggerSearchKanyimuta(w)(dispatch));
+            return `/search/${w.substring(1)}`;
+          }}>
+          {w}
         </Link>{' '}
+      </Box>
+    ) : /^https?:\/\/(?!\.)[A-Za-z0-9.-]+.[A-Za-z0-9.]+(\/[A-Za-z-/0-9@]+)?$/.test(
+        w
+      ) ? (
+      <Box component='span' key={i}>
+        <a href={w} target='blank'>
+          {w}
+        </a>{' '}
       </Box>
     ) : (
       <React.Fragment key={i}>{w} </React.Fragment>

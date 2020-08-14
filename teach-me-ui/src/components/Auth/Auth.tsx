@@ -61,7 +61,7 @@ const Auth = (props: any) => {
                   <Route path='/forgot-password' component={ForgotPassword} />
                   <Route
                     exact
-                    path='/password/reset/:token'
+                    path='/password/reset'
                     component={ResetPassword}
                   />
                 </Switch>
