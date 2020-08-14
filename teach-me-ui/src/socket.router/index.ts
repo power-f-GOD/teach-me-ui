@@ -1,4 +1,5 @@
 import postRouter from './posts';
+import notificationsRouter from './notifications';
 // import chatRouter from './chat';
 
 import { getState } from '../functions';
@@ -15,6 +16,8 @@ export default function socketRouter() {
       console.error('E014: bad response from socket');
     } else if (pipe.startsWith('POST_')) {
       postRouter(data);
+    } else if (pipe.startsWith('PING_')) {
+      notificationsRouter(data)
     } else if (pipe.startsWith('CHAT_')) {
       // chatRouter(data)
     }

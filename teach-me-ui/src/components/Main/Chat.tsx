@@ -34,11 +34,13 @@ import {
   CHAT_MESSAGE_DELIVERED,
   CHAT_TYPING,
   CHAT_READ_RECEIPT,
-  CHAT_MESSAGE_DELETED
+  CHAT_MESSAGE_DELETED,
+  CHAT_MESSAGE_DELETED_FOR
 } from '../../constants/chat';
 import ChatLeftPane from './Chat.LeftPane';
 import ChatMiddlePane from './Chat.MiddlePane';
 import ChatRightPane from './Chat.RightPane';
+import { ONLINE_STATUS } from '../../constants';
 
 export const placeHolderDisplayName = 'Start a new Conversation';
 
@@ -337,14 +339,21 @@ const ChatBox = (props: ChatBoxProps) => {
             }
             break;
           case CHAT_MESSAGE_DELETED:
+          case CHAT_MESSAGE_DELETED_FOR:
             if (deleted && convoId && conversation_id === cid) {
               dispatch(
                 conversationMessages({
-                  pipe: CHAT_MESSAGE_DELETED,
+                  pipe:
+                    pipe === CHAT_MESSAGE_DELETED
+                      ? CHAT_MESSAGE_DELETED
+                      : CHAT_MESSAGE_DELETED_FOR,
                   data: [{ deleted: true, _id }]
                 })
               );
             }
+            break;
+          case ONLINE_STATUS:
+            // console.log(ONLINE_STATUS, message);
             break;
         }
       };
@@ -359,7 +368,7 @@ const ChatBox = (props: ChatBoxProps) => {
           isOpen ? '' : 'close'
         } ${visibilityState}`}>
         <Col as='section' md={3} className='chat-left-pane p-0'>
-          <ChatLeftPane conversations={conversations} />
+          <ChatLeftPane conversations={conversations} userData={userData} />
         </Col>
 
         <Col

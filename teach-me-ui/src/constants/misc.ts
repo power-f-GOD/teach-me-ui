@@ -19,6 +19,7 @@ export const DISPLAY_SNACK_BAR = 'DISPLAY_SNACK_BAR';
 export const POPULATE_STATE_WITH_USER_DATA = 'POPULATE_STATE_WITH_USER_DATA';
 export const INIT_WEB_SOCKET = 'INIT_WEB_SOCKET';
 export const CLOSE_WEB_SOCKET = 'CLOSE_WEB_SOCKET';
+export const ONLINE_STATUS = 'ONLINE_STATUS';
 
 export const snackbarState: SnackbarState = {
   open: false,
@@ -37,7 +38,10 @@ export const searchState: SearchState = {
 export const notificationState: NotificationState = {
   status: 'settled',
   err: false,
-  data: []
+  data: {
+    notifications: [],
+    entities:{}
+  }
 };
 
 export const mentionState: MentionState = {
