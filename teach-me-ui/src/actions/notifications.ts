@@ -9,7 +9,7 @@ import {
   NotificationState
 } from '../constants';
 
-import { logError, callNetworkStatusCheckerFor } from '../functions';
+import { logError, callNetworkStatusCheckerFor, getState } from '../functions';
 
 export const getNotifications = (payload: NotificationState) => {
   return {
@@ -46,25 +46,29 @@ export const getNotificationsRequest = (date: number) => (
     }
   })
   .then(({ data }: any) => {
-    const { error, notifications } = data as {
+    console.log(data)
+    const { error, notifications, entities } = data as {
       error: boolean;
       notifications: any[];
+      entities?: any
     };
-
-    if (!error && !!notifications[0]) {
+    if (!error) {
+      console.log(data);
       dispatch(
         getNotifications({
           status: 'fulfilled',
           err: false,
-          data: notifications
+          data: {
+            notifications,
+            entities
+          }
         })
       );
     } else {
       dispatch(
         getNotifications({
           status: 'fulfilled',
-          err: true,
-          data: notifications
+          err: true
         })
       );
     }
@@ -75,3 +79,11 @@ export const getNotificationsRequest = (date: number) => (
     newState: date
   };
 }; 
+
+export const pingUser = (users: string[]) => {
+  const socket: WebSocket = getState().webSocket as WebSocket;
+  socket.send(JSON.stringify({ 
+    users: users,
+    pipe: 'PING_USER'
+  }));
+}

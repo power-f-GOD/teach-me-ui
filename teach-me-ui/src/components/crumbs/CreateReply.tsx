@@ -21,6 +21,7 @@ import Row from 'react-bootstrap/Row';
 
 // import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
+import { pingUser } from "../../actions";
 // import CircularProgress from '@material-ui/core/CircularProgress';
 
 
@@ -51,7 +52,10 @@ const CreateReply: React.FC<any> = (props) => {
 
   const submitReply = (e: FormEvent) => {
     e.preventDefault();
-    state.reply.text && replyToPostFn(props.post_id, state.reply);
+    state.reply.text && replyToPostFn(props.post_id, state.reply)
+      .then(() => {
+        state.reply.mentions.length && pingUser(state.reply.mentions)
+      });
     input!.current!.value = '';
 
   }

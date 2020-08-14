@@ -41,7 +41,7 @@ import {
   useApiResponse
 } from '../../constants/interfaces';
 import { dispatch, cleanUp } from '../../functions';
-import { getProfileData } from '../../actions';
+import { getProfileData, pingUser } from '../../actions';
 /**
  * Please, Do not delete any commented code; You can either uncomment them to use them or leave them as they are
  */
@@ -179,7 +179,9 @@ const Profile = (props: any) => {
   const onColleagueActionClick = async (e: any) => {
     switch (deepProfileData.status) {
       case 'NOT_COLLEAGUES':
-        await addColleague();
+        await addColleague().then(() => {
+          pingUser([`${data.username}`])
+        });
         break;
       case 'PENDING_REQUEST':
         await removeColleagueRequest();
@@ -193,7 +195,9 @@ const Profile = (props: any) => {
           setDeclineWasClicked(false);
         }
         e.target.id !== 'decline'
-          ? await acceptColleagueRequest()
+          ? await acceptColleagueRequest().then(() => {
+              pingUser([`${data.username}`])
+            })
           : await declineColleagueRequest();
         break;
       case 'IS_COLLEAGUE':
