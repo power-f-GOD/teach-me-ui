@@ -50,12 +50,7 @@ const App = (props: any) => {
             isAuthenticated={isAuthenticated}
           />
           <Route
-            path={[
-              '/signin',
-              '/signup',
-              '/forgot-password',
-              '/password/reset/:token'
-            ]}
+            path={['/signin', '/signup', '/forgot-password', '/password/reset']}
             component={Auth}
           />
           {/* Is this still in use? */}

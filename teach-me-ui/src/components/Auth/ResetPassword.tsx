@@ -20,6 +20,8 @@ import {
 import { BasicInputState, basicInputState } from '../../constants';
 
 const ResetPassword = (props: any) => {
+  const searchParams = new URLSearchParams(window.location.search);
+
   const [newPassword, setNewPassword] = useState<BasicInputState>(
     basicInputState
   );
@@ -42,7 +44,7 @@ const ResetPassword = (props: any) => {
   const onSubmit = (e: any) => {
     handleResetPasswordRequest(
       newPassword.value as string,
-      props.match.params.token,
+      searchParams.get('token') as string,
       () => {
         setNewPassword(basicInputState);
         setConfirmPassword(basicInputState);
