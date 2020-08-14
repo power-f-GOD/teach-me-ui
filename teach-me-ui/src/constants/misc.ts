@@ -1,4 +1,11 @@
-import { SnackbarState, SearchState, UserData, NotificationState, MentionState } from './interfaces';
+import { 
+  SnackbarState, 
+  SearchState, 
+  UserData, 
+  NotificationState, 
+  MentionState, 
+  ReplyState 
+} from './interfaces';
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -12,6 +19,7 @@ export const DISPLAY_SNACK_BAR = 'DISPLAY_SNACK_BAR';
 export const POPULATE_STATE_WITH_USER_DATA = 'POPULATE_STATE_WITH_USER_DATA';
 export const INIT_WEB_SOCKET = 'INIT_WEB_SOCKET';
 export const CLOSE_WEB_SOCKET = 'CLOSE_WEB_SOCKET';
+export const ONLINE_STATUS = 'ONLINE_STATUS';
 
 export const snackbarState: SnackbarState = {
   open: false,
@@ -52,6 +60,12 @@ export const userDataState: UserData = {
   level: '',
   id: '',
   token: ''
+};
+
+export const replyState: ReplyState = {
+  status: 'settled',
+  error: false,
+  data: undefined
 };
 
 export const useStyles = makeStyles((theme: any) => ({

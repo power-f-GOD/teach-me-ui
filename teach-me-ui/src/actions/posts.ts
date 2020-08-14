@@ -6,6 +6,8 @@ import {
   FETCH_POST_RESOLVED,
   FETCH_POST_STARTED,
   FETCHED_POSTS,
+  REPLY_TO_POST,
+  SEND_REPLY_TO_SERVER,
   PostPropsState,
   ReactPostState,
   FetchPostsState,
@@ -13,10 +15,11 @@ import {
   UserData,
   SocketProps,
   PostReactionResult,
-  Reaction
+  Reaction,
+  ReplyState
 } from '../constants';
 
-import { getState } from '../functions';
+import { getState, callNetworkStatusCheckerFor } from '../functions';
 
 import Axios from 'axios';
 
@@ -24,11 +27,38 @@ import Axios from 'axios';
 //   return { type: CREATE_POST, payload };
 // };
 
+export const replyToPost = (payload: ReplyState) => {
+  return {
+    type: REPLY_TO_POST,
+    payload
+  };
+};
+
+export const sendReplyToServer = (payload: SocketProps) =>  (
+  dispatch: Function
+) => {
+  callNetworkStatusCheckerFor({
+    name: 'replyToPost',
+    func: replyToPost
+  });
+
+  dispatch(
+    replyToPost({ 
+      status: 'pending'
+    })
+  )
+  const socket: WebSocket = getState().webSocket as WebSocket;
+  socket.send(JSON.stringify({ ...payload }));
+  return {
+    type: SEND_REPLY_TO_SERVER
+  }
+};
+
 export const updatePost = (payload: PostReactionResult): ReduxAction => {
   return { type: UPDATE_POST, payload };
 };
 
-export const reactToPost = (payload: ReactPostState): ReduxAction => {
+const reactToPost = (payload: ReactPostState): ReduxAction => {
   return { type: REACT_TO_POST, payload };
 };
 
@@ -49,23 +79,19 @@ export const sendReactionToServer = (payload: SocketProps) => (
   );
   if (post === undefined) return;
   const socket: WebSocket = getState().webSocket as WebSocket;
-  socket.addEventListener('message', (event) => {
-    try {
-      const data = JSON.parse(event.data);
-      if (data.pipe === 'POST_REACTION') {
-        dispatch(updatePost(data as PostReactionResult));
-      }
-    } catch (e) {}
-  });
   socket.send(JSON.stringify({ ...payload, reaction: post?.reaction }));
 };
 
-export const fetchPosts: Function = () => (dispatch: Function) => {
+export const fetchPosts: Function = (
+  type: 'FEED' | 'WALL',
+  userId?: string
+) => (dispatch: Function) => {
   dispatch(fetchPostsStarted());
+  const isWall = type === 'WALL' && !!userId;
   const userData = getState().userData as UserData;
   const token = userData.token as string;
   Axios({
-    url: `/feed`,
+    url: isWall ? `/profile/${userId}/posts` : '/feed',
     baseURL,
     method: 'GET',
     headers: {

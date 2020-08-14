@@ -1,21 +1,18 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 
-import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import WebAssetIcon from '@material-ui/icons/WebAsset';
 import CloseIcon from '@material-ui/icons/Close';
 import EmojiIcon from '@material-ui/icons/Mood';
+import MinimizeIcon from '@material-ui/icons/Minimize';
 import SendIcon from '@material-ui/icons/Send';
 import TextField from '@material-ui/core/TextField';
 import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 import IconButton from '@material-ui/core/IconButton';
 import Box from '@material-ui/core/Box';
-import DoneIcon from '@material-ui/icons/Done';
-import DoneAllIcon from '@material-ui/icons/DoneAll';
-import ScheduleIcon from '@material-ui/icons/Schedule';
 import DeleteIcon from '@material-ui/icons/Delete';
 
 import {
@@ -35,13 +32,21 @@ import {
   dispatch,
   delay,
   interval,
-  preventEnterNewLine,
-  timestampFormatter,
-  dateStringMapFormatter
+  preventEnterNewLine
 } from '../../functions/utils';
 import { placeHolderDisplayName } from './Chat';
 import { displaySnackbar, initWebSocket } from '../../actions';
-import { CHAT_TYPING } from '../../constants/chat';
+import {
+  CHAT_TYPING,
+  CHAT_MESSAGE_DELETED,
+  CHAT_MESSAGE_DELETED_FOR
+} from '../../constants/chat';
+import ConfirmDialog, {
+  Message,
+  ChatDate,
+  SelectedMessageValue,
+  ActionChoice
+} from './Chat.crumbs';
 
 const Memoize = createMemo();
 const aDayInMs = 86400000;
@@ -79,18 +84,53 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   const { isMinimized, isOpen }: ChatState = _chatState;
 
   const [scrollView, setScrollView] = useState<HTMLElement | null>(null);
-  const [scrollViewElevation, setScrollViewElevation] = React.useState(String);
+  const [scrollViewElevation, setScrollViewElevation] = React.useState<
+    string
+  >();
   const [msgBoxRowsMax, setMsgBoxRowsMax] = useState<number>(1);
   const [msgBoxCurrentHeight, setMsgBoxCurrentHeight] = useState<number>(
     msgBoxInitHeight
   );
   const [selectedMessages, setSelectedMessages] = useState<{
-    [index: number]: string | null;
+    [id: string]: SelectedMessageValue;
   }>({});
   const [clearSelections, setClearSelections] = useState<boolean>(false);
+  const [openConfirmDialog, setOpenConfirmDialog] = useState<boolean>(false);
+  const [dialogAction, setDialogAction] = useState<any>(
+    (choice: ActionChoice) => choice
+  );
+  const [canDeleteForEveryone, setCanDeleteForEveryone] = useState<boolean>(
+    true
+  );
 
   const today = new Date().toDateString();
   const numOfSelectedMessages = Object.keys(selectedMessages).length;
+
+  const displayConnectInfoThenReconnect = useCallback(() => {
+    dispatch(
+      displaySnackbar({
+        open: true,
+        autoHide: false,
+        severity: 'info',
+        message:
+          "Something went wrong. Seems you are/were offline. We'll try to reconnect then you can perform action again."
+      })
+    );
+    dispatch(initWebSocket(userData.token as string));
+  }, [userData.token]);
+
+  const displaySocketErrInfo = useCallback((e: any) => {
+    dispatch(
+      displaySnackbar({
+        open: true,
+        autoHide: false,
+        severity: 'error',
+        message:
+          'An error occurred. Could not establish connection with server.'
+      })
+    );
+    console.error('An error occurred. Error:', e);
+  }, []);
 
   const handleMinimizeChatClick = useCallback(() => {
     const { isMinimized, queryString: qString }: ChatState = _chatState;
@@ -151,87 +191,79 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         socket.send(JSON.stringify(msg));
         // console.log('message:', msg, 'was sent.');
       } else {
-        dispatch(
-          displaySnackbar({
-            open: true,
-            autoHide: false,
-            severity: 'info',
-            message:
-              "Couldn't send message. Seems you are/were offline. We'll try to reconnect then you can try sending message again."
-          })
-        );
-        dispatch(initWebSocket(userData.token as string));
+        displayConnectInfoThenReconnect();
       }
     } catch (e) {
-      dispatch(
-        displaySnackbar({
-          open: true,
-          autoHide: false,
-          severity: 'error',
-          message:
-            'Send message failed. Could not establish connection with server.'
-        })
-      );
-      console.error('Error:', e, 'Message:', msg, 'failed to send.');
+      displaySocketErrInfo(e);
     }
-  }, [msgBoxRowsMax, convoId, socket, userData.token]);
+  }, [
+    msgBoxRowsMax,
+    convoId,
+    socket,
+    displayConnectInfoThenReconnect,
+    displaySocketErrInfo
+  ]);
 
   const handleMsgInputChange = useCallback(
     (e: any) => {
+      const scrollView = scrollViewRef.current!;
+      const elevation = e.target.offsetHeight;
+      const chatBoxMaxHeight = msgBoxInitHeight * msgBoxRowsMax;
+      const remValue = elevation > msgBoxInitHeight * 4 ? 1.25 : 1.25;
+
       if (socket && socket.readyState === 1) {
         socket.send(
           JSON.stringify({ conversation_id: convoId, pipe: CHAT_TYPING })
         );
       }
 
-      if (!e.shiftKey && e.key === 'Enter' && !userDeviceIsMobile) {
-        handleSendMsgClick();
-        return false;
-      } else if (
-        (e.shiftKey && e.key === 'Enter') ||
-        e.target.scrollHeight > msgBoxInitHeight
-      ) {
-        setMsgBoxRowsMax(msgBoxRowsMax < 6 ? msgBoxRowsMax + 1 : msgBoxRowsMax);
+      if (e.key === 'Enter') {
+        if (!e.shiftKey && !userDeviceIsMobile) {
+          handleSendMsgClick();
+          return false;
+        } else if (e.shiftKey || e.target.scrollHeight > msgBoxInitHeight) {
+          setMsgBoxRowsMax(
+            msgBoxRowsMax < 6 ? msgBoxRowsMax + 1 : msgBoxRowsMax
+          );
+        }
       }
 
-      const scrollView = scrollViewRef.current!;
-      const elevation = e.target.offsetHeight;
-      const chatBoxMaxHeight = msgBoxInitHeight * msgBoxRowsMax;
-      const remValue = elevation > msgBoxInitHeight * 4 ? 1.25 : 1.25;
+      setScrollViewElevation(`calc(${elevation}px - ${remValue}rem)`);
+      setMsgBoxCurrentHeight(elevation);
 
-      if (elevation <= chatBoxMaxHeight) {
+      if (
+        elevation <= chatBoxMaxHeight + 19 &&
+        scrollView.scrollTop > scrollView.scrollHeight - 700
+      ) {
         if (elevation > msgBoxCurrentHeight) {
           //makes sure right amount of scrollTop is set when scrollView scroll position is at the very bottom
-          delay(200).then(() => {
+          delay(0).then(() => {
             if (
               scrollView.scrollHeight -
                 scrollView.offsetHeight -
                 msgBoxInitHeight * 2 <=
               scrollView.scrollTop
             ) {
-              scrollView.scrollTop += 19;
+              scrollView.scrollTop += 22;
             }
           });
-          scrollView.scrollTop += 19;
-        } else if (elevation < msgBoxCurrentHeight) {
-          scrollView.scrollTop -= 19;
         }
       }
-
-      setScrollViewElevation(`calc(${elevation}px - ${remValue}rem)`);
-      setMsgBoxCurrentHeight(elevation);
     },
     [socket, convoId, msgBoxCurrentHeight, msgBoxRowsMax, handleSendMsgClick]
   );
 
   const handleMessageSelection = useCallback(
-    (id: string | null, index: number) => {
+    (id: string | null, value: SelectedMessageValue) => {
       setClearSelections(false);
       setSelectedMessages((prev) => {
-        const newState = { ...prev, ...{ [index]: id } };
+        const newState: { [key: string]: SelectedMessageValue } = {
+          ...prev,
+          ...{ [value.id]: value }
+        };
 
         if (!id) {
-          delete newState[index];
+          delete newState[value.id];
         }
 
         return newState;
@@ -240,16 +272,64 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
     []
   );
 
-  const handleClearSelections = useCallback(
-    (value: boolean) => () => {
-      setClearSelections(value);
+  const handleClearSelections = useCallback(() => {
+    setClearSelections(true);
+    delay(10).then(() => setSelectedMessages({}));
+  }, []);
 
-      if (value) {
-        setSelectedMessages({});
+  const confirmDeleteMessage = useCallback((): Promise<ActionChoice> => {
+    return new Promise((resolve) => {
+      let canDeleteForEveryone = true;
+
+      for (const id in selectedMessages) {
+        if (
+          selectedMessages[id].type === 'incoming' ||
+          selectedMessages[id].deleted
+        ) {
+          canDeleteForEveryone = false;
+          break;
+        }
       }
-    },
-    []
-  );
+
+      setCanDeleteForEveryone(canDeleteForEveryone);
+      setDialogAction(() => (choice: ActionChoice) => {
+        resolve(choice);
+        setOpenConfirmDialog(false);
+      });
+      setOpenConfirmDialog(true);
+    });
+  }, [selectedMessages]);
+
+  const handleDeleteMessage = useCallback(() => {
+    confirmDeleteMessage().then((choice) => {
+      if (choice === 'CANCEL') return;
+
+      const pipe =
+        choice === 'DELETE_FOR_EVERYONE'
+          ? CHAT_MESSAGE_DELETED
+          : CHAT_MESSAGE_DELETED_FOR;
+
+      for (const id in selectedMessages) {
+        try {
+          if (socket && socket.readyState === 1) {
+            socket.send(JSON.stringify({ message_id: id, pipe }));
+            handleClearSelections();
+          } else {
+            displayConnectInfoThenReconnect();
+          }
+        } catch (e) {
+          displaySocketErrInfo(e);
+        }
+      }
+    });
+  }, [
+    selectedMessages,
+    confirmDeleteMessage,
+    socket,
+    handleClearSelections,
+    displayConnectInfoThenReconnect,
+    displaySocketErrInfo
+  ]);
 
   useEffect(() => {
     setScrollView(scrollViewRef.current);
@@ -260,7 +340,12 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   }, [scrollView]);
 
   useEffect(() => {
-    if (convoMessages && scrollView) {
+    if (
+      convoMessages &&
+      scrollView &&
+      (scrollView.scrollTop === 0 ||
+        scrollView.scrollTop > scrollView.scrollHeight - 700)
+    ) {
       // animate (to prevent flicker) if scrollView is at very top else don't animate
       if (scrollView.scrollTop < scrollView.scrollHeight - 300) {
         interval(
@@ -280,7 +365,10 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
 
   return (
     <>
-      <Col as='header' className='chat-header d-flex p-0'>
+      <Memoize
+        memoizedComponent={Col}
+        as='header'
+        className='chat-header d-flex p-0'>
         <Box className='d-flex title-control-wrapper'>
           <Col as='span' className='colleague-name'>
             {type === 'ONE_TO_ONE' ? (
@@ -342,13 +430,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
                 className='minimize-button'
                 onClick={handleMinimizeChatClick}
                 aria-label='minimize chat box'>
-                {!isMinimized ? (
-                  <Col as='span' className='minimize-icon'>
-                    ─
-                  </Col>
-                ) : (
-                  <WebAssetIcon fontSize='inherit' />
-                )}
+                {!isMinimized ? <MinimizeIcon /> : <WebAssetIcon />}
               </IconButton>
             </Col>
             <Col xs={6} as='span' className='close-wrapper'>
@@ -356,7 +438,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
                 className='close-button'
                 onClick={handleCloseChatClick}
                 aria-label='close chat box'>
-                <CloseIcon fontSize='inherit' />
+                <CloseIcon />
               </IconButton>
             </Col>
           </Col>
@@ -371,7 +453,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
               <>
                 <IconButton
                   className='clear-selection-button ml-2'
-                  onClick={handleClearSelections(true)}
+                  onClick={handleClearSelections}
                   aria-label='cancel action button'>
                   <CloseIcon />
                 </IconButton>
@@ -385,14 +467,14 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
           </Box>
           <Box className='action-wrapper text-right'>
             <IconButton
-              className='delete-button d-none mr-2'
-              // onClick={handleDeleteMessageClick}
+              className='delete-button mr-2'
+              onClick={handleDeleteMessage}
               aria-label='delete message'>
               <DeleteIcon />
             </IconButton>
           </Box>
         </Row>
-      </Col>
+      </Memoize>
 
       <Memoize
         memoizedComponent={{
@@ -421,6 +503,9 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
             const prevAndSelfSentSameDay = prevDate === selfDate;
             const nextAndSelfSentSameDay = nextDate === selfDate;
             const shouldRenderDate = !prevAndSelfSentSameDay;
+            const longTimeBtwMsgs =
+              message.date! - (convoMessages[key - 1]?.date ?? message.date!) >=
+              18e5;
 
             const type =
               message.sender_id && message.sender_id !== userData.id
@@ -441,10 +526,12 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
               prevAndSelfSentSameDay;
             const isLastOfStack =
               nextSenderId !== message.sender_id || !nextAndSelfSentSameDay;
-            const className = `${isFirstOfStack ? 'first ' : ''}${
-              isOnlyOfStack ? 'only ' : ''
-            }${isLastOfStack ? 'last ' : ''}${isMiddleOfStack ? 'middle' : ''}`;
-
+            const className = `${longTimeBtwMsgs ? 'mt-2 ' : ''}${
+              isFirstOfStack ? 'first ' : ''
+            }${isOnlyOfStack ? 'only ' : ''}${isLastOfStack ? 'last ' : ''}${
+              isMiddleOfStack ? 'middle' : ''
+            }`;
+            // console.log('message:', message)
             return (
               <React.Fragment key={key}>
                 {shouldRenderDate && (
@@ -454,15 +541,21 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
                     sentYesterday={selfSentYesterday}
                   />
                 )}
-                <Message
+                <Memoize
+                  memoizedComponent={Message}
                   message={message}
                   type={type}
-                  clearSelections={clearSelections}
-                  index={key}
+                  clearSelections={
+                    message._id! in selectedMessages && clearSelections
+                      ? true
+                      : false
+                  }
+                  deleted={message.deleted}
+                  id={message._id}
                   className={className}
                   userId={userData.id}
                   participants={conversation.participants}
-                  handleClearSelections={handleClearSelections}
+                  canSelectByClick={!!Object.keys(selectedMessages)[0]}
                   handleMessageSelection={handleMessageSelection}
                 />
               </React.Fragment>
@@ -487,7 +580,8 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         )}
       </Memoize>
 
-      <Col
+      <Memoize
+        memoizedComponent={Col}
         as='section'
         className={`chat-msg-box p-0 ${!convoId ? 'hide' : 'show'}`}>
         <Col as='span' className='emoji-wrapper p-0'>
@@ -511,6 +605,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
             inputRef={msgBoxRef}
             fullWidth
             inputProps={{
+              onKeyDown: handleMsgInputChange,
               onKeyUp: handleMsgInputChange,
               onKeyPress: preventEnterNewLine
             }}
@@ -524,148 +619,16 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
             <SendIcon fontSize='inherit' />
           </IconButton>
         </Col>
-      </Col>
+      </Memoize>
+
+      <Memoize
+        memoizedComponent={ConfirmDialog}
+        open={openConfirmDialog}
+        action={dialogAction}
+        canDeleteForEveryone={canDeleteForEveryone}
+      />
     </>
   );
 };
-
-function Message(props: {
-  message: Partial<APIMessageResponse>;
-  type: 'incoming' | 'outgoing';
-  userId: string;
-  index: number;
-  className: string;
-  clearSelections: boolean;
-  participants: string[];
-  handleMessageSelection: Function;
-  handleClearSelections: Function;
-}) {
-  const {
-    type,
-    message,
-    participants,
-    userId,
-    index,
-    className,
-    clearSelections,
-    handleMessageSelection,
-    handleClearSelections
-  } = props;
-  const {
-    message: text,
-    date,
-    timestamp_id,
-    delivered_to,
-    seen_by,
-    _id: id
-  } = message;
-  const timestamp = timestampFormatter(date);
-  const isDelivered =
-    type === 'outgoing' &&
-    participants
-      ?.filter((id) => id !== userId)
-      .every((participant) => delivered_to?.includes(participant));
-  const isSeen =
-    type === 'outgoing' &&
-    participants
-      ?.filter((id) => id !== userId)
-      .every((participant) => seen_by?.includes(participant));
-
-  const [selected, setSelected] = useState<boolean | null>(null);
-
-  const handleMessageDblClick = useCallback(
-    (e: any) => {
-      if (type === 'incoming') return;
-      handleClearSelections(false);
-      setSelected((prev) => !prev);
-    },
-    [type, handleClearSelections]
-  );
-
-  useEffect(() => {
-    if (type === 'outgoing' && selected !== null) {
-      handleMessageSelection(selected ? id : null, index);
-    }
-  }, [
-    selected,
-    id,
-    index,
-    type,
-    handleMessageSelection,
-    handleClearSelections
-  ]);
-
-  useEffect(() => {
-    if (type === 'outgoing' && selected !== null && clearSelections) {
-      setSelected(false);
-      handleMessageSelection(null, index);
-    }
-  }, [selected, clearSelections, index, type, handleMessageSelection]);
-
-  useEffect(
-    () => () => {
-      if (type === 'outgoing') {
-        setSelected(false);
-        handleMessageSelection(null, index);
-      }
-    },
-    [index, type, handleMessageSelection]
-  );
-
-  return (
-    <Container
-      className={`${type === 'incoming' ? 'incoming' : 'outgoing'} ${
-        selected ? 'selected' : ''
-      } msg-container ${className} p-0 m-0`}
-      onDoubleClick={handleMessageDblClick}>
-      <Col
-        as='div'
-        className='msg-wrapper scroll-view-msg-wrapper d-inline-flex flex-column justify-content-end'>
-        <Box>
-          {text}
-          <Col as='span' className='chat-timestamp-wrapper p-0'>
-            <Col as='span' className='chat-timestamp d-inline-block'>
-              {timestamp}{' '}
-              {type !== 'incoming' &&
-                (timestamp_id ? (
-                  <ScheduleIcon />
-                ) : isSeen || isDelivered ? (
-                  <DoneAllIcon className={isSeen ? 'read' : ''} />
-                ) : (
-                  <DoneIcon />
-                ))}
-            </Col>
-          </Col>
-        </Box>
-      </Col>
-    </Container>
-  );
-}
-
-function ChatDate({
-  timestamp,
-  sentToday,
-  sentYesterday
-}: {
-  timestamp: number;
-  sentToday: boolean;
-  sentYesterday: boolean;
-}) {
-  if (isNaN(timestamp)) {
-    return <></>;
-  }
-
-  return (
-    <Box className='chat-date-wrapper text-center my-4' position='relative'>
-      <Box component='span' className='chat-date d-inline-block'>
-        {sentToday
-          ? 'Today'
-          : sentYesterday
-          ? 'Yesterday'
-          : dateStringMapFormatter(timestamp, true)}
-      </Box>
-    </Box>
-  );
-}
 
 export default ChatMiddlePane;

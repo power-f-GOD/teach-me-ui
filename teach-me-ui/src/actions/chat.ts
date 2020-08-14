@@ -22,7 +22,9 @@ import {
   SET_CONVERSATION,
   SET_CONVERSATION_MESSAGES,
   CHAT_MESSAGE_DELIVERED,
-  CHAT_READ_RECEIPT
+  CHAT_READ_RECEIPT,
+  CHAT_MESSAGE_DELETED,
+  CHAT_MESSAGE_DELETED_FOR
 } from '../constants/chat';
 import { apiBaseURL as baseURL } from '../constants/misc';
 import { logError, getState, callNetworkStatusCheckerFor } from '../functions';
@@ -368,39 +370,48 @@ export const conversationMessages = (payload: ConversationMessages) => {
     }
   } else if (payload.data) {
     const msg_id = payload.data![0]._id;
+    let indexOfInitial = -1;
+    let initialMessage =
+      previousMessages?.find((message, i) => {
+        if (message._id === msg_id) {
+          indexOfInitial = i;
+          return true;
+        }
+        return false;
+      }) ?? null;
 
-    if (payload.pipe === CHAT_MESSAGE_DELIVERED) {
-      const deliveeId = payload.data![0].delivered_to![0];
-      let indexOfInitial = -1;
-      let initialMessage =
-        previousMessages?.find((message, i) => {
-          if (message._id === msg_id) {
-            indexOfInitial = i;
-            return true;
-          }
-          return false;
-        }) ?? null;
+    switch (payload.pipe) {
+      case CHAT_MESSAGE_DELIVERED:
+        const deliveeId = payload.data![0].delivered_to![0];
 
-      if (initialMessage && !initialMessage.delivered_to!.includes(deliveeId)) {
-        initialMessage.delivered_to?.push(deliveeId);
-        previousMessages[indexOfInitial] = initialMessage;
-      }
-    } else if (payload.pipe === CHAT_READ_RECEIPT) {
-      const seerId = payload.data![0].seen_by![0];
-      let indexOfInitial = -1;
-      let initialMessage =
-        previousMessages?.find((message, i) => {
-          if (message._id === msg_id) {
-            indexOfInitial = i;
-            return true;
-          }
-          return false;
-        }) ?? null;
+        if (
+          initialMessage &&
+          !initialMessage.delivered_to!.includes(deliveeId)
+        ) {
+          initialMessage.delivered_to?.push(deliveeId);
+          previousMessages[indexOfInitial] = initialMessage;
+        }
+        break;
+      case CHAT_READ_RECEIPT:
+        const seerId = payload.data![0].seen_by![0];
 
-      if (initialMessage && !initialMessage.seen_by!.includes(seerId)) {
-        initialMessage.seen_by?.push(seerId);
-        previousMessages[indexOfInitial] = initialMessage;
-      }
+        if (initialMessage && !initialMessage.seen_by!.includes(seerId)) {
+          initialMessage.seen_by?.push(seerId);
+          previousMessages[indexOfInitial] = initialMessage;
+        }
+        break;
+      case CHAT_MESSAGE_DELETED:
+        if (initialMessage && !initialMessage.deleted) {
+          initialMessage.deleted = true;
+          previousMessages[indexOfInitial] = initialMessage;
+        }
+        break;
+      case CHAT_MESSAGE_DELETED_FOR:
+        if (initialMessage) {
+          initialMessage.deleted = true;
+          previousMessages.splice(indexOfInitial, 1);
+        }
+        break;
     }
   }
 

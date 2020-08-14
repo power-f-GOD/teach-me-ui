@@ -1,10 +1,12 @@
-// importing jest mock for mediaqueries
-import '../__mocks__/matchMedia.mock.ts';
-
 import { cleanup } from '@testing-library/react';
 
 import * as actions from '../../actions/notifications';
-import { NotificationState, GET_NOTIFICATIONS, GET_NOTIFICATIONS_REQUEST, ReduxAction } from '../../constants';
+import { 
+  NotificationState, 
+  GET_NOTIFICATIONS, 
+  GET_NOTIFICATIONS_REQUEST, 
+  ReduxAction 
+} from '../../constants';
 
 
 afterEach(cleanup);

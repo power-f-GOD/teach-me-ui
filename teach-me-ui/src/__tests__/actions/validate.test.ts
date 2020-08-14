@@ -1,14 +1,12 @@
 import { cleanup } from '@testing-library/react';
 
-// importing jest mock for mediaqueries
-import '../__mocks__/matchMedia.mock.ts';
-
 import {
   ReduxAction,
   BasicInputState,
   InstitutionInputState,
   inputErrState
 } from '../../constants';
+
 import {
   validateFirstname,
   validateLastname,

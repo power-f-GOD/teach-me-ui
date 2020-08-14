@@ -19,6 +19,7 @@ import createMemo from '../../Memo';
 import { dispatch } from '../../functions/utils';
 import { initWebSocket, closeWebSocket } from '../../actions/misc';
 
+import socketRouter from '../../socket.router';
 
 const Memoize = createMemo();
 
@@ -27,7 +28,7 @@ const Main = (props: any) => {
 
   useEffect(() => {
     dispatch(initWebSocket(userData.token as string));
-
+    socketRouter();
     return () => {
       dispatch(closeWebSocket());
     };
@@ -71,7 +72,9 @@ const Main = (props: any) => {
         <Route path='/about' component={About} />
         <Route path='/support' component={Support} />
         <Route path='/@:userId' component={Profile} />
-        <Route path='/search' component={Search} />
+        <Route 
+            path={['/search/:query', '/search']} 
+            component={Search} />
         <Route path='/notifications' component={Notifications} />
         <Route component={_404} />
       </Switch>

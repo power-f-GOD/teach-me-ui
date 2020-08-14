@@ -52,20 +52,40 @@ interface PostParentProps {
   sender_id: string;
   sender_name: string;
   sender_username: string;
-  userAvatar: string;
+  userAvatar?: string;
   upvotes: number;
   downvotes: number;
   replies: number;
-  reaction: Reaction;
+  reaction?: Reaction;
   reposts: number;
+  posted_at?: number;
 }
 
-export interface SocketProps {
-  pipe: 'POST_REACTION' | 'POST_REPLY';
+export interface SocketProps extends SocketStruct {
   post_id: string;
   reaction?: Reaction;
   interaction?: 'SEEN' | 'ENGAGED';
+  hashtags?: string[];
+  mentions?: string[];
+  text?: string;
 }
+
+interface SocketStruct {
+  pipe: SocketPipe;
+}
+
+export type SocketPipe =
+  | 'POST_REACTION'
+  | 'POST_REPLY'
+  | 'POST_INTERACTION'
+  | 'POST_REPOST'
+  | 'CHAT_NEW_MESSAGE'
+  | 'CHAT_MESSAGE_DELETED'
+  | 'CHAT_MESSAGE_DELETED_FOR'
+  | 'ONLINE_STATUS'
+  | 'CHAT_READ_RECEIPT'
+  | 'CHAT_MESSAGE_DELIVERED'
+  | 'CHAT_TYPING';
 
 export interface PostReactionResult {
   downvotes: number;
@@ -111,6 +131,13 @@ export type useApiResponse<T> = [() => Promise<void>, T, boolean];
 
 interface HeaderProps {
   [key: string]: any;
+}
+
+export interface ColleagueProps {
+  firstname: string;
+  lastname: string;
+  id: string;
+  username: string;
 }
 
 export interface ColleagueRequestProps {
@@ -301,11 +328,7 @@ export interface ConversationsMessages extends StatusPropsState {
 
 export interface ConversationMessages extends Omit<SearchState, 'data'> {
   conversationId?: string;
-  pipe?:
-    | 'CHAT_NEW_MESSAGE'
-    | 'CHAT_MESSAGE_DELIVERED'
-    | 'CHAT_TYPING'
-    | 'CHAT_READ_RECEIPT';
+  pipe?: SocketPipe;
   data?: Partial<APIMessageResponse>[];
 }
 
@@ -327,7 +350,7 @@ export interface APIMessageResponse {
   sender_id: string;
   timestamp_id?: string;
   __v: number;
-  pipe: string;
+  pipe: SocketPipe;
   user_id?: string;
 }
 
@@ -340,6 +363,7 @@ export interface APIConversationResponse {
   creator: 'SYSTEM' | string;
   type: 'ONE_TO_ONE' | string;
   __v: number;
+  last_message: APIMessageResponse;
   friendship: string;
   conversation_name: string;
   associated_username: string;
@@ -366,4 +390,37 @@ export interface MentionState extends StatusPropsState {
 
 export interface MentionData extends ColleagueData {
   [index: string]: any;
+}
+
+export interface Post {
+  text: string;
+  mentions: Array<string>;
+  hashtags: Array<string>;
+}
+
+export interface ReplyProps extends Post {
+  pipe: 'POST_REPLY';
+  post_id: string;
+}
+
+export interface ReplyResult extends ReplyProps {
+  error: boolean;
+  sec_type: 'REPLY';
+  id: string;
+  text: string;
+  parent: PostParentProps;
+  action_count: number;
+}
+
+export interface ReplyState {
+  error?: boolean;
+  data?: ReplyResult;
+  status: 'settled' | 'pending' | 'fulfilled';
+}
+
+export interface PostEditorState {
+  post: Post;
+  mentionsKeyword: string;
+  mentions: any[];
+  [key: string]: any;
 }
