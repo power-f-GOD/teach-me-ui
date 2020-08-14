@@ -11,6 +11,7 @@ import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
+import BlockIcon from '@material-ui/icons/Block';
 
 import { chatState, getConversationInfo } from '../../actions/chat';
 import { dispatch } from '../../functions/utils';
@@ -106,17 +107,23 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
               conversation_name: displayName,
               associated_username: username,
               _id: convoId,
-              last_message
+              last_message,
+              friendship
             } = conversation;
             const lastMessageTimestamp = last_message?.date ?? Date.now();
-            const lastMessageDate = new Date(lastMessageTimestamp)
+            const lastMessageDate = new Date(
+              Number(lastMessageTimestamp)
+            ).toDateString();
+            const lastMessageDateString = new Date(lastMessageTimestamp)
               .toLocaleString()
               .split(',')[0];
-            const currentDate = new Date().toLocaleString().split(',')[0];
+            const todaysDate = new Date().toDateString();
+            const todaysDateString = new Date().toLocaleString().split(',')[0];
             const lastMessageSentYesterday =
-              (Math.abs(
-                (new Date() as any) - (new Date(lastMessageTimestamp) as any)
-              ) as any) /
+              Math.abs(
+                ((new Date(todaysDate) as any) -
+                  (new Date(lastMessageDate) as any)) as any
+              ) /
                 864e5 ===
               1;
             const _queryString = `${pathname}?chat=open&id=${username}&cid=${convoId}`;
@@ -129,7 +136,9 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
             return (
               <NavLink
                 to={_queryString}
-                className='tab-panel-item'
+                className={`tab-panel-item ${
+                  !friendship ? 'uncolleagued' : ''
+                }`}
                 key={convoId}
                 isActive={(_match, location) =>
                   Boolean(
@@ -157,20 +166,23 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
                       src={`/images/${avatar ?? 'avatar-1.png'}`}
                     />
                   </Badge>{' '}
-                  <Box width='calc(100% - 2.25rem)'>
+                  <Box width='100%' maxWidth='calc(100% - 2.75rem)'>
                     <Box className='display-name-wrapper'>
                       <Box className='display-name'>{displayName}</Box>
                       <ChatTimestamp
                         timestamp={
                           lastMessageSentYesterday
                             ? 'Yesterday'
-                            : currentDate !== lastMessageDate
-                            ? lastMessageDate
+                            : todaysDateString !== lastMessageDateString
+                            ? lastMessageDateString
                             : last_message?.date ?? 0
                         }
                       />
                     </Box>
-                    <Box className='last-message mt-1'>
+                    <Box
+                      className={`last-message mt-1 ${
+                        last_message?.deleted ? 'font-italic' : ''
+                      }`}>
                       <ChatStatus
                         type={
                           last_message?.sender_id === userData.id
@@ -183,7 +195,21 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
                         seen_by={last_message?.seen_by ?? []}
                         userId={userData.id}
                       />{' '}
-                      {last_message?.message}
+                      {last_message?.deleted ? (
+                        last_message?.sender_id === userData.id ? (
+                          <>
+                            <BlockIcon fontSize='inherit' /> You deleted this
+                            message
+                          </>
+                        ) : (
+                          <>
+                            <BlockIcon fontSize='inherit' /> User changed their
+                            mind about message
+                          </>
+                        )
+                      ) : (
+                        last_message?.message
+                      )}
                     </Box>
                   </Box>
                 </Col>

@@ -106,7 +106,8 @@ export const Message = (props: {
               </>
             ) : (
               <>
-                <BlockIcon fontSize='inherit' /> User thought to delete message
+                <BlockIcon fontSize='inherit' /> User changed their mind about
+                message
               </>
             )
           ) : (

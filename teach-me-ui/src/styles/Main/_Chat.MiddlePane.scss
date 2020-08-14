@@ -72,7 +72,7 @@
   overflow-x: hidden;
 }
 
-$incoming-outgoing-spacing: 1rem;
+$incoming-outgoing-spacing: 1.25rem;
 $msgs-spacing: 0.125rem;
 $msg-radius: 1.25rem;
 
@@ -103,7 +103,7 @@ $msg-radius: 1.25rem;
 
 .msg-container {
   position: relative;
-  user-select: none;
+  // user-select: none;
   cursor: pointer;
 
   &.deleted {
@@ -195,7 +195,7 @@ $msg-radius: 1.25rem;
 
   &.incoming + .outgoing.msg-container {
     // .msg-wrapper {
-    margin-top: $incoming-outgoing-spacing;
+    margin-top: $incoming-outgoing-spacing !important;
   }
 
   &.outgoing {
@@ -252,7 +252,7 @@ $msg-radius: 1.25rem;
 
   &.outgoing + .incoming.msg-container {
     // .msg-wrapper {
-    margin-top: $incoming-outgoing-spacing;
+    margin-top: $incoming-outgoing-spacing !important;
   }
 
   [class*='Icon'] {
