@@ -220,12 +220,24 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
       if (e.key === 'Enter') {
         if (!e.shiftKey && !userDeviceIsMobile) {
           handleSendMsgClick();
+
+          if (
+            scrollView.scrollTop + scrollView.offsetHeight + 50 >=
+            scrollView.scrollHeight - 100
+          ) {
+            delay(0).then(() => {
+              scrollView.scrollTop = scrollView.scrollHeight;
+            });
+          }
+
           return false;
-        } else if (e.shiftKey || e.target.scrollHeight > msgBoxInitHeight) {
-          setMsgBoxRowsMax(
-            msgBoxRowsMax < 6 ? msgBoxRowsMax + 1 : msgBoxRowsMax
-          );
-        }
+        } 
+      }
+
+      if (e.target.scrollHeight > msgBoxInitHeight) {
+        setMsgBoxRowsMax(
+          msgBoxRowsMax < 6 ? msgBoxRowsMax + 1 : msgBoxRowsMax
+        );
       }
 
       setScrollViewElevation(`calc(${elevation}px - ${remValue}rem)`);
@@ -233,19 +245,13 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
 
       if (
         elevation <= chatBoxMaxHeight + 19 &&
-        scrollView.scrollTop > scrollView.scrollHeight - 700
+        scrollView.scrollTop + scrollView.offsetHeight + 50 >=
+          scrollView.scrollHeight - 100
       ) {
         if (elevation > msgBoxCurrentHeight) {
           //makes sure right amount of scrollTop is set when scrollView scroll position is at the very bottom
           delay(0).then(() => {
-            if (
-              scrollView.scrollHeight -
-                scrollView.offsetHeight -
-                msgBoxInitHeight * 2 <=
-              scrollView.scrollTop
-            ) {
-              scrollView.scrollTop += 22;
-            }
+            scrollView.scrollTop = scrollView.scrollHeight;
           });
         }
       }
@@ -340,25 +346,26 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   }, [scrollView]);
 
   useEffect(() => {
-    if (
-      convoMessages &&
-      scrollView &&
-      (scrollView.scrollTop === 0 ||
-        scrollView.scrollTop > scrollView.scrollHeight - 700)
-    ) {
-      // animate (to prevent flicker) if scrollView is at very top else don't animate
-      if (scrollView.scrollTop < scrollView.scrollHeight - 300) {
-        interval(
-          () => {
-            scrollView.scrollTop += 100;
-          },
-          16,
-          () =>
-            scrollView.scrollTop >=
-            scrollView.scrollHeight - scrollView.offsetHeight - 50
-        );
-      } else {
-        scrollView.scrollTop = scrollView.scrollHeight;
+    if (scrollView) {
+      const canAdjustScrollTop =
+        scrollView.scrollTop + scrollView.offsetHeight + 50 >=
+        scrollView.scrollHeight - 100;
+
+      if (convoMessages && (scrollView.scrollTop === 0 || canAdjustScrollTop)) {
+        // animate (to prevent flicker) if scrollView is at very top else don't animate
+        if (scrollView.scrollTop < scrollView.scrollHeight - 300) {
+          interval(
+            () => {
+              scrollView.scrollTop += 100;
+            },
+            16,
+            () =>
+              scrollView.scrollTop >=
+              scrollView.scrollHeight - scrollView.offsetHeight - 50
+          );
+        } else {
+          scrollView.scrollTop = scrollView.scrollHeight;
+        }
       }
     }
   }, [convoMessages, scrollView]);
