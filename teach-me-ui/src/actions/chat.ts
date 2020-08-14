@@ -23,7 +23,8 @@ import {
   SET_CONVERSATION_MESSAGES,
   CHAT_MESSAGE_DELIVERED,
   CHAT_READ_RECEIPT,
-  CHAT_MESSAGE_DELETED
+  CHAT_MESSAGE_DELETED,
+  CHAT_MESSAGE_DELETED_FOR
 } from '../constants/chat';
 import { apiBaseURL as baseURL } from '../constants/misc';
 import { logError, getState, callNetworkStatusCheckerFor } from '../functions';
@@ -403,6 +404,12 @@ export const conversationMessages = (payload: ConversationMessages) => {
         if (initialMessage && !initialMessage.deleted) {
           initialMessage.deleted = true;
           previousMessages[indexOfInitial] = initialMessage;
+        }
+        break;
+      case CHAT_MESSAGE_DELETED_FOR:
+        if (initialMessage) {
+          initialMessage.deleted = true;
+          previousMessages.splice(indexOfInitial, 1);
         }
         break;
     }

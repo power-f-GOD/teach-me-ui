@@ -18,7 +18,8 @@ import {
   ChatState,
   ConversationInfo,
   APIConversationResponse,
-  SearchState
+  SearchState,
+  UserData
 } from '../../constants/interfaces';
 import { Skeleton, DISPLAY_INFO } from '../crumbs/Loader';
 import {
@@ -26,6 +27,7 @@ import {
   conversation,
   conversationInfo
 } from '../../actions/chat';
+import { ChatTimestamp, ChatStatus } from './Chat.crumbs';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -37,13 +39,14 @@ interface TabPanelProps {
 interface ChatLeftPaneProps {
   conversations: SearchState;
   rooms?: ConversationInfo[];
+  userData: UserData;
 }
 
 const [CV, CR] = ['Conversations', 'Classrooms'];
 
 const ChatLeftPane = (props: ChatLeftPaneProps) => {
   const [value, setValue] = React.useState<number>(0);
-  const { conversations } = props;
+  const { conversations, userData } = props;
   const { pathname } = window.location;
   const convos = (props.conversations.data ?? []) as Partial<
     APIConversationResponse
@@ -93,7 +96,7 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
           overflowY: conversations.status === 'pending' ? 'hidden' : 'auto'
         }}>
         {conversations.status === 'pending' ? (
-          Array(Math.floor(window.innerHeight / 70))
+          Array(Math.floor(window.innerHeight / 60))
             .fill('')
             .map((_, key) => <Skeleton type={DISPLAY_INFO} key={key} />)
         ) : !!convos[0] ? (
@@ -102,15 +105,27 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
               avatar,
               conversation_name: displayName,
               associated_username: username,
-              _id: convoId
+              _id: convoId,
+              last_message
             } = conversation;
+            const lastMessageTimestamp = last_message?.date ?? Date.now();
+            const lastMessageDate = new Date(lastMessageTimestamp)
+              .toLocaleString()
+              .split(',')[0];
+            const currentDate = new Date().toLocaleString().split(',')[0];
+            const lastMessageSentYesterday =
+              (Math.abs(
+                (new Date() as any) - (new Date(lastMessageTimestamp) as any)
+              ) as any) /
+                864e5 ===
+              1;
             const _queryString = `${pathname}?chat=open&id=${username}&cid=${convoId}`;
             const _chatState: ChatState = {
               isOpen: true,
               isMinimized: false,
               queryString: _queryString
             };
-
+            // console.log('last-message:', last_message);
             return (
               <NavLink
                 to={_queryString}
@@ -142,7 +157,35 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
                       src={`/images/${avatar ?? 'avatar-1.png'}`}
                     />
                   </Badge>{' '}
-                  <Box>{displayName}</Box>
+                  <Box width='calc(100% - 2.25rem)'>
+                    <Box className='display-name-wrapper'>
+                      <Box className='display-name'>{displayName}</Box>
+                      <ChatTimestamp
+                        timestamp={
+                          lastMessageSentYesterday
+                            ? 'Yesterday'
+                            : currentDate !== lastMessageDate
+                            ? lastMessageDate
+                            : last_message?.date ?? 0
+                        }
+                      />
+                    </Box>
+                    <Box className='last-message mt-1'>
+                      <ChatStatus
+                        type={
+                          last_message?.sender_id === userData.id
+                            ? 'outgoing'
+                            : 'incoming'
+                        }
+                        delivered_to={last_message?.delivered_to ?? []}
+                        deleted={last_message?.deleted ?? false}
+                        participants={conversation.participants ?? []}
+                        seen_by={last_message?.seen_by ?? []}
+                        userId={userData.id}
+                      />{' '}
+                      {last_message?.message}
+                    </Box>
+                  </Box>
                 </Col>
               </NavLink>
             );
@@ -157,33 +200,6 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
         <Box padding='2rem' textAlign='center'>
           Not available yet.
         </Box>
-        {/* {rooms.map((room) => {
-          const _pathname = `${pathname}?chat=open&type=classroom&id=${
-            room.conversationId
-          }&name=${room.data!.displayName}`;
-          const chatInfo: ChatState = {
-            queryString: _pathname
-          };
-
-          return (
-            <NavLink
-              to={_pathname}
-              className='tab-panel-item'
-              key={room.data!.displayName}
-              isActive={(_match, location) =>
-                queryString.parse(location.search)?.id === room.conversationId
-              }
-              onClick={handleChatClick(
-                { ...chatInfo },
-                {
-                  convoId: room.conversationId as string,
-                  username: room.data!.displayName as string
-                }
-              )}>
-              {room.data!.displayName}
-            </NavLink>
-          );
-        })} */}
       </TabPanel>
     </Box>
   );
