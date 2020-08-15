@@ -37,15 +37,15 @@ const Main = (props: any) => {
   useEffect(() => {
     if (socket) {
       socket.addEventListener('open', () => {
-        console.log('Socket connected!');
+        console.log('Sockets shook hands! :)');
       });
 
       socket.addEventListener('error', (e: any) => {
-        console.error('An error occurred while trying to connect Web Socket.');
+        console.error('An error occurred while trying to connect Web Socket. :(');
       });
 
       socket.addEventListener('close', () => {
-        console.log('Socket closed!');
+        console.log('Sockets called it a day! :|');
       });
     }
   }, [socket]);

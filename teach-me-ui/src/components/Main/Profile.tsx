@@ -113,7 +113,7 @@ const Profile = (props: any) => {
   displayName = data.displayName || '';
   email = data.email || '';
   email = email + '';
-  dob = data.dob?.split('-').reverse().join('-') || '';
+  dob = data.date_of_birth?.split('-').reverse().join('-') || '';
   institution = data.institution || '';
   department = data.department || '';
   level = data.level || '';

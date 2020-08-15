@@ -24,7 +24,6 @@ import {
   ChatState,
   ConversationInfo,
   UserData,
-  UserEnrolledData,
   SearchState,
   APIConversationResponse,
   APIMessageResponse
@@ -264,7 +263,8 @@ const ChatBox = (props: ChatBoxProps) => {
     if (socket) {
       socket.onmessage = (e: any) => {
         const cid = queryString.parse(window.location.search).cid;
-        const message = JSON.parse(e.data) as APIMessageResponse;
+        const message = JSON.parse(e.data) as APIMessageResponse &
+          UserData & { status: string };
         const {
           pipe,
           delivered_to,
@@ -273,7 +273,8 @@ const ChatBox = (props: ChatBoxProps) => {
           sender_id,
           user_id,
           seen_by,
-          deleted
+          deleted,
+          online_status
         } = message;
 
         switch (pipe) {
@@ -339,7 +340,7 @@ const ChatBox = (props: ChatBoxProps) => {
               dispatch(conversationInfo({ user_typing: user_id }));
               userTypingTimeout = window.setTimeout(() => {
                 dispatch(conversationInfo({ user_typing: '' }));
-              }, 750);
+              }, 1000);
             }
             break;
           case CHAT_MESSAGE_DELETED:
@@ -357,7 +358,9 @@ const ChatBox = (props: ChatBoxProps) => {
             }
             break;
           case ONLINE_STATUS:
-            // console.log(ONLINE_STATUS, message);
+            if (user_id && cid === conversation_id) {
+              dispatch(conversationInfo({ isOnline: !!online_status }));
+            }
             break;
         }
       };
@@ -404,7 +407,7 @@ const ChatBox = (props: ChatBoxProps) => {
               conversation={_conversation}
               convoInfo={
                 _conversationInfo.data as Partial<
-                  APIConversationResponse & UserEnrolledData
+                  APIConversationResponse & Omit<UserData, 'token'>
                 >
               }
             />
