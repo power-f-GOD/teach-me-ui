@@ -18,7 +18,7 @@ import {
   ConversationsMessages,
   ConversationInfo,
   APIConversationResponse,
-  UserEnrolledData
+  UserData
 } from '../constants/interfaces';
 import { statusPropsState, searchState } from '../constants';
 
@@ -65,7 +65,7 @@ export const conversationsMessages = (
 };
 
 export const conversationInfo = (
-  state: ConversationInfo = { ...statusPropsState, data: {} },
+  state: ConversationInfo = { ...statusPropsState, isOnline: false, data: {} },
   action: ReduxAction
 ): ConversationInfo => {
   if (action.type === SET_CONVERSATION_INFO) {
@@ -79,9 +79,9 @@ export const conversationInfo = (
 };
 
 export const conversation = (
-  state: Partial<APIConversationResponse & UserEnrolledData> = {},
+  state: Partial<APIConversationResponse & Omit<UserData, 'token'>> = {},
   action: ReduxAction
-): Partial<APIConversationResponse & UserEnrolledData> => {
+): Partial<APIConversationResponse & Omit<UserData, 'token'>> => {
   if (action.type === SET_CONVERSATION) {
     return {
       ...(Object.keys(action.payload).length ? state : {}),

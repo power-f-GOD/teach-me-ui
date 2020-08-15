@@ -195,8 +195,8 @@ export const getConversationInfo = (
     }
   })
     .then(({ data }: any) => {
-      const _data = { ...data };
-      const { error, firstname, lastname } = _data;
+      const _data = { ...data } as UserData & { error: boolean };
+      const { error, firstname, lastname, online_status } = _data;
 
       delete _data.error;
       delete _data.date_of_birth;
@@ -213,6 +213,7 @@ export const getConversationInfo = (
           conversationInfo({
             status: 'fulfilled',
             err: false,
+            isOnline: !!online_status,
             conversationId,
             data: { ...conversationData }
           })
@@ -222,6 +223,7 @@ export const getConversationInfo = (
           conversationInfo({
             status: 'fulfilled',
             err: true,
+            isOnline: !!online_status,
             conversationId,
             data: {}
           })

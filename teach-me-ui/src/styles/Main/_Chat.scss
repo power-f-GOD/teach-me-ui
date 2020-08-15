@@ -96,7 +96,7 @@ $chat-header-min-height: 3.75rem;
   }
 
   &.close {
-    transform: scale(0.95);
+    transform: scale(0.925);
     opacity: 0;
   }
 
@@ -144,14 +144,13 @@ header.chat-header {
 
 .online {
   .MuiBadge-dot {
-    background-color: $success;
+    background-color: limegreen;
   }
 }
 
-.offline {
-  .MuiBadge-dot {
-    background-color: #bbb;
-  }
+.MuiBadge-dot {
+  transition: 0.35s;
+  background-color: #aaa;
 }
 
 .colleague-name,
