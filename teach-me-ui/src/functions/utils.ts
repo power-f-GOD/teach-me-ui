@@ -17,7 +17,6 @@ import { userDeviceIsMobile } from '../';
 
 import moment from 'moment';
 
-
 export const { dispatch, getState }: any = store;
 
 export const cleanUp = (isUnmount: boolean) => {
@@ -392,13 +391,9 @@ export const formatDate = (dateTime: Date) => {
   if (duration.years() > 0) {
     return time.format('ll');
   } else if (duration.weeks() > 0) {
-    return duration.weeks() > 1
-      ? time.format('ll')
-      : 'a week ago';
+    return duration.weeks() > 1 ? time.format('ll') : 'a week ago';
   } else if (duration.days() > 0) {
-    return duration.days() > 1
-      ? duration.days() + ' days ago'
-      : 'a day ago';
+    return duration.days() > 1 ? duration.days() + ' days ago' : 'a day ago';
   } else if (duration.hours() > 0) {
     return duration.hours() > 1
       ? duration.hours() + ' hours ago'
@@ -413,16 +408,29 @@ export const formatDate = (dateTime: Date) => {
       : 'just now';
   }
 };
-export const dateStringMapFormatter = (
-  timestamp: number,
+export const formatMapDateString = (
+  timestamp: number | string,
   includeDay?: boolean,
-  includeYear?: boolean
-) => {
-  if (isNaN(timestamp)) {
-    return timestamp;
+  includeYear?: boolean,
+  dayMonthSeparator?: string
+): string => {
+  if (isNaN(timestamp as number)) {
+    return timestamp as string;
   }
 
+  const today = new Date().toDateString();
   const dateString = new Date(timestamp).toDateString();
+  const dateIsToday = dateString === today;
+  const dateIsYesterday =
+    (Math.abs(
+      (new Date(today) as any) - (new Date(dateString) as any)
+    ) as any) /
+      864e5 ===
+    1;
+
+  if (dateIsToday) return 'today';
+  if (dateIsYesterday) return 'yesterday';
+
   let [day, month, date, year] = dateString.split(' ');
 
   switch (true) {
@@ -488,21 +496,29 @@ export const dateStringMapFormatter = (
       break;
   }
 
-  return `${includeDay ? day + ' - ' : ''}${month} ${date}${
-    includeYear ? ', ' + year : ''
-  }`;
+  return `${
+    includeDay
+      ? day + (dayMonthSeparator ? ' ' + dayMonthSeparator + ' ' : ' - ')
+      : ''
+  }${month} ${date}${includeYear ? ', ' + year : ''}`;
 };
 
 export const formatNotification = (entities: any, text: string) => {
   const text1 = text.replace('\n', ' ');
   let string = '';
   text1.split(' ').map((w) => {
-    /(^{{)[A-Za-z0-9-]+(}}$)/.test(w) 
-    ? entities[w.substring(2, w.length - 2)].action
-      ? string = string.concat(` <a style="color: rgb(0, 115, 160)" href='${entities[w.substring(2, w.length - 2)].action}'>${entities[w.substring(2, w.length - 2)].subject}</a>`)
-      : string = string.concat(` ${entities[w.substring(2, w.length - 2)].subject}`)
-    : string = string.concat(` ${w}`)
+    /(^{{)[A-Za-z0-9-]+(}}$)/.test(w)
+      ? entities[w.substring(2, w.length - 2)].action
+        ? (string = string.concat(
+            ` <a style="color: rgb(0, 115, 160)" href='${
+              entities[w.substring(2, w.length - 2)].action
+            }'>${entities[w.substring(2, w.length - 2)].subject}</a>`
+          ))
+        : (string = string.concat(
+            ` ${entities[w.substring(2, w.length - 2)].subject}`
+          ))
+      : (string = string.concat(` ${w}`));
     return true;
-  })
+  });
   return string;
-}
+};

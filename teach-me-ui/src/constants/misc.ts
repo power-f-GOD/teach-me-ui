@@ -57,7 +57,7 @@ export const userDataState: UserData = {
   lastname: '',
   username: '',
   email: '',
-  dob: '',
+  date_of_birth: '',
   institution: '',
   department: '',
   level: '',

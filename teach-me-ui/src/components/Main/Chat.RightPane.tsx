@@ -8,15 +8,12 @@ import Avatar from '@material-ui/core/Avatar';
 import SchoolIcon from '@material-ui/icons/School';
 
 import { ONE_TO_ONE } from '../../constants/chat';
-import {
-  APIConversationResponse,
-  UserEnrolledData
-} from '../../constants/interfaces';
+import { APIConversationResponse, UserData } from '../../constants/interfaces';
 import { InfoCard } from '../crumbs/Cards';
 
 interface ChatRightPaneProps {
   conversation: APIConversationResponse;
-  convoInfo: Partial<APIConversationResponse & UserEnrolledData>;
+  convoInfo: Omit<UserData, 'token'>;
 }
 
 const ChatRightPane = ({ conversation, convoInfo }: ChatRightPaneProps) => {
@@ -26,12 +23,8 @@ const ChatRightPane = ({ conversation, convoInfo }: ChatRightPaneProps) => {
     avatar,
     associated_username: username
   } = conversation;
-  const {
-    institution,
-    department,
-    level
-  }: Partial<APIConversationResponse & UserEnrolledData> = convoInfo;
-
+  const { institution, department, level }: Omit<UserData, 'token'> = convoInfo;
+  // console.log('convoInfo:', convoInfo, 'conversation:', conversation);
   return (
     <>
       <Col
@@ -53,12 +46,10 @@ const ChatRightPane = ({ conversation, convoInfo }: ChatRightPaneProps) => {
               />
             </Col>
             <Col className='p-0 text-center'>
-              <Col
-                className='display-name p-0 d-flex justify-content-center my-1'>
+              <Col className='display-name p-0 d-flex justify-content-center my-1'>
                 {displayName}
               </Col>
-              <Col
-                className='username p-0 d-flex justify-content-center mb-4'>
+              <Col className='username p-0 d-flex justify-content-center mb-4'>
                 @{username}
               </Col>
             </Col>

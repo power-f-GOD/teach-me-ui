@@ -20,7 +20,8 @@ import {
   ConversationInfo,
   APIConversationResponse,
   SearchState,
-  UserData
+  UserData,
+  APIMessageResponse
 } from '../../constants/interfaces';
 import { Skeleton, DISPLAY_INFO } from '../crumbs/Loader';
 import {
@@ -108,7 +109,8 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
               associated_username: username,
               _id: convoId,
               last_message,
-              friendship
+              friendship,
+              participants
             } = conversation;
             const lastMessageTimestamp = last_message?.date ?? Date.now();
             const lastMessageDate = new Date(
@@ -189,10 +191,12 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
                             ? 'outgoing'
                             : 'incoming'
                         }
-                        delivered_to={last_message?.delivered_to ?? []}
-                        deleted={last_message?.deleted ?? false}
-                        participants={conversation.participants ?? []}
-                        seen_by={last_message?.seen_by ?? []}
+                        shouldUpdate={
+                          last_message?.delivered_to!?.length +
+                          last_message?.seen_by!?.length
+                        }
+                        participants={participants as string[]}
+                        message={last_message as APIMessageResponse}
                         userId={userData.id}
                       />{' '}
                       {last_message?.deleted ? (

@@ -1,7 +1,7 @@
 $convo-spacer: 0.35rem;
 
 .chat-left-pane {
-  background-color: $theme-primary-v3;
+  background-color: $theme-primary-v2;
   color: white;
   overflow: hidden;
 
@@ -60,7 +60,7 @@ $convo-spacer: 0.35rem;
   padding: 0;
   font-weight: bold;
   min-height: $chat-header-min-height;
-  background: $theme-primary-v4;
+  background: $theme-primary-v3;
 
   &:hover,
   &:focus {
@@ -93,6 +93,10 @@ $convo-spacer: 0.35rem;
     .colleague-name {
       background-color: $theme-secondary-v5;
       color: white;
+
+      .MuiBadge-dot {
+        border-color: $theme-secondary-v5;
+      }
     }
     .display-name {
       color: white !important;
@@ -103,6 +107,10 @@ $convo-spacer: 0.35rem;
     .colleague-name {
       background-color: $theme-primary-v6;
       color: white;
+
+      .MuiBadge-dot {
+        border-color: $theme-primary-v6;
+      }
     }
     .display-name {
       color: white !important;
@@ -117,7 +125,11 @@ $convo-spacer: 0.35rem;
     padding: 0.75rem 0.5rem;
     transition: 0.35s;
     border-radius: $convo-spacer;
-    background: rgba(0, 0, 0, 0.25);
+    background: $theme-primary-v3;// rgba(0, 0, 0, 0.25);
+
+    .MuiBadge-dot {
+      border-color: $theme-primary-v3;
+    }
   }
 
   .display-name-wrapper {
@@ -130,7 +142,7 @@ $convo-spacer: 0.35rem;
     font-weight: bold;
     display: inline-block;
     overflow: hidden;
-    color: #ddd;
+    color: #eee;
     white-space: nowrap;
     max-width: calc(100% - 4rem);
     text-overflow: ellipsis;
@@ -153,7 +165,6 @@ $convo-spacer: 0.35rem;
   .last-message {
     white-space: nowrap;
     overflow: hidden;
-    max-width: 97%;
     text-overflow: ellipsis;
 
     [class*='Icon'] {

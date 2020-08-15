@@ -247,11 +247,22 @@ export interface ModalState {
   title?: string;
 }
 
-export interface UserData extends SignupFormData {
+export interface UserData {
   avatar?: string;
   id: string;
   displayName: string;
   token?: string | null;
+  department: string;
+  firstname: string;
+  institution: string;
+  last_login?: number;
+  last_seen?: number;
+  lastname: string;
+  level: string;
+  email?: string;
+  date_of_birth?: string;
+  online_status?: boolean;
+  username: string;
 }
 
 export interface ColleagueData {
@@ -276,51 +287,14 @@ export interface CreateLevelState extends StatusPropsState {
 
 // ChatBox interfaces...
 
-//you should eventually make all the Message props required
-export interface MessageProps extends Partial<APIMessageResponse> {
-  timestamp?: string | number;
-}
-
 export interface ChatState {
   queryString?: string;
   isOpen?: boolean;
   isMinimized?: boolean;
 }
 
-export interface ChatData {
-  [id: string]: AnchorInfo;
-}
-
-export interface AnchorInfo {
-  displayName: string;
-  id: string;
-  messages?: MessageProps[];
-  avatar: string;
-  info?: UserInfo | RoomInfo;
-  type: 'conversation' | 'classroom';
-}
-
-export interface UserInfo {
-  username?: string;
-  institution?: string;
-  department?: string;
-  level?: string;
-}
-
 export interface RoomInfo {
   participants?: any[];
-}
-
-export interface UserEnrolledData {
-  avatar?: string;
-  displayName: string;
-  firstname: string;
-  lastname: string;
-  id: string;
-  username: string;
-  institution: string;
-  department: string;
-  level: string;
 }
 
 export interface ConversationsMessages extends StatusPropsState {
@@ -335,8 +309,9 @@ export interface ConversationMessages extends Omit<SearchState, 'data'> {
 
 export interface ConversationInfo extends Omit<SearchState, 'data'> {
   user_typing?: string;
+  isOnline?: boolean;
   conversationId?: string;
-  data?: Partial<UserEnrolledData & APIConversationResponse>;
+  data?: Partial<Omit<UserData, 'token'> & APIConversationResponse>;
 }
 
 export interface APIMessageResponse {
@@ -373,7 +348,7 @@ export interface APIConversationResponse {
 export interface NotificationState extends StatusPropsState {
   data?: {
     notifications?: any[];
-    entities?: any
+    entities?: any;
   };
   [key: string]: any;
 }
