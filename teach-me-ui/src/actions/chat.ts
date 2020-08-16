@@ -353,8 +353,9 @@ export const conversationMessages = (payload: ConversationMessages) => {
             return false;
           }) ?? null;
 
+        delete newMessage.timestamp_id;
+
         if (initialMessage) {
-          delete newMessage.timestamp_id;
           previousMessages[indexOfInitial] = newMessage;
         } else {
           if (

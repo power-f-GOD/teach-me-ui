@@ -1,4 +1,5 @@
-$convo-spacer: 0.35rem;
+$convo-spacer: 0.2rem;
+$avatar-size: 2.75rem;
 
 .chat-left-pane {
   background-color: $theme-primary-v2;
@@ -25,8 +26,10 @@ $convo-spacer: 0.35rem;
     }
 
     .chat-avatar {
-      background-color: rgba(0, 0, 0, 0.4);
-      animation: glow 2.25s infinite;
+      height: $avatar-size;
+      width: $avatar-size;
+      background-color: $theme-primary-v1;
+      animation: chatConvoGlow 2.5s infinite;
     }
 
     .chat-display-name {
@@ -34,17 +37,17 @@ $convo-spacer: 0.35rem;
       flex-grow: 1;
       max-width: 20rem;
       height: 0.8rem;
-      background-color: rgba(0, 0, 0, 0.4);
-      animation: glow 2.25s infinite;
+      background-color: $theme-primary-v1;
+      animation: chatConvoGlow 2.5s infinite;
     }
   }
 
-  @keyframes glow {
+  @keyframes chatConvoGlow {
     0% {
-      opacity: 1;
+      opacity: 0.7;
     }
     50% {
-      opacity: 0.4;
+      opacity: 0.2;
     }
   }
 }
@@ -88,6 +91,11 @@ $convo-spacer: 0.35rem;
     color: lightblue;
   }
 
+  .chat-avatar {
+    height: $avatar-size;
+    width: $avatar-size;
+  }
+
   &:hover,
   &:focus {
     .colleague-name {
@@ -98,6 +106,7 @@ $convo-spacer: 0.35rem;
         border-color: $theme-secondary-v5;
       }
     }
+
     .display-name {
       color: white !important;
     }
@@ -112,6 +121,7 @@ $convo-spacer: 0.35rem;
         border-color: $theme-primary-v6;
       }
     }
+
     .display-name {
       color: white !important;
     }
@@ -124,8 +134,8 @@ $convo-spacer: 0.35rem;
   .colleague-name {
     padding: 0.75rem 0.5rem;
     transition: 0.35s;
-    border-radius: $convo-spacer;
-    background: $theme-primary-v3;// rgba(0, 0, 0, 0.25);
+    border-radius: $convo-spacer + .15rem;
+    background: $theme-primary-v3;
 
     .MuiBadge-dot {
       border-color: $theme-primary-v3;
