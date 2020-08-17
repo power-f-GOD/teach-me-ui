@@ -137,26 +137,26 @@ export function callNetworkStatusCheckerFor(action: NetworkAction) {
 export async function populateStateWithUserData(
   data: UserData
 ): Promise<ReduxAction> {
-  return (await promisedDispatch(
+  setTimeout(() => {
+    const socket = getState().webSocket as WebSocket;
+
+    if (socket && socket.readyState === 1) {
+      socket.send(
+        JSON.stringify({
+          online_status:
+            document.visibilityState === 'visible' ? 'ONLINE' : 'AWAY',
+          pipe: ONLINE_STATUS
+        })
+      );
+    }
+  }, 2000);
+
+  return await promisedDispatch(
     setUserData({
       ...data,
       online_status: document.visibilityState === 'visible' ? 'ONLINE' : 'AWAY'
     })
-  ).then(() => {
-    setTimeout(() => {
-      const socket = getState().webSocket as WebSocket;
-      
-      if (socket && socket.readyState === 1) {
-        socket.send(
-          JSON.stringify({
-            online_status:
-              document.visibilityState === 'visible' ? 'ONLINE' : 'AWAY',
-            pipe: ONLINE_STATUS
-          })
-        );
-      }
-    }, 2000);
-  })) as ReduxAction;
+  );
 }
 
 export const logError = (action: Function) => (error: any) => {
