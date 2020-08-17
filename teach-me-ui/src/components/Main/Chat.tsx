@@ -108,11 +108,7 @@ const ChatBox = (props: ChatBoxProps) => {
       );
     });
     window.history.pushState({}, '', window.location.pathname + queryString);
-
-    if (!conversations.data![0]) {
-      dispatch(getConversations()(dispatch));
-    }
-  }, [convoId, convoUsername, conversations.data]);
+  }, [convoId, convoUsername]);
 
   const handleChatTransitionEnd = useCallback(
     (e: any) => {
@@ -217,7 +213,9 @@ const ChatBox = (props: ChatBoxProps) => {
 
     if (cid && isNaN(cid)) {
       let infoStatus = _conversationInfo.status;
+
       if (
+        window.navigator.onLine &&
         convoId &&
         (infoStatus === 'settled' ||
           (infoStatus === 'fulfilled' && convoId !== cid))
@@ -231,6 +229,7 @@ const ChatBox = (props: ChatBoxProps) => {
 
       let msgStatus = _conversationMessages.status;
       if (
+        window.navigator.onLine &&
         convoId &&
         (msgStatus === 'settled' ||
           (msgStatus === 'fulfilled' && convoId !== cid))
@@ -254,17 +253,18 @@ const ChatBox = (props: ChatBoxProps) => {
         className={`chat-box-wrapper m-0 ${isMinimized ? 'minimize' : ''} ${
           isOpen ? '' : 'close'
         } ${visibilityState}`}>
-        <Col as='section' md={3} className='chat-left-pane p-0'>
+        <Col as='section' md={3} sm={4} className='chat-left-pane p-0'>
           <Memoize
             memoizedComponent={ChatLeftPane}
             conversations={conversations}
-            userData={userData}
+            userId={userData.id}
           />
         </Col>
 
         <Col
           as='section'
           md={convoUsername ? 6 : 9}
+          sm={8}
           className='chat-middle-pane d-flex flex-column p-0'>
           <Memoize
             memoizedComponent={ChatMiddlePane}
@@ -285,11 +285,7 @@ const ChatBox = (props: ChatBoxProps) => {
             <Memoize
               memoizedComponent={ChatRightPane as React.FC}
               conversation={_conversation}
-              convoInfo={
-                _conversationInfo.data as Partial<
-                  APIConversationResponse & Omit<UserData, 'token'>
-                >
-              }
+              convoInfo={_conversationInfo}
             />
           </Col>
         )}

@@ -87,7 +87,7 @@ it("logError should be called with an 'action' as param and return undefined.", 
   });
   let error = { message: 'A sample error occurred.' };
   let mockFunc = jest.fn();
-  
+
   logError(mockFunc(action) || action)(mockFunc(error) || error);
   expect(mockFunc).toHaveBeenCalledWith(action);
   expect(mockFunc).toHaveBeenCalledWith(error);

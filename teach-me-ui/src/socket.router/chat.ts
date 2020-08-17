@@ -36,6 +36,10 @@ export default function chat(message: APIMessageResponse & UserData) {
       deleted
     } = message;
 
+    //if state to be removed when typing is added and handled
+    if (pipe !== CHAT_TYPING)
+      dispatch(conversations({ data: [{ ...message }] }));
+
     switch (pipe) {
       case CHAT_NEW_MESSAGE:
         if (sender_id !== userData.id) {
@@ -56,7 +60,6 @@ export default function chat(message: APIMessageResponse & UserData) {
             seen_by &&
             !seen_by!?.includes(userData.id)
           ) {
-            console.log('index', userData);
             socket.send(
               JSON.stringify({
                 message_id: message._id,
@@ -69,8 +72,6 @@ export default function chat(message: APIMessageResponse & UserData) {
         if (convoId && conversation_id === cid) {
           dispatch(conversationMessages({ data: [{ ...message }] }));
         }
-        
-        dispatch(conversations({ data: [{ ...message }] }));
         break;
       case CHAT_MESSAGE_DELIVERED:
         if (delivered_to && convoId && conversation_id === cid) {
@@ -83,7 +84,6 @@ export default function chat(message: APIMessageResponse & UserData) {
             })
           );
         }
-        dispatch(conversations({ data: [{ ...message }] }));
         break;
       case CHAT_READ_RECEIPT:
         if (seen_by && convoId && conversation_id === cid) {
@@ -96,7 +96,6 @@ export default function chat(message: APIMessageResponse & UserData) {
             })
           );
         }
-        dispatch(conversations({ data: [{ ...message }] }));
         break;
       case CHAT_TYPING:
         clearTimeout(userTypingTimeout);
@@ -121,7 +120,6 @@ export default function chat(message: APIMessageResponse & UserData) {
             })
           );
         }
-        dispatch(conversations({ data: [{ ...message }] }));
         break;
     }
   }
