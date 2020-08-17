@@ -114,11 +114,11 @@ $avatar-size: 2.75rem;
 
   &.active {
     .colleague-name {
-      background-color: $theme-primary-v6;
+      background-color: $theme-primary-v5;
       color: white;
 
       .MuiBadge-dot {
-        border-color: $theme-primary-v6;
+        border-color: $theme-primary-v5;
       }
     }
 

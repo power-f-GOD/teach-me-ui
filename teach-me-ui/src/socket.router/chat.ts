@@ -10,12 +10,16 @@ import {
   CHAT_MESSAGE_DELETED,
   CHAT_MESSAGE_DELETED_FOR
 } from '../constants/chat';
-import { conversationMessages, conversationInfo } from '../actions/chat';
+import {
+  conversationMessages,
+  conversationInfo,
+  conversations
+} from '../actions/chat';
 
 let userTypingTimeout: any = null;
 
 export default function chat(message: APIMessageResponse & UserData) {
-  const { socket, userData, chatState, conversation } = getState();
+  const { webSocket: socket, userData, chatState, conversation } = getState();
   const { _id: convoId } = conversation ?? {};
   const { isOpen, isMinimized } = chatState;
   const { cid } = queryString.parse(window.location.search) ?? {};
@@ -45,12 +49,14 @@ export default function chat(message: APIMessageResponse & UserData) {
           }
 
           if (
+            userData.online_status === 'ONLINE' &&
             isOpen &&
             !isMinimized &&
             cid === conversation_id &&
             seen_by &&
             !seen_by!?.includes(userData.id)
           ) {
+            console.log('index', userData);
             socket.send(
               JSON.stringify({
                 message_id: message._id,
@@ -63,6 +69,8 @@ export default function chat(message: APIMessageResponse & UserData) {
         if (convoId && conversation_id === cid) {
           dispatch(conversationMessages({ data: [{ ...message }] }));
         }
+        
+        dispatch(conversations({ data: [{ ...message }] }));
         break;
       case CHAT_MESSAGE_DELIVERED:
         if (delivered_to && convoId && conversation_id === cid) {
@@ -75,6 +83,7 @@ export default function chat(message: APIMessageResponse & UserData) {
             })
           );
         }
+        dispatch(conversations({ data: [{ ...message }] }));
         break;
       case CHAT_READ_RECEIPT:
         if (seen_by && convoId && conversation_id === cid) {
@@ -87,6 +96,7 @@ export default function chat(message: APIMessageResponse & UserData) {
             })
           );
         }
+        dispatch(conversations({ data: [{ ...message }] }));
         break;
       case CHAT_TYPING:
         clearTimeout(userTypingTimeout);
@@ -111,6 +121,7 @@ export default function chat(message: APIMessageResponse & UserData) {
             })
           );
         }
+        dispatch(conversations({ data: [{ ...message }] }));
         break;
     }
   }

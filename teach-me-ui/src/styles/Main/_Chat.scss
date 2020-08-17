@@ -50,6 +50,29 @@ $chat-header-min-height: 3.75rem;
   }
 }
 
+body,
+.ChatBox {
+  &,
+  .tab-panel-item {
+    .online {
+      .MuiBadge-dot {
+        background-color: limegreen !important;
+      }
+    }
+
+    .away {
+      .MuiBadge-dot {
+        background-color: orange !important;
+      }
+    }
+
+    .MuiBadge-dot {
+      transition: 0.35s;
+      background-color: #999;
+    }
+  }
+}
+
 .chat-button {
   $size: 3.25rem;
 
@@ -132,25 +155,14 @@ header.chat-header {
   color: $chat-text-color;
 
   + .MuiBadge-dot {
-    $size: 0.75rem;
+    $size: 0.8rem;
 
     border-radius: 50%;
     border: 0.125rem solid white;
     height: $size;
     width: $size;
-    right: 32%;
+    right: 30%;
   }
-}
-
-.online {
-  .MuiBadge-dot {
-    background-color: limegreen;
-  }
-}
-
-.MuiBadge-dot {
-  transition: 0.35s;
-  background-color: #aaa;
 }
 
 .colleague-name,

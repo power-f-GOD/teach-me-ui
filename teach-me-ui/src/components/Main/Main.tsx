@@ -42,7 +42,7 @@ const Main = (props: any) => {
 
       socket.addEventListener('error', (e: any) => {
         console.error(
-          'Error: Sockets lost their hands while trying to shake hands. :('
+          'Error: Sockets lost hands while trying to shake hands. :('
         );
       });
 

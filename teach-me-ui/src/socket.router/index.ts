@@ -21,7 +21,8 @@ export default function activateSocketRouters() {
         notifications(message);
         break;
       case pipe.startsWith('CHAT_'):
-        chat(message);
+        if (!message.error)
+          chat(message);
         break;
       case pipe === undefined:
         console.error('E014: bad response from socket');

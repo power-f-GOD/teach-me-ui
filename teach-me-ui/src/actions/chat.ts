@@ -1,4 +1,5 @@
 import axios from 'axios';
+import produce from 'immer';
 
 import {
   ReduxAction,
@@ -24,10 +25,12 @@ import {
   CHAT_MESSAGE_DELIVERED,
   CHAT_READ_RECEIPT,
   CHAT_MESSAGE_DELETED,
-  CHAT_MESSAGE_DELETED_FOR
+  CHAT_MESSAGE_DELETED_FOR,
+  CHAT_NEW_MESSAGE
 } from '../constants/chat';
-import { apiBaseURL as baseURL } from '../constants/misc';
+import { apiBaseURL as baseURL, ONLINE_STATUS } from '../constants/misc';
 import { logError, getState, callNetworkStatusCheckerFor } from '../functions';
+
 // import { displaySnackbar } from './misc';
 
 export const getUsersEnrolledInInstitution = (params?: string) => (
@@ -118,7 +121,94 @@ export const getConversations = () => (dispatch: Function): ReduxAction => {
   };
 };
 
-export const conversations = (payload: SearchState): ReduxAction => {
+export const conversations = (_payload: SearchState): ReduxAction => {
+  const payload = { ..._payload };
+  const { pipe, online_status, user_id, last_seen } =
+    (payload.data ?? [])[0] ?? {};
+  const message = (payload.data ?? [])[0] ?? ({} as APIMessageResponse);
+  const [initialConversations] = [
+    (getState().conversations.data ?? []) as Partial<APIConversationResponse>[]
+  ];
+
+  if (pipe && !!initialConversations[0]) {
+    let indexOfInitial = -1;
+    let initialConvo = {} as Partial<APIConversationResponse> | undefined;
+
+    switch (pipe) {
+      case ONLINE_STATUS:
+        initialConvo = initialConversations?.find((conversation, i) => {
+          if (user_id === conversation.associated_user_id) {
+            indexOfInitial = i;
+            return true;
+          }
+          return false;
+        });
+
+        if (initialConvo) {
+          if (online_status === 'AWAY') {
+            initialConvo.last_seen = last_seen;
+          }
+
+          initialConvo.online_status = online_status;
+          initialConversations[indexOfInitial] = initialConvo;
+          payload.data = initialConversations;
+        }
+        break;
+      case CHAT_NEW_MESSAGE:
+      case CHAT_READ_RECEIPT:
+      case CHAT_MESSAGE_DELETED:
+      case CHAT_MESSAGE_DELETED_FOR:
+      case CHAT_MESSAGE_DELIVERED:
+        initialConvo = initialConversations?.find((conversation, i) => {
+          const { _id } = conversation;
+
+          if (message?.conversation_id === _id) {
+            indexOfInitial = i;
+            return true;
+          }
+          return false;
+        });
+
+        if (initialConvo) {
+          const last_message = (produce(
+            { ...initialConvo.last_message, ...message },
+            (draft: Partial<APIMessageResponse>) => {
+              const { delivered_to, seen_by, deleted } = message;
+
+              draft.timestamp_id = undefined;
+              draft.delivered_to = delivered_to
+                ? Array.isArray(delivered_to)
+                  ? [...delivered_to]
+                  : [delivered_to]
+                : draft.delivered_to;
+
+              draft.seen_by = seen_by
+                ? Array.isArray(seen_by)
+                  ? [...seen_by]
+                  : [seen_by]
+                : draft.seen_by;
+
+              draft.deleted = deleted !== undefined ? deleted : false;
+            }
+          ) as unknown) as APIMessageResponse;
+
+          initialConvo.last_message = { ...last_message };
+          
+          if (pipe === CHAT_NEW_MESSAGE) {
+            initialConversations.splice(indexOfInitial, 1);
+            initialConversations.unshift(initialConvo);
+          } else {
+            initialConversations[indexOfInitial] = initialConvo;
+          }
+
+          payload.data = initialConversations;
+        }
+        break;
+    }
+  } else if (_payload.data) {
+    payload.data = [..._payload.data];
+  }
+
   return {
     type: SET_CONVERSATIONS,
     payload
@@ -213,7 +303,7 @@ export const getConversationInfo = (
           conversationInfo({
             status: 'fulfilled',
             err: false,
-            isOnline: !!online_status,
+            online_status,
             conversationId,
             data: { ...conversationData }
           })
@@ -223,7 +313,7 @@ export const getConversationInfo = (
           conversationInfo({
             status: 'fulfilled',
             err: true,
-            isOnline: !!online_status,
+            online_status,
             conversationId,
             data: {}
           })
@@ -353,9 +443,8 @@ export const conversationMessages = (payload: ConversationMessages) => {
             return false;
           }) ?? null;
 
-        delete newMessage.timestamp_id;
-
         if (initialMessage) {
+          delete newMessage.timestamp_id;
           previousMessages[indexOfInitial] = newMessage;
         } else {
           if (

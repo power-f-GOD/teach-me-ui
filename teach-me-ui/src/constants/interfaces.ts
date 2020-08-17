@@ -261,7 +261,7 @@ export interface UserData {
   level: string;
   email?: string;
   date_of_birth?: string;
-  online_status?: boolean;
+  online_status?: OnlineStatus;
   username: string;
 }
 
@@ -309,7 +309,7 @@ export interface ConversationMessages extends Omit<SearchState, 'data'> {
 
 export interface ConversationInfo extends Omit<SearchState, 'data'> {
   user_typing?: string;
-  isOnline?: boolean;
+  online_status?: OnlineStatus;
   conversationId?: string;
   data?: Partial<Omit<UserData, 'token'> & APIConversationResponse>;
 }
@@ -330,6 +330,8 @@ export interface APIMessageResponse {
   user_id?: string;
 }
 
+export type OnlineStatus = 'ONLINE' | 'AWAY' | 'OFFLINE';
+
 export interface APIConversationResponse {
   avatar?: string;
   participants: string[];
@@ -341,8 +343,11 @@ export interface APIConversationResponse {
   __v: number;
   last_message: APIMessageResponse;
   friendship: string;
+  online_status: OnlineStatus;
+  last_seen: number;
   conversation_name: string;
   associated_username: string;
+  associated_user_id: string;
 }
 
 export interface NotificationState extends StatusPropsState {
