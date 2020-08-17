@@ -380,7 +380,9 @@ export const verifyAuth = () => (dispatch: Function): ReduxAction => {
     : null;
 
   if (userData?.token) {
-    populateStateWithUserData({ ...userData }).then(() => {
+    populateStateWithUserData({
+      ...userData
+    }).then(() => {
       dispatch(auth({ status: 'fulfilled', isAuthenticated: true }));
       dispatch(signin({ status: 'fulfilled', err: false }));
     });

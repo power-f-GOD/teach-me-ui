@@ -65,7 +65,7 @@ export const conversationsMessages = (
 };
 
 export const conversationInfo = (
-  state: ConversationInfo = { ...statusPropsState, isOnline: false, data: {} },
+  state: ConversationInfo = { ...statusPropsState, online_status: 'OFFLINE', data: {} },
   action: ReduxAction
 ): ConversationInfo => {
   if (action.type === SET_CONVERSATION_INFO) {

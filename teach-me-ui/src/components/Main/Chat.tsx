@@ -25,21 +25,11 @@ import {
   ConversationInfo,
   UserData,
   SearchState,
-  APIConversationResponse,
-  APIMessageResponse
+  APIConversationResponse
 } from '../../constants/interfaces';
-import {
-  CHAT_NEW_MESSAGE,
-  CHAT_MESSAGE_DELIVERED,
-  CHAT_TYPING,
-  CHAT_READ_RECEIPT,
-  CHAT_MESSAGE_DELETED,
-  CHAT_MESSAGE_DELETED_FOR
-} from '../../constants/chat';
 import ChatLeftPane from './Chat.LeftPane';
 import ChatMiddlePane from './Chat.MiddlePane';
 import ChatRightPane from './Chat.RightPane';
-import { ONLINE_STATUS } from '../../constants';
 import createMemo from '../../Memo';
 
 export const placeHolderDisplayName = 'Start a new Conversation';
@@ -54,8 +44,6 @@ interface ChatBoxProps {
   webSocket: WebSocket;
   [key: string]: any;
 }
-
-let userTypingTimeout: any = null;
 
 const chatBoxWrapperRef = createRef<any>();
 
@@ -258,114 +246,6 @@ const ChatBox = (props: ChatBoxProps) => {
     isOpen,
     _conversationMessages.status
   ]);
-
-  useEffect(() => {
-    if (socket) {
-      socket.onmessage = (e: any) => {
-        const cid = queryString.parse(window.location.search).cid;
-        const message = JSON.parse(e.data) as APIMessageResponse &
-          UserData & { status: string };
-        const {
-          pipe,
-          delivered_to,
-          conversation_id,
-          _id,
-          sender_id,
-          user_id,
-          seen_by,
-          deleted,
-          online_status
-        } = message;
-
-        switch (pipe) {
-          case CHAT_NEW_MESSAGE:
-            if (sender_id !== userData.id) {
-              if (delivered_to && !delivered_to!?.includes(userData.id)) {
-                socket.send(
-                  JSON.stringify({
-                    message_id: _id,
-                    pipe: CHAT_MESSAGE_DELIVERED
-                  })
-                );
-              }
-
-              if (
-                isOpen &&
-                !isMinimized &&
-                cid === conversation_id &&
-                seen_by &&
-                !seen_by!?.includes(userData.id)
-              ) {
-                socket.send(
-                  JSON.stringify({
-                    message_id: message._id,
-                    pipe: CHAT_READ_RECEIPT
-                  })
-                );
-              }
-            }
-
-            if (convoId && conversation_id === cid) {
-              dispatch(conversationMessages({ data: [{ ...message }] }));
-            }
-            break;
-          case CHAT_MESSAGE_DELIVERED:
-            if (delivered_to && convoId && conversation_id === cid) {
-              const deliveeId: any = delivered_to;
-
-              dispatch(
-                conversationMessages({
-                  pipe: CHAT_MESSAGE_DELIVERED,
-                  data: [{ delivered_to: [deliveeId], _id }]
-                })
-              );
-            }
-            break;
-          case CHAT_READ_RECEIPT:
-            if (seen_by && convoId && conversation_id === cid) {
-              const seerId: any = seen_by;
-
-              dispatch(
-                conversationMessages({
-                  pipe: CHAT_READ_RECEIPT,
-                  data: [{ seen_by: [seerId], _id }]
-                })
-              );
-            }
-            break;
-          case CHAT_TYPING:
-            clearTimeout(userTypingTimeout);
-
-            if (user_id && cid === conversation_id) {
-              dispatch(conversationInfo({ user_typing: user_id }));
-              userTypingTimeout = window.setTimeout(() => {
-                dispatch(conversationInfo({ user_typing: '' }));
-              }, 1000);
-            }
-            break;
-          case CHAT_MESSAGE_DELETED:
-          case CHAT_MESSAGE_DELETED_FOR:
-            if (deleted && convoId && conversation_id === cid) {
-              dispatch(
-                conversationMessages({
-                  pipe:
-                    pipe === CHAT_MESSAGE_DELETED
-                      ? CHAT_MESSAGE_DELETED
-                      : CHAT_MESSAGE_DELETED_FOR,
-                  data: [{ deleted: true, _id }]
-                })
-              );
-            }
-            break;
-          case ONLINE_STATUS:
-            if (user_id && cid === conversation_id) {
-              dispatch(conversationInfo({ isOnline: !!online_status }));
-            }
-            break;
-        }
-      };
-    }
-  }, [socket, convoId, userData.id, isMinimized, isOpen]);
 
   return (
     <Container fluid className='ChatBox p-0'>

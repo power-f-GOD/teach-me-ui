@@ -4,7 +4,8 @@ import {
   BasicInputState,
   UserData,
   NetworkAction,
-  Reaction
+  Reaction,
+  ONLINE_STATUS
 } from '../constants';
 
 import store from '../appStore';
@@ -136,7 +137,26 @@ export function callNetworkStatusCheckerFor(action: NetworkAction) {
 export async function populateStateWithUserData(
   data: UserData
 ): Promise<ReduxAction> {
-  return await promisedDispatch(setUserData({ ...data }));
+  setTimeout(() => {
+    const socket = getState().webSocket as WebSocket;
+
+    if (socket && socket.readyState === 1) {
+      socket.send(
+        JSON.stringify({
+          online_status:
+            document.visibilityState === 'visible' ? 'ONLINE' : 'AWAY',
+          pipe: ONLINE_STATUS
+        })
+      );
+    }
+  }, 2000);
+
+  return await promisedDispatch(
+    setUserData({
+      ...data,
+      online_status: document.visibilityState === 'visible' ? 'ONLINE' : 'AWAY'
+    })
+  );
 }
 
 export const logError = (action: Function) => (error: any) => {

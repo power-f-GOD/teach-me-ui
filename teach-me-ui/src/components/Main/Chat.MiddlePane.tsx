@@ -28,21 +28,18 @@ import {
 } from '../../constants/interfaces';
 import createMemo from '../../Memo';
 import { userDeviceIsMobile } from '../../';
-import {
-  chatState,
-  conversationMessages,
-  getConversationInfo
-} from '../../actions/chat';
+import { chatState, conversationMessages } from '../../actions/chat';
 import {
   dispatch,
   delay,
   interval,
   preventEnterNewLine,
   formatMapDateString,
-  timestampFormatter
+  timestampFormatter,
+  getState
 } from '../../functions/utils';
 import { placeHolderDisplayName } from './Chat';
-import { displaySnackbar, initWebSocket } from '../../actions';
+import { displaySnackbar, initWebSocket, setUserData } from '../../actions';
 import {
   CHAT_TYPING,
   CHAT_MESSAGE_DELETED,
@@ -56,21 +53,7 @@ import ConfirmDialog, {
   SelectedMessageValue,
   ActionChoice
 } from './Chat.crumbs';
-import { conversationInfo } from '../../actions/chat';
-
-const Memoize = createMemo();
-
-document.addEventListener('visibilitychange', () => {
-  const id = queryString.parse(window.location.search)?.id;
-
-  if (id) {
-    if (document.visibilityState === 'visible') {
-      dispatch(getConversationInfo(id)(dispatch));
-    } else if (false) {
-      dispatch(conversationInfo({ isOnline: false }));
-    }
-  }
-});
+import { ONLINE_STATUS } from '../../constants';
 
 interface ChatMiddlePaneProps {
   conversation: APIConversationResponse;
@@ -80,6 +63,43 @@ interface ChatMiddlePaneProps {
   conversationInfo: ConversationInfo;
   webSocket: WebSocket;
 }
+
+const Memoize = createMemo();
+
+let renderAwayDateTimeout: any;
+let docIsVisible = document.visibilityState === 'visible';
+
+let _canDisplayAwayDate = false;
+
+const displayAwayDate = () => {
+  renderAwayDateTimeout = setTimeout(() => {
+    _canDisplayAwayDate = true;
+  }, 300000);
+};
+
+document.addEventListener('visibilitychange', () => {
+  const { id } = queryString.parse(window.location.search) ?? {};
+  const socket = getState().webSocket as WebSocket;
+  const userData = getState().userData as UserData;
+  docIsVisible = document.visibilityState === 'visible';
+
+  if (id) {
+    if (socket && socket.readyState === 1) {
+      socket.send(
+        JSON.stringify({
+          online_status: docIsVisible ? 'ONLINE' : 'AWAY',
+          pipe: ONLINE_STATUS
+        })
+      );
+      dispatch(
+        setUserData({
+          ...userData,
+          online_status: docIsVisible ? 'ONLINE' : 'AWAY'
+        })
+      );
+    }
+  }
+});
 
 const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   const msgBoxRef = useRef<HTMLInputElement | null>(null);
@@ -96,7 +116,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   const convoMessages = _conversationMessages.data as Partial<
     APIMessageResponse
   >[];
-  const { isOnline, data } = _conversationInfo;
+  const { online_status, data } = _conversationInfo;
   const [lastSeenDate, lastSeenTime] = [
     formatMapDateString(data?.last_seen as number),
     timestampFormatter(data?.last_seen)
@@ -130,6 +150,16 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   );
 
   const numOfSelectedMessages = Object.keys(selectedMessages).length;
+  const canDisplayAwayDate = _canDisplayAwayDate;
+  const lastAwayDate = `away ${
+    canDisplayAwayDate
+      ? 'since ' + lastSeenTime.toLowerCase() + ', ' + lastSeenDate
+      : ''
+  }`;
+  const lastOnlineDate = `last seen ${lastSeenDate} at ${lastSeenTime.replace(
+    ' ',
+    ''
+  )}`;
 
   const displayConnectInfoThenReconnect = useCallback(() => {
     dispatch(
@@ -199,7 +229,8 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
       timestamp_id: String(Date.now()),
       pipe: 'CHAT_NEW_MESSAGE',
       date: Date.now(),
-      conversation_id: convoId
+      conversation_id: convoId,
+      _id: 'ddd'
     } as APIMessageResponse;
 
     if (!msg.message) {
@@ -259,7 +290,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
       }
 
       if (e.target.scrollHeight > msgBoxInitHeight) {
-        setMsgBoxRowsMax(msgBoxRowsMax < 6 ? msgBoxRowsMax + 1 : msgBoxRowsMax);
+        setMsgBoxRowsMax(msgBoxRowsMax < 7 ? msgBoxRowsMax + 1 : msgBoxRowsMax);
       }
 
       setScrollViewElevation(`calc(${elevation}px - ${remValue}rem)`);
@@ -360,33 +391,41 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   ]);
 
   useEffect(() => {
-    if (!!convoMessages[0] && isOnline) {
+    if (online_status === 'ONLINE') {
+      clearTimeout(renderAwayDateTimeout);
+      _canDisplayAwayDate = false;
+    } else displayAwayDate();
+  }, [online_status, canDisplayAwayDate]);
+
+  useEffect(() => {
+    if (!!convoMessages[0] && userData.online_status === 'ONLINE') {
       const isSameCid =
         convoId === queryString.parse(window.location.search)?.cid;
       const userId = userData.id;
 
       for (const message of convoMessages) {
-        if (userId === message.sender_id || message.seen_by?.includes(userId)) {
+        const isSeen = message.seen_by?.includes(userId);
+
+        if (!message.sender_id || userId === message.sender_id || isSeen) {
           continue;
         }
 
         try {
-          if (socket && socket.readyState === 1) {
-            if (isSameCid) {
-              if (isOpen) {
-                socket.send(
-                  JSON.stringify({
-                    message_id: message._id,
-                    pipe: isMinimized
+          if (socket && socket.readyState === 1 && isSameCid) {
+            if (isOpen) {
+              const isDelivered = message.delivered_to?.includes(userId);
+
+              socket.send(
+                JSON.stringify({
+                  message_id: message._id,
+                  pipe:
+                    isMinimized && !isDelivered
                       ? CHAT_MESSAGE_DELIVERED
                       : CHAT_READ_RECEIPT
-                  })
-                );
-              } else continue;
-            } else break;
-          } else {
-            break;
-          }
+                })
+              );
+            } else continue;
+          } else break;
         } catch (e) {
           displaySocketErrInfo(e);
           break;
@@ -396,9 +435,10 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   }, [
     convoId,
     userData.id,
+    userData.online_status,
     convoMessages,
     isOpen,
-    isOnline,
+    online_status,
     isMinimized,
     socket,
     displaySocketErrInfo
@@ -443,7 +483,10 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         memoizedComponent={Col}
         as='header'
         className='chat-header d-flex p-0'>
-        <Box className={`title-control-wrapper d-flex ${numOfSelectedMessages ? 'hide' : ''}`}>
+        <Box
+          className={`title-control-wrapper d-flex ${
+            numOfSelectedMessages ? 'hide' : ''
+          }`}>
           <Col as='span' className='colleague-name'>
             {type === 'ONE_TO_ONE' ? (
               <>
@@ -453,8 +496,8 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
                     horizontal: 'right'
                   }}
                   className={`online-badge ${
-                    _conversationInfo.status === 'fulfilled' && isOnline
-                      ? 'online'
+                    _conversationInfo.status === 'fulfilled'
+                      ? online_status?.toLowerCase()
                       : 'offline'
                   }`}
                   overlap='circle'
@@ -483,13 +526,12 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
                     } p-0`}>
                     {_conversationInfo.user_typing
                       ? 'typing...'
-                      : isOnline
+                      : online_status === 'ONLINE'
                       ? 'online'
+                      : online_status === 'AWAY'
+                      ? lastAwayDate
                       : lastSeenDate
-                      ? 'last seen ' +
-                        lastSeenDate +
-                        ' at ' +
-                        lastSeenTime.replace(' ', '')
+                      ? lastOnlineDate
                       : 'last seen unknown'}
                   </Col>
                 </Col>

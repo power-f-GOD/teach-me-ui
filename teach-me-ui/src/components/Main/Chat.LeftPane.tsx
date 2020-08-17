@@ -59,18 +59,18 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
   };
 
   const handleChatClick = useCallback(
-    (chatInfo: ChatState, extra: { convoId: string; username: string }) => {
+    (chatInfo: ChatState, extra: { convoId: string; userId: string }) => {
       return (e: any) => {
         const { id, cid } = queryString.parse(window.location.search);
-        const { convoId, username } = extra;
+        const { convoId, userId } = extra;
 
-        if (cid === convoId || username === id) {
+        if (cid === convoId || userId === id) {
           e.preventDefault();
           return;
         }
 
         dispatch(conversationInfo({ user_typing: '' }));
-        dispatch(getConversationInfo(username)(dispatch));
+        dispatch(getConversationInfo(userId)(dispatch));
         dispatch(getConversationMessages(convoId)(dispatch));
         dispatch(chatState(chatInfo));
         dispatch(conversation(convoId));
@@ -106,11 +106,12 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
             const {
               avatar,
               conversation_name: displayName,
-              associated_username: username,
+              associated_user_id: userId,
               _id: convoId,
               last_message,
               friendship,
-              participants
+              participants,
+              online_status
             } = conversation;
             const lastMessageTimestamp = last_message?.date ?? Date.now();
             const lastMessageDate = new Date(
@@ -128,7 +129,7 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
               ) /
                 864e5 ===
               1;
-            const _queryString = `${pathname}?chat=open&id=${username}&cid=${convoId}`;
+            const _queryString = `${pathname}?chat=open&id=${userId}&cid=${convoId}`;
             const _chatState: ChatState = {
               isOpen: true,
               isMinimized: false,
@@ -150,7 +151,7 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
                 }
                 onClick={handleChatClick(
                   { ..._chatState },
-                  { convoId: String(convoId), username: String(username) }
+                  { convoId: String(convoId), userId: String(userId) }
                 )}>
                 <Col className='colleague-name'>
                   <Badge
@@ -158,7 +159,7 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
                       vertical: 'bottom',
                       horizontal: 'right'
                     }}
-                    className='offline'
+                    className={online_status?.toLowerCase() ?? 'offline'}
                     overlap='circle'
                     variant='dot'>
                     <Avatar
@@ -168,7 +169,7 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
                       src={`/images/${avatar ?? 'avatar-1.png'}`}
                     />
                   </Badge>{' '}
-                  <Box width='100%' maxWidth='calc(100% - 2.75rem)'>
+                  <Box width='100%' maxWidth='calc(100% - 3.25rem)'>
                     <Box className='display-name-wrapper'>
                       <Box className='display-name'>{displayName}</Box>
                       <ChatTimestamp
