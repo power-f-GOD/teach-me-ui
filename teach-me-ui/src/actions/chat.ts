@@ -1,5 +1,6 @@
 import axios from 'axios';
 import produce from 'immer';
+import queryString from 'query-string';
 
 import {
   ReduxAction,
@@ -126,14 +127,21 @@ export const conversations = (_payload: SearchState): ReduxAction => {
   const { pipe, online_status, user_id, last_seen } =
     (payload.data ?? [])[0] ?? {};
   const message = (payload.data ?? [])[0] ?? ({} as APIMessageResponse);
-  const [initialConversations] = [
-    (getState().conversations.data ?? []) as Partial<APIConversationResponse>[]
+  const [initialConversations, conversationInfo, conversationMessages] = [
+    (getState().conversations.data ?? []) as Partial<APIConversationResponse>[],
+    getState().conversationInfo as ConversationInfo,
+    getState().conversationMessages.data as ConversationMessages['data']
   ];
+  let indexOfInitial = -1;
+  let initialConvo = {} as
+    | Partial<
+        APIConversationResponse & {
+          last_message: APIMessageResponse & { is_recent?: boolean };
+        }
+      >
+    | undefined;
 
   if (pipe && !!initialConversations[0]) {
-    let indexOfInitial = -1;
-    let initialConvo = {} as Partial<APIConversationResponse> | undefined;
-
     switch (pipe) {
       case ONLINE_STATUS:
         initialConvo = initialConversations?.find((conversation, i) => {
@@ -154,15 +162,16 @@ export const conversations = (_payload: SearchState): ReduxAction => {
           payload.data = initialConversations;
         }
         break;
+      case 'CHAT_TYPING':
+        console.log('the view error:', _payload.data);
+        break;
       case CHAT_NEW_MESSAGE:
       case CHAT_READ_RECEIPT:
       case CHAT_MESSAGE_DELETED:
       case CHAT_MESSAGE_DELETED_FOR:
       case CHAT_MESSAGE_DELIVERED:
         initialConvo = initialConversations?.find((conversation, i) => {
-          const { _id } = conversation;
-
-          if (message?.conversation_id === _id) {
+          if (message?.conversation_id === conversation._id) {
             indexOfInitial = i;
             return true;
           }
@@ -192,18 +201,50 @@ export const conversations = (_payload: SearchState): ReduxAction => {
             }
           ) as unknown) as APIMessageResponse;
 
-          initialConvo.last_message = { ...last_message };
-          
           if (pipe === CHAT_NEW_MESSAGE) {
+            initialConvo.last_message = { ...last_message };
+            initialConvo.last_message.is_recent = true;
             initialConversations.splice(indexOfInitial, 1);
             initialConversations.unshift(initialConvo);
           } else {
-            initialConversations[indexOfInitial] = initialConvo;
+            const [id, convoId] = [
+              queryString.parse(window.location.search)?.id,
+              conversationInfo.data?.id
+            ];
+
+            if (
+              initialConvo.last_message?._id === message._id &&
+              pipe === CHAT_MESSAGE_DELETED_FOR
+            ) {
+              if (convoId === id && convoId) {
+                const last_message = conversationMessages?.slice(-2)[0];
+                initialConvo.last_message = last_message as any;
+              }
+            } else if (initialConvo.last_message?._id === message._id) {
+              initialConvo.last_message = { ...last_message };
+              initialConversations[indexOfInitial] = initialConvo;
+            }
           }
 
           payload.data = initialConversations;
         }
         break;
+    }
+  } else if (_payload.data?.length === 1) {
+    initialConvo = initialConversations?.find((conversation, i) => {
+      if (user_id === conversation.associated_user_id) {
+        indexOfInitial = i;
+        return true;
+      }
+      return false;
+    });
+
+    if (initialConvo) {
+      initialConvo = { ...initialConvo, ...message };
+      initialConversations[indexOfInitial] = initialConvo as Partial<
+        APIConversationResponse
+      >;
+      payload.data = initialConversations;
     }
   } else if (_payload.data) {
     payload.data = [..._payload.data];
@@ -460,7 +501,7 @@ export const conversationMessages = (payload: ConversationMessages) => {
     } else {
       previousMessages = [...(payload.data ?? [])];
     }
-  } else if (payload.data) {
+  } else if (payload.data?.length) {
     const msg_id = payload.data![0]._id;
     let indexOfInitial = -1;
     let initialMessage =
@@ -509,7 +550,10 @@ export const conversationMessages = (payload: ConversationMessages) => {
 
   return {
     type: SET_CONVERSATION_MESSAGES,
-    payload: { ...payload, data: [...previousMessages] }
+    payload: {
+      ...payload,
+      data: [...(payload.data?.length ? previousMessages : [])]
+    }
   };
 };
 

@@ -8,12 +8,16 @@ import Avatar from '@material-ui/core/Avatar';
 import SchoolIcon from '@material-ui/icons/School';
 
 import { ONE_TO_ONE } from '../../constants/chat';
-import { APIConversationResponse, UserData } from '../../constants/interfaces';
+import {
+  APIConversationResponse,
+  UserData,
+  ConversationInfo
+} from '../../constants/interfaces';
 import { InfoCard } from '../crumbs/Cards';
 
 interface ChatRightPaneProps {
   conversation: APIConversationResponse;
-  convoInfo: Omit<UserData, 'token'>;
+  convoInfo: ConversationInfo;
 }
 
 const ChatRightPane = ({ conversation, convoInfo }: ChatRightPaneProps) => {
@@ -23,8 +27,9 @@ const ChatRightPane = ({ conversation, convoInfo }: ChatRightPaneProps) => {
     avatar,
     associated_username: username
   } = conversation;
-  const { institution, department, level }: Omit<UserData, 'token'> = convoInfo;
-  // console.log('convoInfo:', convoInfo, 'conversation:', conversation);
+  const { data, err } = convoInfo;
+  const { institution, department, level } = data as UserData;
+
   return (
     <>
       <Col
@@ -54,21 +59,23 @@ const ChatRightPane = ({ conversation, convoInfo }: ChatRightPaneProps) => {
               </Col>
             </Col>
           </Row>
-          <InfoCard
-            title='Academic Info'
-            icon={SchoolIcon}
-            data={[
-              {
-                name: 'institution',
-                value: institution as string
-              },
-              { name: 'department', value: department as string },
-              { name: 'level', value: level as string }
-            ]}
-            bgcolor='#fff'
-            boxShadow='none'
-            padding='0.25rem'
-          />
+          {!err && (
+            <InfoCard
+              title='Academic Info'
+              icon={SchoolIcon}
+              data={[
+                {
+                  name: 'institution',
+                  value: institution as string
+                },
+                { name: 'department', value: department as string },
+                { name: 'level', value: level as string }
+              ]}
+              bgcolor='#fff'
+              boxShadow='none'
+              padding='0.25rem'
+            />
+          )}
         </Container>
       ) : (
         ''

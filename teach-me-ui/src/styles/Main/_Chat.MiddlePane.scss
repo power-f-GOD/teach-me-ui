@@ -140,6 +140,7 @@ $msg-radius: 1.25rem;
         border-top-color: $theme-secondary-v7;
       }
     }
+
     &.incoming .msg-wrapper {
       background-color: $theme-tertiary-v7;
 
@@ -238,6 +239,14 @@ $msg-radius: 1.25rem;
             border-top-color: $theme-tertiary-v9;
           }
         }
+
+        &:focus {
+          .msg-wrapper {
+            &::before {
+              border-top-color: $theme-tertiary-v7;
+            }
+          }
+        }
       }
     }
   }
@@ -300,6 +309,14 @@ $msg-radius: 1.25rem;
         .msg-wrapper {
           &::before {
             border-top-color: $theme-secondary-v9;
+          }
+        }
+
+        &:focus {
+          .msg-wrapper {
+            &::before {
+              border-top-color: $theme-secondary-v7;
+            }
           }
         }
       }

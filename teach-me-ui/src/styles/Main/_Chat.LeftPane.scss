@@ -1,4 +1,4 @@
-$convo-spacer: 0.2rem;
+$convo-spacer: 0.15rem;
 $avatar-size: 2.75rem;
 
 .chat-left-pane {
@@ -56,6 +56,7 @@ $avatar-size: 2.75rem;
   padding: $convo-spacer;
   max-height: calc(100vh - #{$chat-header-min-height});
   overflow-y: auto;
+  transition: 0.35s;
 }
 
 .tab-link {
@@ -96,6 +97,42 @@ $avatar-size: 2.75rem;
     width: $avatar-size;
   }
 
+  .colleague-name {
+    animation: reorder 0.5s;
+  }
+
+  &.recent {
+    .colleague-name {
+      animation: reorderRecent 5s;
+    }
+  }
+
+  @keyframes reorder {
+    from {
+      transform: translateY(-100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes reorderRecent {
+    0% {
+      opacity: 0;
+      color: white;
+      background-color: $theme-secondary-v5;
+      transform: translateY(100%);
+    }
+    10% {
+      opacity: 1;
+      transform: translateY(0%);
+    }
+    100% {
+      color: #bbb;
+      background-color: $theme-primary-v3;
+    }
+  }
+
   &:hover,
   &:focus {
     .colleague-name {
@@ -114,7 +151,7 @@ $avatar-size: 2.75rem;
 
   &.active {
     .colleague-name {
-      background-color: $theme-primary-v5;
+      background-color: $theme-primary-v5 !important;
       color: white;
 
       .MuiBadge-dot {
@@ -134,7 +171,7 @@ $avatar-size: 2.75rem;
   .colleague-name {
     padding: 0.75rem 0.5rem;
     transition: 0.35s;
-    border-radius: $convo-spacer + .15rem;
+    border-radius: $convo-spacer + 0.05rem;
     background: $theme-primary-v3;
 
     .MuiBadge-dot {

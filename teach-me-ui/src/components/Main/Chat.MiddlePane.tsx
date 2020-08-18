@@ -28,18 +28,17 @@ import {
 } from '../../constants/interfaces';
 import createMemo from '../../Memo';
 import { userDeviceIsMobile } from '../../';
-import { chatState, conversationMessages } from '../../actions/chat';
+import { chatState, conversationMessages, conversationInfo } from '../../actions/chat';
 import {
   dispatch,
   delay,
   interval,
   preventEnterNewLine,
   formatMapDateString,
-  timestampFormatter,
-  getState
+  timestampFormatter
 } from '../../functions/utils';
 import { placeHolderDisplayName } from './Chat';
-import { displaySnackbar, initWebSocket, setUserData } from '../../actions';
+import { displaySnackbar, initWebSocket } from '../../actions';
 import {
   CHAT_TYPING,
   CHAT_MESSAGE_DELETED,
@@ -53,7 +52,6 @@ import ConfirmDialog, {
   SelectedMessageValue,
   ActionChoice
 } from './Chat.crumbs';
-import { ONLINE_STATUS } from '../../constants';
 
 interface ChatMiddlePaneProps {
   conversation: APIConversationResponse;
@@ -67,39 +65,15 @@ interface ChatMiddlePaneProps {
 const Memoize = createMemo();
 
 let renderAwayDateTimeout: any;
-let docIsVisible = document.visibilityState === 'visible';
 
 let _canDisplayAwayDate = false;
 
 const displayAwayDate = () => {
   renderAwayDateTimeout = setTimeout(() => {
     _canDisplayAwayDate = true;
-  }, 300000);
+    dispatch(conversationInfo({user_typing: ''}))
+  }, 180000);
 };
-
-document.addEventListener('visibilitychange', () => {
-  const { id } = queryString.parse(window.location.search) ?? {};
-  const socket = getState().webSocket as WebSocket;
-  const userData = getState().userData as UserData;
-  docIsVisible = document.visibilityState === 'visible';
-
-  if (id) {
-    if (socket && socket.readyState === 1) {
-      socket.send(
-        JSON.stringify({
-          online_status: docIsVisible ? 'ONLINE' : 'AWAY',
-          pipe: ONLINE_STATUS
-        })
-      );
-      dispatch(
-        setUserData({
-          ...userData,
-          online_status: docIsVisible ? 'ONLINE' : 'AWAY'
-        })
-      );
-    }
-  }
-});
 
 const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   const msgBoxRef = useRef<HTMLInputElement | null>(null);
@@ -391,6 +365,12 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   ]);
 
   useEffect(() => {
+    if (convoId && msgBoxRef.current) {
+      msgBoxRef.current.value = '';
+    }
+  }, [convoId, msgBoxRef]);
+
+  useEffect(() => {
     if (online_status === 'ONLINE') {
       clearTimeout(renderAwayDateTimeout);
       _canDisplayAwayDate = false;
@@ -615,7 +595,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         as='section'
         className='chat-scroll-view custom-scroll-bar grey-scrollbar'
         style={{ marginBottom: scrollViewElevation }}>
-        {!!convoMessages[0] && _conversationMessages.status === 'fulfilled' ? (
+        {!!convoMessages[0] && _conversationMessages.status !== 'pending' ? (
           convoMessages.map((message, key: number) => {
             const { sender_id, date, delivered_to, deleted, seen_by } = message;
             const prevDate = new Date(
@@ -690,9 +670,15 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
             !convoMessages[0] ? (
               `Start a new conversation with your new colleague, ${displayName}.`
             ) : conversation._id ? (
-              <Box component='span' fontSize='3rem'>
-                . . .
-              </Box>
+              !window.navigator.onLine ? (
+                <Box component='div' fontSize='1.2rem' textAlign='center'>
+                  Something went wrong. You seem to be offline.
+                </Box>
+              ) : (
+                <Box component='span' fontSize='3rem'>
+                  . . .
+                </Box>
+              )
             ) : (
               'Start a new conversation.'
             )}

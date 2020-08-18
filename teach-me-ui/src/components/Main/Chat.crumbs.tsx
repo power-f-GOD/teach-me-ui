@@ -64,8 +64,7 @@ export const Message = (props: {
 
   const handleSelectMessageForEnterPress = useCallback(
     (e: any) => {
-      if (e.key === 'Enter')
-        handleSelectMessage();
+      if (e.key === 'Enter') handleSelectMessage();
     },
     [handleSelectMessage]
   );
@@ -115,8 +114,7 @@ export const Message = (props: {
               </>
             ) : (
               <>
-                <BlockIcon fontSize='inherit' /> User changed their mind about
-                message
+                <BlockIcon fontSize='inherit' /> You can't see this message
               </>
             )
           ) : (
