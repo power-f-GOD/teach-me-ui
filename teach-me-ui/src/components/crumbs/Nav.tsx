@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
 import AppBar from '@material-ui/core/AppBar';
@@ -16,10 +16,13 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 import InfoRoundedIcon from '@material-ui/icons/InfoRounded';
 import HelpRoundedIcon from '@material-ui/icons/HelpRounded';
+import Badge from '@material-ui/core/Badge';
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 
 import { handleSignoutRequest, getState } from '../../functions';
 import { UserData } from '../../constants';
+import { dispatch } from '../../appStore';
+import { getNotificationsRequest } from '../../actions';
 
 const Nav = (props: any) => {
   const forIndexPage = /index/i.test(props.for);
@@ -79,6 +82,10 @@ function IndexNav(props: any) {
 
 function MainNav(props: any) {
   const username = (getState().userData as UserData).username;
+  useEffect(() => {
+    dispatch(getNotificationsRequest(Date.now())(dispatch));
+  })
+  const noNewNotification = getState().getNotifications.data.notifications[0] ? getState().getNotifications.data.notifications[0].last_seen : true
 
   return (
     <Box className={`nav-links-wrapper ${props?.className}`}>
@@ -96,9 +103,11 @@ function MainNav(props: any) {
         <AccountCircleRoundedIcon className='nav-icon' />
       </NavLink>
 
-      <NavLink to='/notifications' className='nav-link'>
-        <NotificationsIcon />
-      </NavLink>
+      <Badge color="secondary" variant="dot" invisible={noNewNotification}>
+        <NavLink to='/notifications' className='nav-link'>
+          <NotificationsIcon />
+        </NavLink>
+      </Badge>
 
       <Box component='span' marginX='1em' />
 
@@ -117,6 +126,10 @@ function MainNav(props: any) {
 
 function MainNavMenu(props: any) {
   const username = (getState().userData as UserData).username;
+  useEffect(() => {
+    dispatch(getNotificationsRequest(Date.now())(dispatch));
+  })
+  const noNewNotification = getState().getNotifications.data.notifications[0] ? getState().getNotifications.data.notifications[0].last_seen : true
 
   return (
     <Box className={`nav-links-wrapper ${props?.className}`}>
@@ -139,9 +152,11 @@ function MainNavMenu(props: any) {
           Profile
         </Box>
       </NavLink>
-
+      
       <NavLink to='/notifications' className='nav-link'>
-        <NotificationsIcon />
+        <Badge color="secondary" variant="dot" invisible={noNewNotification}>
+          <NotificationsIcon />
+        </Badge>
         <Box component='span' className='nav-label ml-3'>
           Notifications
         </Box>

@@ -12,7 +12,11 @@ import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import ListItem from '@material-ui/core/ListItem';
 
-import { dispatch, formatDate, formatNotification } from '../../functions/utils';
+import { 
+  dispatch, 
+  formatDate, 
+  formatNotification 
+} from '../../functions/utils';
 import { getNotificationsRequest } from '../../actions';
 
 const Notifications = (props: any) => {
@@ -65,7 +69,7 @@ const Notifications = (props: any) => {
                         <p style="margin: 0 ; padding: 0; border: 0;color: ${dateColor}">${notificationDate}</p></div>`;
                     
                       return (
-                        <Link to={`${action}`} style={{textDecoration: 'none'}}> 
+                        <Link to={`${action}`} style={{textDecoration: 'none'}} key={key}> 
                           <ListItem key={key} className='notification-result'>
                             <div style={{ color: 'black' }} className='d-flex'>
                               <Avatar
