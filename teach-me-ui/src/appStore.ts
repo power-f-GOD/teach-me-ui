@@ -11,6 +11,8 @@ const store = initStore();
 
 export const dispatch = store.dispatch as Function;
 
+export const getState = store.getState as Function;
+
 function initStore() {
   const store = createStore(reducers, composeEnhancers(applyMiddleware(thunk)));
 

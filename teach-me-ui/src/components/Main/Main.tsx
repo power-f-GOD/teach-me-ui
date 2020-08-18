@@ -91,7 +91,7 @@ document.addEventListener('visibilitychange', () => {
   const userData = getState().userData as UserData;
   let docIsVisible = document.visibilityState === 'visible';
 
-  if (socket && false) {
+  if (socket) {
     if (socket.readyState === 1) {
       socket.send(
         JSON.stringify({

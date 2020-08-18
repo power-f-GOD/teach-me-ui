@@ -501,7 +501,7 @@ export const conversationMessages = (payload: ConversationMessages) => {
     } else {
       previousMessages = [...(payload.data ?? [])];
     }
-  } else if (payload.data) {
+  } else if (payload.data?.length) {
     const msg_id = payload.data![0]._id;
     let indexOfInitial = -1;
     let initialMessage =
@@ -550,7 +550,10 @@ export const conversationMessages = (payload: ConversationMessages) => {
 
   return {
     type: SET_CONVERSATION_MESSAGES,
-    payload: { ...payload, data: [...previousMessages] }
+    payload: {
+      ...payload,
+      data: [...(payload.data?.length ? previousMessages : [])]
+    }
   };
 };
 

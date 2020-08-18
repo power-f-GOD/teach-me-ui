@@ -28,7 +28,7 @@ import {
 } from '../../constants/interfaces';
 import createMemo from '../../Memo';
 import { userDeviceIsMobile } from '../../';
-import { chatState, conversationMessages } from '../../actions/chat';
+import { chatState, conversationMessages, conversationInfo } from '../../actions/chat';
 import {
   dispatch,
   delay,
@@ -71,7 +71,8 @@ let _canDisplayAwayDate = false;
 const displayAwayDate = () => {
   renderAwayDateTimeout = setTimeout(() => {
     _canDisplayAwayDate = true;
-  }, 300000);
+    dispatch(conversationInfo({user_typing: ''}))
+  }, 180000);
 };
 
 const ChatMiddlePane = (props: ChatMiddlePaneProps) => {

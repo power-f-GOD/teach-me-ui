@@ -14,7 +14,7 @@ import ProtectedRoute from './ProtectedRoute';
 import { displaySnackbar, initWebSocket } from './actions/misc';
 import { verifyAuth } from './actions/auth';
 import createMemo from './Memo';
-import { getState, dispatch } from './functions/utils';
+import { getState, dispatch } from './appStore';
 import {
   UserData,
   ChatState,

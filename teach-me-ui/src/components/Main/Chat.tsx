@@ -57,7 +57,8 @@ window.addEventListener('popstate', () => {
     chatBoxWrapperRef.current.style.display = 'flex';
   }
 
-  if (!isNaN(cid)) {
+  if (!isNaN(cid) || cid === '0') {
+    
     dispatch(conversationInfo({ status: 'settled', data: {} }));
     dispatch(conversation(''));
     dispatch(conversationMessages({ status: 'settled', data: [] }));

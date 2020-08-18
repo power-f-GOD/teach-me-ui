@@ -103,7 +103,7 @@ $avatar-size: 2.75rem;
 
   &.recent {
     .colleague-name {
-      animation: reorderRecent 0.5s;
+      animation: reorderRecent 5s;
     }
   }
 
@@ -117,13 +117,19 @@ $avatar-size: 2.75rem;
   }
 
   @keyframes reorderRecent {
-    from {
+    0% {
       opacity: 0;
+      color: white;
+      background-color: $theme-secondary-v5;
       transform: translateY(100%);
     }
-    to {
+    10% {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateY(0%);
+    }
+    100% {
+      color: #bbb;
+      background-color: $theme-primary-v3;
     }
   }
 
@@ -145,7 +151,7 @@ $avatar-size: 2.75rem;
 
   &.active {
     .colleague-name {
-      background-color: $theme-primary-v5;
+      background-color: $theme-primary-v5 !important;
       color: white;
 
       .MuiBadge-dot {
