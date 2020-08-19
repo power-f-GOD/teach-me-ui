@@ -13,7 +13,10 @@ export const Skeleton = (props: { type?: 'DISPLAY_INFO' | string }) => {
       return (
         <Col as='span' className='colleague-name skeleton-loader'>
           <Box component='span' className='chat-avatar mr-2' />
-          <Box component='span' className='chat-display-name'></Box>
+          <Box component='span' className='chat-display-name'>
+            <Box component='span' />
+            <Box component='span' />
+          </Box>
         </Col>
       );
     default:

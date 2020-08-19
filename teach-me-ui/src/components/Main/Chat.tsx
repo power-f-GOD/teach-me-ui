@@ -10,7 +10,7 @@ import Col from 'react-bootstrap/Col';
 import IconButton from '@material-ui/core/IconButton';
 import ChatIcon from '@material-ui/icons/Chat';
 
-import { dispatch, delay } from '../../functions';
+import { dispatch, delay, addEventListenerOnce } from '../../functions';
 import {
   chatState,
   conversationMessages,
@@ -58,7 +58,6 @@ window.addEventListener('popstate', () => {
   }
 
   if (!isNaN(cid) || cid === '0') {
-    
     dispatch(conversationInfo({ status: 'settled', data: {} }));
     dispatch(conversation(''));
     dispatch(conversationMessages({ status: 'settled', data: [] }));
@@ -86,7 +85,11 @@ const ChatBox = (props: ChatBoxProps) => {
     webSocket: socket
   } = props;
   const { isOpen, isMinimized, queryString: qString }: ChatState = _chatState;
-  const { _id: convoId, associated_username: convoUsername } = _conversation;
+  const {
+    _id: convoId,
+    associated_username: convoUsername,
+    associated_user_id: convoUid
+  } = _conversation;
 
   const [visibilityState, setVisibilityState] = React.useState<
     'visible' | 'hidden'
@@ -94,7 +97,7 @@ const ChatBox = (props: ChatBoxProps) => {
 
   const handleOpenChatClick = useCallback(() => {
     const queryString = `?chat=open&id=${
-      convoUsername ?? placeHolderDisplayName
+      convoUid ?? placeHolderDisplayName
     }&cid=${convoId ?? '0'}`;
 
     setVisibilityState('visible');
@@ -109,7 +112,7 @@ const ChatBox = (props: ChatBoxProps) => {
       );
     });
     window.history.pushState({}, '', window.location.pathname + queryString);
-  }, [convoId, convoUsername]);
+  }, [convoId, convoUid]);
 
   const handleChatTransitionEnd = useCallback(
     (e: any) => {
@@ -144,22 +147,7 @@ const ChatBox = (props: ChatBoxProps) => {
     const chatBoxWrapper = chatBoxWrapperRef.current;
 
     if (chatBoxWrapper) {
-      try {
-        chatBoxWrapper.addEventListener(
-          'transitionend',
-          handleChatTransitionEnd,
-          { once: true }
-        );
-      } catch (err) {
-        chatBoxWrapper.removeEventListener(
-          'transitionend',
-          handleChatTransitionEnd
-        );
-        chatBoxWrapper.addEventListener(
-          'transitionend',
-          handleChatTransitionEnd
-        );
-      }
+      addEventListenerOnce(chatBoxWrapper, handleChatTransitionEnd);
     }
   }, [handleChatTransitionEnd]);
 

@@ -22,7 +22,7 @@ const SnackBar = (props: any) => {
     
     setClosed(true);
     promisedDispatch(displaySnackbar({ open: false })).then(() => {
-      timeout = setTimeout(() => setClosed(false), 400);
+      timeout = setTimeout(() => setClosed(false), 500);
     });
   };
 
