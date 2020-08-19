@@ -19,7 +19,7 @@ $avatar-size: 2.75rem;
     margin-bottom: $convo-spacer;
     transition: 0.35s;
     border-radius: $convo-spacer;
-    background: rgba(0, 0, 0, 0.1);
+    background: $theme-primary-v3;
 
     &:last-child {
       margin-bottom: 0;
@@ -28,35 +28,67 @@ $avatar-size: 2.75rem;
     .chat-avatar {
       height: $avatar-size;
       width: $avatar-size;
-      background-color: $theme-primary-v1;
-      animation: chatConvoGlow 2.5s infinite;
+      background-color: $theme-primary-v2;
+      animation: chatConvoGlow 2s infinite;
     }
 
     .chat-display-name {
-      border-radius: 1rem;
       flex-grow: 1;
       max-width: 20rem;
-      height: 0.8rem;
-      background-color: $theme-primary-v1;
-      animation: chatConvoGlow 2.5s infinite;
+      height: 2.75rem;
+      animation: chatConvoGlow 2s infinite;
+
+      span {
+        display: block;
+        height: 0.8rem;
+        border-radius: 0.5rem;
+        margin: 0.35rem 0 0.45rem 0;
+        background-color: $theme-primary-v2;
+
+        &:last-child {
+          width: 70%;
+        }
+      }
     }
   }
 
   @keyframes chatConvoGlow {
     0% {
-      opacity: 0.7;
+      opacity: 0.6;
+      transform: scale(1, 1);
     }
     50% {
-      opacity: 0.2;
+      transform: scale(1, 1.25);
+      opacity: 0.9;
+    }
+    100% {
+      opacity: 0.6;
+      transform: scale(1, 1);
     }
   }
 }
 
-.tab-panel {
+.tab-panels-wrapper {
+  min-height: calc(100vh - #{$chat-header-min-height});
+}
+
+.tab-panel.custom-scroll-bar {
   padding: $convo-spacer;
+  max-width: 100%;
   max-height: calc(100vh - #{$chat-header-min-height});
   overflow-y: auto;
   transition: 0.35s;
+
+  & + .scroll-bar-fader {
+    background: $theme-primary-v2 !important;
+  }
+
+  &.hide-scroll-fader,
+  &.remove-scroll-fader {
+    & + .scroll-bar-fader {
+      z-index: -1 !important;
+    }
+  }
 }
 
 .tab-link {
@@ -98,16 +130,16 @@ $avatar-size: 2.75rem;
   }
 
   .colleague-name {
-    animation: reorder 0.5s;
+    animation: reorderConvo 0.5s;
   }
 
   &.recent {
     .colleague-name {
-      animation: reorderRecent 5s;
+      animation: reorderRecentConvo 5s;
     }
   }
 
-  @keyframes reorder {
+  @keyframes reorderConvo {
     from {
       transform: translateY(-100%);
     }
@@ -116,11 +148,11 @@ $avatar-size: 2.75rem;
     }
   }
 
-  @keyframes reorderRecent {
+  @keyframes reorderRecentConvo {
     0% {
       opacity: 0;
       color: white;
-      background-color: $theme-secondary-v5;
+      background: $theme-secondary-v5;
       transform: translateY(100%);
     }
     10% {
@@ -129,7 +161,7 @@ $avatar-size: 2.75rem;
     }
     100% {
       color: #bbb;
-      background-color: $theme-primary-v3;
+      background: $theme-primary-v3;
     }
   }
 
@@ -151,7 +183,7 @@ $avatar-size: 2.75rem;
 
   &.active {
     .colleague-name {
-      background-color: $theme-primary-v5 !important;
+      background-color: $theme-primary-v5;
       color: white;
 
       .MuiBadge-dot {

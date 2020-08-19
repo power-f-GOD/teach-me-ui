@@ -14,6 +14,7 @@ export default function misc(message: any) {
         dispatch(
           conversationInfo({
             online_status,
+            status: 'fulfilled',
             data: { ...getState().conversationInfo.data, last_seen }
           })
         );
