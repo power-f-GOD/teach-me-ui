@@ -8,15 +8,34 @@ import Box from '@material-ui/core/Box';
 
 import { TopicPropsState } from '../../constants/interfaces';
 
+import { useGetTrends } from '../../hooks/api';
+
 const RightPane: React.FunctionComponent = () => {
+  const [, trends, getTrendsIsLoading] = useGetTrends();
+  console.log(trends, getTrendsIsLoading);
   return (
     <Container className='right-pane' fluid>
-      <h4>Trending Topics</h4>
-      <ul>
-        {topics.map((topic, i) => (
-          <Topic topic={topic} key={i} numberOfDiscussions={2700} />
-        ))}
-      </ul>
+      <h4>Trending Hashtags</h4>
+      {!getTrendsIsLoading && trends !== null && (
+        <ul>
+          {trends.hashtags.map((topic: any, i: number) => (
+            <Topic
+              topic={topic.hashtag}
+              key={i}
+              numberOfDiscussions={topic.count}
+            />
+          ))}
+        </ul>
+      )}
+      {(trends === null || trends.hashtags.length === 0) && (
+        <Box
+          display='flex'
+          justifyContent='center'
+          color='#888'
+          paddingY='2rem'>
+          No trends!
+        </Box>
+      )}
     </Container>
   );
 };
@@ -29,7 +48,5 @@ const Topic: React.FunctionComponent<TopicPropsState> = (props) => {
     </Box>
   );
 };
-
-const topics = ['Physics', 'Astronomy', 'How to study'];
 
 export default RightPane;
