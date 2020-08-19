@@ -140,6 +140,8 @@ header.chat-header {
   position: relative;
   font-weight: bold;
   overflow: hidden;
+  z-index: 3;
+  background-color: white;
   min-height: $chat-header-min-height;
   max-height: $chat-header-min-height;
   box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.1);
@@ -189,26 +191,44 @@ body.desktop {
       }
 
       &::-webkit-scrollbar-track {
-        background: rgba(0, 0, 0, 0.25);
+        background: rgba(0, 0, 0, 0);
       }
 
       &::-webkit-scrollbar-thumb {
-        visibility: hidden;
+        border-radius: 0.5rem;
       }
 
       &.grey-scrollbar {
         &::-webkit-scrollbar-thumb {
-          background: #444;
+          background: #777;
         }
         *::-webkit-scrollbar-thumb {
-          background: #444;
+          background: #777;
         }
       }
 
-      &:hover,
-      &:focus {
-        &::-webkit-scrollbar-thumb {
-          visibility: visible;
+      & + .scroll-bar-fader {
+        @include before-or-after(
+          $w: 0.5rem,
+          $l: unset,
+          $r: 0,
+          $bg: white,
+          $zi: 2,
+          $t: 0
+        );
+      }
+
+      &:hover {
+        & + .scroll-bar-fader {
+          opacity: 0;
+          z-index: -1;
+        }
+      }
+
+      & + .scroll-bar-fader {
+        &:hover {
+          opacity: 0;
+          z-index: -1;
         }
       }
     }

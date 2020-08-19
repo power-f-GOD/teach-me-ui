@@ -103,7 +103,7 @@ export function callNetworkStatusCheckerFor(action: NetworkAction) {
       );
 
     callTimeoutToAbortNetworkAction(action);
-  }, 15000);
+  }, 18000);
 
   function callTimeoutToAbortNetworkAction(action: NetworkAction) {
     if (navigator.onLine && state[action.name]?.status === 'pending') {
@@ -130,7 +130,7 @@ export function callNetworkStatusCheckerFor(action: NetworkAction) {
           })
         );
       }
-    }, 15000);
+    }, 18000);
   }
 }
 
@@ -182,6 +182,35 @@ export const logError = (action: Function) => (error: any) => {
   console.error('An error occured: ', error);
 };
 
+export const addEventListenerOnce = (
+  target: HTMLElement | any,
+  callback: Function | any,
+  event?: string,
+  options?: { capture?: boolean; once?: boolean }
+) => {
+  event = event ? event : 'transitionend';
+
+  try {
+    target.addEventListener(
+      event,
+      callback,
+      options
+        ? {
+            ...(options ?? {}),
+            once: options.once !== undefined ? options.once : true
+          }
+        : { once: true }
+    );
+  } catch (err) {
+    target.removeEventListener(
+      event,
+      callback,
+      options?.capture ? true : false
+    );
+    target.addEventListener(event, callback, options?.capture ? true : false);
+  }
+};
+
 export const timestampFormatter = (
   _timestamp?: string | number,
   withSeconds?: boolean
@@ -195,8 +224,6 @@ export const timestampFormatter = (
   } else {
     timestamp = new Date().toLocaleTimeString();
   }
-
-  // let is12hour = ;
 
   if (/(a|p)m/i.test(timestamp)) {
     timestamp = timestamp.replace(/:\d\d\s?(\w)/, ' $1');

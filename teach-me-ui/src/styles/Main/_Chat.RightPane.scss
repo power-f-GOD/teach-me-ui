@@ -1,12 +1,19 @@
 .chat-right-pane {
   background-color: #eee;
   max-height: 100vh;
+  border-left: 0.15rem solid #ddd;
+
+  .chat-header {
+    background-color: inherit;
+  }
 
   .user-info-container {
     overflow-x: hidden;
 
     > section:first-child {
       position: relative;
+      z-index: 3;
+
       &::before {
         @include before-or-after(
           $bg: #ddd,
@@ -16,13 +23,11 @@
           $t: -7rem,
           $l: -1.5rem
         );
-
-        // background: {
-        //   image: url('/images/avatar-1.png');
-        //   size: cover;
-        //   position: center;
-        // };
       }
+    }
+
+    + .scroll-bar-fader {
+      background-color: #eee !important;
     }
 
     .chat-avatar {
