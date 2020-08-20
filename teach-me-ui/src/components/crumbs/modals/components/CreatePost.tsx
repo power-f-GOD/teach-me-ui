@@ -61,61 +61,20 @@ const CreatePost: React.FC = () => {
 
   const editor = useRef<HTMLTextAreaElement | any>()
 
-  const toggleSuggestor = (metaInformation: any) => {
-    const { hookType, cursor } = metaInformation;
-
-    if (hookType === 'start') {
-      setState({
-        ...state,
-        showSuggestor: true,
-        left: cursor.left,
-
-        // we need to add the cursor height so that the dropdown doesn't overlap with the `@`.
-        top: (Number(cursor.top) + Number(cursor.height))
-      });
-
-    }
-      
-    if (hookType === 'cancel') {
-      // reset the state
-      
-      setState({
-        ...state,
-        showSuggestor: false,
-        left: 0,
-
-        // we need to add the cursor height so that the dropdown doesn't overlap with the `@`.
-        top: 0
-      });
-    };
-  };
-
-  // const handleMentionInput = (metaInformation: any) => {
-
-  //   setState({
-  //     mentionsKeyword: metaInformation.text
-  //   });
-
-  //   getMentions().then((data: any[]) => {
-  //     setState({ 
-  //       ...state,
-  //       mentions: data
-  //     });
-  //   });
-  // } 
-
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const post = e.target.value;
-    setState({
-      ...state,
-      post: { 
-        text: post, 
-        mentions: getMentionsFromText(post), 
-        hashtags: getHashtagsFromText(post)
-      }
-    });
+  const onChange = (e: any) => {
+    console.log(e.target.innerHTML)
+    // const post = e.target.value;
+    // setState({
+    //   ...state,
+    //   post: { 
+    //     text: post, 
+    //     mentions: getMentionsFromText(post), 
+    //     hashtags: getHashtagsFromText(post)
+    //   }
+    // });
   }
   
+
   const onPostSubmit = (e: MouseEvent<HTMLButtonElement>) => {
     if (state.post.text) {
       submitPost().then((data: any) => {
@@ -144,7 +103,7 @@ const CreatePost: React.FC = () => {
       <div
         id='suggestion-container'
       >
-        <InputTrigger
+        {/* <InputTrigger
           trigger={{
             keyCode: 50,
             shiftKey: true,
@@ -158,19 +117,21 @@ const CreatePost: React.FC = () => {
           // onType={(metaData: any) => { 
           //   handleMentionInput(metaData); 
           // }}
-        >
-          <textarea 
-            autoFocus
-            rows={9}
-            id="post-input" 
-            onChange={(e: any) => {
-              onChange(e)
-            }}
-            placeholder={`What's on your mind, ${displayName.split(' ')[0]}`}
+        > */}
+          <div
+            style={{whiteSpace: 'pre'}}
+            onInput={onChange}
+            // autoFocus
+            // rows={9}
+            // id="post-input" 
+            // onChange={(e: any) => {
+            //   onChange(e)
+            // }}
+            // placeholder={`What's on your mind, ${displayName.split(' ')[0]}`}
+            contentEditable={true}
             ref={editor}
           >
-          </textarea>
-        </InputTrigger>
+          </div>
         <div
           id="suggestor-dropdown"
           style={{
