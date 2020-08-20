@@ -371,6 +371,16 @@ div {
 
 .MuiAlert-filledInfo {
   background: $info;
+
+  [class*=Icon] {
+    color: orange;
+  }
+
+  button {
+    [class*=Icon] {
+      color: white;
+    } 
+  }
 }
 
 .MuiAlert-icon {

@@ -17,11 +17,10 @@ import _404 from '../Index/_404';
 
 import createMemo from '../../Memo';
 import { dispatch, getState } from '../../functions/utils';
-import { initWebSocket, closeWebSocket, setUserData } from '../../actions/misc';
+import { initWebSocket, closeWebSocket } from '../../actions/misc';
 
 import activateSocketRouters from '../../socket.router';
-import { UserData } from '../../constants/interfaces';
-import { ONLINE_STATUS } from '../../constants/misc';
+import { emitUserOnlineStatus } from '../../App';
 
 const Memoize = createMemo();
 
@@ -31,6 +30,7 @@ const Main = (props: any) => {
   useEffect(() => {
     dispatch(initWebSocket(userData.token as string));
     activateSocketRouters();
+
     return () => {
       dispatch(closeWebSocket());
     };
@@ -40,6 +40,7 @@ const Main = (props: any) => {
     if (socket) {
       socket.addEventListener('open', () => {
         console.log('Sockets shook hands! :)');
+        emitUserOnlineStatus()();
       });
 
       socket.addEventListener('error', (e: any) => {
@@ -87,29 +88,11 @@ const Main = (props: any) => {
 };
 
 document.addEventListener('visibilitychange', () => {
-  const socket = getState().webSocket as WebSocket;
-  const userData = getState().userData as UserData;
-  let docIsVisible = document.visibilityState === 'visible';
-
-  if (socket) {
-    if (socket.readyState === 1) {
-      socket.send(
-        JSON.stringify({
-          online_status: docIsVisible ? 'ONLINE' : 'AWAY',
-          pipe: ONLINE_STATUS
-        })
-      );
-      dispatch(
-        setUserData({
-          ...userData,
-          online_status: docIsVisible ? 'ONLINE' : 'AWAY'
-        })
-      );
-    } else if (window.navigator.onLine) {
-      dispatch(initWebSocket(userData.token as string));
-      activateSocketRouters();
-    }
-  }
+  emitUserOnlineStatus(
+    window.navigator.onLine &&
+      (getState().webSocket ?? ({} as WebSocket)).readyState !== 1,
+    false
+  )();
 });
 
 const mapStateToProps = (state: any) => {

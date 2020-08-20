@@ -1,5 +1,6 @@
 .chat-middle-pane {
   // @include debugger();
+  position: relative;
 
   .title-control-wrapper {
     flex-grow: 1;
@@ -74,12 +75,21 @@
 }
 
 .chat-scroll-view {
-  padding: 0.75rem 1.15rem;
+  padding: 0.5rem 1rem 1rem 1rem;
   overflow-x: hidden;
+  transition: padding-right 0.25s;
+
+  &.add-scroll-padding {
+    padding-right: 0.5rem;
+
+    &:hover {
+      padding-right: 1rem !important;
+    }
+  }
 }
 
 $incoming-outgoing-spacing: 1.25rem;
-$msgs-spacing: 0.125rem;
+$msgs-spacing: 0.15rem;
 $msg-radius: 1.25rem;
 
 .scroll-view-msg-wrapper {
@@ -196,7 +206,7 @@ $msg-radius: 1.25rem;
       &::before {
         border-top-color: $bg-color;
         top: 0;
-        left: -$msg-radius + 0.5rem;
+        left: -$msg-radius + 0.6rem;
       }
     }
 
@@ -268,7 +278,7 @@ $msg-radius: 1.25rem;
       &::before {
         top: 0;
         border-top-color: $bg-color;
-        right: -$msg-radius + 0.5rem;
+        right: -$msg-radius + 0.6rem;
       }
     }
 
@@ -369,21 +379,24 @@ $msg-radius: 1.25rem;
 }
 
 .chat-date {
-  background: $theme-primary-v6;
+  background: white;//$theme-primary-v6;
   padding: 0.25rem 1rem;
   border-radius: 2rem;
   position: relative;
   z-index: 1;
   font-size: 0.85rem;
   text-transform: capitalize;
-  color: white;
-  border: 0.5rem solid white;
+  color: $theme-tertiary-v5;
+  box-shadow: 0 0 0 1rem white;
+  border: 0.0625rem solid $theme-tertiary-v8;
   user-select: none;
 }
 
 .chat-msg-box {
   $height: 3.25rem;
 
+  position: relative;
+  z-index: 3;
   display: flex;
   flex-grow: 0.3;
   min-height: $height;
@@ -431,18 +444,18 @@ $msg-radius: 1.25rem;
 
   &::before {
     position: absolute;
-    bottom: -0.35rem;
+    bottom: -0.425rem;
     right: 0;
     left: -3.25rem;
     content: ' ';
-    background: white;
-    height: calc(100% + 0.7rem);
+    background: #eee;
+    height: calc(100% + 0.75rem);
     width: calc(100% + 6.5rem);
     z-index: 0;
   }
 
   > div.MuiInputBase-root {
-    background: #eee;
+    background: #fff;
     border-radius: 1.25rem;
     padding: {
       left: 1rem;

@@ -12,7 +12,7 @@ export default function activateSocketRouters() {
   socket.addEventListener('message', (e: any) => {
     const message = JSON.parse(e.data);
     const pipe = message.pipe as SocketPipe;
-
+    
     switch (true) {
       case pipe.startsWith('POST_'):
         post(message);

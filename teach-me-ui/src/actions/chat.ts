@@ -133,7 +133,7 @@ export const conversations = (_payload: SearchState): ReduxAction => {
     getState().conversationMessages.data as ConversationMessages['data']
   ];
   let indexOfInitial = -1;
-  let initialConvo = {} as
+  let actualConvo = {} as
     | Partial<
         APIConversationResponse & {
           last_message: APIMessageResponse & { is_recent?: boolean };
@@ -141,10 +141,10 @@ export const conversations = (_payload: SearchState): ReduxAction => {
       >
     | undefined;
 
-  if (pipe && !!initialConversations[0]) {
+  if (pipe && initialConversations.length) {
     switch (pipe) {
       case ONLINE_STATUS:
-        initialConvo = initialConversations?.find((conversation, i) => {
+        actualConvo = initialConversations?.find((conversation, i) => {
           if (user_id === conversation.associated_user_id) {
             indexOfInitial = i;
             return true;
@@ -152,25 +152,26 @@ export const conversations = (_payload: SearchState): ReduxAction => {
           return false;
         });
 
-        if (initialConvo) {
+        if (actualConvo) {
           if (online_status === 'AWAY') {
-            initialConvo.last_seen = last_seen;
+            actualConvo.last_seen = last_seen;
           }
 
-          initialConvo.online_status = online_status;
-          initialConversations[indexOfInitial] = initialConvo;
+          actualConvo.online_status = online_status;
+          initialConversations[indexOfInitial] = actualConvo;
           payload.data = initialConversations;
+        } else {
+          payload.data = [...initialConversations];
         }
         break;
       case 'CHAT_TYPING':
-        console.log('the view error:', _payload.data);
         break;
       case CHAT_NEW_MESSAGE:
       case CHAT_READ_RECEIPT:
       case CHAT_MESSAGE_DELETED:
       case CHAT_MESSAGE_DELETED_FOR:
       case CHAT_MESSAGE_DELIVERED:
-        initialConvo = initialConversations?.find((conversation, i) => {
+        actualConvo = initialConversations?.find((conversation, i) => {
           if (message?.conversation_id === conversation._id) {
             indexOfInitial = i;
             return true;
@@ -178,9 +179,9 @@ export const conversations = (_payload: SearchState): ReduxAction => {
           return false;
         });
 
-        if (initialConvo) {
+        if (actualConvo) {
           const last_message = (produce(
-            { ...initialConvo.last_message, ...message },
+            { ...actualConvo.last_message, ...message },
             (draft: Partial<APIMessageResponse>) => {
               const { delivered_to, seen_by, deleted } = message;
 
@@ -202,10 +203,10 @@ export const conversations = (_payload: SearchState): ReduxAction => {
           ) as unknown) as APIMessageResponse;
 
           if (pipe === CHAT_NEW_MESSAGE) {
-            initialConvo.last_message = { ...last_message };
-            initialConvo.last_message.is_recent = true;
+            actualConvo.last_message = { ...last_message };
+            actualConvo.last_message.is_recent = true;
             initialConversations.splice(indexOfInitial, 1);
-            initialConversations.unshift(initialConvo);
+            initialConversations.unshift(actualConvo);
           } else {
             const [id, convoId] = [
               queryString.parse(window.location.search)?.id,
@@ -213,16 +214,16 @@ export const conversations = (_payload: SearchState): ReduxAction => {
             ];
 
             if (
-              initialConvo.last_message?._id === message._id &&
+              actualConvo.last_message?._id === message._id &&
               pipe === CHAT_MESSAGE_DELETED_FOR
             ) {
               if (convoId === id && convoId) {
                 const last_message = conversationMessages?.slice(-2)[0];
-                initialConvo.last_message = last_message as any;
+                actualConvo.last_message = last_message as any;
               }
-            } else if (initialConvo.last_message?._id === message._id) {
-              initialConvo.last_message = { ...last_message };
-              initialConversations[indexOfInitial] = initialConvo;
+            } else if (actualConvo.last_message?._id === message._id) {
+              actualConvo.last_message = { ...last_message };
+              initialConversations[indexOfInitial] = actualConvo;
             }
           }
 
@@ -230,8 +231,8 @@ export const conversations = (_payload: SearchState): ReduxAction => {
         }
         break;
     }
-  } else if (_payload.data?.length === 1) {
-    initialConvo = initialConversations?.find((conversation, i) => {
+  } else if (_payload.data?.length) {
+    actualConvo = initialConversations?.find((conversation, i) => {
       if (user_id === conversation.associated_user_id) {
         indexOfInitial = i;
         return true;
@@ -239,15 +240,15 @@ export const conversations = (_payload: SearchState): ReduxAction => {
       return false;
     });
 
-    if (initialConvo) {
-      initialConvo = { ...initialConvo, ...message };
-      initialConversations[indexOfInitial] = initialConvo as Partial<
+    if (actualConvo && payload.data?.length === 1) {
+      actualConvo = { ...actualConvo, ...message };
+      initialConversations[indexOfInitial] = actualConvo as Partial<
         APIConversationResponse
       >;
       payload.data = initialConversations;
+    } else if (!initialConversations.length) {
+      payload.data = [..._payload.data];
     }
-  } else if (_payload.data) {
-    payload.data = [..._payload.data];
   }
 
   return {

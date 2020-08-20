@@ -18,7 +18,7 @@ import {
   getConversationInfo,
   conversationMessages
 } from '../../actions/chat';
-import { dispatch } from '../../functions/utils';
+import { dispatch, addEventListenerOnce } from '../../functions/utils';
 import {
   ChatState,
   ConversationInfo,
@@ -87,7 +87,9 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
               online_status: 'OFFLINE'
             })
           );
-          dispatch(conversationMessages({ status: 'settled', err: true, data: [] }));
+          dispatch(
+            conversationMessages({ status: 'settled', err: true, data: [] })
+          );
         }
 
         dispatch(chatState(chatInfo));
@@ -109,7 +111,7 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
           <Tab label={CR} {...allyProps(1)} />
         </Tabs>
       </AppBar>
-      <Box className='d-flex'>
+      <Box className='tab-panels-wrapper d-flex' position='relative'>
         <TabPanel value={value} index={0} status={conversations.status}>
           {conversations.status === 'pending' ? (
             Array(Math.floor(window.innerHeight / 60))
@@ -262,27 +264,64 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
   const name = (value === 0 ? CV : CR).toLowerCase();
-  const translateVal =
-    (index === value ? (index > 0 ? -index : 0) : index - value) * 100;
+  const translateVal = (index === value ? 0 : index - value) * 100;
+  const tabPanelRef = React.useRef<any>();
+
+  const setVisibility = useCallback(
+    (e: any) => {
+      e.target.inert = value === index ? false : true;
+
+      setTimeout(() => {
+        if (e.target.scrollHeight > e.target.offsetHeight) {
+          e.target.classList.remove('remove-scroll-fader');
+        } else {
+          e.target.classList.add('remove-scroll-fader');
+        }
+      }, 10);
+    },
+    [value, index]
+  );
+
+  React.useEffect(() => {
+    if (tabPanelRef.current) {
+      addEventListenerOnce(tabPanelRef.current, setVisibility, '', {
+        capture: true
+      });
+      addEventListenerOnce(tabPanelRef.current, setVisibility, 'resize', {
+        capture: true
+      });
+
+      if (/fulfilled|settled/.test(other.status)) {
+        setVisibility({ target: tabPanelRef.current });
+      }
+    }
+  }, [setVisibility, other.status]);
 
   return (
-    <Box
-      component='section'
-      role='tabpanel'
-      id={name}
-      style={{
-        transform: `translateX(${translateVal}%)`,
-        WebkitTransform: `translateX(${translateVal}%)`,
-        OTransform: `translateX(${translateVal}%)`,
-        overflowY: other.status === 'pending' ? 'hidden' : 'auto',
-        minWidth: '100%',
-        visibility: value === index ? 'visible' : 'hidden',
-        opacity: value === index ? 1 : 0.25
-      }}
-      className={`tab-panel ${value === index ? '' : ''} custom-scroll-bar`}
-      aria-labelledby={index}>
-      <Box>{children}</Box>
-    </Box>
+    <>
+      <section
+        role='tabpanel'
+        id={name}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          transform: `translateX(${translateVal}%)`,
+          WebkitTransform: `translateX(${translateVal}%)`,
+          OTransform: `translateX(${translateVal}%)`,
+          overflowY: other.status === 'pending' ? 'hidden' : 'auto',
+          opacity: value === index ? 1 : 0.5,
+          minWidth: '100%'
+        }}
+        ref={tabPanelRef}
+        className={`tab-panel ${
+          value !== index ? 'hide-scroll-fader' : ''
+        } custom-scroll-bar`}
+        aria-labelledby={index}>
+        <Box>{children}</Box>
+      </section>
+      <Box className='scroll-bar-fader' />
+    </>
   );
 }
 
