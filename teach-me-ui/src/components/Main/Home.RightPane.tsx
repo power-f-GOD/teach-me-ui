@@ -9,12 +9,12 @@ import Box from '@material-ui/core/Box';
 import { TopicPropsState } from '../../constants/interfaces';
 
 import { useGetTrends } from '../../hooks/api';
+import { bigNumberFormat } from '../../functions/utils';
 
 const RightPane: React.FunctionComponent = () => {
   const [, trends, getTrendsIsLoading] = useGetTrends();
-  console.log(trends, getTrendsIsLoading);
   return (
-    <Container className='right-pane' fluid>
+    <Container fluid className='right-pane'>
       <h4>Trending Hashtags</h4>
       {!getTrendsIsLoading && trends !== null && (
         <ul>
@@ -44,7 +44,7 @@ const Topic: React.FunctionComponent<TopicPropsState> = (props) => {
   return (
     <Box component='li'>
       <span>{props.topic}</span>
-      <span>{props.numberOfDiscussions}</span>
+      <span>{bigNumberFormat(props.numberOfDiscussions)}</span>
     </Box>
   );
 };
