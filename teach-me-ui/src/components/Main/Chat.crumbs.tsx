@@ -198,7 +198,7 @@ export const ChatDate = ({ timestamp }: { timestamp: number }) => {
   }
 
   return (
-    <Box className='chat-date-wrapper text-center my-4' position='relative'>
+    <Box className='chat-date-wrapper text-center my-5' position='relative'>
       <Box component='span' className='chat-date d-inline-block'>
         {formatMapDateString(timestamp, true)}
       </Box>

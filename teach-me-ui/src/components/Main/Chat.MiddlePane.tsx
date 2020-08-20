@@ -28,7 +28,11 @@ import {
 } from '../../constants/interfaces';
 import createMemo from '../../Memo';
 import { userDeviceIsMobile } from '../../';
-import { chatState, conversationMessages, conversationInfo } from '../../actions/chat';
+import {
+  chatState,
+  conversationMessages,
+  conversationInfo
+} from '../../actions/chat';
 import {
   dispatch,
   delay,
@@ -65,14 +69,23 @@ interface ChatMiddlePaneProps {
 const Memoize = createMemo();
 
 let renderAwayDateTimeout: any;
-
 let _canDisplayAwayDate = false;
+let lastSeenForAway = Date.now();
 
 const displayAwayDate = () => {
   renderAwayDateTimeout = setTimeout(() => {
-    _canDisplayAwayDate = true;
-    dispatch(conversationInfo({user_typing: ''}))
-  }, 180000);
+    _canDisplayAwayDate = Date.now() - lastSeenForAway > 180000;
+    //did the next line to trigger a state change for the feature to really work
+    dispatch(conversationInfo({ user_typing: '' }));
+
+    if (!_canDisplayAwayDate) {
+      clearTimeout(renderAwayDateTimeout);
+      displayAwayDate();
+    }
+
+    if (_canDisplayAwayDate || !lastSeenForAway)
+      clearTimeout(renderAwayDateTimeout);
+  }, 2000);
 };
 
 const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
@@ -127,7 +140,10 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   const canDisplayAwayDate = _canDisplayAwayDate;
   const lastAwayDate = `away ${
     canDisplayAwayDate
-      ? 'since ' + lastSeenTime.toLowerCase() + ', ' + lastSeenDate
+      ? 'since ' +
+        lastSeenTime.toLowerCase().replace(' ', '') +
+        ', ' +
+        lastSeenDate
       : ''
   }`;
   const lastOnlineDate = `last seen ${lastSeenDate} at ${lastSeenTime.replace(
@@ -267,7 +283,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         setMsgBoxRowsMax(msgBoxRowsMax < 7 ? msgBoxRowsMax + 1 : msgBoxRowsMax);
       }
 
-      setScrollViewElevation(`calc(${elevation}px - ${remValue}rem)`);
+      setScrollViewElevation(`calc(${elevation + 1}px - ${remValue}rem)`);
       setMsgBoxCurrentHeight(elevation);
 
       if (
@@ -371,11 +387,14 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   }, [convoId, msgBoxRef]);
 
   useEffect(() => {
-    if (online_status === 'ONLINE') {
+    lastSeenForAway = _conversationInfo.data!?.last_seen!;
+    displayAwayDate();
+
+    if (online_status !== 'AWAY' || canDisplayAwayDate) {
       clearTimeout(renderAwayDateTimeout);
       _canDisplayAwayDate = false;
-    } else displayAwayDate();
-  }, [online_status, canDisplayAwayDate]);
+    }
+  }, [online_status, canDisplayAwayDate, _conversationInfo.data]);
 
   useEffect(() => {
     if (!!convoMessages[0] && userData.online_status === 'ONLINE') {
@@ -437,6 +456,14 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
       const canAdjustScrollTop =
         scrollView.scrollTop + scrollView.offsetHeight + 50 >=
         scrollView.scrollHeight - 100;
+      const canAddScrollPadding =
+        scrollView.scrollHeight > scrollView.offsetHeight;
+
+      if (canAddScrollPadding) {
+        scrollView.classList.add('add-scroll-padding');
+      } else {
+        scrollView.classList.remove('add-scroll-padding');
+      }
 
       if (convoMessages && (scrollView.scrollTop === 0 || canAdjustScrollTop)) {
         // animate (to prevent flicker) if scrollView is at very top else don't animate
@@ -495,6 +522,8 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
                     className={`display-name ${
                       _conversationInfo.status !== 'fulfilled'
                         ? 'status-hidden'
+                        : !data?.last_seen
+                        ? 'status-hidden'
                         : ''
                     } p-0`}>
                     {displayName ?? placeHolderDisplayName}
@@ -502,7 +531,10 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
                   <Col
                     as='span'
                     className={`status ${
-                      _conversationInfo.status === 'fulfilled' ? 'show' : ''
+                      _conversationInfo.status === 'fulfilled' &&
+                      data?.last_seen
+                        ? 'show'
+                        : ''
                     } p-0`}>
                     {_conversationInfo.user_typing
                       ? 'typing...'
@@ -512,7 +544,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
                       ? lastAwayDate
                       : lastSeenDate
                       ? lastOnlineDate
-                      : 'last seen unknown'}
+                      : '...'}
                   </Col>
                 </Col>
               </>
@@ -672,7 +704,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
             ) : conversation._id ? (
               !window.navigator.onLine ? (
                 <Box component='div' fontSize='1.2rem' textAlign='center'>
-                  Something went wrong. You seem to be offline.
+                  Can't load messages. You seem to be offline.
                 </Box>
               ) : (
                 <Box component='span' fontSize='3rem'>
@@ -685,6 +717,8 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
           </Box>
         )}
       </Memoize>
+
+      <Box className='scroll-bar-fader' />
 
       <Memoize
         memoizedComponent={Col}

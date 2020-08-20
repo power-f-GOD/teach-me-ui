@@ -4,6 +4,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
+import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 import SchoolIcon from '@material-ui/icons/School';
 
@@ -80,6 +81,7 @@ const ChatRightPane = ({ conversation, convoInfo }: ChatRightPaneProps) => {
       ) : (
         ''
       )}
+      <Box className='scroll-bar-fader' />
     </>
   );
 };
