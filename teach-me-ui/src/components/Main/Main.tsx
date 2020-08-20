@@ -13,6 +13,7 @@ import Loader from '../crumbs/Loader';
 import Chat from './Chat';
 import Search from './Search';
 import Notifications from './Notifications';
+import PostPage from './PostPage';
 import _404 from '../Index/_404';
 
 import createMemo from '../../Memo';
@@ -75,6 +76,7 @@ const Main = (props: any) => {
         <Route path={['/', '/index', '/home']} exact component={Home} />
         <Route path='/about' component={About} />
         <Route path='/support' component={Support} />
+        <Route path='/p/:id' component={PostPage} />
         <Route path='/@:userId' component={Profile} />
         <Route path={['/search/:query', '/search']} component={Search} />
         <Route path='/notifications' component={Notifications} />

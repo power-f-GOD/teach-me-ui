@@ -142,7 +142,7 @@ const Profile = (props: any) => {
     if (data.id && !selfView) {
       fetchDeepProfile();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [data.id, selfView, username]);
 
   const [
@@ -180,7 +180,7 @@ const Profile = (props: any) => {
     switch (deepProfileData.status) {
       case 'NOT_COLLEAGUES':
         await addColleague().then(() => {
-          pingUser([`${data.username}`])
+          pingUser([`${data.username}`]);
         });
         break;
       case 'PENDING_REQUEST':
@@ -196,7 +196,7 @@ const Profile = (props: any) => {
         }
         e.target.id !== 'decline'
           ? await acceptColleagueRequest().then(() => {
-              pingUser([`${data.username}`])
+              pingUser([`${data.username}`]);
             })
           : await declineColleagueRequest();
         break;

@@ -56,6 +56,7 @@ const App = (props: any) => {
                     '/@:userId/colleagues',
                     '/search',
                     '/notifications',
+                    '/p/:id',
                     '/*'
                   ]
                 : ['/home', '/search', '/notifications']

@@ -87,7 +87,9 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
               online_status: 'OFFLINE'
             })
           );
-          dispatch(conversationMessages({ status: 'settled', err: true, data: [] }));
+          dispatch(
+            conversationMessages({ status: 'settled', err: true, data: [] })
+          );
         }
 
         dispatch(chatState(chatInfo));

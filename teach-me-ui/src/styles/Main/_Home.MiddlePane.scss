@@ -1,5 +1,6 @@
 .post-list-page {
   background: #fff;
+  cursor: pointer;
 }
 
 .middle-pane-col {
@@ -64,7 +65,8 @@
   transition: all 0.3s;
   user-select: none;
 
-  &:hover, &:focus {
+  &:hover,
+  &:focus {
     background: #eee;
   }
 }

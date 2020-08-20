@@ -1,10 +1,7 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import useApi from './base';
-import { 
-  useApiResponse, 
-  Post 
-} from '../../constants';
+import { useApiResponse, Post } from '../../constants';
 
 const cookieEnabled = navigator.cookieEnabled;
 
@@ -14,24 +11,20 @@ if (cookieEnabled) {
 }
 
 const useFetchMentions = (keyword: string): useApiResponse<any> => {
-  const [...r] = useApi<any>(
-    {
-      endpoint: `/colleagues/find?keyword=${keyword}`,
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` }
-    }
-  );
+  const [...r] = useApi<any>({
+    endpoint: `/colleagues/find?keyword=${keyword}`,
+    method: 'GET',
+    headers: { Authorization: `Bearer ${token}` }
+  });
   return r;
 };
 
-export const useFetchHashtags = (keyword: string,): useApiResponse<any> => {
-  const [...r] = useApi<any>(
-    {
-      endpoint: `/hashtag/suggest?keyword=${keyword}`,
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` }
-    }
-  );
+export const useFetchHashtags = (keyword: string): useApiResponse<any> => {
+  const [...r] = useApi<any>({
+    endpoint: `/hashtag/suggest?keyword=${keyword}`,
+    method: 'GET',
+    headers: { Authorization: `Bearer ${token}` }
+  });
   return r;
 };
 
@@ -53,22 +46,54 @@ export const useGetFormattedMentionsWithKeyword = (keyword: string) => {
     let mention: any[] = [];
     getMentions().then((response: any) => {
       if (!isLoading) {
-        const {error, colleagues } = response as {
+        const { error, colleagues } = response as {
           error: boolean;
           colleagues: any[];
-        }
+        };
         if (!error) {
           for (let colleague of colleagues) {
             mention.push({
-              name: colleague.username, 
-              link: `/@${colleague.username}`, 
+              name: colleague.username,
+              link: `/@${colleague.username}`,
               avatar: '/images/avatar-1.png'
             });
-          };
-        };
-      };
+          }
+        }
+      }
     });
     return mention;
   }, [getMentions, isLoading]);
   return [callback];
+};
+
+export const useGetPost = (id: string) => {
+  const r = useApi<any>(
+    {
+      endpoint: `/post/${id}`,
+      method: 'GET'
+    },
+    {},
+    false
+  );
+  useEffect(() => {
+    r[0]();
+    // eslint-disable-next-line
+  }, [id]);
+  return r;
+};
+
+export const useGetPostReplies = (id: string) => {
+  const r = useApi<any>(
+    {
+      endpoint: `/post/${id}/replies?limit=10&skip=0`,
+      method: 'GET'
+    },
+    {},
+    false
+  );
+  useEffect(() => {
+    r[0]();
+    // eslint-disable-next-line
+  }, [id]);
+  return r;
 };
