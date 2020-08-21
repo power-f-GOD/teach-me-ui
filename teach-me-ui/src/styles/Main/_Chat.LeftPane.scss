@@ -135,7 +135,7 @@ $avatar-size: 2.75rem;
 
   &.recent {
     .colleague-name {
-      animation: reorderRecentConvo 5s;
+      animation: reorderRecentConvo 0.5s;
     }
   }
 
@@ -149,19 +149,13 @@ $avatar-size: 2.75rem;
   }
 
   @keyframes reorderRecentConvo {
-    0% {
+    from {
       opacity: 0;
-      color: white;
-      background: $theme-secondary-v5;
       transform: translateY(100%);
     }
-    10% {
+    to {
       opacity: 1;
       transform: translateY(0%);
-    }
-    100% {
-      color: #bbb;
-      background: $theme-primary-v3;
     }
   }
 

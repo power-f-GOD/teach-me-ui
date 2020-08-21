@@ -44,7 +44,7 @@ const Main = (props: any) => {
         emitUserOnlineStatus()();
       });
 
-      socket.addEventListener('error', (e: any) => {
+      socket.addEventListener('error', () => {
         console.error(
           'Error: Sockets lost hands while trying to make handshake. :('
         );
