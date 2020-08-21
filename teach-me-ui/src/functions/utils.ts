@@ -425,7 +425,7 @@ export const getHashtagsFromText = (text: string): string[] => {
   return hashtags;
 };
 
-export const formatDate = (dateTime: Date) => {
+export const formatDate = (dateTime: Date | number) => {
   if (!dateTime) {
     return null;
   }

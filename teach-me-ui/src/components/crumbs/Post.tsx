@@ -11,7 +11,7 @@ import Skeleton from 'react-loading-skeleton';
 import { Link, useHistory } from 'react-router-dom';
 
 import ReactButton from './ReactButton';
-import { bigNumberFormat, dispatch } from '../../functions/utils';
+import { bigNumberFormat, dispatch, formatDate } from '../../functions/utils';
 import { PostPropsState } from '../../constants/interfaces';
 
 import CreateReply from './CreateReply';
@@ -24,40 +24,43 @@ const stopProp = (e: any) => {
 
 export const processPostFn = (post: string) =>
   post &&
-  post.split(/ /gi).map((w, i) => {
-    w = w.replace(/ /gi, '');
-    return /(^@)[A-Za-z0-9_]+[,.!?]*$/.test(w) ? (
-      <Box component='span' key={i}>
-        <Link
-          onClick={stopProp}
-          to={`/${/[,.!]+$/.test(w) ? w.slice(0, -1) : w}`}>{`${
-          /[,.!]+$/.test(w) ? w.slice(0, -1) : w
-        }`}</Link>
-        {`${/[,.!]+$/.test(w) ? w.slice(-1) : ''}`}{' '}
-      </Box>
-    ) : /(^#)[A-Za-z0-9_]+[,.!?]*$/.test(w) ? (
-      <Box component='span' key={i}>
-        <Link
-          onClick={stopProp}
-          to={() => {
-            dispatch(triggerSearchKanyimuta(w)(dispatch));
-            return `/search/${w.substring(1)}`;
-          }}>
-          {w}
-        </Link>{' '}
-      </Box>
-    ) : /^https?:\/\/(?!\.)[A-Za-z0-9.-]+.[A-Za-z0-9.]+(\/[A-Za-z-/0-9@]+)?$/.test(
-        w
-      ) ? (
-      <Box component='span' key={i}>
-        <a onClick={stopProp} href={w} target='blank'>
-          {w}
-        </a>{' '}
-      </Box>
-    ) : (
-      <React.Fragment key={i}>{w} </React.Fragment>
-    );
-  });
+  post
+    .trim()
+    .split(/ /gi)
+    .map((w, i) => {
+      w = w.replace(/ /gi, '');
+      return /(^@)[A-Za-z0-9_]+[,.!?]*$/.test(w) ? (
+        <Box component='span' key={i}>
+          <Link
+            onClick={stopProp}
+            to={`/${/[,.!]+$/.test(w) ? w.slice(0, -1) : w}`}>{`${
+            /[,.!]+$/.test(w) ? w.slice(0, -1) : w
+          }`}</Link>
+          {`${/[,.!]+$/.test(w) ? w.slice(-1) : ''}`}{' '}
+        </Box>
+      ) : /(^#)[A-Za-z0-9_]+[,.!?]*$/.test(w) ? (
+        <Box component='span' key={i}>
+          <Link
+            onClick={stopProp}
+            to={() => {
+              dispatch(triggerSearchKanyimuta(w)(dispatch));
+              return `/search/${w.substring(1)}`;
+            }}>
+            {w}
+          </Link>{' '}
+        </Box>
+      ) : /^https?:\/\/(?!\.)[A-Za-z0-9.-]+.[A-Za-z0-9.]+(\/[A-Za-z-/0-9@]+)?$/.test(
+          w
+        ) ? (
+        <Box component='span' key={i}>
+          <a onClick={stopProp} href={w} target='blank'>
+            {w}
+          </a>{' '}
+        </Box>
+      ) : (
+        <React.Fragment key={i}>{w} </React.Fragment>
+      );
+    });
 
 const Post: React.FunctionComponent<
   Partial<PostPropsState> & Partial<{ head: boolean }>
@@ -93,10 +96,9 @@ const Post: React.FunctionComponent<
       pb={props.sec_type === 'REPLY' ? 1 : 0}
       mb={1}>
       {((props._extra && props.sec_type !== 'REPLY') ||
-        (props.sec_type === 'REPOST' && !props.text)) && (
-        <small className='small-text'>{extra}</small>
-      )}
-      {props.sec_type === 'REPLY' && (
+        (props.sec_type === 'REPOST' && !props.text)) &&
+        props.head && <small className='small-text'>{extra}</small>}
+      {props.sec_type === 'REPLY' && props.head && (
         <small className='small-text'>{extra}</small>
       )}
       <Row
@@ -187,6 +189,21 @@ const Post: React.FunctionComponent<
                 : props.parent?.text) as string
             )}
           </Box>
+          <Box
+            component='small'
+            textAlign='right'
+            width='100%'
+            color='#888'
+            pt={1}
+            mr={3}>
+            {formatDate(
+              (props.sec_type === 'REPLY'
+                ? props.parent?.posted_at
+                : props.text
+                ? props.posted_at
+                : props.parent?.posted_at) as number
+            )}
+          </Box>
         </Row>
       ) : (
         <Box p={2} pl={3}>
@@ -216,6 +233,15 @@ const Post: React.FunctionComponent<
           <Row className='container-fluid  mx-auto'>
             <Box component='div' pt={1} px={0} className='break-word'>
               {processPostFn(props.parent?.text as string)}
+            </Box>
+            <Box
+              component='small'
+              textAlign='right'
+              width='100%'
+              color='#888'
+              pt={1}
+              mr={3}>
+              {formatDate(props.parent?.posted_at as number)}
             </Box>
           </Row>
         </Box>
@@ -375,6 +401,15 @@ const Post: React.FunctionComponent<
               onClick={navigate(props.id as string)}
               className='break-word'>
               {processPostFn(props.text as string)}
+            </Box>
+            <Box
+              component='small'
+              textAlign='right'
+              width='100%'
+              color='#888'
+              pt={1}
+              mr={3}>
+              {formatDate(props.posted_at as number)}
             </Box>
           </Row>
           {props.sender_name && (
