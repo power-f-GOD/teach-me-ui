@@ -16,6 +16,8 @@ import Badge from '@material-ui/core/Badge';
 import IconButton from '@material-ui/core/IconButton';
 import Box from '@material-ui/core/Box';
 import DeleteIcon from '@material-ui/icons/Delete';
+import CloudOffIcon from '@material-ui/icons/CloudOff';
+import ChatIcon from '@material-ui/icons/Chat';
 
 import {
   ChatState,
@@ -117,9 +119,9 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   const { isMinimized, isOpen }: ChatState = _chatState;
 
   const [scrollView, setScrollView] = useState<HTMLElement | null>(null);
-  const [scrollViewElevation, setScrollViewElevation] = React.useState<
-    string
-  >();
+  const [scrollViewElevation, setScrollViewElevation] = React.useState<string>(
+    'calc(21.5px - 1.25rem)'
+  );
   const [msgBoxRowsMax, setMsgBoxRowsMax] = useState<number>(1);
   const [msgBoxCurrentHeight, setMsgBoxCurrentHeight] = useState<number>(
     msgBoxInitHeight
@@ -233,7 +235,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         dispatch(conversationMessages({ data: [{ ...msg }] }));
         msgBox.value = '';
         setMsgBoxRowsMax(1);
-        setScrollViewElevation('calc(19px - 1.25rem)');
+        setScrollViewElevation('calc(21.5px - 1.25rem)');
         socket.send(JSON.stringify(msg));
       } else {
         displayConnectInfoThenReconnect();
@@ -283,7 +285,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         setMsgBoxRowsMax(msgBoxRowsMax < 7 ? msgBoxRowsMax + 1 : msgBoxRowsMax);
       }
 
-      setScrollViewElevation(`calc(${elevation + 1}px - ${remValue}rem)`);
+      setScrollViewElevation(`calc(${elevation + 1.5}px - ${remValue}rem)`);
       setMsgBoxCurrentHeight(elevation);
 
       if (
@@ -380,6 +382,19 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
     displaySocketErrInfo
   ]);
 
+  const handleScrollViewScroll = useCallback(() => {
+    let hideScrollBarTimeout: any;
+    return () => {
+      if (scrollView) {
+        scrollView.classList.remove('scroll-ended');
+        clearTimeout(hideScrollBarTimeout);
+        hideScrollBarTimeout = setTimeout(() => {
+          scrollView.classList.add('scroll-ended');
+        }, 750);
+      }
+    };
+  }, [scrollView]);
+
   useEffect(() => {
     if (convoId && msgBoxRef.current) {
       msgBoxRef.current.value = '';
@@ -444,12 +459,12 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   ]);
 
   useEffect(() => {
-    setScrollView(scrollViewRef.current);
+    if (!scrollView) setScrollView(scrollViewRef.current);
 
-    if (scrollView) {
+    if (scrollView && !_conversationMessages.statusText) {
       scrollView.scrollTop = scrollView.scrollHeight;
     }
-  }, [scrollView]);
+  }, [scrollView, _conversationMessages.statusText]);
 
   useEffect(() => {
     if (scrollView) {
@@ -459,13 +474,24 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
       const canAddScrollPadding =
         scrollView.scrollHeight > scrollView.offsetHeight;
 
-      if (canAddScrollPadding) {
+      if (canAddScrollPadding && !userDeviceIsMobile) {
         scrollView.classList.add('add-scroll-padding');
       } else {
         scrollView.classList.remove('add-scroll-padding');
       }
 
-      if (convoMessages && (scrollView.scrollTop === 0 || canAdjustScrollTop)) {
+      if (
+        convoMessages.length &&
+        /settled|fulfilled/.test(_conversationMessages.status as string)
+      ) {
+        delay(400).then(() => {
+          scrollView.classList.remove('hide-messages');
+        });
+      } else {
+        scrollView.classList.add('hide-messages');
+      }
+
+      if (convoMessages && canAdjustScrollTop) {
         // animate (to prevent flicker) if scrollView is at very top else don't animate
         if (scrollView.scrollTop < scrollView.scrollHeight - 300) {
           interval(
@@ -482,7 +508,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         }
       }
     }
-  }, [convoMessages, scrollView]);
+  }, [convoMessages, _conversationMessages.status, scrollView]);
 
   return (
     <>
@@ -520,7 +546,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
                   <Col
                     as='span'
                     className={`display-name ${
-                      _conversationInfo.status !== 'fulfilled'
+                      _conversationInfo.status === 'pending'
                         ? 'status-hidden'
                         : !data?.last_seen
                         ? 'status-hidden'
@@ -625,100 +651,116 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
           ref: scrollViewRef
         }}
         as='section'
-        className='chat-scroll-view custom-scroll-bar grey-scrollbar'
-        style={{ marginBottom: scrollViewElevation }}>
-        {!!convoMessages[0] && _conversationMessages.status !== 'pending' ? (
-          convoMessages.map((message, key: number) => {
-            const { sender_id, date, delivered_to, deleted, seen_by } = message;
-            const prevDate = new Date(
-              Number(convoMessages[key - 1]?.date)
-            ).toDateString();
-            const nextDate = new Date(
-              Number(convoMessages[key + 1]?.date)
-            ).toDateString();
-            const selfDate = new Date(Number(message.date)).toDateString();
-            const prevAndSelfSentSameDay = prevDate === selfDate;
-            const nextAndSelfSentSameDay = nextDate === selfDate;
-            const shouldRenderDate = !prevAndSelfSentSameDay;
-            const prevDelayed =
-              date! - (convoMessages[key - 1]?.date ?? date!) >= 18e5;
-            const nextDelayed =
-              (convoMessages[key + 1]?.date ?? date!) - date! >= 18e5;
+        className={`chat-scroll-view custom-scroll-bar grey-scrollbar`}
+        style={{ marginBottom: scrollViewElevation }}
+        onScroll={handleScrollViewScroll()}>
+        {convoMessages.map((message, key: number) => {
+          const { sender_id, date, delivered_to, deleted, seen_by } = message;
+          const prevDate = new Date(
+            Number(convoMessages[key - 1]?.date)
+          ).toDateString();
+          const nextDate = new Date(
+            Number(convoMessages[key + 1]?.date)
+          ).toDateString();
+          const selfDate = new Date(Number(message.date)).toDateString();
+          const prevAndSelfSentSameDay = prevDate === selfDate;
+          const nextAndSelfSentSameDay = nextDate === selfDate;
+          const shouldRenderDate = !prevAndSelfSentSameDay;
+          const prevDelayed =
+            date! - (convoMessages[key - 1]?.date ?? date!) >= 18e5;
+          const nextDelayed =
+            (convoMessages[key + 1]?.date ?? date!) - date! >= 18e5;
 
-            const type =
-              sender_id && sender_id !== userData.id ? 'incoming' : 'outgoing';
-            const prevSenderId = (convoMessages[key - 1] ?? {}).sender_id;
-            const nextSenderId = (convoMessages[key + 1] ?? {}).sender_id;
-            const isFirstOfStack =
-              prevSenderId !== sender_id || !prevAndSelfSentSameDay;
-            const isOnlyOfStack =
-              (prevSenderId !== sender_id && nextSenderId !== sender_id) ||
-              (!nextAndSelfSentSameDay && !prevAndSelfSentSameDay);
-            const isMiddleOfStack =
-              prevSenderId === sender_id &&
-              nextSenderId === sender_id &&
-              nextAndSelfSentSameDay &&
-              prevAndSelfSentSameDay;
-            const isLastOfStack =
-              nextSenderId !== sender_id ||
-              !nextAndSelfSentSameDay ||
-              nextDelayed;
-            const className = `${prevDelayed ? 'delayed mt-3 ' : ''}${
-              isFirstOfStack ? 'first ' : ''
-            }${isOnlyOfStack ? 'only ' : ''}${isLastOfStack ? 'last ' : ''}${
-              isMiddleOfStack ? 'middle' : ''
-            }`;
+          const type =
+            sender_id && sender_id !== userData.id ? 'incoming' : 'outgoing';
+          const prevSenderId = (convoMessages[key - 1] ?? {}).sender_id;
+          const nextSenderId = (convoMessages[key + 1] ?? {}).sender_id;
+          const isFirstOfStack =
+            prevSenderId !== sender_id || !prevAndSelfSentSameDay;
+          const isOnlyOfStack =
+            (prevSenderId !== sender_id && nextSenderId !== sender_id) ||
+            (!nextAndSelfSentSameDay && !prevAndSelfSentSameDay);
+          const isMiddleOfStack =
+            prevSenderId === sender_id &&
+            nextSenderId === sender_id &&
+            nextAndSelfSentSameDay &&
+            prevAndSelfSentSameDay;
+          const isLastOfStack =
+            nextSenderId !== sender_id ||
+            !nextAndSelfSentSameDay ||
+            nextDelayed;
+          const className = `${prevDelayed ? 'delayed mt-3' : ''}${
+            isFirstOfStack ? ' first' : ''
+          }${isOnlyOfStack ? ' only' : ''}${isLastOfStack ? ' last' : ''}${
+            isMiddleOfStack ? ' middle' : ''
+          }${key === convoMessages.length - 1 ? ' last-message' : ''}`;
 
-            return (
-              <React.Fragment key={key}>
-                {shouldRenderDate && <ChatDate timestamp={Number(date)} />}
-                <Memoize
-                  memoizedComponent={Message}
-                  message={message as APIMessageResponse}
-                  type={type}
-                  clearSelections={
-                    message._id! in selectedMessages && clearSelections
-                      ? true
-                      : false
-                  }
-                  shouldUpdate={
-                    String(deleted) + delivered_to?.length + seen_by?.length
-                  }
-                  className={className}
-                  userId={userData.id}
-                  participants={conversation.participants}
-                  canSelectByClick={!!Object.keys(selectedMessages)[0]}
-                  handleMessageSelection={handleMessageSelection}
-                />
-              </React.Fragment>
-            );
-          })
-        ) : (
-          <Box
-            className='theme-tertiary-lighter d-flex align-items-center justify-content-center'
-            height='100%'
-            fontWeight='bold'>
-            {_conversationMessages.status === 'fulfilled' &&
-            !convoMessages[0] ? (
-              `Start a new conversation with your new colleague, ${displayName}.`
-            ) : conversation._id ? (
-              !window.navigator.onLine ? (
-                <Box component='div' fontSize='1.2rem' textAlign='center'>
-                  Can't load messages. You seem to be offline.
-                </Box>
-              ) : (
-                <Box component='span' fontSize='3rem'>
-                  . . .
-                </Box>
-              )
-            ) : (
-              'Start a new conversation.'
-            )}
-          </Box>
-        )}
+          return (
+            <React.Fragment key={key}>
+              {shouldRenderDate && <ChatDate timestamp={Number(date)} />}
+              <Memoize
+                memoizedComponent={Message}
+                message={message as APIMessageResponse}
+                type={type}
+                clearSelections={
+                  message._id! in selectedMessages && clearSelections
+                    ? true
+                    : false
+                }
+                shouldUpdate={
+                  String(deleted) + delivered_to?.length + seen_by?.length
+                }
+                className={className}
+                userId={userData.id}
+                participants={conversation.participants}
+                canSelectByClick={!!Object.keys(selectedMessages)[0]}
+                handleMessageSelection={handleMessageSelection}
+              />
+            </React.Fragment>
+          );
+        })}
       </Memoize>
 
       <Box className='scroll-bar-fader' />
+
+      <Box
+        className='theme-tertiary-lighter d-flex align-items-center justify-content-center messages-status-signal'
+        height='100%'
+        fontWeight='bold'>
+        {_conversationMessages.status === 'fulfilled' &&
+        !convoMessages.length &&
+        conversation._id ? (
+          <Box fontSize='1.1rem' textAlign='center'>
+            <ChatIcon fontSize='large' />
+            <br />
+            No messages here.
+            <br />
+            <br />
+            Send a message to begin a new conversation with{' '}
+            <Box fontWeight='bold'>{displayName}</Box>.
+          </Box>
+        ) : conversation._id ? (
+          !window.navigator.onLine ? (
+            <Box fontSize='1.2rem' textAlign='center'>
+              <CloudOffIcon fontSize='large' />
+              <br />
+              <br />
+              Can't load messages. You seem to be offline.
+            </Box>
+          ) : (
+            <Box component='span' fontSize='3rem'>
+              . . .
+            </Box>
+          )
+        ) : (
+          <Box fontSize='1.1rem' textAlign='center'>
+            <ChatIcon fontSize='large' />
+            <br />
+            <br />
+            Start a new conversation.
+          </Box>
+        )}
+      </Box>
 
       <Memoize
         memoizedComponent={Col}

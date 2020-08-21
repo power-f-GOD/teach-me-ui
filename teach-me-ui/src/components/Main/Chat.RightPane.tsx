@@ -21,14 +21,17 @@ interface ChatRightPaneProps {
   convoInfo: ConversationInfo;
 }
 
-const ChatRightPane = ({ conversation, convoInfo }: ChatRightPaneProps) => {
+const ChatRightPane = ({
+  conversation,
+  convoInfo: _conversationInfo
+}: ChatRightPaneProps) => {
   const {
     type,
     conversation_name: displayName,
     avatar,
     associated_username: username
   } = conversation;
-  const { data, err } = convoInfo;
+  const { data, err } = _conversationInfo;
   const { institution, department, level } = data as UserData;
 
   return (
@@ -60,7 +63,8 @@ const ChatRightPane = ({ conversation, convoInfo }: ChatRightPaneProps) => {
               </Col>
             </Col>
           </Row>
-          {!err && (
+
+          <Box className={`info-card-wrapper ${err ? 'hide' : 'show'}`}>
             <InfoCard
               title='Academic Info'
               icon={SchoolIcon}
@@ -76,7 +80,7 @@ const ChatRightPane = ({ conversation, convoInfo }: ChatRightPaneProps) => {
               boxShadow='none'
               padding='0.25rem'
             />
-          )}
+          </Box>
         </Container>
       ) : (
         ''
