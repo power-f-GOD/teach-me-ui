@@ -1,7 +1,7 @@
 .chat-right-pane {
-  background-color: #eee;
+  background-color: #fff;
   max-height: 100vh;
-  border-left: 0.15rem solid #ddd;
+  border-left: 0.0625rem solid #ddd;
 
   .chat-header {
     background-color: inherit;
@@ -27,7 +27,7 @@
     }
 
     + .scroll-bar-fader {
-      background-color: #eee !important;
+      background-color: #fff !important;
     }
 
     .chat-avatar {

@@ -17,18 +17,20 @@ import createMemo from './Memo';
 import { getState, dispatch } from './appStore';
 import {
   UserData,
-  ChatState,
   AuthState,
   ConversationMessages,
   SearchState,
-  APIConversationResponse
+  APIConversationResponse,
+  ConversationInfo
 } from './constants/interfaces';
 import activateSocketRouters from './socket.router';
 import {
   getConversations,
   getConversationMessages,
   conversations,
-  conversationInfo
+  conversationInfo,
+  conversationMessages,
+  getConversationInfo
 } from './actions/chat';
 import { ONLINE_STATUS } from './constants/misc';
 
@@ -128,14 +130,17 @@ export const emitUserOnlineStatus = (
     );
   }
 
-  const socket = getState().webSocket as WebSocket;
-  const userData = getState().userData as UserData;
+  const userData = getState().userData as UserData & APIConversationResponse;
   const auth = getState().auth as AuthState;
-  const chatState = getState().chatState as ChatState;
   const _conversations = getState().conversations as SearchState;
-  const conversationMessages = getState().conversationMessages
-    .data as ConversationMessages['data'];
-  const { cid } = queryString.parse(window.location.search) ?? {};
+  const _conversationInfo = getState().conversationInfo as ConversationInfo;
+  const _conversationMessages = getState()
+    .conversationMessages as ConversationMessages;
+  const { cid = undefined, id = undefined, stateCid, stateId } = {
+    ...(queryString.parse(window.location.search) ?? {}),
+    stateCid: _conversationInfo.data?._id,
+    stateId: _conversationInfo.data?.associated_user_id
+  };
   let timeToEmitOnlineStatus: any = undefined;
 
   if (auth.isAuthenticated && !connectionIsDead) {
@@ -144,21 +149,30 @@ export const emitUserOnlineStatus = (
       activateSocketRouters();
     }
 
-    if (chatState.isOpen) {
-      if (_conversations?.data?.length === 0) {
-        dispatch(getConversations()(dispatch));
-      }
+    if (_conversations.err) {
+      dispatch(getConversations()(dispatch));
+    }
 
-      if (conversationMessages?.length === 0)
-        dispatch(getConversationMessages(cid)(dispatch));
+    if ((cid || stateCid) && _conversationMessages.err) {
+      dispatch(
+        getConversationMessages(
+          cid || (stateCid as string),
+          'settled',
+          'updating message list...'
+        )(dispatch)
+      );
+    }
+
+    if ((id || stateId) && _conversationInfo.err) {
+      dispatch(getConversationInfo(id || (stateId as string))(dispatch));
     }
 
     return function recurse() {
       timeToEmitOnlineStatus = setTimeout(() => {
-        if (
-          socket.readyState === 1 &&
-          /ONLINE|AWAY/.test(getState().conversationInfo?.online_status)
-        ) {
+        //make sure to use updated/reinitialized webSock from state as former would have been closed
+        const socket = getState().webSocket as WebSocket;
+
+        if (socket.readyState === 1) {
           const docIsVisible = document.visibilityState === 'visible';
 
           socket.send(
@@ -188,12 +202,19 @@ export const emitUserOnlineStatus = (
         }
       ) as SearchState['data'];
 
-      dispatch(conversations({ data: [...updateConversations] }));
+      dispatch(conversations({ err: true, data: [...updateConversations] }));
       dispatch(
         conversationInfo({
           online_status: 'OFFLINE',
+          err: true,
           status: 'settled',
           data: { ...getState().conversationInfo.data, last_seen: undefined }
+        })
+      );
+      dispatch(conversationMessages({ status: 'settled', err: true }));
+      dispatch(
+        setUserData({
+          online_status: 'OFFLINE'
         })
       );
     }

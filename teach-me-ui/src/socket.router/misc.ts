@@ -15,11 +15,12 @@ export default function misc(message: any) {
           conversationInfo({
             online_status,
             status: 'fulfilled',
+            err: false,
             data: { ...getState().conversationInfo.data, last_seen }
           })
         );
       }
-
+      
       if (getState().userData.id !== user_id) {
         dispatch(conversations({ data: [{ ...message }] }));
       }

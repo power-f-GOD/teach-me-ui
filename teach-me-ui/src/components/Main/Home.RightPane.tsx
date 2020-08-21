@@ -13,6 +13,7 @@ import { bigNumberFormat } from '../../functions/utils';
 
 const RightPane: React.FunctionComponent = () => {
   const [, trends, getTrendsIsLoading] = useGetTrends();
+
   return (
     <Container fluid className='right-pane'>
       <h4>Trending Hashtags</h4>
