@@ -33,6 +33,8 @@ export default function useApi<T>(
         throw new Error(e.response?.data);
       });
       if (res.data.error) {
+        console.log(res.data);
+        setData(res.data);
         throw new Error(res.data.message);
       }
       setData(res.data);
@@ -57,7 +59,7 @@ export default function useApi<T>(
       callback();
     }
     // return AxiosManager.cancel;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [lazy]);
   return [callback, data, isLoading];
 }

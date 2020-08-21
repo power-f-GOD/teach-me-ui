@@ -372,14 +372,14 @@ div {
 .MuiAlert-filledInfo {
   background: $info;
 
-  [class*=Icon] {
+  [class*='Icon'] {
     color: orange;
   }
 
   button {
-    [class*=Icon] {
+    [class*='Icon'] {
       color: white;
-    } 
+    }
   }
 }
 
