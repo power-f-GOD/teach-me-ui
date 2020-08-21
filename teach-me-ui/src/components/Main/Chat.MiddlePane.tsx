@@ -384,6 +384,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
 
   const handleScrollViewScroll = useCallback(() => {
     let hideScrollBarTimeout: any;
+    
     return () => {
       if (scrollView) {
         scrollView.classList.remove('scroll-ended');

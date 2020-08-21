@@ -11,7 +11,7 @@ import Loader from './components/crumbs/Loader';
 import SnackBar from './components/crumbs/SnackBar';
 import ProtectedRoute from './ProtectedRoute';
 
-import { displaySnackbar, initWebSocket, setUserData } from './actions/misc';
+import { displaySnackbar, initWebSocket, setUserData, closeWebSocket } from './actions/misc';
 import { verifyAuth } from './actions/auth';
 import createMemo from './Memo';
 import { getState, dispatch } from './appStore';
@@ -202,6 +202,7 @@ export const emitUserOnlineStatus = (
         }
       ) as SearchState['data'];
 
+      dispatch(closeWebSocket());
       dispatch(conversations({ err: true, data: [...updateConversations] }));
       dispatch(
         conversationInfo({
