@@ -183,20 +183,27 @@ const ChatBox = (props: ChatBoxProps) => {
     const search = window.location.search;
     let { chat, id, cid } = queryString.parse(search);
 
-    if (chat) {
+    if (!isOpen) {
       //delay till chatBox display property is set for animation to work
       delay(500).then(() => {
-        dispatch(
-          chatState({
-            queryString: !!chat ? search : qString,
-            isOpen: true,
-            isMinimized: chat === 'min'
-          })
-        );
+        let { chat } = queryString.parse(search);
+
+        if (chat)
+          dispatch(
+            chatState({
+              queryString: !!chat ? search : qString,
+              isOpen: true,
+              isMinimized: chat === 'min'
+            })
+          );
       });
     }
 
-    if ((isOpen || chat === 'open') && !conversations.data![0]) {
+    if (
+      (isOpen || chat === 'open') &&
+      !conversations.data![0] &&
+      !conversations.err
+    ) {
       dispatch(getConversations()(dispatch));
     }
 
@@ -205,6 +212,7 @@ const ChatBox = (props: ChatBoxProps) => {
 
       if (
         window.navigator.onLine &&
+        !_conversationInfo.err &&
         convoId &&
         (infoStatus === 'settled' ||
           (infoStatus === 'fulfilled' && convoId !== cid))
@@ -219,19 +227,23 @@ const ChatBox = (props: ChatBoxProps) => {
       let msgStatus = _conversationMessages.status;
       if (
         window.navigator.onLine &&
+        !_conversationMessages.err &&
         convoId &&
         (msgStatus === 'settled' ||
           (msgStatus === 'fulfilled' && convoId !== cid))
       ) {
-        dispatch(getConversationMessages(cid)(dispatch));
+        dispatch(getConversationMessages(cid, 'pending')(dispatch));
       }
     }
   }, [
-    _conversationInfo.status,
     conversations.data,
     convoId,
     qString,
     isOpen,
+    _conversationInfo.status,
+    _conversationInfo.err,
+    _conversationMessages.err,
+    conversations.err,
     _conversationMessages.status
   ]);
 

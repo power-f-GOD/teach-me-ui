@@ -12,7 +12,7 @@ import { useGetTrends } from '../../hooks/api';
 
 const RightPane: React.FunctionComponent = () => {
   const [, trends, getTrendsIsLoading] = useGetTrends();
-  console.log(trends, getTrendsIsLoading);
+  
   return (
     <Container className='right-pane' fluid>
       <h4>Trending Hashtags</h4>

@@ -42,7 +42,7 @@ export default function chat(message: APIMessageResponse & UserData) {
 
     switch (pipe) {
       case CHAT_NEW_MESSAGE:
-        if (sender_id !== userData.id) {
+        if (sender_id !== userData.id && socket.readyState === 1) {
           if (delivered_to && !delivered_to!?.includes(userData.id)) {
             socket.send(
               JSON.stringify({
