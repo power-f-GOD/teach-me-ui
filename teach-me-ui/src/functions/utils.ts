@@ -569,3 +569,17 @@ export const formatNotification = (entities: any, text: string) => {
   });
   return string;
 };
+
+const addStyledToHashtags = (markUp: string) => {
+  let styledMarkUpArray = markUp.split(' ').map()
+}
+
+export const getPostAndMarkUpFromMarkUpInput = (markUp: string) => {
+  let markup = '';
+  let post = '';
+  if(/</.test(markUp)) {
+
+  } else {
+    post = markUp
+  }
+} 
