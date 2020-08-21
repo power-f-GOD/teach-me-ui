@@ -78,7 +78,7 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
 
         if (window.navigator.onLine) {
           dispatch(getConversationInfo(userId)(dispatch));
-          dispatch(getConversationMessages(convoId)(dispatch));
+          dispatch(getConversationMessages(convoId, 'pending')(dispatch));
         } else {
           dispatch(
             conversationInfo({
@@ -88,7 +88,7 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
             })
           );
           dispatch(
-            conversationMessages({ status: 'settled', err: true, data: [] })
+            conversationMessages({ status: 'pending', err: true, data: [] })
           );
         }
 
@@ -113,11 +113,11 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
       </AppBar>
       <Box className='tab-panels-wrapper d-flex' position='relative'>
         <TabPanel value={value} index={0} status={conversations.status}>
-          {conversations.status === 'pending' ? (
+          {conversations.status === 'pending' && !conversations.err ? (
             Array(Math.floor(window.innerHeight / 60))
               .fill('')
               .map((_, key) => <Skeleton type={DISPLAY_INFO} key={key} />)
-          ) : !!convos[0] ? (
+          ) : convos.length ? (
             convos.map((conversation, i) => {
               const {
                 avatar,
@@ -309,8 +309,13 @@ function TabPanel(props: TabPanelProps) {
           transform: `translateX(${translateVal}%)`,
           WebkitTransform: `translateX(${translateVal}%)`,
           OTransform: `translateX(${translateVal}%)`,
-          overflowY: other.status === 'pending' ? 'hidden' : 'auto',
-          opacity: value === index ? 1 : 0.5,
+          overflowY:
+            other.status === 'pending'
+              ? 'hidden'
+              : value === index
+              ? 'auto'
+              : 'hidden',
+          opacity: value === index ? 1 : 0.8,
           minWidth: '100%'
         }}
         ref={tabPanelRef}

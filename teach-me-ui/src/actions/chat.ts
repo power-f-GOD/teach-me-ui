@@ -232,24 +232,30 @@ export const conversations = (_payload: SearchState): ReduxAction => {
         break;
     }
   } else if (_payload.data?.length) {
-    actualConvo = initialConversations?.find((conversation, i) => {
-      if (user_id === conversation.associated_user_id) {
-        indexOfInitial = i;
-        return true;
-      }
-      return false;
-    });
+    if (pipe) {
+      actualConvo = initialConversations?.find((conversation, i) => {
+        if (user_id === conversation.associated_user_id) {
+          indexOfInitial = i;
+          return true;
+        }
+        return false;
+      });
 
-    if (actualConvo && payload.data?.length === 1) {
-      actualConvo = { ...actualConvo, ...message };
-      initialConversations[indexOfInitial] = actualConvo as Partial<
-        APIConversationResponse
-      >;
-      payload.data = initialConversations;
+      if (actualConvo && payload.data?.length === 1) {
+        actualConvo = { ...actualConvo, ...message };
+        initialConversations[indexOfInitial] = actualConvo as Partial<
+          APIConversationResponse
+        >;
+        payload.data = initialConversations;
+      } else {
+        payload.data = [...initialConversations];
+      }
     } else if (!initialConversations.length) {
       payload.data = [..._payload.data];
     }
   }
+
+  // console.log('initialConversations............', initialConversations);
 
   return {
     type: SET_CONVERSATIONS,
@@ -376,12 +382,19 @@ export const conversationInfo = (payload: ConversationInfo): ReduxAction => {
   };
 };
 
-export const getConversationMessages = (convoId: string) => (
-  dispatch: Function
-): ReduxAction => {
+export const getConversationMessages = (
+  convoId: string,
+  status?: 'settled' | 'pending' | 'fulfilled',
+  statusText?: string
+) => (dispatch: Function): ReduxAction => {
   const token = getState().userData?.token;
 
-  dispatch(conversationMessages({ status: 'pending' }));
+  dispatch(
+    conversationMessages({
+      status: status ? status : 'pending',
+      statusText: "Don't remove this prop to avoid the scroll to bottom bug."
+    })
+  );
   callNetworkStatusCheckerFor({
     name: 'conversationMessages',
     func: conversationMessages
@@ -400,7 +413,10 @@ export const getConversationMessages = (convoId: string) => (
       const messages: APIMessageResponse[] = data.messages;
       const userId = (getState().userData as UserData)!.id;
       const socket = getState().webSocket as WebSocket;
-      const convoId = (getState().conversation as APIConversationResponse)._id;
+      const convoId =
+        (getState().conversation as APIConversationResponse)._id ??
+        queryString.parse(window.location.search).id ??
+        '';
       const chatState = getState().chatState as ChatState;
 
       if (!error) {
@@ -439,6 +455,7 @@ export const getConversationMessages = (convoId: string) => (
             conversationId: convoId,
             status: 'fulfilled',
             err: false,
+            statusText: statusText ? statusText : undefined,
             data: [...messages.reverse()]
           })
         );
@@ -447,6 +464,7 @@ export const getConversationMessages = (convoId: string) => (
           conversationMessages({
             conversationId: convoId,
             status: 'fulfilled',
+            statusText: statusText ? statusText : undefined,
             err: true,
             data: []
           })
@@ -469,9 +487,9 @@ export const conversationMessages = (payload: ConversationMessages) => {
   ];
 
   if (!payload.pipe) {
-    if (payload.data && payload.data![0]?.conversation_id === convoId) {
-      if (payload.data!?.length > 0) {
-        let newMessage = payload.data![0];
+    if (payload.data?.length && payload.data![0]?.conversation_id === convoId) {
+      if (payload.data?.length === 1) {
+        let newMessage = payload.data[0];
         let indexOfInitial: number = -1;
         let initialMessage =
           previousMessages?.find((message, i) => {
@@ -498,9 +516,10 @@ export const conversationMessages = (payload: ConversationMessages) => {
             previousMessages.unshift(...payload.data);
           }
         }
+      } else {
+        // console.log(payload.data === previousMessages);
+        previousMessages = [...payload.data]; //, ...previousMessages];
       }
-    } else {
-      previousMessages = [...(payload.data ?? [])];
     }
   } else if (payload.data?.length) {
     const msg_id = payload.data![0]._id;
@@ -553,7 +572,11 @@ export const conversationMessages = (payload: ConversationMessages) => {
     type: SET_CONVERSATION_MESSAGES,
     payload: {
       ...payload,
-      data: [...(payload.data?.length ? previousMessages : [])]
+      data: [
+        ...(payload.data?.length || (payload.status !== 'pending' && convoId)
+          ? previousMessages
+          : [])
+      ]
     }
   };
 };
