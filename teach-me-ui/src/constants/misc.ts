@@ -12,7 +12,7 @@ import { makeStyles } from '@material-ui/core/styles';
 export const apiBaseURL = 'https://teach-me-services.herokuapp.com/api/v1';
 // export const apiBaseURL = 'http://883fe0f3aa74.ngrok.io/api/v1';
 export const wsBaseURL = 'wss://teach-me-services.herokuapp.com/api/v1';
-// export const wsBaseURL = 'ws://883fe0f3aa74.ngrok.io/api/v1';
+// export const wsBaseURL = 'ws://6bba2f1001c5.ngrok.io/api/v1';
 
 
 export const DISPLAY_SNACK_BAR = 'DISPLAY_SNACK_BAR';
@@ -38,7 +38,10 @@ export const searchState: SearchState = {
 export const notificationState: NotificationState = {
   status: 'settled',
   err: false,
-  data: []
+  data: {
+    notifications: [],
+    entities:{}
+  }
 };
 
 export const mentionState: MentionState = {
@@ -54,7 +57,7 @@ export const userDataState: UserData = {
   lastname: '',
   username: '',
   email: '',
-  dob: '',
+  date_of_birth: '',
   institution: '',
   department: '',
   level: '',

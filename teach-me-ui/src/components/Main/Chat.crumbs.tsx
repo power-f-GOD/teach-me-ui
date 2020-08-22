@@ -13,11 +13,11 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-import { APIMessageResponse } from '../../constants/interfaces';
 import {
-  timestampFormatter,
-  dateStringMapFormatter
-} from '../../functions/utils';
+  APIMessageResponse,
+  APIConversationResponse
+} from '../../constants/interfaces';
+import { timestampFormatter, formatMapDateString } from '../../functions/utils';
 
 export interface SelectedMessageValue {
   id: string;
@@ -32,6 +32,7 @@ export const Message = (props: {
   type: 'incoming' | 'outgoing';
   userId: string;
   className: string;
+  shouldUpdate: any;
   clearSelections: boolean;
   canSelectByClick: boolean;
   participants: string[];
@@ -50,18 +51,23 @@ export const Message = (props: {
   const {
     message: text,
     date: timestamp,
-    timestamp_id,
+    deleted,
     delivered_to,
     seen_by,
-    _id: id,
-    deleted
+    _id: id
   } = message;
-
   const [selected, setSelected] = useState<boolean | null>(null);
 
-  const handleSelectMessage = useCallback((e: any) => {
+  const handleSelectMessage = useCallback(() => {
     setSelected((prev) => !prev);
   }, []);
+
+  const handleSelectMessageForEnterPress = useCallback(
+    (e: any) => {
+      if (e.key === 'Enter') handleSelectMessage();
+    },
+    [handleSelectMessage]
+  );
 
   useEffect(() => {
     if (selected !== null) {
@@ -94,6 +100,8 @@ export const Message = (props: {
         selected ? 'selected' : ''
       } msg-container ${className} ${deleted ? 'deleted' : ''} p-0 mx-0`}
       onDoubleClick={handleSelectMessage}
+      onKeyUp={handleSelectMessageForEnterPress}
+      tabIndex={0}
       onClick={canSelectByClick ? handleSelectMessage : undefined}>
       <Col
         as='div'
@@ -106,7 +114,7 @@ export const Message = (props: {
               </>
             ) : (
               <>
-                <BlockIcon fontSize='inherit' /> User thought to delete message
+                <BlockIcon fontSize='inherit' /> You can't see this message
               </>
             )
           ) : (
@@ -117,11 +125,11 @@ export const Message = (props: {
             chatStatus={
               <ChatStatus
                 type={type}
-                deleted={deleted}
-                timestamp_id={timestamp_id}
-                seen_by={seen_by}
-                delivered_to={delivered_to}
                 userId={userId}
+                message={message}
+                shouldUpdate={
+                  '' + deleted + delivered_to?.length + seen_by?.length
+                }
                 participants={participants}
               />
             }
@@ -152,22 +160,13 @@ export const ChatTimestamp = (props: {
 
 export const ChatStatus = (props: {
   type: string;
-  deleted: boolean;
-  timestamp_id?: string;
-  seen_by: string[];
-  delivered_to: string[];
   userId: string;
+  shouldUpdate: any;
+  message: Partial<APIMessageResponse & APIConversationResponse>;
   participants: string[];
 }) => {
-  const {
-    type,
-    deleted,
-    timestamp_id,
-    seen_by,
-    delivered_to,
-    userId,
-    participants
-  } = props;
+  const { type, userId, message, participants } = props;
+  const { timestamp_id, deleted, delivered_to, seen_by } = message ?? {};
   const isDelivered =
     type === 'outgoing' &&
     participants
@@ -193,27 +192,15 @@ export const ChatStatus = (props: {
   return element ? <>{element}</> : <></>;
 };
 
-export const ChatDate = ({
-  timestamp,
-  sentToday,
-  sentYesterday
-}: {
-  timestamp: number;
-  sentToday: boolean;
-  sentYesterday: boolean;
-}) => {
+export const ChatDate = ({ timestamp }: { timestamp: number }) => {
   if (isNaN(timestamp)) {
     return <>{timestamp}</>;
   }
 
   return (
-    <Box className='chat-date-wrapper text-center my-4' position='relative'>
+    <Box className='chat-date-wrapper text-center my-5' position='relative'>
       <Box component='span' className='chat-date d-inline-block'>
-        {sentToday
-          ? 'Today'
-          : sentYesterday
-          ? 'Yesterday'
-          : dateStringMapFormatter(timestamp, true)}
+        {formatMapDateString(timestamp, true)}
       </Box>
     </Box>
   );

@@ -8,41 +8,64 @@ import Avatar from '@material-ui/core/Avatar';
 
 import Skeleton from 'react-loading-skeleton';
 
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 import ReactButton from './ReactButton';
-import { bigNumberFormat, dispatch } from '../../functions/utils';
+import { bigNumberFormat, dispatch, formatDate } from '../../functions/utils';
 import { PostPropsState } from '../../constants/interfaces';
 
 import CreateReply from './CreateReply';
 
 import { triggerSearchKanyimuta } from '../../actions/search';
 
+const stopProp = (e: any) => {
+  e.stopPropagation();
+};
+
 export const processPostFn = (post: string) =>
   post &&
-  post.split(' ').map((w, i) => {
-    return /(^@)[A-Za-z0-9_]+[,.!]*$/.test(w) ? (
-      <Box component='span' key={i}>
-        <Link to={`/${/[,.!]+$/.test(w) ? w.slice(0, -1) : w}`}>{`${
-          /[,.!]+$/.test(w) ? w.slice(0, -1) : w
-        }`}</Link>
-        {`${/[,.!]+$/.test(w) ? w.slice(-1) : ''}`}{' '}
-      </Box>
-    ) : /(^#)[A-Za-z0-9_]+[,.!]*$/.test(w) ? (
-      <Box component='span' key={i}>
-        <Link to={(location => {
-          dispatch(triggerSearchKanyimuta(w)(dispatch));
-          return `/search/${w.substring(1)}`;
-        })}>
-        {w}
-        </Link>{' '}
-      </Box>
-    ) : (
-      <React.Fragment key={i}>{w} </React.Fragment>
-    );
-  });
+  post
+    .trim()
+    .split(/ /gi)
+    .map((w, i) => {
+      w = w.replace(/ /gi, '');
+      return /(^@)[A-Za-z0-9_]+[,.!?]*$/.test(w) ? (
+        <Box component='span' key={i}>
+          <Link
+            onClick={stopProp}
+            to={`/${/[,.!]+$/.test(w) ? w.slice(0, -1) : w}`}>{`${
+            /[,.!]+$/.test(w) ? w.slice(0, -1) : w
+          }`}</Link>
+          {`${/[,.!]+$/.test(w) ? w.slice(-1) : ''}`}{' '}
+        </Box>
+      ) : /(^#)[A-Za-z0-9_]+[,.!?]*$/.test(w) ? (
+        <Box component='span' key={i}>
+          <Link
+            onClick={stopProp}
+            to={() => {
+              dispatch(triggerSearchKanyimuta(w)(dispatch));
+              return `/search/${w.substring(1)}`;
+            }}>
+            {w}
+          </Link>{' '}
+        </Box>
+      ) : /^https?:\/\/(?!\.)[A-Za-z0-9.-]+.[A-Za-z0-9.]+(\/[A-Za-z-/0-9@]+)?$/.test(
+          w
+        ) ? (
+        <Box component='span' key={i}>
+          <a onClick={stopProp} href={w} target='blank'>
+            {w}
+          </a>{' '}
+        </Box>
+      ) : (
+        <React.Fragment key={i}>{w} </React.Fragment>
+      );
+    });
 
-const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
+const Post: React.FunctionComponent<
+  Partial<PostPropsState> & Partial<{ head: boolean }>
+> = (props) => {
+  const history = useHistory();
   let extra: string | null = null;
   if (props.sec_type === 'REPOST') {
     extra = `${props.sender_name} reposted`;
@@ -60,7 +83,9 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
   if (props.sec_type === 'REPLY') {
     extra = `${props.sender_name} replied`;
   }
-
+  const navigate = (id: string) => (e: any) => {
+    history.push(`/p/${id}`);
+  };
   return (
     <Box
       className='post-list-page'
@@ -71,10 +96,9 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
       pb={props.sec_type === 'REPLY' ? 1 : 0}
       mb={1}>
       {((props._extra && props.sec_type !== 'REPLY') ||
-        (props.sec_type === 'REPOST' && !props.text)) && (
-        <small className='small-text'>{extra}</small>
-      )}
-      {props.sec_type === 'REPLY' && (
+        (props.sec_type === 'REPOST' && !props.text)) &&
+        props.head && <small className='small-text'>{extra}</small>}
+      {props.sec_type === 'REPLY' && props.head && (
         <small className='small-text'>{extra}</small>
       )}
       <Row
@@ -141,13 +165,43 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
       </Row>
       {props.sender_name ? (
         <Row className='container-fluid  mx-auto'>
-          <Box component='div' pt={1} px={0} ml={5} className='break-word'>
+          <Box
+            component='div'
+            pt={1}
+            py={props.head ? 2 : undefined}
+            px={0}
+            ml={5}
+            width='100%'
+            onClick={navigate(
+              (props.sec_type === 'REPLY'
+                ? props.parent?.id
+                : props.text
+                ? props.id
+                : props.parent?.id) as string
+            )}
+            fontSize={props.head ? '1.5rem' : undefined}
+            className='break-word'>
             {processPostFn(
               (props.sec_type === 'REPLY'
                 ? props.parent?.text
                 : props.text
                 ? props.text
                 : props.parent?.text) as string
+            )}
+          </Box>
+          <Box
+            component='small'
+            textAlign='right'
+            width='100%'
+            color='#888'
+            pt={1}
+            mr={3}>
+            {formatDate(
+              (props.sec_type === 'REPLY'
+                ? props.parent?.posted_at
+                : props.text
+                ? props.posted_at
+                : props.parent?.posted_at) as number
             )}
           </Box>
         </Row>
@@ -157,7 +211,9 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
         </Box>
       )}
       {props.sec_type === 'REPOST' && props.text && (
-        <Box className='quoted-post'>
+        <Box
+          className='quoted-post'
+          onClick={navigate(props.parent?.id as string)}>
           <Row className='container-fluid px-2 mx-auto p-0 align-items-center'>
             <Avatar
               component='span'
@@ -177,6 +233,15 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
           <Row className='container-fluid  mx-auto'>
             <Box component='div' pt={1} px={0} className='break-word'>
               {processPostFn(props.parent?.text as string)}
+            </Box>
+            <Box
+              component='small'
+              textAlign='right'
+              width='100%'
+              color='#888'
+              pt={1}
+              mr={3}>
+              {formatDate(props.parent?.posted_at as number)}
             </Box>
           </Row>
         </Box>
@@ -327,8 +392,24 @@ const Post: React.FunctionComponent<Partial<PostPropsState>> = (props) => {
             </Col>
           </Row>
           <Row className='container-fluid  mx-auto'>
-            <Box component='div' pt={1} px={0} ml={5} className='break-word'>
+            <Box
+              component='div'
+              pt={1}
+              px={0}
+              ml={5}
+              width='100%'
+              onClick={navigate(props.id as string)}
+              className='break-word'>
               {processPostFn(props.text as string)}
+            </Box>
+            <Box
+              component='small'
+              textAlign='right'
+              width='100%'
+              color='#888'
+              pt={1}
+              mr={3}>
+              {formatDate(props.posted_at as number)}
             </Box>
           </Row>
           {props.sender_name && (

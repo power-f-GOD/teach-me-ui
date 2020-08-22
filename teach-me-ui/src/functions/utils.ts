@@ -4,7 +4,8 @@ import {
   BasicInputState,
   UserData,
   NetworkAction,
-  Reaction
+  Reaction,
+  ONLINE_STATUS
 } from '../constants';
 
 import store from '../appStore';
@@ -16,7 +17,6 @@ import {
 import { userDeviceIsMobile } from '../';
 
 import moment from 'moment';
-
 
 export const { dispatch, getState }: any = store;
 
@@ -103,7 +103,7 @@ export function callNetworkStatusCheckerFor(action: NetworkAction) {
       );
 
     callTimeoutToAbortNetworkAction(action);
-  }, 15000);
+  }, 18000);
 
   function callTimeoutToAbortNetworkAction(action: NetworkAction) {
     if (navigator.onLine && state[action.name]?.status === 'pending') {
@@ -130,14 +130,33 @@ export function callNetworkStatusCheckerFor(action: NetworkAction) {
           })
         );
       }
-    }, 15000);
+    }, 18000);
   }
 }
 
 export async function populateStateWithUserData(
   data: UserData
 ): Promise<ReduxAction> {
-  return await promisedDispatch(setUserData({ ...data }));
+  setTimeout(() => {
+    const socket = getState().webSocket as WebSocket;
+
+    if (socket && socket.readyState === 1) {
+      socket.send(
+        JSON.stringify({
+          online_status:
+            document.visibilityState === 'visible' ? 'ONLINE' : 'AWAY',
+          pipe: ONLINE_STATUS
+        })
+      );
+    }
+  }, 2000);
+
+  return await promisedDispatch(
+    setUserData({
+      ...data,
+      online_status: document.visibilityState === 'visible' ? 'ONLINE' : 'AWAY'
+    })
+  );
 }
 
 export const logError = (action: Function) => (error: any) => {
@@ -163,6 +182,35 @@ export const logError = (action: Function) => (error: any) => {
   console.error('An error occured: ', error);
 };
 
+export const addEventListenerOnce = (
+  target: HTMLElement | any,
+  callback: Function | any,
+  event?: string,
+  options?: { capture?: boolean; once?: boolean }
+) => {
+  event = event ? event : 'transitionend';
+
+  try {
+    target.addEventListener(
+      event,
+      callback,
+      options
+        ? {
+            ...(options ?? {}),
+            once: options.once !== undefined ? options.once : true
+          }
+        : { once: true }
+    );
+  } catch (err) {
+    target.removeEventListener(
+      event,
+      callback,
+      options?.capture ? true : false
+    );
+    target.addEventListener(event, callback, options?.capture ? true : false);
+  }
+};
+
 export const timestampFormatter = (
   _timestamp?: string | number,
   withSeconds?: boolean
@@ -176,8 +224,6 @@ export const timestampFormatter = (
   } else {
     timestamp = new Date().toLocaleTimeString();
   }
-
-  // let is12hour = ;
 
   if (/(a|p)m/i.test(timestamp)) {
     timestamp = timestamp.replace(/:\d\d\s?(\w)/, ' $1');
@@ -379,7 +425,7 @@ export const getHashtagsFromText = (text: string): string[] => {
   return hashtags;
 };
 
-export const formatDate = (dateTime: Date) => {
+export const formatDate = (dateTime: Date | number) => {
   if (!dateTime) {
     return null;
   }
@@ -392,13 +438,9 @@ export const formatDate = (dateTime: Date) => {
   if (duration.years() > 0) {
     return time.format('ll');
   } else if (duration.weeks() > 0) {
-    return duration.weeks() > 1
-      ? time.format('ll')
-      : 'a week ago';
+    return duration.weeks() > 1 ? time.format('ll') : 'a week ago';
   } else if (duration.days() > 0) {
-    return duration.days() > 1
-      ? duration.days() + ' days ago'
-      : 'a day ago';
+    return duration.days() > 1 ? duration.days() + ' days ago' : 'a day ago';
   } else if (duration.hours() > 0) {
     return duration.hours() > 1
       ? duration.hours() + ' hours ago'
@@ -413,16 +455,29 @@ export const formatDate = (dateTime: Date) => {
       : 'just now';
   }
 };
-export const dateStringMapFormatter = (
-  timestamp: number,
+export const formatMapDateString = (
+  timestamp: number | string,
   includeDay?: boolean,
-  includeYear?: boolean
-) => {
-  if (isNaN(timestamp)) {
-    return timestamp;
+  includeYear?: boolean,
+  dayMonthSeparator?: string
+): string => {
+  if (isNaN(timestamp as number)) {
+    return timestamp as string;
   }
 
+  const today = new Date().toDateString();
   const dateString = new Date(timestamp).toDateString();
+  const dateIsToday = dateString === today;
+  const dateIsYesterday =
+    (Math.abs(
+      (new Date(today) as any) - (new Date(dateString) as any)
+    ) as any) /
+      864e5 ===
+    1;
+
+  if (dateIsToday) return 'today';
+  if (dateIsYesterday) return 'yesterday';
+
   let [day, month, date, year] = dateString.split(' ');
 
   switch (true) {
@@ -488,7 +543,29 @@ export const dateStringMapFormatter = (
       break;
   }
 
-  return `${includeDay ? day + ' - ' : ''}${month} ${date}${
-    includeYear ? ', ' + year : ''
-  }`;
+  return `${
+    includeDay
+      ? day + (dayMonthSeparator ? ' ' + dayMonthSeparator + ' ' : ' - ')
+      : ''
+  }${month} ${date}${includeYear ? ', ' + year : ''}`;
+};
+
+export const formatNotification = (entities: any, text: string) => {
+  const text1 = text.replace('\n', ' ');
+  let string = '';
+  text1.split(' ').map((w) => {
+    /(^{{)[A-Za-z0-9-]+(}}$)/.test(w)
+      ? entities[w.substring(2, w.length - 2)].action
+        ? (string = string.concat(
+            ` <a style="color: rgb(0, 115, 160)" href='${
+              entities[w.substring(2, w.length - 2)].action
+            }'>${entities[w.substring(2, w.length - 2)].subject}</a>`
+          ))
+        : (string = string.concat(
+            ` ${entities[w.substring(2, w.length - 2)].subject}`
+          ))
+      : (string = string.concat(` ${w}`));
+    return true;
+  });
+  return string;
 };

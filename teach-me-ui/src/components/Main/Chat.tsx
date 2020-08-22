@@ -10,7 +10,7 @@ import Col from 'react-bootstrap/Col';
 import IconButton from '@material-ui/core/IconButton';
 import ChatIcon from '@material-ui/icons/Chat';
 
-import { dispatch, delay } from '../../functions';
+import { dispatch, delay, addEventListenerOnce } from '../../functions';
 import {
   chatState,
   conversationMessages,
@@ -24,23 +24,13 @@ import {
   ChatState,
   ConversationInfo,
   UserData,
-  UserEnrolledData,
   SearchState,
-  APIConversationResponse,
-  APIMessageResponse
+  APIConversationResponse
 } from '../../constants/interfaces';
-import {
-  CHAT_NEW_MESSAGE,
-  CHAT_MESSAGE_DELIVERED,
-  CHAT_TYPING,
-  CHAT_READ_RECEIPT,
-  CHAT_MESSAGE_DELETED,
-  CHAT_MESSAGE_DELETED_FOR
-} from '../../constants/chat';
 import ChatLeftPane from './Chat.LeftPane';
 import ChatMiddlePane from './Chat.MiddlePane';
 import ChatRightPane from './Chat.RightPane';
-import { ONLINE_STATUS } from '../../constants';
+import createMemo from '../../Memo';
 
 export const placeHolderDisplayName = 'Start a new Conversation';
 
@@ -55,8 +45,9 @@ interface ChatBoxProps {
   [key: string]: any;
 }
 
-let userTypingTimeout: any = null;
 const chatBoxWrapperRef = createRef<any>();
+
+const Memoize = createMemo();
 
 window.addEventListener('popstate', () => {
   let { chat, cid } = queryString.parse(window.location.search);
@@ -66,7 +57,7 @@ window.addEventListener('popstate', () => {
     chatBoxWrapperRef.current.style.display = 'flex';
   }
 
-  if (!isNaN(cid)) {
+  if (!isNaN(cid) || cid === '0') {
     dispatch(conversationInfo({ status: 'settled', data: {} }));
     dispatch(conversation(''));
     dispatch(conversationMessages({ status: 'settled', data: [] }));
@@ -94,7 +85,11 @@ const ChatBox = (props: ChatBoxProps) => {
     webSocket: socket
   } = props;
   const { isOpen, isMinimized, queryString: qString }: ChatState = _chatState;
-  const { _id: convoId, associated_username: convoUsername } = _conversation;
+  const {
+    _id: convoId,
+    associated_username: convoUsername,
+    associated_user_id: convoUid
+  } = _conversation;
 
   const [visibilityState, setVisibilityState] = React.useState<
     'visible' | 'hidden'
@@ -102,7 +97,7 @@ const ChatBox = (props: ChatBoxProps) => {
 
   const handleOpenChatClick = useCallback(() => {
     const queryString = `?chat=open&id=${
-      convoUsername ?? placeHolderDisplayName
+      convoUid ?? placeHolderDisplayName
     }&cid=${convoId ?? '0'}`;
 
     setVisibilityState('visible');
@@ -117,11 +112,7 @@ const ChatBox = (props: ChatBoxProps) => {
       );
     });
     window.history.pushState({}, '', window.location.pathname + queryString);
-
-    if (!conversations.data![0]) {
-      dispatch(getConversations()(dispatch));
-    }
-  }, [convoId, convoUsername, conversations.data]);
+  }, [convoId, convoUid]);
 
   const handleChatTransitionEnd = useCallback(
     (e: any) => {
@@ -156,22 +147,7 @@ const ChatBox = (props: ChatBoxProps) => {
     const chatBoxWrapper = chatBoxWrapperRef.current;
 
     if (chatBoxWrapper) {
-      try {
-        chatBoxWrapper.addEventListener(
-          'transitionend',
-          handleChatTransitionEnd,
-          { once: true }
-        );
-      } catch (err) {
-        chatBoxWrapper.removeEventListener(
-          'transitionend',
-          handleChatTransitionEnd
-        );
-        chatBoxWrapper.addEventListener(
-          'transitionend',
-          handleChatTransitionEnd
-        );
-      }
+      addEventListenerOnce(chatBoxWrapper, handleChatTransitionEnd);
     }
   }, [handleChatTransitionEnd]);
 
@@ -207,26 +183,36 @@ const ChatBox = (props: ChatBoxProps) => {
     const search = window.location.search;
     let { chat, id, cid } = queryString.parse(search);
 
-    if (chat) {
+    if (!isOpen) {
       //delay till chatBox display property is set for animation to work
       delay(500).then(() => {
-        dispatch(
-          chatState({
-            queryString: !!chat ? search : qString,
-            isOpen: true,
-            isMinimized: chat === 'min'
-          })
-        );
+        let { chat } = queryString.parse(search);
+
+        if (chat)
+          dispatch(
+            chatState({
+              queryString: !!chat ? search : qString,
+              isOpen: true,
+              isMinimized: chat === 'min'
+            })
+          );
       });
     }
 
-    if ((isOpen || chat === 'open') && !conversations.data![0]) {
+    if (
+      (isOpen || chat === 'open') &&
+      !conversations.data![0] &&
+      !conversations.err
+    ) {
       dispatch(getConversations()(dispatch));
     }
 
     if (cid && isNaN(cid)) {
       let infoStatus = _conversationInfo.status;
+
       if (
+        window.navigator.onLine &&
+        !_conversationInfo.err &&
         convoId &&
         (infoStatus === 'settled' ||
           (infoStatus === 'fulfilled' && convoId !== cid))
@@ -240,125 +226,26 @@ const ChatBox = (props: ChatBoxProps) => {
 
       let msgStatus = _conversationMessages.status;
       if (
+        window.navigator.onLine &&
+        !_conversationMessages.err &&
         convoId &&
         (msgStatus === 'settled' ||
           (msgStatus === 'fulfilled' && convoId !== cid))
       ) {
-        dispatch(getConversationMessages(cid)(dispatch));
+        dispatch(getConversationMessages(cid, 'pending')(dispatch));
       }
     }
   }, [
-    _conversationInfo.status,
     conversations.data,
     convoId,
     qString,
     isOpen,
+    _conversationInfo.status,
+    _conversationInfo.err,
+    _conversationMessages.err,
+    conversations.err,
     _conversationMessages.status
   ]);
-
-  useEffect(() => {
-    if (socket) {
-      socket.onmessage = (e: any) => {
-        const cid = queryString.parse(window.location.search).cid;
-        const message = JSON.parse(e.data) as APIMessageResponse;
-        const {
-          pipe,
-          delivered_to,
-          conversation_id,
-          _id,
-          sender_id,
-          user_id,
-          seen_by,
-          deleted
-        } = message;
-
-        switch (pipe) {
-          case CHAT_NEW_MESSAGE:
-            if (sender_id !== userData.id) {
-              if (delivered_to && !delivered_to!?.includes(userData.id)) {
-                socket.send(
-                  JSON.stringify({
-                    message_id: _id,
-                    pipe: CHAT_MESSAGE_DELIVERED
-                  })
-                );
-              }
-
-              if (
-                isOpen &&
-                !isMinimized &&
-                cid === conversation_id &&
-                seen_by &&
-                !seen_by!?.includes(userData.id)
-              ) {
-                socket.send(
-                  JSON.stringify({
-                    message_id: message._id,
-                    pipe: CHAT_READ_RECEIPT
-                  })
-                );
-              }
-            }
-
-            if (convoId && conversation_id === cid) {
-              dispatch(conversationMessages({ data: [{ ...message }] }));
-            }
-            break;
-          case CHAT_MESSAGE_DELIVERED:
-            if (delivered_to && convoId && conversation_id === cid) {
-              const deliveeId: any = delivered_to;
-
-              dispatch(
-                conversationMessages({
-                  pipe: CHAT_MESSAGE_DELIVERED,
-                  data: [{ delivered_to: [deliveeId], _id }]
-                })
-              );
-            }
-            break;
-          case CHAT_READ_RECEIPT:
-            if (seen_by && convoId && conversation_id === cid) {
-              const seerId: any = seen_by;
-
-              dispatch(
-                conversationMessages({
-                  pipe: CHAT_READ_RECEIPT,
-                  data: [{ seen_by: [seerId], _id }]
-                })
-              );
-            }
-            break;
-          case CHAT_TYPING:
-            clearTimeout(userTypingTimeout);
-
-            if (user_id && cid === conversation_id) {
-              dispatch(conversationInfo({ user_typing: user_id }));
-              userTypingTimeout = window.setTimeout(() => {
-                dispatch(conversationInfo({ user_typing: '' }));
-              }, 750);
-            }
-            break;
-          case CHAT_MESSAGE_DELETED:
-          case CHAT_MESSAGE_DELETED_FOR:
-            if (deleted && convoId && conversation_id === cid) {
-              dispatch(
-                conversationMessages({
-                  pipe:
-                    pipe === CHAT_MESSAGE_DELETED
-                      ? CHAT_MESSAGE_DELETED
-                      : CHAT_MESSAGE_DELETED_FOR,
-                  data: [{ deleted: true, _id }]
-                })
-              );
-            }
-            break;
-          case ONLINE_STATUS:
-            // console.log(ONLINE_STATUS, message);
-            break;
-        }
-      };
-    }
-  }, [socket, convoId, userData.id, isMinimized, isOpen]);
 
   return (
     <Container fluid className='ChatBox p-0'>
@@ -367,15 +254,21 @@ const ChatBox = (props: ChatBoxProps) => {
         className={`chat-box-wrapper m-0 ${isMinimized ? 'minimize' : ''} ${
           isOpen ? '' : 'close'
         } ${visibilityState}`}>
-        <Col as='section' md={3} className='chat-left-pane p-0'>
-          <ChatLeftPane conversations={conversations} userData={userData} />
+        <Col as='section' md={3} sm={4} className='chat-left-pane p-0'>
+          <Memoize
+            memoizedComponent={ChatLeftPane}
+            conversations={conversations}
+            userId={userData.id}
+          />
         </Col>
 
         <Col
           as='section'
           md={convoUsername ? 6 : 9}
+          sm={8}
           className='chat-middle-pane d-flex flex-column p-0'>
-          <ChatMiddlePane
+          <Memoize
+            memoizedComponent={ChatMiddlePane}
             conversation={_conversation}
             conversationMessages={_conversationMessages}
             chatState={_chatState}
@@ -390,13 +283,10 @@ const ChatBox = (props: ChatBoxProps) => {
             as='section'
             md={3}
             className='chat-right-pane d-flex flex-column p-0'>
-            <ChatRightPane
+            <Memoize
+              memoizedComponent={ChatRightPane as React.FC}
               conversation={_conversation}
-              convoInfo={
-                _conversationInfo.data as Partial<
-                  APIConversationResponse & UserEnrolledData
-                >
-              }
+              convoInfo={_conversationInfo}
             />
           </Col>
         )}

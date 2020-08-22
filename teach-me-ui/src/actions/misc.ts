@@ -10,6 +10,7 @@ import {
   CLOSE_WEB_SOCKET
 } from '../constants';
 import { getState } from '../functions/utils';
+import { dispatch } from '../appStore';
 
 export const displaySnackbar = (payload: SnackbarState): ReduxAction => {
   return {
@@ -25,7 +26,7 @@ export function setDisplayName(payload: string): ReduxAction {
   };
 }
 
-export function setUserData(payload: UserData): ReduxAction {
+export function setUserData(payload: Partial<UserData>): ReduxAction {
   return {
     type: POPULATE_STATE_WITH_USER_DATA,
     payload
@@ -33,10 +34,13 @@ export function setUserData(payload: UserData): ReduxAction {
 }
 
 export function initWebSocket(token: string): ReduxAction {
+  //close webSocket if initially open to avoid bugs of double responses
+  dispatch(closeWebSocket());
+
   const socket = new WebSocket(`${wsBaseURL}/socket?token=${token}`);
 
   //this is just to poll server and keep it alive as Heroku keeps shutting out the webSocket
-  setInterval(() => {
+  const pollServer = () => {
     if (socket.readyState === 1)
       socket.send(
         JSON.stringify({
@@ -45,7 +49,15 @@ export function initWebSocket(token: string): ReduxAction {
           time_stamp_id: Date.now()
         })
       );
-  }, 30000);
+    // console.log('ping', socket.CLOSED);
+    const timeout = setTimeout(pollServer, 20000);
+
+    if (!window.navigator.onLine) {
+      clearTimeout(timeout);
+    }
+  };
+
+  pollServer();
 
   return {
     type: INIT_WEB_SOCKET,
@@ -53,8 +65,12 @@ export function initWebSocket(token: string): ReduxAction {
   };
 }
 
+// export function isAlive
+
 export function closeWebSocket(): ReduxAction {
-  getState().webSocket.close();
+  if (getState().webSocket) {
+    getState().webSocket.close();
+  }
 
   return {
     type: CLOSE_WEB_SOCKET

@@ -1,4 +1,6 @@
 import axios from 'axios';
+import produce from 'immer';
+import queryString from 'query-string';
 
 import {
   ReduxAction,
@@ -24,10 +26,12 @@ import {
   CHAT_MESSAGE_DELIVERED,
   CHAT_READ_RECEIPT,
   CHAT_MESSAGE_DELETED,
-  CHAT_MESSAGE_DELETED_FOR
+  CHAT_MESSAGE_DELETED_FOR,
+  CHAT_NEW_MESSAGE
 } from '../constants/chat';
-import { apiBaseURL as baseURL } from '../constants/misc';
+import { apiBaseURL as baseURL, ONLINE_STATUS } from '../constants/misc';
 import { logError, getState, callNetworkStatusCheckerFor } from '../functions';
+
 // import { displaySnackbar } from './misc';
 
 export const getUsersEnrolledInInstitution = (params?: string) => (
@@ -118,7 +122,141 @@ export const getConversations = () => (dispatch: Function): ReduxAction => {
   };
 };
 
-export const conversations = (payload: SearchState): ReduxAction => {
+export const conversations = (_payload: SearchState): ReduxAction => {
+  const payload = { ..._payload };
+  const { pipe, online_status, user_id, last_seen } =
+    (payload.data ?? [])[0] ?? {};
+  const message = (payload.data ?? [])[0] ?? ({} as APIMessageResponse);
+  const [initialConversations, conversationInfo, conversationMessages] = [
+    (getState().conversations.data ?? []) as Partial<APIConversationResponse>[],
+    getState().conversationInfo as ConversationInfo,
+    getState().conversationMessages.data as ConversationMessages['data']
+  ];
+  let indexOfInitial = -1;
+  let actualConvo = {} as
+    | Partial<
+        APIConversationResponse & {
+          last_message: APIMessageResponse & { is_recent?: boolean };
+        }
+      >
+    | undefined;
+
+  if (pipe && initialConversations.length) {
+    switch (pipe) {
+      case ONLINE_STATUS:
+        actualConvo = initialConversations?.find((conversation, i) => {
+          if (user_id === conversation.associated_user_id) {
+            indexOfInitial = i;
+            return true;
+          }
+          return false;
+        });
+
+        if (actualConvo) {
+          if (online_status === 'AWAY') {
+            actualConvo.last_seen = last_seen;
+          }
+
+          actualConvo.online_status = online_status;
+          initialConversations[indexOfInitial] = actualConvo;
+          payload.data = initialConversations;
+        } else {
+          payload.data = [...initialConversations];
+        }
+        break;
+      case 'CHAT_TYPING':
+        break;
+      case CHAT_NEW_MESSAGE:
+      case CHAT_READ_RECEIPT:
+      case CHAT_MESSAGE_DELETED:
+      case CHAT_MESSAGE_DELETED_FOR:
+      case CHAT_MESSAGE_DELIVERED:
+        actualConvo = initialConversations?.find((conversation, i) => {
+          if (message?.conversation_id === conversation._id) {
+            indexOfInitial = i;
+            return true;
+          }
+          return false;
+        });
+
+        if (actualConvo) {
+          const last_message = (produce(
+            { ...actualConvo.last_message, ...message },
+            (draft: Partial<APIMessageResponse>) => {
+              const { delivered_to, seen_by, deleted } = message;
+
+              draft.timestamp_id = undefined;
+              draft.delivered_to = delivered_to
+                ? Array.isArray(delivered_to)
+                  ? [...delivered_to]
+                  : [delivered_to]
+                : draft.delivered_to;
+
+              draft.seen_by = seen_by
+                ? Array.isArray(seen_by)
+                  ? [...seen_by]
+                  : [seen_by]
+                : draft.seen_by;
+
+              draft.deleted = deleted !== undefined ? deleted : false;
+            }
+          ) as unknown) as APIMessageResponse;
+
+          if (pipe === CHAT_NEW_MESSAGE) {
+            actualConvo.last_message = { ...last_message };
+            actualConvo.last_message.is_recent = true;
+            initialConversations.splice(indexOfInitial, 1);
+            initialConversations.unshift(actualConvo);
+          } else {
+            const [id, convoId] = [
+              queryString.parse(window.location.search)?.id,
+              conversationInfo.data?.id
+            ];
+
+            if (
+              actualConvo.last_message?._id === message._id &&
+              pipe === CHAT_MESSAGE_DELETED_FOR
+            ) {
+              if (convoId === id && convoId) {
+                const last_message = conversationMessages?.slice(-2)[0];
+                actualConvo.last_message = last_message as any;
+              }
+            } else if (actualConvo.last_message?._id === message._id) {
+              actualConvo.last_message = { ...last_message };
+              initialConversations[indexOfInitial] = actualConvo;
+            }
+          }
+
+          payload.data = initialConversations;
+        }
+        break;
+    }
+  } else if (_payload.data?.length) {
+    if (pipe) {
+      actualConvo = initialConversations?.find((conversation, i) => {
+        if (user_id === conversation.associated_user_id) {
+          indexOfInitial = i;
+          return true;
+        }
+        return false;
+      });
+
+      if (actualConvo && payload.data?.length === 1) {
+        actualConvo = { ...actualConvo, ...message };
+        initialConversations[indexOfInitial] = actualConvo as Partial<
+          APIConversationResponse
+        >;
+        payload.data = initialConversations;
+      } else {
+        payload.data = [...initialConversations];
+      }
+    } else if (!initialConversations.length) {
+      payload.data = [..._payload.data];
+    }
+  }
+
+  // console.log('initialConversations............', initialConversations);
+
   return {
     type: SET_CONVERSATIONS,
     payload
@@ -195,8 +333,8 @@ export const getConversationInfo = (
     }
   })
     .then(({ data }: any) => {
-      const _data = { ...data };
-      const { error, firstname, lastname } = _data;
+      const _data = { ...data } as UserData & { error: boolean };
+      const { error, firstname, lastname, online_status } = _data;
 
       delete _data.error;
       delete _data.date_of_birth;
@@ -213,6 +351,7 @@ export const getConversationInfo = (
           conversationInfo({
             status: 'fulfilled',
             err: false,
+            online_status,
             conversationId,
             data: { ...conversationData }
           })
@@ -222,6 +361,7 @@ export const getConversationInfo = (
           conversationInfo({
             status: 'fulfilled',
             err: true,
+            online_status,
             conversationId,
             data: {}
           })
@@ -242,12 +382,19 @@ export const conversationInfo = (payload: ConversationInfo): ReduxAction => {
   };
 };
 
-export const getConversationMessages = (convoId: string) => (
-  dispatch: Function
-): ReduxAction => {
+export const getConversationMessages = (
+  convoId: string,
+  status?: 'settled' | 'pending' | 'fulfilled',
+  statusText?: string
+) => (dispatch: Function): ReduxAction => {
   const token = getState().userData?.token;
 
-  dispatch(conversationMessages({ status: 'pending' }));
+  dispatch(
+    conversationMessages({
+      status: status ? status : 'pending',
+      statusText: "Don't remove this prop to avoid the scroll to bottom bug."
+    })
+  );
   callNetworkStatusCheckerFor({
     name: 'conversationMessages',
     func: conversationMessages
@@ -266,7 +413,10 @@ export const getConversationMessages = (convoId: string) => (
       const messages: APIMessageResponse[] = data.messages;
       const userId = (getState().userData as UserData)!.id;
       const socket = getState().webSocket as WebSocket;
-      const convoId = (getState().conversation as APIConversationResponse)._id;
+      const convoId =
+        (getState().conversation as APIConversationResponse)._id ??
+        queryString.parse(window.location.search).id ??
+        '';
       const chatState = getState().chatState as ChatState;
 
       if (!error) {
@@ -305,6 +455,7 @@ export const getConversationMessages = (convoId: string) => (
             conversationId: convoId,
             status: 'fulfilled',
             err: false,
+            statusText: statusText ? statusText : undefined,
             data: [...messages.reverse()]
           })
         );
@@ -313,6 +464,7 @@ export const getConversationMessages = (convoId: string) => (
           conversationMessages({
             conversationId: convoId,
             status: 'fulfilled',
+            statusText: statusText ? statusText : undefined,
             err: true,
             data: []
           })
@@ -335,9 +487,9 @@ export const conversationMessages = (payload: ConversationMessages) => {
   ];
 
   if (!payload.pipe) {
-    if (payload.data && payload.data![0]?.conversation_id === convoId) {
-      if (payload.data!?.length > 0) {
-        let newMessage = payload.data![0];
+    if (payload.data?.length && payload.data![0]?.conversation_id === convoId) {
+      if (payload.data?.length === 1) {
+        let newMessage = payload.data[0];
         let indexOfInitial: number = -1;
         let initialMessage =
           previousMessages?.find((message, i) => {
@@ -364,11 +516,12 @@ export const conversationMessages = (payload: ConversationMessages) => {
             previousMessages.unshift(...payload.data);
           }
         }
+      } else {
+        // console.log(payload.data === previousMessages);
+        previousMessages = [...payload.data]; //, ...previousMessages];
       }
-    } else {
-      previousMessages = [...(payload.data ?? [])];
     }
-  } else if (payload.data) {
+  } else if (payload.data?.length) {
     const msg_id = payload.data![0]._id;
     let indexOfInitial = -1;
     let initialMessage =
@@ -417,7 +570,14 @@ export const conversationMessages = (payload: ConversationMessages) => {
 
   return {
     type: SET_CONVERSATION_MESSAGES,
-    payload: { ...payload, data: [...previousMessages] }
+    payload: {
+      ...payload,
+      data: [
+        ...(payload.data?.length || (payload.status !== 'pending' && convoId)
+          ? previousMessages
+          : [])
+      ]
+    }
   };
 };
 

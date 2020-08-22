@@ -11,7 +11,6 @@ import {
   AUTHENTICATE_USER,
   ForgotPasswordStatusState,
   forgotPasswordStatusState,
-  FORGOT_PASSWORD_PENDING,
   FORGOT_PASSWORD_COMPLETED
 } from '../../constants';
 import {

@@ -4,33 +4,35 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
+import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 import SchoolIcon from '@material-ui/icons/School';
 
 import { ONE_TO_ONE } from '../../constants/chat';
 import {
   APIConversationResponse,
-  UserEnrolledData
+  UserData,
+  ConversationInfo
 } from '../../constants/interfaces';
 import { InfoCard } from '../crumbs/Cards';
 
 interface ChatRightPaneProps {
   conversation: APIConversationResponse;
-  convoInfo: Partial<APIConversationResponse & UserEnrolledData>;
+  convoInfo: ConversationInfo;
 }
 
-const ChatRightPane = ({ conversation, convoInfo }: ChatRightPaneProps) => {
+const ChatRightPane = ({
+  conversation,
+  convoInfo: _conversationInfo
+}: ChatRightPaneProps) => {
   const {
     type,
     conversation_name: displayName,
     avatar,
     associated_username: username
   } = conversation;
-  const {
-    institution,
-    department,
-    level
-  }: Partial<APIConversationResponse & UserEnrolledData> = convoInfo;
+  const { data, err } = _conversationInfo;
+  const { institution, department, level } = data as UserData;
 
   return (
     <>
@@ -53,35 +55,37 @@ const ChatRightPane = ({ conversation, convoInfo }: ChatRightPaneProps) => {
               />
             </Col>
             <Col className='p-0 text-center'>
-              <Col
-                className='display-name p-0 d-flex justify-content-center my-1'>
+              <Col className='display-name p-0 d-flex justify-content-center my-1'>
                 {displayName}
               </Col>
-              <Col
-                className='username p-0 d-flex justify-content-center mb-4'>
+              <Col className='username p-0 d-flex justify-content-center mb-4'>
                 @{username}
               </Col>
             </Col>
           </Row>
-          <InfoCard
-            title='Academic Info'
-            icon={SchoolIcon}
-            data={[
-              {
-                name: 'institution',
-                value: institution as string
-              },
-              { name: 'department', value: department as string },
-              { name: 'level', value: level as string }
-            ]}
-            bgcolor='#fff'
-            boxShadow='none'
-            padding='0.25rem'
-          />
+
+          <Box className={`info-card-wrapper ${err ? 'hide' : 'show'}`}>
+            <InfoCard
+              title='Academic Info'
+              icon={SchoolIcon}
+              data={[
+                {
+                  name: 'institution',
+                  value: institution as string
+                },
+                { name: 'department', value: department as string },
+                { name: 'level', value: level as string }
+              ]}
+              bgcolor='#fff'
+              boxShadow='none'
+              padding='0.25rem'
+            />
+          </Box>
         </Container>
       ) : (
         ''
       )}
+      <Box className='scroll-bar-fader' />
     </>
   );
 };

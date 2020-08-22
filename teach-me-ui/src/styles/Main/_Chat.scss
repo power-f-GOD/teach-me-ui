@@ -25,7 +25,7 @@ $chat-header-min-height: 3.75rem;
   .tab-panel-item {
     [class*='Icon'] {
       font-size: 1.05rem;
-      margin-bottom: -0.25rem;
+      margin-bottom: -0.2rem;
       margin-left: 0.1rem;
       color: rgba(0, 0, 0, 0.35);
       transition: 0.3s;
@@ -46,6 +46,29 @@ $chat-header-min-height: 3.75rem;
           transform: scale(1);
         }
       }
+    }
+  }
+}
+
+body,
+.ChatBox {
+  &,
+  .tab-panel-item {
+    .online {
+      .MuiBadge-dot {
+        background-color: limegreen !important;
+      }
+    }
+
+    .away {
+      .MuiBadge-dot {
+        background-color: orange !important;
+      }
+    }
+
+    .MuiBadge-dot {
+      transition: 0.35s;
+      background-color: #999;
     }
   }
 }
@@ -96,7 +119,7 @@ $chat-header-min-height: 3.75rem;
   }
 
   &.close {
-    transform: scale(0.95);
+    transform: scale(0.925);
     opacity: 0;
   }
 
@@ -117,6 +140,8 @@ header.chat-header {
   position: relative;
   font-weight: bold;
   overflow: hidden;
+  z-index: 3;
+  background-color: white;
   min-height: $chat-header-min-height;
   max-height: $chat-header-min-height;
   box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.1);
@@ -132,25 +157,13 @@ header.chat-header {
   color: $chat-text-color;
 
   + .MuiBadge-dot {
-    $size: 0.75rem;
+    $size: 0.8rem;
 
     border-radius: 50%;
     border: 0.125rem solid white;
     height: $size;
     width: $size;
-    right: 32%;
-  }
-}
-
-.online {
-  .MuiBadge-dot {
-    background-color: $success;
-  }
-}
-
-.offline {
-  .MuiBadge-dot {
-    background-color: #bbb;
+    right: 30%;
   }
 }
 
@@ -178,26 +191,44 @@ body.desktop {
       }
 
       &::-webkit-scrollbar-track {
-        background: rgba(0, 0, 0, 0.25);
+        background: rgba(0, 0, 0, 0);
       }
 
       &::-webkit-scrollbar-thumb {
-        visibility: hidden;
+        border-radius: 0.5rem;
       }
 
       &.grey-scrollbar {
         &::-webkit-scrollbar-thumb {
-          background: #444;
+          background: #555;
         }
         *::-webkit-scrollbar-thumb {
-          background: #444;
+          background: #555;
         }
       }
 
-      &:hover,
-      &:focus {
-        &::-webkit-scrollbar-thumb {
-          visibility: visible;
+      & + .scroll-bar-fader {
+        @include before-or-after(
+          $w: 0.5rem,
+          $l: unset,
+          $r: 0,
+          $bg: white,
+          $zi: 2,
+          $t: 0
+        );
+      }
+
+      &:hover {
+        & + .scroll-bar-fader {
+          opacity: 0;
+          z-index: -1;
+        }
+      }
+
+      & + .scroll-bar-fader {
+        &:hover {
+          opacity: 0;
+          z-index: -1;
         }
       }
     }

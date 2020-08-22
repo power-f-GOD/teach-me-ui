@@ -8,8 +8,9 @@ import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
 import Post from '../../components/crumbs/Post';
-import { PostPropsState } from '../../constants';
+import { Route, BrowserRouter as Router } from 'react-router-dom';
 
+import { PostPropsState } from '../../constants';
 
 const post: PostPropsState = {
   sender_id: '1',
@@ -28,7 +29,16 @@ const post: PostPropsState = {
 };
 
 test('loads and displays placeholder text', async () => {
-  render(<Post {...post} />);
+  const PostSample = () => (
+    <>
+      <Post {...post} />
+    </>
+  );
+  render(
+    <Router>
+      <Route path='/' component={PostSample} />
+    </Router>
+  );
   expect(screen.getByText(/7.13M/)).toBeInTheDocument();
   expect(screen.getByText(/45K/)).toBeInTheDocument();
 });

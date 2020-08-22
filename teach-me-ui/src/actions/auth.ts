@@ -175,17 +175,14 @@ export const requestSignup = (data: SignupFormData) => (
 
       if (!error) {
         const displayName = `${firstname} ${lastname}`;
-        const dob = _data.date_of_birth;
 
         delete _data.error;
-        delete _data.date_of_birth;
 
         const userData: UserData = { ..._data };
 
         populateStateWithUserData({
           ...userData,
-          displayName,
-          dob
+          displayName
         }).then(() => {
           dispatch(signup({ status: 'fulfilled' }));
           dispatch(auth({ status: 'settled', isAuthenticated: true }));
@@ -292,18 +289,15 @@ export const requestSignin = (data: SigninFormData) => (
       const error = _data.error;
 
       if (!error) {
-        const dob = _data.date_of_birth;
         const displayName = `${_data.firstname} ${_data.lastname}`;
 
         delete _data.error;
-        delete _data.date_of_birth;
 
         const userData: UserData = { ..._data };
 
         populateStateWithUserData({
           ...userData,
-          displayName,
-          dob
+          displayName
         }).then(() => {
           dispatch(signin({ status: 'fulfilled' }));
           dispatch(auth({ status: 'settled', isAuthenticated: true }));
@@ -320,8 +314,7 @@ export const requestSignin = (data: SigninFormData) => (
           if (navigator.cookieEnabled) {
             localStorage.kanyimuta = JSON.stringify({
               ...userData,
-              displayName,
-              dob
+              displayName
             });
           }
         });
@@ -387,7 +380,9 @@ export const verifyAuth = () => (dispatch: Function): ReduxAction => {
     : null;
 
   if (userData?.token) {
-    populateStateWithUserData({ ...userData }).then(() => {
+    populateStateWithUserData({
+      ...userData
+    }).then(() => {
       dispatch(auth({ status: 'fulfilled', isAuthenticated: true }));
       dispatch(signin({ status: 'fulfilled', err: false }));
     });

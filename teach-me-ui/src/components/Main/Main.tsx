@@ -13,13 +13,15 @@ import Loader from '../crumbs/Loader';
 import Chat from './Chat';
 import Search from './Search';
 import Notifications from './Notifications';
+import PostPage from './PostPage';
 import _404 from '../Index/_404';
 
 import createMemo from '../../Memo';
-import { dispatch } from '../../functions/utils';
+import { dispatch, getState } from '../../functions/utils';
 import { initWebSocket, closeWebSocket } from '../../actions/misc';
 
-import socketRouter from '../../socket.router';
+import activateSocketRouters from '../../socket.router';
+import { emitUserOnlineStatus } from '../../App';
 
 const Memoize = createMemo();
 
@@ -28,7 +30,8 @@ const Main = (props: any) => {
 
   useEffect(() => {
     dispatch(initWebSocket(userData.token as string));
-    socketRouter();
+    activateSocketRouters();
+
     return () => {
       dispatch(closeWebSocket());
     };
@@ -37,15 +40,18 @@ const Main = (props: any) => {
   useEffect(() => {
     if (socket) {
       socket.addEventListener('open', () => {
-        console.log('Socket connected!');
+        console.log('Sockets shook hands! :)');
+        emitUserOnlineStatus()();
       });
 
-      socket.addEventListener('error', (e: any) => {
-        console.error('An error occurred while trying to connect Web Socket.');
+      socket.addEventListener('error', () => {
+        console.error(
+          'Error: Sockets lost hands while trying to make handshake. :('
+        );
       });
 
       socket.addEventListener('close', () => {
-        console.log('Socket closed!');
+        console.log('Sockets called it a day! :|');
       });
     }
   }, [socket]);
@@ -71,10 +77,9 @@ const Main = (props: any) => {
         <Route path={['/', '/index', '/home']} exact component={Home} />
         <Route path='/about' component={About} />
         <Route path='/support' component={Support} />
+        <Route path='/p/:id' component={PostPage} />
         <Route path='/@:userId' component={Profile} />
-        <Route 
-            path={['/search/:query', '/search']} 
-            component={Search} />
+        <Route path={['/search/:query', '/search']} component={Search} />
         <Route path='/notifications' component={Notifications} />
         <Route component={_404} />
       </Switch>
@@ -83,6 +88,14 @@ const Main = (props: any) => {
     </Grid>
   );
 };
+
+document.addEventListener('visibilitychange', () => {
+  emitUserOnlineStatus(
+    window.navigator.onLine &&
+      (getState().webSocket ?? ({} as WebSocket)).readyState !== 1,
+    false
+  )();
+});
 
 const mapStateToProps = (state: any) => {
   return {

@@ -30,7 +30,7 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
     const type = props.type || 'FEED';
     const userId = (profile as UserData).id || undefined;
     fetchPostsFn(type, userId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, []);
   return (
     <Container className='middle-pane' fluid>
