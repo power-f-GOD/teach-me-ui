@@ -10,6 +10,7 @@ import About from '../Index/About';
 import Support from '../Index/Support';
 import Profile from './Profile';
 import Loader from '../crumbs/Loader';
+import ModalFrame from '../crumbs/modals';
 import Chat from './Chat';
 import Search from './Search';
 import Notifications from './Notifications';
@@ -70,22 +71,23 @@ const Main = (props: any) => {
   }
 
   return (
-    <Grid className='Main fade-in'>
-      <Memoize memoizedComponent={Nav} for='main' />
-
-      <Switch>
-        <Route path={['/', '/index', '/home']} exact component={Home} />
-        <Route path='/about' component={About} />
-        <Route path='/support' component={Support} />
-        <Route path='/p/:id' component={PostPage} />
-        <Route path='/@:userId' component={Profile} />
-        <Route path={['/search/:query', '/search']} component={Search} />
-        <Route path='/notifications' component={Notifications} />
-        <Route component={_404} />
-      </Switch>
-
-      <Memoize memoizedComponent={Chat} />
-    </Grid>
+    <>
+      <ModalFrame />
+      <Grid className='Main fade-in'>
+        <Memoize memoizedComponent={Nav} for='main' />
+        <Switch>
+          <Route path={['/', '/index', '/home']} exact component={Home} />
+          <Route path='/about' component={About} />
+          <Route path='/support' component={Support} />
+          <Route path='/p/:id' component={PostPage} />
+          <Route path='/@:userId' component={Profile} />
+          <Route path={['/search/:query', '/search']} component={Search} />
+          <Route path='/notifications' component={Notifications} />
+          <Route component={_404} />
+        </Switch>
+        <Memoize memoizedComponent={Chat} />
+      </Grid>
+    </>
   );
 };
 

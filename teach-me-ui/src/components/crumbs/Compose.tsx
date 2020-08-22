@@ -17,7 +17,7 @@ if (navigator.cookieEnabled && localStorage.kanyimuta) {
 }
 
 const openCreatePostModal = (e: any) => {
-  displayModal(true, 'CREATE_POST', 'Create Post');
+  displayModal(true, 'CREATE_POST', { title: 'Create Post' });
 };
 
 const Compose: React.FunctionComponent = () => {

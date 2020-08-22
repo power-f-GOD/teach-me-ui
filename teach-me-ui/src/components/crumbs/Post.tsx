@@ -16,6 +16,7 @@ import { PostPropsState } from '../../constants/interfaces';
 
 import CreateReply from './CreateReply';
 
+import { displayModal } from '../../functions';
 import { triggerSearchKanyimuta } from '../../actions/search';
 
 const stopProp = (e: any) => {
@@ -62,6 +63,13 @@ export const processPostFn = (post: string) =>
       );
     });
 
+const openCreateRepostModal = (meta: any) => (e: any) => {
+  displayModal(true, 'CREATE_REPOST', {
+    title: 'Create Repost',
+    post: meta
+  });
+};
+
 const Post: React.FunctionComponent<
   Partial<PostPropsState> & Partial<{ head: boolean }>
 > = (props) => {
@@ -97,8 +105,8 @@ const Post: React.FunctionComponent<
       mb={1}>
       {((props._extra && props.sec_type !== 'REPLY') ||
         (props.sec_type === 'REPOST' && !props.text)) &&
-        props.head && <small className='small-text'>{extra}</small>}
-      {props.sec_type === 'REPLY' && props.head && (
+        !props.head && <small className='small-text'>{extra}</small>}
+      {props.sec_type === 'REPLY' && !props.head && (
         <small className='small-text'>{extra}</small>
       )}
       <Row
@@ -239,8 +247,7 @@ const Post: React.FunctionComponent<
               textAlign='right'
               width='100%'
               color='#888'
-              pt={1}
-              mr={3}>
+              pt={1}>
               {formatDate(props.parent?.posted_at as number)}
             </Box>
           </Row>
@@ -312,6 +319,13 @@ const Post: React.FunctionComponent<
             <Col className='d-flex align-items-center justify-content-center'>
               <Box
                 padding='5px 15px'
+                onClick={openCreateRepostModal(
+                  props.sec_type === 'REPLY'
+                    ? (props.parent as any)
+                    : props.text
+                    ? (props as any)
+                    : (props.parent as any)
+                )}
                 className='d-flex align-items-center react-to-post justify-content-center'
                 fontSize='13px'>
                 <svg
@@ -438,6 +452,7 @@ const Post: React.FunctionComponent<
                 <Col className='d-flex align-items-center justify-content-center'>
                   <Box
                     padding='5px 15px'
+                    onClick={openCreateRepostModal(props)}
                     className='d-flex align-items-center react-to-post justify-content-center'
                     fontSize='13px'>
                     <svg

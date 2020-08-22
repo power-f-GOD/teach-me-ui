@@ -1,22 +1,29 @@
 import {
   ReduxAction,
   REACT_TO_POST,
-  FETCH_POST_REJECTED,
+  UPDATE_REPOST,
   UPDATE_POST,
+  FETCH_POST_REJECTED,
   FETCH_POST_RESOLVED,
   FETCH_POST_STARTED,
+  MAKE_REPOST_REJECTED,
+  MAKE_REPOST_RESOLVED,
+  MAKE_REPOST_STARTED,
   FETCHED_POSTS,
   REPLY_TO_POST,
   SEND_REPLY_TO_SERVER,
   PostPropsState,
   ReactPostState,
   FetchPostsState,
+  MakeRepostState,
   apiBaseURL as baseURL,
   UserData,
   SocketProps,
   PostReactionResult,
+  RepostResult,
   Reaction,
-  ReplyState
+  ReplyState,
+  CREATE_POST
 } from '../constants';
 
 import { getState, callNetworkStatusCheckerFor } from '../functions';
@@ -34,7 +41,7 @@ export const replyToPost = (payload: ReplyState) => {
   };
 };
 
-export const sendReplyToServer = (payload: SocketProps) =>  (
+export const sendReplyToServer = (payload: SocketProps) => (
   dispatch: Function
 ) => {
   callNetworkStatusCheckerFor({
@@ -43,19 +50,27 @@ export const sendReplyToServer = (payload: SocketProps) =>  (
   });
 
   dispatch(
-    replyToPost({ 
+    replyToPost({
       status: 'pending'
     })
-  )
+  );
   const socket: WebSocket = getState().webSocket as WebSocket;
   socket.send(JSON.stringify({ ...payload }));
   return {
     type: SEND_REPLY_TO_SERVER
-  }
+  };
 };
 
 export const updatePost = (payload: PostReactionResult): ReduxAction => {
   return { type: UPDATE_POST, payload };
+};
+
+export const createPost = (payload: PostPropsState): ReduxAction => {
+  return { type: CREATE_POST, payload };
+};
+
+export const updateRepostData = (payload: RepostResult): ReduxAction => {
+  return { type: UPDATE_REPOST, payload };
 };
 
 const reactToPost = (payload: ReactPostState): ReduxAction => {
@@ -80,6 +95,38 @@ export const sendReactionToServer = (payload: SocketProps) => (
   if (post === undefined) return;
   const socket: WebSocket = getState().webSocket as WebSocket;
   socket.send(JSON.stringify({ ...payload, reaction: post?.reaction }));
+};
+
+export const makeRepost = (payload: SocketProps) => (dispatch: Function) => {
+  dispatch(makeRepostStarted());
+
+  const socket = getState().webSocket as WebSocket;
+  socket.send(JSON.stringify(payload));
+};
+
+export const makeRepostStarted = (
+  payload?: Partial<FetchPostsState>
+): ReduxAction => {
+  return {
+    type: MAKE_REPOST_STARTED,
+    payload: { ...payload, status: 'pending' }
+  };
+};
+export const makeRepostResolved = (
+  payload?: Partial<FetchPostsState>
+): ReduxAction => {
+  return {
+    type: MAKE_REPOST_RESOLVED,
+    payload: { ...payload, status: 'resolved' }
+  };
+};
+export const makeRepostRejected = (
+  payload?: Partial<MakeRepostState>
+): ReduxAction => {
+  return {
+    type: MAKE_REPOST_REJECTED,
+    payload: { ...payload, status: 'rejected' }
+  };
 };
 
 export const fetchPosts: Function = (
