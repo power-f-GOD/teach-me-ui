@@ -5,8 +5,8 @@ import {
   replyToPost,
   makeRepostResolved,
   makeRepostRejected,
-  updateRepostData
-  // createPost
+  updateRepostData,
+  createPost
 } from '../actions';
 
 import { displayModal } from '../functions';
@@ -20,12 +20,12 @@ export default function post(data: any) {
         dispatch(updatePost(data as PostReactionResult));
         break;
       case 'POST_REPOST':
-        console.log(data);
         if (!data.error) {
           if (data.count !== undefined) {
             dispatch(updateRepostData(data as RepostResult));
           }
-          // dispatch(createPost(data));
+          if (data.action_count !== undefined) dispatch(createPost(data));
+          document.querySelector('.middle-pane-col')?.scrollTo(0, 0);
           dispatch(
             makeRepostResolved({
               error: false,
