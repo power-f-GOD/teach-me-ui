@@ -89,8 +89,13 @@ export type SocketPipe =
   | 'PING_USER';
 
 export interface PostReactionResult {
-  downvotes: number;
-  upvotes: number;
+  downvotes?: number;
+  upvotes?: number;
+  id: string;
+}
+
+export interface RepostResult {
+  count?: number;
   id: string;
 }
 
@@ -101,6 +106,8 @@ export interface FetchPostsState {
   error?: boolean;
   message?: string;
 }
+
+export interface MakeRepostState extends FetchPostsState {}
 
 export interface TopicPropsState {
   topic: string;
@@ -243,8 +250,8 @@ export interface SnackbarState {
 
 export interface ModalState {
   open: boolean;
-  type?: 'CREATE_POST' | 'CREATE_COMMENT';
-  title?: string;
+  type?: 'CREATE_POST' | 'CREATE_REPOST';
+  meta?: { title?: string; [key: string]: any };
 }
 
 export interface UserData {

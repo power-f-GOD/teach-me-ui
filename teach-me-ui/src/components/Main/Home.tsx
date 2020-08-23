@@ -9,14 +9,12 @@ import Col from 'react-bootstrap/Col';
 import RightPane from './Home.RightPane';
 import MiddlePane from './Home.MiddlePane';
 import LeftPane from './Home.LeftPane';
-import ModalFrame from '../crumbs/modals';
 
 const Home = () => {
   React.useEffect(() => () => window.scrollTo(0, 0), []);
 
   return (
     <>
-      <ModalFrame />
       <Container className='Home p-0 fade-in'>
         <Row className='flex-row m-0 justify-content-around'>
           <Col lg={3} md={3} className='d-none d-md-block left-pane-col'>

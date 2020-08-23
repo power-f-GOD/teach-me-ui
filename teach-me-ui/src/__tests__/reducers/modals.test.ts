@@ -15,7 +15,7 @@ it("modals reducers should be called with 'state' and 'action' params and return
   const mockModalState: ModalState = {
     open: expect.any(Boolean),
     type: expect.any(String),
-    title: expect.any(String)
+    meta: { title: expect.any(String) }
   };
   const showModalAction: ReduxAction = {
     type: SHOW_MODAL,
@@ -23,7 +23,7 @@ it("modals reducers should be called with 'state' and 'action' params and return
       ...modalState,
       open: true,
       type: 'CREATE_POST',
-      title: 'Create Post'
+      meta: { title: 'Create Post' }
     }
   };
   const showModalMockFunc = jest.fn((state: ModalState, action: ReduxAction) =>

@@ -31,6 +31,8 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
+import ModalFrame from '../crumbs/modals';
+
 import Loader from '../crumbs/Loader';
 import Img from '../crumbs/Img';
 import ColleagueView from '../crumbs/ColleagueView';
@@ -329,6 +331,7 @@ const Profile = (props: any) => {
 
   return (
     <Box className={`Profile ${selfView ? 'self-view' : ''} fade-in`}>
+      <ModalFrame />
       <Box component='div' className='profile-top'>
         <Img
           alt={displayName}
