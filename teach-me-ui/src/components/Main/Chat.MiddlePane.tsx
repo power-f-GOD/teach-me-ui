@@ -35,7 +35,8 @@ import {
   chatState,
   conversationMessages,
   conversationInfo,
-  getConversationMessages
+  getConversationMessages,
+  conversations
 } from '../../actions/chat';
 import {
   dispatch,
@@ -440,6 +441,12 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
       const isSameCid =
         convoId === queryString.parse(window.location.search)?.cid;
       const userId = userData.id;
+
+      if (isOpen && isSameCid && !isMinimized) {
+        dispatch(
+          conversations({ data: [{ unread_count: 0, _id: convoId }] })
+        );
+      }
 
       for (const message of convoMessages) {
         const isSeen = message.seen_by?.includes(userId);

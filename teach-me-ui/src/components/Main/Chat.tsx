@@ -9,6 +9,7 @@ import Col from 'react-bootstrap/Col';
 
 import IconButton from '@material-ui/core/IconButton';
 import ChatIcon from '@material-ui/icons/Chat';
+import Badge from '@material-ui/core/Badge';
 
 import { dispatch, delay, addEventListenerOnce } from '../../functions';
 import {
@@ -297,7 +298,15 @@ const ChatBox = (props: ChatBoxProps) => {
         className={`chat-button ${isOpen ? 'hide' : ''}`}
         onClick={handleOpenChatClick}
         aria-label='chat'>
-        <ChatIcon fontSize='inherit' />
+        <Badge
+          badgeContent={conversations.data?.reduce(
+            (a, conversation: APIConversationResponse) =>
+              a + (conversation.unread_count ? 1 : 0),
+            0
+          )}
+          color='error'>
+          <ChatIcon fontSize='inherit' />
+        </Badge>
       </IconButton>
     </Container>
   );
