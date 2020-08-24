@@ -356,6 +356,7 @@ export interface APIConversationResponse {
   conversation_name: string;
   associated_username: string;
   associated_user_id: string;
+  unread_count: number;
 }
 
 export interface NotificationState extends StatusPropsState {

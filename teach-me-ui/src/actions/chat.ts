@@ -125,13 +125,25 @@ export const getConversations = () => (dispatch: Function): ReduxAction => {
 
 export const conversations = (_payload: SearchState): ReduxAction => {
   const payload = { ..._payload };
-  const { pipe, online_status, user_id, last_seen } =
-    (payload.data ?? [])[0] ?? {};
+  const {
+    pipe,
+    online_status,
+    user_id,
+    last_seen,
+    unread_count,
+    _id: convoId
+  } = (payload.data ?? [])[0] ?? {};
   const message = (payload.data ?? [])[0] ?? ({} as APIMessageResponse);
-  const [initialConversations, _conversationInfo, conversationMessages] = [
+  const [
+    initialConversations,
+    _conversationInfo,
+    conversationMessages,
+    userData
+  ] = [
     (getState().conversations.data ?? []) as Partial<APIConversationResponse>[],
     getState().conversationInfo as ConversationInfo,
-    getState().conversationMessages.data as ConversationMessages['data']
+    getState().conversationMessages.data as ConversationMessages['data'],
+    getState().userData as UserData
   ];
   let indexOfInitial = -1;
   let actualConvo = {} as
@@ -204,6 +216,10 @@ export const conversations = (_payload: SearchState): ReduxAction => {
           ) as unknown) as APIMessageResponse;
 
           if (pipe === CHAT_NEW_MESSAGE) {
+            if (userData.id !== message.sender_id) {
+              actualConvo.unread_count!++;
+            }
+
             dispatch(conversationInfo({ new_message: { ...last_message } }));
             actualConvo.last_message = { ...last_message };
             actualConvo.last_message.is_recent = true;
@@ -254,6 +270,22 @@ export const conversations = (_payload: SearchState): ReduxAction => {
       }
     } else if (!initialConversations.length) {
       payload.data = [..._payload.data];
+    } else if (unread_count !== undefined) {
+      actualConvo = initialConversations?.find((conversation, i) => {
+        if (convoId === conversation._id) {
+          indexOfInitial = i;
+          return true;
+        }
+        return false;
+      });
+      
+      if (actualConvo) {
+        actualConvo.unread_count = unread_count;
+        initialConversations[indexOfInitial] = actualConvo as Partial<
+          APIConversationResponse
+        >;
+        payload.data = initialConversations;
+      }
     }
   }
 
@@ -529,7 +561,7 @@ export const conversationMessages = (payload: ConversationMessages) => {
           }
         }
       } else if (/offset|end/.test(payload.statusText as string)) {
-        if (payload.data[0]._id !== previousMessages[0]._id) {
+        if (payload.data && previousMessages.length && payload.data[0]._id !== previousMessages[0]._id) {
           previousMessages.unshift(...payload.data);
         } else {
           previousMessages = [...payload.data];
