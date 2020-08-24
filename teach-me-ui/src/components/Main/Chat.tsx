@@ -185,7 +185,7 @@ const ChatBox = (props: ChatBoxProps) => {
 
     if (!isOpen) {
       //delay till chatBox display property is set for animation to work
-      delay(500).then(() => {
+      delay(750).then(() => {
         let { chat } = queryString.parse(search);
 
         if (chat)
@@ -213,7 +213,7 @@ const ChatBox = (props: ChatBoxProps) => {
       if (
         window.navigator.onLine &&
         !_conversationInfo.err &&
-        convoId &&
+        !convoId &&
         (infoStatus === 'settled' ||
           (infoStatus === 'fulfilled' && convoId !== cid))
       ) {
@@ -228,7 +228,7 @@ const ChatBox = (props: ChatBoxProps) => {
       if (
         window.navigator.onLine &&
         !_conversationMessages.err &&
-        convoId &&
+        !convoId &&
         (msgStatus === 'settled' ||
           (msgStatus === 'fulfilled' && convoId !== cid))
       ) {
@@ -259,6 +259,7 @@ const ChatBox = (props: ChatBoxProps) => {
             memoizedComponent={ChatLeftPane}
             conversations={conversations}
             userId={userData.id}
+            userFirstname={userData.firstname}
           />
         </Col>
 

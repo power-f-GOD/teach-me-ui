@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
 
-import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 
 import Box from '@material-ui/core/Box';
@@ -32,7 +31,7 @@ export const Message = (props: {
   type: 'incoming' | 'outgoing';
   userId: string;
   className: string;
-  shouldUpdate: any;
+  forceUpdate: any;
   clearSelections: boolean;
   canSelectByClick: boolean;
   participants: string[];
@@ -95,7 +94,7 @@ export const Message = (props: {
   );
 
   return (
-    <Container
+    <Box
       className={`${type === 'incoming' ? 'incoming' : 'outgoing'} ${
         selected ? 'selected' : ''
       } msg-container ${className} ${deleted ? 'deleted' : ''} p-0 mx-0`}
@@ -136,7 +135,7 @@ export const Message = (props: {
           />
         </Box>
       </Col>
-    </Container>
+    </Box>
   );
 };
 
@@ -198,11 +197,11 @@ export const ChatDate = ({ timestamp }: { timestamp: number }) => {
   }
 
   return (
-    <Box className='chat-date-wrapper text-center my-5' position='relative'>
+    <div className='chat-date-wrapper text-center my-5'>
       <Box component='span' className='chat-date d-inline-block'>
         {formatMapDateString(timestamp, true)}
       </Box>
-    </Box>
+    </div>
   );
 };
 

@@ -463,29 +463,29 @@ div {
 }
 
 .theme-primary {
-  color: $theme-primary;
+  color: $theme-primary !important;
 }
 .theme-primary-lighter {
-  color: $theme-primary-v7;
+  color: $theme-primary-v7 !important;
 }
 .theme-primary-lightest {
-  color: $theme-primary-v9;
+  color: $theme-primary-v9 !important;
 }
 .theme-primary-darker {
-  color: $theme-primary-v3;
+  color: $theme-primary-v3 !important;
 }
 .theme-primary-darkest {
-  color: $theme-primary-v1;
+  color: $theme-primary-v1 !important;
 }
 
 .theme-secondary {
-  color: $theme-secondary;
+  color: $theme-secondary !important;
 }
 .theme-secondary-darker {
-  color: $theme-secondary-v7;
+  color: $theme-secondary-v7 !important;
 }
 .theme-secondary-lighter {
-  color: $theme-secondary-v7;
+  color: $theme-secondary-v7 !important;
 }
 
 .theme-tertiary {
