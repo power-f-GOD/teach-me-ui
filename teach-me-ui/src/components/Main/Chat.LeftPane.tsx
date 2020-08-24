@@ -12,6 +12,8 @@ import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 import BlockIcon from '@material-ui/icons/Block';
+import CloudOffIcon from '@material-ui/icons/CloudOff';
+import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
 
 import {
   chatState,
@@ -45,13 +47,14 @@ interface ChatLeftPaneProps {
   conversations: SearchState;
   rooms?: ConversationInfo[];
   userId: string;
+  userFirstname: string;
 }
 
 const [CV, CR] = ['Conversations', 'Classrooms'];
 
 const ChatLeftPane = (props: ChatLeftPaneProps) => {
   const [value, setValue] = React.useState<number>(0);
-  const { conversations, userId } = props;
+  const { conversations, userId, userFirstname } = props;
   const { pathname } = window.location;
   const convos = (props.conversations.data ?? []) as Partial<
     APIConversationResponse
@@ -78,7 +81,9 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
 
         if (window.navigator.onLine) {
           dispatch(getConversationInfo(userId)(dispatch));
-          dispatch(getConversationMessages(convoId, 'pending')(dispatch));
+          dispatch(
+            getConversationMessages(convoId, 'pending', 'loading new')(dispatch)
+          );
         } else {
           dispatch(
             conversationInfo({
@@ -128,7 +133,7 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
                 friendship,
                 participants,
                 online_status
-              } = conversation;
+              } = conversation ?? {};
               const hasRecent: boolean = { ...(last_message as any) }.is_recent;
 
               if (hasRecent) setRecent(i);
@@ -247,7 +252,34 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
             })
           ) : (
             <Box padding='2rem' textAlign='center'>
-              You have no conversations yet.
+              {window.navigator.onLine ? (
+                <>
+                  <PeopleAltIcon fontSize='large' />
+                  <br />
+                  <br />
+                  Hi,{' '}
+                  <Box component='span' fontWeight='bold'>
+                    {userFirstname}
+                  </Box>
+                  !
+                  <br />
+                  <br />
+                  - You have no conversations yet.
+                  <br />
+                  <br />
+                  - Your list of colleagues would appear here.
+                  <br />
+                  <br />- Search for and add a colleague to begin a conversation
+                  with them.
+                </>
+              ) : (
+                <>
+                  <CloudOffIcon fontSize='large' />
+                  <br />
+                  <br />
+                  Can't load conversations. You seem to be offline
+                </>
+              )}
             </Box>
           )}
         </TabPanel>

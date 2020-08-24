@@ -18,6 +18,7 @@ import Box from '@material-ui/core/Box';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CloudOffIcon from '@material-ui/icons/CloudOff';
 import ChatIcon from '@material-ui/icons/Chat';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import {
   ChatState,
@@ -33,7 +34,8 @@ import { userDeviceIsMobile } from '../../';
 import {
   chatState,
   conversationMessages,
-  conversationInfo
+  conversationInfo,
+  getConversationMessages
 } from '../../actions/chat';
 import {
   dispatch,
@@ -73,6 +75,9 @@ const Memoize = createMemo();
 let renderAwayDateTimeout: any;
 let _canDisplayAwayDate = false;
 let lastSeenForAway = Date.now();
+let hideScrollBarTimeout: any;
+let loadMessagesTimeout: any;
+let scrollViewScrollPos = 0;
 
 const displayAwayDate = () => {
   renderAwayDateTimeout = setTimeout(() => {
@@ -91,9 +96,6 @@ const displayAwayDate = () => {
 };
 
 const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
-  const msgBoxRef = useRef<HTMLInputElement | null>(null);
-  const scrollViewRef = useRef<HTMLElement | null>(null);
-  const msgBoxInitHeight = 19;
   const {
     conversation,
     conversationMessages: _conversationMessages,
@@ -105,6 +107,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   const convoMessages = _conversationMessages.data as Partial<
     APIMessageResponse
   >[];
+  const { status, statusText, err } = _conversationMessages;
   const { online_status, data } = _conversationInfo;
   const [lastSeenDate, lastSeenTime] = [
     formatMapDateString(data?.last_seen as number),
@@ -117,9 +120,13 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
     conversation_name: displayName
   } = conversation;
   const { isMinimized, isOpen }: ChatState = _chatState;
+  const msgBoxInitHeight = 19;
+
+  const scrollViewRef = useRef<HTMLElement | null>(null);
+  const msgBoxRef = useRef<HTMLInputElement | null>(null);
 
   const [scrollView, setScrollView] = useState<HTMLElement | null>(null);
-  const [scrollViewElevation, setScrollViewElevation] = React.useState<string>(
+  const [scrollViewElevation, setScrollViewElevation] = useState<string>(
     'calc(21.5px - 1.25rem)'
   );
   const [msgBoxRowsMax, setMsgBoxRowsMax] = useState<number>(1);
@@ -382,18 +389,34 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
     displaySocketErrInfo
   ]);
 
+  const offset = (convoMessages[0] ?? {}).date;
   const handleScrollViewScroll = useCallback(() => {
-    let hideScrollBarTimeout: any;
-    
-    return () => {
-      if (scrollView) {
-        scrollView.classList.remove('scroll-ended');
-        clearTimeout(hideScrollBarTimeout);
-        hideScrollBarTimeout = setTimeout(() => {
-          scrollView.classList.add('scroll-ended');
-        }, 750);
-      }
-    };
+    if (scrollView) {
+      clearTimeout(loadMessagesTimeout);
+      scrollViewScrollPos = scrollView.scrollHeight - scrollView.scrollTop;
+      loadMessagesTimeout = setTimeout(() => {
+        if (scrollView?.scrollTop <= 200 && !/end/.test(statusText as string)) {
+          dispatch(
+            getConversationMessages(
+              convoId,
+              'settled',
+              'has offset',
+              offset
+            )(dispatch)
+          );
+        }
+      }, 200);
+
+      scrollView.classList.remove('scroll-ended');
+      clearTimeout(hideScrollBarTimeout);
+      hideScrollBarTimeout = setTimeout(() => {
+        scrollView.classList.add('scroll-ended');
+      }, 800);
+    }
+  }, [scrollView, convoId, offset, statusText]);
+
+  useEffect(() => {
+    if (!scrollView) setScrollView(scrollViewRef.current);
   }, [scrollView]);
 
   useEffect(() => {
@@ -460,20 +483,27 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   ]);
 
   useEffect(() => {
-    if (!scrollView) setScrollView(scrollViewRef.current);
-
-    if (scrollView && !_conversationMessages.statusText) {
-      scrollView.scrollTop = scrollView.scrollHeight;
-    }
-  }, [scrollView, _conversationMessages.statusText]);
-
-  useEffect(() => {
     if (scrollView) {
       const canAdjustScrollTop =
         scrollView.scrollTop + scrollView.offsetHeight + 50 >=
-        scrollView.scrollHeight - 100;
+        scrollView.scrollHeight - 300;
       const canAddScrollPadding =
         scrollView.scrollHeight > scrollView.offsetHeight;
+
+      const scrollPos = scrollView.scrollHeight - scrollViewScrollPos;
+
+      if (!statusText || /new/.test(statusText as string)) {
+        scrollView.scrollTop = scrollView.scrollHeight;
+      } else {
+        //the code block below implies that if the request for or receipt of (a) new message(s) is not coming from a socket or message hasn't gotten to the very first message of the conversation and the receipt is coming from a request for previous messages (offset) in the conversation, scroll scrollView to the initial scroll position before messages were loaded.
+        if (
+          /offset/.test(statusText as string) &&
+          status === 'fulfilled' &&
+          !/end|socket|new/.test(statusText as string)
+        ) {
+          scrollView.scrollTop = scrollPos;
+        }
+      }
 
       if (canAddScrollPadding && !userDeviceIsMobile) {
         scrollView.classList.add('add-scroll-padding');
@@ -481,10 +511,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         scrollView.classList.remove('add-scroll-padding');
       }
 
-      if (
-        convoMessages.length &&
-        /settled|fulfilled/.test(_conversationMessages.status as string)
-      ) {
+      if (convoMessages.length && /settled|fulfilled/.test(status as string)) {
         delay(400).then(() => {
           scrollView.classList.remove('hide-messages');
         });
@@ -499,17 +526,15 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
             () => {
               scrollView.scrollTop += 100;
             },
-            16,
+            8,
             () =>
               scrollView.scrollTop >=
               scrollView.scrollHeight - scrollView.offsetHeight - 50
           );
-        } else {
-          scrollView.scrollTop = scrollView.scrollHeight;
         }
       }
     }
-  }, [convoMessages, _conversationMessages.status, scrollView]);
+  }, [convoMessages, status, statusText, scrollView]);
 
   return (
     <>
@@ -654,7 +679,26 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         as='section'
         className={`chat-scroll-view custom-scroll-bar grey-scrollbar`}
         style={{ marginBottom: scrollViewElevation }}
-        onScroll={handleScrollViewScroll()}>
+        onScroll={handleScrollViewScroll}>
+        <Box
+          className={`more-messages-loader theme-primary-lighter ${
+            status === 'settled' && /offset/.test(statusText as string) && !err
+              ? ''
+              : 'hide'
+          }`}
+          textAlign='center'>
+          <CircularProgress thickness={5} color='inherit' size={25} />
+        </Box>
+        <Box
+          className={`pt-5 mb-4 text-center theme-tertiary-lighter ${
+            status === 'fulfilled' && /end/.test(statusText as string)
+              ? 'd-block'
+              : 'd-none'
+          }`}
+          fontSize='0.85rem'>
+          This is the beginning of your conversation with{' '}
+          {_conversationInfo.data?.displayName ?? 'your colleague'}.
+        </Box>
         {convoMessages.map((message, key: number) => {
           const { sender_id, date, delivered_to, deleted, seen_by } = message;
           const prevDate = new Date(
@@ -694,7 +738,12 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
             isFirstOfStack ? ' first' : ''
           }${isOnlyOfStack ? ' only' : ''}${isLastOfStack ? ' last' : ''}${
             isMiddleOfStack ? ' middle' : ''
-          }${key === convoMessages.length - 1 ? ' last-message' : ''}`;
+          }${
+            _conversationInfo.new_message?._id === message._id ||
+            message.timestamp_id
+              ? ' last-message'
+              : ''
+          }`;
 
           return (
             <React.Fragment key={key}>
@@ -708,7 +757,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
                     ? true
                     : false
                 }
-                shouldUpdate={
+                forceUpdate={
                   String(deleted) + delivered_to?.length + seen_by?.length
                 }
                 className={className}
@@ -728,9 +777,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         className='theme-tertiary-lighter d-flex align-items-center justify-content-center messages-status-signal'
         height='100%'
         fontWeight='bold'>
-        {_conversationMessages.status === 'fulfilled' &&
-        !convoMessages.length &&
-        conversation._id ? (
+        {status === 'fulfilled' && !convoMessages.length && conversation._id ? (
           <Box fontSize='1.1rem' textAlign='center'>
             <ChatIcon fontSize='large' />
             <br />
@@ -738,7 +785,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
             <br />
             <br />
             Send a message to begin a new conversation with{' '}
-            <Box fontWeight='bold'>{displayName}</Box>.
+            <Box fontWeight='bold'>{displayName}.</Box>
           </Box>
         ) : conversation._id ? (
           !window.navigator.onLine ? (
