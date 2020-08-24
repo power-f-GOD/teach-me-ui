@@ -318,6 +318,7 @@ export interface ConversationInfo extends Omit<SearchState, 'data'> {
   user_typing?: string;
   online_status?: OnlineStatus;
   conversationId?: string;
+  new_message?: Partial<APIMessageResponse>;
   data?: Partial<Omit<UserData, 'token'> & APIConversationResponse>;
 }
 
