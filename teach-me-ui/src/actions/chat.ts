@@ -87,8 +87,10 @@ export const usersEnrolledInInstitution = (
   };
 };
 
-export const getConversations = () => (dispatch: Function): ReduxAction => {
-  dispatch(conversations({ status: 'pending' }));
+export const getConversations = (
+  status?: 'pending' | 'settled' | 'fulfilled'
+) => (dispatch: Function): ReduxAction => {
+  dispatch(conversations({ status: status ? status : 'pending' }));
   callNetworkStatusCheckerFor({
     name: 'conversations',
     func: conversations
@@ -274,7 +276,7 @@ export const conversations = (_payload: SearchState): ReduxAction => {
       }
     } else if (!initialConversations.length) {
       payload.data = [..._payload.data];
-    } else if (unread_count !== undefined) {
+    } else if (unread_count !== undefined && !payload?.status) {
       actualConvo = initialConversations?.find((conversation, i) => {
         if (convoId === conversation._id) {
           indexOfInitial = i;
@@ -282,7 +284,7 @@ export const conversations = (_payload: SearchState): ReduxAction => {
         }
         return false;
       });
-
+      
       if (actualConvo) {
         actualConvo.unread_count = unread_count;
         initialConversations[indexOfInitial] = actualConvo as Partial<

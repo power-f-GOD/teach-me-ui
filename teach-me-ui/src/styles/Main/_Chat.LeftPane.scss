@@ -264,6 +264,14 @@ $avatar-size: 3rem;
     }
   }
 
+  .new-conversation-tag {
+    background-color: $theme-tertiary-v1;
+    color: white;
+    font-size: 0.8rem;
+    padding: 0.1rem 0.75rem;
+    border-radius: 0.25rem;
+  }
+
   .last-message {
     white-space: nowrap;
     overflow: hidden;

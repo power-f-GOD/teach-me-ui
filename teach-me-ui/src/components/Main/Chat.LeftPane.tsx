@@ -224,60 +224,68 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
                           }
                         />
                       </Box>
-                      <Box
-                        className='message-badge-wrapper d-flex justify-content-between'
-                        maxWidth='100%'
-                        width='100%'>
+                      {friendship && (
                         <Box
-                          className={`last-message mt-1 ${
-                            last_message?.deleted ? 'font-italic' : ''
-                          } ${user_typing ? 'theme-secondary-lightest' : ''}`}
-                          maxWidth={
-                            unread_count ? 'calc(100% - 2.25rem)' : '100%'
-                          }>
+                          className='message-badge-wrapper d-flex justify-content-between'
+                          maxWidth='100%'
+                          width='100%'>
                           <Box
-                            position='absolute'
-                            className={user_typing ? 'show' : 'hide'}>
-                            typing...
-                          </Box>
-                          <Box className={user_typing ? 'hide' : 'show'}>
-                            <ChatStatus
-                              type={
-                                last_message?.sender_id === userId
-                                  ? 'outgoing'
-                                  : 'incoming'
-                              }
-                              shouldUpdate={
-                                last_message?.delivered_to!?.length +
-                                last_message?.seen_by!?.length
-                              }
-                              participants={participants as string[]}
-                              message={last_message as APIMessageResponse}
-                              userId={userId as string}
-                            />{' '}
-                            {last_message?.deleted ? (
-                              last_message?.sender_id === userId ? (
-                                <>
-                                  <BlockIcon fontSize='inherit' /> You deleted
-                                  this message
-                                </>
-                              ) : (
-                                <>
-                                  <BlockIcon fontSize='inherit' /> You can't see
-                                  this message
-                                </>
-                              )
+                            className={`last-message mt-1 ${
+                              last_message?.deleted ? 'font-italic' : ''
+                            } ${user_typing ? 'theme-secondary-lightest' : ''}`}
+                            maxWidth={
+                              unread_count ? 'calc(100% - 2.25rem)' : '100%'
+                            }>
+                            {!last_message ? (
+                              <Box className='new-conversation-tag'>NEW</Box>
                             ) : (
-                              last_message?.message
+                              <>
+                                <Box
+                                  position='absolute'
+                                  className={user_typing ? 'show' : 'hide'}>
+                                  typing...
+                                </Box>
+                                <Box className={user_typing ? 'hide' : 'show'}>
+                                  <ChatStatus
+                                    type={
+                                      last_message?.sender_id === userId
+                                        ? 'outgoing'
+                                        : 'incoming'
+                                    }
+                                    shouldUpdate={
+                                      last_message?.delivered_to!?.length +
+                                      last_message?.seen_by!?.length
+                                    }
+                                    participants={participants as string[]}
+                                    message={last_message as APIMessageResponse}
+                                    userId={userId as string}
+                                  />{' '}
+                                  {last_message?.deleted ? (
+                                    last_message?.sender_id === userId ? (
+                                      <>
+                                        <BlockIcon fontSize='inherit' /> You
+                                        deleted this message
+                                      </>
+                                    ) : (
+                                      <>
+                                        <BlockIcon fontSize='inherit' /> You
+                                        can't see this message
+                                      </>
+                                    )
+                                  ) : (
+                                    last_message?.message
+                                  )}
+                                </Box>
+                              </>
                             )}
                           </Box>
+                          <Badge
+                            className={unread_count ? 'show-badge' : ''}
+                            badgeContent={unread_count}
+                            max={999}
+                          />
                         </Box>
-                        <Badge
-                          className={unread_count ? 'show-badge' : ''}
-                          badgeContent={unread_count}
-                          max={999}
-                        />
-                      </Box>
+                      )}
                     </Box>
                   </Col>
                 </NavLink>

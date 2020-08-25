@@ -85,7 +85,7 @@ window.addEventListener('popstate', () => {
     dispatch(conversation(cid));
   }
 
-  delay(5).then(() => {
+  delay(100).then(() => {
     dispatch(
       chatState({
         isOpen: !!chat,
@@ -188,7 +188,9 @@ const ChatBox = (props: ChatBoxProps) => {
 
   useEffect(() => {
     delay(400).then(() => {
-      if (isOpen && !isMinimized) {
+      const { chat } = queryString.parse(window.location.search);
+
+      if ((chat && chat === 'open') || (isOpen && !isMinimized)) {
         document.body.style.overflow = 'hidden';
         document.querySelectorAll('.Main > *').forEach((component: any) => {
           if (!/ChatBox/.test(component.className)) {
@@ -229,7 +231,8 @@ const ChatBox = (props: ChatBoxProps) => {
     if (
       (isOpen || chat === 'open') &&
       !conversations.data![0] &&
-      !conversations.err
+      !conversations.err &&
+      conversations.status !== 'fulfilled'
     ) {
       dispatch(getConversations()(dispatch));
     }
@@ -264,6 +267,7 @@ const ChatBox = (props: ChatBoxProps) => {
     }
   }, [
     conversations.data,
+    conversations.status,
     convoId,
     qString,
     isOpen,

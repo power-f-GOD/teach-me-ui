@@ -80,10 +80,13 @@ export const getNotificationsRequest = (date: number) => (
   };
 }; 
 
-export const pingUser = (users: string[]) => {
+export const pingUser = (users: string[], data?: { type?: 'NEW_CONVERSATION'; }) => {
   const socket: WebSocket = getState().webSocket as WebSocket;
   socket.send(JSON.stringify({ 
     users: users,
-    pipe: 'PING_USER'
+    pipe: 'PING_USER',
+    data: {
+      type: data?.type
+    }
   }));
 }
