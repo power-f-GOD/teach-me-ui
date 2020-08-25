@@ -79,6 +79,7 @@ let lastSeenForAway = Date.now();
 let hideScrollBarTimeout: any;
 let loadMessagesTimeout: any;
 let scrollViewScrollPos = 0;
+let messageDrafts: any = {};
 
 const displayAwayDate = () => {
   renderAwayDateTimeout = setTimeout(() => {
@@ -120,6 +121,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
     avatar,
     conversation_name: displayName
   } = conversation;
+  const cid = queryString.parse(window.location.search)?.cid;
   const { isMinimized, isOpen }: ChatState = _chatState;
   const msgBoxInitHeight = 19;
 
@@ -265,6 +267,8 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
       const elevation = e.target.offsetHeight;
       const chatBoxMaxHeight = msgBoxInitHeight * msgBoxRowsMax;
       const remValue = elevation > msgBoxInitHeight * 4 ? 1.25 : 1.25;
+
+      messageDrafts[convoId] = e.target.value;
 
       if (socket && socket.readyState === 1) {
         socket.send(
@@ -416,15 +420,30 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
     }
   }, [scrollView, convoId, offset, statusText]);
 
+  useEffect(
+    () => () => {
+      renderAwayDateTimeout = null;
+      _canDisplayAwayDate = false;
+      lastSeenForAway = Date.now();
+      hideScrollBarTimeout = null;
+      loadMessagesTimeout = null;
+      scrollViewScrollPos = 0;
+      messageDrafts = {};
+    },
+    []
+  );
+
   useEffect(() => {
     if (!scrollView) setScrollView(scrollViewRef.current);
   }, [scrollView]);
 
   useEffect(() => {
-    if (convoId && msgBoxRef.current) {
-      msgBoxRef.current.value = '';
+    if ((cid || convoId) && msgBoxRef.current) {
+      msgBoxRef.current.value = messageDrafts[convoId || cid] ?? '';
+
+      if (!userDeviceIsMobile) msgBoxRef.current.focus();
     }
-  }, [convoId, msgBoxRef]);
+  }, [convoId, msgBoxRef, cid]);
 
   useEffect(() => {
     lastSeenForAway = _conversationInfo.data!?.last_seen!;
@@ -438,14 +457,11 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
 
   useEffect(() => {
     if (!!convoMessages[0] && userData.online_status === 'ONLINE') {
-      const isSameCid =
-        convoId === queryString.parse(window.location.search)?.cid;
+      const isSameCid = convoId === cid;
       const userId = userData.id;
 
       if (isOpen && isSameCid && !isMinimized) {
-        dispatch(
-          conversations({ data: [{ unread_count: 0, _id: convoId }] })
-        );
+        dispatch(conversations({ data: [{ unread_count: 0, _id: convoId }] }));
       }
 
       for (const message of convoMessages) {
@@ -478,6 +494,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
       }
     }
   }, [
+    cid,
     convoId,
     userData.id,
     userData.online_status,

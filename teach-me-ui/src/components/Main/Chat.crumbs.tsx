@@ -140,14 +140,17 @@ export const Message = (props: {
 };
 
 export const ChatTimestamp = (props: {
+  className?: string;
   timestamp: number | string;
   chatStatus?: React.ReactFragment;
 }) => {
-  const { timestamp, chatStatus } = props;
+  const { className, timestamp, chatStatus } = props;
 
   return (
-    <Col as='span' className='chat-timestamp-wrapper p-0'>
-      <Col as='span' className='chat-timestamp d-inline-block'>
+    <Col as='span' className={`chat-timestamp-wrapper p-0`}>
+      <Col
+        as='span'
+        className={`chat-timestamp d-inline-block ${className ?? ''}`}>
         {typeof timestamp === 'string'
           ? timestamp
           : timestampFormatter(timestamp)}{' '}

@@ -138,7 +138,9 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
                 last_message,
                 friendship,
                 participants,
-                online_status
+                online_status,
+                user_typing,
+                unread_count
               } = conversation ?? {};
               const hasRecent: boolean = { ...(last_message as any) }.is_recent;
 
@@ -208,6 +210,11 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
                       <Box className='display-name-wrapper'>
                         <Box className='display-name'>{displayName}</Box>
                         <ChatTimestamp
+                          className={`${
+                            conversation.unread_count
+                              ? 'theme-secondary-lighter'
+                              : ''
+                          }`}
                           timestamp={
                             lastMessageSentYesterday
                               ? 'Yesterday'
@@ -224,42 +231,50 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
                         <Box
                           className={`last-message mt-1 ${
                             last_message?.deleted ? 'font-italic' : ''
-                          }`}>
-                          <ChatStatus
-                            type={
-                              last_message?.sender_id === userId
-                                ? 'outgoing'
-                                : 'incoming'
-                            }
-                            shouldUpdate={
-                              last_message?.delivered_to!?.length +
-                              last_message?.seen_by!?.length
-                            }
-                            participants={participants as string[]}
-                            message={last_message as APIMessageResponse}
-                            userId={userId as string}
-                          />{' '}
-                          {last_message?.deleted ? (
-                            last_message?.sender_id === userId ? (
-                              <>
-                                <BlockIcon fontSize='inherit' /> You deleted
-                                this message
-                              </>
+                          } ${user_typing ? 'theme-secondary-lightest' : ''}`}
+                          maxWidth={
+                            unread_count ? 'calc(100% - 2.25rem)' : '100%'
+                          }>
+                          <Box
+                            position='absolute'
+                            className={user_typing ? 'show' : 'hide'}>
+                            typing...
+                          </Box>
+                          <Box className={user_typing ? 'hide' : 'show'}>
+                            <ChatStatus
+                              type={
+                                last_message?.sender_id === userId
+                                  ? 'outgoing'
+                                  : 'incoming'
+                              }
+                              shouldUpdate={
+                                last_message?.delivered_to!?.length +
+                                last_message?.seen_by!?.length
+                              }
+                              participants={participants as string[]}
+                              message={last_message as APIMessageResponse}
+                              userId={userId as string}
+                            />{' '}
+                            {last_message?.deleted ? (
+                              last_message?.sender_id === userId ? (
+                                <>
+                                  <BlockIcon fontSize='inherit' /> You deleted
+                                  this message
+                                </>
+                              ) : (
+                                <>
+                                  <BlockIcon fontSize='inherit' /> You can't see
+                                  this message
+                                </>
+                              )
                             ) : (
-                              <>
-                                <BlockIcon fontSize='inherit' /> You can't see
-                                this message
-                              </>
-                            )
-                          ) : (
-                            last_message?.message
-                          )}
+                              last_message?.message
+                            )}
+                          </Box>
                         </Box>
                         <Badge
-                          className={
-                            conversation.unread_count ? 'show-badge' : ''
-                          }
-                          badgeContent={conversation.unread_count}
+                          className={unread_count ? 'show-badge' : ''}
+                          badgeContent={unread_count}
                           max={999}
                         />
                       </Box>
