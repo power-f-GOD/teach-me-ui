@@ -243,9 +243,11 @@ $avatar-size: 3rem;
       transform: scale(0);
       height: $size;
       width: $size;
+      opacity: 0;
       top: 0.25rem;
 
       &.show-badge {
+        opacity: 1;
         transform: scale(1);
       }
     }
@@ -266,7 +268,6 @@ $avatar-size: 3rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: calc(100% - 2.25rem);
 
     [class*='Icon'] {
       color: inherit;
