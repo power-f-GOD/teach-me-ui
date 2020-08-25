@@ -44,6 +44,7 @@ import {
 } from '../../constants/interfaces';
 import { dispatch, cleanUp } from '../../functions';
 import { getProfileData, pingUser } from '../../actions';
+import { getConversations } from '../../actions/chat';
 /**
  * Please, Do not delete any commented code; You can either uncomment them to use them or leave them as they are
  */
@@ -198,7 +199,7 @@ const Profile = (props: any) => {
         }
         e.target.id !== 'decline'
           ? await acceptColleagueRequest().then(() => {
-              pingUser([`${data.username}`]);
+              pingUser([`${data.username}`], { type: 'NEW_CONVERSATION' });
             })
           : await declineColleagueRequest();
         break;
@@ -207,6 +208,7 @@ const Profile = (props: any) => {
         break;
     }
     await fetchDeepProfile();
+    dispatch(getConversations('settled')(dispatch));
     setAcceptWasClicked(false);
     setDeclineWasClicked(false);
   };

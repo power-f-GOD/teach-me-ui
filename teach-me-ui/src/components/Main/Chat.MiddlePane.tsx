@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 
 import queryString from 'query-string';
 
@@ -187,6 +188,15 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
       })
     );
     console.error('An error occurred. Error:', e);
+  }, []);
+
+  const handleProfileLinkClick = useCallback(() => {
+    dispatch(
+      chatState({
+        queryString: window.location.search.replace('open', 'min'),
+        isMinimized: true
+      })
+    );
   }, []);
 
   const handleMinimizeChatClick = useCallback(() => {
@@ -715,7 +725,8 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         </Box>
         <Box
           className={`pt-5 mb-4 text-center theme-tertiary-lighter ${
-            status === 'fulfilled' && /end/.test(statusText as string)
+            (status === 'fulfilled' && /end/.test(statusText as string)) ||
+            convoMessages.length < 20
               ? 'd-block'
               : 'd-none'
           }`}
@@ -802,14 +813,34 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         height='100%'
         fontWeight='bold'>
         {status === 'fulfilled' && !convoMessages.length && conversation._id ? (
-          <Box fontSize='1.1rem' textAlign='center'>
+          <Box fontSize='1.1rem' textAlign='center' maxWidth='100%'>
             <ChatIcon fontSize='large' />
             <br />
             No messages here.
             <br />
             <br />
-            Send a message to begin a new conversation with{' '}
-            <Box fontWeight='bold'>{displayName}.</Box>
+            {_conversationInfo.data?.friendship ? (
+              <>
+                Send a message to begin a new conversation with{' '}
+                <Box fontWeight='bold'>{displayName}.</Box>
+              </>
+            ) : (
+              <>
+                You are not colleagues with{' '}
+                <Box fontWeight='bold'>{displayName}.</Box>
+                <br />
+                Send{' '}
+                <Link
+                  className='font-bold'
+                  onClick={handleProfileLinkClick}
+                  to={`/@${
+                    conversation.associated_username
+                  }${window.location.search.replace('open', 'min')}`}>
+                  {displayName.split(' ')[0]}
+                </Link>{' '}
+                a colleague request to start a conversation.
+              </>
+            )}
           </Box>
         ) : conversation._id ? (
           !window.navigator.onLine ? (

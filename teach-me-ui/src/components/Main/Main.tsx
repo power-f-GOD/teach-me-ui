@@ -31,10 +31,14 @@ const Main = (props: any) => {
   const { signout, userData, webSocket: socket, conversations } = props;
 
   useEffect(() => {
-    if (!conversations.data?.length && !conversations.err) {
+    if (
+      !conversations.data?.length &&
+      !conversations.err &&
+      conversations.status !== 'fulfilled'
+    ) {
       dispatch(getConversations()(dispatch));
     }
-  }, [conversations.data, conversations.err]);
+  }, [conversations.data, conversations.err, conversations.status]);
 
   useEffect(() => {
     dispatch(initWebSocket(userData.token as string));
