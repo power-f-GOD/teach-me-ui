@@ -19,6 +19,33 @@
   }
 }
 
+.recommendations {
+  overflow-x: scroll;
+  scroll-snap-type: x proximity;
+  display: grid;
+  column-gap: 0.5rem;
+  height: 100%;
+
+  .add-button {
+    background: $theme-primary;
+    color: white;
+    path {
+      fill: white;
+    }
+  }
+  &::-webkit-scrollbar {
+    width: 5px;
+    height: 0px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #ccc;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #999;
+  }
+}
+
 .break-word {
   white-space: pre-wrap;
   word-break: break-word;

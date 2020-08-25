@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -74,6 +74,7 @@ const Post: React.FunctionComponent<
   Partial<PostPropsState> & Partial<{ head: boolean }>
 > = (props) => {
   const history = useHistory();
+  const [showComment, setShowComment] = useState(false);
   let extra: string | null = null;
   if (props.sec_type === 'REPOST') {
     extra = `${props.sender_name} reposted`;
@@ -357,6 +358,7 @@ const Post: React.FunctionComponent<
             <Col className='d-flex align-items-center justify-content-center'>
               <Box
                 padding='5px 15px'
+                onClick={() => setShowComment(!showComment)}
                 className='d-flex align-items-center react-to-post justify-content-center'
                 fontSize='13px'>
                 <svg
@@ -384,7 +386,7 @@ const Post: React.FunctionComponent<
               </Box>
             </Col>
           </Row>
-          <CreateReply post_id={`${props.id}`} />
+          {showComment && <CreateReply post_id={`${props.id}`} />}
         </Box>
       )}
       {props.sec_type === 'REPLY' && (

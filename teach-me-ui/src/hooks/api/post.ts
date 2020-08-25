@@ -97,3 +97,16 @@ export const useGetPostReplies = (id: string) => {
   }, [id]);
   return r;
 };
+
+export const useGetRecommendations = () => {
+  const r = useApi<any>(
+    {
+      endpoint: `/people/recommendations`,
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` }
+    },
+    {},
+    false
+  );
+  return r;
+};
