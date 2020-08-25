@@ -19,7 +19,7 @@ import { useGetRecommendations } from '../../hooks/api';
 
 const Recommendations = (props: any) => {
   const [
-    getRecommendations,
+    ,
     recommendations,
     getRecommendationsIsLoading
   ] = useGetRecommendations();
