@@ -85,7 +85,7 @@ window.addEventListener('popstate', () => {
     dispatch(conversation(cid));
   }
 
-  delay(100).then(() => {
+  delay(500).then(() => {
     dispatch(
       chatState({
         isOpen: !!chat,
@@ -112,6 +112,7 @@ const ChatBox = (props: ChatBoxProps) => {
     associated_username: convoUsername,
     associated_user_id: convoUid
   } = _conversation;
+  const { chat } = queryString.parse(window.location.search);
   const unopened_count = conversations.data?.reduce(
     (a, conversation: APIConversationResponse) =>
       a + (conversation.unread_count ? 1 : 0),
@@ -120,7 +121,7 @@ const ChatBox = (props: ChatBoxProps) => {
 
   const [visibilityState, setVisibilityState] = React.useState<
     'visible' | 'hidden'
-  >('hidden');
+  >(isOpen || chat ? 'visible' : 'hidden');
 
   const handleOpenChatClick = useCallback(() => {
     const queryString = `?chat=open&id=${
@@ -130,7 +131,7 @@ const ChatBox = (props: ChatBoxProps) => {
     setVisibilityState('visible');
 
     //delay till chatBox display property is set for animation to work
-    delay(5).then(() => {
+    delay(150).then(() => {
       dispatch(
         chatState({
           isOpen: true,
@@ -145,8 +146,8 @@ const ChatBox = (props: ChatBoxProps) => {
     (e: any) => {
       const { currentTarget } = e;
 
-      delay(400).then(() => {
-        if (!isOpen && !/chat=/.test(window.location.search)) {
+      delay(100).then(() => {
+        if (!queryString.parse(window.location.search).chat) {
           setVisibilityState('hidden');
         }
 
@@ -167,7 +168,7 @@ const ChatBox = (props: ChatBoxProps) => {
         }
       });
     },
-    [isOpen, isMinimized]
+    [isOpen, isMinimized, chat]
   );
 
   useEffect(() => {
@@ -181,15 +182,13 @@ const ChatBox = (props: ChatBoxProps) => {
   useEffect(() => {
     const timeout = isMinimized ? 500 : 5;
 
-    if (/chat=open/.test(window.location.search) || isMinimized) {
+    if (chat) {
       delay(timeout).then(() => setVisibilityState('visible'));
     }
-  }, [isMinimized]);
+  }, [isMinimized, chat]);
 
   useEffect(() => {
     delay(400).then(() => {
-      const { chat } = queryString.parse(window.location.search);
-
       if ((chat && chat === 'open') || (isOpen && !isMinimized)) {
         document.body.style.overflow = 'hidden';
         document.querySelectorAll('.Main > *').forEach((component: any) => {
@@ -206,7 +205,7 @@ const ChatBox = (props: ChatBoxProps) => {
         });
       }
     });
-  }, [isOpen, isMinimized]);
+  }, [isOpen, isMinimized, chat]);
 
   useEffect(() => {
     const search = window.location.search;
