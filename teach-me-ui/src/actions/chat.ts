@@ -27,7 +27,8 @@ import {
   CHAT_READ_RECEIPT,
   CHAT_MESSAGE_DELETED,
   CHAT_MESSAGE_DELETED_FOR,
-  CHAT_NEW_MESSAGE
+  CHAT_NEW_MESSAGE,
+  CHAT_TYPING
 } from '../constants/chat';
 import { apiBaseURL as baseURL, ONLINE_STATUS } from '../constants/misc';
 import { logError, getState, callNetworkStatusCheckerFor } from '../functions';
@@ -131,6 +132,7 @@ export const conversations = (_payload: SearchState): ReduxAction => {
     user_id,
     last_seen,
     unread_count,
+    user_typing,
     _id: convoId
   } = (payload.data ?? [])[0] ?? {};
   const message = (payload.data ?? [])[0] ?? ({} as APIMessageResponse);
@@ -177,8 +179,7 @@ export const conversations = (_payload: SearchState): ReduxAction => {
           payload.data = [...initialConversations];
         }
         break;
-      case 'CHAT_TYPING':
-        break;
+      case CHAT_TYPING:
       case CHAT_NEW_MESSAGE:
       case CHAT_READ_RECEIPT:
       case CHAT_MESSAGE_DELETED:
@@ -239,6 +240,9 @@ export const conversations = (_payload: SearchState): ReduxAction => {
                 const last_message = conversationMessages?.slice(-2)[0];
                 actualConvo.last_message = last_message as any;
               }
+            } else if (pipe === CHAT_TYPING) {
+              actualConvo.user_typing = user_typing;
+              initialConversations[indexOfInitial] = actualConvo;
             } else if (actualConvo.last_message?._id === message._id) {
               actualConvo.last_message = { ...last_message };
               initialConversations[indexOfInitial] = actualConvo;
@@ -278,7 +282,7 @@ export const conversations = (_payload: SearchState): ReduxAction => {
         }
         return false;
       });
-      
+
       if (actualConvo) {
         actualConvo.unread_count = unread_count;
         initialConversations[indexOfInitial] = actualConvo as Partial<
@@ -288,8 +292,6 @@ export const conversations = (_payload: SearchState): ReduxAction => {
       }
     }
   }
-
-  // console.log('initialConversations............', initialConversations);
 
   return {
     type: SET_CONVERSATIONS,
@@ -561,10 +563,12 @@ export const conversationMessages = (payload: ConversationMessages) => {
           }
         }
       } else if (/offset|end/.test(payload.statusText as string)) {
-        if (payload.data && previousMessages.length && payload.data[0]._id !== previousMessages[0]._id) {
+        if (
+          payload.data &&
+          previousMessages.length &&
+          payload.data[0]._id !== previousMessages[0]._id
+        ) {
           previousMessages.unshift(...payload.data);
-        } else {
-          previousMessages = [...payload.data];
         }
       } else {
         previousMessages = [...payload.data];

@@ -17,6 +17,7 @@ import {
 } from '../actions/chat';
 
 let userTypingTimeout: any = null;
+let conversationTypingTimeouts: any = {};
 
 export default function chat(message: APIMessageResponse & UserData) {
   const { webSocket: socket, userData, chatState, conversation } = getState();
@@ -70,7 +71,12 @@ export default function chat(message: APIMessageResponse & UserData) {
         }
 
         if (convoId && conversation_id === cid) {
-          dispatch(conversationMessages({ statusText: 'from socket', data: [{ ...message }] }));
+          dispatch(
+            conversationMessages({
+              statusText: 'from socket',
+              data: [{ ...message }]
+            })
+          );
         }
         break;
       case CHAT_MESSAGE_DELIVERED:
@@ -104,10 +110,18 @@ export default function chat(message: APIMessageResponse & UserData) {
 
         if (user_id && cid === conversation_id) {
           dispatch(conversationInfo({ user_typing: user_id }));
-          userTypingTimeout = window.setTimeout(() => {
+          userTypingTimeout = setTimeout(() => {
             dispatch(conversationInfo({ user_typing: '' }));
-          }, 1000);
+          }, 750);
         }
+
+        clearTimeout(conversationTypingTimeouts[user_id as string]);
+        dispatch(
+          conversations({ data: [{ ...message, user_typing: user_id }] })
+        );
+        conversationTypingTimeouts[user_id as string] = setTimeout(() => {
+          dispatch(conversations({ data: [{ ...message, user_typing: '' }] }));
+        }, 750);
         break;
       case CHAT_MESSAGE_DELETED:
       case CHAT_MESSAGE_DELETED_FOR:

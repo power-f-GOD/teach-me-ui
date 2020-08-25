@@ -481,11 +481,17 @@ div {
 .theme-secondary {
   color: $theme-secondary !important;
 }
-.theme-secondary-darker {
-  color: $theme-secondary-v7 !important;
-}
 .theme-secondary-lighter {
   color: $theme-secondary-v7 !important;
+}
+.theme-secondary-lightest {
+  color: $theme-secondary-v9 !important;
+}
+.theme-secondary-darker {
+  color: $theme-secondary-v3 !important;
+}
+.theme-secondary-darkest {
+  color: $theme-secondary-v1 !important;
 }
 
 .theme-tertiary {

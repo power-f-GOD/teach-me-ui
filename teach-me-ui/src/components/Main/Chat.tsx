@@ -51,7 +51,7 @@ const chatBoxWrapperRef = createRef<any>();
 const Memoize = createMemo();
 
 window.addEventListener('popstate', () => {
-  let { chat, cid } = queryString.parse(window.location.search);
+  let { chat, id: userId, cid } = queryString.parse(window.location.search);
 
   //for the sake of the smooth animation
   if (/min|open/.test(chat) && chatBoxWrapperRef.current) {
@@ -62,14 +62,35 @@ window.addEventListener('popstate', () => {
     dispatch(conversationInfo({ status: 'settled', data: {} }));
     dispatch(conversation(''));
     dispatch(conversationMessages({ status: 'settled', data: [] }));
+  } else {
+    dispatch(conversationInfo({ user_typing: '' }));
+
+    if (window.navigator.onLine) {
+      dispatch(getConversationInfo(userId)(dispatch));
+      dispatch(
+        getConversationMessages(cid, 'pending', 'loading new')(dispatch)
+      );
+    } else {
+      dispatch(
+        conversationInfo({
+          status: 'settled',
+          err: true,
+          online_status: 'OFFLINE'
+        })
+      );
+      dispatch(
+        conversationMessages({ status: 'pending', err: true, data: [] })
+      );
+    }
+    dispatch(conversation(cid));
   }
 
   delay(5).then(() => {
     dispatch(
       chatState({
-        queryString: window.location.search,
-        isOpen: /min|open/.test(chat),
-        isMinimized: chat === 'min'
+        isOpen: !!chat,
+        isMinimized: chat === 'min',
+        queryString: window.location.search
       })
     );
   });
@@ -91,6 +112,11 @@ const ChatBox = (props: ChatBoxProps) => {
     associated_username: convoUsername,
     associated_user_id: convoUid
   } = _conversation;
+  const unopened_count = conversations.data?.reduce(
+    (a, conversation: APIConversationResponse) =>
+      a + (conversation.unread_count ? 1 : 0),
+    0
+  );
 
   const [visibilityState, setVisibilityState] = React.useState<
     'visible' | 'hidden'
@@ -295,16 +321,12 @@ const ChatBox = (props: ChatBoxProps) => {
       </Row>
 
       <IconButton
-        className={`chat-button ${isOpen ? 'hide' : ''}`}
+        className={`chat-button ${unopened_count ? 'ripple' : ''} ${
+          isOpen ? 'hide' : ''
+        }`}
         onClick={handleOpenChatClick}
         aria-label='chat'>
-        <Badge
-          badgeContent={conversations.data?.reduce(
-            (a, conversation: APIConversationResponse) =>
-              a + (conversation.unread_count ? 1 : 0),
-            0
-          )}
-          color='error'>
+        <Badge badgeContent={unopened_count} color='error'>
           <ChatIcon fontSize='inherit' />
         </Badge>
       </IconButton>
