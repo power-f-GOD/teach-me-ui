@@ -9,6 +9,7 @@ import Col from 'react-bootstrap/Col';
 
 import IconButton from '@material-ui/core/IconButton';
 import ChatIcon from '@material-ui/icons/Chat';
+import Badge from '@material-ui/core/Badge';
 
 import { dispatch, delay, addEventListenerOnce } from '../../functions';
 import {
@@ -185,7 +186,7 @@ const ChatBox = (props: ChatBoxProps) => {
 
     if (!isOpen) {
       //delay till chatBox display property is set for animation to work
-      delay(500).then(() => {
+      delay(750).then(() => {
         let { chat } = queryString.parse(search);
 
         if (chat)
@@ -213,7 +214,7 @@ const ChatBox = (props: ChatBoxProps) => {
       if (
         window.navigator.onLine &&
         !_conversationInfo.err &&
-        convoId &&
+        !convoId &&
         (infoStatus === 'settled' ||
           (infoStatus === 'fulfilled' && convoId !== cid))
       ) {
@@ -228,7 +229,7 @@ const ChatBox = (props: ChatBoxProps) => {
       if (
         window.navigator.onLine &&
         !_conversationMessages.err &&
-        convoId &&
+        !convoId &&
         (msgStatus === 'settled' ||
           (msgStatus === 'fulfilled' && convoId !== cid))
       ) {
@@ -259,6 +260,7 @@ const ChatBox = (props: ChatBoxProps) => {
             memoizedComponent={ChatLeftPane}
             conversations={conversations}
             userId={userData.id}
+            userFirstname={userData.firstname}
           />
         </Col>
 
@@ -296,7 +298,15 @@ const ChatBox = (props: ChatBoxProps) => {
         className={`chat-button ${isOpen ? 'hide' : ''}`}
         onClick={handleOpenChatClick}
         aria-label='chat'>
-        <ChatIcon fontSize='inherit' />
+        <Badge
+          badgeContent={conversations.data?.reduce(
+            (a, conversation: APIConversationResponse) =>
+              a + (conversation.unread_count ? 1 : 0),
+            0
+          )}
+          color='error'>
+          <ChatIcon fontSize='inherit' />
+        </Badge>
       </IconButton>
     </Container>
   );

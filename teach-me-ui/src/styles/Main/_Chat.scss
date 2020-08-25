@@ -95,6 +95,11 @@ body,
   &.hide {
     transform: scale(0);
   }
+
+  [class*=MuiBadge-badge] {
+    top: -0.2rem;
+    right: -0.4rem;
+  }
 }
 
 .chat-box-wrapper {
@@ -112,7 +117,7 @@ body,
   top: 0;
   display: none;
   right: 0;
-  transition: 0.4s;
+  transition: transform 0.4s, opacity 0.4s;
 
   &.minimize {
     transform: translateY(calc(100% - #{$chat-header-min-height}));

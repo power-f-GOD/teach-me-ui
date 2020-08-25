@@ -23,11 +23,18 @@ import { initWebSocket, closeWebSocket } from '../../actions/misc';
 
 import activateSocketRouters from '../../socket.router';
 import { emitUserOnlineStatus } from '../../App';
+import { getConversations } from '../../actions/chat';
 
 const Memoize = createMemo();
 
 const Main = (props: any) => {
-  const { signout, userData, webSocket: socket } = props;
+  const { signout, userData, webSocket: socket, conversations } = props;
+
+  useEffect(() => {
+    if (!conversations.data?.length && !conversations.err) {
+      dispatch(getConversations()(dispatch));
+    }
+  }, [conversations.data, conversations.err]);
 
   useEffect(() => {
     dispatch(initWebSocket(userData.token as string));
@@ -103,7 +110,8 @@ const mapStateToProps = (state: any) => {
   return {
     signout: state.signout,
     userData: state.userData,
-    webSocket: state.webSocket
+    webSocket: state.webSocket,
+    conversations: state.conversations
   };
 };
 

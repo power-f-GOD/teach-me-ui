@@ -12,13 +12,15 @@ import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 import BlockIcon from '@material-ui/icons/Block';
+import CloudOffIcon from '@material-ui/icons/CloudOff';
+import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
 
 import {
   chatState,
   getConversationInfo,
   conversationMessages
 } from '../../actions/chat';
-import { dispatch, addEventListenerOnce } from '../../functions/utils';
+import { dispatch, addEventListenerOnce, delay } from '../../functions/utils';
 import {
   ChatState,
   ConversationInfo,
@@ -30,7 +32,8 @@ import { Skeleton, DISPLAY_INFO } from '../crumbs/Loader';
 import {
   getConversationMessages,
   conversation,
-  conversationInfo
+  conversationInfo,
+  conversations
 } from '../../actions/chat';
 import { ChatTimestamp, ChatStatus } from './Chat.crumbs';
 
@@ -45,13 +48,14 @@ interface ChatLeftPaneProps {
   conversations: SearchState;
   rooms?: ConversationInfo[];
   userId: string;
+  userFirstname: string;
 }
 
 const [CV, CR] = ['Conversations', 'Classrooms'];
 
 const ChatLeftPane = (props: ChatLeftPaneProps) => {
   const [value, setValue] = React.useState<number>(0);
-  const { conversations, userId } = props;
+  const { conversations: _conversations, userId, userFirstname } = props;
   const { pathname } = window.location;
   const convos = (props.conversations.data ?? []) as Partial<
     APIConversationResponse
@@ -78,7 +82,14 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
 
         if (window.navigator.onLine) {
           dispatch(getConversationInfo(userId)(dispatch));
-          dispatch(getConversationMessages(convoId, 'pending')(dispatch));
+          dispatch(
+            getConversationMessages(convoId, 'pending', 'loading new')(dispatch)
+          );
+          delay(1500).then(() => {
+            dispatch(
+              conversations({ data: [{ unread_count: 0, _id: convoId }] })
+            );
+          });
         } else {
           dispatch(
             conversationInfo({
@@ -112,8 +123,8 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
         </Tabs>
       </AppBar>
       <Box className='tab-panels-wrapper d-flex' position='relative'>
-        <TabPanel value={value} index={0} status={conversations.status}>
-          {conversations.status === 'pending' && !conversations.err ? (
+        <TabPanel value={value} index={0} status={_conversations.status}>
+          {_conversations.status === 'pending' && !_conversations.err ? (
             Array(Math.floor(window.innerHeight / 60))
               .fill('')
               .map((_, key) => <Skeleton type={DISPLAY_INFO} key={key} />)
@@ -128,7 +139,7 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
                 friendship,
                 participants,
                 online_status
-              } = conversation;
+              } = conversation ?? {};
               const hasRecent: boolean = { ...(last_message as any) }.is_recent;
 
               if (hasRecent) setRecent(i);
@@ -207,38 +218,50 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
                         />
                       </Box>
                       <Box
-                        className={`last-message mt-1 ${
-                          last_message?.deleted ? 'font-italic' : ''
-                        }`}>
-                        <ChatStatus
-                          type={
-                            last_message?.sender_id === userId
-                              ? 'outgoing'
-                              : 'incoming'
-                          }
-                          shouldUpdate={
-                            last_message?.delivered_to!?.length +
-                            last_message?.seen_by!?.length
-                          }
-                          participants={participants as string[]}
-                          message={last_message as APIMessageResponse}
-                          userId={userId as string}
-                        />{' '}
-                        {last_message?.deleted ? (
-                          last_message?.sender_id === userId ? (
-                            <>
-                              <BlockIcon fontSize='inherit' /> You deleted this
-                              message
-                            </>
+                        className='message-badge-wrapper d-flex justify-content-between'
+                        maxWidth='100%'
+                        width='100%'>
+                        <Box
+                          className={`last-message mt-1 ${
+                            last_message?.deleted ? 'font-italic' : ''
+                          }`}>
+                          <ChatStatus
+                            type={
+                              last_message?.sender_id === userId
+                                ? 'outgoing'
+                                : 'incoming'
+                            }
+                            shouldUpdate={
+                              last_message?.delivered_to!?.length +
+                              last_message?.seen_by!?.length
+                            }
+                            participants={participants as string[]}
+                            message={last_message as APIMessageResponse}
+                            userId={userId as string}
+                          />{' '}
+                          {last_message?.deleted ? (
+                            last_message?.sender_id === userId ? (
+                              <>
+                                <BlockIcon fontSize='inherit' /> You deleted
+                                this message
+                              </>
+                            ) : (
+                              <>
+                                <BlockIcon fontSize='inherit' /> You can't see
+                                this message
+                              </>
+                            )
                           ) : (
-                            <>
-                              <BlockIcon fontSize='inherit' /> You can't see
-                              this message
-                            </>
-                          )
-                        ) : (
-                          last_message?.message
-                        )}
+                            last_message?.message
+                          )}
+                        </Box>
+                        <Badge
+                          className={
+                            conversation.unread_count ? 'show-badge' : ''
+                          }
+                          badgeContent={conversation.unread_count}
+                          max={999}
+                        />
                       </Box>
                     </Box>
                   </Col>
@@ -247,7 +270,34 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
             })
           ) : (
             <Box padding='2rem' textAlign='center'>
-              You have no conversations yet.
+              {window.navigator.onLine ? (
+                <>
+                  <PeopleAltIcon fontSize='large' />
+                  <br />
+                  <br />
+                  Hi,{' '}
+                  <Box component='span' fontWeight='bold'>
+                    {userFirstname}
+                  </Box>
+                  !
+                  <br />
+                  <br />
+                  - You have no conversations yet.
+                  <br />
+                  <br />
+                  - Your list of colleagues would appear here.
+                  <br />
+                  <br />- Search for and add a colleague to begin a conversation
+                  with them.
+                </>
+              ) : (
+                <>
+                  <CloudOffIcon fontSize='large' />
+                  <br />
+                  <br />
+                  Can't load conversations. You seem to be offline
+                </>
+              )}
             </Box>
           )}
         </TabPanel>

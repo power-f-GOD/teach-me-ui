@@ -70,7 +70,7 @@ export default function chat(message: APIMessageResponse & UserData) {
         }
 
         if (convoId && conversation_id === cid) {
-          dispatch(conversationMessages({ data: [{ ...message }] }));
+          dispatch(conversationMessages({ statusText: 'from socket', data: [{ ...message }] }));
         }
         break;
       case CHAT_MESSAGE_DELIVERED:
@@ -79,6 +79,7 @@ export default function chat(message: APIMessageResponse & UserData) {
 
           dispatch(
             conversationMessages({
+              statusText: 'from socket',
               pipe: CHAT_MESSAGE_DELIVERED,
               data: [{ delivered_to: [deliveeId], _id }]
             })
@@ -91,6 +92,7 @@ export default function chat(message: APIMessageResponse & UserData) {
 
           dispatch(
             conversationMessages({
+              statusText: 'from socket',
               pipe: CHAT_READ_RECEIPT,
               data: [{ seen_by: [seerId], _id }]
             })
@@ -112,6 +114,7 @@ export default function chat(message: APIMessageResponse & UserData) {
         if (deleted && convoId && conversation_id === cid) {
           dispatch(
             conversationMessages({
+              statusText: 'from socket',
               pipe:
                 pipe === CHAT_MESSAGE_DELETED
                   ? CHAT_MESSAGE_DELETED
