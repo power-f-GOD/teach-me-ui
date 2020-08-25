@@ -11,15 +11,23 @@ import * as profile from './profile';
 import * as colleague from './colleague';
 import * as notifications from './notifications';
 
-export default combineReducers({
-  ...validate,
-  ...auth,
-  ...misc,
-  ...chat,
-  ...modals,
-  ...posts,
-  ...search,
-  ...profile,
-  ...colleague,
-  ...notifications
-});
+import { ReduxAction, SIGNOUT_USER } from '../constants';
+
+export default function reducers(state: any, action: ReduxAction) {
+  if (action.type === SIGNOUT_USER) {
+    state = undefined;
+  }
+
+  return combineReducers({
+    ...validate,
+    ...auth,
+    ...misc,
+    ...chat,
+    ...modals,
+    ...posts,
+    ...search,
+    ...profile,
+    ...colleague,
+    ...notifications
+  })(state, action);
+}

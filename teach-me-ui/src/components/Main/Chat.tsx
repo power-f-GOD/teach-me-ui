@@ -168,7 +168,7 @@ const ChatBox = (props: ChatBoxProps) => {
         }
       });
     },
-    [isOpen, isMinimized, chat]
+    [isOpen, isMinimized]
   );
 
   useEffect(() => {
