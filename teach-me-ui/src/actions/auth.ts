@@ -407,11 +407,10 @@ export const requestSignout = () => (dispatch: Function): ReduxAction => {
   delay(200).then(() => dispatch(signout({ status: 'pending' })));
 
   if (navigator.cookieEnabled) {
-    localStorage.kanyimuta = JSON.stringify({
-      ...JSON.parse(localStorage.kanyimuta ?? '{}'),
-      id: null,
-      token: null
-    });
+    const username = JSON.parse(localStorage.kanyimuta ?? '{}').username;
+
+    //preserve username in localStorage as it is used to fill signin textbox on signout
+    localStorage.kanyimuta = JSON.stringify({ username });
   }
 
   delay(300).then(() => {
