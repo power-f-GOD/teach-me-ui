@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 
 import useApi from './base';
 import { useApiResponse, Post } from '../../constants';
@@ -64,38 +64,6 @@ export const useGetFormattedMentionsWithKeyword = (keyword: string) => {
     return mention;
   }, [getMentions, isLoading]);
   return [callback];
-};
-
-export const useGetPost = (id: string) => {
-  const r = useApi<any>(
-    {
-      endpoint: `/post/${id}`,
-      method: 'GET'
-    },
-    {},
-    false
-  );
-  useEffect(() => {
-    r[0]();
-    // eslint-disable-next-line
-  }, [id]);
-  return r;
-};
-
-export const useGetPostReplies = (id: string) => {
-  const r = useApi<any>(
-    {
-      endpoint: `/post/${id}/replies?limit=10&skip=0`,
-      method: 'GET'
-    },
-    {},
-    false
-  );
-  useEffect(() => {
-    r[0]();
-    // eslint-disable-next-line
-  }, [id]);
-  return r;
 };
 
 export const useGetRecommendations = () => {

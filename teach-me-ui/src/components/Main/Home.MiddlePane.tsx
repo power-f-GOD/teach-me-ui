@@ -35,12 +35,8 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
   }, []);
   return (
     <Container className='middle-pane' fluid>
-      {(selfView || !inProfile) && (
-        <>
-          <Compose />
-          <Recommendations />
-        </>
-      )}
+      {(selfView || !inProfile) && <Compose />}
+      {!inProfile && <Recommendations />}
 
       {props.fetchPostStatus.status === 'resolved' &&
         props.posts.map((post: PostPropsState, i: number) => (
