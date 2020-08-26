@@ -32,7 +32,7 @@ const Recommendations = (props: any) => {
             pb={1}
             className='recommendations'
             style={{
-              gridTemplateColumns: `repeat(${recommendations.recommendations.length}, 13rem)`
+              gridTemplateColumns: `repeat(${recommendations.recommendations.length}, 15rem)`
             }}>
             {recommendations.recommendations.map((recommendation: any) => (
               <Recommendation
@@ -66,11 +66,11 @@ const Recommendation = (props: any) => {
         className='left-pane p-2'
         style={{ height: '100%', cursor: 'pointer' }}>
         <Container className='rows-wrapper custom-scroll-bar small-bar rounded-bar tertiary-bar debugger'>
-          <Row as='section' className='m-0 flex-column mb-4 d-block'>
+          <Row as='section' className='m-0 flex-column mb-2 d-block'>
             <Col className='p-0 d-flex safari-fix-d-block text-center justify-content-center'>
               <Avatar
-                component='span'
-                className='chat-avatar text-center'
+                component='div'
+                className='recommendation-avatar text-center'
                 alt={displayName}
                 src={`/images/${avatar}`}
               />
@@ -83,17 +83,21 @@ const Recommendation = (props: any) => {
               </Col>
               <Col
                 as='span'
-                className='username p-0 d-flex justify-content-center mb-4'>
+                className='username p-0 d-flex justify-content-center mb-2'>
                 @{username}
               </Col>
             </Col>
           </Row>
           <Row as='section' className='academic m-0 flex-column d-block'>
-            <Col as='span' className='info p-0 d-flex my-1  align-items-center'>
+            <Col
+              as='span'
+              className='info p-0 d-flex my-1 justify-content-center align-items-center'>
               <SchoolIcon className='mr-2' fontSize='small' />
               {institution}
             </Col>
-            <Col as='span' className='info p-0 d-flex my-1  align-items-center'>
+            <Col
+              as='span'
+              className='info p-0 d-flex my-1 justify-content-center align-items-center'>
               <MenuBookIcon className='mr-2' fontSize='small' />
               {department}
             </Col>

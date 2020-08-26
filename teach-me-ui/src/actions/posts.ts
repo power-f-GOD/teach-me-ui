@@ -6,10 +6,14 @@ import {
   FETCH_POST_REJECTED,
   FETCH_POST_RESOLVED,
   FETCH_POST_STARTED,
+  FETCH_A_POST_REJECTED,
+  FETCH_A_POST_RESOLVED,
+  FETCH_A_POST_STARTED,
   MAKE_REPOST_REJECTED,
   MAKE_REPOST_RESOLVED,
   MAKE_REPOST_STARTED,
   FETCHED_POSTS,
+  FETCHED_POST,
   REPLY_TO_POST,
   SEND_REPLY_TO_SERVER,
   PostPropsState,
@@ -29,10 +33,6 @@ import {
 import { getState, callNetworkStatusCheckerFor } from '../functions';
 
 import Axios from 'axios';
-
-// export const createPost = (payload: PostPropsState): ReduxAction => {
-//   return { type: CREATE_POST, payload };
-// };
 
 export const replyToPost = (payload: ReplyState) => {
   return {
@@ -84,14 +84,23 @@ export const sendReactionToServer = (payload: SocketProps) => (
     reactToPost({ id: payload.post_id, type: payload.reaction as Reaction })
   );
   const posts: Array<PostPropsState> = getState().posts;
+  const singlePost: PostPropsState = getState().singlePost;
 
-  const post = posts.find((post: PostPropsState) =>
+  let post = posts.find((post: PostPropsState) =>
     (post.id as string) === payload.post_id
       ? post
       : (post.parent?.id as string) === payload.post_id
       ? post.parent
       : undefined
   );
+  if (post === undefined) {
+    post =
+      (singlePost.id as string) === payload.post_id
+        ? singlePost
+        : (singlePost.parent?.id as string) === payload.post_id
+        ? (singlePost.parent as PostPropsState)
+        : undefined;
+  }
   if (post === undefined) return;
   const socket: WebSocket = getState().webSocket as WebSocket;
   socket.send(JSON.stringify({ ...payload, reaction: post?.reaction }));
@@ -162,9 +171,78 @@ export const fetchPosts: Function = (
     });
 };
 
-const fetchedPosts = (payload: Array<PostPropsState>): ReduxAction => {
+export const fetchReplies = (postId?: string) => (dispatch: Function) => {
+  dispatch(fetchPostsStarted());
+  const userData = getState().userData as UserData;
+  const headers =
+    userData && userData.token
+      ? { Authorization: `Bearer ${userData.token}` }
+      : {};
+  Axios({
+    url: `/post/${postId}/replies?limit=10&skip=0`,
+    baseURL,
+    method: 'GET',
+    headers
+  })
+    .then((res) => {
+      if (res.data.error) {
+        throw new Error(res.data.message);
+      }
+      return res.data.replies;
+    })
+    .then((state) => {
+      dispatch(fetchedPosts(state as Array<PostPropsState>));
+      dispatch(
+        fetchPostsResolved({ error: false, message: 'Fetch posts successful' })
+      );
+    })
+    .catch((err) => {
+      dispatch(fetchPostsRejected({ error: true, message: err.message }));
+    });
+};
+
+export const fetchPost: Function = (postId?: string) => (
+  dispatch: Function
+) => {
+  dispatch(fetchPostStarted());
+  const userData = getState().userData as UserData;
+  const headers =
+    userData && userData.token
+      ? { Authorization: `Bearer ${userData.token}` }
+      : {};
+  Axios({
+    url: `/post/${postId}`,
+    baseURL,
+    method: 'GET',
+    headers
+  })
+    .then((res) => {
+      if (res.data.error) {
+        throw new Error(res.data.message);
+      }
+      return res.data;
+    })
+    .then((state) => {
+      dispatch(fetchedPost(state as PostPropsState));
+      dispatch(
+        fetchPostResolved({ error: false, message: 'Fetch posts successful' })
+      );
+    })
+    .catch((err) => {
+      dispatch(fetchPostRejected({ error: true, message: err.message }));
+    });
+};
+
+export const fetchedPosts = (payload: Array<PostPropsState>): ReduxAction => {
   return {
     type: FETCHED_POSTS,
+    payload
+  };
+};
+
+export const fetchedPost = (payload: PostPropsState): ReduxAction => {
+  return {
+    type: FETCHED_POST,
     payload
   };
 };
@@ -188,6 +266,25 @@ const fetchPostsRejected = (
 ): ReduxAction => {
   return {
     type: FETCH_POST_REJECTED,
+    payload: { ...payload, status: 'rejected' }
+  };
+};
+
+const fetchPostStarted = (payload?: Partial<FetchPostsState>): ReduxAction => {
+  return {
+    type: FETCH_A_POST_STARTED,
+    payload: { ...payload, status: 'pending' }
+  };
+};
+const fetchPostResolved = (payload?: Partial<FetchPostsState>): ReduxAction => {
+  return {
+    type: FETCH_A_POST_RESOLVED,
+    payload: { ...payload, status: 'resolved' }
+  };
+};
+const fetchPostRejected = (payload?: Partial<FetchPostsState>): ReduxAction => {
+  return {
+    type: FETCH_A_POST_REJECTED,
     payload: { ...payload, status: 'rejected' }
   };
 };
