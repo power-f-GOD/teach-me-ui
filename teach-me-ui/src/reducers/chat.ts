@@ -65,7 +65,11 @@ export const conversationsMessages = (
 };
 
 export const conversationInfo = (
-  state: ConversationInfo = { ...statusPropsState, online_status: 'OFFLINE', data: {} },
+  state: ConversationInfo = {
+    ...statusPropsState,
+    online_status: 'OFFLINE',
+    data: {}
+  },
   action: ReduxAction
 ): ConversationInfo => {
   if (action.type === SET_CONVERSATION_INFO) {
@@ -85,6 +89,7 @@ export const conversation = (
   if (action.type === SET_CONVERSATION) {
     return {
       ...(Object.keys(action.payload).length ? state : {}),
+      friendship: action.payload.friendship,
       ...action.payload
     };
   }
