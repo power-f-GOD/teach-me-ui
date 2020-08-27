@@ -284,7 +284,7 @@ export const conversations = (_payload: SearchState): ReduxAction => {
         }
         return false;
       });
-      
+
       if (actualConvo) {
         actualConvo.unread_count = unread_count;
         initialConversations[indexOfInitial] = actualConvo as Partial<
@@ -461,7 +461,8 @@ export const getConversationMessages = (
         (getState().conversation as APIConversationResponse)._id ??
         queryString.parse(window.location.search).cid ??
         '';
-      const chatState = getState().chatState as ChatState;
+      const chat = queryString.parse(window.location.search).chat;
+      const [isOpen, isMinimized] = [!!chat, chat === 'min'];
 
       if (!error) {
         if (socket && socket.readyState === 1) {
@@ -480,7 +481,7 @@ export const getConversationMessages = (
 
               if (!message.seen_by!.includes(userId)) {
                 if (convoId === message.conversation_id) {
-                  if (chatState.isOpen && !chatState.isMinimized) {
+                  if (isOpen && !isMinimized) {
                     socket.send(
                       JSON.stringify({
                         message_id: message._id,
@@ -527,15 +528,19 @@ export const getConversationMessages = (
 };
 
 export const conversationMessages = (payload: ConversationMessages) => {
-  let [previousMessages, convoId] = [
+  let [previousMessages, convoId, cid] = [
     (getState().conversationMessages.data ?? []) as Partial<
       APIMessageResponse
     >[],
-    (getState().conversation as Partial<APIConversationResponse>)._id
+    (getState().conversation as Partial<APIConversationResponse>)._id,
+    queryString.parse(window.location.search).cid
   ];
 
   if (!payload.pipe) {
-    if (payload.data?.length && payload.data![0]?.conversation_id === convoId) {
+    if (
+      payload.data?.length &&
+      payload.data![0]?.conversation_id === (convoId || cid)
+    ) {
       if (payload.data?.length === 1) {
         let newMessage = payload.data[0];
         let indexOfInitial: number = -1;
