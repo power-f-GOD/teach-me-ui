@@ -9,6 +9,7 @@ export default (props: any) => {
     <img
       alt='Description goes here'
       {...props}
+      src={props.src || 'undefined'}
       style={{ display: error ? 'none' : 'block' }}
       onError={onError}
     />
