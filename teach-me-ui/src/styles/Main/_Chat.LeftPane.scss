@@ -101,7 +101,7 @@ $avatar-size: 3rem;
   &:hover,
   &:focus {
     color: white;
-    background: $theme-secondary-v6;
+    background: $theme-secondary-v5;
   }
 }
 
@@ -202,6 +202,7 @@ $avatar-size: 3rem;
 
     .MuiBadge-dot {
       border-color: $theme-primary-v3;
+      right: 30%;
     }
   }
 
@@ -273,9 +274,11 @@ $avatar-size: 3rem;
   }
 
   .last-message {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    > * {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
     [class*='Icon'] {
       color: inherit;
