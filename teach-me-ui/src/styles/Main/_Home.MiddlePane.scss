@@ -3,27 +3,10 @@
   cursor: pointer;
 }
 
-.middle-pane-col {
-  height: calc(100vh - 4rem);
-  overflow-y: scroll;
-
-  &::-webkit-scrollbar {
-    width: 5px;
-  }
-  &::-webkit-scrollbar-track {
-    background: #ccc;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #999;
-  }
-}
-
 .recommendations {
   overflow-x: scroll;
   scroll-snap-type: x proximity;
   display: grid;
-  column-gap: 0.5rem;
   height: 100%;
 
   .add-button {

@@ -13,7 +13,8 @@ const AxiosManager = Axios.CancelToken.source();
 export default function useApi<T>(
   props: ApiProps,
   body: T = {} as T,
-  lazy: boolean = true
+  lazy: boolean = true,
+  runWithResult: Function = () => {}
 ): useApiResponse<any> {
   const [data, setData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,6 +38,7 @@ export default function useApi<T>(
         setData(res.data);
         throw new Error(res.data.message);
       }
+      runWithResult(res.data);
       setData(res.data);
       return res.data;
     } catch (e) {
@@ -53,6 +55,7 @@ export default function useApi<T>(
     } finally {
       setIsLoading(false);
     }
+    // eslint-disable-next-line
   }, [props, body]);
   useEffect(() => {
     if (!lazy) {

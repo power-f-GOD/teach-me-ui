@@ -84,7 +84,6 @@ window.addEventListener('popstate', () => {
 });
 
 let [
-  avatar,
   firstname,
   lastname,
   displayName,
@@ -109,8 +108,6 @@ const Profile = (props: any) => {
   const { auth, location } = props;
   const { isAuthenticated } = auth;
   const token = (userData as UserData).token as string;
-
-  avatar = data.avatar || 'avatar-1.png';
   firstname = data.firstname || '';
   lastname = data.lastname || '';
   displayName = data.displayName || '';
@@ -335,17 +332,13 @@ const Profile = (props: any) => {
     <Box className={`Profile ${selfView ? 'self-view' : ''} fade-in`}>
       <ModalFrame />
       <Box component='div' className='profile-top'>
-        <Img
-          alt={displayName}
-          className='cover-photo'
-          src={`https://source.unsplash.com/user/erondu/1600x900`}
-        />
+        <Img alt={displayName} className='cover-photo' src={data.cover_photo} />
         <Box component='div' className='details-container'>
           <Avatar
             component='span'
             className='profile-avatar-x profile-photo'
             alt={displayName}
-            src={`/images/${avatar}`}
+            src={data.profile_photo}
           />
           <Col className='d-flex flex-column px-4'>
             <Col as='span' className='display-name p-0 my-1'>
@@ -522,8 +515,10 @@ const Profile = (props: any) => {
           </Button>
         </div>
       </Box>
-      <Row className='container mt-5 mx-auto'>
-        <Col className='col-4'>
+      <Row
+        className='container mt-5 mx-auto'
+        style={{ alignItems: 'flex-start' }}>
+        <Col className='col-4 hang-in'>
           {selfView && (
             <Box className='details-card px-3 py-2 mb-3'>
               <Col className='py-0 px-2 d-flex justify-content-between align-items-center'>

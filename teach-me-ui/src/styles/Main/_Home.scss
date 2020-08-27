@@ -2,13 +2,19 @@
 
 .Home {
   margin-top: 4rem;
-  height: calc(100vh - 4rem);
+  min-height: calc(100vh - 4rem);
 }
 
 .left-pane-col,
 .middle-pane-col,
 .right-pane-col {
   padding: 1rem 0;
+}
+
+@media (max-width: 767px) {
+  .middle-pane-col {
+    padding: 0rem 0;
+  }
 }
 
 .main-modal {

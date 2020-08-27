@@ -2,6 +2,8 @@ import { useCallback } from 'react';
 
 import useApi from './base';
 import { useApiResponse, Post } from '../../constants';
+import { dispatch } from '../../functions';
+import { createPost } from '../../actions';
 
 const cookieEnabled = navigator.cookieEnabled;
 
@@ -29,13 +31,19 @@ export const useFetchHashtags = (keyword: string): useApiResponse<any> => {
 };
 
 export const useSubmitPost = (post: Post): useApiResponse<any> => {
+  const addPost = (payload: any) => {
+    window.scrollTo(0, 0);
+    dispatch(createPost(payload));
+  };
   const [...r] = useApi<any>(
     {
       endpoint: '/post/make',
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` }
     },
-    post
+    post,
+    true,
+    addPost
   );
   return r;
 };
