@@ -22,9 +22,13 @@
 }
 
 .comment {
+  outline: none;
+  padding-top: 0.25em !important;
   padding: 0.5em;
   margin: 0;
+  resize: none;
   background: #eee;
+  overflow: hidden !important;
   border: none;
   border-radius: 1em;
   height: 1.9em;
@@ -32,6 +36,7 @@
 
 .comment-avatar {
   height: 2em;
+  margin-right: 0.5em;
 }
 
 .comment:focus {
@@ -40,4 +45,10 @@
 
 .comment-button {
   height: 1em;
+}
+
+.comment-container {
+  textarea {
+    overflow: hidden !important;
+  }
 }

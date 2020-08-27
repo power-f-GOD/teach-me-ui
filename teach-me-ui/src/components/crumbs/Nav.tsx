@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
 import AppBar from '@material-ui/core/AppBar';
@@ -81,11 +81,20 @@ function IndexNav(props: any) {
 }
 
 function MainNav(props: any) {
+  const [invisible, setInvisible] = useState(true);
   const username = (getState().userData as UserData).username;
+  
+
   useEffect(() => {
     dispatch(getNotificationsRequest(Date.now())(dispatch));
-  })
-  const noNewNotification = getState().getNotifications.data.notifications[0] ? getState().getNotifications.data.notifications[0].last_seen : true
+    setInterval(() => {
+    if (getState().getNotifications.data.notifications[0]){
+      if (!(getState().getNotifications.data.notifications[0].last_seen)) {
+        setInvisible(false)
+      }
+    }},3000)
+  }, [])
+ 
 
   return (
     <Box className={`nav-links-wrapper ${props?.className}`}>
@@ -103,11 +112,11 @@ function MainNav(props: any) {
         <AccountCircleRoundedIcon className='nav-icon' />
       </NavLink>
 
-      <Badge color="secondary" variant="dot" invisible={noNewNotification}>
-        <NavLink to='/notifications' className='nav-link'>
+      <NavLink to='/notifications' className='nav-link'>
+        <Badge color='secondary' variant='dot' invisible={invisible} >
           <NotificationsIcon />
-        </NavLink>
-      </Badge>
+        </Badge>
+      </NavLink>
 
       <Box component='span' marginX='1em' />
 
@@ -126,9 +135,11 @@ function MainNav(props: any) {
 
 function MainNavMenu(props: any) {
   const username = (getState().userData as UserData).username;
-  useEffect(() => {
-    dispatch(getNotificationsRequest(Date.now())(dispatch));
-  })
+  const getNotifications = async () => {
+    await dispatch(getNotificationsRequest(Date.now())(dispatch));
+  }
+  getNotifications()
+
   const noNewNotification = getState().getNotifications.data.notifications[0] ? getState().getNotifications.data.notifications[0].last_seen : true
 
   return (
@@ -154,7 +165,7 @@ function MainNavMenu(props: any) {
       </NavLink>
       
       <NavLink to='/notifications' className='nav-link'>
-        <Badge color="secondary" variant="dot" invisible={noNewNotification}>
+        <Badge color='secondary' variant="dot" invisible={noNewNotification}>
           <NotificationsIcon />
         </Badge>
         <Box component='span' className='nav-label ml-3'>

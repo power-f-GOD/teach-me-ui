@@ -6,3 +6,4 @@ export * from './posts';
 export * from './colleague';
 export * from './notifications';
 export * from './profile';
+export * from './upload';

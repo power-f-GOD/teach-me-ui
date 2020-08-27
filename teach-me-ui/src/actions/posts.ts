@@ -23,10 +23,6 @@ import { getState, callNetworkStatusCheckerFor } from '../functions';
 
 import Axios from 'axios';
 
-// export const createPost = (payload: PostPropsState): ReduxAction => {
-//   return { type: CREATE_POST, payload };
-// };
-
 export const replyToPost = (payload: ReplyState) => {
   return {
     type: REPLY_TO_POST,

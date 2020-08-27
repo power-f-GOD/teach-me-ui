@@ -9,7 +9,18 @@ import {
   NotificationState
 } from '../constants';
 
-import { logError, callNetworkStatusCheckerFor, getState } from '../functions';
+import { 
+  logError, 
+  callNetworkStatusCheckerFor, 
+  getState 
+} from '../functions';
+
+const cookieEnabled = navigator.cookieEnabled;
+
+let token = ''
+  if (cookieEnabled) {
+    token = JSON.parse(localStorage?.kanyimuta ?? {})?.token ?? null;
+  };
 
 export const getNotifications = (payload: NotificationState) => {
   return {
@@ -22,12 +33,6 @@ export const getNotificationsRequest = (date: number) => (
   dispatch: Function
 ): ReduxAction => {
   
-  const cookieEnabled = navigator.cookieEnabled;
-
-  let token = ''
-  if (cookieEnabled) {
-    token = JSON.parse(localStorage?.kanyimuta ?? {})?.token ?? null;
-  };
 
   callNetworkStatusCheckerFor({
     name: 'getNotifications',
@@ -84,4 +89,19 @@ export const pingUser = (users: string[]) => {
     users: users,
     pipe: 'PING_USER'
   }));
+}
+
+export const setLastseen = (id: string) => {
+  axios({
+    url: 'notification/seen',
+    baseURL,
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content_Type': 'application/json'
+    },
+    data: {
+      'notification_id': id
+    }
+  })
 }

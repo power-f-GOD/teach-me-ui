@@ -380,6 +380,7 @@ export interface Post {
   text: string;
   mentions: Array<string>;
   hashtags: Array<string>;
+  media?: Array<string>;
 }
 
 export interface ReplyProps extends Post {
@@ -407,4 +408,10 @@ export interface PostEditorState {
   mentionsKeyword: string;
   mentions: any[];
   [key: string]: any;
+}
+
+export interface UploadState {
+  err: boolean;
+  status: 'settled' | 'pending' | 'fulfilled';
+  _id?: string; 
 }

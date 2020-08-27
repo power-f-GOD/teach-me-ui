@@ -2,6 +2,8 @@ import React, {
   useEffect
 } from 'react';
 
+import Skeleton from 'react-loading-skeleton';
+
 import { connect } from 'react-redux';
 
 import { Link } from 'react-router-dom';
@@ -13,22 +15,25 @@ import Box from '@material-ui/core/Box';
 import ListItem from '@material-ui/core/ListItem';
 
 import { 
-  dispatch, 
+  // dispatch, 
   formatDate, 
   formatNotification 
 } from '../../functions/utils';
-import { getNotificationsRequest } from '../../actions';
+import { setLastseen } from '../../actions';
 
 const Notifications = (props: any) => {
   const { getNotifications } = props;
   const result = getNotifications.data.notifications;
   const entities = getNotifications.data.entities;
+  const lastNotificationId = result[0] ? result[0]._id : false;
 
   useEffect(() => {
-    dispatch(getNotificationsRequest(Date.now())(dispatch));
-  }, [])
+    return () => {
+      result[0] && setLastseen(lastNotificationId)
+      // dispatch(getNotificationsRequest(Date.now())(dispatch));
+    }
+  })
 
-  
   let read = false;
   const makeReadTrue = () => {
     read = true;
@@ -42,8 +47,14 @@ const Notifications = (props: any) => {
           <div className='Notifications-div'>
             <Container className='d-flex flex-column justify-content-center'>
               <Box className='notification-container mx-auto'>
-                <h2 style={{ color: 'black', marginLeft: '2rem' }}>
-                </h2>
+                <h2 className='notification-text'>Notifications</h2>
+                {Array(6).fill('').map((j,i) => (
+                  <React.Fragment key={i}>
+                    <Skeleton width={300} className='skeleton-loader notifications-skeleton'/><br/>
+                    <Skeleton width={250} className='skeleton-loader notifications-skeleton'/><br/>
+                    <Skeleton width={70} className='skeleton-loader notifications-skeleton'/><br style={{display: i !== 5 ? 'block' : 'none'}}/><br style={{display: i !== 5 ? 'block' : 'none'}}/>
+                  </React.Fragment>
+                ))}
               </Box>
             </Container>
           </div>
@@ -70,7 +81,7 @@ const Notifications = (props: any) => {
                     
                       return (
                         <Link to={`${action}`} style={{textDecoration: 'none'}} key={key}> 
-                          <ListItem key={key} className='notification-result'>
+                          <ListItem key={key} className='notification-result' style={{backgroundColor: read ? '#fff' : '#ddd'}}>
                             <div style={{ color: 'black' }} className='d-flex'>
                               <Avatar
                                 component='span'

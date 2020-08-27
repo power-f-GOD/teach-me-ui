@@ -6,23 +6,28 @@ import React,
   FormEvent
 } from "react";
 
-// import { connect } from 'react-redux';
+import { connect } from 'react-redux';
 
 import { 
   getState, 
   replyToPostFn, 
   getHashtagsFromText, 
-  getMentionsFromText 
+  getMentionsFromText
+  // preventEnterNewLine
 } from '../../functions';
 
 import { UserData, Post} from '../../constants/interfaces';
 
 import Row from 'react-bootstrap/Row';
 
-// import Button from '@material-ui/core/Button';
+import { TextField } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
+
 import { pingUser } from "../../actions";
-// import CircularProgress from '@material-ui/core/CircularProgress';
+
+import CircularProgress from '@material-ui/core/CircularProgress';
+// import SendIcon from '@material-ui/icons/Send';
 
 
 const CreateReply: React.FC<any> = (props) => {
@@ -34,18 +39,20 @@ const CreateReply: React.FC<any> = (props) => {
     reply: {
       text:'',
       mentions: [],
-      hashtags: []
+      hashtags: [],
+      media: []
     }
   });
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const reply = (e.target as HTMLInputElement)?.value;
+  const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const reply = (e.target as HTMLTextAreaElement)?.value;
     setState({
       ...state,
       reply: {
         text: reply,
         mentions: getMentionsFromText(reply),
-        hashtags: getHashtagsFromText(reply)
+        hashtags: getHashtagsFromText(reply),
+        media: []
       }
     })
   }
@@ -62,24 +69,29 @@ const CreateReply: React.FC<any> = (props) => {
 
   return (
     <form onSubmit={submitReply}>
-      <Row className='container-fluid mx-auto align-items-center'>
+      <Row className='container-fluid mx-auto align-items-center comment-container'>
         <Avatar
           className='comment-avatar'
           component='span'
           alt={userData.displayName}
           src={`/images/${userData.avatar}`}
         />
-        <input
-          ref={input}
-          onChange={onChange}
-          className='flex-grow-1 comment'
-          placeholder='Write a comment'
-        />
-        {/* <Button
-          onCLick
+        <TextField
+            onChange={onChange}
+            className='flex-grow-1 comment'
+            placeholder='Write a comment'
+            multiline
+            rows={1}
+            size='small'
+            inputRef={input}
+          />
+        <Button
+          // variant='contained'
+          size='small'
+          onClick={submitReply}
           className='comment-button'
           color={state.reply.text
-            ? 'primary' 
+            ? 'primary'
             : 'default'
           }
         >
@@ -87,14 +99,12 @@ const CreateReply: React.FC<any> = (props) => {
             ? <CircularProgress/>
             : 'Reply'
           }
-        </Button> */}
+        </Button>
       </Row>
     </form>
   )
 };
 
-// const mapStateToProps = ({ replyToPost }: any) => ({ replyToPost });
+const mapStateToProps = ({ replyToPost }: any) => ({ replyToPost });
 
-// export default connect(mapStateToProps)(CreateReply);
-
-export default CreateReply;
+export default connect(mapStateToProps)(CreateReply);

@@ -8,6 +8,11 @@ import {
   ONLINE_STATUS
 } from '../constants';
 
+import { 
+  sendFileToServer
+} from '../actions';
+
+
 import store from '../appStore';
 import {
   displaySnackbar,
@@ -570,16 +575,27 @@ export const formatNotification = (entities: any, text: string) => {
   return string;
 };
 
-const addStyledToHashtags = (markUp: string) => {
-  let styledMarkUpArray = markUp.split(' ').map()
-}
+// const addStyledToHashtags = (markUp: string) => {
+//   let styledMarkUpArray = markUp.split(' ').map()
+// }
 
-export const getPostAndMarkUpFromMarkUpInput = (markUp: string) => {
-  let markup = '';
-  let post = '';
-  if(/</.test(markUp)) {
+// export const getPostAndMarkUpFromMarkUpInput = (markUp: string) => {
+//   let markup = '';
+//   let post = '';
+//   if(/</.test(markUp)) {
 
+//   } else {
+//     post = markUp
+//   }
+// }
+let ids: Array<string> = []
+export const recursiveUploadReturnsArrayOfId = (files: Array<File>) => {
+  const nextFile = files.shift()
+  if(nextFile){
+    dispatch(sendFileToServer(nextFile)(dispatch))
+      ids.push(getState().sendFile.data);
+      recursiveUploadReturnsArrayOfId(files)
   } else {
-    post = markUp
+    return ids
   }
 } 
