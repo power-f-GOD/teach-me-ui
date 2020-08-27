@@ -43,6 +43,91 @@
   }
 }
 
+@media screen and (max-width: 991px) {
+  .ChatBox {
+    font-size: 0.95rem;
+
+    .chat-right-pane,
+    .chat-left-pane {
+      position: fixed;
+      height: 100vh;
+      width: 100vw;
+      z-index: 5;
+      top: 0;
+      left: 0;
+      max-width: unset;
+    }
+
+    .chat-left-pane {
+      transform: translateX(-100%);
+      transition: opacity 0.35s,
+        transform 0.3s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+
+      &.active-pane {
+        transition: transform 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+        transform: translateX(0);
+      }
+    }
+
+    .chat-middle-pane {
+      width: 100vw;
+      opacity: 0.35;
+      max-width: unset;
+      transform: scale(0.9);
+      transition: opacity 0.5s, transform 0.5s;
+
+      &.active-pane {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .colleague-name {
+        .colleague-name-container {
+          max-width: calc(100% - 3.25rem);
+        }
+      }
+
+      .control-wrapper > button {
+        &.minimize-button,
+        &.close-button {
+          display: none;
+        }
+      }
+
+      .conversations-menu-button {
+        display: inline-flex;
+      }
+
+      .more-button {
+        display: inline-flex;
+      }
+    }
+
+    .chat-right-pane {
+      opacity: 0;
+      transform: translateX(200%) scale(2);
+      transition: opacity 0.35s, transform 0.35s;
+
+      &.active-pane {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+      }
+
+      .back-button {
+        display: inline-flex;
+      }
+    }
+
+    .controls {
+      max-width: 3.25rem;
+    }
+
+    .msg-wrapper {
+      max-width: 85%;
+    }
+  }
+}
+
 @media screen and (max-width: 767px) {
   // landing page styles
   .landing-splash-box {
@@ -211,10 +296,6 @@
   //chat box style(s)
   .scroll-view-msg-wrapper {
     max-width: 75%;
-  }
-
-  .ChatBox .chat-right-pane.d-flex {
-    display: none !important;
   }
 
   //Profile page styles

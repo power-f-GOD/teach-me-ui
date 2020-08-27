@@ -49,19 +49,25 @@ interface ChatLeftPaneProps {
   rooms?: ConversationInfo[];
   userId: string;
   userFirstname: string;
+  handleSetActivePaneIndex(index: number): Function;
 }
 
 const [CV, CR] = ['Conversations', 'Classrooms'];
 
 const ChatLeftPane = (props: ChatLeftPaneProps) => {
-  const [value, setValue] = React.useState<number>(0);
-  const { conversations: _conversations, userId, userFirstname } = props;
+  const {
+    conversations: _conversations,
+    userId,
+    userFirstname,
+    handleSetActivePaneIndex
+  } = props;
   const { pathname } = window.location;
   const convos = (props.conversations.data ?? []) as Partial<
     APIConversationResponse
   >[];
 
   const [recent, setRecent] = React.useState<number>(0);
+  const [value, setValue] = React.useState<number>(0);
 
   const handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
@@ -73,8 +79,23 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
         const { id, cid } = queryString.parse(window.location.search);
         const { convoId, userId } = extra;
 
+        delay(300).then(() => {
+          handleSetActivePaneIndex(1)();
+        });
+
         if (cid === convoId || userId === id) {
+          const queryString = window.location.search.replace(
+            'chat=min',
+            'chat=open'
+          );
+
+          dispatch(chatState({ queryString }));
           e.preventDefault();
+          window.history.replaceState(
+            {},
+            '',
+            window.location.pathname + queryString
+          );
           return;
         }
 
@@ -107,7 +128,7 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
         dispatch(conversation(convoId));
       };
     },
-    []
+    [handleSetActivePaneIndex]
   );
 
   return (
@@ -118,8 +139,8 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
           value={value}
           onChange={handleChange}
           aria-label='Chat left pane tab panels'>
-          <Tab label={CV} {...allyProps(0)} />
-          <Tab label={CR} {...allyProps(1)} />
+          <Tab label={CV} {...allyProps(0)} style={{ minWidth: '50%' }} />
+          <Tab label={CR} {...allyProps(1)} style={{ minWidth: '50%' }} />
         </Tabs>
       </AppBar>
       <Box className='tab-panels-wrapper d-flex' position='relative'>
@@ -206,7 +227,7 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
                         src={`/images/${avatar ?? 'avatar-1.png'}`}
                       />
                     </Badge>{' '}
-                    <Box width='100%' maxWidth='calc(100% - 3.25rem)'>
+                    <Box width='100%' maxWidth='calc(100% - 3.65rem)'>
                       <Box className='display-name-wrapper'>
                         <Box className='display-name'>{displayName}</Box>
                         <ChatTimestamp
@@ -340,35 +361,35 @@ function TabPanel(props: TabPanelProps) {
   const translateVal = (index === value ? 0 : index - value) * 100;
   const tabPanelRef = React.useRef<any>();
 
-  const setVisibility = useCallback(
+  const setInertness = useCallback(
     (e: any) => {
-      e.target.inert = value === index ? false : true;
+      e.target.inert = value !== index;
 
-      setTimeout(() => {
+      delay(10).then(() => {
         if (e.target.scrollHeight > e.target.offsetHeight) {
           e.target.classList.remove('remove-scroll-fader');
         } else {
           e.target.classList.add('remove-scroll-fader');
         }
-      }, 10);
+      });
     },
     [value, index]
   );
 
   React.useEffect(() => {
     if (tabPanelRef.current) {
-      addEventListenerOnce(tabPanelRef.current, setVisibility, '', {
+      addEventListenerOnce(tabPanelRef.current, setInertness, '', {
         capture: true
       });
-      addEventListenerOnce(tabPanelRef.current, setVisibility, 'resize', {
+      addEventListenerOnce(tabPanelRef.current, setInertness, 'resize', {
         capture: true
       });
 
       if (/fulfilled|settled/.test(other.status)) {
-        setVisibility({ target: tabPanelRef.current });
+        setInertness({ target: tabPanelRef.current });
       }
     }
-  }, [setVisibility, other.status]);
+  }, [setInertness, other.status]);
 
   return (
     <>
