@@ -1,7 +1,5 @@
 import React from 'react';
 
-import Row from 'react-bootstrap/Row';
-
 import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 
@@ -23,12 +21,10 @@ const openCreatePostModal = (e: any) => {
 const Compose: React.FunctionComponent = () => {
   return (
     <Box
-      className='post-list-page d-flex flex-column'
+      className='post-list-page d-flex flex-column mb-1 mb-md-2'
       borderRadius='5px'
-      p={1}
-      pb={2}
-      mb={1}>
-      <Row className='container-fluid mx-auto align-items-center'>
+      p={1}>
+      <Box display='flex'>
         <Avatar
           component='span'
           className='chat-avatar compose-avatar'
@@ -45,7 +41,7 @@ const Compose: React.FunctionComponent = () => {
           px={2}>
           What's on your mind {displayName.split(' ')[0]}?
         </Box>
-      </Row>
+      </Box>
     </Box>
   );
 };

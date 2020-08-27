@@ -17,6 +17,8 @@ import Col from 'react-bootstrap/Col';
 import { UserData } from '../../constants';
 import { useGetRecommendations } from '../../hooks/api';
 
+import { userDeviceIsMobile } from '../../index';
+
 const Recommendations = (props: any) => {
   const [
     ,
@@ -29,10 +31,10 @@ const Recommendations = (props: any) => {
         recommendations !== null &&
         !recommendations.error && (
           <Box
-            pb={1}
-            className='recommendations'
+            className='recommendations pb-1 pb-md-2'
             style={{
-              gridTemplateColumns: `repeat(${recommendations.recommendations.length}, 15rem)`
+              gridTemplateColumns: `repeat(${recommendations.recommendations.length}, 13rem)`,
+              columnGap: userDeviceIsMobile ? '.25rem' : '.5rem'
             }}>
             {recommendations.recommendations.map((recommendation: any) => (
               <Recommendation

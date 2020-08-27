@@ -3,7 +3,7 @@
 html,
 body,
 #root {
-  height: 100vh;
+  min-height: 100vh;
   width: 100%;
   margin: 0;
   font-size: 1rem;
@@ -93,10 +93,11 @@ body {
   width: 100%;
   min-height: 100vh;
   display: flex;
-  overflow: hidden;
+  // overflow: hidden;
 
   > div {
     width: 100%;
+    min-height: 100vh;
     background: #ccc;
   }
 }

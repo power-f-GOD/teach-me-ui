@@ -23,9 +23,11 @@ const stopProp = (e: any) => {
   e.stopPropagation();
 };
 
-export const processPostFn = (post: string) =>
-  post &&
-  post
+export const processPostFn = (post: string) => {
+  if (!post) return;
+
+  const mid = post.replace(/([\t\r\n\f]+)/gi, ' $1 ');
+  return mid
     .trim()
     .split(/ /gi)
     .map((w, i) => {
@@ -62,6 +64,7 @@ export const processPostFn = (post: string) =>
         <React.Fragment key={i}>{w} </React.Fragment>
       );
     });
+};
 
 const openCreateRepostModal = (meta: any) => (e: any) => {
   displayModal(true, 'CREATE_REPOST', {
@@ -97,13 +100,12 @@ const Post: React.FunctionComponent<
   };
   return (
     <Box
-      className='post-list-page'
-      borderRadius='5px'
+      className='post-list-page mb-1 mb-md-2'
+      borderRadius='2px'
       p={0}
       pt={1}
       pl={1}
-      pb={props.sec_type === 'REPLY' ? 1 : 0}
-      mb={1}>
+      pb={props.sec_type === 'REPLY' ? 1 : 0}>
       {((props._extra && props.sec_type !== 'REPLY') ||
         (props.sec_type === 'REPOST' && !props.text)) &&
         !props.head && <small className='small-text'>{extra}</small>}
