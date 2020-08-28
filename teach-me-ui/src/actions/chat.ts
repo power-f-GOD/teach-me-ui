@@ -284,7 +284,6 @@ export const conversations = (_payload: SearchState): ReduxAction => {
         }
         return false;
       });
-
       if (actualConvo) {
         actualConvo.unread_count = unread_count;
         initialConversations[indexOfInitial] = actualConvo as Partial<

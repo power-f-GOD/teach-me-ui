@@ -15,7 +15,7 @@ it("gets users notifications and displays it to the user", () => {
   const mockNotificationState: NotificationState = {
     status: expect.any(String),
     err: expect.any(Boolean),
-    data: expect.any(Array)
+    data: expect.any(Object)
   };
   const mockDate = expect.any(Number)
   
@@ -24,7 +24,7 @@ it("gets users notifications and displays it to the user", () => {
     payload: {
       status: expect.any(String),
       err: expect.any(Boolean),
-      data: expect.any(Array)
+      data: expect.any(Object)
     }
   };
 

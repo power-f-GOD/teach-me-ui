@@ -1,0 +1,2 @@
+export const SEND_FILE = 'SEND_FILE';
+export const SEND_FILE_TO_SERVER = 'SEND_FILE_TO_SERVER';

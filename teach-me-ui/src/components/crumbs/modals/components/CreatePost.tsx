@@ -5,12 +5,18 @@ import React, {
   MouseEvent 
 } from 'react';
 
+// import { recursiveUploadReturnsArrayOfId } from '../../../../functions/utils';
+
+import { connect } from 'react-redux';
+
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
+// import Input from '@material-ui/core/Input'
 
-import InputTrigger from 'react-input-trigger';
+import AttachmentIcon from '@material-ui/icons/Attachment';
+
 
 import Row from 'react-bootstrap/Row';
 
@@ -21,12 +27,13 @@ import {
 } from '../../../../functions';
 
 import { 
-  useStyles, 
+  // useStyles, 
   PostEditorState 
 } from '../../../../constants';
 
+
 import { 
-  useSubmitPost,
+  useSubmitPost
   /*useGetFormattedMentionsWithKeyword*/
 } from '../../../../hooks/api';
 
@@ -40,20 +47,26 @@ if (navigator.cookieEnabled && localStorage.kanyimuta) {
   username = userInfo.username;
 }
 
-const CreatePost: React.FC = () => {
+const CreatePost = (props: any) => {
 
-  const avatarSizes = useStyles()
+  // const { sendFile } = props;
+
+  const label = useRef<HTMLLabelElement | any>()
+
+  // const avatarSizes = useStyles()
   const [state, setState] = useState<PostEditorState>({
     mentionsKeyword: '',
     post: {
       text: '',
       mentions: [],
-      hashtags: []
+      hashtags: [],
+      media: []
     },
     top: 0,
     left: 0,
     showSuggestor: false,
-    mentions: []
+    mentions: [],
+    selectedFiles: []
 
   })
   // const getMentions = useGetFormattedMentionsWithKeyword(state.mentionsKeyword)[0];
@@ -61,61 +74,39 @@ const CreatePost: React.FC = () => {
 
   const editor = useRef<HTMLTextAreaElement | any>()
 
-  const toggleSuggestor = (metaInformation: any) => {
-    const { hookType, cursor } = metaInformation;
+//   const fileSelectedHandler = (e: ChangeEvent<any>) => {
+//     let files: Array<File> = [];
+//     for (let file of e.target.files) {
+//       if (file.size > 50000000) {
+//         label.current.style.display = 'block'
+//         return
+//       files.push(file)
+//       }
+//     }
+//     setState({
+//       ...state,
+//       selectedFiles: e.target.files,
+//       post: {
+//        ...state.post,
+//        media: recursiveUploadReturnsArrayOfId(files)
+//       }
+//     })
+// };
 
-    if (hookType === 'start') {
-      setState({
-        ...state,
-        showSuggestor: true,
-        left: cursor.left,
-
-        // we need to add the cursor height so that the dropdown doesn't overlap with the `@`.
-        top: (Number(cursor.top) + Number(cursor.height))
-      });
-
-    }
-      
-    if (hookType === 'cancel') {
-      // reset the state
-      
-      setState({
-        ...state,
-        showSuggestor: false,
-        left: 0,
-
-        // we need to add the cursor height so that the dropdown doesn't overlap with the `@`.
-        top: 0
-      });
-    };
-  };
-
-  // const handleMentionInput = (metaInformation: any) => {
-
-  //   setState({
-  //     mentionsKeyword: metaInformation.text
-  //   });
-
-  //   getMentions().then((data: any[]) => {
-  //     setState({ 
-  //       ...state,
-  //       mentions: data
-  //     });
-  //   });
-  // } 
-
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const post = e.target.value;
     setState({
       ...state,
       post: { 
+        ...state.post,
         text: post, 
         mentions: getMentionsFromText(post), 
-        hashtags: getHashtagsFromText(post)
+        hashtags: getHashtagsFromText(post),
       }
     });
   }
   
+
   const onPostSubmit = (e: MouseEvent<HTMLButtonElement>) => {
     if (state.post.text) {
       submitPost().then((data: any) => {
@@ -141,25 +132,13 @@ const CreatePost: React.FC = () => {
         </div>
       </Row>
       <form>
-      <div
+      {/* <div
         id='suggestion-container'
-      >
-        <InputTrigger
-          trigger={{
-            keyCode: 50,
-            shiftKey: true,
-          }}
-          onStart={(metaData: any) => {
-            toggleSuggestor(metaData);
-          }}
-          onCancel={(metaData: any) => {
-            toggleSuggestor(metaData);
-          }}
-          // onType={(metaData: any) => { 
-          //   handleMentionInput(metaData); 
-          // }}
-        >
-          <textarea 
+      > */}
+       
+          <textarea
+            style={{whiteSpace: 'pre'}}
+            onInput={onChange}
             autoFocus
             rows={9}
             id="post-input" 
@@ -168,10 +147,19 @@ const CreatePost: React.FC = () => {
             }}
             placeholder={`What's on your mind, ${displayName.split(' ')[0]}`}
             ref={editor}
-          >
-          </textarea>
-        </InputTrigger>
-        <div
+          />
+          {/* <div> */}
+            <label htmlFor='my-input'><AttachmentIcon/></label>
+            <label htmlFor='my-input' ref={label} style={{color: 'red', fontSize: 'small', display: 'none'}} >files should be maximum of 50mb</label>
+          <input
+              multiple={true}
+              id={'my-input'}
+              style={{display:'none'}}
+              type={'file'}
+              // onChange={(e) => {fileSelectedHandler(e)}}
+              // ref={myInput}
+          />
+        {/* <div
           id="suggestor-dropdown"
           style={{
             display: state.showSuggestor ? "block" : "none",
@@ -197,7 +185,7 @@ const CreatePost: React.FC = () => {
             ))  
           }
         </div>
-      </div>
+      </div> */}
         <Row className='d-flex mx-auto mt-1'>
           <Button
             onClick={onPostSubmit}
@@ -219,4 +207,6 @@ const CreatePost: React.FC = () => {
 };
 
 
-export default CreatePost;
+const mapStateToProps = ({ sendFile }: any) => ({ sendFile });
+
+export default connect(mapStateToProps)(CreatePost);
