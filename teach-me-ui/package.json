@@ -24,6 +24,11 @@
     "@types/redux": "^3.6.0",
     "autoprefixer": "^9.8.0",
     "axios": "^0.19.2",
+    "draft-js": "^0.11.7",
+    "draft-js-hashtag-plugin": "^2.0.4",
+    "draft-js-linkify-plugin": "^2.0.2",
+    "draft-js-mention-plugin": "^3.1.0",
+    "draft-js-plugins-editor": "^3.0.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
     "enzyme-to-json": "^3.4.4",
@@ -46,6 +51,7 @@
     "react-test-renderer": "^16.13.1",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
+    "typescript": "^3.8.3",
     "typescript-eslint": "0.0.1-alpha.0",
     "worker-loader": "^2.0.0"
   },
@@ -64,9 +70,7 @@
     "gh-pages": "^2.2.0",
     "jest": "^24.9.0",
     "style-loader": "^1.2.1",
-    "typescript": "^3.8.3",
-    "draft-js": "^0.7.0",
-    "draft-js-mention-plugin": "^1.1.2"
+    "typescript": "^3.8.3"
   },
   "peerDependencies": {
     "react": "^16.8.6",

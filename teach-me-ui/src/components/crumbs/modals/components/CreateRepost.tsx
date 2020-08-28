@@ -21,7 +21,7 @@ import { connect } from 'react-redux';
 
 import { makeRepost } from '../../../../actions';
 
-import { useStyles, PostEditorState } from '../../../../constants';
+import { useStyles } from '../../../../constants';
 
 // import {
 // //   useSubmitPost
@@ -40,7 +40,7 @@ if (navigator.cookieEnabled && localStorage.kanyimuta) {
 
 const CreatePost: React.FC<any> = (props) => {
   const avatarSizes = useStyles();
-  const [state, setState] = useState<PostEditorState>({
+  const [state, setState] = useState<any>({
     mentionsKeyword: '',
     post: {
       text: '',
