@@ -55,7 +55,6 @@
 
   .notification-result {
     padding: 0.3rem 0.8rem;
-    border-radius: 0.35rem;
     display: block;
 
     a {
@@ -109,4 +108,8 @@
       padding: 0em !important;
     }
   }
+}
+
+.notifications-skeleton {
+  margin-left: 4em !important;
 }
