@@ -7,6 +7,8 @@ import Col from 'react-bootstrap/Col';
 import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 import SchoolIcon from '@material-ui/icons/School';
+import IconButton from '@material-ui/core/IconButton';
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 
 import { ONE_TO_ONE } from '../../constants/chat';
 import {
@@ -19,11 +21,13 @@ import { InfoCard } from '../crumbs/Cards';
 interface ChatRightPaneProps {
   conversation: APIConversationResponse;
   convoInfo: ConversationInfo;
+  handleSetActivePaneIndex(index: number): any;
 }
 
 const ChatRightPane = ({
   conversation,
-  convoInfo: _conversationInfo
+  convoInfo: _conversationInfo,
+  handleSetActivePaneIndex
 }: ChatRightPaneProps) => {
   const {
     type,
@@ -32,14 +36,24 @@ const ChatRightPane = ({
     associated_username: username
   } = conversation;
   const { data, err } = _conversationInfo;
-  const { institution, department, level } = data as UserData;
+  const { institution, department, level } = data ?? ({} as UserData);
 
   return (
     <>
       <Col
         as='header'
-        className='chat-header d-flex flex-column justify-content-center'>
-        {type === ONE_TO_ONE ? 'User info' : 'Participants'}
+        className='chat-header d-flex justify-content-between align-items-center px-2'>
+        <Box component='span' className='font-bold pl-1'>
+          {type === ONE_TO_ONE ? 'User info' : 'Participants'}
+        </Box>
+        <Box component='span' className='control-wrapper ml-1'>
+          <IconButton
+            className='back-button'
+            onClick={handleSetActivePaneIndex(1)}
+            aria-label='go back'>
+            <ArrowForwardIcon />
+          </IconButton>
+        </Box>
       </Col>
       {type === ONE_TO_ONE ? (
         <Container

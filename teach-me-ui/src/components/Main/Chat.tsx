@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, createRef } from 'react';
+import React, { useState, useCallback, useEffect, createRef } from 'react';
 import { connect } from 'react-redux';
 
 import queryString from 'query-string';
@@ -32,6 +32,7 @@ import ChatLeftPane from './Chat.LeftPane';
 import ChatMiddlePane from './Chat.MiddlePane';
 import ChatRightPane from './Chat.RightPane';
 import createMemo from '../../Memo';
+import { userDeviceIsMobile } from '../..';
 
 export const placeHolderDisplayName = 'Start a new Conversation';
 
@@ -47,11 +48,29 @@ interface ChatBoxProps {
 }
 
 const chatBoxWrapperRef = createRef<any>();
+const leftPaneRef = createRef<any>();
+const middlePaneRef = createRef<any>();
+const rightPaneRef = createRef<any>();
 
 const Memoize = createMemo();
 
 window.addEventListener('popstate', () => {
-  let { chat, id: userId, cid } = queryString.parse(window.location.search);
+  const { chat, id: userId, cid } = queryString.parse(window.location.search);
+
+  if (userDeviceIsMobile && chat) {
+    delay(100).then(() => {
+      dispatch(
+        chatState({
+          isOpen: false,
+          isMinimized: false,
+          queryString: ''
+        })
+      );
+    });
+    window.history.replaceState({}, '', window.location.pathname);
+
+    return;
+  }
 
   //for the sake of the smooth animation
   if (/min|open/.test(chat) && chatBoxWrapperRef.current) {
@@ -119,15 +138,30 @@ const ChatBox = (props: ChatBoxProps) => {
     0
   );
 
-  const [visibilityState, setVisibilityState] = React.useState<
-    'visible' | 'hidden'
-  >(isOpen || chat ? 'visible' : 'hidden');
+  const leftPane = leftPaneRef.current;
+  const middlePane = middlePaneRef.current;
+  const rightPane = rightPaneRef.current;
+
+  const [visibilityState, setVisibilityState] = useState<'visible' | 'hidden'>(
+    isOpen || chat ? 'visible' : 'hidden'
+  );
+  const [activePaneIndex, setActivePaneIndex] = useState<number>(
+    chat === 'open' ? 1 : userDeviceIsMobile ? 0 : 1
+  );
+
+  const handleSetActivePaneIndex = useCallback(
+    (index: number) => () => {
+      setActivePaneIndex(index);
+    },
+    []
+  );
 
   const handleOpenChatClick = useCallback(() => {
-    const queryString = `?chat=open&id=${
+    const queryString = `?chat=${userDeviceIsMobile ? 'min' : 'open'}&id=${
       convoUid ?? placeHolderDisplayName
     }&cid=${convoId ?? '0'}`;
 
+    setActivePaneIndex(0);
     setVisibilityState('visible');
 
     //delay till chatBox display property is set for animation to work
@@ -170,6 +204,30 @@ const ChatBox = (props: ChatBoxProps) => {
     },
     [isOpen, isMinimized]
   );
+
+  useEffect(() => {
+    if (window.innerWidth < 992) {
+      if (leftPane && middlePane && rightPane) {
+        leftPane.inert = true;
+        middlePane.inert = true;
+        rightPane.inert = true;
+
+        delay(300).then(() => {
+          switch (activePaneIndex) {
+            case 0:
+              leftPane.inert = false;
+              break;
+            case 1:
+              middlePane.inert = false;
+              break;
+            case 2:
+              rightPane.inert = false;
+              break;
+          }
+        });
+      }
+    }
+  }, [leftPane, middlePane, rightPane, activePaneIndex]);
 
   useEffect(() => {
     const chatBoxWrapper = chatBoxWrapperRef.current;
@@ -221,7 +279,7 @@ const ChatBox = (props: ChatBoxProps) => {
             chatState({
               queryString: !!chat ? search : qString,
               isOpen: true,
-              isMinimized: chat === 'min'
+              isMinimized: chat === 'min' && !userDeviceIsMobile
             })
           );
       });
@@ -284,20 +342,29 @@ const ChatBox = (props: ChatBoxProps) => {
         className={`chat-box-wrapper m-0 ${isMinimized ? 'minimize' : ''} ${
           isOpen ? '' : 'close'
         } ${visibilityState}`}>
-        <Col as='section' md={3} sm={4} className='chat-left-pane p-0'>
+        <Col
+          as='section'
+          lg={3}
+          className={`chat-left-pane ${
+            activePaneIndex === 0 ? 'active-pane ' : ''
+          }p-0`}
+          ref={leftPaneRef}>
           <Memoize
             memoizedComponent={ChatLeftPane}
             conversations={conversations}
             userId={userData.id}
             userFirstname={userData.firstname}
+            handleSetActivePaneIndex={handleSetActivePaneIndex}
           />
         </Col>
 
         <Col
           as='section'
-          md={convoUsername ? 6 : 9}
-          sm={8}
-          className='chat-middle-pane d-flex flex-column p-0'>
+          lg={convoUsername ? 6 : 9}
+          className={`chat-middle-pane ${
+            activePaneIndex === 1 ? 'active-pane ' : ''
+          }d-flex flex-column p-0 `}
+          ref={middlePaneRef}>
           <Memoize
             memoizedComponent={ChatMiddlePane}
             conversation={_conversation}
@@ -306,18 +373,23 @@ const ChatBox = (props: ChatBoxProps) => {
             userData={userData}
             conversationInfo={_conversationInfo}
             webSocket={socket}
+            handleSetActivePaneIndex={handleSetActivePaneIndex}
           />
         </Col>
 
         {convoUsername && (
           <Col
             as='section'
-            md={3}
-            className='chat-right-pane d-flex flex-column p-0'>
+            lg={3}
+            ref={rightPaneRef}
+            className={`chat-right-pane ${
+              activePaneIndex === 2 ? 'active-pane ' : ''
+            }d-flex flex-column p-0`}>
             <Memoize
               memoizedComponent={ChatRightPane as React.FC}
               conversation={_conversation}
               convoInfo={_conversationInfo}
+              handleSetActivePaneIndex={handleSetActivePaneIndex}
             />
           </Col>
         )}

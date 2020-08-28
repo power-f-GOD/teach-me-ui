@@ -153,7 +153,7 @@ export const ChatTimestamp = (props: {
         className={`chat-timestamp d-inline-block ${className ?? ''}`}>
         {typeof timestamp === 'string'
           ? timestamp
-          : timestampFormatter(timestamp)}{' '}
+          : timestampFormatter(timestamp).toLowerCase()}{' '}
         {chatStatus ? chatStatus : ''}
       </Col>
     </Col>

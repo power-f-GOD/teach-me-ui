@@ -15,11 +15,15 @@ import TextField from '@material-ui/core/TextField';
 import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CloudOffIcon from '@material-ui/icons/CloudOff';
 import ChatIcon from '@material-ui/icons/Chat';
+import MenuIcon from '@material-ui/icons/MenuRounded';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import PersonIcon from '@material-ui/icons/Person';
 
 import {
   ChatState,
@@ -70,6 +74,7 @@ interface ChatMiddlePaneProps {
   chatState: ChatState;
   conversationInfo: ConversationInfo;
   webSocket: WebSocket;
+  handleSetActivePaneIndex(index: number): any;
 }
 
 const Memoize = createMemo();
@@ -84,7 +89,7 @@ let messageDrafts: any = {};
 
 const displayAwayDate = () => {
   renderAwayDateTimeout = setTimeout(() => {
-    _canDisplayAwayDate = Date.now() - lastSeenForAway > 180000;
+    _canDisplayAwayDate = Date.now() - lastSeenForAway > 300000;
     //did the next line to trigger a state change for the feature to really work
     dispatch(conversationInfo({ user_typing: '' }));
 
@@ -105,7 +110,8 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
     chatState: _chatState,
     userData,
     conversationInfo: _conversationInfo,
-    webSocket: socket
+    webSocket: socket,
+    handleSetActivePaneIndex
   } = props;
   const convoMessages = _conversationMessages.data as Partial<
     APIMessageResponse
@@ -122,7 +128,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
     avatar,
     conversation_name: displayName
   } = conversation;
-  const cid = queryString.parse(window.location.search)?.cid;
+  const { chat, cid } = queryString.parse(window.location.search) ?? {};
   const { isMinimized, isOpen }: ChatState = _chatState;
   const msgBoxInitHeight = 19;
 
@@ -148,16 +154,14 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   const [canDeleteForEveryone, setCanDeleteForEveryone] = useState<boolean>(
     true
   );
+  const [moreOptionsIsVisible, setMoreOptionsIsVisible] = useState<boolean>(
+    false
+  );
 
   const numOfSelectedMessages = Object.keys(selectedMessages).length;
   const canDisplayAwayDate = _canDisplayAwayDate;
   const lastAwayDate = `away ${
-    canDisplayAwayDate
-      ? 'since ' +
-        lastSeenTime.toLowerCase().replace(' ', '') +
-        ', ' +
-        lastSeenDate
-      : ''
+    canDisplayAwayDate ? 'since ' + lastSeenTime + ', ' + lastSeenDate : ''
   }`;
   const lastOnlineDate = `last seen ${lastSeenDate} at ${lastSeenTime.replace(
     ' ',
@@ -188,6 +192,60 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
       })
     );
     console.error('An error occurred. Error:', e);
+  }, []);
+
+  const toggleMoreOptionsPopover = useCallback(() => {
+    setMoreOptionsIsVisible((prev) => !prev);
+  }, []);
+
+  const handleConversationsMenuClick = useCallback(() => {
+    const queryString = window.location.search.replace('chat=open', 'chat=min');
+
+    if (isMinimized) {
+      dispatch(chatState({ isMinimized: false }));
+    }
+
+    delay(isMinimized ? 500 : 1).then(() => {
+      handleSetActivePaneIndex(0)();
+    });
+
+    if (convoId || isNaN(cid)) {
+      dispatch(
+        chatState({
+          isOpen: true,
+          queryString
+        })
+      );
+      window.history.replaceState(
+        {},
+        '',
+        window.location.pathname + queryString
+      );
+    }
+  }, [convoId, cid, isMinimized, handleSetActivePaneIndex]);
+
+  const handleUserInfoOptionClick = useCallback(() => {
+    if (isMinimized) {
+      const queryString = window.location.search.replace(
+        'chat=open',
+        'chat=min'
+      );
+
+      dispatch(chatState({ isMinimized: false, queryString }));
+      window.history.replaceState(
+        {},
+        '',
+        window.location.pathname + queryString
+      );
+    }
+
+    delay(isMinimized ? 500 : 250).then(() => {
+      handleSetActivePaneIndex(2)();
+    });
+  }, [isMinimized, handleSetActivePaneIndex]);
+
+  const hideMoreOptionsOnClick = useCallback(() => {
+    setMoreOptionsIsVisible(false);
   }, []);
 
   const handleProfileLinkClick = useCallback(() => {
@@ -230,8 +288,12 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
           queryString: ''
         })
       );
-      window.history.pushState({}, '', window.location.pathname);
-    }, 300);
+      window.history[userDeviceIsMobile ? 'replaceState' : 'pushState'](
+        {},
+        '',
+        window.location.pathname
+      );
+    }, 400);
   }, [isOpen, _conversationMessages.status]);
 
   const handleSendMsgClick = useCallback(() => {
@@ -287,7 +349,10 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
       }
 
       if (e.key === 'Enter') {
-        if (!e.shiftKey && !userDeviceIsMobile) {
+        if (
+          (!e.shiftKey && !userDeviceIsMobile) ||
+          (e.shiftKey && userDeviceIsMobile)
+        ) {
           handleSendMsgClick();
 
           if (
@@ -410,7 +475,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
       clearTimeout(loadMessagesTimeout);
       scrollViewScrollPos = scrollView.scrollHeight - scrollView.scrollTop;
       loadMessagesTimeout = setTimeout(() => {
-        if (scrollView?.scrollTop <= 200 && !/end/.test(statusText as string)) {
+        if (scrollView?.scrollTop <= 75 && !/end/.test(statusText as string)) {
           dispatch(
             getConversationMessages(
               convoId,
@@ -445,13 +510,18 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
 
   useEffect(() => {
     if (!scrollView) setScrollView(scrollViewRef.current);
-  }, [scrollView]);
+
+    //call this on app load to take care of wider screens where messages may not be long enough for a scroll
+    handleScrollViewScroll();
+  }, [scrollView, handleScrollViewScroll]);
 
   useEffect(() => {
     if ((cid || convoId) && msgBoxRef.current) {
       msgBoxRef.current.value = messageDrafts[convoId || cid] ?? '';
 
-      if (!userDeviceIsMobile) msgBoxRef.current.focus();
+      if (!userDeviceIsMobile) {
+        msgBoxRef.current.focus();
+      }
     }
   }, [convoId, msgBoxRef, cid]);
 
@@ -467,6 +537,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
 
   useEffect(() => {
     if (!!convoMessages[0] && userData.online_status === 'ONLINE') {
+      const [isOpen, isMinimized] = [!!chat, chat === 'min'];
       const isSameCid = convoId === cid;
       const userId = userData.id;
 
@@ -486,15 +557,35 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
             if (isOpen) {
               const isDelivered = message.delivered_to?.includes(userId);
 
-              socket.send(
-                JSON.stringify({
-                  message_id: message._id,
-                  pipe:
-                    isMinimized && !isDelivered
-                      ? CHAT_MESSAGE_DELIVERED
-                      : CHAT_READ_RECEIPT
-                })
-              );
+              if (userDeviceIsMobile) {
+                if (!isDelivered) {
+                  socket.send(
+                    JSON.stringify({
+                      message_id: message._id,
+                      pipe: CHAT_MESSAGE_DELIVERED
+                    })
+                  );
+                }
+
+                if (!isMinimized) {
+                  socket.send(
+                    JSON.stringify({
+                      message_id: message._id,
+                      pipe: CHAT_READ_RECEIPT
+                    })
+                  );
+                }
+              } else {
+                socket.send(
+                  JSON.stringify({
+                    message_id: message._id,
+                    pipe:
+                      isMinimized && !isDelivered
+                        ? CHAT_MESSAGE_DELIVERED
+                        : CHAT_READ_RECEIPT
+                  })
+                );
+              }
             } else continue;
           } else break;
         } catch (e) {
@@ -506,12 +597,11 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   }, [
     cid,
     convoId,
+    chat,
     userData.id,
     userData.online_status,
     convoMessages,
-    isOpen,
     online_status,
-    isMinimized,
     socket,
     displaySocketErrInfo
   ]);
@@ -576,13 +666,29 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
         memoizedComponent={Col}
         as='header'
         className='chat-header d-flex p-0'>
-        <Box
-          className={`title-control-wrapper d-flex ${
+        <Row
+          className={`title-control-wrapper px-2 mx-0 ${
             numOfSelectedMessages ? 'hide' : ''
           }`}>
           <Col as='span' className='colleague-name'>
+            <Box component='span' className='control-wrapper'>
+              <IconButton
+                edge='start'
+                className='conversations-menu-button ml-0 mr-1'
+                color='inherit'
+                onClick={handleConversationsMenuClick}
+                aria-label='conversations menu'>
+                <MenuIcon />
+              </IconButton>
+            </Box>
+
             {type === 'ONE_TO_ONE' ? (
-              <>
+              <Box
+                component='span'
+                className='colleague-name-container d-inline-flex align-items-center'
+                onClick={
+                  userDeviceIsMobile ? handleUserInfoOptionClick : undefined
+                }>
                 <Badge
                   anchorOrigin={{
                     vertical: 'bottom',
@@ -602,7 +708,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
                     src={`/images/${avatar}`}
                   />
                 </Badge>{' '}
-                <Col as='span' className='ml-1 p-0'>
+                <Col as='span' className='ml-2 p-0'>
                   <Col
                     as='span'
                     className={`display-name ${
@@ -633,16 +739,16 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
                       : '...'}
                   </Col>
                 </Col>
-              </>
+              </Box>
             ) : !convoId ? (
-              <Col as='span' className='ml-2 p-0'>
+              <Col as='span' className='ml-0 p-0'>
                 {placeHolderDisplayName}
               </Col>
             ) : (
               <>
                 <Avatar
                   component='span'
-                  className='chat-avatar'
+                  className='chat-avatar ml-0'
                   alt='Emmanuel Sunday'
                   src={`/images/${avatar}`}
                 />
@@ -654,55 +760,109 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
           </Col>
 
           <Col as='span' className='controls p-0'>
-            <Col xs={6} as='span' className='minimize-wrapper'>
+            <Box component='span' className='control-wrapper ml-1'>
               <IconButton
                 className='minimize-button'
                 onClick={handleMinimizeChatClick}
                 aria-label='minimize chat box'>
                 {!isMinimized ? <MinimizeIcon /> : <WebAssetIcon />}
               </IconButton>
-            </Col>
-            <Col xs={6} as='span' className='close-wrapper'>
+            </Box>
+
+            <Box component='span' className='control-wrapper ml-1'>
               <IconButton
                 className='close-button'
                 onClick={handleCloseChatClick}
                 aria-label='close chat box'>
                 <CloseIcon />
               </IconButton>
-            </Col>
-          </Col>
-        </Box>
+            </Box>
 
-        <Row
-          className={`message-actions-container ${
-            numOfSelectedMessages ? 'open' : ''
-          } m-0`}>
-          <Box className='action-wrapper text-left'>
-            {
-              <>
-                <IconButton
-                  className='clear-selection-button ml-2'
-                  onClick={handleClearSelections}
-                  aria-label='cancel action button'>
-                  <CloseIcon />
-                </IconButton>
-                <Col as='span' className='ml-2 px-0'>
-                  {numOfSelectedMessages
-                    ? `${numOfSelectedMessages} selected`
-                    : 'Cleared'}
-                </Col>
-              </>
-            }
-          </Box>
-          <Box className='action-wrapper text-right'>
-            <IconButton
-              className='delete-button mr-2'
-              onClick={handleDeleteMessage}
-              aria-label='delete message'>
-              <DeleteIcon />
-            </IconButton>
-          </Box>
+            <Box component='span' className='control-wrapper ml-1'>
+              <IconButton
+                className='more-button'
+                onClick={toggleMoreOptionsPopover}
+                aria-label='more'>
+                <MoreVertIcon />
+              </IconButton>
+
+              <Box
+                component='span'
+                className={`more-options-container ${
+                  moreOptionsIsVisible ? 'visible' : ''
+                } ${
+                  isMinimized ? 'transform-upwards' : ''
+                } d-inline-flex flex-column`}
+                onClick={hideMoreOptionsOnClick}>
+                <Button
+                  variant='contained'
+                  className='user-info-button'
+                  onClick={handleUserInfoOptionClick}>
+                  <PersonIcon /> User Info
+                </Button>
+
+                <Button
+                  variant='contained'
+                  className='minimize-button'
+                  onClick={handleMinimizeChatClick}>
+                  {!isMinimized ? (
+                    <>
+                      <MinimizeIcon /> Minimize
+                    </>
+                  ) : (
+                    <>
+                      <WebAssetIcon />
+                      Maximize
+                    </>
+                  )}
+                </Button>
+
+                <Button
+                  variant='contained'
+                  className='close-button'
+                  onClick={handleCloseChatClick}>
+                  <CloseIcon /> Close
+                </Button>
+              </Box>
+            </Box>
+          </Col>
         </Row>
+
+        <Box
+          className={`message-actions-wrapper${
+            numOfSelectedMessages ? ' visible' : ''
+          }`}>
+          <Row
+            className={`message-actions-container ${
+              numOfSelectedMessages ? 'open' : ''
+            } m-0`}>
+            <Box className='action-wrapper text-left'>
+              {
+                <>
+                  <IconButton
+                    className='clear-selection-button ml-2'
+                    onClick={handleClearSelections}
+                    aria-label='cancel action button'>
+                    <CloseIcon />
+                  </IconButton>
+                  <Col as='span' className='ml-2 px-0'>
+                    {numOfSelectedMessages
+                      ? `${numOfSelectedMessages} selected`
+                      : 'Cleared'}
+                  </Col>
+                </>
+              }
+            </Box>
+            <Box className='action-wrapper text-right'>
+              <IconButton
+                className='delete-button mr-2'
+                onClick={handleDeleteMessage}
+                aria-label='delete message'>
+                <DeleteIcon />
+              </IconButton>
+            </Box>
+          </Row>
+        </Box>
       </Memoize>
 
       <Memoize
@@ -724,9 +884,9 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
           <CircularProgress thickness={5} color='inherit' size={25} />
         </Box>
         <Box
-          className={`pt-5 mb-4 text-center theme-tertiary-lighter ${
+          className={`pt-4 mb-4 text-center theme-tertiary-lighter ${
             (status === 'fulfilled' && /end/.test(statusText as string)) ||
-            convoMessages.length < 20
+            (convoMessages.length && convoMessages.length < 20)
               ? 'd-block'
               : 'd-none'
           }`}
@@ -804,6 +964,24 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
             </React.Fragment>
           );
         })}
+        {!conversation.friendship &&
+          _conversationMessages.status === 'fulfilled' && (
+            <Box className='text-center py-5 my-2'>
+              You are not colleagues with{' '}
+              <Box fontWeight='bold'>{displayName}.</Box>
+              <br />
+              Send{' '}
+              <Link
+                className='font-bold'
+                onClick={handleProfileLinkClick}
+                to={`/@${
+                  conversation.associated_username
+                }${window.location.search.replace('open', 'min')}`}>
+                {displayName?.split(' ')[0]}
+              </Link>{' '}
+              a colleague request to continue your conversation.
+            </Box>
+          )}
       </Memoize>
 
       <Box className='scroll-bar-fader' />
@@ -819,7 +997,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
             No messages here.
             <br />
             <br />
-            {_conversationInfo.data?.friendship ? (
+            {conversation.friendship ? (
               <>
                 Send a message to begin a new conversation with{' '}
                 <Box fontWeight='bold'>{displayName}.</Box>
