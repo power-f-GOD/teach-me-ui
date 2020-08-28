@@ -392,6 +392,7 @@ export interface Post {
   text: string;
   mentions: Array<string>;
   hashtags: Array<string>;
+  media?: Array<string>;
 }
 
 export interface ReplyProps extends Post {
