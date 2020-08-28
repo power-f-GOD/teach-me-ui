@@ -6,7 +6,11 @@
   flex-grow: 1;
   background: #eee !important;
 }
-
+.hang-in {
+  position: sticky;
+  position: -webkit-sticky;
+  top: 5rem;
+}
 .top-navbar {
   background: $theme-primary-v4;
   color: white;
@@ -21,7 +25,8 @@
     height: 3.5rem;
 
     a {
-      &:hover, &:focus {
+      &:hover,
+      &:focus {
         color: white;
       }
 

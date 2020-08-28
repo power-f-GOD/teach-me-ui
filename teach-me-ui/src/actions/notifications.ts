@@ -15,12 +15,6 @@ import {
   getState 
 } from '../functions';
 
-const cookieEnabled = navigator.cookieEnabled;
-
-let token = ''
-if (cookieEnabled) {
-  token = JSON.parse(localStorage?.kanyimuta ?? {})?.token ?? null;
-};
 
 export const getNotifications = (payload: NotificationState) => {
   return {
@@ -32,6 +26,13 @@ export const getNotifications = (payload: NotificationState) => {
 export const getNotificationsRequest = (date: number) => (
   dispatch: Function
 ): ReduxAction => {
+
+  const cookieEnabled = navigator.cookieEnabled;
+
+  let token = ''
+  if (cookieEnabled) {
+    token = JSON.parse(localStorage?.kanyimuta ?? {})?.token ?? null;
+  };
 
   callNetworkStatusCheckerFor({
     name: 'getNotifications',
@@ -96,6 +97,13 @@ export const pingUser = (users: string[], data?: { type?: 'NEW_CONVERSATION'; })
 }
 
 export const setLastseen = (id: string) => {
+  const cookieEnabled = navigator.cookieEnabled;
+
+  let token = ''
+  if (cookieEnabled) {
+    token = JSON.parse(localStorage?.kanyimuta ?? {})?.token ?? null;
+  }
+  
   axios({
     url: 'notification/seen',
     baseURL,
