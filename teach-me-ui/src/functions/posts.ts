@@ -1,25 +1,25 @@
-import { 
-  sendReactionToServer, 
-  sendReplyToServer, 
-  fetchPosts 
+import {
+  sendReactionToServer,
+  sendReplyToServer,
+  fetchPosts,
+  displaySnackbar
 } from '../actions';
 
-import { dispatch } from './utils';
+import Axios from 'axios';
 
-import { Post } from '../constants';
+import { dispatch, getState } from './utils';
 
-export const replyToPostFn = async (
-  id: string,
-  reply: Post
-) => {
+import { Post, apiBaseURL as baseURL, UserData } from '../constants';
+
+export const replyToPostFn = async (id: string, reply: Post) => {
   await dispatch(
     sendReplyToServer({
       ...reply,
       pipe: 'POST_REPLY',
-      post_id: id,
+      post_id: id
     })
-  )
-}
+  );
+};
 
 export const reactToPostFn = (
   id: string,
@@ -36,4 +36,30 @@ export const reactToPostFn = (
 
 export const fetchPostsFn = (type: 'FEED' | 'WALL', userId?: string) => {
   dispatch(fetchPosts(type, userId));
+};
+
+export const fetchMentionsFn = (value: string) => {
+  const token = (getState().userData as UserData).token;
+  return Axios({
+    url: `/colleagues/find?keyword=${value}`,
+    method: 'GET',
+    baseURL,
+    headers: { Authorization: `Bearer ${token}` }
+  })
+    .then((response) => {
+      if (response.data.error) {
+        throw new Error(response.data.message);
+      }
+      return response.data.colleagues;
+    })
+    .catch((e) => {
+      dispatch(
+        displaySnackbar({
+          autoHide: true,
+          open: true,
+          message: e.message,
+          severity: 'error'
+        })
+      );
+    });
 };

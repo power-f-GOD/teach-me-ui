@@ -416,7 +416,7 @@ export interface ReplyState {
 }
 
 export interface PostEditorState {
-  post: Post;
+  post: string;
   mentionsKeyword: string;
   mentions: any[];
   [key: string]: any;

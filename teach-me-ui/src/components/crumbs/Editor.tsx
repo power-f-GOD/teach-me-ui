@@ -1,173 +1,132 @@
-import React, { useState, useRef, ChangeEvent, MouseEvent } from 'react';
+import React, { useState, createRef } from 'react';
 
-import Avatar from '@material-ui/core/Avatar';
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { fetchMentionsFn } from '../../functions';
 
-import InputTrigger from 'react-input-trigger';
+import mentionStyles from '../../styles/mentionStyles.module.css';
+import 'draft-js-hashtag-plugin/lib/plugin.css';
+import 'draft-js-linkify-plugin/lib/plugin.css';
 
-import Row from 'react-bootstrap/Row';
+import { EditorState } from 'draft-js';
+import Editor from 'draft-js-plugins-editor';
+import createMentionPlugin from 'draft-js-mention-plugin';
+import createHashtagPlugin from 'draft-js-hashtag-plugin';
+import createLinkifyPlugin from 'draft-js-linkify-plugin';
+import PluginEditor from 'draft-js-plugins-editor';
 
-import {
-  displayModal,
-  getMentionsFromText,
-  getHashtagsFromText
-} from '../../functions';
+const positionSuggestions = ({ state, props }: any) => {
+  let transform;
+  let transition;
 
-import { useStyles, PostEditorState } from '../../constants';
+  if (state.isActive && props.suggestions.length > 0) {
+    transform = 'scaleY(1)';
+    transition = 'all 0.25s cubic-bezier(.3,1.2,.2,1)';
+  } else if (state.isActive) {
+    transform = 'scaleY(0)';
+    transition = 'all 0.25s cubic-bezier(.3,1,.2,1)';
+  }
 
-import {
-  useSubmitPost
-  /*useGetFormattedMentionsWithKeyword*/
-} from '../../hooks/api';
-
-let userInfo: any = {};
-let [avatar, displayName, username] = ['', '', ''];
-
-//you can now use the 'userData' props in state to get userInfo; for this component, you can mapToProps or better still, just pass the value you need to it as props from its parent
-if (navigator.cookieEnabled && localStorage.kanyimuta) {
-  userInfo = JSON.parse(localStorage.kanyimuta);
-  displayName = userInfo.displayName;
-  username = userInfo.username;
-}
-
-const Editor: React.FC = () => {
-  const avatarSizes = useStyles();
-  const [state, setState] = useState<PostEditorState>({
-    mentionsKeyword: '',
-    post: {
-      text: '',
-      mentions: [],
-      hashtags: []
-    },
-    top: 0,
-    left: 0,
-    showSuggestor: false,
-    mentions: []
-  });
-  // const getMentions = useGetFormattedMentionsWithKeyword(state.mentionsKeyword)[0];
-  const [submitPost, , isSubmitting] = useSubmitPost(state.post);
-
-  const editor = useRef<HTMLTextAreaElement | any>();
-
-  const toggleSuggestor = (metaInformation: any) => {
-    const { hookType, cursor } = metaInformation;
-
-    if (hookType === 'start') {
-      setState({
-        ...state,
-        showSuggestor: true,
-        left: cursor.left,
-
-        // we need to add the cursor height so that the dropdown doesn't overlap with the `@`.
-        top: Number(cursor.top) + Number(cursor.height)
-      });
-    }
-
-    if (hookType === 'cancel') {
-      // reset the state
-
-      setState({
-        ...state,
-        showSuggestor: false,
-        left: 0,
-
-        // we need to add the cursor height so that the dropdown doesn't overlap with the `@`.
-        top: 0
-      });
-    }
+  return {
+    transform,
+    transition
   };
+};
 
-  // const handleMentionInput = (metaInformation: any) => {
-
-  //   setState({
-  //     mentionsKeyword: metaInformation.text
-  //   });
-
-  //   getMentions().then((data: any[]) => {
-  //     setState({
-  //       ...state,
-  //       mentions: data
-  //     });
-  //   });
-  // }
-
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const post = e.target.value;
-    setState({
-      ...state,
-      post: {
-        text: post,
-        mentions: getMentionsFromText(post),
-        hashtags: getHashtagsFromText(post)
-      }
-    });
-  };
-
-  const onPostSubmit = (e: MouseEvent<HTMLButtonElement>) => {
-    if (state.post.text) {
-      submitPost().then((data: any) => {
-        if (!isSubmitting) {
-          displayModal(false);
-        }
-      });
-    }
-  };
-
+const Entry = (props: any) => {
+  const {
+    mention,
+    theme,
+    searchValue, // eslint-disable-line
+    isFocused, // eslint-disable-line
+    ...parentProps
+  } = props;
   return (
-    <>
-      <div id='suggestion-container'>
-        <InputTrigger
-          trigger={{
-            keyCode: 50,
-            shiftKey: true
-          }}
-          onStart={(metaData: any) => {
-            toggleSuggestor(metaData);
-          }}
-          onCancel={(metaData: any) => {
-            toggleSuggestor(metaData);
-          }}
-          // onType={(metaData: any) => {
-          //   handleMentionInput(metaData);
-          // }}
-        >
-          <textarea
-            autoFocus
-            rows={9}
-            id='post-input'
-            onChange={(e: any) => {
-              onChange(e);
-            }}
-            placeholder={`What's on your mind, ${displayName.split(' ')[0]}`}
-            ref={editor}></textarea>
-        </InputTrigger>
-        <div
-          id='suggestor-dropdown'
-          style={{
-            display: state.showSuggestor ? 'block' : 'none',
-            top: state.top || 0,
-            left: state.left || 0
-          }}>
-          {state.mentions?.map((mention: any, key: number) => (
-            <div
-              key={key}
-              style={{
-                padding: '10px 20px'
-              }}>
-              <Avatar
-                className={avatarSizes.small}
-                component='span'
-                src={`${mention.avatar}`}
-              />
-              {mention.name}
-            </div>
-          ))}
+    <div {...parentProps}>
+      <div className={theme.mentionSuggestionsEntryContainer}>
+        <div className={theme.mentionSuggestionsEntryContainerLeft}>
+          <img
+            src={mention.avatar}
+            className={theme.mentionSuggestionsEntryAvatar}
+            alt='avatar'
+            role='presentation'
+          />
+        </div>
+
+        <div className={theme.mentionSuggestionsEntryContainerRight}>
+          <div className={theme.mentionSuggestionsEntryText}>
+            {mention.displayname}
+          </div>
+
+          <div className={theme.mentionSuggestionsEntryTitle}>
+            {mention.name}
+          </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
-export default Editor;
+const mentionPlugin = createMentionPlugin({
+  mentionPrefix: '@',
+  supportWhitespace: true,
+  positionSuggestions,
+  theme: mentionStyles,
+  entityMutability: 'IMMUTABLE'
+});
+
+const hashtagPlugin = createHashtagPlugin();
+const linkifyPlugin = createLinkifyPlugin();
+
+const editorRef = createRef<PluginEditor>();
+
+const EditorBase: React.FC<any> = (props) => {
+  const [editorState, setEditorState] = useState<EditorState>(
+    EditorState.createEmpty()
+  );
+  const [suggestions, setSuggestions] = useState([]);
+
+  // const [,] = useSubmitPost(state.post);
+
+  const onChange = (editorState: EditorState) => {
+    setEditorState(editorState);
+    props.onUpdate(editorState.getCurrentContent().getPlainText());
+  };
+
+  const onSearchChange = ({ value }: any) => {
+    setSuggestions([]);
+    fetchMentionsFn(value).then((suggestions) => {
+      setSuggestions(
+        suggestions.map(({ firstname, lastname, username }: any) => ({
+          displayname: `${firstname} ${lastname}`,
+          name: username,
+          avatar: '/images/avatar-1.png'
+        }))
+      );
+    });
+  };
+
+  const focus = () => {
+    editorRef.current?.focus();
+  };
+
+  const { MentionSuggestions } = mentionPlugin;
+  const plugins = [mentionPlugin, linkifyPlugin, hashtagPlugin];
+  return (
+    <div
+      style={{ height: '150px', cursor: 'text', marginTop: '5px' }}
+      onClick={focus}>
+      <Editor
+        editorState={editorState}
+        onChange={onChange}
+        plugins={plugins}
+        ref={editorRef}
+      />
+      <MentionSuggestions
+        onSearchChange={onSearchChange}
+        suggestions={suggestions}
+        entryComponent={Entry}
+      />
+    </div>
+  );
+};
+
+export default EditorBase;
