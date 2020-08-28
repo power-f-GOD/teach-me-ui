@@ -16,6 +16,8 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 
+import { userDeviceIsMobile } from '../../index';
+
 import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 import AddColleagueIcon from '@material-ui/icons/PersonAdd';
@@ -333,14 +335,21 @@ const Profile = (props: any) => {
       <ModalFrame />
       <Box component='div' className='profile-top'>
         <Img alt={displayName} className='cover-photo' src={data.cover_photo} />
-        <Box component='div' className='details-container'>
+        <Box
+          component='div'
+          className={`details-container ${
+            userDeviceIsMobile ? 'flex-column py-3' : ''
+          }`}>
           <Avatar
             component='span'
             className='profile-avatar-x profile-photo'
             alt={displayName}
             src={data.profile_photo}
           />
-          <Col className='d-flex flex-column px-4'>
+          <Col
+            className={`d-flex flex-column px-4 pt-2 ${
+              userDeviceIsMobile ? 'text-center' : ''
+            }`}>
             <Col as='span' className='display-name p-0 my-1'>
               {displayName}
             </Col>
@@ -349,7 +358,7 @@ const Profile = (props: any) => {
             </Col>
           </Col>
         </Box>
-        <div className='profile-nav-bar d-flex align-items-center'>
+        <div className='profile-nav-bar d-flex justify-content-center align-items-center'>
           <Link to={`/${userId}`}>
             <div
               className={`nav-item ${
@@ -505,20 +514,24 @@ const Profile = (props: any) => {
           ) : (
             ''
           )}
-          <Button
-            variant='contained'
-            size='small'
-            className='more-btn'
-            color='primary'
-            onClick={() => {}}>
-            <MoreIcon fontSize='inherit' />
-          </Button>
+          {false && (
+            <Button
+              variant='contained'
+              size='small'
+              className='more-btn'
+              color='primary'
+              onClick={() => {}}>
+              <MoreIcon fontSize='inherit' />
+            </Button>
+          )}
         </div>
       </Box>
       <Row
-        className='container mt-5 mx-auto'
+        className={`container ${
+          userDeviceIsMobile ? 'px-0' : ''
+        } mt-5 pt-3 mx-auto`}
         style={{ alignItems: 'flex-start' }}>
-        <Col className='col-4 hang-in'>
+        <Col className='col-md-4 hang-in col-12 my-3 my-sm-0'>
           {selfView && (
             <Box className='details-card px-3 py-2 mb-3'>
               <Col className='py-0 px-2 d-flex justify-content-between align-items-center'>
@@ -583,17 +596,19 @@ const Profile = (props: any) => {
             </Row>
           </Box>
         </Col>
-        <Switch>
-          {selfView && (
-            <Route
-              path='/@:userId/colleagues'
-              exact
-              component={ColleagueView}
-            />
-          )}
-          <Route path='/@:userId' exact component={ProfileFeeds} />
-          <Redirect to={`/@${data.username}`} />
-        </Switch>
+        <Col className='col-md-8 col-12'>
+          <Switch>
+            {selfView && (
+              <Route
+                path='/@:userId/colleagues'
+                exact
+                component={ColleagueView}
+              />
+            )}
+            <Route path='/@:userId' exact component={ProfileFeeds} />
+            <Redirect to={`/@${data.username}`} />
+          </Switch>
+        </Col>
       </Row>
       <Container className='rows-wrapper custom-scroll-bar small-bar rounded-bar tertiary-bar p-0'>
         <Row as='section' className='m-0 px-3 flex-column mb-5'>

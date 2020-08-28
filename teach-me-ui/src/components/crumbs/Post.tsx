@@ -78,6 +78,7 @@ const Post: React.FunctionComponent<
 > = (props) => {
   const history = useHistory();
   const [showComment, setShowComment] = useState(false);
+  const [showComment2, setShowComment2] = useState(false);
   let extra: string | null = null;
   if (props.sec_type === 'REPOST') {
     extra = `${props.sender_name} reposted`;
@@ -388,7 +389,17 @@ const Post: React.FunctionComponent<
               </Box>
             </Col>
           </Row>
-          {showComment && <CreateReply post_id={`${props.id}`} />}
+          {showComment && (
+            <CreateReply
+              post_id={`${
+                (props.sec_type === 'REPLY'
+                  ? props.parent?.id
+                  : props.text
+                  ? props.id
+                  : props.parent?.id) as string
+              }`}
+            />
+          )}
         </Box>
       )}
       {props.sec_type === 'REPLY' && (
@@ -482,6 +493,7 @@ const Post: React.FunctionComponent<
                 <Col className='d-flex align-items-center justify-content-center'>
                   <Box
                     padding='5px 15px'
+                    onClick={() => setShowComment2(!showComment2)}
                     className='d-flex align-items-center react-to-post justify-content-center'
                     fontSize='13px'>
                     <svg
@@ -502,6 +514,7 @@ const Post: React.FunctionComponent<
                   </Box>
                 </Col>
               </Row>
+              {showComment2 && <CreateReply post_id={props.id} />}
             </Box>
           )}
         </Box>
