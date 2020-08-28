@@ -42,7 +42,7 @@ const Landing = () => {
   React.useEffect(() => () => window.scrollTo(0, 0), []);
 
   return (
-    <Box className='Landing fade-in'>
+    <Box className='Landing fade-in' style={{ overflowX: 'hidden' }}>
       <Box component='main' className='landing-main-box'>
         <Box component='section' className='landing-splash-box'>
           <Container className='landing-splash-container'>
