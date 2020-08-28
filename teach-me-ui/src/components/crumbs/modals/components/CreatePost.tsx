@@ -49,7 +49,7 @@ if (navigator.cookieEnabled && localStorage.kanyimuta) {
 
 const CreatePost = (props: any) => {
 
-  const { sendFile } = props;
+  // const { sendFile } = props;
 
   const label = useRef<HTMLLabelElement | any>()
 
@@ -195,7 +195,7 @@ const CreatePost = (props: any) => {
             }
             className='post-button p-0 flex-grow-1'>
             {
-              isSubmitting || sendFile.status === 'pending'
+              isSubmitting 
               ? <CircularProgress size={28} color='inherit'/> 
               : 'Post'
             }
