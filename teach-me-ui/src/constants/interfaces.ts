@@ -421,3 +421,9 @@ export interface PostEditorState {
   mentions: any[];
   [key: string]: any;
 }
+
+export interface UploadState {
+  err: boolean;
+  status: 'settled' | 'pending' | 'fulfilled';
+  _id?: string;
+}
