@@ -5,14 +5,13 @@ import {
 } from '../constants';
 
 import axios from 'axios';
-import { callNetworkStatusCheckerFor, logError } from '../functions';
 
-const cookieEnabled = navigator.cookieEnabled;
+import { 
+  callNetworkStatusCheckerFor, 
+  logError, 
+  getState 
+} from '../functions';
 
-let token = '';
-if (cookieEnabled) {
-  token = JSON.parse(localStorage?.kanyimuta ?? '{}')?.token ?? null;
-}
 
 export const sendFile = (payload: any) => {
   return {
@@ -24,6 +23,8 @@ export const sendFile = (payload: any) => {
 export const sendFileToServer = (file: File) => (
   dispatch: Function
 ) => {
+  let token = getState().userData.token
+
   const formData = new FormData()
   formData.append('file', file)
   

@@ -26,7 +26,7 @@ import Avatar from '@material-ui/core/Avatar';
 
 import { pingUser } from "../../actions";
 
-import CircularProgress from '@material-ui/core/CircularProgress';
+// import CircularProgress from '@material-ui/core/CircularProgress';
 // import SendIcon from '@material-ui/icons/Send';
 
 
@@ -64,6 +64,15 @@ const CreateReply: React.FC<any> = (props) => {
         state.reply.mentions.length && pingUser(state.reply.mentions)
       });
     input!.current!.value = '';
+    setState({
+      ...state,
+      reply: {
+        mentions: [],
+        hashtags: [],
+        text: '',
+        media: []
+      }
+    })
 
   }
 
@@ -95,10 +104,7 @@ const CreateReply: React.FC<any> = (props) => {
             : 'default'
           }
         >
-          {props.replyToPost.status === 'pending'
-            ? <CircularProgress/>
-            : 'Reply'
-          }
+          Reply
         </Button>
       </Row>
     </form>
