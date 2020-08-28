@@ -9,6 +9,7 @@ import Col from 'react-bootstrap/Col';
 
 import IconButton from '@material-ui/core/IconButton';
 import ChatIcon from '@material-ui/icons/Chat';
+import Badge from '@material-ui/core/Badge';
 
 import { dispatch, delay, addEventListenerOnce } from '../../functions';
 import {
@@ -50,7 +51,7 @@ const chatBoxWrapperRef = createRef<any>();
 const Memoize = createMemo();
 
 window.addEventListener('popstate', () => {
-  let { chat, cid } = queryString.parse(window.location.search);
+  let { chat, id: userId, cid } = queryString.parse(window.location.search);
 
   //for the sake of the smooth animation
   if (/min|open/.test(chat) && chatBoxWrapperRef.current) {
@@ -61,14 +62,35 @@ window.addEventListener('popstate', () => {
     dispatch(conversationInfo({ status: 'settled', data: {} }));
     dispatch(conversation(''));
     dispatch(conversationMessages({ status: 'settled', data: [] }));
+  } else {
+    dispatch(conversationInfo({ user_typing: '' }));
+
+    if (window.navigator.onLine) {
+      dispatch(getConversationInfo(userId)(dispatch));
+      dispatch(
+        getConversationMessages(cid, 'pending', 'loading new')(dispatch)
+      );
+    } else {
+      dispatch(
+        conversationInfo({
+          status: 'settled',
+          err: true,
+          online_status: 'OFFLINE'
+        })
+      );
+      dispatch(
+        conversationMessages({ status: 'pending', err: true, data: [] })
+      );
+    }
+    dispatch(conversation(cid));
   }
 
-  delay(5).then(() => {
+  delay(500).then(() => {
     dispatch(
       chatState({
-        queryString: window.location.search,
-        isOpen: /min|open/.test(chat),
-        isMinimized: chat === 'min'
+        isOpen: !!chat,
+        isMinimized: chat === 'min',
+        queryString: window.location.search
       })
     );
   });
@@ -90,10 +112,16 @@ const ChatBox = (props: ChatBoxProps) => {
     associated_username: convoUsername,
     associated_user_id: convoUid
   } = _conversation;
+  const { chat } = queryString.parse(window.location.search);
+  const unopened_count = conversations.data?.reduce(
+    (a, conversation: APIConversationResponse) =>
+      a + (conversation.unread_count ? 1 : 0),
+    0
+  );
 
   const [visibilityState, setVisibilityState] = React.useState<
     'visible' | 'hidden'
-  >('hidden');
+  >(isOpen || chat ? 'visible' : 'hidden');
 
   const handleOpenChatClick = useCallback(() => {
     const queryString = `?chat=open&id=${
@@ -103,7 +131,7 @@ const ChatBox = (props: ChatBoxProps) => {
     setVisibilityState('visible');
 
     //delay till chatBox display property is set for animation to work
-    delay(5).then(() => {
+    delay(150).then(() => {
       dispatch(
         chatState({
           isOpen: true,
@@ -118,8 +146,8 @@ const ChatBox = (props: ChatBoxProps) => {
     (e: any) => {
       const { currentTarget } = e;
 
-      delay(400).then(() => {
-        if (!isOpen && !/chat=/.test(window.location.search)) {
+      delay(100).then(() => {
+        if (!queryString.parse(window.location.search).chat) {
           setVisibilityState('hidden');
         }
 
@@ -154,14 +182,14 @@ const ChatBox = (props: ChatBoxProps) => {
   useEffect(() => {
     const timeout = isMinimized ? 500 : 5;
 
-    if (/chat=open/.test(window.location.search) || isMinimized) {
+    if (chat) {
       delay(timeout).then(() => setVisibilityState('visible'));
     }
-  }, [isMinimized]);
+  }, [isMinimized, chat]);
 
   useEffect(() => {
     delay(400).then(() => {
-      if (isOpen && !isMinimized) {
+      if ((chat && chat === 'open') || (isOpen && !isMinimized)) {
         document.body.style.overflow = 'hidden';
         document.querySelectorAll('.Main > *').forEach((component: any) => {
           if (!/ChatBox/.test(component.className)) {
@@ -177,26 +205,34 @@ const ChatBox = (props: ChatBoxProps) => {
         });
       }
     });
-  }, [isOpen, isMinimized]);
+  }, [isOpen, isMinimized, chat]);
 
   useEffect(() => {
     const search = window.location.search;
     let { chat, id, cid } = queryString.parse(search);
 
-    if (chat) {
+    if (!isOpen) {
       //delay till chatBox display property is set for animation to work
-      delay(500).then(() => {
-        dispatch(
-          chatState({
-            queryString: !!chat ? search : qString,
-            isOpen: true,
-            isMinimized: chat === 'min'
-          })
-        );
+      delay(750).then(() => {
+        let { chat } = queryString.parse(search);
+
+        if (chat)
+          dispatch(
+            chatState({
+              queryString: !!chat ? search : qString,
+              isOpen: true,
+              isMinimized: chat === 'min'
+            })
+          );
       });
     }
 
-    if ((isOpen || chat === 'open') && !conversations.data![0]) {
+    if (
+      (isOpen || chat === 'open') &&
+      !conversations.data![0] &&
+      !conversations.err &&
+      conversations.status !== 'fulfilled'
+    ) {
       dispatch(getConversations()(dispatch));
     }
 
@@ -205,7 +241,8 @@ const ChatBox = (props: ChatBoxProps) => {
 
       if (
         window.navigator.onLine &&
-        convoId &&
+        !_conversationInfo.err &&
+        !convoId &&
         (infoStatus === 'settled' ||
           (infoStatus === 'fulfilled' && convoId !== cid))
       ) {
@@ -219,19 +256,24 @@ const ChatBox = (props: ChatBoxProps) => {
       let msgStatus = _conversationMessages.status;
       if (
         window.navigator.onLine &&
-        convoId &&
+        !_conversationMessages.err &&
+        !convoId &&
         (msgStatus === 'settled' ||
           (msgStatus === 'fulfilled' && convoId !== cid))
       ) {
-        dispatch(getConversationMessages(cid)(dispatch));
+        dispatch(getConversationMessages(cid, 'pending')(dispatch));
       }
     }
   }, [
-    _conversationInfo.status,
     conversations.data,
+    conversations.status,
     convoId,
     qString,
     isOpen,
+    _conversationInfo.status,
+    _conversationInfo.err,
+    _conversationMessages.err,
+    conversations.err,
     _conversationMessages.status
   ]);
 
@@ -247,6 +289,7 @@ const ChatBox = (props: ChatBoxProps) => {
             memoizedComponent={ChatLeftPane}
             conversations={conversations}
             userId={userData.id}
+            userFirstname={userData.firstname}
           />
         </Col>
 
@@ -281,10 +324,14 @@ const ChatBox = (props: ChatBoxProps) => {
       </Row>
 
       <IconButton
-        className={`chat-button ${isOpen ? 'hide' : ''}`}
+        className={`chat-button ${unopened_count ? 'ripple' : ''} ${
+          isOpen ? 'hide' : ''
+        }`}
         onClick={handleOpenChatClick}
         aria-label='chat'>
-        <ChatIcon fontSize='inherit' />
+        <Badge badgeContent={unopened_count} color='error'>
+          <ChatIcon fontSize='inherit' />
+        </Badge>
       </IconButton>
     </Container>
   );

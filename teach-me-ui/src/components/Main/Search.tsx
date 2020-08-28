@@ -87,11 +87,11 @@ const Search = (props: any) => {
                     const link = `/${username}`;
                     let displayName = `${result.firstname} ${result.lastname}`.replace(
                       new RegExp(`(${keyword.trim()})`, 'i'),
-                      `<span class='theme-secondary-darker'>$1</span>`
+                      `<span class='theme-secondary-lighter'>$1</span>`
                     );
                     username = username.replace(
                       new RegExp(`(${keyword.trim()})`, 'i'),
-                      `<span class='theme-secondary-darker'>$1</span>`
+                      `<span class='theme-secondary-lighter'>$1</span>`
                     );
                     const person = `
                     <div class='display-name'>${displayName}</div>

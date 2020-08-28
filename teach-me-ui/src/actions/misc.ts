@@ -10,6 +10,7 @@ import {
   CLOSE_WEB_SOCKET
 } from '../constants';
 import { getState } from '../functions/utils';
+import { dispatch } from '../appStore';
 
 export const displaySnackbar = (payload: SnackbarState): ReduxAction => {
   return {
@@ -33,6 +34,9 @@ export function setUserData(payload: Partial<UserData>): ReduxAction {
 }
 
 export function initWebSocket(token: string): ReduxAction {
+  //close webSocket if initially open to avoid bugs of double responses
+  dispatch(closeWebSocket());
+
   const socket = new WebSocket(`${wsBaseURL}/socket?token=${token}`);
 
   //this is just to poll server and keep it alive as Heroku keeps shutting out the webSocket
@@ -64,7 +68,9 @@ export function initWebSocket(token: string): ReduxAction {
 // export function isAlive
 
 export function closeWebSocket(): ReduxAction {
-  getState().webSocket.close();
+  if (getState().webSocket) {
+    getState().webSocket.close();
+  }
 
   return {
     type: CLOSE_WEB_SOCKET

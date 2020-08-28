@@ -3,12 +3,22 @@
   cursor: pointer;
 }
 
-.middle-pane-col {
-  height: calc(100vh - 4rem);
-  overflow-y: scroll;
+.recommendations {
+  overflow-x: scroll;
+  scroll-snap-type: x proximity;
+  display: grid;
+  height: 100%;
 
+  .add-button {
+    background: $theme-primary;
+    color: white;
+    path {
+      fill: white;
+    }
+  }
   &::-webkit-scrollbar {
     width: 5px;
+    height: 0px;
   }
   &::-webkit-scrollbar-track {
     background: #ccc;

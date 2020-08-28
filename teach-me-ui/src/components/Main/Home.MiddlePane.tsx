@@ -4,6 +4,7 @@ import Container from 'react-bootstrap/Container';
 
 import Post from '../crumbs/Post';
 import Compose from '../crumbs/Compose';
+import Recommendations from '../crumbs/Recommendations';
 
 import { PostPropsState, UserData } from '../../constants';
 
@@ -33,8 +34,10 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
     // eslint-disable-next-line
   }, []);
   return (
-    <Container className='middle-pane' fluid>
+    <Container className='middle-pane p-1 p-md-2' fluid>
       {(selfView || !inProfile) && <Compose />}
+      {!inProfile && <Recommendations />}
+
       {props.fetchPostStatus.status === 'resolved' &&
         props.posts.map((post: PostPropsState, i: number) => (
           <Post {...post} key={i} />

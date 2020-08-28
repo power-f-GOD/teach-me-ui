@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -11,58 +11,73 @@ import Skeleton from 'react-loading-skeleton';
 import { Link, useHistory } from 'react-router-dom';
 
 import ReactButton from './ReactButton';
-import { bigNumberFormat, dispatch } from '../../functions/utils';
+import { bigNumberFormat, dispatch, formatDate } from '../../functions/utils';
 import { PostPropsState } from '../../constants/interfaces';
 
 import CreateReply from './CreateReply';
 
+import { displayModal } from '../../functions';
 import { triggerSearchKanyimuta } from '../../actions/search';
 
 const stopProp = (e: any) => {
   e.stopPropagation();
 };
 
-export const processPostFn = (post: string) =>
-  post &&
-  post.split(/ /gi).map((w, i) => {
-    w = w.replace(/ /gi, '');
-    return /(^@)[A-Za-z0-9_]+[,.!?]*$/.test(w) ? (
-      <Box component='span' key={i}>
-        <Link
-          onClick={stopProp}
-          to={`/${/[,.!]+$/.test(w) ? w.slice(0, -1) : w}`}>{`${
-          /[,.!]+$/.test(w) ? w.slice(0, -1) : w
-        }`}</Link>
-        {`${/[,.!]+$/.test(w) ? w.slice(-1) : ''}`}{' '}
-      </Box>
-    ) : /(^#)[A-Za-z0-9_]+[,.!?]*$/.test(w) ? (
-      <Box component='span' key={i}>
-        <Link
-          onClick={stopProp}
-          to={() => {
-            dispatch(triggerSearchKanyimuta(w)(dispatch));
-            return `/search/${w.substring(1)}`;
-          }}>
-          {w}
-        </Link>{' '}
-      </Box>
-    ) : /^https?:\/\/(?!\.)[A-Za-z0-9.-]+.[A-Za-z0-9.]+(\/[A-Za-z-/0-9@]+)?$/.test(
-        w
-      ) ? (
-      <Box component='span' key={i}>
-        <a onClick={stopProp} href={w} target='blank'>
-          {w}
-        </a>{' '}
-      </Box>
-    ) : (
-      <React.Fragment key={i}>{w} </React.Fragment>
-    );
+export const processPostFn = (post: string) => {
+  if (!post) return;
+
+  const mid = post.replace(/([\t\r\n\f]+)/gi, ' $1 ');
+  return mid
+    .trim()
+    .split(/ /gi)
+    .map((w, i) => {
+      w = w.replace(/ /gi, '');
+      return /(^@)[A-Za-z0-9_]+[,.!?]*$/.test(w) ? (
+        <Box component='span' key={i}>
+          <Link
+            onClick={stopProp}
+            to={`/${/[,.!]+$/.test(w) ? w.slice(0, -1) : w}`}>{`${
+            /[,.!]+$/.test(w) ? w.slice(0, -1) : w
+          }`}</Link>
+          {`${/[,.!]+$/.test(w) ? w.slice(-1) : ''}`}{' '}
+        </Box>
+      ) : /(^#)[A-Za-z0-9_]+[,.!?]*$/.test(w) ? (
+        <Box component='span' key={i}>
+          <Link
+            onClick={stopProp}
+            to={() => {
+              dispatch(triggerSearchKanyimuta(w)(dispatch));
+              return `/search/${w.substring(1)}`;
+            }}>
+            {w}
+          </Link>{' '}
+        </Box>
+      ) : /^https?:\/\/(?!\.)[A-Za-z0-9.-]+.[A-Za-z0-9.]+(\/[A-Za-z-/0-9@]+)?$/.test(
+          w
+        ) ? (
+        <Box component='span' key={i}>
+          <a onClick={stopProp} href={w} target='blank'>
+            {w}
+          </a>{' '}
+        </Box>
+      ) : (
+        <React.Fragment key={i}>{w} </React.Fragment>
+      );
+    });
+};
+
+const openCreateRepostModal = (meta: any) => (e: any) => {
+  displayModal(true, 'CREATE_REPOST', {
+    title: 'Create Repost',
+    post: meta
   });
+};
 
 const Post: React.FunctionComponent<
   Partial<PostPropsState> & Partial<{ head: boolean }>
 > = (props) => {
   const history = useHistory();
+  const [showComment, setShowComment] = useState(false);
   let extra: string | null = null;
   if (props.sec_type === 'REPOST') {
     extra = `${props.sender_name} reposted`;
@@ -85,18 +100,16 @@ const Post: React.FunctionComponent<
   };
   return (
     <Box
-      className='post-list-page'
-      borderRadius='5px'
+      className='post-list-page mb-1 mb-md-2'
+      borderRadius='2px'
       p={0}
       pt={1}
       pl={1}
-      pb={props.sec_type === 'REPLY' ? 1 : 0}
-      mb={1}>
+      pb={props.sec_type === 'REPLY' ? 1 : 0}>
       {((props._extra && props.sec_type !== 'REPLY') ||
-        (props.sec_type === 'REPOST' && !props.text)) && (
-        <small className='small-text'>{extra}</small>
-      )}
-      {props.sec_type === 'REPLY' && (
+        (props.sec_type === 'REPOST' && !props.text)) &&
+        !props.head && <small className='small-text'>{extra}</small>}
+      {props.sec_type === 'REPLY' && !props.head && (
         <small className='small-text'>{extra}</small>
       )}
       <Row
@@ -187,6 +200,21 @@ const Post: React.FunctionComponent<
                 : props.parent?.text) as string
             )}
           </Box>
+          <Box
+            component='small'
+            textAlign='right'
+            width='100%'
+            color='#888'
+            pt={1}
+            mr={3}>
+            {formatDate(
+              (props.sec_type === 'REPLY'
+                ? props.parent?.posted_at
+                : props.text
+                ? props.posted_at
+                : props.parent?.posted_at) as number
+            )}
+          </Box>
         </Row>
       ) : (
         <Box p={2} pl={3}>
@@ -216,6 +244,14 @@ const Post: React.FunctionComponent<
           <Row className='container-fluid  mx-auto'>
             <Box component='div' pt={1} px={0} className='break-word'>
               {processPostFn(props.parent?.text as string)}
+            </Box>
+            <Box
+              component='small'
+              textAlign='right'
+              width='100%'
+              color='#888'
+              pt={1}>
+              {formatDate(props.parent?.posted_at as number)}
             </Box>
           </Row>
         </Box>
@@ -286,6 +322,13 @@ const Post: React.FunctionComponent<
             <Col className='d-flex align-items-center justify-content-center'>
               <Box
                 padding='5px 15px'
+                onClick={openCreateRepostModal(
+                  props.sec_type === 'REPLY'
+                    ? (props.parent as any)
+                    : props.text
+                    ? (props as any)
+                    : (props.parent as any)
+                )}
                 className='d-flex align-items-center react-to-post justify-content-center'
                 fontSize='13px'>
                 <svg
@@ -317,6 +360,7 @@ const Post: React.FunctionComponent<
             <Col className='d-flex align-items-center justify-content-center'>
               <Box
                 padding='5px 15px'
+                onClick={() => setShowComment(!showComment)}
                 className='d-flex align-items-center react-to-post justify-content-center'
                 fontSize='13px'>
                 <svg
@@ -344,7 +388,7 @@ const Post: React.FunctionComponent<
               </Box>
             </Col>
           </Row>
-          <CreateReply post_id={`${props.id}`} />
+          {showComment && <CreateReply post_id={`${props.id}`} />}
         </Box>
       )}
       {props.sec_type === 'REPLY' && (
@@ -376,6 +420,15 @@ const Post: React.FunctionComponent<
               className='break-word'>
               {processPostFn(props.text as string)}
             </Box>
+            <Box
+              component='small'
+              textAlign='right'
+              width='100%'
+              color='#888'
+              pt={1}
+              mr={3}>
+              {formatDate(props.posted_at as number)}
+            </Box>
           </Row>
           {props.sender_name && (
             <Box py={1} mt={1}>
@@ -403,6 +456,7 @@ const Post: React.FunctionComponent<
                 <Col className='d-flex align-items-center justify-content-center'>
                   <Box
                     padding='5px 15px'
+                    onClick={openCreateRepostModal(props)}
                     className='d-flex align-items-center react-to-post justify-content-center'
                     fontSize='13px'>
                     <svg

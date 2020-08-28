@@ -12,13 +12,15 @@ import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 import BlockIcon from '@material-ui/icons/Block';
+import CloudOffIcon from '@material-ui/icons/CloudOff';
+import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
 
 import {
   chatState,
   getConversationInfo,
   conversationMessages
 } from '../../actions/chat';
-import { dispatch, addEventListenerOnce } from '../../functions/utils';
+import { dispatch, addEventListenerOnce, delay } from '../../functions/utils';
 import {
   ChatState,
   ConversationInfo,
@@ -30,7 +32,8 @@ import { Skeleton, DISPLAY_INFO } from '../crumbs/Loader';
 import {
   getConversationMessages,
   conversation,
-  conversationInfo
+  conversationInfo,
+  conversations
 } from '../../actions/chat';
 import { ChatTimestamp, ChatStatus } from './Chat.crumbs';
 
@@ -45,13 +48,14 @@ interface ChatLeftPaneProps {
   conversations: SearchState;
   rooms?: ConversationInfo[];
   userId: string;
+  userFirstname: string;
 }
 
 const [CV, CR] = ['Conversations', 'Classrooms'];
 
 const ChatLeftPane = (props: ChatLeftPaneProps) => {
   const [value, setValue] = React.useState<number>(0);
-  const { conversations, userId } = props;
+  const { conversations: _conversations, userId, userFirstname } = props;
   const { pathname } = window.location;
   const convos = (props.conversations.data ?? []) as Partial<
     APIConversationResponse
@@ -78,7 +82,14 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
 
         if (window.navigator.onLine) {
           dispatch(getConversationInfo(userId)(dispatch));
-          dispatch(getConversationMessages(convoId)(dispatch));
+          dispatch(
+            getConversationMessages(convoId, 'pending', 'loading new')(dispatch)
+          );
+          delay(1500).then(() => {
+            dispatch(
+              conversations({ data: [{ unread_count: 0, _id: convoId }] })
+            );
+          });
         } else {
           dispatch(
             conversationInfo({
@@ -88,7 +99,7 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
             })
           );
           dispatch(
-            conversationMessages({ status: 'settled', err: true, data: [] })
+            conversationMessages({ status: 'pending', err: true, data: [] })
           );
         }
 
@@ -112,12 +123,12 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
         </Tabs>
       </AppBar>
       <Box className='tab-panels-wrapper d-flex' position='relative'>
-        <TabPanel value={value} index={0} status={conversations.status}>
-          {conversations.status === 'pending' ? (
+        <TabPanel value={value} index={0} status={_conversations.status}>
+          {_conversations.status === 'pending' && !_conversations.err ? (
             Array(Math.floor(window.innerHeight / 60))
               .fill('')
               .map((_, key) => <Skeleton type={DISPLAY_INFO} key={key} />)
-          ) : !!convos[0] ? (
+          ) : convos.length ? (
             convos.map((conversation, i) => {
               const {
                 avatar,
@@ -127,8 +138,10 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
                 last_message,
                 friendship,
                 participants,
-                online_status
-              } = conversation;
+                online_status,
+                user_typing,
+                unread_count
+              } = conversation ?? {};
               const hasRecent: boolean = { ...(last_message as any) }.is_recent;
 
               if (hasRecent) setRecent(i);
@@ -197,6 +210,11 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
                       <Box className='display-name-wrapper'>
                         <Box className='display-name'>{displayName}</Box>
                         <ChatTimestamp
+                          className={`${
+                            conversation.unread_count
+                              ? 'theme-secondary-lighter'
+                              : ''
+                          }`}
                           timestamp={
                             lastMessageSentYesterday
                               ? 'Yesterday'
@@ -206,40 +224,68 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
                           }
                         />
                       </Box>
-                      <Box
-                        className={`last-message mt-1 ${
-                          last_message?.deleted ? 'font-italic' : ''
-                        }`}>
-                        <ChatStatus
-                          type={
-                            last_message?.sender_id === userId
-                              ? 'outgoing'
-                              : 'incoming'
-                          }
-                          shouldUpdate={
-                            last_message?.delivered_to!?.length +
-                            last_message?.seen_by!?.length
-                          }
-                          participants={participants as string[]}
-                          message={last_message as APIMessageResponse}
-                          userId={userId as string}
-                        />{' '}
-                        {last_message?.deleted ? (
-                          last_message?.sender_id === userId ? (
-                            <>
-                              <BlockIcon fontSize='inherit' /> You deleted this
-                              message
-                            </>
-                          ) : (
-                            <>
-                              <BlockIcon fontSize='inherit' /> You can't see
-                              this message
-                            </>
-                          )
-                        ) : (
-                          last_message?.message
-                        )}
-                      </Box>
+                      {friendship && (
+                        <Box
+                          className='message-badge-wrapper d-flex justify-content-between'
+                          maxWidth='100%'
+                          width='100%'>
+                          <Box
+                            className={`last-message mt-1 ${
+                              last_message?.deleted ? 'font-italic' : ''
+                            } ${user_typing ? 'theme-secondary-lightest' : ''}`}
+                            maxWidth={
+                              unread_count ? 'calc(100% - 2.25rem)' : '100%'
+                            }>
+                            {!last_message ? (
+                              <Box className='new-conversation-tag'>NEW</Box>
+                            ) : (
+                              <>
+                                <Box
+                                  position='absolute'
+                                  className={user_typing ? 'show' : 'hide'}>
+                                  typing...
+                                </Box>
+                                <Box className={user_typing ? 'hide' : 'show'}>
+                                  <ChatStatus
+                                    type={
+                                      last_message?.sender_id === userId
+                                        ? 'outgoing'
+                                        : 'incoming'
+                                    }
+                                    shouldUpdate={
+                                      last_message?.delivered_to!?.length +
+                                      last_message?.seen_by!?.length
+                                    }
+                                    participants={participants as string[]}
+                                    message={last_message as APIMessageResponse}
+                                    userId={userId as string}
+                                  />{' '}
+                                  {last_message?.deleted ? (
+                                    last_message?.sender_id === userId ? (
+                                      <>
+                                        <BlockIcon fontSize='inherit' /> You
+                                        deleted this message
+                                      </>
+                                    ) : (
+                                      <>
+                                        <BlockIcon fontSize='inherit' /> You
+                                        can't see this message
+                                      </>
+                                    )
+                                  ) : (
+                                    last_message?.message
+                                  )}
+                                </Box>
+                              </>
+                            )}
+                          </Box>
+                          <Badge
+                            className={unread_count ? 'show-badge' : ''}
+                            badgeContent={unread_count}
+                            max={999}
+                          />
+                        </Box>
+                      )}
                     </Box>
                   </Col>
                 </NavLink>
@@ -247,7 +293,34 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
             })
           ) : (
             <Box padding='2rem' textAlign='center'>
-              You have no conversations yet.
+              {window.navigator.onLine ? (
+                <>
+                  <PeopleAltIcon fontSize='large' />
+                  <br />
+                  <br />
+                  Hi,{' '}
+                  <Box component='span' fontWeight='bold'>
+                    {userFirstname}
+                  </Box>
+                  !
+                  <br />
+                  <br />
+                  - You have no conversations yet.
+                  <br />
+                  <br />
+                  - Your list of colleagues would appear here.
+                  <br />
+                  <br />- Search for and add a colleague to begin a conversation
+                  with them.
+                </>
+              ) : (
+                <>
+                  <CloudOffIcon fontSize='large' />
+                  <br />
+                  <br />
+                  Can't load conversations. You seem to be offline
+                </>
+              )}
             </Box>
           )}
         </TabPanel>
@@ -309,8 +382,13 @@ function TabPanel(props: TabPanelProps) {
           transform: `translateX(${translateVal}%)`,
           WebkitTransform: `translateX(${translateVal}%)`,
           OTransform: `translateX(${translateVal}%)`,
-          overflowY: other.status === 'pending' ? 'hidden' : 'auto',
-          opacity: value === index ? 1 : 0.5,
+          overflowY:
+            other.status === 'pending'
+              ? 'hidden'
+              : value === index
+              ? 'auto'
+              : 'hidden',
+          opacity: value === index ? 1 : 0.8,
           minWidth: '100%'
         }}
         ref={tabPanelRef}

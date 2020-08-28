@@ -9,18 +9,7 @@ import {
   NotificationState
 } from '../constants';
 
-import { 
-  logError, 
-  callNetworkStatusCheckerFor, 
-  getState 
-} from '../functions';
-
-const cookieEnabled = navigator.cookieEnabled;
-
-let token = ''
-  if (cookieEnabled) {
-    token = JSON.parse(localStorage?.kanyimuta ?? {})?.token ?? null;
-  };
+import { logError, callNetworkStatusCheckerFor, getState } from '../functions';
 
 export const getNotifications = (payload: NotificationState) => {
   return {
@@ -33,6 +22,12 @@ export const getNotificationsRequest = (date: number) => (
   dispatch: Function
 ): ReduxAction => {
   
+  const cookieEnabled = navigator.cookieEnabled;
+
+  let token = ''
+  if (cookieEnabled) {
+    token = JSON.parse(localStorage?.kanyimuta ?? {})?.token ?? null;
+  };
 
   callNetworkStatusCheckerFor({
     name: 'getNotifications',
@@ -51,12 +46,14 @@ export const getNotificationsRequest = (date: number) => (
     }
   })
   .then(({ data }: any) => {
+    console.log(data)
     const { error, notifications, entities } = data as {
       error: boolean;
       notifications: any[];
       entities?: any
     };
     if (!error) {
+      console.log(data);
       dispatch(
         getNotifications({
           status: 'fulfilled',
@@ -83,25 +80,13 @@ export const getNotificationsRequest = (date: number) => (
   };
 }; 
 
-export const pingUser = (users: string[]) => {
+export const pingUser = (users: string[], data?: { type?: 'NEW_CONVERSATION'; }) => {
   const socket: WebSocket = getState().webSocket as WebSocket;
   socket.send(JSON.stringify({ 
     users: users,
-    pipe: 'PING_USER'
-  }));
-}
-
-export const setLastseen = (id: string) => {
-  axios({
-    url: 'notification/seen',
-    baseURL,
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content_Type': 'application/json'
-    },
+    pipe: 'PING_USER',
     data: {
-      'notification_id': id
+      type: data?.type
     }
-  })
+  }));
 }

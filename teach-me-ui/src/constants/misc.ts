@@ -1,11 +1,10 @@
-import { 
-  SnackbarState, 
-  SearchState, 
-  UserData, 
-  NotificationState, 
-  MentionState, 
-  ReplyState, 
-  UploadState
+import {
+  SnackbarState,
+  SearchState,
+  UserData,
+  NotificationState,
+  MentionState,
+  ReplyState
 } from './interfaces';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -14,7 +13,6 @@ export const apiBaseURL = 'https://teach-me-services.herokuapp.com/api/v1';
 // export const apiBaseURL = 'http://883fe0f3aa74.ngrok.io/api/v1';
 export const wsBaseURL = 'wss://teach-me-services.herokuapp.com/api/v1';
 // export const wsBaseURL = 'ws://6bba2f1001c5.ngrok.io/api/v1';
-
 
 export const DISPLAY_SNACK_BAR = 'DISPLAY_SNACK_BAR';
 export const POPULATE_STATE_WITH_USER_DATA = 'POPULATE_STATE_WITH_USER_DATA';
@@ -41,7 +39,7 @@ export const notificationState: NotificationState = {
   err: false,
   data: {
     notifications: [],
-    entities:{}
+    entities: {}
   }
 };
 
@@ -76,21 +74,15 @@ export const useStyles = makeStyles((theme: any) => ({
   root: {
     display: 'flex',
     '& > *': {
-      margin: theme.spacing(1),
-    },
+      margin: theme.spacing(1)
+    }
   },
   small: {
     width: theme.spacing(3),
-    height: theme.spacing(3),
+    height: theme.spacing(3)
   },
   large: {
     width: theme.spacing(7),
-    height: theme.spacing(7),
-  },
+    height: theme.spacing(7)
+  }
 }));
-
-export const uploadState: UploadState = {
-  status: 'settled',
-  err: false,
-  _id:''
-};

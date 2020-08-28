@@ -1,5 +1,5 @@
 $convo-spacer: 0.15rem;
-$avatar-size: 2.75rem;
+$avatar-size: 3rem;
 
 .chat-left-pane {
   background-color: $theme-primary-v2;
@@ -135,7 +135,7 @@ $avatar-size: 2.75rem;
 
   &.recent {
     .colleague-name {
-      animation: reorderRecentConvo 5s;
+      animation: reorderRecentConvo 0.5s;
     }
   }
 
@@ -149,19 +149,13 @@ $avatar-size: 2.75rem;
   }
 
   @keyframes reorderRecentConvo {
-    0% {
+    from {
       opacity: 0;
-      color: white;
-      background: $theme-secondary-v5;
       transform: translateY(100%);
     }
-    10% {
+    to {
       opacity: 1;
       transform: translateY(0%);
-    }
-    100% {
-      color: #bbb;
-      background: $theme-primary-v3;
     }
   }
 
@@ -239,6 +233,43 @@ $avatar-size: 2.75rem;
       padding: 0;
       font-size: 0.8rem;
     }
+  }
+
+  .message-badge-wrapper {
+    $size: 1.25rem;
+
+    .MuiBadge-root {
+      transition: 0.35s;
+      transform: scale(0);
+      height: $size;
+      width: $size;
+      opacity: 0;
+      top: 0.25rem;
+
+      &.show-badge {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .MuiBadge-badge {
+      transform: unset;
+      transform-origin: unset !important;
+
+      font-size: 0.8rem;
+      height: $size;
+      width: auto;
+      background-color: $theme-secondary-v6;
+      color: white;
+    }
+  }
+
+  .new-conversation-tag {
+    background-color: $theme-tertiary-v1;
+    color: white;
+    font-size: 0.8rem;
+    padding: 0.1rem 0.75rem;
+    border-radius: 0.25rem;
   }
 
   .last-message {

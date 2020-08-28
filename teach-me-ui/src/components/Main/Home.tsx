@@ -9,23 +9,26 @@ import Col from 'react-bootstrap/Col';
 import RightPane from './Home.RightPane';
 import MiddlePane from './Home.MiddlePane';
 import LeftPane from './Home.LeftPane';
-import ModalFrame from '../crumbs/modals';
 
 const Home = () => {
   React.useEffect(() => () => window.scrollTo(0, 0), []);
 
   return (
     <>
-      <ModalFrame />
       <Container className='Home p-0 fade-in'>
-        <Row className='flex-row m-0 justify-content-around'>
-          <Col lg={3} md={3} className='d-none d-md-block left-pane-col'>
+        <Row
+          className='container mx-auto justify-content-around'
+          style={{ alignItems: 'flex-start' }}>
+          <Col
+            lg={3}
+            md={4}
+            className='d-none hang-in d-md-block left-pane-col'>
             <LeftPane />
           </Col>
-          <Col lg={6} md={9} className='middle-pane-col'>
+          <Col lg={6} md={8} className='middle-pane-col'>
             <MiddlePane />
           </Col>
-          <Col lg={3} className='d-none d-lg-block right-pane-col'>
+          <Col lg={3} className='d-none hang-in d-lg-block right-pane-col'>
             <RightPane />
           </Col>
         </Row>

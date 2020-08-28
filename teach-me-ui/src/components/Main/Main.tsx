@@ -10,6 +10,7 @@ import About from '../Index/About';
 import Support from '../Index/Support';
 import Profile from './Profile';
 import Loader from '../crumbs/Loader';
+import ModalFrame from '../crumbs/modals';
 import Chat from './Chat';
 import Search from './Search';
 import Notifications from './Notifications';
@@ -22,11 +23,22 @@ import { initWebSocket, closeWebSocket } from '../../actions/misc';
 
 import activateSocketRouters from '../../socket.router';
 import { emitUserOnlineStatus } from '../../App';
+import { getConversations } from '../../actions/chat';
 
 const Memoize = createMemo();
 
 const Main = (props: any) => {
-  const { signout, userData, webSocket: socket } = props;
+  const { signout, userData, webSocket: socket, conversations } = props;
+
+  useEffect(() => {
+    if (
+      !conversations.data?.length &&
+      !conversations.err &&
+      conversations.status !== 'fulfilled'
+    ) {
+      dispatch(getConversations()(dispatch));
+    }
+  }, [conversations.data, conversations.err, conversations.status]);
 
   useEffect(() => {
     dispatch(initWebSocket(userData.token as string));
@@ -44,7 +56,7 @@ const Main = (props: any) => {
         emitUserOnlineStatus()();
       });
 
-      socket.addEventListener('error', (e: any) => {
+      socket.addEventListener('error', () => {
         console.error(
           'Error: Sockets lost hands while trying to make handshake. :('
         );
@@ -70,22 +82,23 @@ const Main = (props: any) => {
   }
 
   return (
-    <Grid className='Main fade-in'>
-      <Memoize memoizedComponent={Nav} for='main' />
-
-      <Switch>
-        <Route path={['/', '/index', '/home']} exact component={Home} />
-        <Route path='/about' component={About} />
-        <Route path='/support' component={Support} />
-        <Route path='/p/:id' component={PostPage} />
-        <Route path='/@:userId' component={Profile} />
-        <Route path={['/search/:query', '/search']} component={Search} />
-        <Route path='/notifications' component={Notifications} />
-        <Route component={_404} />
-      </Switch>
-
-      <Memoize memoizedComponent={Chat} />
-    </Grid>
+    <>
+      <ModalFrame />
+      <Grid className='Main fade-in'>
+        <Memoize memoizedComponent={Nav} for='main' />
+        <Switch>
+          <Route path={['/', '/index', '/home']} exact component={Home} />
+          <Route path='/about' component={About} />
+          <Route path='/support' component={Support} />
+          <Route path='/p/:id' component={PostPage} />
+          <Route path='/@:userId' component={Profile} />
+          <Route path={['/search/:query', '/search']} component={Search} />
+          <Route path='/notifications' component={Notifications} />
+          <Route component={_404} />
+        </Switch>
+        <Memoize memoizedComponent={Chat} />
+      </Grid>
+    </>
   );
 };
 
@@ -101,7 +114,8 @@ const mapStateToProps = (state: any) => {
   return {
     signout: state.signout,
     userData: state.userData,
-    webSocket: state.webSocket
+    webSocket: state.webSocket,
+    conversations: state.conversations
   };
 };
 

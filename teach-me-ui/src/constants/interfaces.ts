@@ -89,8 +89,13 @@ export type SocketPipe =
   | 'PING_USER';
 
 export interface PostReactionResult {
-  downvotes: number;
-  upvotes: number;
+  downvotes?: number;
+  upvotes?: number;
+  id: string;
+}
+
+export interface RepostResult {
+  count?: number;
   id: string;
 }
 
@@ -101,6 +106,8 @@ export interface FetchPostsState {
   error?: boolean;
   message?: string;
 }
+
+export interface MakeRepostState extends FetchPostsState {}
 
 export interface TopicPropsState {
   topic: string;
@@ -243,12 +250,14 @@ export interface SnackbarState {
 
 export interface ModalState {
   open: boolean;
-  type?: 'CREATE_POST' | 'CREATE_COMMENT';
-  title?: string;
+  type?: 'CREATE_POST' | 'CREATE_REPOST';
+  meta?: { title?: string; [key: string]: any };
 }
 
 export interface UserData {
   avatar?: string;
+  cover_photo?: string;
+  profile_photo?: string;
   id: string;
   displayName: string;
   token?: string | null;
@@ -311,6 +320,7 @@ export interface ConversationInfo extends Omit<SearchState, 'data'> {
   user_typing?: string;
   online_status?: OnlineStatus;
   conversationId?: string;
+  new_message?: Partial<APIMessageResponse>;
   data?: Partial<Omit<UserData, 'token'> & APIConversationResponse>;
 }
 
@@ -348,6 +358,8 @@ export interface APIConversationResponse {
   conversation_name: string;
   associated_username: string;
   associated_user_id: string;
+  unread_count: number;
+  user_typing: string;
 }
 
 export interface NotificationState extends StatusPropsState {
@@ -380,7 +392,6 @@ export interface Post {
   text: string;
   mentions: Array<string>;
   hashtags: Array<string>;
-  media?: Array<string>;
 }
 
 export interface ReplyProps extends Post {
@@ -408,10 +419,4 @@ export interface PostEditorState {
   mentionsKeyword: string;
   mentions: any[];
   [key: string]: any;
-}
-
-export interface UploadState {
-  err: boolean;
-  status: 'settled' | 'pending' | 'fulfilled';
-  _id?: string; 
 }

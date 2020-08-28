@@ -31,6 +31,8 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
+import ModalFrame from '../crumbs/modals';
+
 import Loader from '../crumbs/Loader';
 import Img from '../crumbs/Img';
 import ColleagueView from '../crumbs/ColleagueView';
@@ -42,6 +44,7 @@ import {
 } from '../../constants/interfaces';
 import { dispatch, cleanUp } from '../../functions';
 import { getProfileData, pingUser } from '../../actions';
+import { getConversations } from '../../actions/chat';
 /**
  * Please, Do not delete any commented code; You can either uncomment them to use them or leave them as they are
  */
@@ -81,7 +84,6 @@ window.addEventListener('popstate', () => {
 });
 
 let [
-  avatar,
   firstname,
   lastname,
   displayName,
@@ -106,8 +108,6 @@ const Profile = (props: any) => {
   const { auth, location } = props;
   const { isAuthenticated } = auth;
   const token = (userData as UserData).token as string;
-
-  avatar = data.avatar || 'avatar-1.png';
   firstname = data.firstname || '';
   lastname = data.lastname || '';
   displayName = data.displayName || '';
@@ -196,7 +196,7 @@ const Profile = (props: any) => {
         }
         e.target.id !== 'decline'
           ? await acceptColleagueRequest().then(() => {
-              pingUser([`${data.username}`]);
+              pingUser([`${data.username}`], { type: 'NEW_CONVERSATION' });
             })
           : await declineColleagueRequest();
         break;
@@ -205,6 +205,7 @@ const Profile = (props: any) => {
         break;
     }
     await fetchDeepProfile();
+    dispatch(getConversations('settled')(dispatch));
     setAcceptWasClicked(false);
     setDeclineWasClicked(false);
   };
@@ -329,18 +330,15 @@ const Profile = (props: any) => {
 
   return (
     <Box className={`Profile ${selfView ? 'self-view' : ''} fade-in`}>
+      <ModalFrame />
       <Box component='div' className='profile-top'>
-        <Img
-          alt={displayName}
-          className='cover-photo'
-          src={`https://source.unsplash.com/user/erondu/1600x900`}
-        />
+        <Img alt={displayName} className='cover-photo' src={data.cover_photo} />
         <Box component='div' className='details-container'>
           <Avatar
             component='span'
             className='profile-avatar-x profile-photo'
             alt={displayName}
-            src={`/images/${avatar}`}
+            src={data.profile_photo}
           />
           <Col className='d-flex flex-column px-4'>
             <Col as='span' className='display-name p-0 my-1'>
@@ -517,8 +515,10 @@ const Profile = (props: any) => {
           </Button>
         </div>
       </Box>
-      <Row className='container mt-5 mx-auto'>
-        <Col className='col-4'>
+      <Row
+        className='container mt-5 mx-auto'
+        style={{ alignItems: 'flex-start' }}>
+        <Col className='col-4 hang-in'>
           {selfView && (
             <Box className='details-card px-3 py-2 mb-3'>
               <Col className='py-0 px-2 d-flex justify-content-between align-items-center'>

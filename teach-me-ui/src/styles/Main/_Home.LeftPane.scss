@@ -1,6 +1,6 @@
 .left-pane {
   background-color: #fff;
-  
+
   .rows-wrapper {
     height: 100%;
     overflow: auto;
@@ -20,6 +20,19 @@
     background: $theme-primary-v5;
     color: #eee;
     border: 0.125rem solid #eee;
+  }
+  .small-text {
+    font-size: 0.7rem;
+  }
+  .recommendation-avatar {
+    @extend .chat-avatar;
+    $size: 3rem;
+    font-size: 1rem;
+    background: #ccc;
+    color: black;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .display-name {
@@ -57,4 +70,8 @@
       color: $theme-primary-v6;
     }
   }
+}
+
+.left-pane-col {
+  padding: 1rem 5px;
 }

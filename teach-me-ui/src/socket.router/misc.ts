@@ -3,9 +3,11 @@ import queryString from 'query-string';
 import { ONLINE_STATUS } from '../constants/misc';
 import { dispatch, getState } from '../functions/utils';
 import { conversationInfo, conversations } from '../actions/chat';
+import { ConversationInfo } from '../constants';
 
 export default function misc(message: any) {
   const { id } = queryString.parse(window.location.search) ?? {};
+  const { data } = getState().conversationInfo as ConversationInfo;
   const { pipe, user_id, online_status, last_seen } = message;
 
   switch (pipe) {
@@ -15,7 +17,11 @@ export default function misc(message: any) {
           conversationInfo({
             online_status,
             status: 'fulfilled',
-            data: { ...getState().conversationInfo.data, last_seen }
+            err: false,
+            data: {
+              ...data,
+              last_seen: last_seen ? last_seen : data?.last_seen
+            }
           })
         );
       }

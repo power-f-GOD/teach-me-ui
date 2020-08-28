@@ -78,11 +78,11 @@ body,
 
   background-color: $theme-secondary-v5;
   color: white;
-  position: fixed;
+  position: relative;
   height: $size !important;
   width: $size !important;
-  right: 1rem;
-  bottom: 1rem;
+  right: $size + 1rem;
+  bottom: $size + 1rem;
   font-size: 1.85rem !important;
   box-shadow: 0 0 1rem rgba(0, 0, 0, 0.35);
   transition: 0.3s;
@@ -94,6 +94,45 @@ body,
 
   &.hide {
     transform: scale(0);
+  }
+
+  &.ripple {
+    &::before, &::after {
+      @include before-or-after(
+        $h: 100%,
+        $w: 100%,
+        $bg: transparent,
+        $br: inherit
+      );
+      border: 0.125rem solid $theme-secondary-v6;
+      animation: chatButtonRipple 2s infinite;
+    }
+
+    &::after {
+      animation-delay: 0.5s;
+    }
+
+    @keyframes chatButtonRipple {
+      from {
+        opacity: 1;
+        transform: scale(0.85);
+      }
+      to {
+        transform: scale(1.5);
+        opacity: 0;
+      }
+    }
+  }
+
+  [class*='MuiBadge-badge'] {
+    $size: 1.25rem;
+
+    height: $size;
+    width: $size;
+    border-radius: 1rem;
+    font-size: 0.9rem;
+    top: -0.3rem;
+    right: -0.5rem;
   }
 }
 
@@ -112,7 +151,7 @@ body,
   top: 0;
   display: none;
   right: 0;
-  transition: 0.4s;
+  transition: transform 0.4s, opacity 0.4s;
 
   &.minimize {
     transform: translateY(calc(100% - #{$chat-header-min-height}));
@@ -124,11 +163,11 @@ body,
   }
 
   &.visible {
-    display: flex;
+    display: flex !important;
   }
 
   &.hidden {
-    display: none;
+    display: none !important;
   }
 }
 
@@ -200,10 +239,10 @@ body.desktop {
 
       &.grey-scrollbar {
         &::-webkit-scrollbar-thumb {
-          background: #777;
+          background: #555;
         }
         *::-webkit-scrollbar-thumb {
-          background: #777;
+          background: #555;
         }
       }
 

@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 
 import { displayModal } from '../../../functions';
 import CreatePost from './components/CreatePost';
+import CreateRepost from './components/CreateRepost';
 
 const removeModal = (event: any) => {
   displayModal(false);
@@ -22,6 +23,9 @@ const ModalFrame = (props: any) => {
   switch (props.modal.type) {
     case 'CREATE_POST':
       modalBody = <CreatePost />;
+      break;
+    case 'CREATE_REPOST':
+      modalBody = <CreateRepost {...props.modal.meta?.post} />;
   }
   return (
     <Modal
@@ -36,28 +40,26 @@ const ModalFrame = (props: any) => {
           background: '#ddd5'
         }
       }}>
-      <div className='modal-div'>
       <Fade in={props.modal.open}>
-          <Box className='main-modal'>
-            <div className=' d-flex container justify-content-between action-bar p-0'>
-              <span></span>
-              <h4 className='m-0 text-center'>{props.modal.title}</h4>
-              <div onClick={removeModal}>
-                <Box
-                  component='button'
-                  className='close-btn'
-                  height='30px'
-                  width='30px'
-                  border='none'
-                  borderRadius='50%'>
-                  <CloseIcon />
-                </Box>
-              </div>
+        <Box className='main-modal'>
+          <div className=' d-flex container justify-content-between action-bar p-0'>
+            <span></span>
+            <h4 className='m-0 text-center'>{props.modal.meta?.title}</h4>
+            <div onClick={removeModal}>
+              <Box
+                component='button'
+                className='close-btn'
+                height='30px'
+                width='30px'
+                border='none'
+                borderRadius='50%'>
+                <CloseIcon />
+              </Box>
             </div>
-            <Box padding='7px'>{modalBody}</Box>
-          </Box>
-        </Fade>
-      </div>
+          </div>
+          <Box padding='7px'>{modalBody}</Box>
+        </Box>
+      </Fade>
     </Modal>
   );
 };
