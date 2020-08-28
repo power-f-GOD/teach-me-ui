@@ -37,7 +37,7 @@ const ChatRightPane = ({
   } = conversation;
   const { data, err } = _conversationInfo;
   const { institution, department, level } = data ?? ({} as UserData);
-
+// console.log('RightPane renders')
   return (
     <>
       <Col

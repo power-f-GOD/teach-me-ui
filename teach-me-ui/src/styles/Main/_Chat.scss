@@ -66,9 +66,15 @@ body,
       }
     }
 
+    .offline {
+      .MuiBadge-dot {
+        background-color: #999 !important;
+      }
+    }
+
     .MuiBadge-dot {
       transition: 0.35s;
-      background-color: #999;
+      background-color: $error;
     }
   }
 }
