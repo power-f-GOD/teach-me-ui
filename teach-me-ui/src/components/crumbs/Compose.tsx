@@ -5,6 +5,7 @@ import Avatar from '@material-ui/core/Avatar';
 
 import { displayModal } from '../../functions';
 import { connect } from 'react-redux';
+import { userDeviceIsMobile } from '../..';
 
 const openCreatePostModal = (e: any) => {
   displayModal(true, 'CREATE_POST', { title: 'Create Post' });
@@ -18,21 +19,23 @@ export const Compose: React.FunctionComponent = (props: any) => {
       borderRadius='5px'
       p={1}>
       <Box display='flex'>
-        <Avatar
-          component='span'
-          className='chat-avatar compose-avatar'
-          alt={firstname}
-          src={profile_photo}
-        />
+        <Box px={1}>
+          <Avatar
+            component='span'
+            className='chat-avatar compose-avatar'
+            alt={firstname}
+            src={profile_photo}
+          />
+        </Box>
         <Box
-          className='compose-question flex-grow-1'
+          className='compose-question flex-grow-1 d-flex align-items-center'
           py={1}
           fontSize='16px'
           color='#888'
           onClick={openCreatePostModal}
           role='compose'
           px={2}>
-          What's on your mind {firstname}?
+          What's on your mind{userDeviceIsMobile ? '' : ` ${firstname}`}?
         </Box>
       </Box>
     </Box>

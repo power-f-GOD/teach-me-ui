@@ -3,6 +3,7 @@
 .Profile {
   // @include debugger($color: green);
   // background-color: #ddd;
+  overflow: hidden;
   position: relative;
   min-height: 100vh;
   .details-card {
@@ -19,6 +20,7 @@
     background-color: black;
     position: relative;
     background-color: #00537e;
+
     .details-container {
       position: absolute;
       display: flex;
@@ -45,10 +47,16 @@
       position: absolute;
       bottom: 0;
       left: 50%;
-      transform: translate(-50%, 50%);
       z-index: 1;
       font-size: small;
       border-radius: 0.4rem;
+      transform: translate(-50%, 50%);
+
+      @media screen and (max-width: 512px) {
+        border-radius: 0;
+        width: 100%;
+        transform: translate(-50%, 100%);
+      }
       .more-btn {
         background: #ccc !important;
         color: #000;
@@ -378,14 +386,6 @@
       position: relative;
     }
   }
-
-  // .basic-info-card {
-
-  // }
-
-  // .academic-info-card {
-
-  // }
 
   .card-title {
     margin: 0;

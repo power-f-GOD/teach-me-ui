@@ -62,7 +62,7 @@ const Recommendation = (props: any) => {
     history.push(`/@${username}`);
   };
   return (
-    <Box>
+    <Box className='recommendation'>
       <Container
         as='section'
         className='left-pane p-2'

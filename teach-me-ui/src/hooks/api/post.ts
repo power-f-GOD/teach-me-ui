@@ -1,18 +1,12 @@
 import { useCallback } from 'react';
 
 import useApi from './base';
-import { useApiResponse, Post } from '../../constants';
-import { dispatch } from '../../functions';
+import { useApiResponse, Post, UserData } from '../../constants';
+import { dispatch, getState } from '../../functions';
 import { createPost } from '../../actions';
 
-const cookieEnabled = navigator.cookieEnabled;
-
-let token = '';
-if (cookieEnabled) {
-  token = JSON.parse(localStorage?.kanyimuta ?? '{}')?.token ?? null;
-}
-
 const useFetchMentions = (keyword: string): useApiResponse<any> => {
+  const token = (getState().userData as UserData).token;
   const [...r] = useApi<any>({
     endpoint: `/colleagues/find?keyword=${keyword}`,
     method: 'GET',
@@ -22,6 +16,7 @@ const useFetchMentions = (keyword: string): useApiResponse<any> => {
 };
 
 export const useFetchHashtags = (keyword: string): useApiResponse<any> => {
+  const token = (getState().userData as UserData).token;
   const [...r] = useApi<any>({
     endpoint: `/hashtag/suggest?keyword=${keyword}`,
     method: 'GET',
@@ -31,6 +26,7 @@ export const useFetchHashtags = (keyword: string): useApiResponse<any> => {
 };
 
 export const useSubmitPost = (post: Post): useApiResponse<any> => {
+  const token = (getState().userData as UserData).token;
   const addPost = (payload: any) => {
     window.scrollTo(0, 0);
     dispatch(createPost(payload));
@@ -75,6 +71,7 @@ export const useGetFormattedMentionsWithKeyword = (keyword: string) => {
 };
 
 export const useGetRecommendations = () => {
+  const token = (getState().userData as UserData).token;
   const r = useApi<any>(
     {
       endpoint: `/people/recommendations`,

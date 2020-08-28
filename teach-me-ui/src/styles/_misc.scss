@@ -523,3 +523,7 @@ div {
 [class*='theme-'] {
   font-weight: inherit;
 }
+.MuiSnackbar-root {
+  display: flex;
+  align-items: flex-end;
+}

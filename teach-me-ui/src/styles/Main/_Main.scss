@@ -6,10 +6,12 @@
   flex-grow: 1;
   background: #eee !important;
 }
-.hang-in {
-  position: sticky;
-  position: -webkit-sticky;
-  top: 5rem;
+@media screen and (min-width: 512px) {
+  .hang-in {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 5rem;
+  }
 }
 .top-navbar {
   background: $theme-primary-v4;
