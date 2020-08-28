@@ -312,6 +312,39 @@ body.mobile {
   }
 }
 
+body.mobile {
+  .chat-scroll-view {
+    padding: {
+      right: 1rem;
+      left: 1.25rem;
+    }
+  }
+
+  .msg-container {
+    &.outgoing .msg-wrapper {
+      transform: translateX(-0.25rem);
+      animation: outgoingMessageSlideInForMobile 1s;
+    }
+
+    .last-message {
+      &.outgoing .msg-wrapper {
+        animation: outgoingMessageSlideInForMobile 1s;
+      }
+    }
+  }
+
+  @keyframes outgoingMessageSlideInForMobile {
+    from {
+      opacity: 0;
+      transform: translateX(2rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-0.25rem);
+    }
+  }
+}
+
 .msg-container {
   position: relative;
   // user-select: none;
