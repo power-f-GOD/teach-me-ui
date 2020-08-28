@@ -10,7 +10,7 @@ const openCreatePostModal = (e: any) => {
   displayModal(true, 'CREATE_POST', { title: 'Create Post' });
 };
 
-const Compose: React.FunctionComponent = (props: any) => {
+export const Compose: React.FunctionComponent = (props: any) => {
   const { firstname, profile_photo } = props.userData;
   return (
     <Box
