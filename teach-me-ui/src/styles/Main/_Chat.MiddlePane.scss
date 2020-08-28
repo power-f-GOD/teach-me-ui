@@ -288,12 +288,23 @@ body.mobile {
   }
 
   .msg-container {
+    &.incoming .msg-wrapper {
+      &::before {
+        left: -$msg-radius + 0.65rem !important;
+        // background-color: RED;
+      }
+    }
+
     &.outgoing .msg-wrapper {
       transform: translateX(0);
       animation: outgoingMessageSlideInForMobile 1s;
+
+      &::before {
+        right: -$msg-radius + 0.65rem;
+      }
     }
 
-    .last-message {
+    &.last-message {
       &.outgoing .msg-wrapper {
         animation: outgoingMessageSlideInForMobile 1s;
       }
@@ -435,7 +446,7 @@ body.mobile {
       &::before {
         background-color: $bg-color;
         top: 0;
-        left: -$msg-radius + 0.45rem;
+        left: -$msg-radius + 0.5rem;
         clip-path: polygon(0 0, 80% 0, 70% 60%, 0 0.25rem, 0 0);
       }
     }

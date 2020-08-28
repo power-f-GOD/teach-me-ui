@@ -131,7 +131,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
   const { chat, cid } = queryString.parse(window.location.search) ?? {};
   const { isMinimized, isOpen }: ChatState = _chatState;
   const msgBoxInitHeight = 19;
-
+// console.log('MiddlePane renders')
   const scrollViewRef = useRef<HTMLElement | null>(null);
   const msgBoxRef = useRef<HTMLInputElement | null>(null);
 
@@ -485,7 +485,7 @@ const ChatMiddlePane = (props: ChatMiddlePaneProps) => {
             )(dispatch)
           );
         }
-      }, 200);
+      }, 400);
 
       scrollView.classList.remove('scroll-ended');
       clearTimeout(hideScrollBarTimeout);
