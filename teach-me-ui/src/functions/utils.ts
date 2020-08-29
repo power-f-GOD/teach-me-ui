@@ -586,6 +586,7 @@ export const formatNotification = (entities: any, text: string) => {
 // }
 let ids: Array<string> = []
 export const recursiveUploadReturnsArrayOfId = (files: Array<File>) => {
+  console.log(files)
   const nextFile = files.shift()
   if(nextFile){
     dispatch(sendFileToServer(nextFile)(dispatch))

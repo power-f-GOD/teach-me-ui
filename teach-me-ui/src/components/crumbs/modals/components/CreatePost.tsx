@@ -5,7 +5,7 @@ import React, {
   MouseEvent 
 } from 'react';
 
-// import { recursiveUploadReturnsArrayOfId } from '../../../../functions/utils';
+import { recursiveUploadReturnsArrayOfId } from '../../../../functions/utils';
 
 import { connect } from 'react-redux';
 
@@ -74,24 +74,24 @@ const CreatePost = (props: any) => {
 
   const editor = useRef<HTMLTextAreaElement | any>()
 
-//   const fileSelectedHandler = (e: ChangeEvent<any>) => {
-//     let files: Array<File> = [];
-//     for (let file of e.target.files) {
-//       if (file.size > 50000000) {
-//         label.current.style.display = 'block'
-//         return
-//       files.push(file)
-//       }
-//     }
-//     setState({
-//       ...state,
-//       selectedFiles: e.target.files,
-//       post: {
-//        ...state.post,
-//        media: recursiveUploadReturnsArrayOfId(files)
-//       }
-//     })
-// };
+  const fileSelectedHandler = (e: ChangeEvent<any>) => {
+    let files: Array<File> = [];
+    for (let file of e.target.files) {
+      if (file.size > 50000000) {
+        label.current.style.display = 'block'
+        return
+      files.push(file)
+      }
+    }
+    setState({
+      ...state,
+      selectedFiles: e.target.files,
+      post: {
+       ...state.post,
+       media: recursiveUploadReturnsArrayOfId(files)
+      }
+    })
+};
 
   const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const post = e.target.value;
