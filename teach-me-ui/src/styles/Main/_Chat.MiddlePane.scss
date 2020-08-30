@@ -337,13 +337,12 @@ body.mobile {
 
   .msg-container {
     &.outgoing .msg-wrapper {
-      transform: translateX(-0.25rem);
-      animation: outgoingMessageSlideInForMobile 1s;
+      transform: translateX(-0.25rem) !important;
     }
 
     .last-message {
       &.outgoing .msg-wrapper {
-        animation: outgoingMessageSlideInForMobile 1s;
+        animation: outgoingMessageSlideInForMobile 1s !important;
       }
     }
   }

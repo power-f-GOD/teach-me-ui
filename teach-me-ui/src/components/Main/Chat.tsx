@@ -143,8 +143,7 @@ const ChatBox = (props: ChatBoxProps) => {
     friendship: convoFriendship,
     type: convoType,
     conversation_name: convoDisplayName,
-    avatar: convoAvatar,
-    user_typing: convoUserTyping
+    avatar: convoAvatar
   } = _conversation;
   const {
     data: convoMessages,
@@ -157,7 +156,8 @@ const ChatBox = (props: ChatBoxProps) => {
     status: convoInfoStatus,
     data: convoInfoData,
     new_message: convoInfoNewMessage,
-    online_status: convoInfoOnlineStatus
+    online_status: convoInfoOnlineStatus,
+    user_typing: convoUserTyping
   } = _conversationInfo;
   const convoInfoLastSeen = convoInfoData?.last_seen;
   const { chat } = queryString.parse(window.location.search);
@@ -166,8 +166,8 @@ const ChatBox = (props: ChatBoxProps) => {
       a + (conversation.unread_count ? 1 : 0),
     0
   );
-  const windowWidth = window.innerWidth;
-  
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
+
   const leftPane = leftPaneRef.current;
   const middlePane = middlePaneRef.current;
   const rightPane = rightPaneRef.current;
@@ -270,6 +270,8 @@ const ChatBox = (props: ChatBoxProps) => {
     },
     [isOpen, isMinimized]
   );
+
+  window.onresize = () => setWindowWidth(window.innerWidth);
 
   useEffect(() => {
     if (leftPane && middlePane && rightPane) {
