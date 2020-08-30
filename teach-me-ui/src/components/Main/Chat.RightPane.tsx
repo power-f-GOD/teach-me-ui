@@ -11,40 +11,38 @@ import IconButton from '@material-ui/core/IconButton';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 
 import { ONE_TO_ONE } from '../../constants/chat';
-import {
-  APIConversationResponse,
-  UserData,
-  ConversationInfo
-} from '../../constants/interfaces';
+import { UserData, ConversationInfo } from '../../constants/interfaces';
 import { InfoCard } from '../crumbs/Cards';
 
 interface ChatRightPaneProps {
-  conversation: APIConversationResponse;
-  convoInfo: ConversationInfo;
+  convoType: string;
+  convoDisplayName: string;
+  convoAvatar: string;
+  convoAssocUsername: string;
+  convoInfoData?: ConversationInfo['data'];
+  convoInfoErr: boolean;
   handleSetActivePaneIndex(index: number): any;
 }
 
-const ChatRightPane = ({
-  conversation,
-  convoInfo: _conversationInfo,
-  handleSetActivePaneIndex
-}: ChatRightPaneProps) => {
+const ChatRightPane = (props: ChatRightPaneProps) => {
   const {
-    type,
-    conversation_name: displayName,
-    avatar,
-    associated_username: username
-  } = conversation;
-  const { data, err } = _conversationInfo;
-  const { institution, department, level } = data ?? ({} as UserData);
-// console.log('RightPane renders')
+    convoType,
+    convoDisplayName,
+    convoAvatar,
+    convoAssocUsername,
+    convoInfoErr,
+    convoInfoData,
+    handleSetActivePaneIndex
+  } = props;
+  const { institution, department, level } = convoInfoData ?? ({} as UserData);
+
   return (
     <>
       <Col
         as='header'
         className='chat-header d-flex justify-content-between align-items-center px-2'>
         <Box component='span' className='font-bold pl-1'>
-          {type === ONE_TO_ONE ? 'User info' : 'Participants'}
+          {convoType === ONE_TO_ONE ? 'User info' : 'Participants'}
         </Box>
         <Box component='span' className='control-wrapper ml-1'>
           <IconButton
@@ -55,7 +53,7 @@ const ChatRightPane = ({
           </IconButton>
         </Box>
       </Col>
-      {type === ONE_TO_ONE ? (
+      {convoType === ONE_TO_ONE ? (
         <Container
           as='section'
           className='user-info-container custom-scroll-bar small-bar grey-scrollbar p-3 debugger'>
@@ -64,21 +62,22 @@ const ChatRightPane = ({
               <Avatar
                 component='span'
                 className='chat-avatar d-inline-block'
-                alt={displayName}
-                src={`/images/${avatar}`}
+                alt={convoDisplayName}
+                src={`/images/${convoAvatar}`}
               />
             </Col>
             <Col className='p-0 text-center'>
               <Col className='display-name p-0 d-flex justify-content-center my-1'>
-                {displayName}
+                {convoDisplayName}
               </Col>
               <Col className='username p-0 d-flex justify-content-center mb-4'>
-                @{username}
+                @{convoAssocUsername}
               </Col>
             </Col>
           </Row>
 
-          <Box className={`info-card-wrapper ${err ? 'hide' : 'show'}`}>
+          <Box
+            className={`info-card-wrapper ${convoInfoErr ? 'hide' : 'show'}`}>
             <InfoCard
               title='Academic Info'
               icon={SchoolIcon}
@@ -92,7 +91,7 @@ const ChatRightPane = ({
               ]}
               bgcolor='#fff'
               boxShadow='none'
-              padding='0.25rem'
+              padding='0.25rem 0'
             />
           </Box>
         </Container>

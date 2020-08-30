@@ -78,7 +78,7 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
   const handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
-
+  
   return (
     <Box width='100%'>
       <AppBar position='static'>
