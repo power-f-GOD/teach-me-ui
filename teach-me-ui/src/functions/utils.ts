@@ -85,7 +85,7 @@ export function callNetworkStatusCheckerFor(action: NetworkAction) {
   const errFeedback: StatusPropsState = {
     status: 'pending',
     err: true,
-    statusText: "Network is taking too long to respond. Sure you're connected?"
+    statusText: "Network is taking too long to respond. Sure you're connected?" + action.name
   };
   const abortionFeedback: StatusPropsState = {
     status: 'settled',
@@ -126,7 +126,7 @@ export function callNetworkStatusCheckerFor(action: NetworkAction) {
         dispatch(
           displaySnackbar({
             open: true,
-            message: abortionFeedback.statusText,
+            message: abortionFeedback.statusText + action.name,
             severity: 'error'
           })
         );

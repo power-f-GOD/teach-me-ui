@@ -11,7 +11,12 @@ import Loader from './components/crumbs/Loader';
 import SnackBar from './components/crumbs/SnackBar';
 import ProtectedRoute from './ProtectedRoute';
 
-import { displaySnackbar, initWebSocket, setUserData, closeWebSocket } from './actions/misc';
+import {
+  displaySnackbar,
+  initWebSocket,
+  setUserData,
+  closeWebSocket
+} from './actions/misc';
 import { verifyAuth } from './actions/auth';
 import createMemo from './Memo';
 import { getState, dispatch } from './appStore';
@@ -106,15 +111,16 @@ export const emitUserOnlineStatus = (
     open?: boolean;
     severity?: 'error' | 'success' | 'info';
     message?: string;
+    autoHide?: boolean;
   }
 ) => {
-  const { open, severity, message } = snackBarOptions ?? {};
+  const { open, severity, message, autoHide } = snackBarOptions ?? {};
 
   if (connectionIsDead) {
     dispatch(
       displaySnackbar({
         open: true,
-        autoHide: !connectionIsDead,
+        autoHide: false,
         message: message ? message : 'You are offline.',
         severity: severity ? severity : 'error'
       })
@@ -123,7 +129,7 @@ export const emitUserOnlineStatus = (
     dispatch(
       displaySnackbar({
         open: true,
-        autoHide: true,
+        autoHide: autoHide !== undefined ? autoHide : true,
         message: message ? message : 'You are back online.',
         severity: severity ? severity : 'success'
       })
@@ -195,7 +201,7 @@ export const emitUserOnlineStatus = (
   }
 
   return () => {
-    if (auth.isAuthenticated) {
+    if (auth.isAuthenticated && connectionIsDead) {
       const updateConversations = _conversations.data?.map(
         (conversation): APIConversationResponse => {
           return { ...conversation, online_status: 'OFFLINE' };

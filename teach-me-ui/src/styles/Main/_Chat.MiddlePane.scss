@@ -9,13 +9,9 @@
       visibility: hidden;
     }
   }
-
+  
   .colleague-name {
     max-width: 100%;
-
-    .colleague-name-container {
-      max-width: calc(100% - 9rem);
-    }
   }
 
   .display-name {
@@ -55,11 +51,11 @@
     font-size: 1.35rem !important;
   }
 
-  .conversations-menu-button {
+  &.conversations-menu-button-wrapper {
     display: none;
   }
 
-  .more-button {
+  &.more-options-wrapper {
     display: none;
   }
 
@@ -275,7 +271,7 @@
 }
 
 $incoming-outgoing-spacing: 1.25rem;
-$msgs-spacing: 0.125rem;
+$msgs-spacing: 0.1875rem;
 $msg-radius: 1.25rem;
 
 .scroll-view-msg {
@@ -288,13 +284,32 @@ body.mobile {
   }
 
   .msg-container {
-    &.outgoing .msg-wrapper {
-      transform: translateX(0);
-      animation: outgoingMessageSlideInForMobile 1s;
+    &.last-message.incoming,
+    &.delayed.incoming,
+    &.incoming {
+      .msg-wrapper {
+        &::before {
+          left: -$msg-radius + 0.65rem !important;
+          clip-path: polygon(0 0, 80% 0, 70% 75%, 0 0.25rem, 0 0);
+        }
+      }
     }
 
-    .last-message {
-      &.outgoing .msg-wrapper {
+    &.last-message.outgoing,
+    &.delayed.outgoing,
+    &.outgoing {
+      .msg-wrapper {
+        transform: translateX(0);
+
+        &::before {
+          right: -$msg-radius + 0.65rem;
+          clip-path: polygon(20% 0, 100% 0, 100% 0.25rem, 30% 75%, 0 0);
+        }
+      }
+    }
+
+    &.last-message.outgoing {
+      .msg-wrapper {
         animation: outgoingMessageSlideInForMobile 1s;
       }
     }
@@ -322,13 +337,12 @@ body.mobile {
 
   .msg-container {
     &.outgoing .msg-wrapper {
-      transform: translateX(-0.25rem);
-      animation: outgoingMessageSlideInForMobile 1s;
+      transform: translateX(-0.25rem) !important;
     }
 
     .last-message {
       &.outgoing .msg-wrapper {
-        animation: outgoingMessageSlideInForMobile 1s;
+        animation: outgoingMessageSlideInForMobile 1s !important;
       }
     }
   }
@@ -468,7 +482,7 @@ body.mobile {
       &::before {
         background-color: $bg-color;
         top: 0;
-        left: -$msg-radius + 0.45rem;
+        left: -$msg-radius + 0.5rem;
         clip-path: polygon(0 0, 80% 0, 70% 60%, 0 0.25rem, 0 0);
       }
     }
@@ -609,6 +623,7 @@ body.mobile {
     word-break: break-word;
     width: auto;
     max-width: 75%;
+    box-shadow: 0 0.0625rem 0 rgba(0, 0, 0, 0.25);
 
     &::before {
       position: absolute;
@@ -692,6 +707,7 @@ body.mobile {
     background: #eee;
     height: calc(100% + 0.75rem);
     width: calc(100% + 6.5rem);
+    box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.075);
     z-index: 0;
   }
 

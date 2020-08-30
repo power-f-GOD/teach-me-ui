@@ -72,21 +72,37 @@ $avatar-size: 3rem;
   min-height: calc(100vh - #{$chat-header-min-height});
 }
 
-.tab-panel.custom-scroll-bar {
-  padding: $convo-spacer;
-  max-width: 100%;
-  max-height: calc(100vh - #{$chat-header-min-height});
-  overflow-y: auto;
-  transition: 0.35s;
+.tab-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  transition: opacity 0.35s, transform 0.35s;
 
-  & + .scroll-bar-fader {
-    background: $theme-primary-v2 !important;
+  &.hidden {
+    overflow-y: hidden;
   }
 
-  &.hide-scroll-fader,
-  &.remove-scroll-fader {
+  &.auto {
+    overflow-y: auto;
+  }
+
+  &.custom-scroll-bar {
+    padding: $convo-spacer;
+    max-width: 100%;
+    max-height: calc(100vh - #{$chat-header-min-height});
+    overflow-y: auto;
+    
+
     & + .scroll-bar-fader {
-      z-index: -1 !important;
+      background: $theme-primary-v2 !important;
+    }
+
+    &.hide-scroll-fader,
+    &.remove-scroll-fader {
+      & + .scroll-bar-fader {
+        z-index: -1 !important;
+      }
     }
   }
 }

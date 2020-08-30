@@ -66,9 +66,15 @@ body,
       }
     }
 
+    .offline {
+      .MuiBadge-dot {
+        background-color: #999 !important;
+      }
+    }
+
     .MuiBadge-dot {
       transition: 0.35s;
-      background-color: #999;
+      background-color: $error;
     }
   }
 }
@@ -179,12 +185,11 @@ body,
 header.chat-header {
   position: relative;
   font-weight: bold;
-  // overflow: hidden;
   z-index: 3;
   background-color: white;
   min-height: $chat-header-min-height;
   max-height: $chat-header-min-height;
-  box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.15);
 
   // @include debugger();
 }
@@ -218,7 +223,7 @@ header.chat-header {
 
 .controls {
   justify-content: flex-end;
-  max-width: 10rem;
+  max-width: 6.5rem;
 }
 
 .title-control-wrapper {
