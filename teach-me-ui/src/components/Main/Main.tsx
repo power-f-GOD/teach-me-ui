@@ -24,30 +24,34 @@ import { initWebSocket, closeWebSocket } from '../../actions/misc';
 import activateSocketRouters from '../../socket.router';
 import { emitUserOnlineStatus } from '../../App';
 import { getConversations } from '../../actions/chat';
+import { SearchState } from '../../constants';
 
 const Memoize = createMemo();
 
 const Main = (props: any) => {
-  const { signout, userData, webSocket: socket, conversations } = props;
+  const {
+    signoutStatus,
+    userToken,
+    webSocket: socket,
+    convosLength,
+    convosErr,
+    convosStatus
+  } = props;
 
   useEffect(() => {
-    if (
-      !conversations.data?.length &&
-      !conversations.err &&
-      conversations.status !== 'fulfilled'
-    ) {
+    if (!convosLength && !convosErr && convosStatus !== 'fulfilled') {
       dispatch(getConversations()(dispatch));
     }
-  }, [conversations.data, conversations.err, conversations.status]);
+  }, [convosLength, convosErr, convosStatus]);
 
   useEffect(() => {
-    dispatch(initWebSocket(userData.token as string));
+    dispatch(initWebSocket(userToken as string));
     activateSocketRouters();
 
     return () => {
       dispatch(closeWebSocket());
     };
-  }, [userData.token]);
+  }, [userToken]);
 
   useEffect(() => {
     if (socket) {
@@ -67,12 +71,12 @@ const Main = (props: any) => {
       });
     }
   }, [socket]);
-
+  
   if (!/chat=/.test(window.location.search)) {
     window.history.replaceState({}, '', window.location.pathname);
   }
 
-  if (signout.status === 'pending') {
+  if (signoutStatus === 'pending') {
     return <Loader />;
   }
 
@@ -111,11 +115,15 @@ document.addEventListener('visibilitychange', () => {
 });
 
 const mapStateToProps = (state: any) => {
+  const convos = state.conversations as SearchState;
+
   return {
-    signout: state.signout,
-    userData: state.userData,
+    signoutStatus: state.signout.status,
+    userToken: state.userData.token,
     webSocket: state.webSocket,
-    conversations: state.conversations
+    convosLength: convos.data?.length,
+    convosStatus: convos.status,
+    convosErr: convos.err
   };
 };
 
