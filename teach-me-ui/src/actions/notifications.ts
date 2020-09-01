@@ -46,14 +46,12 @@ export const getNotificationsRequest = (date: number) => (
     }
   })
   .then(({ data }: any) => {
-    console.log(data)
     const { error, notifications, entities } = data as {
       error: boolean;
       notifications: any[];
       entities?: any
     };
     if (!error) {
-      console.log(data);
       dispatch(
         getNotifications({
           status: 'fulfilled',

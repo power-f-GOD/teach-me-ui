@@ -16,7 +16,7 @@
     padding: 0;
     padding: {
       right: 0.35rem;
-      left: 0.75rem;
+      left: 0.55rem;
     }
     white-space: nowrap;
   }
@@ -45,8 +45,8 @@
   z-index: 1;
   font-size: 0.85rem;
   text-transform: capitalize;
-  color: $theme-tertiary-v5;
+  color: $theme-tertiary-v3;
   box-shadow: 0 0 0 1rem white;
-  border: 0.0625rem solid $theme-tertiary-v9;
+  border: 0.0625rem solid $theme-tertiary-v8;
   user-select: none;
 }

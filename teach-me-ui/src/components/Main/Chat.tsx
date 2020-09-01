@@ -1,4 +1,10 @@
-import React, { useState, useCallback, useEffect, createRef } from 'react';
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+  createRef
+} from 'react';
 import { connect } from 'react-redux';
 
 import queryString from 'query-string';
@@ -29,7 +35,10 @@ import {
   APIConversationResponse
 } from '../../constants/interfaces';
 import ChatLeftPane from './Chat.LeftPane';
-import ChatMiddlePane from './Chat.MiddlePane';
+import ChatMiddlePane, {
+  MiddlePaneHeaderContext,
+  ScrollViewContext
+} from './Chat.MiddlePane';
 import ChatRightPane from './Chat.RightPane';
 import createMemo from '../../Memo';
 import { userDeviceIsMobile } from '../..';
@@ -128,10 +137,35 @@ const ChatBox = (props: ChatBoxProps) => {
   const { isOpen, isMinimized, queryString: qString }: ChatState = _chatState;
   const {
     _id: convoId,
-    associated_username: convoUsername,
-    associated_user_id: convoUid
+    associated_username: convoAssocUsername,
+    associated_user_id: convoAssocUserId,
+    participants: convoParticipants,
+    friendship: convoFriendship,
+    type: convoType,
+    conversation_name: convoDisplayName,
+    avatar: convoAvatar
   } = _conversation;
-  const { chat } = queryString.parse(window.location.search);
+  const {
+    data: convoMessages,
+    err: convoMessagesErr,
+    status: convoMessagesStatus,
+    statusText: convoMessagesStatusText
+  } = _conversationMessages;
+  const {
+    err: convoInfoErr,
+    status: convoInfoStatus,
+    data: convoInfoData,
+    new_message: convoInfoNewMessage,
+    online_status: convoInfoOnlineStatus,
+    user_typing: convoUserTyping
+  } = _conversationInfo;
+  const {
+    err: convosErr,
+    status: convosStatus,
+    data: convosData
+  } = conversations;
+  const convoInfoLastSeen = convoInfoData?.last_seen;
+  const { chat, id, cid } = queryString.parse(window.location.search);
   const unopened_count = conversations.data?.reduce(
     (a, conversation: APIConversationResponse) =>
       a + (conversation.unread_count ? 1 : 0),
@@ -142,6 +176,7 @@ const ChatBox = (props: ChatBoxProps) => {
   const middlePane = middlePaneRef.current;
   const rightPane = rightPaneRef.current;
 
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
   const [visibilityState, setVisibilityState] = useState<'visible' | 'hidden'>(
     isOpen || chat ? 'visible' : 'hidden'
   );
@@ -156,9 +191,45 @@ const ChatBox = (props: ChatBoxProps) => {
     []
   );
 
+  const scrollViewProviderValue = useMemo(() => {
+    return {
+      convoMessagesErr,
+      convoMessagesStatusText,
+      convoParticipants,
+      convoInfoNewMessage
+    };
+  }, [
+    convoMessagesErr,
+    convoMessagesStatusText,
+    convoParticipants,
+    convoInfoNewMessage
+  ]);
+
+  const middlePaneHeaderProviderValue = useMemo(() => {
+    return {
+      chatState: _chatState,
+      convoInfoData,
+      convoAvatar,
+      convoType,
+      convoInfoLastSeen,
+      convoInfoStatus,
+      convoUserTyping,
+      handleSetActivePaneIndex
+    };
+  }, [
+    _chatState,
+    convoInfoData,
+    convoAvatar,
+    convoType,
+    convoInfoLastSeen,
+    convoInfoStatus,
+    convoUserTyping,
+    handleSetActivePaneIndex
+  ]);
+
   const handleOpenChatClick = useCallback(() => {
     const queryString = `?chat=${userDeviceIsMobile ? 'min' : 'open'}&id=${
-      convoUid ?? placeHolderDisplayName
+      convoAssocUserId ?? placeHolderDisplayName
     }&cid=${convoId ?? '0'}`;
 
     setActivePaneIndex(0);
@@ -174,7 +245,7 @@ const ChatBox = (props: ChatBoxProps) => {
       );
     });
     window.history.pushState({}, '', window.location.pathname + queryString);
-  }, [convoId, convoUid]);
+  }, [convoId, convoAssocUserId]);
 
   const handleChatTransitionEnd = useCallback(
     (e: any) => {
@@ -206,28 +277,43 @@ const ChatBox = (props: ChatBoxProps) => {
   );
 
   useEffect(() => {
-    if (window.innerWidth < 992) {
-      if (leftPane && middlePane && rightPane) {
-        leftPane.inert = true;
-        middlePane.inert = true;
-        rightPane.inert = true;
+    window.onresize = (e: any) => setWindowWidth(e.target.innerWidth);
+  }, []);
 
-        delay(300).then(() => {
-          switch (activePaneIndex) {
-            case 0:
-              leftPane.inert = false;
-              break;
-            case 1:
-              middlePane.inert = false;
-              break;
-            case 2:
-              rightPane.inert = false;
-              break;
-          }
-        });
+  useEffect(() => {
+    if (isOpen || isMinimized || chat) {
+      if (windowWidth < 992) {
+        (leftPane ?? {}).inert = true;
+        (middlePane ?? {}).inert = true;
+        (rightPane ?? {}).inert = true;
+
+        switch (activePaneIndex) {
+          case 0:
+            (leftPane ?? {}).inert = false;
+            break;
+          case 1:
+            (middlePane ?? {}).inert = false;
+            break;
+          case 2:
+            (rightPane ?? {}).inert = false;
+            break;
+        }
+      } else {
+        (leftPane ?? {}).inert = false;
+        (middlePane ?? {}).inert = false;
+        (rightPane ?? {}).inert = false;
       }
     }
-  }, [leftPane, middlePane, rightPane, activePaneIndex]);
+  }, [
+    leftPane,
+    middlePane,
+    rightPane,
+    activePaneIndex,
+    windowWidth,
+    isOpen,
+    chat,
+    isMinimized
+  ]);
 
   useEffect(() => {
     const chatBoxWrapper = chatBoxWrapperRef.current;
@@ -265,19 +351,17 @@ const ChatBox = (props: ChatBoxProps) => {
     });
   }, [isOpen, isMinimized, chat]);
 
+  const convosLength = convosData?.length;
   useEffect(() => {
-    const search = window.location.search;
-    let { chat, id, cid } = queryString.parse(search);
-
     if (!isOpen) {
       //delay till chatBox display property is set for animation to work
       delay(750).then(() => {
-        let { chat } = queryString.parse(search);
+        let { chat } = queryString.parse(window.location.search);
 
         if (chat)
           dispatch(
             chatState({
-              queryString: !!chat ? search : qString,
+              queryString: !!chat ? window.location.search : qString,
               isOpen: true,
               isMinimized: chat === 'min' && !userDeviceIsMobile
             })
@@ -287,22 +371,20 @@ const ChatBox = (props: ChatBoxProps) => {
 
     if (
       (isOpen || chat === 'open') &&
-      !conversations.data![0] &&
-      !conversations.err &&
-      conversations.status !== 'fulfilled'
+      !convosLength &&
+      !convosErr &&
+      convosStatus !== 'fulfilled'
     ) {
       dispatch(getConversations()(dispatch));
     }
 
     if (cid && isNaN(cid)) {
-      let infoStatus = _conversationInfo.status;
-
       if (
         window.navigator.onLine &&
-        !_conversationInfo.err &&
+        !convoInfoErr &&
         !convoId &&
-        (infoStatus === 'settled' ||
-          (infoStatus === 'fulfilled' && convoId !== cid))
+        (convoInfoStatus === 'settled' ||
+          (convoInfoStatus === 'fulfilled' && convoId !== cid))
       ) {
         dispatch(getConversationInfo(id)(dispatch));
       }
@@ -311,28 +393,30 @@ const ChatBox = (props: ChatBoxProps) => {
         dispatch(conversation(cid));
       }
 
-      let msgStatus = _conversationMessages.status;
       if (
         window.navigator.onLine &&
-        !_conversationMessages.err &&
+        !convoMessagesErr &&
         !convoId &&
-        (msgStatus === 'settled' ||
-          (msgStatus === 'fulfilled' && convoId !== cid))
+        (convoMessagesStatus === 'settled' ||
+          (convoMessagesStatus === 'fulfilled' && convoId !== cid))
       ) {
         dispatch(getConversationMessages(cid, 'pending')(dispatch));
       }
     }
   }, [
-    conversations.data,
-    conversations.status,
+    convosLength,
+    convosStatus,
     convoId,
     qString,
     isOpen,
-    _conversationInfo.status,
-    _conversationInfo.err,
-    _conversationMessages.err,
-    conversations.err,
-    _conversationMessages.status
+    chat,
+    id,
+    cid,
+    convoInfoStatus,
+    convoInfoErr,
+    convoMessagesErr,
+    convosErr,
+    convoMessagesStatus
   ]);
 
   return (
@@ -360,24 +444,32 @@ const ChatBox = (props: ChatBoxProps) => {
 
         <Col
           as='section'
-          lg={convoUsername ? 6 : 9}
+          lg={convoAssocUsername ? 6 : 9}
           className={`chat-middle-pane ${
             activePaneIndex === 1 ? 'active-pane ' : ''
           }d-flex flex-column p-0 `}
           ref={middlePaneRef}>
-          <Memoize
-            memoizedComponent={ChatMiddlePane}
-            conversation={_conversation}
-            conversationMessages={_conversationMessages}
-            chatState={_chatState}
-            userData={userData}
-            conversationInfo={_conversationInfo}
-            webSocket={socket}
-            handleSetActivePaneIndex={handleSetActivePaneIndex}
-          />
+          <MiddlePaneHeaderContext.Provider
+            value={middlePaneHeaderProviderValue}>
+            <ScrollViewContext.Provider value={scrollViewProviderValue}>
+              <Memoize
+                memoizedComponent={ChatMiddlePane}
+                userData={userData}
+                convoDisplayName={convoDisplayName}
+                convoId={convoId}
+                convoFriendship={convoFriendship}
+                convoAssocUsername={convoAssocUsername}
+                convoInfoOnlineStatus={convoInfoOnlineStatus}
+                convoMessages={convoMessages}
+                convoMessagesStatus={convoMessagesStatus}
+                chatState={_chatState}
+                webSocket={socket}
+              />
+            </ScrollViewContext.Provider>
+          </MiddlePaneHeaderContext.Provider>
         </Col>
 
-        {convoUsername && (
+        {convoAssocUsername && (
           <Col
             as='section'
             lg={3}
@@ -386,9 +478,13 @@ const ChatBox = (props: ChatBoxProps) => {
               activePaneIndex === 2 ? 'active-pane ' : ''
             }d-flex flex-column p-0`}>
             <Memoize
-              memoizedComponent={ChatRightPane as React.FC}
-              conversation={_conversation}
-              convoInfo={_conversationInfo}
+              memoizedComponent={ChatRightPane}
+              convoType={convoType}
+              convoInfoErr={convoInfoErr}
+              convoInfoData={convoInfoData}
+              convoDisplayName={convoDisplayName}
+              convoAvatar={convoAvatar}
+              convoAssocUsername={convoAssocUsername}
               handleSetActivePaneIndex={handleSetActivePaneIndex}
             />
           </Col>
