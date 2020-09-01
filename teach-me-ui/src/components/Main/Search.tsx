@@ -22,25 +22,28 @@ import { triggerSearchKanyimuta } from '../../actions/search';
 
 const searchBoxRef = createRef<HTMLInputElement>();
 const searchInputRef = createRef<HTMLInputElement>();
+
 let searchTimeout: any = null;
+let searchBox: any = searchBoxRef.current;
 
 const Search = (props: any) => {
   const { searchKanyimuta, location } = props;
   const results: ColleagueData[] | any[] = searchKanyimuta.data;
   const query = queryString.parse(location.search).q ?? '';
-  const searchBox = searchBoxRef.current;
   const searchInput = searchInputRef.current;
+
+  searchBox = searchBoxRef.current;
 
   const handleSearchChange = useCallback(
     (e: any) => {
       const value = e.target.value;
 
-      if (searchBox) {
-        if (value) {
-          searchBox.classList.add('transform');
-        } else {
-          searchBox.classList.remove('transform');
-        }
+      searchBox = searchBoxRef.current;
+
+      if (value) {
+        searchBox?.classList.add('transform');
+      } else {
+        searchBox?.classList.remove('transform');
       }
 
       //attempt to clear state before making search
@@ -55,7 +58,7 @@ const Search = (props: any) => {
         value ? 750 : 0
       );
     },
-    [location.pathname, searchBox]
+    [location.pathname]
   );
 
   React.useEffect(() => {
@@ -79,7 +82,7 @@ const Search = (props: any) => {
     return () => {
       dispatch(triggerSearchKanyimuta('')(dispatch));
     };
-  }, [query, location.pathname, searchBox, searchInput]);
+  }, [query, location.pathname, searchInput]);
 
   return (
     <Box className='Search fade-in'>
