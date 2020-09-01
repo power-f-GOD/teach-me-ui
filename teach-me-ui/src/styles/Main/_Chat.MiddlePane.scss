@@ -9,7 +9,7 @@
       visibility: hidden;
     }
   }
-  
+
   .colleague-name {
     max-width: 100%;
   }
@@ -361,9 +361,11 @@ body.mobile {
 
 .msg-container {
   position: relative;
-  // user-select: none;
+  user-select: none;
   cursor: pointer;
   opacity: 1;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   transition: opacity 0.3s;
 
   &.deleted {
@@ -376,10 +378,10 @@ body.mobile {
       $tr: 0.2s,
       $zi: unset,
       $w: calc(100% + 4rem),
-      $h: calc(100% + 0.125rem),
+      $h: calc(100% + 0.19rem),
       $l: -2rem,
       $t: unset,
-      $b: -0.0625rem,
+      $b: -0.125rem,
       $bg: rgba($prim-r + 50, $prim-g + 50, $prim-b + 50, 0.35)
     );
     transform: scale(1, 0);
@@ -401,6 +403,34 @@ body.mobile {
 
       &::before {
         background-color: $theme-tertiary-v7;
+      }
+    }
+  }
+
+  &.selected {
+    &,
+    &.deleted {
+      &::after {
+        transform: scale(1, 1);
+      }
+    }
+
+    &,
+    &.deleted {
+      &.outgoing {
+        .msg-wrapper {
+          transition: transform 0.35s, background-color 0.35s,
+            border-radius 0.35s;
+          transform: translateX(-1.5rem) !important;
+        }
+      }
+
+      &.incoming {
+        .msg-wrapper {
+          transition: transform 0.35s, background-color 0.35s,
+            border-radius 0.35s;
+          transform: translateX(1.5rem);
+        }
       }
     }
   }
@@ -438,34 +468,6 @@ body.mobile {
     to {
       opacity: 1;
       transform: translateX(0);
-    }
-  }
-
-  &.selected {
-    &,
-    &.deleted {
-      &::after {
-        transform: scale(1, 1);
-      }
-    }
-
-    &,
-    &.deleted {
-      &.outgoing {
-        .msg-wrapper {
-          transition: transform 0.35s, background-color 0.35s,
-            border-radius 0.35s;
-          transform: translateX(-1.5rem) !important;
-        }
-      }
-
-      &.incoming {
-        .msg-wrapper {
-          transition: transform 0.35s, background-color 0.35s,
-            border-radius 0.35s;
-          transform: translateX(1.5rem);
-        }
-      }
     }
   }
 

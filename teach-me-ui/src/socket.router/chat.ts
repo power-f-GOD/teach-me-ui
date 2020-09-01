@@ -20,10 +20,10 @@ let userTypingTimeout: any = null;
 let conversationTypingTimeouts: any = {};
 
 export default function chat(message: APIMessageResponse & UserData) {
-  const { webSocket: socket, userData, chatState, conversation } = getState();
+  const { webSocket: socket, userData, conversation } = getState();
   const { _id: convoId } = conversation ?? {};
-  const { isOpen, isMinimized } = chatState;
-  const { cid } = queryString.parse(window.location.search) ?? {};
+  const { cid, chat } = queryString.parse(window.location.search) ?? {};
+  const [isOpen, isMinimized] = [!!chat, chat === 'min'];
 
   if (socket) {
     const {

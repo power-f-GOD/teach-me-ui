@@ -85,7 +85,7 @@ export function callNetworkStatusCheckerFor(action: NetworkAction) {
   const errFeedback: StatusPropsState = {
     status: 'pending',
     err: true,
-    statusText: "Network is taking too long to respond. Sure you're connected?" + action.name
+    statusText: "Network is taking too long to respond. Sure you're connected?"
   };
   const abortionFeedback: StatusPropsState = {
     status: 'settled',
@@ -104,7 +104,7 @@ export function callNetworkStatusCheckerFor(action: NetworkAction) {
       );
 
     callTimeoutToAbortNetworkAction(action);
-  }, 18000);
+  }, 14000);
 
   function callTimeoutToAbortNetworkAction(action: NetworkAction) {
     if (navigator.onLine && state[action.name]?.status === 'pending') {
@@ -131,7 +131,7 @@ export function callNetworkStatusCheckerFor(action: NetworkAction) {
           })
         );
       }
-    }, 18000);
+    }, 14000);
   }
 }
 

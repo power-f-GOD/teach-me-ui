@@ -80,6 +80,7 @@ interface ChatMiddlePaneProps {
   userData: UserData;
   chatState: ChatState;
   webSocket: WebSocket;
+  search: string;
   convoFriendship: string;
   convoParticipants: string[];
   convoId: string;
@@ -194,11 +195,11 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
 
   useEffect(() => {
     if (!!convoMessages[0] && userData?.online_status === 'ONLINE') {
-      const [isOpen, isMinimized] = [!!chat, chat === 'min'];
+      const [_isOpen, _isMinimized] = [!!chat, chat === 'min'];
       const isSameCid = convoId === cid;
       const userId = userData.id;
 
-      if (isOpen && isSameCid && !isMinimized) {
+      if (_isOpen && isSameCid && !_isMinimized) {
         dispatch(conversations({ data: [{ unread_count: 0, _id: convoId }] }));
       }
 
@@ -211,7 +212,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
 
         try {
           if (socket && socket.readyState === 1 && isSameCid) {
-            if (isOpen) {
+            if (_isOpen) {
               const isDelivered = message.delivered_to?.includes(userId);
 
               if (userDeviceIsMobile) {
@@ -224,7 +225,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
                   );
                 }
 
-                if (!isMinimized) {
+                if (!_isMinimized) {
                   socket.send(
                     JSON.stringify({
                       message_id: message._id,
@@ -237,7 +238,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
                   JSON.stringify({
                     message_id: message._id,
                     pipe:
-                      isMinimized && !isDelivered
+                      _isMinimized && !isDelivered
                         ? CHAT_MESSAGE_DELIVERED
                         : CHAT_READ_RECEIPT
                   })
@@ -419,29 +420,29 @@ function MiddlePaneHeader(props: {
   const [moreOptionsContainerIsVisible, setMoreOptionsIsVisible] = useState<
     boolean
   >(false);
-  const [openConfirmDialog, setOpenConfirmDialog] = useState<boolean>(false);
-  const [dialogAction, setDialogAction] = useState<any>(
-    (choice: ActionChoice) => choice
-  );
-  const [canDeleteForEveryone, setCanDeleteForEveryone] = useState<boolean>(
-    true
-  );
 
-  const handleMinimizeChatClick = useCallback(() => {
-    const { isMinimized, queryString: qString } = _chatState as ChatState;
-    const queryString = qString!.replace(
-      isMinimized ? 'chat=min' : 'chat=open',
-      isMinimized ? 'chat=open' : 'chat=min'
-    );
+  const handleMinimizeChatClick = useCallback(
+    (shouldActuallyMinimize?: any) => {
+      const { isMinimized, queryString: qString } = _chatState as ChatState;
+      let queryString = qString!.replace(
+        isMinimized ? 'chat=min' : 'chat=open',
+        isMinimized ? 'chat=open' : 'chat=min'
+      );
 
-    dispatch(
-      chatState({
-        isMinimized: !isMinimized,
-        queryString
-      })
-    );
-    window.history.replaceState({}, '', queryString);
-  }, [_chatState]);
+      queryString = shouldActuallyMinimize
+        ? queryString
+        : queryString.replace('=open', '=min');
+
+      dispatch(
+        chatState({
+          isMinimized: shouldActuallyMinimize ? !isMinimized : false,
+          queryString
+        })
+      );
+      window.history.replaceState({}, '', queryString);
+    },
+    [_chatState]
+  );
 
   const clickTimeout: any = useRef();
   const handleCloseChatClick = useCallback(() => {
@@ -467,10 +468,7 @@ function MiddlePaneHeader(props: {
   }, [isOpen, convoMessagesStatus]);
 
   const handleUserInfoOptionClick = useCallback(() => {
-    if (isMinimized) {
-      handleMinimizeChatClick();
-    }
-
+    handleMinimizeChatClick(false);
     delay(isMinimized ? 500 : 250).then(() => {
       handleSetActivePaneIndex!(2)();
     });
@@ -481,10 +479,7 @@ function MiddlePaneHeader(props: {
   }, []);
 
   const handleConversationsMenuClick = useCallback(() => {
-    if (isMinimized) {
-      handleMinimizeChatClick();
-    }
-
+    handleMinimizeChatClick(false);
     delay(isMinimized ? 500 : 1).then(() => {
       handleSetActivePaneIndex!(0)();
     });
@@ -493,71 +488,6 @@ function MiddlePaneHeader(props: {
   const hideMoreOptionsOnClick = useCallback(() => {
     setMoreOptionsIsVisible(false);
   }, []);
-
-  const handleClearSelections = useCallback(() => {
-    setClearSelections(true);
-    delay(10).then(() => setSelectedMessages({}));
-  }, [setClearSelections, setSelectedMessages]);
-
-  const confirmDeleteMessage = useCallback((): Promise<ActionChoice> => {
-    return new Promise((resolve) => {
-      let canDeleteForEveryone = true;
-
-      for (const id in selectedMessages) {
-        if (
-          selectedMessages[id].type === 'incoming' ||
-          selectedMessages[id].deleted
-        ) {
-          canDeleteForEveryone = false;
-          break;
-        }
-      }
-
-      setCanDeleteForEveryone(canDeleteForEveryone);
-      setDialogAction(() => (choice: ActionChoice) => {
-        resolve(choice);
-        setOpenConfirmDialog(false);
-      });
-      setOpenConfirmDialog(true);
-    });
-  }, [selectedMessages]);
-
-  const handleDeleteMessage = useCallback(() => {
-    confirmDeleteMessage().then((choice) => {
-      if (choice === 'CANCEL') return;
-
-      const pipe =
-        choice === 'DELETE_FOR_EVERYONE'
-          ? CHAT_MESSAGE_DELETED
-          : CHAT_MESSAGE_DELETED_FOR;
-
-      for (const id in selectedMessages) {
-        try {
-          if (socket && socket.readyState === 1) {
-            socket.send(JSON.stringify({ message_id: id, pipe }));
-            handleClearSelections();
-          } else {
-            emitUserOnlineStatus(true, false, {
-              open: true,
-              message:
-                "Something went wrong. Seems you are/were offline. We'll try to reconnect then you can perform action again.",
-              severity: 'info',
-              autoHide: false
-            });
-          }
-        } catch (e) {
-          emitUserOnlineStatus(false, true, {
-            open: true,
-            message:
-              e +
-              'An error occurred. Could not establish connection with server.',
-            severity: 'error'
-          });
-          console.error('An error occurred. Error:', e);
-        }
-      }
-    });
-  }, [selectedMessages, confirmDeleteMessage, socket, handleClearSelections]);
 
   useEffect(() => {
     if (moreOptionsContainer) {
@@ -587,7 +517,7 @@ function MiddlePaneHeader(props: {
     <>
       <Row
         className={`title-control-wrapper px-2 mx-0 ${
-          numOfSelectedMessages ? 'hide' : ''
+          numOfSelectedMessages ? 'hide' : 'show'
         }`}>
         <Col as='span' className='colleague-name'>
           <Box
@@ -750,6 +680,107 @@ function MiddlePaneHeader(props: {
         </Col>
       </Row>
 
+      <Memoize
+        memoizedComponent={MiddlePaneHeaderActions}
+        numOfSelectedMessages={numOfSelectedMessages}
+        selectedMessages={selectedMessages}
+        setClearSelections={setClearSelections}
+        setSelectedMessages={setSelectedMessages}
+        webSocket={socket}
+      />
+    </>
+  );
+}
+
+function MiddlePaneHeaderActions(props: {
+  numOfSelectedMessages: number;
+  selectedMessages: { [key: string]: any };
+  setClearSelections: Function;
+  setSelectedMessages: Function;
+  webSocket: WebSocket;
+}) {
+  const {
+    numOfSelectedMessages,
+    selectedMessages,
+    setClearSelections,
+    setSelectedMessages,
+    webSocket: socket
+  } = props;
+  const [openConfirmDialog, setOpenConfirmDialog] = useState<boolean>(false);
+  const [dialogAction, setDialogAction] = useState<any>(
+    (choice: ActionChoice) => choice
+  );
+  const [canDeleteForEveryone, setCanDeleteForEveryone] = useState<boolean>(
+    true
+  );
+
+  const handleClearSelections = useCallback(() => {
+    setClearSelections(true);
+    delay(10).then(() => setSelectedMessages({}));
+  }, [setClearSelections, setSelectedMessages]);
+
+  const confirmDeleteMessage = useCallback((): Promise<ActionChoice> => {
+    return new Promise((resolve) => {
+      let canDeleteForEveryone = true;
+
+      for (const id in selectedMessages) {
+        if (
+          selectedMessages[id].type === 'incoming' ||
+          selectedMessages[id].deleted
+        ) {
+          canDeleteForEveryone = false;
+          break;
+        }
+      }
+
+      setCanDeleteForEveryone(canDeleteForEveryone);
+      setDialogAction(() => (choice: ActionChoice) => {
+        resolve(choice);
+        setOpenConfirmDialog(false);
+      });
+      setOpenConfirmDialog(true);
+    });
+  }, [selectedMessages]);
+
+  const handleDeleteMessage = useCallback(() => {
+    confirmDeleteMessage().then((choice) => {
+      if (choice === 'CANCEL') return;
+
+      const pipe =
+        choice === 'DELETE_FOR_EVERYONE'
+          ? CHAT_MESSAGE_DELETED
+          : CHAT_MESSAGE_DELETED_FOR;
+
+      for (const id in selectedMessages) {
+        try {
+          if (socket && socket.readyState === 1) {
+            socket.send(JSON.stringify({ message_id: id, pipe }));
+            handleClearSelections();
+          } else {
+            emitUserOnlineStatus(true, false, {
+              open: true,
+              message:
+                "Something went wrong. Seems you are/were offline. We'll try to reconnect then you can perform action again.",
+              severity: 'info',
+              autoHide: false
+            });
+          }
+        } catch (e) {
+          emitUserOnlineStatus(false, true, {
+            open: true,
+            message:
+              e +
+              'An error occurred. Could not establish connection with server.',
+            severity: 'error'
+          });
+          console.error('An error occurred. Error:', e);
+        }
+      }
+    });
+  }, [selectedMessages, confirmDeleteMessage, socket, handleClearSelections]);
+
+  return (
+    <>
       <Box
         className={`message-actions-wrapper${
           numOfSelectedMessages ? ' visible' : ''
