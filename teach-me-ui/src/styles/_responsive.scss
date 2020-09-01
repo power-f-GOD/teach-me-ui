@@ -45,7 +45,11 @@
 
 @media screen and (max-width: 991px) {
   .ChatBox {
-    font-size: 0.95rem;
+    .chat-left-pane,
+    .chat-middle-pane,
+    .chat-right-pane {
+      transition-delay: 0.25s !important;
+    }
 
     .chat-right-pane,
     .chat-left-pane {
@@ -105,6 +109,7 @@
 
     .chat-right-pane {
       opacity: 0;
+      animation: unset;
       transform: translateX(200%) scale(2);
       transition: opacity 0.35s, transform 0.35s;
 
@@ -123,7 +128,7 @@
     }
 
     .msg-wrapper {
-      max-width: 85%;
+      max-width: 70%;
     }
   }
 }
@@ -298,6 +303,14 @@
     max-width: 75%;
   }
 
+  .ChatBox {
+    font-size: 0.95rem;
+
+    .msg-wrapper {
+      max-width: 85%;
+    }
+  }
+
   //Profile page styles
   .Profile {
     &::before {
@@ -311,6 +324,47 @@
 
     [class*='-info-card'] {
       padding: 1.5rem 1rem;
+    }
+  }
+
+  //Search page style(s)
+  .Search {
+    padding: 0;
+    padding-top: 3.25rem;
+
+
+    .search-box {
+      transform: translateY(25vh);
+  
+      // &:focus-within {
+      //   transform: translateY(0);
+      // }
+
+      &.transform {
+        transform: translateY(0) !important;
+
+        // &:focus-within {
+        //   transform: translateY(0);
+        // }
+      }
+    }
+
+    .search-container {
+      margin-top: 0;
+      padding: 1.25rem 1rem;
+      border-radius: 0;
+    }
+
+    .no-results-wrapper {
+      height: calc(100vh - 17.75rem);
+      max-width: 100%;
+      overflow: unset;
+    }
+
+    .search-results-wrapper {
+      max-width: 100%;
+      height: calc(100vh - 10.25rem);
+      max-height: calc(100vh - 10.25rem);
     }
   }
 }

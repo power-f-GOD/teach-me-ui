@@ -29,7 +29,7 @@ export function InfoCard(props: InfoCardProps) {
   return (
     <Box
       component='section'
-      className='InfoCard'
+      className='InfoCard text-left'
       bgcolor={bgcolor ? bgcolor : 'white'}
       boxShadow={boxShadow ? boxShadow : '0 0 2.5rem rgba(0, 0, 0, 0.2)'}
       padding={padding ? padding : '1rem'}

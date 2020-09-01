@@ -21,6 +21,10 @@ $chat-header-min-height: 3.75rem;
     transition: 0.35s;
   }
 
+  a {
+    text-decoration: none;
+  }
+
   .chat-timestamp,
   .tab-panel-item {
     [class*='Icon'] {

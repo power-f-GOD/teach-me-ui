@@ -35,7 +35,7 @@ const ChatRightPane = (props: ChatRightPaneProps) => {
     handleSetActivePaneIndex
   } = props;
   const { institution, department, level } = convoInfoData ?? ({} as UserData);
-
+  
   return (
     <>
       <Col
@@ -77,7 +77,7 @@ const ChatRightPane = (props: ChatRightPaneProps) => {
           </Row>
 
           <Box
-            className={`info-card-wrapper ${convoInfoErr ? 'hide' : 'show'}`}>
+            className={`info-card-wrapper text-center ${convoInfoErr ? 'hide' : 'show'}`}>
             <InfoCard
               title='Academic Info'
               icon={SchoolIcon}

@@ -65,6 +65,8 @@
 }
 
 .more-options-container {
+  $transition: 0.3s ease 0.25s, background-color 0.3s;
+
   position: absolute;
   right: 0;
   top: calc(100% + 0.5rem);
@@ -72,20 +74,18 @@
   overflow: hidden;
   background-color: white;
   opacity: 0;
-  visibility: hidden;
   box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
   perspective: 3rem;
   transform: translateX(1.5rem);
-  transition: 0.3s;
+  transition: $transition;
 
   button {
     transform: rotateY(-30deg) translateX(-3rem);
-    transition: 0.3s;
+    transition: $transition;
   }
 
-  &.visible {
+  &.show {
     opacity: 1;
-    visibility: visible;
     transform: translateX(0);
 
     button {
@@ -622,7 +622,7 @@ body.mobile {
     white-space: pre-wrap;
     word-break: break-word;
     width: auto;
-    max-width: 75%;
+    max-width: 85%;
     box-shadow: 0 0.0625rem 0 rgba(0, 0, 0, 0.25);
 
     &::before {
@@ -652,12 +652,6 @@ body.mobile {
   min-height: $height;
   max-height: $height;
   background-color: white;
-  transform: translateY($height);
-  transition: 0.35s;
-
-  &.show {
-    transform: translateY(0);
-  }
 }
 
 .msg-box-wrapper,
