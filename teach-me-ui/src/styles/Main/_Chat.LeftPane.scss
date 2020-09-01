@@ -1,8 +1,8 @@
-$convo-spacer: 0.15rem;
+$convo-spacer: 0.25rem;
 $avatar-size: 3rem;
 
 .chat-left-pane {
-  background-color: $theme-primary-v2;
+  background-color: $theme-primary-v3;
   color: white;
   overflow: hidden;
 
@@ -78,6 +78,7 @@ $avatar-size: 3rem;
   left: 0;
   min-width: 100%;
   transition: opacity 0.35s, transform 0.35s;
+  transition-delay: 0.25s;
 
   &.hidden {
     overflow-y: hidden;
@@ -112,7 +113,7 @@ $avatar-size: 3rem;
   padding: 0;
   font-weight: bold;
   min-height: $chat-header-min-height;
-  background: $theme-primary-v3;
+  background: $theme-primary-v4;
 
   &:hover,
   &:focus {
@@ -180,6 +181,7 @@ $avatar-size: 3rem;
     .colleague-name {
       background-color: $theme-secondary-v5;
       color: white;
+      border-color: transparent;
 
       .MuiBadge-dot {
         border-color: $theme-secondary-v5;
@@ -195,6 +197,7 @@ $avatar-size: 3rem;
     .colleague-name {
       background-color: $theme-primary-v5;
       color: white;
+      border-color: transparent;
 
       .MuiBadge-dot {
         border-color: $theme-primary-v5;
@@ -212,9 +215,10 @@ $avatar-size: 3rem;
 
   .colleague-name {
     padding: 0.75rem 0.5rem;
-    transition: 0.35s;
-    border-radius: $convo-spacer + 0.05rem;
+    border-radius: $convo-spacer + 0.15rem;
     background: $theme-primary-v3;
+    border: 0.0625rem solid rgba($prim-r - 75, $prim-g - 75, $prim-b - 75, 0.5);
+    transition: color 0.2s, background-color 0.35s;
 
     .MuiBadge-dot {
       border-color: $theme-primary-v3;

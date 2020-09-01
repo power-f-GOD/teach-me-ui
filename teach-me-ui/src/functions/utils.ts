@@ -126,7 +126,7 @@ export function callNetworkStatusCheckerFor(action: NetworkAction) {
         dispatch(
           displaySnackbar({
             open: true,
-            message: abortionFeedback.statusText + action.name,
+            message: abortionFeedback.statusText,
             severity: 'error'
           })
         );

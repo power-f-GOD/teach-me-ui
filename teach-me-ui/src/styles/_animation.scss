@@ -109,12 +109,14 @@
 
 .hide {
   transition: opacity 0.35s;
+  transition-delay: 0.25s;
   // visibility: hidden;
   opacity: 0;
 }
 
 .show {
   transition: opacity 0.35s;
+  transition-delay: 0.25s;
   // visibility: visible;
   opacity: 1;
 }

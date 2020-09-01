@@ -57,7 +57,8 @@ import {
   interval,
   preventEnterNewLine,
   formatMapDateString,
-  timestampFormatter
+  timestampFormatter,
+  addEventListenerOnce
 } from '../../functions/utils';
 import { placeHolderDisplayName } from './Chat';
 import {
@@ -109,6 +110,7 @@ export const MiddlePaneHeaderContext = createContext(
 
 const scrollViewRef = createRef<HTMLElement | null>();
 const msgBoxRef = createRef<HTMLInputElement | null>();
+const moreOptionsContainerRef = createRef<HTMLElement | any>();
 
 let scrollView: HTMLElement | null = null;
 
@@ -398,8 +400,6 @@ function MiddlePaneHeader(props: {
     convoUserTyping,
     handleSetActivePaneIndex
   } = useContext(MiddlePaneHeaderContext);
-
-  const { cid } = queryString.parse(window.location.search) ?? {};
   const { isMinimized, isOpen } = _chatState as ChatState;
   const canDisplayAwayDate = _canDisplayAwayDate;
   const [lastSeenDate, lastSeenTime] = [
@@ -414,10 +414,11 @@ function MiddlePaneHeader(props: {
     ''
   )}`;
   const numOfSelectedMessages = Object.keys(selectedMessages).length;
+  const moreOptionsContainer = moreOptionsContainerRef.current;
 
-  const [moreOptionsIsVisible, setMoreOptionsIsVisible] = useState<boolean>(
-    false
-  );
+  const [moreOptionsContainerIsVisible, setMoreOptionsIsVisible] = useState<
+    boolean
+  >(false);
   const [openConfirmDialog, setOpenConfirmDialog] = useState<boolean>(false);
   const [dialogAction, setDialogAction] = useState<any>(
     (choice: ActionChoice) => choice
@@ -467,67 +468,31 @@ function MiddlePaneHeader(props: {
 
   const handleUserInfoOptionClick = useCallback(() => {
     if (isMinimized) {
-      const queryString = window.location.search.replace(
-        'chat=open',
-        'chat=min'
-      );
-
-      dispatch(chatState({ isMinimized: false, queryString }));
-      window.history.replaceState(
-        {},
-        '',
-        window.location.pathname + queryString
-      );
+      handleMinimizeChatClick();
     }
 
     delay(isMinimized ? 500 : 250).then(() => {
       handleSetActivePaneIndex!(2)();
     });
-  }, [isMinimized, handleSetActivePaneIndex]);
+  }, [isMinimized, handleMinimizeChatClick, handleSetActivePaneIndex]);
 
   const toggleMoreOptionsPopover = useCallback(() => {
     setMoreOptionsIsVisible((prev) => !prev);
   }, []);
 
   const handleConversationsMenuClick = useCallback(() => {
-    const queryString = window.location.search.replace('chat=open', 'chat=min');
-
     if (isMinimized) {
-      dispatch(chatState({ isMinimized: false }));
+      handleMinimizeChatClick();
     }
 
     delay(isMinimized ? 500 : 1).then(() => {
       handleSetActivePaneIndex!(0)();
     });
-
-    if (convoId || isNaN(cid)) {
-      dispatch(
-        chatState({
-          isOpen: true,
-          queryString
-        })
-      );
-      window.history.replaceState(
-        {},
-        '',
-        window.location.pathname + queryString
-      );
-    }
-  }, [convoId, cid, isMinimized, handleSetActivePaneIndex]);
+  }, [isMinimized, handleMinimizeChatClick, handleSetActivePaneIndex]);
 
   const hideMoreOptionsOnClick = useCallback(() => {
     setMoreOptionsIsVisible(false);
   }, []);
-
-  useEffect(() => {
-    lastSeenForAway = convoInfoLastSeen as number;
-    displayAwayDate();
-
-    if (convoInfoOnlineStatus !== 'AWAY' || canDisplayAwayDate) {
-      clearTimeout(renderAwayDateTimeout);
-      _canDisplayAwayDate = false;
-    }
-  }, [convoInfoOnlineStatus, canDisplayAwayDate, convoInfoLastSeen]);
 
   const handleClearSelections = useCallback(() => {
     setClearSelections(true);
@@ -593,6 +558,30 @@ function MiddlePaneHeader(props: {
       }
     });
   }, [selectedMessages, confirmDeleteMessage, socket, handleClearSelections]);
+
+  useEffect(() => {
+    if (moreOptionsContainer) {
+      moreOptionsContainer.inert = true;
+    }
+  }, [moreOptionsContainer]);
+
+  useEffect(() => {
+    if (moreOptionsContainer) {
+      addEventListenerOnce(moreOptionsContainer, () => {
+        moreOptionsContainer.inert = !moreOptionsContainerIsVisible;
+      });
+    }
+  }, [moreOptionsContainer, moreOptionsContainerIsVisible]);
+
+  useEffect(() => {
+    lastSeenForAway = convoInfoLastSeen as number;
+    displayAwayDate();
+
+    if (convoInfoOnlineStatus !== 'AWAY' || canDisplayAwayDate) {
+      clearTimeout(renderAwayDateTimeout);
+      _canDisplayAwayDate = false;
+    }
+  }, [convoInfoOnlineStatus, canDisplayAwayDate, convoInfoLastSeen]);
 
   return (
     <>
@@ -719,13 +708,13 @@ function MiddlePaneHeader(props: {
               <MoreVertIcon />
             </IconButton>
 
-            <Box
-              component='span'
+            <span
+              ref={moreOptionsContainerRef as any}
               className={`more-options-container ${
-                moreOptionsIsVisible ? 'visible' : ''
+                moreOptionsContainerIsVisible ? 'show' : 'hide'
               } ${
                 isMinimized ? 'transform-upwards' : ''
-              } d-inline-flex flex-column`}
+              } d-inline-flex flex-column p-0`}
               onClick={hideMoreOptionsOnClick}>
               <Button
                 variant='contained'
@@ -756,7 +745,7 @@ function MiddlePaneHeader(props: {
                 onClick={handleCloseChatClick}>
                 <CloseIcon /> Close
               </Button>
-            </Box>
+            </span>
           </Box>
         </Col>
       </Row>
@@ -1089,7 +1078,7 @@ function MessageBox(props: { convoId: string; webSocket: WebSocket }) {
     msgBoxInitHeight
   );
   const [msgBoxRowsMax, setMsgBoxRowsMax] = useState<number>(1);
-  
+
   const handleSendMsgClick = useCallback(() => {
     const msgBox = msgBoxRef.current!;
     const msg = {
@@ -1198,45 +1187,45 @@ function MessageBox(props: { convoId: string; webSocket: WebSocket }) {
   );
 
   return (
-    <Col
-      as='section'
-      className={`chat-msg-box p-0 ${!convoId ? 'hide' : 'show'}`}>
-      <Col as='span' className='emoji-wrapper p-0'>
-        <IconButton
-          className='emoji-button d-none'
-          // onClick={toggleDrawer(true)}
-          aria-label='insert emoji'>
-          <EmojiIcon fontSize='inherit' />
-        </IconButton>
+    !!convoId && (
+      <Col as='section' className={`chat-msg-box p-0`}>
+        <Col as='span' className='emoji-wrapper p-0'>
+          <IconButton
+            className='emoji-button d-none'
+            // onClick={toggleDrawer(true)}
+            aria-label='insert emoji'>
+            <EmojiIcon fontSize='inherit' />
+          </IconButton>
+        </Col>
+        <Col className='msg-box-wrapper p-0'>
+          <TextField
+            variant='outlined'
+            id='msg-box'
+            className='msg-box custom-scroll-bar grey-scrollbar'
+            placeholder='Type a message...'
+            multiline
+            rows={1}
+            rowsMax={msgBoxRowsMax}
+            size='small'
+            inputRef={msgBoxRef}
+            fullWidth
+            inputProps={{
+              onKeyDown: handleMsgInputChange,
+              onKeyUp: handleMsgInputChange,
+              onKeyPress: preventEnterNewLine
+            }}
+          />
+        </Col>
+        <Col as='span' className='send-wrapper p-0'>
+          <IconButton
+            className='send-button'
+            onClick={handleSendMsgClick}
+            aria-label='send msg'>
+            <SendIcon fontSize='inherit' />
+          </IconButton>
+        </Col>
       </Col>
-      <Col className='msg-box-wrapper p-0'>
-        <TextField
-          variant='outlined'
-          id='msg-box'
-          className='msg-box custom-scroll-bar grey-scrollbar'
-          placeholder='Type a message...'
-          multiline
-          rows={1}
-          rowsMax={msgBoxRowsMax}
-          size='small'
-          inputRef={msgBoxRef}
-          fullWidth
-          inputProps={{
-            onKeyDown: handleMsgInputChange,
-            onKeyUp: handleMsgInputChange,
-            onKeyPress: preventEnterNewLine
-          }}
-        />
-      </Col>
-      <Col as='span' className='send-wrapper p-0'>
-        <IconButton
-          className='send-button'
-          onClick={handleSendMsgClick}
-          aria-label='send msg'>
-          <SendIcon fontSize='inherit' />
-        </IconButton>
-      </Col>
-    </Col>
+    )
   );
 }
 

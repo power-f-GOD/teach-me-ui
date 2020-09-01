@@ -159,19 +159,24 @@ const ChatBox = (props: ChatBoxProps) => {
     online_status: convoInfoOnlineStatus,
     user_typing: convoUserTyping
   } = _conversationInfo;
+  const {
+    err: convosErr,
+    status: convosStatus,
+    data: convosData
+  } = conversations;
   const convoInfoLastSeen = convoInfoData?.last_seen;
-  const { chat } = queryString.parse(window.location.search);
+  const { chat, id, cid } = queryString.parse(window.location.search);
   const unopened_count = conversations.data?.reduce(
     (a, conversation: APIConversationResponse) =>
       a + (conversation.unread_count ? 1 : 0),
     0
   );
-  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
   const leftPane = leftPaneRef.current;
   const middlePane = middlePaneRef.current;
   const rightPane = rightPaneRef.current;
 
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
   const [visibilityState, setVisibilityState] = useState<'visible' | 'hidden'>(
     isOpen || chat ? 'visible' : 'hidden'
   );
@@ -271,35 +276,44 @@ const ChatBox = (props: ChatBoxProps) => {
     [isOpen, isMinimized]
   );
 
-  window.onresize = () => setWindowWidth(window.innerWidth);
+  useEffect(() => {
+    window.onresize = (e: any) => setWindowWidth(e.target.innerWidth);
+  }, []);
 
   useEffect(() => {
-    if (leftPane && middlePane && rightPane) {
+    if (isOpen || isMinimized || chat) {
       if (windowWidth < 992) {
-        leftPane.inert = true;
-        middlePane.inert = true;
-        rightPane.inert = true;
+        (leftPane ?? {}).inert = true;
+        (middlePane ?? {}).inert = true;
+        (rightPane ?? {}).inert = true;
 
-        delay(300).then(() => {
-          switch (activePaneIndex) {
-            case 0:
-              leftPane.inert = false;
-              break;
-            case 1:
-              middlePane.inert = false;
-              break;
-            case 2:
-              rightPane.inert = false;
-              break;
-          }
-        });
+        switch (activePaneIndex) {
+          case 0:
+            (leftPane ?? {}).inert = false;
+            break;
+          case 1:
+            (middlePane ?? {}).inert = false;
+            break;
+          case 2:
+            (rightPane ?? {}).inert = false;
+            break;
+        }
       } else {
-        leftPane.inert = false;
-        middlePane.inert = false;
-        rightPane.inert = false;
+        (leftPane ?? {}).inert = false;
+        (middlePane ?? {}).inert = false;
+        (rightPane ?? {}).inert = false;
       }
     }
-  }, [leftPane, middlePane, rightPane, activePaneIndex, windowWidth]);
+  }, [
+    leftPane,
+    middlePane,
+    rightPane,
+    activePaneIndex,
+    windowWidth,
+    isOpen,
+    chat,
+    isMinimized
+  ]);
 
   useEffect(() => {
     const chatBoxWrapper = chatBoxWrapperRef.current;
@@ -337,19 +351,17 @@ const ChatBox = (props: ChatBoxProps) => {
     });
   }, [isOpen, isMinimized, chat]);
 
+  const convosLength = convosData?.length;
   useEffect(() => {
-    const search = window.location.search;
-    let { chat, id, cid } = queryString.parse(search);
-
     if (!isOpen) {
       //delay till chatBox display property is set for animation to work
       delay(750).then(() => {
-        let { chat } = queryString.parse(search);
+        let { chat } = queryString.parse(window.location.search);
 
         if (chat)
           dispatch(
             chatState({
-              queryString: !!chat ? search : qString,
+              queryString: !!chat ? window.location.search : qString,
               isOpen: true,
               isMinimized: chat === 'min' && !userDeviceIsMobile
             })
@@ -359,22 +371,20 @@ const ChatBox = (props: ChatBoxProps) => {
 
     if (
       (isOpen || chat === 'open') &&
-      !conversations.data![0] &&
-      !conversations.err &&
-      conversations.status !== 'fulfilled'
+      !convosLength &&
+      !convosErr &&
+      convosStatus !== 'fulfilled'
     ) {
       dispatch(getConversations()(dispatch));
     }
 
     if (cid && isNaN(cid)) {
-      let infoStatus = _conversationInfo.status;
-
       if (
         window.navigator.onLine &&
-        !_conversationInfo.err &&
+        !convoInfoErr &&
         !convoId &&
-        (infoStatus === 'settled' ||
-          (infoStatus === 'fulfilled' && convoId !== cid))
+        (convoInfoStatus === 'settled' ||
+          (convoInfoStatus === 'fulfilled' && convoId !== cid))
       ) {
         dispatch(getConversationInfo(id)(dispatch));
       }
@@ -383,28 +393,30 @@ const ChatBox = (props: ChatBoxProps) => {
         dispatch(conversation(cid));
       }
 
-      let msgStatus = _conversationMessages.status;
       if (
         window.navigator.onLine &&
-        !_conversationMessages.err &&
+        !convoMessagesErr &&
         !convoId &&
-        (msgStatus === 'settled' ||
-          (msgStatus === 'fulfilled' && convoId !== cid))
+        (convoMessagesStatus === 'settled' ||
+          (convoMessagesStatus === 'fulfilled' && convoId !== cid))
       ) {
         dispatch(getConversationMessages(cid, 'pending')(dispatch));
       }
     }
   }, [
-    conversations.data,
-    conversations.status,
+    convosLength,
+    convosStatus,
     convoId,
     qString,
     isOpen,
-    _conversationInfo.status,
-    _conversationInfo.err,
-    _conversationMessages.err,
-    conversations.err,
-    _conversationMessages.status
+    chat,
+    id,
+    cid,
+    convoInfoStatus,
+    convoInfoErr,
+    convoMessagesErr,
+    convosErr,
+    convoMessagesStatus
   ]);
 
   return (

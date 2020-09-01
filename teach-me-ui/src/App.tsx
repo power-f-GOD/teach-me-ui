@@ -38,6 +38,7 @@ import {
   getConversationInfo
 } from './actions/chat';
 import { ONLINE_STATUS } from './constants/misc';
+import { addEventListenerOnce } from './functions';
 
 const Memo = createMemo();
 
@@ -45,9 +46,22 @@ const App = (props: any) => {
   const { status: authStatus, isAuthenticated } = props.auth;
   const { signin, signup, snackbar } = props;
 
+  React.useEffect(() => {
+    Array.prototype.map.call(document.getElementsByClassName('show'), (el) => {
+      console.log('bbbbb')
+      addEventListenerOnce(el, () => {el.inert = false});
+    })
+    Array.prototype.forEach.call(document.getElementsByClassName('hide'), (el) => {
+      console.log('aaaaaaa')
+      addEventListenerOnce(el, () => {el.inert = true});
+    })
+  }, [])
+
   if (signin?.status !== 'pending' || signup?.status !== 'pending') {
     if (authStatus === 'pending') return <Loader />;
   }
+
+  
 
   return (
     <>
@@ -235,6 +249,8 @@ window.ononline = () => {
 window.onoffline = () => {
   emitUserOnlineStatus(false, true)();
 };
+
+
 
 const mapStateToProps = ({ auth, signin, signup, snackbar }: any) => {
   return { auth, signin, signup, snackbar };

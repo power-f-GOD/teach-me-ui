@@ -72,13 +72,12 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
     userFirstname,
     handleSetActivePaneIndex
   } = props;
-
   const [value, setValue] = React.useState<number>(0);
 
   const handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
-  
+
   return (
     <Box width='100%'>
       <AppBar position='static'>
@@ -104,7 +103,7 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
           ) : _conversations.data?.length ? (
             <Memoize
               memoizedComponent={PaneItems}
-              conversations={_conversations}
+              convos={_conversations.data}
               userId={userId}
               handleSetActivePaneIndex={handleSetActivePaneIndex}
             />
@@ -216,16 +215,16 @@ function TabPanel(props: TabPanelProps) {
 }
 
 function PaneItems(props: {
-  conversations: SearchState;
+  convos: SearchState['data'];
   userId: string;
   handleSetActivePaneIndex(index: number): Function;
 }) {
   const {
-    conversations: _conversations,
+    convos: _conversations,
     userId,
     handleSetActivePaneIndex
   } = props;
-  const convos = (_conversations.data ?? []) as Partial<
+  const convos = (_conversations ?? []) as Partial<
     APIConversationResponse
   >[];
 
@@ -286,7 +285,6 @@ function PaneItem({
     unread_count
   } = _conversation ?? {};
   const hasRecent: boolean = { ...(last_message as any) }.is_recent;
-  const { pathname } = window.location;
 
   const [recent, setRecent] = React.useState<number>(0);
 
@@ -308,12 +306,26 @@ function PaneItem({
     ) /
       864e5 ===
     1;
-  const _queryString = `${pathname}?chat=open&id=${_userId}&cid=${convoId}`;
+  const _queryString = `?chat=open&id=${_userId}&cid=${convoId}`;
   const _chatState: ChatState = {
     isOpen: true,
     isMinimized: false,
     queryString: _queryString
   };
+
+  const navLinkTo = useCallback(
+    ({ pathname }: any) => pathname + _queryString,
+    [_queryString]
+  );
+
+  const navLinkActive = useCallback(
+    (_match: any, location: any) => {
+      return Boolean(
+        convoId && queryString.parse(location.search)?.cid === convoId
+      );
+    },
+    [convoId]
+  );
 
   const handleChatClick = useCallback(
     (chatInfo: ChatState, extra: { convoId: string; userId: string }) => {
@@ -372,19 +384,15 @@ function PaneItem({
     },
     [handleSetActivePaneIndex]
   );
-
+  
   return (
     <NavLink
-      to={_queryString}
+      to={navLinkTo}
       className={`tab-panel-item ${!friendship ? 'uncolleagued' : ''} ${
         recent === index ? 'recent' : ''
       }`}
       key={convoId}
-      isActive={(_match: any, location: any) => {
-        return Boolean(
-          convoId && queryString.parse(location.search)?.cid === convoId
-        );
-      }}
+      isActive={navLinkActive}
       onClick={handleChatClick(
         { ..._chatState },
         { convoId: String(convoId), userId: String(_userId) }

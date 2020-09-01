@@ -100,7 +100,7 @@ const Main = (props: any) => {
           <Route path='/notifications' component={Notifications} />
           <Route component={_404} />
         </Switch>
-        <Memoize memoizedComponent={Chat} />
+        <Memoize memoizedComponent={Chat} location={props.location} />
       </Grid>
     </>
   );
