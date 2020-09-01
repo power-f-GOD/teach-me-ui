@@ -20,6 +20,7 @@ $avatar-size: 3rem;
     transition: 0.35s;
     border-radius: $convo-spacer;
     background: $theme-primary-v3;
+    border: 0.0625rem solid rgba($prim-r - 75, $prim-g - 75, $prim-b - 75, 0.5);
 
     &:last-child {
       margin-bottom: 0;

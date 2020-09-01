@@ -26,6 +26,8 @@ export interface SelectedMessageValue {
 
 export type ActionChoice = 'DELETE_FOR_ME' | 'CANCEL' | 'DELETE_FOR_EVERYONE';
 
+let messageTouchTimeout: any = null;
+
 export const Message = (props: {
   message: APIMessageResponse;
   type: 'incoming' | 'outgoing';
@@ -68,6 +70,16 @@ export const Message = (props: {
     [handleSelectMessage]
   );
 
+  const handleMessageTouchStart = useCallback(() => {
+    messageTouchTimeout = setTimeout(() => {
+      handleSelectMessage();
+    }, 700);
+  }, [handleSelectMessage]);
+
+  const handleMessageTouchEnd = useCallback(() => {
+    clearTimeout(messageTouchTimeout);
+  }, []);
+
   useEffect(() => {
     if (selected !== null) {
       handleMessageSelection(selected ? String(id) : null, {
@@ -99,6 +111,8 @@ export const Message = (props: {
         selected ? 'selected' : ''
       } msg-container ${className} ${deleted ? 'deleted' : ''} p-0 mx-0`}
       onDoubleClick={handleSelectMessage}
+      onTouchStart={handleMessageTouchStart}
+      onTouchEnd={handleMessageTouchEnd}
       onKeyUp={handleSelectMessageForEnterPress}
       tabIndex={0}
       onClick={canSelectByClick ? handleSelectMessage : undefined}>

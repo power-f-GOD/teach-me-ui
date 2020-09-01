@@ -462,6 +462,7 @@ const ChatBox = (props: ChatBoxProps) => {
                 convoInfoOnlineStatus={convoInfoOnlineStatus}
                 convoMessages={convoMessages}
                 convoMessagesStatus={convoMessagesStatus}
+                chatState={_chatState}
                 webSocket={socket}
               />
             </ScrollViewContext.Provider>

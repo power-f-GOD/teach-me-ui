@@ -103,8 +103,8 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
           ) : _conversations.data?.length ? (
             <Memoize
               memoizedComponent={PaneItems}
-              convos={_conversations.data}
               userId={userId}
+              conversations={_conversations}
               handleSetActivePaneIndex={handleSetActivePaneIndex}
             />
           ) : (
@@ -215,16 +215,16 @@ function TabPanel(props: TabPanelProps) {
 }
 
 function PaneItems(props: {
-  convos: SearchState['data'];
+  conversations: SearchState;
   userId: string;
   handleSetActivePaneIndex(index: number): Function;
 }) {
   const {
-    convos: _conversations,
+    conversations: _conversations,
     userId,
     handleSetActivePaneIndex
   } = props;
-  const convos = (_conversations ?? []) as Partial<
+  const convos = (_conversations.data ?? []) as Partial<
     APIConversationResponse
   >[];
 
@@ -245,6 +245,8 @@ function PaneItems(props: {
             forceUpdate={
               '' +
               last_message?._id +
+              last_message?.delivered_to +
+              last_message?.seen_by +
               unread_count +
               user_typing +
               online_status
@@ -384,7 +386,7 @@ function PaneItem({
     },
     [handleSetActivePaneIndex]
   );
-  
+
   return (
     <NavLink
       to={navLinkTo}
@@ -485,7 +487,7 @@ function PaneItem({
               <Badge
                 className={unread_count ? 'show-badge' : ''}
                 badgeContent={unread_count}
-                max={999}
+                max={9999}
               />
             </Box>
           )}
