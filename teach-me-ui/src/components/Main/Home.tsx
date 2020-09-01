@@ -26,7 +26,7 @@ const Home = () => {
             <LeftPane />
           </Col>
           <Col lg={6} md={8} className='middle-pane-col'>
-            <MiddlePane />
+            <MiddlePane type={'FEED'} />
           </Col>
           <Col lg={3} className='d-none hang-in d-lg-block right-pane-col'>
             <RightPane />

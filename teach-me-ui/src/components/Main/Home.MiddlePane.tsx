@@ -6,11 +6,35 @@ import Post from '../crumbs/Post';
 import Compose from '../crumbs/Compose';
 import Recommendations from '../crumbs/Recommendations';
 
-import { PostPropsState, UserData } from '../../constants';
+import { PostPropsState, UserData, SocketProps } from '../../constants';
 
-import { fetchPostsFn } from '../../functions';
+import { fetchPostsFn, getState } from '../../functions';
 
 import { connect } from 'react-redux';
+
+const config: IntersectionObserverInit = {
+  root: null,
+  rootMargin: '0px',
+  threshold: [0.5, 1]
+};
+
+const observer = new IntersectionObserver((entries, self) => {
+  const socket = getState().webSocket as WebSocket;
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      const data: SocketProps = {
+        pipe: 'POST_INTERACTION',
+        post_id: entry.target.id,
+        interaction: 'SEEN'
+      };
+      if (socket.readyState === 1) {
+        console.log(data);
+        socket.send(JSON.stringify(data));
+        console.log('seen was sent');
+      }
+    }
+  });
+}, config);
 
 const MiddlePane: React.FunctionComponent = (props: any) => {
   const {
@@ -32,7 +56,16 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
     const userId = (profile as UserData).id || undefined;
     fetchPostsFn(type, userId);
     // eslint-disable-next-line
-  }, []);
+  }, [props.type]);
+  const posts = document.querySelectorAll('.post-list-page');
+  useEffect(() => {
+    if (props.type === 'FEED') {
+      posts.forEach((post) => {
+        observer.observe(post);
+      });
+    }
+    // eslint-disable-next-line
+  }, [posts.length, props.type]);
   return (
     <Container className='middle-pane p-1 p-md-2' fluid>
       {(selfView || !inProfile) && <Compose />}
