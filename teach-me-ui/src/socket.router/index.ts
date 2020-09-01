@@ -10,7 +10,6 @@ export default function activateSocketRouters() {
   const socket: WebSocket = getState().webSocket;
 
   socket.addEventListener('message', (e: any) => {
-    console.log(e);
     if (e.data === 'error') {
       console.error('E014: bad response from socket');
       return;

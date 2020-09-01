@@ -12,30 +12,6 @@ import { fetchPostsFn, getState } from '../../functions';
 
 import { connect } from 'react-redux';
 
-const config: IntersectionObserverInit = {
-  root: null,
-  rootMargin: '0px',
-  threshold: [0.5, 1]
-};
-
-const observer = new IntersectionObserver((entries, self) => {
-  const socket = getState().webSocket as WebSocket;
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      const data: SocketProps = {
-        pipe: 'POST_INTERACTION',
-        post_id: entry.target.id,
-        interaction: 'SEEN'
-      };
-      if (socket.readyState === 1) {
-        console.log(data);
-        socket.send(JSON.stringify(data));
-        console.log('seen was sent');
-      }
-    }
-  });
-}, config);
-
 const MiddlePane: React.FunctionComponent = (props: any) => {
   const {
     auth: { isAuthenticated },
@@ -43,6 +19,30 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
       data: [profile]
     }
   } = props;
+  const config: IntersectionObserverInit = {
+    root: null,
+    rootMargin: '0px',
+    threshold: [0.5, 1]
+  };
+  const observer = React.useMemo(
+    () =>
+      new IntersectionObserver((entries, self) => {
+        const socket = getState().webSocket as WebSocket;
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const data: SocketProps = {
+              pipe: 'POST_INTERACTION',
+              post_id: entry.target.id,
+              interaction: 'SEEN'
+            };
+            if (socket.readyState === 1) {
+              socket.send(JSON.stringify(data));
+            }
+          }
+        });
+      }, config),
+    []
+  );
   const username = props.userData.username || '';
 
   let profileUsername = profile.username || '';
