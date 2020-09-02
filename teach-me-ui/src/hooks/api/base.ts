@@ -34,7 +34,7 @@ export default function useApi<T>(
         throw new Error(e.response?.data);
       });
       if (res.data.error) {
-        console.log(res.data);
+        // console.log(res.data);
         setData(res.data);
         throw new Error(res.data.message);
       }

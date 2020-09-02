@@ -24,7 +24,6 @@ const morePosts = () => {
 
 const trackScrolling = () => {
   if (isBottom(elementRef.current as HTMLElement)) {
-    console.log('bottom reached');
     morePosts();
   }
 };
@@ -40,18 +39,17 @@ const Home = (props: any) => {
   }, []);
   return (
     <>
-      <Container className='Home p-0 fade-in'>
+      <Container className='Home fade-in'>
         <Row
           ref={elementRef}
-          className='container mx-auto justify-content-around'
-          style={{ alignItems: 'flex-start' }}>
+          className='mx-auto justify-content-around align-items-start py-3'>
           <Col
             lg={3}
             md={4}
             className='d-none hang-in d-md-block left-pane-col'>
             <LeftPane />
           </Col>
-          <Col lg={6} md={8} className='middle-pane-col'>
+          <Col lg={6} md={8} className='middle-pane-col px-3'>
             <MiddlePane type={'FEED'} />
           </Col>
           <Col lg={3} className='d-none hang-in d-lg-block right-pane-col'>

@@ -3,6 +3,10 @@
     display: none;
   }
 
+  [class*=container] {
+    max-width: 1250px;
+  }
+
   @media screen and (max-width: 1152px) {
     .drawer {
       display: flex;
@@ -185,8 +189,29 @@
     max-width: 22rem;
   }
 
+  //Home style(s)
+  .Home {
+    .middle-pane-col {
+      padding: {
+        left: 0 !important;
+        right: 0 !important;
+      };
+    }
+  }
+
   //Profile style(s)
   .Profile {
+    overflow: hidden;
+
+    .profile-top {
+      height: 17rem;
+    }
+
+    .profile-avatar-x {
+      height: 7rem;
+      width: 7rem;
+    }
+
     .action-buttons-container {
       &.enlarge {
         &::before {
@@ -337,8 +362,6 @@
   }
 
   .ChatBox {
-    font-size: 0.95rem;
-
     .msg-wrapper {
       max-width: 85%;
     }

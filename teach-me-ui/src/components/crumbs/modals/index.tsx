@@ -37,14 +37,14 @@ const ModalFrame = (props: any) => {
       BackdropProps={{
         timeout: 300,
         style: {
-          background: '#ddd5'
+          background: 'rgba(0,0,0,0.6)'
         }
       }}>
       <Fade in={props.modal.open}>
         <Box className='main-modal'>
           <div className=' d-flex container justify-content-between action-bar p-0'>
             <span></span>
-            <h4 className='m-0 text-center'>{props.modal.meta?.title}</h4>
+            <h4 className='m-0 text-center align-self-center theme-primary-darker'>{props.modal.meta?.title}</h4>
             <div onClick={removeModal}>
               <Box
                 component='button'

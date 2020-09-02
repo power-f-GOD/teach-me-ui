@@ -37,13 +37,14 @@ import {
 import ChatLeftPane from './Chat.LeftPane';
 import ChatMiddlePane, {
   MiddlePaneHeaderContext,
-  ScrollViewContext
+  ScrollViewContext,
+  ColleagueNameAndStatusContext
 } from './Chat.MiddlePane';
 import ChatRightPane from './Chat.RightPane';
 import createMemo from '../../Memo';
 import { userDeviceIsMobile } from '../..';
 
-export const placeHolderDisplayName = 'Start a new Conversation';
+export const placeHolderDisplayName = 'Start a Conversation';
 
 interface ChatBoxProps {
   conversation: APIConversationResponse;
@@ -138,7 +139,6 @@ const ChatBox = (props: ChatBoxProps) => {
   const {
     _id: convoId,
     associated_username: convoAssocUsername,
-    associated_user_id: convoAssocUserId,
     participants: convoParticipants,
     friendship: convoFriendship,
     type: convoType,
@@ -211,7 +211,6 @@ const ChatBox = (props: ChatBoxProps) => {
       convoInfoData,
       convoAvatar,
       convoType,
-      convoInfoLastSeen,
       convoInfoStatus,
       convoUserTyping,
       handleSetActivePaneIndex
@@ -221,16 +220,35 @@ const ChatBox = (props: ChatBoxProps) => {
     convoInfoData,
     convoAvatar,
     convoType,
-    convoInfoLastSeen,
     convoInfoStatus,
     convoUserTyping,
     handleSetActivePaneIndex
   ]);
 
+  const colleagueNameAndStatusContextValue = React.useMemo(() => {
+    return {
+      convoId,
+      convoDisplayName,
+      convoAvatar,
+      convoType,
+      convoInfoStatus,
+      convoUserTyping,
+      convoInfoLastSeen
+    };
+  }, [
+    convoId,
+    convoDisplayName,
+    convoAvatar,
+    convoType,
+    convoInfoStatus,
+    convoUserTyping,
+    convoInfoLastSeen
+  ]);
+
   const handleOpenChatClick = useCallback(() => {
-    const queryString = `?chat=${userDeviceIsMobile ? 'min' : 'open'}&id=${
-      convoAssocUserId ?? placeHolderDisplayName
-    }&cid=${convoId ?? '0'}`;
+    const queryString = `?chat=${
+      userDeviceIsMobile ? 'min' : 'open'
+    }&id=${placeHolderDisplayName}&cid=0`;
 
     setActivePaneIndex(0);
     setVisibilityState('visible');
@@ -240,12 +258,13 @@ const ChatBox = (props: ChatBoxProps) => {
       dispatch(
         chatState({
           isOpen: true,
+          isMinimized: false,
           queryString
         })
       );
     });
     window.history.pushState({}, '', window.location.pathname + queryString);
-  }, [convoId, convoAssocUserId]);
+  }, []);
 
   const handleChatTransitionEnd = useCallback(
     (e: any) => {
@@ -451,21 +470,24 @@ const ChatBox = (props: ChatBoxProps) => {
           ref={middlePaneRef}>
           <MiddlePaneHeaderContext.Provider
             value={middlePaneHeaderProviderValue}>
-            <ScrollViewContext.Provider value={scrollViewProviderValue}>
-              <Memoize
-                memoizedComponent={ChatMiddlePane}
-                userData={userData}
-                convoDisplayName={convoDisplayName}
-                convoId={convoId}
-                convoFriendship={convoFriendship}
-                convoAssocUsername={convoAssocUsername}
-                convoInfoOnlineStatus={convoInfoOnlineStatus}
-                convoMessages={convoMessages}
-                convoMessagesStatus={convoMessagesStatus}
-                chatState={_chatState}
-                webSocket={socket}
-              />
-            </ScrollViewContext.Provider>
+            <ColleagueNameAndStatusContext.Provider
+              value={colleagueNameAndStatusContextValue}>
+              <ScrollViewContext.Provider value={scrollViewProviderValue}>
+                <Memoize
+                  memoizedComponent={ChatMiddlePane}
+                  userData={userData}
+                  convoDisplayName={convoDisplayName}
+                  convoId={convoId}
+                  convoFriendship={convoFriendship}
+                  convoAssocUsername={convoAssocUsername}
+                  convoInfoOnlineStatus={convoInfoOnlineStatus}
+                  convoMessages={convoMessages}
+                  convoMessagesStatus={convoMessagesStatus}
+                  chatState={_chatState}
+                  webSocket={socket}
+                />
+              </ScrollViewContext.Provider>
+            </ColleagueNameAndStatusContext.Provider>
           </MiddlePaneHeaderContext.Provider>
         </Col>
 

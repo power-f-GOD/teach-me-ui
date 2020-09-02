@@ -112,15 +112,15 @@ const Colleague: FunctionComponent<{
   };
   return (
     <Collapse in={!collapsed}>
-      <div className={`d-flex p-2 ${removed ? 'removed-request' : ''}`}>
+      <div className={`d-flex p-3 ${removed ? 'removed-request' : ''}`}>
         <Avatar
           component='span'
-          className='chat-avatar request-avatar'
+          className='chat-avatar request-avatar mr-2'
           alt={colleague.firstname}
           src={`/images/avatar-1.png`}
         />
         <div className='d-flex justify-content-around flex-column'>
-          <div>
+          <div className='font-bold'>
             {colleague.firstname} {colleague.lastname}
           </div>
           {!removed && (
@@ -202,19 +202,19 @@ const Request: FunctionComponent<{
   };
   return (
     <Collapse in={!collapsed}>
-      <div className={`d-flex p-2 ${removed ? 'removed-request' : ''}`}>
+      <div className={`d-flex p-3 ${removed ? 'removed-request' : ''}`}>
         <Avatar
           component='span'
-          className='chat-avatar request-avatar'
+          className='chat-avatar request-avatar mr-2'
           alt={request.sender.firstname}
           src={`/images/avatar-1.png`}
         />
         <div className='d-flex justify-content-around flex-column'>
           <div>
-            You have received a colleague request from{' '}
-            <b>
+            <span className='font-bold'>
               {request.sender.firstname} {request.sender.lastname}
-            </b>
+            </span>{' '}
+            sent you a colleague request
           </div>
           {!removed && (
             <div className='d-flex'>

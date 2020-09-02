@@ -13,25 +13,17 @@ import AttachmentIcon from '@material-ui/icons/Attachment';
 
 import Row from 'react-bootstrap/Row';
 
-import { PostEditorState } from '../../../../constants';
+import { PostEditorState, UserData } from '../../../../constants';
 
 import Editor from '../../Editor';
 
 import { useSubmitPost } from '../../../../hooks/api';
 import { displayModal } from '../../../../functions';
 
-let userInfo: any = {};
-let [avatar, displayName, username] = ['', '', ''];
-
-//you can now use the 'userData' props in state to get userInfo; for this component, you can mapToProps or better still, just pass the value you need to it as props from its parent
-if (navigator.cookieEnabled && localStorage.kanyimuta) {
-  userInfo = JSON.parse(localStorage.kanyimuta);
-  displayName = userInfo.displayName;
-  username = userInfo.username;
-}
-
-const CreatePost = () => {
+const CreatePost = (props: { userData: UserData; sendFile: any }) => {
   // const { sendFile } = props;
+  const { userData } = props;
+  const { avatar, profile_photo, displayName, username } = userData;
 
   const label = useRef<HTMLLabelElement | any>();
 
@@ -81,6 +73,7 @@ const CreatePost = () => {
       });
     }
   };
+
   return (
     <Box p={1} pt={0}>
       <Row className='container-fluid p-0 mx-auto'>
@@ -89,7 +82,7 @@ const CreatePost = () => {
             component='span'
             className='chat-avatar compose-avatar'
             alt={displayName}
-            src={`/images/${avatar}`}
+            src={`/images/${profile_photo || avatar}`}
           />
         </Box>
         <div className='d-flex flex-column justify-content-center flex-grow-1'>
@@ -119,7 +112,7 @@ const CreatePost = () => {
           <Button
             onClick={onPostSubmit}
             color={state.post ? 'primary' : 'default'}
-            className='post-button p-0 flex-grow-1'>
+            className='post-button major-button Primary contained p-0 flex-grow-1'>
             {isSubmitting ? (
               <CircularProgress size={28} color='inherit' />
             ) : (
@@ -132,6 +125,9 @@ const CreatePost = () => {
   );
 };
 
-const mapStateToProps = ({ sendFile }: any) => ({ sendFile });
+const mapStateToProps = ({ sendFile, userData }: any) => ({
+  sendFile,
+  userData
+});
 
 export default connect(mapStateToProps)(CreatePost);

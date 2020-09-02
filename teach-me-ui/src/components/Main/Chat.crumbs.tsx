@@ -243,21 +243,21 @@ export default function ConfirmDialog(props: {
           onClick={handleClose('DELETE_FOR_ME')}
           color='primary'
           variant='text'
-          className='ml-auto my-2 mr-2'>
+          className='ml-auto my-2 mr-2 btn-secondary'>
           Delete for Self
         </Button>
         <Button
           onClick={handleClose('CANCEL')}
           color='primary'
           variant='text'
-          className='ml-auto my-2 mr-2'
+          className='ml-auto my-2 mr-2 btn-secondary'
           autoFocus>
           Cancel
         </Button>
         {canDeleteForEveryone && (
           <Button
             onClick={handleClose('DELETE_FOR_EVERYONE')}
-            className='ml-auto my-2 mr-2'
+            className='ml-auto my-2 mr-2 btn-secondary'
             variant='text'
             color='primary'>
             Delete for All
