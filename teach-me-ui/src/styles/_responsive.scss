@@ -3,8 +3,12 @@
     display: none;
   }
 
-  [class*=container] {
+  [class*='container'] {
     max-width: 1250px;
+  }
+
+  [class*='container-fluid'] {
+    max-width: 100%;
   }
 
   @media screen and (max-width: 1152px) {

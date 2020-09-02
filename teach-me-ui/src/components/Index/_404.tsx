@@ -8,7 +8,7 @@ const _404 = () => {
   return (
     <Box
       component='main'
-      className='root-grid container-404 flex-column d-flex justify-content-center align-items-center fade-in'
+      className='root-grid flex-column d-flex justify-content-center align-items-center fade-in'
       paddingY='100px'>
       <Box component='section'>
         <svg
