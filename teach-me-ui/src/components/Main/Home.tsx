@@ -36,6 +36,7 @@ const Home = (props: any) => {
     return () => {
       document.removeEventListener('scroll', trackScrolling);
     };
+    // eslint-disable-next-line
   }, []);
   return (
     <>

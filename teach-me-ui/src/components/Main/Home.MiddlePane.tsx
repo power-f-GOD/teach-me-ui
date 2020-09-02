@@ -41,6 +41,7 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
           }
         });
       }, config),
+    // eslint-disable-next-line
     []
   );
   const username = props.userData.username || '';
