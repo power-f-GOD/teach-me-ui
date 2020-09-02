@@ -67,8 +67,9 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
     }
     // eslint-disable-next-line
   }, [posts.length, props.type]);
+
   return (
-    <Container className='middle-pane p-1 p-md-2' fluid>
+    <Container className='middle-pane px-0' fluid>
       {(selfView || !inProfile) && <Compose />}
       {!inProfile && <Recommendations />}
 

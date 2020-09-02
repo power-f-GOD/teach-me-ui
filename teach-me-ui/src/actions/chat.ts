@@ -97,7 +97,7 @@ export const getConversations = (
   });
 
   axios({
-    url: `${baseURL}/conversations?limit=10&offset=`,
+    url: `${baseURL}/conversations?limit=20&offset=`,
     method: 'GET',
     headers: {
       Authorization: `Bearer ${getState().userData?.token}`,

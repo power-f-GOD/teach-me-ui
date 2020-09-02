@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
+import Container from 'react-bootstrap/Container';
+
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
-import Container from '@material-ui/core/Container';
 import ArrowForward from '@material-ui/icons/ArrowForwardIosSharp';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import IconButton from '@material-ui/core/IconButton';

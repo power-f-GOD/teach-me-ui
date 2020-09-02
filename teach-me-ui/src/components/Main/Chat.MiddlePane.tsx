@@ -49,7 +49,8 @@ import {
   conversationMessages,
   conversationInfo,
   getConversationMessages,
-  conversations
+  conversations,
+  conversation
 } from '../../actions/chat';
 import {
   dispatch,
@@ -108,6 +109,9 @@ export const ScrollViewContext = createContext(
 export const MiddlePaneHeaderContext = createContext(
   {} as Partial<ChatMiddlePaneProps>
 );
+export const ColleagueNameAndStatusContext = createContext(
+  {} as Partial<ChatMiddlePaneProps>
+);
 
 const scrollViewRef = createRef<HTMLElement | null>();
 const msgBoxRef = createRef<HTMLInputElement | null>();
@@ -117,29 +121,10 @@ let scrollView: HTMLElement | null = null;
 
 const Memoize = createMemo();
 
-let renderAwayDateTimeout: any;
-let _canDisplayAwayDate = false;
-let lastSeenForAway = Date.now();
 let hideScrollBarTimeout: any;
 let loadMessagesTimeout: any;
 let scrollViewScrollPos = 0;
 let messageDrafts: any = {};
-
-const displayAwayDate = () => {
-  renderAwayDateTimeout = setTimeout(() => {
-    _canDisplayAwayDate = Date.now() - lastSeenForAway > 300000;
-    //did the next line to trigger a state change for the feature to really work
-    dispatch(conversationInfo({ user_typing: '' }));
-
-    if (!_canDisplayAwayDate) {
-      clearTimeout(renderAwayDateTimeout);
-      displayAwayDate();
-    }
-
-    if (_canDisplayAwayDate || !lastSeenForAway)
-      clearTimeout(renderAwayDateTimeout);
-  }, 2000);
-};
 
 const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
   const {
@@ -274,8 +259,6 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
       <Col as='header' className='chat-header d-flex p-0'>
         <Memoize
           memoizedComponent={MiddlePaneHeader}
-          convoId={convoId}
-          convoDisplayName={convoDisplayName}
           convoInfoOnlineStatus={convoInfoOnlineStatus}
           convoMessagesStatus={convoMessagesStatus}
           selectedMessages={selectedMessages}
@@ -327,7 +310,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
                 <br />
                 Send{' '}
                 <Link
-                  className='font-bold'
+                  className='font-bold theme-secondary-lighter'
                   onClick={handleProfileLinkClick}
                   to={`/@${convoAssocUsername}${window.location.search.replace(
                     'open',
@@ -357,7 +340,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
             <ChatIcon fontSize='large' />
             <br />
             <br />
-            Start a new conversation.
+            Start a Conversation.
           </Box>
         )}
       </Box>
@@ -372,19 +355,15 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
 };
 
 function MiddlePaneHeader(props: {
-  convoId: string;
-  convoDisplayName: string;
-  convoInfoOnlineStatus: OnlineStatus;
-  webSocket: WebSocket;
   convoMessagesStatus: SearchState['status'];
+  convoInfoOnlineStatus: OnlineStatus;
   setSelectedMessages: Function;
-  selectedMessages: { [key: string]: any };
   setClearSelections: Function;
+  selectedMessages: { [key: string]: any };
+  webSocket: WebSocket;
 }) {
   const {
     convoMessagesStatus,
-    convoId,
-    convoDisplayName,
     convoInfoOnlineStatus,
     selectedMessages,
     setClearSelections,
@@ -394,26 +373,10 @@ function MiddlePaneHeader(props: {
   const {
     chatState: _chatState,
     convoInfoData,
-    convoAvatar,
-    convoType,
-    convoInfoLastSeen,
-    convoInfoStatus,
-    convoUserTyping,
     handleSetActivePaneIndex
   } = useContext(MiddlePaneHeaderContext);
   const { isMinimized, isOpen } = _chatState as ChatState;
-  const canDisplayAwayDate = _canDisplayAwayDate;
-  const [lastSeenDate, lastSeenTime] = [
-    formatMapDateString(convoInfoData?.last_seen as number),
-    timestampFormatter(convoInfoData?.last_seen)
-  ];
-  const lastAwayDate = `away ${
-    canDisplayAwayDate ? 'since ' + lastSeenTime + ', ' + lastSeenDate : ''
-  }`;
-  const lastOnlineDate = `last seen ${lastSeenDate} at ${lastSeenTime.replace(
-    ' ',
-    ''
-  )}`;
+
   const numOfSelectedMessages = Object.keys(selectedMessages).length;
   const moreOptionsContainer = moreOptionsContainerRef.current;
 
@@ -464,6 +427,9 @@ function MiddlePaneHeader(props: {
         '',
         window.location.pathname
       );
+      dispatch(conversation(''));
+      dispatch(conversationInfo({ data: {} }));
+      dispatch(conversationMessages({ data: [] }));
     }, 400);
   }, [isOpen, convoMessagesStatus]);
 
@@ -503,111 +469,19 @@ function MiddlePaneHeader(props: {
     }
   }, [moreOptionsContainer, moreOptionsContainerIsVisible]);
 
-  useEffect(() => {
-    lastSeenForAway = convoInfoLastSeen as number;
-    displayAwayDate();
-
-    if (convoInfoOnlineStatus !== 'AWAY' || canDisplayAwayDate) {
-      clearTimeout(renderAwayDateTimeout);
-      _canDisplayAwayDate = false;
-    }
-  }, [convoInfoOnlineStatus, canDisplayAwayDate, convoInfoLastSeen]);
-
   return (
     <>
       <Row
         className={`title-control-wrapper px-2 mx-0 ${
           numOfSelectedMessages ? 'hide' : 'show'
         }`}>
-        <Col as='span' className='colleague-name'>
-          <Box
-            component='span'
-            className='control-wrapper conversations-menu-button-wrapper'>
-            <IconButton
-              edge='start'
-              className='conversations-menu-button ml-0 mr-1'
-              color='inherit'
-              onClick={handleConversationsMenuClick}
-              aria-label='conversations menu'>
-              <MenuIcon />
-            </IconButton>
-          </Box>
-
-          {convoType === 'ONE_TO_ONE' ? (
-            <Box
-              component='span'
-              className='colleague-name-container d-inline-flex align-items-center'
-              onClick={
-                userDeviceIsMobile ? handleUserInfoOptionClick : undefined
-              }>
-              <Badge
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'right'
-                }}
-                className={`online-badge ${
-                  convoInfoStatus === 'fulfilled'
-                    ? convoInfoOnlineStatus?.toLowerCase()
-                    : 'offline'
-                }`}
-                overlap='circle'
-                variant='dot'>
-                <Avatar
-                  component='span'
-                  className='chat-avatar'
-                  alt={convoDisplayName}
-                  src={`/images/${convoAvatar}`}
-                />
-              </Badge>{' '}
-              <Col as='span' className='ml-2 p-0'>
-                <Col
-                  as='span'
-                  className={`display-name ${
-                    convoInfoStatus === 'pending'
-                      ? 'status-hidden'
-                      : !convoInfoData?.last_seen
-                      ? 'status-hidden'
-                      : ''
-                  } p-0`}>
-                  {convoDisplayName ?? placeHolderDisplayName}
-                </Col>
-                <Col
-                  as='span'
-                  className={`status ${
-                    convoInfoStatus === 'fulfilled' && convoInfoData?.last_seen
-                      ? 'show'
-                      : ''
-                  } p-0`}>
-                  {convoUserTyping
-                    ? 'typing...'
-                    : convoInfoOnlineStatus === 'ONLINE'
-                    ? 'online'
-                    : convoInfoOnlineStatus === 'AWAY'
-                    ? lastAwayDate
-                    : lastSeenDate
-                    ? lastOnlineDate
-                    : '...'}
-                </Col>
-              </Col>
-            </Box>
-          ) : !convoId ? (
-            <Col as='span' className='ml-0 p-0'>
-              {placeHolderDisplayName}
-            </Col>
-          ) : (
-            <>
-              <Avatar
-                component='span'
-                className='chat-avatar ml-0'
-                alt='Emmanuel Sunday'
-                src={`/images/${convoAvatar}`}
-              />
-              <Col as='span' className='ml-2 p-0'>
-                {convoDisplayName ?? placeHolderDisplayName}
-              </Col>
-            </>
-          )}
-        </Col>
+        <Memoize
+          memoizedComponent={MiddlePandeHeaderColleagueNameAndStatus}
+          convoInfoOnlineStatus={convoInfoOnlineStatus}
+          convoInfoData={convoInfoData}
+          handleConversationsMenuClick={handleConversationsMenuClick}
+          handleUserInfoOptionClick={handleUserInfoOptionClick}
+        />
 
         <Col as='span' className='controls p-0'>
           <Box component='span' className='control-wrapper ml-1'>
@@ -689,6 +563,164 @@ function MiddlePaneHeader(props: {
         webSocket={socket}
       />
     </>
+  );
+}
+
+let renderAwayDateTimeout: any;
+let _canDisplayAwayDate = false;
+let lastSeenForAway = Date.now();
+
+function MiddlePandeHeaderColleagueNameAndStatus(props: {
+  convoInfoOnlineStatus: OnlineStatus;
+  convoInfoData: ConversationInfo['data'];
+  handleConversationsMenuClick: React.MouseEventHandler;
+  handleUserInfoOptionClick: React.MouseEventHandler;
+}) {
+  const {
+    convoInfoOnlineStatus,
+    convoInfoData,
+    handleConversationsMenuClick,
+    handleUserInfoOptionClick
+  } = props;
+  const {
+    convoId,
+    convoDisplayName,
+    convoAvatar,
+    convoType,
+    convoInfoStatus,
+    convoUserTyping,
+    convoInfoLastSeen
+  } = useContext(ColleagueNameAndStatusContext);
+  const [canDisplayAwayDate, setCanDisplayAwayDate] = useState(false);
+  const [lastSeenDate, lastSeenTime] = [
+    formatMapDateString(convoInfoData?.last_seen as number),
+    timestampFormatter(convoInfoData?.last_seen)
+  ];
+  const lastAwayDate = `away ${
+    canDisplayAwayDate ? 'since ' + lastSeenTime + ', ' + lastSeenDate : ''
+  }`;
+  const lastOnlineDate = `last seen ${lastSeenDate} at ${lastSeenTime.replace(
+    ' ',
+    ''
+  )}`;
+
+  const displayAwayDate = useCallback(() => {
+    renderAwayDateTimeout = setTimeout(() => {
+      _canDisplayAwayDate = Date.now() - lastSeenForAway > 300000;
+      //did the next line to trigger a state change for the feature to really work
+      dispatch(conversationInfo({ user_typing: '' }));
+
+      if (!_canDisplayAwayDate) {
+        clearTimeout(renderAwayDateTimeout);
+        displayAwayDate();
+      }
+
+      if (_canDisplayAwayDate || !lastSeenForAway) {
+        clearTimeout(renderAwayDateTimeout);
+        setCanDisplayAwayDate(true);
+      }
+    }, 10000);
+  }, []);
+
+  useEffect(() => {
+    lastSeenForAway = convoInfoLastSeen as number;
+    displayAwayDate();
+
+    if (convoInfoOnlineStatus !== 'AWAY') {
+      clearTimeout(renderAwayDateTimeout);
+      setCanDisplayAwayDate(false);
+    } else {
+    }
+  }, [convoInfoOnlineStatus, convoInfoLastSeen, displayAwayDate]);
+
+  return (
+    <Col as='span' className='colleague-name'>
+      <Box
+        component='span'
+        className='control-wrapper conversations-menu-button-wrapper'>
+        <IconButton
+          edge='start'
+          className='conversations-menu-button ml-0 mr-1'
+          color='inherit'
+          onClick={handleConversationsMenuClick}
+          aria-label='conversations menu'>
+          <MenuIcon />
+        </IconButton>
+      </Box>
+
+      {convoType === 'ONE_TO_ONE' ? (
+        <Box
+          component='span'
+          className='colleague-name-container d-inline-flex align-items-center'
+          onClick={userDeviceIsMobile ? handleUserInfoOptionClick : undefined}>
+          <Badge
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right'
+            }}
+            className={`online-badge ${
+              convoInfoStatus === 'fulfilled'
+                ? convoInfoOnlineStatus?.toLowerCase()
+                : 'offline'
+            }`}
+            overlap='circle'
+            variant='dot'>
+            <Avatar
+              component='span'
+              className='chat-avatar'
+              alt={convoDisplayName}
+              src={`/images/${convoAvatar}`}
+            />
+          </Badge>{' '}
+          <Col as='span' className='ml-2 p-0'>
+            <Col
+              as='span'
+              className={`display-name ${
+                convoInfoStatus === 'pending'
+                  ? 'status-hidden'
+                  : !convoInfoData?.last_seen
+                  ? 'status-hidden'
+                  : ''
+              } p-0`}>
+              {convoDisplayName ?? placeHolderDisplayName}
+            </Col>
+            <Col
+              as='span'
+              className={`status ${
+                convoInfoStatus === 'fulfilled' && convoInfoData?.last_seen
+                  ? 'show'
+                  : ''
+              } p-0`}>
+              {convoUserTyping
+                ? 'typing...'
+                : convoInfoOnlineStatus === 'ONLINE'
+                ? 'online'
+                : convoInfoOnlineStatus === 'AWAY'
+                ? lastAwayDate
+                : lastSeenDate
+                ? lastOnlineDate
+                : '...'}
+            </Col>
+          </Col>
+        </Box>
+      ) : !convoId ? (
+        <Col as='span' className='ml-0 p-0'>
+          {placeHolderDisplayName}
+        </Col>
+      ) : (
+        <>
+          <Avatar
+            component='span'
+            className='chat-avatar ml-0'
+            alt='Emmanuel Sunday'
+            src={`/images/${convoAvatar}`}
+          />
+          <Col as='span' className='ml-2 p-0'>
+            {convoDisplayName ?? placeHolderDisplayName}
+          </Col>
+        </>
+      )}
+    </Col>
   );
 }
 
@@ -861,10 +893,11 @@ function ScrollView(props: {
     convoParticipants,
     convoInfoNewMessage
   } = useContext(ScrollViewContext);
+  const { chat, cid } = queryString.parse(window.location.search) ?? {};
 
   const offset = (convoMessages![0] ?? {}).date;
   const handleScrollViewScroll = useCallback(() => {
-    if (scrollView) {
+    if (scrollView && cid && (convoId || isNaN(cid)) && chat) {
       clearTimeout(loadMessagesTimeout);
       scrollViewScrollPos = scrollView.scrollHeight - scrollView.scrollTop;
       loadMessagesTimeout = setTimeout(() => {
@@ -881,7 +914,7 @@ function ScrollView(props: {
             )(dispatch)
           );
         }
-      }, 500);
+      }, 750);
 
       scrollView.classList.remove('scroll-ended');
       clearTimeout(hideScrollBarTimeout);
@@ -889,7 +922,7 @@ function ScrollView(props: {
         scrollView!.classList.add('scroll-ended');
       }, 800);
     }
-  }, [convoId, offset, convoMessagesStatusText]);
+  }, [chat, cid, convoId, offset, convoMessagesStatusText]);
 
   const handleMessageSelection = useCallback(
     (id: string | null, value: SelectedMessageValue) => {
@@ -916,12 +949,19 @@ function ScrollView(props: {
     if (scrollView) {
       scrollView.style.marginBottom = 'calc(21.5px - 1.25rem)';
     }
+  }, []);
 
+  useEffect(() => {
     //call this on app load to take care of wider screens where messages may not be long enough for a scroll
-    if (scrollView && scrollView.scrollHeight <= scrollView.offsetHeight) {
+    if (
+      scrollView &&
+      scrollView.scrollHeight <= scrollView.offsetHeight &&
+      convoMessagesStatus === 'fulfilled' &&
+      !/end|socket/.test(convoMessagesStatusText as string)
+    ) {
       handleScrollViewScroll();
     }
-  }, [handleScrollViewScroll]);
+  }, [convoMessagesStatus, convoMessagesStatusText, handleScrollViewScroll]);
 
   useEffect(() => {
     if (scrollView) {
@@ -1002,9 +1042,8 @@ function ScrollView(props: {
       </Box>
       <Box
         className={`pt-4 mb-4 text-center theme-tertiary-lighter ${
-          (convoMessagesStatus === 'fulfilled' &&
-            /end/.test(convoMessagesStatusText as string)) ||
-          (convoMessages?.length && convoMessages?.length < 20)
+          convoMessagesStatus === 'fulfilled' &&
+          /end/.test(convoMessagesStatusText as string)
             ? 'd-block'
             : 'd-none'
         }`}

@@ -248,7 +248,7 @@ const Signup = (props: SignupPropsState) => {
               const keyword = institution.value?.keyword!.trim();
               const highlighted = `${_institution.name.replace(
                 new RegExp(`(${keyword})`, 'i'),
-                `<span class='theme-secondary-darker'>$1</span>`
+                `<span class='theme-secondary-lighter'>$1</span>`
               )}, ${country}`.replace(/<\/?script>/gi, '');
 
               return (
@@ -299,7 +299,7 @@ const Signup = (props: SignupPropsState) => {
                   .trim()
                   .replace(
                     new RegExp(`(${department.value!.trim()})`, 'i'),
-                    `<span class='theme-secondary-darker'>$1</span>`
+                    `<span class='theme-secondary-lighter'>$1</span>`
                   )}`.replace(/<\/?script>/gi, '');
 
                 return (
@@ -347,7 +347,7 @@ const Signup = (props: SignupPropsState) => {
                   .trim()
                   .replace(
                     new RegExp(`(${level.value!.trim()})`, 'i'),
-                    `<span class='theme-secondary-darker'>$1</span>`
+                    `<span class='theme-secondary-lighter'>$1</span>`
                   )}`.replace(/<\/?script>/gi, '');
 
                 return (
@@ -666,6 +666,7 @@ function DatePicker({ dob }: any) {
         inputVariant='outlined'
         value={selectedDate}
         error={dob.err}
+        className='secondary'
         inputRef={refs.dobInput}
         helperText={dob.helperText}
         fullWidth

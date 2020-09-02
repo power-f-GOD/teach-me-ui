@@ -123,6 +123,8 @@ const Search = (props: any) => {
                   ? 'Found nothing. :/'
                   : searchKanyimuta.status === 'pending'
                   ? 'Searching... ;)'
+                  : searchKanyimuta.err
+                  ? 'An error occurred. :('
                   : 'Search Kanyimuta'}
               </span>
             </Box>
