@@ -101,6 +101,7 @@ const Post: React.FunctionComponent<
   };
   return (
     <Box
+      id={props.id}
       className='post-list-page mb-1 mb-md-2'
       borderRadius='2px'
       p={0}
