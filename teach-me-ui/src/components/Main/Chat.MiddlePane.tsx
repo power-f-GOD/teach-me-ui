@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 
 import queryString from 'query-string';
 
+import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
@@ -285,10 +286,9 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
       />
       <Box className='scroll-bar-fader' />
 
-      <Box
-        className='theme-tertiary-lighter d-flex align-items-center justify-content-center messages-status-signal'
-        height='100%'
-        fontWeight='bold'>
+      <Container
+        fluid
+        className='theme-tertiary-lighter d-flex align-items-center justify-content-center messages-status-signal font-bold h-100'>
         {convoMessagesStatus === 'fulfilled' &&
         !convoMessages.length &&
         convoId ? (
@@ -343,7 +343,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
             Start a Conversation.
           </Box>
         )}
-      </Box>
+      </Container>
 
       <Memoize
         memoizedComponent={MessageBox}
@@ -895,6 +895,8 @@ function ScrollView(props: {
   } = useContext(ScrollViewContext);
   const { chat, cid } = queryString.parse(window.location.search) ?? {};
 
+  const [hasReachedTopOfConvo, setHasReachedTopOfConvo] = useState(false);
+
   const offset = (convoMessages![0] ?? {}).date;
   const handleScrollViewScroll = useCallback(() => {
     if (scrollView && cid && (convoId || isNaN(cid)) && chat) {
@@ -903,6 +905,7 @@ function ScrollView(props: {
       loadMessagesTimeout = setTimeout(() => {
         if (
           scrollView!?.scrollTop <= 100 &&
+          !hasReachedTopOfConvo &&
           !/end/.test(convoMessagesStatusText as string)
         ) {
           dispatch(
@@ -913,6 +916,9 @@ function ScrollView(props: {
               offset
             )(dispatch)
           );
+          setHasReachedTopOfConvo(false);
+        } else {
+          setHasReachedTopOfConvo(true);
         }
       }, 750);
 
@@ -922,7 +928,14 @@ function ScrollView(props: {
         scrollView!.classList.add('scroll-ended');
       }, 800);
     }
-  }, [chat, cid, convoId, offset, convoMessagesStatusText]);
+  }, [
+    chat,
+    cid,
+    convoId,
+    offset,
+    hasReachedTopOfConvo,
+    convoMessagesStatusText
+  ]);
 
   const handleMessageSelection = useCallback(
     (id: string | null, value: SelectedMessageValue) => {
@@ -942,6 +955,12 @@ function ScrollView(props: {
     },
     [setSelectedMessages, setClearSelections]
   );
+
+  useEffect(() => {
+    if (convoId) {
+      setHasReachedTopOfConvo(false);
+    }
+  }, [convoId]);
 
   useEffect(() => {
     if (!scrollView) scrollView = scrollViewRef.current;
@@ -999,7 +1018,7 @@ function ScrollView(props: {
         convoMessages?.length &&
         /settled|fulfilled/.test(convoMessagesStatus as string)
       ) {
-        delay(400).then(() => {
+        delay(700).then(() => {
           scrollView!.classList.remove('hide-messages');
         });
       } else {
@@ -1042,8 +1061,7 @@ function ScrollView(props: {
       </Box>
       <Box
         className={`pt-4 mb-4 text-center theme-tertiary-lighter ${
-          convoMessagesStatus === 'fulfilled' &&
-          /end/.test(convoMessagesStatusText as string)
+          convoMessagesStatus === 'fulfilled' && hasReachedTopOfConvo
             ? 'd-block'
             : 'd-none'
         }`}
