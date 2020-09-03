@@ -905,8 +905,7 @@ function ScrollView(props: {
       loadMessagesTimeout = setTimeout(() => {
         if (
           scrollView!?.scrollTop <= 100 &&
-          !hasReachedTopOfConvo &&
-          !/end/.test(convoMessagesStatusText as string)
+          !/end|socket/.test(convoMessagesStatusText as string)
         ) {
           dispatch(
             getConversationMessages(
@@ -917,8 +916,6 @@ function ScrollView(props: {
             )(dispatch)
           );
           setHasReachedTopOfConvo(false);
-        } else {
-          setHasReachedTopOfConvo(true);
         }
       }, 750);
 
@@ -933,7 +930,6 @@ function ScrollView(props: {
     cid,
     convoId,
     offset,
-    hasReachedTopOfConvo,
     convoMessagesStatusText
   ]);
 
@@ -979,6 +975,10 @@ function ScrollView(props: {
       !/end|socket/.test(convoMessagesStatusText as string)
     ) {
       handleScrollViewScroll();
+    }
+
+    if (/end/.test(convoMessagesStatusText as string)) {
+      setHasReachedTopOfConvo(true);
     }
   }, [convoMessagesStatus, convoMessagesStatusText, handleScrollViewScroll]);
 
