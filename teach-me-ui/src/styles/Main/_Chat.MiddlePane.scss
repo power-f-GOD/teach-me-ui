@@ -278,6 +278,31 @@ $msg-radius: 1.25rem;
   padding: 0.5rem 0.65rem;
 }
 
+body.desktop {
+  .chat-scroll-view {
+    &.add-scroll-padding {
+      .msg-container {
+        &.last-message.outgoing {
+          .msg-wrapper {
+            animation: outgoingMessageSlideInWithScroll 1s;
+          }
+        }
+      }
+    }
+  }
+
+  @keyframes outgoingMessageSlideInWithScroll {
+    from {
+      opacity: 0;
+      transform: translateX(2rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0.5rem);
+    }
+  }
+}
+
 body.mobile {
   .chat-scroll-view {
     padding: 1rem;
@@ -313,48 +338,16 @@ body.mobile {
         animation: outgoingMessageSlideInForMobile 1s;
       }
     }
-  }
 
-  @keyframes outgoingMessageSlideInForMobile {
-    from {
-      opacity: 0;
-      transform: translateX(2rem);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-}
-
-body.mobile {
-  .chat-scroll-view {
-    padding: {
-      right: 1rem;
-      left: 1.25rem;
-    }
-  }
-
-  .msg-container {
-    &.outgoing .msg-wrapper {
-      transform: translateX(-0.25rem) !important;
-    }
-
-    .last-message {
-      &.outgoing .msg-wrapper {
-        animation: outgoingMessageSlideInForMobile 1s !important;
+    @keyframes outgoingMessageSlideInForMobile {
+      from {
+        opacity: 0;
+        transform: translateX(2rem);
       }
-    }
-  }
-
-  @keyframes outgoingMessageSlideInForMobile {
-    from {
-      opacity: 0;
-      transform: translateX(2rem);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(-0.25rem);
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
   }
 }
@@ -444,19 +437,19 @@ body.mobile {
 
     &.outgoing {
       .msg-wrapper {
-        animation: outgoingMessageSlideIn 1s;
+        animation: outgoingMessageSlideInWithNoScroll 1s;
       }
     }
   }
 
-  @keyframes outgoingMessageSlideIn {
+  @keyframes outgoingMessageSlideInWithNoScroll {
     from {
       opacity: 0;
       transform: translateX(2rem);
     }
     to {
       opacity: 1;
-      transform: translateX(0.5rem);
+      transform: translateX(0rem);
     }
   }
 
