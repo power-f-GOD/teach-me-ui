@@ -1,4 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, {
+  useState, 
+  useRef,
+  ChangeEvent
+} from 'react';
 
 import { recursiveUploadReturnsArrayOfId } from '../../../../functions/utils';
 
@@ -20,59 +24,56 @@ import Editor from '../../Editor';
 import { useSubmitPost } from '../../../../hooks/api';
 import { displayModal } from '../../../../functions';
 
-let userInfo: any = {};
-let [avatar, displayName, username] = ['', '', ''];
-
-//you can now use the 'userData' props in state to get userInfo; for this component, you can mapToProps or better still, just pass the value you need to it as props from its parent
-if (navigator.cookieEnabled && localStorage.kanyimuta) {
-  userInfo = JSON.parse(localStorage.kanyimuta);
-  displayName = userInfo.displayName;
-  username = userInfo.username;
-}
-
-const CreatePost = () => {
-  // const { sendFile } = props;
+const CreatePost = (props: any) => {
+  const { userData } = props;
 
   const label = useRef<HTMLLabelElement | any>();
 
-  // const avatarSizes = useStyles()
   const [state, setState] = useState<PostEditorState>({
     mentionsKeyword: '',
-    post: '',
-    top: 0,
-    left: 0,
-    showSuggestor: false,
+    post: {
+      text: '',
+      media: []
+    },
     mentions: [],
-    selectedFiles: []
   });
+
+  const [selectedFiles, setSelectedFiles] = useState<any>();
   const [submitPost, , isSubmitting] = useSubmitPost(state.post);
 
   const onUpdate = (value: string) => {
     setState({
       ...state,
-      post: value
-    });
+      post: {
+        ...state.post,
+        text: value
+      }
+    })
   };
-  //   const fileSelectedHandler = (e: ChangeEvent<any>) => {
-  //     let files: Array<File> = [];
-  //     for (let file of e.target.files) {
-  //       if (file.size > 50000000) {
-  //         label.current.style.display = 'block'
-  //         return
-  //       files.push(file)
-  //       }
-  //     }
-  //     setState({
-  //       ...state,
-  //       selectedFiles: e.target.files,
-  //       post: {
-  //        ...state.post,
-  //        media: recursiveUploadReturnsArrayOfId(files)
-  //       }
-  //     })
-  // };
 
+  const fileSelectedHandler = (e: ChangeEvent<any>) => {
+    let files: Array<File> = [];
+    for (let file of e.target.files) {
+      if (file.size > 50000000) {
+        label.current.style.display = 'block'
+        return
+      }
+      files.push(file)
+    }
+    console.log(files)
+    
+    setState({
+      ...state,
+      post: {
+        ...state.post,
+        media: recursiveUploadReturnsArrayOfId(files)
+      }
+    })
+    setSelectedFiles(e.target.files);
+  };
+ 
   const onPostSubmit = () => {
+    console.log(state.selectedFiles)
     if (state.post) {
       submitPost().then(() => {
         if (!isSubmitting) {
@@ -88,13 +89,13 @@ const CreatePost = () => {
           <Avatar
             component='span'
             className='chat-avatar compose-avatar'
-            alt={displayName}
-            src={`/images/${avatar}`}
+            alt={userData.displayName}
+            src={`/images/${userData.avatar}`}
           />
         </Box>
         <div className='d-flex flex-column justify-content-center flex-grow-1'>
-          <span>{displayName}</span>
-          <small>{username}</small>
+          <span>{userData.displayName}</span>
+          <small>{userData.username}</small>
         </div>
       </Row>
       <form>
@@ -110,11 +111,16 @@ const CreatePost = () => {
         </label>
         <input
           multiple={true}
-          id={'my-input'}
+          id='my-input'
+          onChange={fileSelectedHandler}
           style={{ display: 'none' }}
           type={'file'}
         />
-
+        <Row className='d-flex mx-auto mt-1'>
+          <div>
+            {selectedFiles && selectedFiles.map((file: any) => (<div>{file.name}</div>))}
+          </div>
+        </Row>
         <Row className='d-flex mx-auto mt-1'>
           <Button
             onClick={onPostSubmit}
@@ -132,6 +138,6 @@ const CreatePost = () => {
   );
 };
 
-const mapStateToProps = ({ sendFile }: any) => ({ sendFile });
+const mapStateToProps = ({ userData }: any) => ({ userData });
 
 export default connect(mapStateToProps)(CreatePost);

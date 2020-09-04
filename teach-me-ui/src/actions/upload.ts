@@ -48,6 +48,7 @@ export const sendFileToServer = (file: File) => (
     },
     data: formData
   }).then(({ data }: any) => {
+    console.log(data._id)
       const { error, _id } = data as {
         error: boolean;
         _id: string;

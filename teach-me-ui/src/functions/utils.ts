@@ -591,6 +591,7 @@ export const recursiveUploadReturnsArrayOfId = (files: Array<File>) => {
   if(nextFile){
     dispatch(sendFileToServer(nextFile)(dispatch))
       ids.push(getState().sendFile.data);
+      console.log(ids)
       recursiveUploadReturnsArrayOfId(files)
   } else {
     return ids
