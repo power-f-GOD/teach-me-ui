@@ -1,7 +1,11 @@
 .chat-right-pane {
   background-color: #fff;
+  height: 100vh;
   max-height: 100vh;
   border-left: 0.0625rem solid #ddd;
+  position: absolute;
+  right: 0;
+  animation: slideInRight 0.35s;
 
   .chat-header {
     background-color: inherit;

@@ -12,10 +12,6 @@
 
   .colleague-name {
     max-width: 100%;
-
-    .colleague-name-container {
-      max-width: calc(100% - 9rem);
-    }
   }
 
   .display-name {
@@ -55,11 +51,11 @@
     font-size: 1.35rem !important;
   }
 
-  .conversations-menu-button {
+  &.conversations-menu-button-wrapper {
     display: none;
   }
 
-  .more-button {
+  &.more-options-wrapper {
     display: none;
   }
 
@@ -69,6 +65,8 @@
 }
 
 .more-options-container {
+  $transition: 0.3s ease 0.25s, background-color 0.3s;
+
   position: absolute;
   right: 0;
   top: calc(100% + 0.5rem);
@@ -76,20 +74,18 @@
   overflow: hidden;
   background-color: white;
   opacity: 0;
-  visibility: hidden;
   box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
   perspective: 3rem;
   transform: translateX(1.5rem);
-  transition: 0.3s;
+  transition: $transition;
 
   button {
     transform: rotateY(-30deg) translateX(-3rem);
-    transition: 0.3s;
+    transition: $transition;
   }
 
-  &.visible {
+  &.show {
     opacity: 1;
-    visibility: visible;
     transform: translateX(0);
 
     button {
@@ -275,11 +271,36 @@
 }
 
 $incoming-outgoing-spacing: 1.25rem;
-$msgs-spacing: 0.125rem;
+$msgs-spacing: 0.1875rem;
 $msg-radius: 1.25rem;
 
 .scroll-view-msg {
   padding: 0.5rem 0.65rem;
+}
+
+body.desktop {
+  .chat-scroll-view {
+    &.add-scroll-padding {
+      .msg-container {
+        &.last-message.outgoing {
+          .msg-wrapper {
+            animation: outgoingMessageSlideInWithScroll 1s;
+          }
+        }
+      }
+    }
+  }
+
+  @keyframes outgoingMessageSlideInWithScroll {
+    from {
+      opacity: 0;
+      transform: translateX(2rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0.5rem);
+    }
+  }
 }
 
 body.mobile {
@@ -288,68 +309,56 @@ body.mobile {
   }
 
   .msg-container {
-    &.outgoing .msg-wrapper {
-      transform: translateX(0);
-      animation: outgoingMessageSlideInForMobile 1s;
+    &.last-message.incoming,
+    &.delayed.incoming,
+    &.incoming {
+      .msg-wrapper {
+        &::before {
+          left: -$msg-radius + 0.65rem !important;
+          clip-path: polygon(0 0, 80% 0, 70% 75%, 0 0.25rem, 0 0);
+        }
+      }
     }
 
-    .last-message {
-      &.outgoing .msg-wrapper {
+    &.last-message.outgoing,
+    &.delayed.outgoing,
+    &.outgoing {
+      .msg-wrapper {
+        transform: translateX(0);
+
+        &::before {
+          right: -$msg-radius + 0.65rem;
+          clip-path: polygon(20% 0, 100% 0, 100% 0.25rem, 30% 75%, 0 0);
+        }
+      }
+    }
+
+    &.last-message.outgoing {
+      .msg-wrapper {
         animation: outgoingMessageSlideInForMobile 1s;
       }
     }
-  }
 
-  @keyframes outgoingMessageSlideInForMobile {
-    from {
-      opacity: 0;
-      transform: translateX(2rem);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-}
-
-body.mobile {
-  .chat-scroll-view {
-    padding: {
-      right: 1rem;
-      left: 1.25rem;
-    }
-  }
-
-  .msg-container {
-    &.outgoing .msg-wrapper {
-      transform: translateX(-0.25rem);
-      animation: outgoingMessageSlideInForMobile 1s;
-    }
-
-    .last-message {
-      &.outgoing .msg-wrapper {
-        animation: outgoingMessageSlideInForMobile 1s;
+    @keyframes outgoingMessageSlideInForMobile {
+      from {
+        opacity: 0;
+        transform: translateX(2rem);
       }
-    }
-  }
-
-  @keyframes outgoingMessageSlideInForMobile {
-    from {
-      opacity: 0;
-      transform: translateX(2rem);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(-0.25rem);
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
   }
 }
 
 .msg-container {
   position: relative;
-  // user-select: none;
+  user-select: none;
   cursor: pointer;
   opacity: 1;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   transition: opacity 0.3s;
 
   &.deleted {
@@ -362,10 +371,10 @@ body.mobile {
       $tr: 0.2s,
       $zi: unset,
       $w: calc(100% + 4rem),
-      $h: calc(100% + 0.125rem),
+      $h: calc(100% + 0.19rem),
       $l: -2rem,
       $t: unset,
-      $b: -0.0625rem,
+      $b: -0.125rem,
       $bg: rgba($prim-r + 50, $prim-g + 50, $prim-b + 50, 0.35)
     );
     transform: scale(1, 0);
@@ -388,42 +397,6 @@ body.mobile {
       &::before {
         background-color: $theme-tertiary-v7;
       }
-    }
-  }
-
-  &.last-message {
-    &.incoming {
-      .msg-wrapper {
-        animation: incomingMessageSlideIn 1s;
-      }
-    }
-
-    &.outgoing {
-      .msg-wrapper {
-        animation: outgoingMessageSlideIn 1s;
-      }
-    }
-  }
-
-  @keyframes outgoingMessageSlideIn {
-    from {
-      opacity: 0;
-      transform: translateX(2rem);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0.5rem);
-    }
-  }
-
-  @keyframes incomingMessageSlideIn {
-    from {
-      opacity: 0;
-      transform: translateX(-2rem);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
     }
   }
 
@@ -455,6 +428,42 @@ body.mobile {
     }
   }
 
+  &.last-message {
+    &.incoming {
+      .msg-wrapper {
+        animation: incomingMessageSlideIn 1s;
+      }
+    }
+
+    &.outgoing {
+      .msg-wrapper {
+        animation: outgoingMessageSlideInWithNoScroll 1s;
+      }
+    }
+  }
+
+  @keyframes outgoingMessageSlideInWithNoScroll {
+    from {
+      opacity: 0;
+      transform: translateX(2rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0rem);
+    }
+  }
+
+  @keyframes incomingMessageSlideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-2rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
   $br: 0.35rem;
 
   &.incoming {
@@ -468,7 +477,7 @@ body.mobile {
       &::before {
         background-color: $bg-color;
         top: 0;
-        left: -$msg-radius + 0.45rem;
+        left: -$msg-radius + 0.5rem;
         clip-path: polygon(0 0, 80% 0, 70% 60%, 0 0.25rem, 0 0);
       }
     }
@@ -608,7 +617,8 @@ body.mobile {
     white-space: pre-wrap;
     word-break: break-word;
     width: auto;
-    max-width: 75%;
+    max-width: 85%;
+    box-shadow: 0 0.0625rem 0 rgba(0, 0, 0, 0.25);
 
     &::before {
       position: absolute;
@@ -637,12 +647,6 @@ body.mobile {
   min-height: $height;
   max-height: $height;
   background-color: white;
-  transform: translateY($height);
-  transition: 0.35s;
-
-  &.show {
-    transform: translateY(0);
-  }
 }
 
 .msg-box-wrapper,
@@ -692,6 +696,7 @@ body.mobile {
     background: #eee;
     height: calc(100% + 0.75rem);
     width: calc(100% + 6.5rem);
+    box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.075);
     z-index: 0;
   }
 

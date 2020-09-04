@@ -44,11 +44,11 @@ export const processPostFn = (post: string) => {
       ) : /(^#)[A-Za-z0-9_]+[,.!?]*$/.test(w) ? (
         <Box component='span' key={i}>
           <Link
-            onClick={stopProp}
-            to={() => {
+            onClick={(e: any) => {
+              stopProp(e);
               dispatch(triggerSearchKanyimuta(w)(dispatch));
-              return `/search/${w.substring(1)}`;
-            }}>
+            }}
+            to={`/search?q=${w.substring(1)}`}>
             {w}
           </Link>{' '}
         </Box>
@@ -101,6 +101,7 @@ const Post: React.FunctionComponent<
   };
   return (
     <Box
+      id={props.id}
       className='post-list-page mb-1 mb-md-2'
       borderRadius='2px'
       p={0}

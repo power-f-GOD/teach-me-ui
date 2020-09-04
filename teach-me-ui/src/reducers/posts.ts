@@ -6,6 +6,7 @@ import {
   UPDATE_POST,
   UPDATE_REPOST,
   FETCHED_POSTS,
+  FETCHED_MORE_POSTS,
   FETCHED_POST,
   FETCH_POST_STARTED,
   FETCH_POST_REJECTED,
@@ -41,6 +42,8 @@ export const posts = (
   else if (action.type === UPDATE_POST)
     return updatePost(state, action.payload);
   else if (action.type === FETCHED_POSTS) return [...action.payload];
+  else if (action.type === FETCHED_MORE_POSTS)
+    return [...state, ...action.payload];
   else if (action.type === UPDATE_REPOST)
     return updateReposts(state, action.payload);
   else return state;

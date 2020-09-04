@@ -34,8 +34,12 @@ export const reactToPostFn = (
   );
 };
 
-export const fetchPostsFn = (type: 'FEED' | 'WALL', userId?: string) => {
-  dispatch(fetchPosts(type, userId));
+export const fetchPostsFn = (
+  type: 'FEED' | 'WALL',
+  userId?: string,
+  update = false
+) => {
+  dispatch(fetchPosts(type, userId, update));
 };
 
 export const fetchMentionsFn = (value: string) => {

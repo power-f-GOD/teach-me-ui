@@ -9,7 +9,7 @@ body,
   font-size: 1rem;
   background: #eee;
   color: $theme-tertiary-v1;
-  line-height: 1.4rem;
+  line-height: 1.4em;
 }
 body {
   position: relative;
@@ -52,31 +52,36 @@ body {
       }
     }
 
-    .small-bar {
+    .small-bar,
+    &.small-bar {
       &::-webkit-scrollbar {
-        width: 0.4em;
+        width: 0.5em;
       }
     }
 
-    .primary-bar {
+    .primary-bar,
+    &.primary-bar {
       &::-webkit-scrollbar-thumb {
         background: $theme-primary-v6;
       }
     }
 
-    .secondary-bar {
+    .secondary-bar,
+    &.secondary-bar {
       &::-webkit-scrollbar-thumb {
         background: $theme-secondary-v6;
       }
     }
 
-    .tertiary-bar {
+    .tertiary-bar,
+    &.tertiary-bar {
       &::-webkit-scrollbar-thumb {
-        background: $theme-tertiary-v6;
+        background: $theme-tertiary-v5;
       }
     }
 
-    .rounded-bar {
+    .rounded-bar,
+    &.rounded-bar {
       &::-webkit-scrollbar-track {
         border-radius: 1rem;
       }
@@ -97,7 +102,7 @@ body {
 
   > div {
     width: 100%;
-    min-height: 100vh;
+    // min-height: 100vh;
     background: #ccc;
   }
 }
@@ -130,10 +135,16 @@ input {
 }
 
 a {
-  color: $theme-secondary-v4;
+  color: $theme-secondary-v7;
+  text-decoration: none;
 
   &:visited {
-    color: $theme-secondary-v8;
+    color: $theme-secondary-v5;
+  }
+
+  &:hover,
+  &:focus {
+    text-decoration: underline;
   }
 }
 
@@ -164,10 +175,17 @@ hr {
   border: none;
 }
 
+[class*=dialog] {
+  button[class*=text] {
+    color: $theme-secondary !important;
+    background-color: transparent;
+  }
+}
+
 button,
 a {
   text-transform: unset !important;
-  font-size: 1rem !important;
+  font-size: 1rem;
 
   &[class*='outlined'] {
     display: inline-flex;
@@ -187,26 +205,33 @@ a {
     }
   }
 
-  &[class*='Primary'] {
+  &[class*='Primary'],
+  &[class*='primary'],
+  &[class*='Secondary'],
+  &[class*='btn-secondary'] {
     min-height: 2.5rem;
     border-radius: 0.25rem;
+    background-color: $theme-primary;
 
     &[class*='contained'] {
-      background-color: $theme-secondary !important;
+      background-color: $theme-primary;
       color: white;
     }
 
     &[class*='text'] {
-      color: $theme-secondary;
+      background-color: transparent;
+      color: $theme-primary;
     }
 
     &.major-button {
       overflow: hidden;
       z-index: 0;
       position: relative;
-      background-color: #ccc !important;
+      background-color: #ccc;
       border-radius: 1.75rem;
       height: 3.2rem;
+      font-size: 1rem;
+      color: white;
 
       &::before,
       &::after {
@@ -250,12 +275,30 @@ a {
 
     &:disabled,
     &.Mui-disabled {
-      color: #555;
+      background-color: #ddd !important;
+      color: #555 !important;
 
       &::before,
       &::after {
         opacity: 0;
       }
+
+      path {
+        fill: #555 !important;
+      }
+    }
+  }
+
+  &[class*='Secondary'],
+  &[class*='btn-secondary'] {
+    background-color: $theme-secondary;
+
+    &[class*='contained'] {
+      background-color: $theme-secondary;
+    }
+
+    &[class*='text'] {
+      color: $theme-secondary;
     }
   }
 }
@@ -392,6 +435,7 @@ div {
   max-width: $app-max-width / 2;
   display: block;
   width: auto !important;
+  z-index: 1550;
   background: transparent !important;
 }
 
@@ -460,7 +504,15 @@ div {
 }
 
 .font-bold {
-  font-weight: bold;
+  font-weight: bold !important;
+}
+
+.h-100 {
+  height: 100%;
+}
+
+.vh-100 {
+  height: 100vh;
 }
 
 .theme-primary {
@@ -522,8 +574,4 @@ div {
 
 [class*='theme-'] {
   font-weight: inherit;
-}
-.MuiSnackbar-root {
-  display: flex;
-  align-items: flex-end;
 }

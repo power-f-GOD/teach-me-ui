@@ -17,15 +17,17 @@ import AttachmentIcon from '@material-ui/icons/Attachment';
 
 import Row from 'react-bootstrap/Row';
 
-import { PostEditorState } from '../../../../constants';
+import { PostEditorState, UserData } from '../../../../constants';
 
 import Editor from '../../Editor';
 
 import { useSubmitPost } from '../../../../hooks/api';
 import { displayModal } from '../../../../functions';
 
-const CreatePost = (props: any) => {
+const CreatePost = (props: { userData: UserData; }) => {
+  // const { sendFile } = props;
   const { userData } = props;
+  const { avatar, profile_photo, displayName, username } = userData;
 
   const label = useRef<HTMLLabelElement | any>();
 
@@ -82,6 +84,7 @@ const CreatePost = (props: any) => {
       });
     }
   };
+
   return (
     <Box p={1} pt={0}>
       <Row className='container-fluid p-0 mx-auto'>
@@ -89,8 +92,8 @@ const CreatePost = (props: any) => {
           <Avatar
             component='span'
             className='chat-avatar compose-avatar'
-            alt={userData.displayName}
-            src={`/images/${userData.avatar}`}
+            alt={displayName}
+            src={`/images/${profile_photo || avatar}`}
           />
         </Box>
         <div className='d-flex flex-column justify-content-center flex-grow-1'>
@@ -125,7 +128,7 @@ const CreatePost = (props: any) => {
           <Button
             onClick={onPostSubmit}
             color={state.post ? 'primary' : 'default'}
-            className='post-button p-0 flex-grow-1'>
+            className='post-button major-button Primary contained p-0 flex-grow-1'>
             {isSubmitting ? (
               <CircularProgress size={28} color='inherit' />
             ) : (

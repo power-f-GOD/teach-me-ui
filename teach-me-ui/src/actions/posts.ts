@@ -13,6 +13,7 @@ import {
   MAKE_REPOST_RESOLVED,
   MAKE_REPOST_STARTED,
   FETCHED_POSTS,
+  FETCHED_MORE_POSTS,
   FETCHED_POST,
   REPLY_TO_POST,
   SEND_REPLY_TO_SERVER,
@@ -140,9 +141,10 @@ export const makeRepostRejected = (
 
 export const fetchPosts: Function = (
   type: 'FEED' | 'WALL',
-  userId?: string
+  userId?: string,
+  update = false
 ) => (dispatch: Function) => {
-  dispatch(fetchPostsStarted());
+  if (!update) dispatch(fetchPostsStarted());
   const isWall = type === 'WALL' && !!userId;
   const userData = getState().userData as UserData;
   const token = userData.token as string;
@@ -161,10 +163,17 @@ export const fetchPosts: Function = (
       return res.data.posts;
     })
     .then((state) => {
-      dispatch(fetchedPosts(state as Array<PostPropsState>));
-      dispatch(
-        fetchPostsResolved({ error: false, message: 'Fetch posts successful' })
-      );
+      if (update) {
+        dispatch(fetchedMorePosts(state as Array<PostPropsState>));
+      } else {
+        dispatch(fetchedPosts(state as Array<PostPropsState>));
+        dispatch(
+          fetchPostsResolved({
+            error: false,
+            message: 'Fetch posts successful'
+          })
+        );
+      }
     })
     .catch((err) => {
       dispatch(fetchPostsRejected({ error: true, message: err.message }));
@@ -236,6 +245,14 @@ export const fetchPost: Function = (postId?: string) => (
 export const fetchedPosts = (payload: Array<PostPropsState>): ReduxAction => {
   return {
     type: FETCHED_POSTS,
+    payload
+  };
+};
+export const fetchedMorePosts = (
+  payload: Array<PostPropsState>
+): ReduxAction => {
+  return {
+    type: FETCHED_MORE_POSTS,
     payload
   };
 };
