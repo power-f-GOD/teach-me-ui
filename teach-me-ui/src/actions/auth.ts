@@ -413,7 +413,7 @@ export const requestSignout = () => (dispatch: Function): ReduxAction => {
     localStorage.kanyimuta = JSON.stringify({ username });
   }
 
-  delay(300).then(() => {
+  delay(1000).then(() => {
     dispatch(auth({ status: 'fulfilled', isAuthenticated: false }));
     dispatch(
       signout({

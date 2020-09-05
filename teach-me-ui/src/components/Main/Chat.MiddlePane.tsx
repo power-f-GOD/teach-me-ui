@@ -287,6 +287,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
         convoAssocUsername={convoAssocUsername}
         convoId={convoId}
         convoDisplayName={convoDisplayName}
+        username={userData?.username as string}
         userId={userData?.id as string}
         clearSelections={clearSelections}
         selectedMessages={selectedMessages}
@@ -805,7 +806,7 @@ function MiddlePaneHeaderActions(props: {
     let messages = '';
 
     for (const id in selectedMessages) {
-      const { message, date: _date, type } = selectedMessages[id];
+      const { message, date: _date, sender_username } = selectedMessages[id];
       const [date, time] = [
         new Date(_date).toLocaleDateString(),
         timestampFormatter(_date)
@@ -813,11 +814,7 @@ function MiddlePaneHeaderActions(props: {
 
       if (isMulti) {
         messages +=
-          `[${
-            type === 'incoming' ? 'Colleague' : 'You'
-          } | ${date} at ${time}]: ` +
-          message +
-          '\n\n';
+          `[@${sender_username} | ${date} at ${time}]: ` + message + '\n\n';
       } else {
         messages = message;
       }
@@ -956,6 +953,7 @@ function MiddlePaneHeaderActions(props: {
 
 function ScrollView(props: {
   userId: string;
+  username: string;
   convoMessages: APIMessageResponse[];
   convoMessagesStatus: SearchState['status'];
   convoFriendship: string;
@@ -970,6 +968,7 @@ function ScrollView(props: {
 }) {
   const {
     userId,
+    username,
     convoMessages,
     convoMessagesStatus,
     convoFriendship,
@@ -1210,6 +1209,9 @@ function ScrollView(props: {
               memoizedComponent={Message}
               message={message as APIMessageResponse}
               type={type}
+              sender_username={
+                type === 'incoming' ? convoAssocUsername : username
+              }
               clearSelections={
                 message._id! in selectedMessages && clearSelections
                   ? true
@@ -1227,7 +1229,7 @@ function ScrollView(props: {
           </React.Fragment>
         );
       })}
-      {!convoFriendship && convoMessagesStatus === 'fulfilled' && (
+      {!convoFriendship && convoMessagesStatus === 'fulfilled' && chat && (
         <Box className='text-center py-5 my-2'>
           You are not colleagues with{' '}
           <Box fontWeight='bold'>{convoDisplayName}.</Box>

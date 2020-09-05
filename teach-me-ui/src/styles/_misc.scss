@@ -439,6 +439,10 @@ div {
   background: transparent !important;
 }
 
+.MuiBackdrop-root {
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
 .logo {
   // min-width: 10rem;
   width: auto !important;

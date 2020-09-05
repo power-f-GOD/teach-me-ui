@@ -20,6 +20,7 @@ import { timestampFormatter, formatMapDateString } from '../../functions/utils';
 
 export interface SelectedMessageValue extends Omit<APIMessageResponse, 'type'> {
   type: 'incoming' | 'outgoing';
+  sender_username: string;
 }
 
 export type ActionChoice = 'DELETE_FOR_ME' | 'CANCEL' | 'DELETE_FOR_EVERYONE';
@@ -29,6 +30,7 @@ let messageTouchTimeout: any = null;
 export const Message = (props: {
   message: APIMessageResponse;
   type: 'incoming' | 'outgoing';
+  sender_username: string;
   userId: string;
   className: string;
   forceUpdate: any;
@@ -42,6 +44,7 @@ export const Message = (props: {
     message,
     participants,
     userId,
+    sender_username,
     className,
     clearSelections,
     canSelectByClick,
@@ -81,24 +84,32 @@ export const Message = (props: {
     if (selected !== null) {
       handleMessageSelection(selected ? String(message._id) : null, {
         ...message,
-        type
+        type,
+        sender_username
       });
     }
-  }, [selected, type, message, handleMessageSelection]);
+  }, [selected, type, sender_username, message, handleMessageSelection]);
 
   useEffect(() => {
     if (selected !== null && clearSelections) {
       setSelected(false);
-      handleMessageSelection(null, { ...message, type });
+      handleMessageSelection(null, { ...message, type, sender_username });
     }
-  }, [selected, clearSelections, message, type, handleMessageSelection]);
+  }, [
+    selected,
+    clearSelections,
+    sender_username,
+    message,
+    type,
+    handleMessageSelection
+  ]);
 
   useEffect(
     () => () => {
       setSelected(false);
-      handleMessageSelection(null, { ...message, type });
+      handleMessageSelection(null, { ...message, type, sender_username });
     },
-    [type, message, handleMessageSelection]
+    [type, message, sender_username, handleMessageSelection]
   );
 
   return (
