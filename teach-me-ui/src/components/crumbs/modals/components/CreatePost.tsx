@@ -1,6 +1,8 @@
-import React, { useState, useRef } from 'react';
-
-// import { recursiveUploadReturnsArrayOfId } from '../../../../functions/utils';
+import React, {
+  useState, 
+  useRef,
+  ChangeEvent
+} from 'react';
 
 import { connect } from 'react-redux';
 
@@ -15,57 +17,88 @@ import Row from 'react-bootstrap/Row';
 
 import { PostEditorState, UserData } from '../../../../constants';
 
+import { sendFilesToServer } from '../../../../actions';
+
 import Editor from '../../Editor';
 
 import { useSubmitPost } from '../../../../hooks/api';
 import { displayModal } from '../../../../functions';
 
-const CreatePost = (props: { userData: UserData; sendFile: any }) => {
-  // const { sendFile } = props;
-  const { userData } = props;
-  const { avatar, profile_photo, displayName, username } = userData;
-
+const CreatePost = (props: { userData: UserData; sendFiles: any }) => {
+  const { userData, sendFiles } = props;
+  const { avatar, profile_photo, displayName } = userData;
   const label = useRef<HTMLLabelElement | any>();
 
-  // const avatarSizes = useStyles()
   const [state, setState] = useState<PostEditorState>({
     mentionsKeyword: '',
-    post: '',
-    top: 0,
-    left: 0,
-    showSuggestor: false,
+    post: {
+      text: ''
+    },
     mentions: [],
-    selectedFiles: []
   });
-  const [submitPost, , isSubmitting] = useSubmitPost(state.post);
+
+  const [submitPost, , isSubmitting] = useSubmitPost({...state.post, media:sendFiles.payload});
 
   const onUpdate = (value: string) => {
     setState({
       ...state,
-      post: value
-    });
+      post: {
+        ...state.post,
+        text: value
+      }
+    })
   };
-  //   const fileSelectedHandler = (e: ChangeEvent<any>) => {
-  //     let files: Array<File> = [];
-  //     for (let file of e.target.files) {
-  //       if (file.size > 50000000) {
-  //         label.current.style.display = 'block'
-  //         return
-  //       files.push(file)
-  //       }
-  //     }
-  //     setState({
-  //       ...state,
-  //       selectedFiles: e.target.files,
-  //       post: {
-  //        ...state.post,
-  //        media: recursiveUploadReturnsArrayOfId(files)
-  //       }
-  //     })
-  // };
 
+  const prev = useRef<HTMLDivElement | any>('');
+
+  const isImage = (file: File) => {
+    return file['type'].split('/')[0] === 'image';
+  }
+
+  const preview = (files: File[]) => {
+    for (let file of files) {
+      if (isImage(file)) {
+        let img = document.createElement('img');
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          img.setAttribute('src', e.target!.result as string);
+        }
+        reader.readAsDataURL(file)
+        img.style.height = '100px';
+        img.style.width = '100px';
+        (prev.current as HTMLDivElement).appendChild(img)
+      } else {
+        let div = document.createElement('div');
+        let text = document.createTextNode(`${file.name}`)
+        div.appendChild(text);
+        div.style.width = '100px';
+        div.style.height = '100px';
+        div.style.fontSize = '1.5em';
+        div.style.backgroundColor = '#ccc';
+        div.style.borderRadius = '3px';
+
+        (prev.current as HTMLDivElement).appendChild(div)
+      }
+    }
+  }
+
+  const fileSelectedHandler = (e: ChangeEvent<any>) => {
+    let files: Array<File> = [];
+    for (let file of e.target.files) {
+      if (file.size > 50000000) {
+        label.current.style.display = 'block'
+        return
+      } else {
+        files.push(file)
+      }
+    }
+    preview(files);
+    sendFilesToServer(files)
+  };
+  
+ 
   const onPostSubmit = () => {
-    if (state.post) {
+    if (state.post.text) {
       submitPost().then(() => {
         if (!isSubmitting) {
           displayModal(false);
@@ -86,8 +119,8 @@ const CreatePost = (props: { userData: UserData; sendFile: any }) => {
           />
         </Box>
         <div className='d-flex flex-column justify-content-center flex-grow-1'>
-          <span>{displayName}</span>
-          <small>{username}</small>
+          <span>{userData.displayName}</span>
+          <small>{userData.username}</small>
         </div>
       </Row>
       <form>
@@ -103,11 +136,16 @@ const CreatePost = (props: { userData: UserData; sendFile: any }) => {
         </label>
         <input
           multiple={true}
-          id={'my-input'}
+          id='my-input'
+          onChange={fileSelectedHandler}
           style={{ display: 'none' }}
           type={'file'}
         />
-
+        <Row className='d-flex mx-auto mt-1'>
+          <div ref={prev} style={{display: 'flex', flexWrap :'wrap'}}>
+            
+          </div>
+        </Row>
         <Row className='d-flex mx-auto mt-1'>
           <Button
             onClick={onPostSubmit}
@@ -125,9 +163,6 @@ const CreatePost = (props: { userData: UserData; sendFile: any }) => {
   );
 };
 
-const mapStateToProps = ({ sendFile, userData }: any) => ({
-  sendFile,
-  userData
-});
+const mapStateToProps = ({ userData , sendFiles}: any) => ({ userData, sendFiles });
 
 export default connect(mapStateToProps)(CreatePost);

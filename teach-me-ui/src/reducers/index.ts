@@ -4,6 +4,7 @@ import * as validate from './validate';
 import * as auth from './auth';
 import * as misc from './misc';
 import * as chat from './chat';
+import * as upload from './upload';
 import * as modals from './modals';
 import * as posts from './posts';
 import * as search from './search';
@@ -23,6 +24,7 @@ export default function reducers(state: any, action: ReduxAction) {
     ...auth,
     ...misc,
     ...chat,
+    ...upload,
     ...modals,
     ...posts,
     ...search,
