@@ -109,6 +109,7 @@ export const Message = (props: {
       onDoubleClick={handleSelectMessage}
       onTouchStart={handleMessageTouchStart}
       onTouchEnd={handleMessageTouchEnd}
+      onTouchMove={handleMessageTouchEnd}
       onKeyUp={handleSelectMessageForEnterPress}
       tabIndex={0}
       onClick={canSelectByClick ? handleSelectMessage : undefined}>

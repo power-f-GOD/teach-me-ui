@@ -163,6 +163,7 @@ body,
   display: none;
   right: 0;
   transition: transform 0.4s, opacity 0.4s;
+  transition-delay: 0.25s;
 
   &.minimize {
     transform: translateY(calc(100% - #{$chat-header-min-height}));
