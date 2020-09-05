@@ -1392,7 +1392,8 @@ function MessageBox(props: { convoId: string; webSocket: WebSocket }) {
             inputProps={{
               onKeyDown: handleMsgInputChange,
               onKeyUp: handleMsgInputChange,
-              onKeyPress: preventEnterNewLine
+              onKeyPress: preventEnterNewLine,
+              onInput: handleMsgInputChange
             }}
           />
         </Col>
