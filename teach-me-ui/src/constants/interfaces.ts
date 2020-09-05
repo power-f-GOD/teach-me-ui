@@ -246,6 +246,7 @@ export interface SnackbarState {
   message?: string;
   severity?: 'error' | 'info' | 'success' | 'warning';
   autoHide?: boolean;
+  timeout?: number;
 }
 
 export interface ModalState {

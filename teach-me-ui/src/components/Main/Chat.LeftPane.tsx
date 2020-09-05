@@ -284,7 +284,8 @@ function PaneItem({
     participants,
     online_status,
     user_typing,
-    unread_count
+    unread_count,
+    created_at
   } = _conversation ?? {};
   const hasRecent: boolean = { ...(last_message as any) }.is_recent;
 
@@ -390,8 +391,8 @@ function PaneItem({
   return (
     <NavLink
       to={navLinkTo}
-      className={`tab-panel-item ${!friendship ? 'uncolleagued' : ''} ${
-        recent === index ? 'recent' : ''
+      className={`tab-panel-item${!friendship ? ' uncolleagued' : ''}${
+        recent === index ? ' recent' : ''
       }`}
       key={convoId}
       isActive={navLinkActive}
@@ -399,7 +400,7 @@ function PaneItem({
         { ..._chatState },
         { convoId: String(convoId), userId: String(_userId) }
       )}>
-      <Col className='colleague-name'>
+      <Col className='conversation-name-wrapper'>
         <Badge
           anchorOrigin={{
             vertical: 'bottom',
@@ -418,6 +419,7 @@ function PaneItem({
         <Box width='100%' maxWidth='calc(100% - 3.65rem)'>
           <Box className='display-name-wrapper'>
             <Box className='display-name'>{displayName}</Box>
+
             <ChatTimestamp
               className={`${
                 _conversation.unread_count ? 'theme-secondary-lighter' : ''
@@ -427,7 +429,7 @@ function PaneItem({
                   ? 'Yesterday'
                   : todaysDateString !== lastMessageDateString
                   ? lastMessageDateString
-                  : last_message?.date ?? 0
+                  : last_message?.date ?? created_at ?? 0
               }
             />
           </Box>
@@ -440,7 +442,8 @@ function PaneItem({
                 className={`last-message mt-1 ${
                   last_message?.deleted ? 'font-italic' : ''
                 } ${user_typing ? 'theme-secondary-lightest' : ''}`}
-                maxWidth={unread_count ? 'calc(100% - 2.25rem)' : '100%'}>
+                maxWidth={unread_count ? 'calc(100% - 2.25rem)' : '100%'}
+                title={last_message?.message ?? ''}>
                 {!last_message ? (
                   <Box className='new-conversation-tag'>NEW</Box>
                 ) : (

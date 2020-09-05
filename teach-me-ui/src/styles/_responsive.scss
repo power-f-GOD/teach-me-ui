@@ -56,7 +56,7 @@
     .chat-left-pane,
     .chat-middle-pane,
     .chat-right-pane {
-      transition-delay: 0.25s !important;
+      transition-delay: 0.275s !important;
     }
 
     .chat-right-pane,
@@ -93,8 +93,8 @@
         transform: scale(1);
       }
 
-      .colleague-name {
-        .colleague-name-container {
+      .conversation-name-wrapper {
+        .conversation-name-container {
           max-width: calc(100% - 3.25rem);
         }
       }
@@ -118,12 +118,12 @@
     .chat-right-pane {
       opacity: 0;
       animation: unset;
-      transform: translateX(200%) scale(2);
+      transform: scale(4);
       transition: opacity 0.35s, transform 0.35s;
 
       &.active-pane {
         opacity: 1;
-        transform: translateX(0) scale(1);
+        transform: scale(1);
       }
 
       .back-button {
@@ -167,17 +167,22 @@
       background: none;
     }
 
-    .auth-container {
-      min-height: inherit;
-      background-color: white;
-      // overflow-x: hidden;
+    .form-section {
+      padding: 2em 1.85em;
+      height: auto;
+      box-shadow: none;
+      border: none;
+      background: transparent;
+      align-self: center;
 
-      .form-section {
-        padding: 2em 1em;
-        height: auto;
-        box-shadow: none;
-        border: none;
-        background: transparent;
+      [class*='col'] {
+        padding: 0 0.25em !important;
+      }
+
+      @media screen and (max-width: 330px) {
+        & {
+          padding: 2em 1.25em;
+        }
       }
     }
   }
@@ -199,7 +204,7 @@
       padding: {
         left: 0 !important;
         right: 0 !important;
-      };
+      }
     }
   }
 
@@ -357,7 +362,7 @@
   }
 
   .auth-form-wrapper {
-    width: 100%;
+    max-width: 100%;
   }
 
   //chat box style(s)

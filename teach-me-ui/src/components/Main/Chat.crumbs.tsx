@@ -18,10 +18,8 @@ import {
 } from '../../constants/interfaces';
 import { timestampFormatter, formatMapDateString } from '../../functions/utils';
 
-export interface SelectedMessageValue {
-  id: string;
-  deleted: boolean;
-  type: string;
+export interface SelectedMessageValue extends Omit<APIMessageResponse, 'type'> {
+  type: 'incoming' | 'outgoing';
 }
 
 export type ActionChoice = 'DELETE_FOR_ME' | 'CANCEL' | 'DELETE_FOR_EVERYONE';
@@ -54,8 +52,7 @@ export const Message = (props: {
     date: timestamp,
     deleted,
     delivered_to,
-    seen_by,
-    _id: id
+    seen_by
   } = message;
   const [selected, setSelected] = useState<boolean | null>(null);
 
@@ -73,7 +70,7 @@ export const Message = (props: {
   const handleMessageTouchStart = useCallback(() => {
     messageTouchTimeout = setTimeout(() => {
       handleSelectMessage();
-    }, 700);
+    }, 500);
   }, [handleSelectMessage]);
 
   const handleMessageTouchEnd = useCallback(() => {
@@ -82,27 +79,26 @@ export const Message = (props: {
 
   useEffect(() => {
     if (selected !== null) {
-      handleMessageSelection(selected ? String(id) : null, {
-        id,
-        deleted,
+      handleMessageSelection(selected ? String(message._id) : null, {
+        ...message,
         type
       });
     }
-  }, [selected, deleted, id, type, handleMessageSelection]);
+  }, [selected, type, message, handleMessageSelection]);
 
   useEffect(() => {
     if (selected !== null && clearSelections) {
       setSelected(false);
-      handleMessageSelection(null, { id, deleted, type });
+      handleMessageSelection(null, { ...message, type });
     }
-  }, [selected, clearSelections, id, deleted, type, handleMessageSelection]);
+  }, [selected, clearSelections, message, type, handleMessageSelection]);
 
   useEffect(
     () => () => {
       setSelected(false);
-      handleMessageSelection(null, { id, deleted, type });
+      handleMessageSelection(null, { ...message, type });
     },
-    [id, type, deleted, handleMessageSelection]
+    [type, message, handleMessageSelection]
   );
 
   return (
@@ -113,6 +109,7 @@ export const Message = (props: {
       onDoubleClick={handleSelectMessage}
       onTouchStart={handleMessageTouchStart}
       onTouchEnd={handleMessageTouchEnd}
+      onTouchMove={handleMessageTouchEnd}
       onKeyUp={handleSelectMessageForEnterPress}
       tabIndex={0}
       onClick={canSelectByClick ? handleSelectMessage : undefined}>
@@ -243,21 +240,21 @@ export default function ConfirmDialog(props: {
           onClick={handleClose('DELETE_FOR_ME')}
           color='primary'
           variant='text'
-          className='ml-auto my-2 mr-2 btn-secondary'>
+          className='ml-auto my-2 mr-2 btn-secondary uppercase'>
           Delete for Self
         </Button>
         <Button
           onClick={handleClose('CANCEL')}
           color='primary'
           variant='text'
-          className='ml-auto my-2 mr-2 btn-secondary'
+          className='ml-auto my-2 mr-2 btn-secondary uppercase'
           autoFocus>
           Cancel
         </Button>
         {canDeleteForEveryone && (
           <Button
             onClick={handleClose('DELETE_FOR_EVERYONE')}
-            className='ml-auto my-2 mr-2 btn-secondary'
+            className='ml-auto my-2 mr-2 btn-secondary uppercase'
             variant='text'
             color='primary'>
             Delete for All

@@ -11,7 +11,7 @@ import { userDeviceIsMobile } from '../../index';
 
 const SnackBar = (props: any) => {
   const { snackbar } = props;
-  const { open, message, severity, autoHide } = snackbar;
+  const { open, message, severity, autoHide, timeout: _timeout } = snackbar;
   const [closed, setClosed] = useState<boolean>(false);
   let timeout: any;
 
@@ -19,7 +19,7 @@ const SnackBar = (props: any) => {
     clearTimeout(timeout);
 
     if (reason === 'clickaway' && !autoHide) return;
-    
+
     setClosed(true);
     promisedDispatch(displaySnackbar({ open: false })).then(() => {
       timeout = setTimeout(() => setClosed(false), 500);
@@ -38,7 +38,7 @@ const SnackBar = (props: any) => {
         onClose={handleClose}
         onEntered={() => setClosed(false)}
         TransitionComponent={Fade}
-        autoHideDuration={autoHide ? 4000 : null}
+        autoHideDuration={_timeout ? _timeout : autoHide ? 4000 : null}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left'
