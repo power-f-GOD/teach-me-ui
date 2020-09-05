@@ -183,7 +183,7 @@ body,
 }
 
 .ChatBox header {
-  box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.15);
 }
 
 header.chat-header {
@@ -193,7 +193,6 @@ header.chat-header {
   background-color: white;
   min-height: $chat-header-min-height;
   max-height: $chat-header-min-height;
-  box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.15);
 
   // @include debugger();
 }
@@ -217,7 +216,7 @@ header.chat-header {
   }
 }
 
-.colleague-name,
+.conversation-name-wrapper,
 .controls,
 .control-wrapper {
   display: inline-flex;
@@ -230,7 +229,7 @@ header.chat-header {
   max-width: 6.5rem;
 }
 
-.title-control-wrapper {
+.header-name-control-wrapper {
   max-width: 100%;
   // @include debugger();
 }

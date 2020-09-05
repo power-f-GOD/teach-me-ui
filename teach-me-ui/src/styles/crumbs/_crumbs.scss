@@ -30,13 +30,13 @@
 
   [class*='-info-wrapper'] {
     width: 50%;
-    transition: 0.25s;
+    transition: opacity 0.25s;
     opacity: 1;
     position: relative;
 
     &.hide {
       position: absolute;
-      visibility: hidden;
+      // visibility: hidden;
       opacity: 0;
     }
   }

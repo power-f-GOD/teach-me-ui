@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -44,12 +43,10 @@ const Signin = (props: SigninPropsState) => {
   return (
     <Box
       width='25rem'
-      className='auth-form-wrapper fade-in d-flex flex-column justify-content-center'>
-      <Typography component='h2' variant='h6'>
-        <Box marginY='0.75em' fontSize='1.25rem' fontWeight={900}>
-          Sign In
-        </Box>
-      </Typography>
+      className='auth-form-wrapper fade-in d-flex flex-column justify-content-center px-1'>
+      <Box component='h2' marginY='0.75em' fontSize='1.25rem' fontWeight={900}>
+        Sign In
+      </Box>
 
       <form
         noValidate
@@ -64,7 +61,9 @@ const Signin = (props: SigninPropsState) => {
             label='Username or Email'
             type='email'
             defaultValue={
-              props.signinId.value || JSON.parse(localStorage.kanyimuta || '{}')?.username || ''
+              props.signinId.value ||
+              JSON.parse(localStorage.kanyimuta || '{}')?.username ||
+              ''
             }
             autoComplete='username'
             inputRef={refs.idInput}
@@ -132,10 +131,8 @@ const Signin = (props: SigninPropsState) => {
           </Button>
         </Box>
       </form>
-      <Box marginY='1em'>
-        <Typography component='div' align='center'>
-          New to Kanyimuta? <Link to='/signup'>Sign up here!</Link>
-        </Typography>
+      <Box marginY='1em' className='text-center'>
+        New to Kanyimuta? <Link to='/signup'>Sign up here!</Link>
       </Box>
     </Box>
   );

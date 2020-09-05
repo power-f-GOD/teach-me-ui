@@ -43,6 +43,7 @@ import ChatMiddlePane, {
 import ChatRightPane from './Chat.RightPane';
 import createMemo from '../../Memo';
 import { userDeviceIsMobile } from '../..';
+import { getState } from '../../appStore';
 
 export const placeHolderDisplayName = 'Start a Conversation';
 
@@ -65,6 +66,10 @@ const rightPaneRef = createRef<any>();
 const Memoize = createMemo();
 
 window.addEventListener('popstate', () => {
+  if (!getState().auth.isAuthenticated) {
+    return;
+  }
+
   const { chat, id: userId, cid } = queryString.parse(window.location.search);
 
   if (userDeviceIsMobile && chat) {
@@ -388,16 +393,11 @@ const ChatBox = (props: ChatBoxProps) => {
       });
     }
 
-    if (
-      (isOpen || chat === 'open') &&
-      !convosLength &&
-      !convosErr &&
-      convosStatus !== 'fulfilled'
-    ) {
+    if (chat && !convosLength && !convosErr && convosStatus !== 'fulfilled') {
       dispatch(getConversations()(dispatch));
     }
 
-    if (cid && isNaN(cid)) {
+    if (chat && cid && isNaN(cid)) {
       if (
         window.navigator.onLine &&
         !convoInfoErr &&

@@ -2,15 +2,11 @@
   // @include debugger();
   position: relative;
 
-  .title-control-wrapper {
+  .header-name-control-wrapper {
     flex-grow: 1;
-
-    &.hide {
-      visibility: hidden;
-    }
   }
 
-  .colleague-name {
+  .conversation-name-wrapper {
     max-width: 100%;
   }
 
@@ -65,7 +61,9 @@
 }
 
 .more-options-container {
-  $transition: 0.3s ease 0.25s, background-color 0.3s;
+  $transVal: 0.3s ease 0.25s;
+  $transition: opacity $transVal, transform $transVal, box-shadow $transVal,
+    background-color 0.3s;
 
   position: absolute;
   right: 0;
@@ -135,14 +133,11 @@
   width: 100%;
   overflow: hidden;
   opacity: 0;
-  z-index: -1;
-  visibility: hidden;
-  transition: 0.35s;
+  z-index: 5;
+  transition: opacity 0.3s;
 
   &.visible {
-    visibility: visible;
     opacity: 1;
-    z-index: 5;
   }
 }
 
@@ -156,12 +151,14 @@
   height: 100%;
   width: 100%;
   top: 0;
-  z-index: 2;
+  left: 0;
   margin: 0;
+  opacity: 0;
   transform: translateY(100%);
-  transition: 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+  transition: opacity 0.3s, transform 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
 
   &.open {
+    opacity: 1;
     transform: translateY(0);
   }
 
@@ -225,7 +222,7 @@
   }
 
   .more-messages-loader {
-    transition: 0.3s;
+    transition: opacity 0.3s;
     position: absolute;
     width: 100%;
     top: 0.75rem;
@@ -239,8 +236,7 @@
   & ~ .messages-status-signal {
     opacity: 0;
     position: absolute;
-    visibility: hidden;
-    z-index: -1;
+    z-index: 2;
     top: 0;
     bottom: 0;
     background-color: white;
@@ -254,18 +250,10 @@
 
     .msg-container {
       opacity: 0;
-      visibility: hidden;
-    }
-
-    .chat-date-wrapper {
-      opacity: 0;
-      visibility: hidden;
     }
 
     & ~ .messages-status-signal {
       opacity: 1;
-      z-index: 2;
-      visibility: visible;
     }
   }
 }
@@ -478,7 +466,7 @@ body.mobile {
         background-color: $bg-color;
         top: 0;
         left: -$msg-radius + 0.5rem;
-        clip-path: polygon(0 0, 80% 0, 70% 60%, 0 0.25rem, 0 0);
+        clip-path: polygon(0 0, 80% 0, 70% 75%, 0 0.25rem, 0 0);
       }
     }
 
@@ -551,7 +539,7 @@ body.mobile {
         background-color: $bg-color;
         top: 0;
         right: -$msg-radius + 0.5rem;
-        clip-path: polygon(20% 0, 100% 0, 100% 0.25rem, 30% 60%, 0 0);
+        clip-path: polygon(20% 0, 100% 0, 100% 0.25rem, 30% 75%, 0 0);
       }
     }
 
@@ -708,4 +696,12 @@ body.mobile {
       right: 1rem;
     }
   }
+}
+
+.message-selection-data-container {
+  position: absolute;
+  opacity: 0;
+  bottom: 0;
+  z-index: -1000;
+  white-space: pre;
 }

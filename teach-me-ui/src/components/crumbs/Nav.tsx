@@ -81,24 +81,32 @@ function IndexNav(props: any) {
   );
 }
 
+let notifInterval: any = null;
+
 function MainNav(props: any) {
+  const { isAuthenticated, className } = props;
   const [invisible, setInvisible] = useState(true);
   const username = (getState().userData as UserData).username;
-  
 
   useEffect(() => {
-    dispatch(getNotificationsRequest(Date.now())(dispatch));
-    setInterval(() => {
-    if (getState().getNotifications.data.notifications[0]){
-      if (!(getState().getNotifications.data.notifications[0].last_seen)) {
-        setInvisible(false)
-      }
-    }},3000)
-  }, [])
- 
+    if (isAuthenticated) {
+      dispatch(getNotificationsRequest(Date.now())(dispatch));
+      notifInterval = setInterval(() => {
+        if (getState().getNotifications.data.notifications[0]) {
+          if (!getState().getNotifications.data.notifications[0].last_seen) {
+            setInvisible(false);
+          }
+        }
+      }, 3000);
+    }
+
+    return () => {
+      clearInterval(notifInterval);
+    };
+  }, [isAuthenticated]);
 
   return (
-    <Box className={`nav-links-wrapper ${props?.className}`}>
+    <Box className={`nav-links-wrapper ${className}`}>
       <NavLink to='/search' className='nav-link'>
         <SearchIcon />
       </NavLink>
@@ -114,7 +122,7 @@ function MainNav(props: any) {
       </NavLink>
 
       <NavLink to='/notifications' className='nav-link'>
-        <Badge color='secondary' variant='dot' invisible={invisible} >
+        <Badge color='secondary' variant='dot' invisible={invisible}>
           <NotificationsIcon />
         </Badge>
       </NavLink>
@@ -135,16 +143,20 @@ function MainNav(props: any) {
 }
 
 function MainNavMenu(props: any) {
+  const { isAuthenticated, className } = props;
   const username = (getState().userData as UserData).username;
-  const getNotifications = async () => {
-    await dispatch(getNotificationsRequest(Date.now())(dispatch));
-  }
-  getNotifications()
+  const noNewNotification = getState().getNotifications.data.notifications[0]
+    ? getState().getNotifications.data.notifications[0].last_seen
+    : true;
 
-  const noNewNotification = getState().getNotifications.data.notifications[0] ? getState().getNotifications.data.notifications[0].last_seen : true
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(getNotificationsRequest(Date.now())(dispatch));
+    }
+  }, [isAuthenticated]);
 
   return (
-    <Box className={`nav-links-wrapper ${props?.className}`}>
+    <Box className={`nav-links-wrapper ${className}`}>
       <NavLink to='/search' className='nav-link'>
         <SearchIcon />
         <Box component='span' className='nav-label ml-3'>
@@ -164,9 +176,9 @@ function MainNavMenu(props: any) {
           Profile
         </Box>
       </NavLink>
-      
+
       <NavLink to='/notifications' className='nav-link'>
-        <Badge color='secondary' variant="dot" invisible={noNewNotification}>
+        <Badge color='secondary' variant='dot' invisible={noNewNotification}>
           <NotificationsIcon />
         </Badge>
         <Box component='span' className='nav-label ml-3'>
