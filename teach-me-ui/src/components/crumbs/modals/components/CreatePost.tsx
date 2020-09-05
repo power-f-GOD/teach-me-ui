@@ -4,8 +4,6 @@ import React, {
   ChangeEvent
 } from 'react';
 
-import { recursiveUploadReturnsArrayOfId } from '../../../../functions/utils';
-
 import { connect } from 'react-redux';
 
 import Avatar from '@material-ui/core/Avatar';
@@ -19,29 +17,27 @@ import Row from 'react-bootstrap/Row';
 
 import { PostEditorState, UserData } from '../../../../constants';
 
+import { sendFilesToServer } from '../../../../actions';
+
 import Editor from '../../Editor';
 
 import { useSubmitPost } from '../../../../hooks/api';
 import { displayModal } from '../../../../functions';
 
-const CreatePost = (props: { userData: UserData; }) => {
-  // const { sendFile } = props;
-  const { userData } = props;
-  const { avatar, profile_photo, displayName, username } = userData;
-
+const CreatePost = (props: { userData: UserData; sendFiles: any }) => {
+  const { userData, sendFiles } = props;
+  const { avatar, profile_photo, displayName } = userData;
   const label = useRef<HTMLLabelElement | any>();
 
   const [state, setState] = useState<PostEditorState>({
     mentionsKeyword: '',
     post: {
-      text: '',
-      media: []
+      text: ''
     },
     mentions: [],
   });
 
-  const [selectedFiles, setSelectedFiles] = useState<any>();
-  const [submitPost, , isSubmitting] = useSubmitPost(state.post);
+  const [submitPost, , isSubmitting] = useSubmitPost({...state.post, media:sendFiles.payload});
 
   const onUpdate = (value: string) => {
     setState({
@@ -53,30 +49,56 @@ const CreatePost = (props: { userData: UserData; }) => {
     })
   };
 
+  const prev = useRef<HTMLDivElement | any>('');
+
+  const isImage = (file: File) => {
+    return file['type'].split('/')[0] === 'image';
+  }
+
+  const preview = (files: File[]) => {
+    for (let file of files) {
+      if (isImage(file)) {
+        let img = document.createElement('img');
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          img.setAttribute('src', e.target!.result as string);
+        }
+        reader.readAsDataURL(file)
+        img.style.height = '100px';
+        img.style.width = '100px';
+        (prev.current as HTMLDivElement).appendChild(img)
+      } else {
+        let div = document.createElement('div');
+        let text = document.createTextNode(`${file.name}`)
+        div.appendChild(text);
+        div.style.width = '100px';
+        div.style.height = '100px';
+        div.style.fontSize = '1.5em';
+        div.style.backgroundColor = '#ccc';
+        div.style.borderRadius = '3px';
+
+        (prev.current as HTMLDivElement).appendChild(div)
+      }
+    }
+  }
+
   const fileSelectedHandler = (e: ChangeEvent<any>) => {
     let files: Array<File> = [];
     for (let file of e.target.files) {
       if (file.size > 50000000) {
         label.current.style.display = 'block'
         return
+      } else {
+        files.push(file)
       }
-      files.push(file)
     }
-    console.log(files)
-    
-    setState({
-      ...state,
-      post: {
-        ...state.post,
-        media: recursiveUploadReturnsArrayOfId(files)
-      }
-    })
-    setSelectedFiles(e.target.files);
+    preview(files);
+    sendFilesToServer(files)
   };
+  
  
   const onPostSubmit = () => {
-    console.log(state.selectedFiles)
-    if (state.post) {
+    if (state.post.text) {
       submitPost().then(() => {
         if (!isSubmitting) {
           displayModal(false);
@@ -120,8 +142,8 @@ const CreatePost = (props: { userData: UserData; }) => {
           type={'file'}
         />
         <Row className='d-flex mx-auto mt-1'>
-          <div>
-            {selectedFiles && selectedFiles.map((file: any) => (<div>{file.name}</div>))}
+          <div ref={prev} style={{display: 'flex', flexWrap :'wrap'}}>
+            
           </div>
         </Row>
         <Row className='d-flex mx-auto mt-1'>
@@ -141,6 +163,6 @@ const CreatePost = (props: { userData: UserData; }) => {
   );
 };
 
-const mapStateToProps = ({ userData }: any) => ({ userData });
+const mapStateToProps = ({ userData , sendFiles}: any) => ({ userData, sendFiles });
 
 export default connect(mapStateToProps)(CreatePost);

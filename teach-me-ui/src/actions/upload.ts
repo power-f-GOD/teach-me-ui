@@ -1,77 +1,44 @@
-import { 
-  SEND_FILE, 
-  SEND_FILE_TO_SERVER,
-  apiBaseURL as baseURL
-} from '../constants';
-
 import axios from 'axios';
 
+import { getState, dispatch } from '../functions'
+
 import { 
-  callNetworkStatusCheckerFor, 
-  logError, 
-  getState 
-} from '../functions';
+  apiBaseURL as baseURL, 
+  SEND_FILES 
+} from '../constants'
 
-
-export const sendFile = (payload: any) => {
+const sendFiles = (payload: any) => {
   return {
-    type: SEND_FILE,
+    type: SEND_FILES,
     payload
   }
 }
 
-export const sendFileToServer = (file: File) => (
-  dispatch: Function
-) => {
+export const sendFilesToServer = (files: Array<File>) => {
   let token = getState().userData.token
+  let ids: string[] = [];
+  const recursiveUploadReturnsArrayOfId = (files1: Array<File>) => {
+    const nextFile = files1.shift()
+    if(nextFile){
+      const formData = new FormData()
+      formData.append('file', nextFile)
 
-  const formData = new FormData()
-  formData.append('file', file)
-  
-  callNetworkStatusCheckerFor({
-    name: 'sendFile',
-    func: sendFile
-  })
-  dispatch(
-    sendFile({
-      status: 'pending'
-    })
-  )
-
-  axios({
-    url: '/upload',
-    baseURL,
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content_Type': 'multipart/form-data'
-    },
-    data: formData
-  }).then(({ data }: any) => {
-    console.log(data._id)
-      const { error, _id } = data as {
-        error: boolean;
-        _id: string;
-      };
-      if (!error) {
-        dispatch(
-          sendFile({
-            status: 'fulfilled',
-            err: false,
-            _id
-          })
-        );
-      } else {
-        dispatch(
-          sendFile({
-            status: 'fulfilled',
-            err: true
-          })
-        );
-      }
-    })
-    .catch(logError(sendFile));
-  return {
-    type: SEND_FILE_TO_SERVER
+      axios({
+        url: '/upload',
+        baseURL,
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content_Type': 'multipart/form-data'
+        },
+        data: formData
+      }).then(({ data }: any) => {
+        ids.push(data._id);
+        recursiveUploadReturnsArrayOfId(files1)
+      });
+    } else {
+      dispatch(sendFiles(ids))
+    }
   }
+  recursiveUploadReturnsArrayOfId(Array.from(files))
 }
