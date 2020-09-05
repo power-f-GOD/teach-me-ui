@@ -71,10 +71,6 @@ const Main = (props: any) => {
       });
     }
   }, [socket]);
-  
-  if (!/chat=/.test(window.location.search)) {
-    window.history.replaceState({}, '', window.location.pathname);
-  }
 
   if (signoutStatus === 'pending') {
     return <Loader />;
@@ -89,7 +85,11 @@ const Main = (props: any) => {
     <>
       <ModalFrame />
       <Grid className='Main fade-in'>
-        <Memoize memoizedComponent={Nav} for='main' />
+        <Memoize
+          memoizedComponent={Nav}
+          for='main'
+          isAuthenticated={!!userToken}
+        />
         <Switch>
           <Route path={['/', '/index', '/home']} exact component={Home} />
           <Route path='/about' component={About} />
