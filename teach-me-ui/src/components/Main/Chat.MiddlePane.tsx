@@ -440,7 +440,7 @@ function MiddlePaneHeader(props: {
       dispatch(conversation(''));
       dispatch(conversationInfo({ data: {} }));
       dispatch(conversationMessages({ data: [] }));
-    }, 600);
+    }, 700);
   }, [isOpen, convoMessagesStatus]);
 
   const handleUserInfoOptionClick = useCallback(() => {
@@ -813,9 +813,9 @@ function MiddlePaneHeaderActions(props: {
 
       if (isMulti) {
         messages +=
-          `[${date} at ${time} | ${
+          `[${
             type === 'incoming' ? 'Colleague' : 'You'
-          }]: ` +
+          } | ${date} at ${time}]: ` +
           message +
           '\n\n';
       } else {
@@ -834,11 +834,11 @@ function MiddlePaneHeaderActions(props: {
     handleClearSelections();
     dispatch(
       displaySnackbar({
-        message: `Message${isMulti ? 's' : ''} copied.`,
+        message: `Message${isMulti ? 's' : ''} copied to clipboard.`,
         severity: 'info',
         open: true,
         autoHide: true,
-        timeout: 1500
+        timeout: 1600
       })
     );
   }, [selectedMessages, numOfSelectedMessages, handleClearSelections]);
