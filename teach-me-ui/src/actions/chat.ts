@@ -33,6 +33,7 @@ import {
 import { apiBaseURL as baseURL, ONLINE_STATUS } from '../constants/misc';
 import { logError, getState, callNetworkStatusCheckerFor } from '../functions';
 import { dispatch } from '../appStore';
+import { displaySnackbar } from './misc';
 
 // import { displaySnackbar } from './misc';
 
@@ -70,6 +71,9 @@ export const getUsersEnrolledInInstitution = (params?: string) => (
           })
         );
       }
+
+      //hide Snackbar in case it's currently displayed (due to an error event)
+      dispatch(displaySnackbar({ timeout: 1000 }));
     })
     .catch(logError(usersEnrolledInInstitution));
 
@@ -118,6 +122,9 @@ export const getConversations = (
       } else {
         dispatch(conversations({ status: 'fulfilled', err: true, data: [] }));
       }
+
+      //hide Snackbar in case it's currently displayed (due to an error event)
+      dispatch(displaySnackbar({ timeout: 1000 }));
     })
     .catch(logError(conversations));
 
@@ -404,6 +411,9 @@ export const getConversationInfo = (
           })
         );
       }
+
+      //hide Snackbar in case it's currently displayed (due to an error event)
+      dispatch(displaySnackbar({ timeout: 1000 }));
     })
     .catch(logError(conversationInfo));
 
@@ -518,6 +528,9 @@ export const getConversationMessages = (
           })
         );
       }
+
+      //hide Snackbar in case it's currently displayed (due to an error event)
+      dispatch(displaySnackbar({ timeout: 1000 }));
     })
     .catch(logError(conversationMessages));
 

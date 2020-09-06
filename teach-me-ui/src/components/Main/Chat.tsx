@@ -43,6 +43,7 @@ import ChatMiddlePane, {
 import ChatRightPane from './Chat.RightPane';
 import createMemo from '../../Memo';
 import { userDeviceIsMobile } from '../..';
+import { getState } from '../../appStore';
 
 export const placeHolderDisplayName = 'Start a Conversation';
 
@@ -65,10 +66,17 @@ const rightPaneRef = createRef<any>();
 const Memoize = createMemo();
 
 window.addEventListener('popstate', () => {
+  if (!getState().auth.isAuthenticated) {
+    return;
+  }
+
   const { chat, id: userId, cid } = queryString.parse(window.location.search);
 
   if (userDeviceIsMobile && chat) {
-    delay(100).then(() => {
+    dispatch(conversation(''));
+    dispatch(conversationInfo({ data: {} }));
+    dispatch(conversationMessages({ data: [] }));
+    delay(300).then(() => {
       dispatch(
         chatState({
           isOpen: false,
@@ -82,7 +90,7 @@ window.addEventListener('popstate', () => {
     return;
   }
 
-  //for the sake of the smooth animation
+  //for the sake of the (smooth) animation
   if (/min|open/.test(chat) && chatBoxWrapperRef.current) {
     chatBoxWrapperRef.current.style.display = 'flex';
   }
@@ -180,15 +188,22 @@ const ChatBox = (props: ChatBoxProps) => {
   const [visibilityState, setVisibilityState] = useState<'visible' | 'hidden'>(
     isOpen || chat ? 'visible' : 'hidden'
   );
-  const [activePaneIndex, setActivePaneIndex] = useState<number>(
-    chat === 'open' ? 1 : userDeviceIsMobile ? 0 : 1
-  );
+  const [activePaneIndex, setActivePaneIndex] = useState<number>(0);
 
   const handleSetActivePaneIndex = useCallback(
     (index: number) => () => {
       setActivePaneIndex(index);
+
+      if (index === 1 && windowWidth < 992) {
+        window.history[userDeviceIsMobile ? 'replaceState' : 'pushState'](
+          {},
+          '',
+          window.location.pathname +
+            window.location.search.replace('=min', '=open')
+        );
+      }
     },
-    []
+    [windowWidth]
   );
 
   const scrollViewProviderValue = useMemo(() => {
@@ -263,7 +278,11 @@ const ChatBox = (props: ChatBoxProps) => {
         })
       );
     });
-    window.history.pushState({}, '', window.location.pathname + queryString);
+    window.history[userDeviceIsMobile ? 'replaceState' : 'pushState'](
+      {},
+      '',
+      window.location.pathname + queryString
+    );
   }, []);
 
   const handleChatTransitionEnd = useCallback(
@@ -296,6 +315,11 @@ const ChatBox = (props: ChatBoxProps) => {
   );
 
   useEffect(() => {
+    window.history.replaceState(
+      {},
+      '',
+      window.location.pathname + `?chat=open&id=${placeHolderDisplayName}&cid=0`
+    );
     window.onresize = (e: any) => setWindowWidth(e.target.innerWidth);
   }, []);
 
@@ -372,6 +396,26 @@ const ChatBox = (props: ChatBoxProps) => {
 
   const convosLength = convosData?.length;
   useEffect(() => {
+    delay(500).then(() => {
+      let { cid, chat } = queryString.parse(window.location.search);
+      if (
+        ((!isNaN(cid) && cid) || !convoId) &&
+        chat &&
+        isOpen &&
+        userDeviceIsMobile
+      ) {
+        const queryString = `?chat=${
+          userDeviceIsMobile ? 'min' : 'open'
+        }&id=${placeHolderDisplayName}&cid=0`;
+
+        window.history.replaceState(
+          {},
+          '',
+          window.location.pathname + queryString
+        );
+      }
+    });
+
     if (!isOpen) {
       //delay till chatBox display property is set for animation to work
       delay(750).then(() => {
@@ -388,39 +432,8 @@ const ChatBox = (props: ChatBoxProps) => {
       });
     }
 
-    if (
-      (isOpen || chat === 'open') &&
-      !convosLength &&
-      !convosErr &&
-      convosStatus !== 'fulfilled'
-    ) {
+    if (chat && !convosLength && !convosErr && convosStatus !== 'fulfilled') {
       dispatch(getConversations()(dispatch));
-    }
-
-    if (cid && isNaN(cid)) {
-      if (
-        window.navigator.onLine &&
-        !convoInfoErr &&
-        !convoId &&
-        (convoInfoStatus === 'settled' ||
-          (convoInfoStatus === 'fulfilled' && convoId !== cid))
-      ) {
-        dispatch(getConversationInfo(id)(dispatch));
-      }
-
-      if (!convoId || convoId !== cid) {
-        dispatch(conversation(cid));
-      }
-
-      if (
-        window.navigator.onLine &&
-        !convoMessagesErr &&
-        !convoId &&
-        (convoMessagesStatus === 'settled' ||
-          (convoMessagesStatus === 'fulfilled' && convoId !== cid))
-      ) {
-        dispatch(getConversationMessages(cid, 'pending')(dispatch));
-      }
     }
   }, [
     convosLength,

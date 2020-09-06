@@ -15,7 +15,7 @@ export const snackbar = (
   action: ReduxAction
 ): SnackbarState => {
   return action.type === DISPLAY_SNACK_BAR
-    ? { ...state, autoHide: false, ...action.payload }
+    ? { ...state, autoHide: false, timeout: undefined, ...action.payload }
     : state;
 };
 

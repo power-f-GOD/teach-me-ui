@@ -246,6 +246,7 @@ export interface SnackbarState {
   message?: string;
   severity?: 'error' | 'info' | 'success' | 'warning';
   autoHide?: boolean;
+  timeout?: number;
 }
 
 export interface ModalState {
@@ -390,9 +391,16 @@ export interface MentionData extends ColleagueData {
 
 export interface Post {
   text: string;
+  media?: Array<string>;
+  mentions?: Array<string>;
+  hashtags?: Array<string>;
+}
+
+export interface Reply {
+  text: string;
+  media: Array<string>;
   mentions: Array<string>;
   hashtags: Array<string>;
-  media?: Array<string>;
 }
 
 export interface ReplyProps extends Post {
@@ -416,14 +424,9 @@ export interface ReplyState {
 }
 
 export interface PostEditorState {
-  post: string;
+  post: Post;
   mentionsKeyword: string;
   mentions: any[];
   [key: string]: any;
 }
 
-export interface UploadState {
-  err: boolean;
-  status: 'settled' | 'pending' | 'fulfilled';
-  _id?: string;
-}

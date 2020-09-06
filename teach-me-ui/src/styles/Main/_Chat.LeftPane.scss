@@ -10,6 +10,11 @@ $avatar-size: 3rem;
     animation: slideUp 0.75s;
   }
 
+  .hide,
+  .show {
+    transition-delay: unset;
+  }
+
   header {
     box-shadow: none;
   }
@@ -79,7 +84,27 @@ $avatar-size: 3rem;
   left: 0;
   min-width: 100%;
   transition: opacity 0.35s, transform 0.35s;
-  transition-delay: 0.25s;
+  transition-delay: 0.3s;
+
+  &.custom-scroll-bar {
+    padding: $convo-spacer;
+    max-width: 100%;
+    max-height: calc(100vh - #{$chat-header-min-height});
+    overflow-y: auto;
+
+    & + .scroll-bar-fader {
+      background: $theme-primary-v2 !important;
+    }
+
+    &.hide-scroll-fader,
+    &.remove-scroll-fader,
+    &.hidden {
+      & + .scroll-bar-fader {
+        z-index: -1 !important;
+        opacity: 0;
+      }
+    }
+  }
 
   &.hidden {
     overflow-y: hidden;
@@ -88,38 +113,21 @@ $avatar-size: 3rem;
   &.auto {
     overflow-y: auto;
   }
-
-  &.custom-scroll-bar {
-    padding: $convo-spacer;
-    max-width: 100%;
-    max-height: calc(100vh - #{$chat-header-min-height});
-    overflow-y: auto;
-    
-
-    & + .scroll-bar-fader {
-      background: $theme-primary-v2 !important;
-    }
-
-    &.hide-scroll-fader,
-    &.remove-scroll-fader {
-      & + .scroll-bar-fader {
-        z-index: -1 !important;
-      }
-    }
-  }
 }
 
 .tab-link {
   flex-grow: 1;
   padding: 0;
+  font-size: 1rem;
+  opacity: 0.5;
+  color: white;
   font-weight: bold;
   min-height: $chat-header-min-height;
   background: $theme-primary-v4;
 
   &:hover,
   &:focus {
-    color: white;
-    background: $theme-secondary-v5;
+    opacity: 1;
   }
 }
 
@@ -147,12 +155,12 @@ $avatar-size: 3rem;
     width: $avatar-size;
   }
 
-  .colleague-name {
+  .conversation-name-wrapper {
     animation: reorderConvo 0.5s;
   }
 
   &.recent {
-    .colleague-name {
+    .conversation-name-wrapper {
       animation: reorderRecentConvo 0.5s;
     }
   }
@@ -179,7 +187,7 @@ $avatar-size: 3rem;
 
   &:hover,
   &:focus {
-    .colleague-name {
+    .conversation-name-wrapper {
       background-color: $theme-secondary-v5;
       color: white;
       border-color: transparent;
@@ -195,7 +203,7 @@ $avatar-size: 3rem;
   }
 
   &.active {
-    .colleague-name {
+    .conversation-name-wrapper {
       background-color: $theme-primary-v5;
       color: white;
       border-color: transparent;
@@ -214,11 +222,11 @@ $avatar-size: 3rem;
     opacity: 0.35;
   }
 
-  .colleague-name {
+  .conversation-name-wrapper {
     padding: 0.75rem 0.5rem;
     border-radius: $convo-spacer + 0.15rem;
-    background: $theme-primary-v3;
-    border: 0.0625rem solid rgba($prim-r - 75, $prim-g - 75, $prim-b - 75, 0.5);
+    background: rgb($prim-r - 45, $prim-g - 45, $prim-b - 45);
+    border: 0.0625rem solid rgba($prim-r - 65, $prim-g - 65, $prim-b - 65, 0.5);
     transition: color 0.2s, background-color 0.35s;
 
     .MuiBadge-dot {

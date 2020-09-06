@@ -43,7 +43,6 @@
     "react-bootstrap": "^1.0.1",
     "react-dom": "^16.13.1",
     "react-https-redirect": "^1.1.0",
-    "react-input-trigger": "^1.1.2",
     "react-loading-skeleton": "^2.1.1",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.1.2",
@@ -86,7 +85,8 @@
     "autoprefix:r": "npx postcss src/styles/index.min.css --use autoprefixer --no-map -o src/styles/index.min.css",
     "autoprefix:w": "npx postcss src/styles/index.min.css --use autoprefixer --no-map -w -o src/styles/prefixed.min.css",
     "rebase": "git pull origin staging; git status",
-    "rebase:chat": "git stash && git checkout staging && git stash && git pull origin staging && git stash && git checkout feature/TMFED-complete-chat-feature && git stash && git rebase staging"
+    "rebase:chat": "git stash && git checkout staging && git stash && git pull origin staging && git stash && git checkout feature/TMFED-complete-chat-feature && git stash && git rebase staging",
+    "merge:chat": "git stash && git checkout staging && git stash && git pull origin staging && git stash && git checkout feature/TMFED-complete-chat-feature && git stash && git merge staging"
   },
   "jest": {
     "coveragePathIgnorePatterns": [

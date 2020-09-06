@@ -175,8 +175,8 @@ hr {
   border: none;
 }
 
-[class*=dialog] {
-  button[class*=text] {
+[class*='dialog'] {
+  button[class*='text'] {
     color: $theme-secondary !important;
     background-color: transparent;
   }
@@ -439,6 +439,10 @@ div {
   background: transparent !important;
 }
 
+.MuiBackdrop-root {
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
 .logo {
   // min-width: 10rem;
   width: auto !important;
@@ -505,6 +509,30 @@ div {
 
 .font-bold {
   font-weight: bold !important;
+}
+
+.uppercase {
+  text-transform: uppercase !important;
+}
+
+.w-0 {
+  width: 0;
+}
+
+.w-auto {
+  width: auto;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.vw-100 {
+  width: 100vw;
+}
+
+.h-0 {
+  height: 0;
 }
 
 .h-100 {
