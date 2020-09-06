@@ -142,8 +142,10 @@ export const makeRepostRejected = (
 export const fetchPosts: Function = (
   type: 'FEED' | 'WALL',
   userId?: string,
-  update = false
+  update = false,
+  cb = (s: boolean) => {}
 ) => (dispatch: Function) => {
+  cb(true);
   if (!update) dispatch(fetchPostsStarted());
   const isWall = type === 'WALL' && !!userId;
   const userData = getState().userData as UserData;
@@ -163,6 +165,11 @@ export const fetchPosts: Function = (
       return res.data.posts;
     })
     .then((state) => {
+      if (state.length === 0) {
+        console.log('recycling feeds...');
+        dispatch(recycleFeeds(cb));
+        return;
+      }
       if (update) {
         dispatch(fetchedMorePosts(state as Array<PostPropsState>));
       } else {
@@ -174,6 +181,42 @@ export const fetchPosts: Function = (
           })
         );
       }
+      cb(false);
+    })
+    .catch((err) => {
+      dispatch(fetchPostsRejected({ error: true, message: err.message }));
+    });
+};
+
+export const recycleFeeds = (cb = (s: boolean) => {}) => (
+  dispatch: Function
+) => {
+  const userData = getState().userData as UserData;
+  // const lastPost = getState().posts[1] as PostPropsState;
+  const token = userData.token as string;
+  Axios({
+    url: `/feed/recycle`,
+    baseURL,
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+    .then((res) => {
+      if (res.data.error) {
+        throw new Error(res.data.message);
+      }
+      return res.data.posts;
+    })
+    .then((state) => {
+      dispatch(fetchedMorePosts(state as Array<PostPropsState>));
+      dispatch(
+        fetchPostsResolved({
+          error: false,
+          message: 'Fetch posts successful'
+        })
+      );
+      cb(false);
     })
     .catch((err) => {
       dispatch(fetchPostsRejected({ error: true, message: err.message }));

@@ -29,7 +29,8 @@ const Recommendations = (props: any) => {
     <>
       {!getRecommendationsIsLoading &&
         recommendations !== null &&
-        !recommendations.error && (
+        !recommendations.error &&
+        recommendations.recommendations.length > 0 && (
           <Box
             className='recommendations pb-1 pb-md-2'
             style={{
