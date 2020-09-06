@@ -6,6 +6,9 @@ import Post from '../crumbs/Post';
 import Compose from '../crumbs/Compose';
 import Recommendations from '../crumbs/Recommendations';
 
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Box from '@material-ui/core/Box';
+
 import { PostPropsState, UserData, SocketProps } from '../../constants';
 
 import { fetchPostsFn, getState } from '../../functions';
@@ -29,7 +32,7 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
       new IntersectionObserver((entries, self) => {
         const socket = getState().webSocket as WebSocket;
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
+          if (entry.isIntersecting && entry.target.id) {
             const data: SocketProps = {
               pipe: 'POST_INTERACTION',
               post_id: entry.target.id,
@@ -72,13 +75,17 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
     <Container className='middle-pane px-0' fluid>
       {(selfView || !inProfile) && <Compose />}
       {!inProfile && <Recommendations />}
-
       {props.fetchPostStatus.status === 'resolved' &&
         props.posts.map((post: PostPropsState, i: number) => (
           <Post {...post} key={i} />
         ))}
       {props.fetchPostStatus.status === 'pending' &&
         Array.from({ length: 4 }).map((_, i) => <Post key={i} />)}
+      {props.isFetching && (
+        <Box textAlign='center' py='2'>
+          <CircularProgress />
+        </Box>
+      )}
     </Container>
   );
 };

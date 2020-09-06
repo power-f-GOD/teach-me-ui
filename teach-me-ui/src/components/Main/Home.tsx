@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 // import Box from '@material-ui/core/Box';
 
@@ -18,17 +18,20 @@ const elementRef = React.createRef<any>();
 const isBottom = (el: HTMLElement) =>
   el.getBoundingClientRect().bottom <= window.innerHeight;
 
-const morePosts = () => {
-  fetchPostsFn('FEED', undefined, true);
-};
-
-const trackScrolling = () => {
-  if (isBottom(elementRef.current as HTMLElement)) {
-    morePosts();
-  }
+const morePosts = (cb = (s: boolean) => {}) => {
+  fetchPostsFn('FEED', undefined, true, cb);
 };
 
 const Home = (props: any) => {
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+  const fetchStatusSet = (s: boolean) => {
+    setIsFetching(s);
+  };
+  const trackScrolling = () => {
+    if (isBottom(elementRef.current as HTMLElement) && !isFetching) {
+      morePosts(fetchStatusSet);
+    }
+  };
   React.useEffect(() => () => window.scrollTo(0, 0), []);
   React.useEffect(() => {
     document.addEventListener('scroll', trackScrolling);
@@ -50,7 +53,7 @@ const Home = (props: any) => {
             <LeftPane />
           </Col>
           <Col lg={6} md={8} className='middle-pane-col px-3'>
-            <MiddlePane type={'FEED'} />
+            <MiddlePane type={'FEED'} isFetching={isFetching} />
           </Col>
           <Col lg={3} className='d-none hang-in d-lg-block right-pane-col'>
             <RightPane />
