@@ -11,6 +11,7 @@ import {
 } from '../constants';
 import { getState } from '../functions/utils';
 import { dispatch } from '../appStore';
+import { emitUserOnlineStatus } from '../App';
 
 export const displaySnackbar = (payload: SnackbarState): ReduxAction => {
   return {
@@ -41,7 +42,9 @@ export function initWebSocket(token: string): ReduxAction {
 
   //this is just to poll server and keep it alive as Heroku keeps shutting out the webSocket
   const pollServer = () => {
-    if (socket.readyState === 1)
+    const connectionIsAlive = window.navigator.onLine;
+
+    if (socket.readyState === 1) {
       socket.send(
         JSON.stringify({
           pipe: 'PING',
@@ -49,10 +52,14 @@ export function initWebSocket(token: string): ReduxAction {
           time_stamp_id: Date.now()
         })
       );
-    // console.log('ping', socket.CLOSED);
+    } else {
+      //make first arg always false to prevent an infinite recursion
+      emitUserOnlineStatus(false, !connectionIsAlive)();
+    }
+
     const timeout = setTimeout(pollServer, 20000);
 
-    if (!window.navigator.onLine) {
+    if (!connectionIsAlive) {
       clearTimeout(timeout);
     }
   };

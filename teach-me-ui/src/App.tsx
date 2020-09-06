@@ -42,11 +42,11 @@ import { ONLINE_STATUS } from './constants/misc';
 const Memo = createMemo();
 
 const App = (props: any) => {
-  const { status: authStatus, isAuthenticated } = props.auth;
-  const { signin, signup, snackbar } = props;
+  const { signout, auth } = props;
+  const { status: authStatus, isAuthenticated } = auth;
 
-  if (signin?.status !== 'pending' || signup?.status !== 'pending') {
-    if (authStatus === 'pending') return <Loader />;
+  if (authStatus === 'pending' || signout?.status === 'pending') {
+    return <Loader />;
   }
 
   return (
@@ -96,7 +96,7 @@ const App = (props: any) => {
           {/* Is it? */}
         </Switch>
       </BrowserRouter>
-      <Memo memoizedComponent={SnackBar} snackbar={snackbar} />
+      <Memo memoizedComponent={SnackBar} />
     </>
   );
 };
@@ -174,13 +174,13 @@ export const emitUserOnlineStatus = (
     }
 
     return function recurse() {
+      clearTimeout(timeToEmitOnlineStatus);
       timeToEmitOnlineStatus = setTimeout(() => {
         //make sure to use updated/reinitialized webSock from state as former would have been closed
         const socket = getState().webSocket as WebSocket;
+        const docIsVisible = document.visibilityState === 'visible';
 
         if (socket.readyState === 1) {
-          const docIsVisible = document.visibilityState === 'visible';
-
           socket.send(
             JSON.stringify({
               online_status: docIsVisible ? 'ONLINE' : 'AWAY',
@@ -192,11 +192,12 @@ export const emitUserOnlineStatus = (
               online_status: docIsVisible ? 'ONLINE' : 'AWAY'
             })
           );
-          clearTimeout(timeToEmitOnlineStatus);
         } else {
-          recurse();
+          if (window.navigator.onLine && docIsVisible) {
+            recurse();
+          }
         }
-      }, 500);
+      }, 2000);
     };
   }
 
@@ -236,8 +237,8 @@ window.onoffline = () => {
   emitUserOnlineStatus(false, true)();
 };
 
-const mapStateToProps = ({ auth, signin, signup, snackbar }: any) => {
-  return { auth, signin, signup, snackbar };
+const mapStateToProps = ({ auth, signout }: any) => {
+  return { auth, signout };
 };
 
 export default connect(mapStateToProps)(App);

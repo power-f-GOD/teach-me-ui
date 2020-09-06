@@ -281,7 +281,7 @@ export const conversations = (_payload: SearchState): ReduxAction => {
       } else {
         payload.data = [...initialConversations];
       }
-    } else if (!initialConversations.length) {
+    } else if (!initialConversations.length || _payload.data.length > 1) {
       payload.data = [..._payload.data];
     } else if (unread_count !== undefined && !payload?.status) {
       actualConvo = initialConversations?.find((conversation, i) => {

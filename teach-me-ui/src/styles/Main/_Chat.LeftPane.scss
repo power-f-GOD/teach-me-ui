@@ -223,10 +223,14 @@ $avatar-size: 3rem;
   }
 
   .conversation-name-wrapper {
+    $bg-sub: 40;
+    $br-sub: 70;
+
     padding: 0.75rem 0.5rem;
     border-radius: $convo-spacer + 0.15rem;
-    background: rgb($prim-r - 45, $prim-g - 45, $prim-b - 45);
-    border: 0.0625rem solid rgba($prim-r - 65, $prim-g - 65, $prim-b - 65, 0.5);
+    background: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
+    border: 0.0625rem solid
+      rgba($prim-r - $br-sub, $prim-g - $br-sub, $prim-b - $br-sub, 0.5);
     transition: color 0.2s, background-color 0.35s;
 
     .MuiBadge-dot {

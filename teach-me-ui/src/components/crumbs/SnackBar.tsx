@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
@@ -8,9 +9,9 @@ import Fade from '@material-ui/core/Fade';
 import { promisedDispatch } from '../../functions/utils';
 import { displaySnackbar } from '../../actions/misc';
 import { userDeviceIsMobile } from '../../index';
+import { SnackbarState } from '../../constants';
 
-const SnackBar = (props: any) => {
-  const { snackbar } = props;
+const SnackBar = ({ snackbar }: { snackbar: SnackbarState }) => {
   const { open, message, severity, autoHide, timeout: _timeout } = snackbar;
   const [closed, setClosed] = useState<boolean>(false);
   let timeout: any;
@@ -55,4 +56,6 @@ const SnackBar = (props: any) => {
   );
 };
 
-export default SnackBar;
+export default connect(({ snackbar }: any) => {
+  return { snackbar };
+})(SnackBar);
