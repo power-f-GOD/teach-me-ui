@@ -36,7 +36,7 @@ const PostPage = (props: any) => {
   return (
     <>
       <ModalFrame />
-      <Container fluid className='Home p-0 fade-in'>
+      <Container className='Home fade-in'>
         <Row className='flex-row m-2 justify-content-between'>
           <Col lg={9} md={9} className='middle-pane-col pr-2'>
             <Post head {...{ ...props.post, sec_type: undefined }} />

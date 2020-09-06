@@ -315,11 +315,15 @@ const ChatBox = (props: ChatBoxProps) => {
   );
 
   useEffect(() => {
-    window.history.replaceState(
-      {},
-      '',
-      window.location.pathname + `?chat=open&id=${placeHolderDisplayName}&cid=0`
-    );
+    if (/chat=/.test(window.location.search)) {
+      window.history.replaceState(
+        {},
+        '',
+        window.location.pathname +
+          `?chat=open&id=${placeHolderDisplayName}&cid=0`
+      );
+    }
+
     window.onresize = (e: any) => setWindowWidth(e.target.innerWidth);
   }, []);
 

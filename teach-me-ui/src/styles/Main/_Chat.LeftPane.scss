@@ -83,7 +83,7 @@ $avatar-size: 3rem;
   top: 0;
   left: 0;
   min-width: 100%;
-  transition: opacity 0.35s, transform 0.35s;
+  transition: opacity 0.25s, transform 0.23s;
   transition-delay: 0.3s;
 
   &.custom-scroll-bar {
@@ -229,8 +229,9 @@ $avatar-size: 3rem;
     padding: 0.75rem 0.5rem;
     border-radius: $convo-spacer + 0.15rem;
     background: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
-    border: 0.0625rem solid
-      rgba($prim-r - $br-sub, $prim-g - $br-sub, $prim-b - $br-sub, 0.5);
+    // border: 0.0625rem solid
+    //   rgba($prim-r - $br-sub, $prim-g - $br-sub, $prim-b - $br-sub, 0.5);
+    box-shadow: 0 0rem 0.25rem 0rem inset $theme-primary-v2;
     transition: color 0.2s, background-color 0.35s;
 
     .MuiBadge-dot {

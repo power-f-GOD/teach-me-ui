@@ -9,9 +9,8 @@ import {
   INIT_WEB_SOCKET,
   CLOSE_WEB_SOCKET
 } from '../constants';
-import { getState } from '../functions/utils';
+import { getState, emitUserOnlineStatus } from '../functions/utils';
 import { dispatch } from '../appStore';
-import { emitUserOnlineStatus } from '../App';
 
 export const displaySnackbar = (payload: SnackbarState): ReduxAction => {
   return {
