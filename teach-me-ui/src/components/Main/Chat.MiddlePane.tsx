@@ -61,7 +61,8 @@ import {
   preventEnterNewLine,
   formatMapDateString,
   timestampFormatter,
-  addEventListenerOnce
+  addEventListenerOnce,
+  emitUserOnlineStatus
 } from '../../functions/utils';
 import { placeHolderDisplayName } from './Chat';
 import {
@@ -77,7 +78,6 @@ import ConfirmDialog, {
   SelectedMessageValue,
   ActionChoice
 } from './Chat.crumbs';
-import { emitUserOnlineStatus } from '../../App';
 import { displaySnackbar } from '../../actions';
 
 interface ChatMiddlePaneProps {
