@@ -73,32 +73,36 @@ const LeftPane = (props: any) => {
               </Box>
             </Col>
           </Col>
-          <Col className='info p-0 d-flex my-1'>
-            <GroupIcon className='mr-2' fontSize='large' />
-            <Col
-              as='span'
-              className='p-0 d-flex justify-content-between align-items-center'>
-              <Box component='span' marginRight='auto'>
-                Groups
-              </Box>
-              <Box component='span' className='number'>
-                0
-              </Box>
-            </Col>
-          </Col>
-          <Col className='info p-0 d-flex my-1'>
-            <ForumIcon className='mr-2' fontSize='large' />
-            <Col
-              as='span'
-              className='p-0 d-flex justify-content-between align-items-center'>
-              <Box component='span' marginRight='auto'>
-                Classrooms
-              </Box>
-              <Box component='span' className='number'>
-                0
-              </Box>
-            </Col>
-          </Col>
+          {false && (
+            <>
+              <Col className='info p-0 d-flex my-1'>
+                <GroupIcon className='mr-2' fontSize='large' />
+                <Col
+                  as='span'
+                  className='p-0 d-flex justify-content-between align-items-center'>
+                  <Box component='span' marginRight='auto'>
+                    Groups
+                  </Box>
+                  <Box component='span' className='number'>
+                    0
+                  </Box>
+                </Col>
+              </Col>
+              <Col className='info p-0 d-flex my-1'>
+                <ForumIcon className='mr-2' fontSize='large' />
+                <Col
+                  as='span'
+                  className='p-0 d-flex justify-content-between align-items-center'>
+                  <Box component='span' marginRight='auto'>
+                    Classrooms
+                  </Box>
+                  <Box component='span' className='number'>
+                    0
+                  </Box>
+                </Col>
+              </Col>
+            </>
+          )}
         </Row>
         <Row as='section' className='academic m-0 flex-column d-block'>
           <Col as='span' className='info p-0 d-flex my-1  align-items-center'>
