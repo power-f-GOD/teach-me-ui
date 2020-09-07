@@ -34,7 +34,8 @@ const CreatePost = (props: { userData: UserData; sendFiles: any }) => {
     post: {
       text: ''
     },
-    mentions: [],
+    fileCount: 0,
+    selectedFiles: []
   });
 
   const [submitPost, , isSubmitting] = useSubmitPost({...state.post, media:sendFiles.payload});
@@ -82,22 +83,37 @@ const CreatePost = (props: { userData: UserData; sendFiles: any }) => {
     }
   }
 
+
   const fileSelectedHandler = (e: ChangeEvent<any>) => {
+    let numOfFiles = state.fileCount;
+    let selectedFiles = state.selectedFiles;
     let files: Array<File> = [];
     for (let file of e.target.files) {
       if (file.size > 50000000) {
+        files = []
         label.current.style.display = 'block'
         return
       } else {
+        if (numOfFiles >= 5) break;
+        numOfFiles++
         files.push(file)
       }
     }
+    Array.prototype.push.apply(selectedFiles, files)
     preview(files);
-    sendFilesToServer(files)
+    setState({
+      ...state,
+      fileCount: numOfFiles,
+      selectedFiles
+    })
   };
   
  
   const onPostSubmit = () => {
+
+    state.selectedFiles[0] && sendFilesToServer(state.selectedFiles)
+  
+    if (state.selectedFiles[0] && !sendFiles.payload) return;
     if (state.post.text) {
       submitPost().then(() => {
         if (!isSubmitting) {
@@ -133,6 +149,11 @@ const CreatePost = (props: { userData: UserData; sendFiles: any }) => {
           ref={label}
           style={{ color: 'red', fontSize: 'small', display: 'none' }}>
           files should be maximum of 50mb
+        </label>
+        <label
+          htmlFor='my-input'
+          style={{ color: 'green', fontSize: 'small'}}>
+          * you can upload a maximum of five files
         </label>
         <input
           multiple={true}
