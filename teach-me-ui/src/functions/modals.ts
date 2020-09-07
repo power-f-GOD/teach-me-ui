@@ -4,10 +4,10 @@ import { dispatch } from './utils';
 export const displayModal = (
   visibility: boolean,
   type?: string,
-  title?: string
+  meta?: { [key: string]: any }
 ) => {
   if (visibility) {
-    return dispatch(showModal({ type, title }));
+    return dispatch(showModal({ type, meta }));
   }
   return dispatch(hideModal());
 };

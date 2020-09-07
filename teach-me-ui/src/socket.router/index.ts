@@ -10,9 +10,16 @@ export default function activateSocketRouters() {
   const socket: WebSocket = getState().webSocket;
 
   socket.addEventListener('message', (e: any) => {
+    if (e.data === 'error') {
+      console.error('E014: bad response from socket');
+      return;
+    }
     const message = JSON.parse(e.data);
+    if (message.error) {
+      console.error('E014: bad response from socket');
+    }
     const pipe = message.pipe as SocketPipe;
-    
+
     switch (true) {
       case pipe.startsWith('POST_'):
         post(message);
@@ -21,8 +28,7 @@ export default function activateSocketRouters() {
         notifications(message);
         break;
       case pipe.startsWith('CHAT_'):
-        if (!message.error)
-          chat(message);
+        if (!message.error) chat(message);
         break;
       case pipe === undefined:
         console.error('E014: bad response from socket');

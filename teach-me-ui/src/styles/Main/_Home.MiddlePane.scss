@@ -3,12 +3,38 @@
   cursor: pointer;
 }
 
-.middle-pane-col {
-  height: calc(100vh - 4rem);
-  overflow-y: scroll;
+.recommendations {
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+  display: grid;
+  height: 100%;
+  margin-bottom: 5px;
 
+  @media (hover: none) and (pointer: coarse) {
+    & {
+      margin-bottom: 0;
+    }
+  }
+  .recommendation {
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+  }
+  .add-button {
+    background: $theme-primary;
+    color: white;
+    path {
+      fill: white;
+    }
+  }
   &::-webkit-scrollbar {
     width: 5px;
+    height: 10px;
+  }
+  @media (hover: none) and (pointer: coarse) {
+    &::-webkit-scrollbar {
+      width: 5px;
+      height: 0px;
+    }
   }
   &::-webkit-scrollbar-track {
     background: #ccc;
@@ -16,6 +42,7 @@
 
   &::-webkit-scrollbar-thumb {
     background: #999;
+    border-radius: 5px;
   }
 }
 

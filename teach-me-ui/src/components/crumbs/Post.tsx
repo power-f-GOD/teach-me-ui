@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -16,15 +16,18 @@ import { PostPropsState } from '../../constants/interfaces';
 
 import CreateReply from './CreateReply';
 
+import { displayModal } from '../../functions';
 import { triggerSearchKanyimuta } from '../../actions/search';
 
 const stopProp = (e: any) => {
   e.stopPropagation();
 };
 
-export const processPostFn = (post: string) =>
-  post &&
-  post
+export const processPostFn = (post: string) => {
+  if (!post) return;
+
+  const mid = post.replace(/([\t\r\n\f]+)/gi, ' $1 ');
+  return mid
     .trim()
     .split(/ /gi)
     .map((w, i) => {
@@ -41,11 +44,11 @@ export const processPostFn = (post: string) =>
       ) : /(^#)[A-Za-z0-9_]+[,.!?]*$/.test(w) ? (
         <Box component='span' key={i}>
           <Link
-            onClick={stopProp}
-            to={() => {
+            onClick={(e: any) => {
+              stopProp(e);
               dispatch(triggerSearchKanyimuta(w)(dispatch));
-              return `/search/${w.substring(1)}`;
-            }}>
+            }}
+            to={`/search?q=${w.substring(1)}`}>
             {w}
           </Link>{' '}
         </Box>
@@ -61,11 +64,21 @@ export const processPostFn = (post: string) =>
         <React.Fragment key={i}>{w} </React.Fragment>
       );
     });
+};
+
+const openCreateRepostModal = (meta: any) => (e: any) => {
+  displayModal(true, 'CREATE_REPOST', {
+    title: 'Create Repost',
+    post: meta
+  });
+};
 
 const Post: React.FunctionComponent<
   Partial<PostPropsState> & Partial<{ head: boolean }>
 > = (props) => {
   const history = useHistory();
+  const [showComment, setShowComment] = useState(false);
+  const [showComment2, setShowComment2] = useState(false);
   let extra: string | null = null;
   if (props.sec_type === 'REPOST') {
     extra = `${props.sender_name} reposted`;
@@ -88,17 +101,17 @@ const Post: React.FunctionComponent<
   };
   return (
     <Box
-      className='post-list-page'
-      borderRadius='5px'
+      id={props.id}
+      className='post-list-page mb-1 mb-md-2'
+      borderRadius='2px'
       p={0}
       pt={1}
       pl={1}
-      pb={props.sec_type === 'REPLY' ? 1 : 0}
-      mb={1}>
+      pb={props.sec_type === 'REPLY' ? 1 : 0}>
       {((props._extra && props.sec_type !== 'REPLY') ||
         (props.sec_type === 'REPOST' && !props.text)) &&
-        props.head && <small className='small-text'>{extra}</small>}
-      {props.sec_type === 'REPLY' && props.head && (
+        !props.head && <small className='small-text'>{extra}</small>}
+      {props.sec_type === 'REPLY' && !props.head && (
         <small className='small-text'>{extra}</small>
       )}
       <Row
@@ -239,8 +252,7 @@ const Post: React.FunctionComponent<
               textAlign='right'
               width='100%'
               color='#888'
-              pt={1}
-              mr={3}>
+              pt={1}>
               {formatDate(props.parent?.posted_at as number)}
             </Box>
           </Row>
@@ -312,6 +324,13 @@ const Post: React.FunctionComponent<
             <Col className='d-flex align-items-center justify-content-center'>
               <Box
                 padding='5px 15px'
+                onClick={openCreateRepostModal(
+                  props.sec_type === 'REPLY'
+                    ? (props.parent as any)
+                    : props.text
+                    ? (props as any)
+                    : (props.parent as any)
+                )}
                 className='d-flex align-items-center react-to-post justify-content-center'
                 fontSize='13px'>
                 <svg
@@ -343,6 +362,7 @@ const Post: React.FunctionComponent<
             <Col className='d-flex align-items-center justify-content-center'>
               <Box
                 padding='5px 15px'
+                onClick={() => setShowComment(!showComment)}
                 className='d-flex align-items-center react-to-post justify-content-center'
                 fontSize='13px'>
                 <svg
@@ -370,7 +390,17 @@ const Post: React.FunctionComponent<
               </Box>
             </Col>
           </Row>
-          <CreateReply post_id={`${props.id}`} />
+          {showComment && (
+            <CreateReply
+              post_id={`${
+                (props.sec_type === 'REPLY'
+                  ? props.parent?.id
+                  : props.text
+                  ? props.id
+                  : props.parent?.id) as string
+              }`}
+            />
+          )}
         </Box>
       )}
       {props.sec_type === 'REPLY' && (
@@ -438,6 +468,7 @@ const Post: React.FunctionComponent<
                 <Col className='d-flex align-items-center justify-content-center'>
                   <Box
                     padding='5px 15px'
+                    onClick={openCreateRepostModal(props)}
                     className='d-flex align-items-center react-to-post justify-content-center'
                     fontSize='13px'>
                     <svg
@@ -463,6 +494,7 @@ const Post: React.FunctionComponent<
                 <Col className='d-flex align-items-center justify-content-center'>
                   <Box
                     padding='5px 15px'
+                    onClick={() => setShowComment2(!showComment2)}
                     className='d-flex align-items-center react-to-post justify-content-center'
                     fontSize='13px'>
                     <svg
@@ -483,6 +515,7 @@ const Post: React.FunctionComponent<
                   </Box>
                 </Col>
               </Row>
+              {showComment2 && <CreateReply post_id={props.id} />}
             </Box>
           )}
         </Box>

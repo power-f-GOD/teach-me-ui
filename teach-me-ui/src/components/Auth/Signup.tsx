@@ -13,8 +13,9 @@ import { connect } from 'react-redux';
 
 import MomentUtils from '@date-io/moment';
 
-import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -248,7 +249,7 @@ const Signup = (props: SignupPropsState) => {
               const keyword = institution.value?.keyword!.trim();
               const highlighted = `${_institution.name.replace(
                 new RegExp(`(${keyword})`, 'i'),
-                `<span class='theme-secondary-darker'>$1</span>`
+                `<span class='theme-secondary-lighter'>$1</span>`
               )}, ${country}`.replace(/<\/?script>/gi, '');
 
               return (
@@ -299,7 +300,7 @@ const Signup = (props: SignupPropsState) => {
                   .trim()
                   .replace(
                     new RegExp(`(${department.value!.trim()})`, 'i'),
-                    `<span class='theme-secondary-darker'>$1</span>`
+                    `<span class='theme-secondary-lighter'>$1</span>`
                   )}`.replace(/<\/?script>/gi, '');
 
                 return (
@@ -347,7 +348,7 @@ const Signup = (props: SignupPropsState) => {
                   .trim()
                   .replace(
                     new RegExp(`(${level.value!.trim()})`, 'i'),
-                    `<span class='theme-secondary-darker'>$1</span>`
+                    `<span class='theme-secondary-lighter'>$1</span>`
                   )}`.replace(/<\/?script>/gi, '');
 
                 return (
@@ -370,21 +371,24 @@ const Signup = (props: SignupPropsState) => {
   }
 
   return (
-    <Box
-      width='45rem'
-      className='auth-form-wrapper fade-in d-flex flex-column justify-content-center'>
-      <Typography component='h2' variant='h6'>
-        <Box marginY='0.5em' fontSize='1.25rem' fontWeight={900}>
-          Basic info:
-        </Box>
-      </Typography>
+    <Box 
+    width='45rem'
+    className='auth-form-wrapper fade-in d-flex flex-column justify-content-center'>
+      <Box
+        component='h2'
+        marginY='0.5em'
+        fontSize='1.25rem'
+        className='col px-0'
+        fontWeight={900}>
+        Basic info:
+      </Box>
 
       <form
         noValidate
         autoComplete='on'
         onSubmit={(e: any) => e.preventDefault()}>
-        <Grid justify='space-between' container>
-          <Grid item xs={12} sm={6} className='flex-basis-halved'>
+        <Row className='mx-0'>
+          <Col xs={12} sm={6} className='pl-0'>
             <Box marginY='0.25em'>
               <Memoize
                 memoizedComponent={TextField}
@@ -402,8 +406,8 @@ const Signup = (props: SignupPropsState) => {
                 inputProps={inputProps}
               />
             </Box>
-          </Grid>
-          <Grid item xs={12} sm={5} className='flex-basis-halved'>
+          </Col>
+          <Col xs={12} sm={6} className='pr-0'>
             <Box marginY='0.25em'>
               <Memoize
                 memoizedComponent={TextField}
@@ -421,11 +425,11 @@ const Signup = (props: SignupPropsState) => {
                 inputProps={inputProps}
               />
             </Box>
-          </Grid>
-        </Grid>
+          </Col>
+        </Row>
 
-        <Grid justify='space-between' container>
-          <Grid item xs={12} sm={6} className='flex-basis-halved'>
+        <Row className='mx-0'>
+          <Col xs={12} sm={6} className='pl-0'>
             <Box component='div' marginY='0.25em' minWidth='100%'>
               <Memoize
                 memoizedComponent={TextField}
@@ -443,8 +447,8 @@ const Signup = (props: SignupPropsState) => {
                 inputProps={inputProps}
               />
             </Box>
-          </Grid>
-          <Grid item xs={12} sm={5} className='flex-basis-halved'>
+          </Col>
+          <Col xs={12} sm={6} className='pr-0'>
             <Box component='div' marginY='0.25em' minWidth='100%'>
               <Memoize
                 memoizedComponent={TextField}
@@ -463,16 +467,16 @@ const Signup = (props: SignupPropsState) => {
                 inputProps={inputProps}
               />
             </Box>
-          </Grid>
-        </Grid>
+          </Col>
+        </Row>
 
-        <Grid justify='space-between' container>
-          <Grid item xs={12} sm={6} className='flex-basis-halved'>
+        <Row className='mx-0'>
+          <Col xs={12} sm={6} className='pl-0'>
             <Box component='div' marginY='0.25em' minWidth='100%'>
               <Memoize memoizedComponent={DatePicker} dob={dob} />
             </Box>
-          </Grid>
-          <Grid item xs={12} sm={5} className='flex-basis-halved'>
+          </Col>
+          <Col xs={12} sm={6} className='pr-0'>
             <Box component='div' marginY='0.25em' minWidth='100%'>
               <Memoize
                 memoizedComponent={TextField}
@@ -492,17 +496,20 @@ const Signup = (props: SignupPropsState) => {
                 InputProps={inputAdorned}
               />
             </Box>
-          </Grid>
-        </Grid>
+          </Col>
+        </Row>
 
-        <Typography component='h2' variant='h6'>
-          <Box marginY='0.5em' fontSize='1.25rem' fontWeight={900}>
-            Academic info:
-          </Box>
-        </Typography>
+        <Box
+          component='h2'
+          marginY='0.5em'
+          fontSize='1.25rem'
+          fontWeight={900}
+          className='col px-0'>
+          Academic info:
+        </Box>
 
-        <Grid justify='space-between' container>
-          <Grid item xs={12} sm={6} className='flex-basis-halved'>
+        <Row className='mx-0'>
+          <Col xs={12} sm={6} className='pl-0'>
             <Box
               component='div'
               marginY='0.25em'
@@ -530,8 +537,8 @@ const Signup = (props: SignupPropsState) => {
               )}
               {matchingInstitutionsList}
             </Box>
-          </Grid>
-          <Grid item xs={12} sm={5} className='flex-basis-halved'>
+          </Col>
+          <Col xs={12} sm={6} className='pr-0'>
             <Box
               component='div'
               marginY='0.25em'
@@ -564,11 +571,11 @@ const Signup = (props: SignupPropsState) => {
               )}
               {matchingDepartmentsList}
             </Box>
-          </Grid>
-        </Grid>
+          </Col>
+        </Row>
 
-        <Grid justify='space-between' container>
-          <Grid item xs={12} sm={6} className='flex-basis-halved'>
+        <Row className='mx-0'>
+          <Col xs={12} sm={6} className='pl-0'>
             <Box
               component='div'
               marginY='0.25em'
@@ -601,8 +608,8 @@ const Signup = (props: SignupPropsState) => {
               )}
               {matchingLevelsList}
             </Box>
-          </Grid>
-          <Grid item xs={12} sm={5} className='flex-basis-halved' key='button'>
+          </Col>
+          <Col xs={12} sm={6} className='pr-0' key='button'>
             <Box component='div' marginY='0.25em' minWidth='100%'>
               <Memoize
                 memoizedComponent={Button}
@@ -622,14 +629,12 @@ const Signup = (props: SignupPropsState) => {
                 )}
               </Memoize>
             </Box>
-          </Grid>
-        </Grid>
+          </Col>
+        </Row>
       </form>
 
-      <Box marginY='1em'>
-        <Typography component='div' align='center'>
-          Have a an account? <Link to='/signin'>Sign in here!</Link>
-        </Typography>
+      <Box marginY='1em' className='text-center'>
+        Have a an account? <Link to='/signin'>Sign in here!</Link>
       </Box>
     </Box>
   );
@@ -666,6 +671,7 @@ function DatePicker({ dob }: any) {
         inputVariant='outlined'
         value={selectedDate}
         error={dob.err}
+        className='secondary'
         inputRef={refs.dobInput}
         helperText={dob.helperText}
         fullWidth

@@ -1,4 +1,5 @@
 .Search {
+  padding: 4.5rem 0 2rem 0;
   min-height: 100vh;
   margin: 0;
   // @include debugger();
@@ -31,8 +32,10 @@
     padding: 0 0.65em;
     margin: 0 2.5em 0 0;
     width: 100%;
-    transition: 0.3s;
+    position: relative;
+    z-index: 5;
     background: rgba(0, 0, 0, 0.06);
+    transition: transform 0.5s cubic-bezier(0.215, 0.61, 0.355, 1), background-color 0.3s;
 
     &:focus-within {
       background: rgba(0, 0, 0, 0.12);
@@ -51,8 +54,11 @@
     padding-left: 0.5em;
   }
 
-  .search-results-wrapper {
+  .search-results-wrapper,
+  .no-results-wrapper {
     padding: 0;
+    max-height: calc(100vh - 14rem);
+    overflow-y: auto;
   }
 
   .search-result {
@@ -60,6 +66,7 @@
     margin-top: 0.5rem;
     border-radius: 0.35rem;
     display: block;
+    animation: fadeIn 0.3s;
 
     a {
       text-decoration: none;

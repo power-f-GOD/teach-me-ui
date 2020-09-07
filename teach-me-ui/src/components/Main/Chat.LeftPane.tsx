@@ -12,13 +12,15 @@ import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 import BlockIcon from '@material-ui/icons/Block';
+import CloudOffIcon from '@material-ui/icons/CloudOff';
+import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
 
 import {
   chatState,
   getConversationInfo,
   conversationMessages
 } from '../../actions/chat';
-import { dispatch, addEventListenerOnce } from '../../functions/utils';
+import { dispatch, addEventListenerOnce, delay } from '../../functions/utils';
 import {
   ChatState,
   ConversationInfo,
@@ -30,9 +32,11 @@ import { Skeleton, DISPLAY_INFO } from '../crumbs/Loader';
 import {
   getConversationMessages,
   conversation,
-  conversationInfo
+  conversationInfo,
+  conversations
 } from '../../actions/chat';
 import { ChatTimestamp, ChatStatus } from './Chat.crumbs';
+import createMemo from '../../Memo';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -45,23 +49,286 @@ interface ChatLeftPaneProps {
   conversations: SearchState;
   rooms?: ConversationInfo[];
   userId: string;
+  userFirstname: string;
+  handleSetActivePaneIndex(index: number): Function;
 }
+
+const Memoize = createMemo();
 
 const [CV, CR] = ['Conversations', 'Classrooms'];
 
-const ChatLeftPane = (props: ChatLeftPaneProps) => {
-  const [value, setValue] = React.useState<number>(0);
-  const { conversations, userId } = props;
-  const { pathname } = window.location;
-  const convos = (props.conversations.data ?? []) as Partial<
-    APIConversationResponse
-  >[];
+const allyProps = (index: any) => {
+  return {
+    id: index,
+    'aria-controls': index,
+    className: 'tab-link'
+  };
+};
 
-  const [recent, setRecent] = React.useState<number>(0);
+const ChatLeftPane = (props: ChatLeftPaneProps) => {
+  const {
+    conversations: _conversations,
+    userId,
+    userFirstname,
+    handleSetActivePaneIndex
+  } = props;
+  const [value, setValue] = React.useState<number>(0);
 
   const handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
+
+  return (
+    <Box width='100%'>
+      <AppBar position='static'>
+        <Tabs
+          className='tab-links-container'
+          value={value}
+          onChange={handleChange}
+          aria-label='Chat left pane tab panels'>
+          <Tab label={CV} {...allyProps(0)} style={{ minWidth: '50%' }} />
+          <Tab label={CR} {...allyProps(1)} style={{ minWidth: '50%' }} />
+        </Tabs>
+      </AppBar>
+      <Box className='tab-panels-wrapper d-flex' position='relative'>
+        <Memoize
+          memoizedComponent={TabPanel}
+          value={value}
+          index={0}
+          status={_conversations.status}>
+          {_conversations.status === 'pending' && !_conversations.err ? (
+            Array(Math.floor(window.innerHeight / 60))
+              .fill('')
+              .map((_, key) => <Skeleton type={DISPLAY_INFO} key={key} />)
+          ) : _conversations.data?.length ? (
+            <Memoize
+              memoizedComponent={PaneItems}
+              userId={userId}
+              conversations={_conversations}
+              handleSetActivePaneIndex={handleSetActivePaneIndex}
+            />
+          ) : (
+            <Box padding='2rem' textAlign='center'>
+              {window.navigator.onLine &&
+              _conversations.status === 'fulfilled' ? (
+                <>
+                  <PeopleAltIcon fontSize='large' />
+                  <br />
+                  <br />
+                  Hi,{' '}
+                  <Box component='span' fontWeight='bold'>
+                    {userFirstname}
+                  </Box>
+                  !
+                  <br />
+                  <br />
+                  - You have no conversations yet.
+                  <br />
+                  <br />
+                  - Your list of colleagues would appear here.
+                  <br />
+                  <br />- Search for and add a colleague to begin a conversation
+                  with them.
+                </>
+              ) : (
+                <>
+                  <CloudOffIcon fontSize='large' />
+                  <br />
+                  <br />
+                  Can't load conversations. You seem to be offline
+                </>
+              )}
+            </Box>
+          )}
+        </Memoize>
+        <Memoize memoizedComponent={TabPanel} value={value} index={1}>
+          <Box padding='2rem' textAlign='center'>
+            Not available yet.
+          </Box>
+        </Memoize>
+      </Box>
+    </Box>
+  );
+};
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+  const name = (value === 0 ? CV : CR).toLowerCase();
+  const translateVal = (index === value ? 0 : index - value) * 100;
+  const tabPanelRef = React.useRef<any>();
+
+  const setInertness = useCallback(
+    (e: any) => {
+      e.target.inert = value !== index;
+
+      delay(50).then(() => {
+        if (e.target.scrollHeight > e.target.offsetHeight) {
+          e.target.classList.remove('remove-scroll-fader');
+        } else {
+          e.target.classList.add('remove-scroll-fader');
+        }
+      });
+    },
+    [value, index]
+  );
+
+  React.useEffect(() => {
+    if (tabPanelRef.current) {
+      addEventListenerOnce(tabPanelRef.current, setInertness, '', {
+        capture: true
+      });
+      addEventListenerOnce(tabPanelRef.current, setInertness, 'resize', {
+        capture: true
+      });
+
+      if (/fulfilled|settled/.test(other.status)) {
+        setInertness({ target: tabPanelRef.current });
+      }
+    }
+  }, [setInertness, other.status]);
+
+  return (
+    <>
+      <section
+        role='tabpanel'
+        id={name}
+        style={{
+          transform: `translateX(${translateVal}%)`,
+          WebkitTransform: `translateX(${translateVal}%)`,
+          OTransform: `translateX(${translateVal}%)`,
+          opacity: value === index ? 1 : 0
+        }}
+        ref={tabPanelRef}
+        className={`tab-panel ${value !== index ? 'hide-scroll-fader' : ''} ${
+          other.status === 'pending'
+            ? 'hidden'
+            : value === index
+            ? 'auto'
+            : 'hidden'
+        } custom-scroll-bar`}
+        aria-labelledby={index}>
+        <Box>{children}</Box>
+      </section>
+      <Box className='scroll-bar-fader' />
+    </>
+  );
+}
+
+function PaneItems(props: {
+  conversations: SearchState;
+  userId: string;
+  handleSetActivePaneIndex(index: number): Function;
+}) {
+  const {
+    conversations: _conversations,
+    userId,
+    handleSetActivePaneIndex
+  } = props;
+  const convos = (_conversations.data ?? []) as Partial<
+    APIConversationResponse
+  >[];
+
+  return (
+    <>
+      {convos.map((conversation, i) => {
+        const {
+          last_message,
+          unread_count,
+          user_typing,
+          online_status
+        } = conversation;
+
+        return (
+          <Memoize
+            memoizedComponent={PaneItem}
+            conversation={conversation}
+            forceUpdate={
+              '' +
+              last_message?._id +
+              last_message?.delivered_to +
+              last_message?.seen_by +
+              unread_count +
+              user_typing +
+              online_status
+            }
+            index={i}
+            userId={userId}
+            handleSetActivePaneIndex={handleSetActivePaneIndex}
+            key={i}
+          />
+        );
+      })}
+    </>
+  );
+}
+
+function PaneItem({
+  conversation: _conversation,
+  userId,
+  handleSetActivePaneIndex,
+  index
+}: {
+  conversation: Partial<APIConversationResponse>;
+  userId: string;
+  index: number;
+  handleSetActivePaneIndex(index: number): Function;
+  forceUpdate: string;
+}) {
+  const {
+    avatar,
+    conversation_name: displayName,
+    associated_user_id: _userId,
+    _id: convoId,
+    last_message,
+    friendship,
+    participants,
+    online_status,
+    user_typing,
+    unread_count,
+    created_at
+  } = _conversation ?? {};
+  const hasRecent: boolean = { ...(last_message as any) }.is_recent;
+
+  const [recent, setRecent] = React.useState<number>(0);
+
+  if (hasRecent) setRecent(index);
+
+  delete (last_message as any)?.is_recent;
+
+  const lastMessageTimestamp = last_message?.date ?? Date.now();
+  const lastMessageDate = new Date(Number(lastMessageTimestamp)).toDateString();
+  const lastMessageDateString = new Date(lastMessageTimestamp)
+    .toLocaleString()
+    .split(',')[0];
+  const todaysDate = new Date().toDateString();
+  const todaysDateString = new Date().toLocaleString().split(',')[0];
+  const lastMessageSentYesterday =
+    Math.abs(
+      ((new Date(todaysDate) as any) -
+        (new Date(lastMessageDate) as any)) as any
+    ) /
+      864e5 ===
+    1;
+  const _queryString = `?chat=open&id=${_userId}&cid=${convoId}`;
+  const _chatState: ChatState = {
+    isOpen: true,
+    isMinimized: false,
+    queryString: _queryString
+  };
+
+  const navLinkTo = useCallback(
+    ({ pathname }: any) => pathname + _queryString,
+    [_queryString]
+  );
+
+  const navLinkActive = useCallback(
+    (_match: any, location: any) => {
+      return Boolean(
+        convoId && queryString.parse(location.search)?.cid === convoId
+      );
+    },
+    [convoId]
+  );
 
   const handleChatClick = useCallback(
     (chatInfo: ChatState, extra: { convoId: string; userId: string }) => {
@@ -69,8 +336,23 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
         const { id, cid } = queryString.parse(window.location.search);
         const { convoId, userId } = extra;
 
+        delay(300).then(() => {
+          handleSetActivePaneIndex(1)();
+        });
+
         if (cid === convoId || userId === id) {
+          const queryString = window.location.search.replace(
+            'chat=min',
+            'chat=open'
+          );
+
+          dispatch(chatState({ queryString }));
           e.preventDefault();
+          window.history.replaceState(
+            {},
+            '',
+            window.location.pathname + queryString
+          );
           return;
         }
 
@@ -78,7 +360,14 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
 
         if (window.navigator.onLine) {
           dispatch(getConversationInfo(userId)(dispatch));
-          dispatch(getConversationMessages(convoId, 'pending')(dispatch));
+          dispatch(
+            getConversationMessages(convoId, 'pending', 'loading new')(dispatch)
+          );
+          delay(1500).then(() => {
+            dispatch(
+              conversations({ data: [{ unread_count: 0, _id: convoId }] })
+            );
+          });
         } else {
           dispatch(
             conversationInfo({
@@ -96,246 +385,119 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
         dispatch(conversation(convoId));
       };
     },
-    []
+    [handleSetActivePaneIndex]
   );
 
   return (
-    <Box width='100%'>
-      <AppBar position='static'>
-        <Tabs
-          className='tab-links-container'
-          value={value}
-          onChange={handleChange}
-          aria-label='Chat left pane tab panels'>
-          <Tab label={CV} {...allyProps(0)} />
-          <Tab label={CR} {...allyProps(1)} />
-        </Tabs>
-      </AppBar>
-      <Box className='tab-panels-wrapper d-flex' position='relative'>
-        <TabPanel value={value} index={0} status={conversations.status}>
-          {conversations.status === 'pending' && !conversations.err ? (
-            Array(Math.floor(window.innerHeight / 60))
-              .fill('')
-              .map((_, key) => <Skeleton type={DISPLAY_INFO} key={key} />)
-          ) : convos.length ? (
-            convos.map((conversation, i) => {
-              const {
-                avatar,
-                conversation_name: displayName,
-                associated_user_id: _userId,
-                _id: convoId,
-                last_message,
-                friendship,
-                participants,
-                online_status
-              } = conversation;
-              const hasRecent: boolean = { ...(last_message as any) }.is_recent;
+    <NavLink
+      to={navLinkTo}
+      className={`tab-panel-item${!friendship ? ' uncolleagued' : ''}${
+        recent === index ? ' recent' : ''
+      }`}
+      key={convoId}
+      isActive={navLinkActive}
+      onClick={handleChatClick(
+        { ..._chatState },
+        { convoId: String(convoId), userId: String(_userId) }
+      )}>
+      <Col className='conversation-name-wrapper'>
+        <Badge
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right'
+          }}
+          className={online_status?.toLowerCase() ?? 'offline'}
+          overlap='circle'
+          variant='dot'>
+          <Avatar
+            component='span'
+            className='chat-avatar mr-2'
+            alt={displayName}
+            src={`/images/${avatar ?? 'avatar-1.png'}`}
+          />
+        </Badge>{' '}
+        <Box width='100%' maxWidth='calc(100% - 3.65rem)'>
+          <Box className='display-name-wrapper'>
+            <Box className='display-name'>{displayName}</Box>
 
-              if (hasRecent) setRecent(i);
-
-              delete (last_message as any)?.is_recent;
-
-              const lastMessageTimestamp = last_message?.date ?? Date.now();
-              const lastMessageDate = new Date(
-                Number(lastMessageTimestamp)
-              ).toDateString();
-              const lastMessageDateString = new Date(lastMessageTimestamp)
-                .toLocaleString()
-                .split(',')[0];
-              const todaysDate = new Date().toDateString();
-              const todaysDateString = new Date()
-                .toLocaleString()
-                .split(',')[0];
-              const lastMessageSentYesterday =
-                Math.abs(
-                  ((new Date(todaysDate) as any) -
-                    (new Date(lastMessageDate) as any)) as any
-                ) /
-                  864e5 ===
-                1;
-              const _queryString = `${pathname}?chat=open&id=${_userId}&cid=${convoId}`;
-              const _chatState: ChatState = {
-                isOpen: true,
-                isMinimized: false,
-                queryString: _queryString
-              };
-
-              return (
-                <NavLink
-                  to={_queryString}
-                  className={`tab-panel-item ${
-                    !friendship ? 'uncolleagued' : ''
-                  } ${recent === i ? 'recent' : ''}`}
-                  key={convoId}
-                  isActive={(_match, location) =>
-                    Boolean(
-                      convoId &&
-                        queryString.parse(location.search)?.cid === convoId
-                    )
-                  }
-                  onClick={handleChatClick(
-                    { ..._chatState },
-                    { convoId: String(convoId), userId: String(_userId) }
-                  )}>
-                  <Col className='colleague-name'>
-                    <Badge
-                      anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'right'
-                      }}
-                      className={online_status?.toLowerCase() ?? 'offline'}
-                      overlap='circle'
-                      variant='dot'>
-                      <Avatar
-                        component='span'
-                        className='chat-avatar mr-2'
-                        alt={displayName}
-                        src={`/images/${avatar ?? 'avatar-1.png'}`}
-                      />
-                    </Badge>{' '}
-                    <Box width='100%' maxWidth='calc(100% - 3.25rem)'>
-                      <Box className='display-name-wrapper'>
-                        <Box className='display-name'>{displayName}</Box>
-                        <ChatTimestamp
-                          timestamp={
-                            lastMessageSentYesterday
-                              ? 'Yesterday'
-                              : todaysDateString !== lastMessageDateString
-                              ? lastMessageDateString
-                              : last_message?.date ?? 0
-                          }
-                        />
-                      </Box>
-                      <Box
-                        className={`last-message mt-1 ${
-                          last_message?.deleted ? 'font-italic' : ''
-                        }`}>
-                        <ChatStatus
-                          type={
-                            last_message?.sender_id === userId
-                              ? 'outgoing'
-                              : 'incoming'
-                          }
-                          shouldUpdate={
-                            last_message?.delivered_to!?.length +
-                            last_message?.seen_by!?.length
-                          }
-                          participants={participants as string[]}
-                          message={last_message as APIMessageResponse}
-                          userId={userId as string}
-                        />{' '}
-                        {last_message?.deleted ? (
-                          last_message?.sender_id === userId ? (
-                            <>
-                              <BlockIcon fontSize='inherit' /> You deleted this
-                              message
-                            </>
-                          ) : (
-                            <>
-                              <BlockIcon fontSize='inherit' /> You can't see
-                              this message
-                            </>
-                          )
-                        ) : (
-                          last_message?.message
-                        )}
-                      </Box>
+            <ChatTimestamp
+              className={`${
+                _conversation.unread_count ? 'theme-secondary-lighter' : ''
+              }`}
+              timestamp={
+                lastMessageSentYesterday
+                  ? 'Yesterday'
+                  : todaysDateString !== lastMessageDateString
+                  ? lastMessageDateString
+                  : last_message?.date ?? created_at ?? 0
+              }
+            />
+          </Box>
+          {friendship && (
+            <Box
+              className='message-badge-wrapper d-flex justify-content-between'
+              maxWidth='100%'
+              width='100%'>
+              <Box
+                className={`last-message mt-1 ${
+                  last_message?.deleted ? 'font-italic' : ''
+                } ${user_typing ? 'theme-secondary-lightest' : ''}`}
+                maxWidth={unread_count ? 'calc(100% - 2.25rem)' : '100%'}
+                title={last_message?.message ?? ''}>
+                {!last_message ? (
+                  <Box className='new-conversation-tag'>NEW</Box>
+                ) : (
+                  <>
+                    <Box
+                      position='absolute'
+                      className={user_typing ? 'show' : 'hide'}>
+                      typing...
                     </Box>
-                  </Col>
-                </NavLink>
-              );
-            })
-          ) : (
-            <Box padding='2rem' textAlign='center'>
-              You have no conversations yet.
+                    <Box className={user_typing ? 'hide' : 'show'}>
+                      <ChatStatus
+                        type={
+                          last_message?.sender_id === userId
+                            ? 'outgoing'
+                            : 'incoming'
+                        }
+                        shouldUpdate={
+                          last_message?.delivered_to!?.length +
+                          last_message?.seen_by!?.length
+                        }
+                        participants={participants as string[]}
+                        message={last_message as APIMessageResponse}
+                        userId={userId as string}
+                      />{' '}
+                      {last_message?.deleted ? (
+                        last_message?.sender_id === userId ? (
+                          <>
+                            <BlockIcon fontSize='inherit' /> You deleted this
+                            message
+                          </>
+                        ) : (
+                          <>
+                            <BlockIcon fontSize='inherit' /> You can't see this
+                            message
+                          </>
+                        )
+                      ) : (
+                        last_message?.message
+                      )}
+                    </Box>
+                  </>
+                )}
+              </Box>
+              <Badge
+                className={unread_count ? 'show-badge' : ''}
+                badgeContent={unread_count}
+                max={9999}
+              />
             </Box>
           )}
-        </TabPanel>
-        <TabPanel value={value} index={1}>
-          <Box padding='2rem' textAlign='center'>
-            Not available yet.
-          </Box>
-        </TabPanel>
-      </Box>
-    </Box>
+        </Box>
+      </Col>
+    </NavLink>
   );
-};
-
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-  const name = (value === 0 ? CV : CR).toLowerCase();
-  const translateVal = (index === value ? 0 : index - value) * 100;
-  const tabPanelRef = React.useRef<any>();
-
-  const setVisibility = useCallback(
-    (e: any) => {
-      e.target.inert = value === index ? false : true;
-
-      setTimeout(() => {
-        if (e.target.scrollHeight > e.target.offsetHeight) {
-          e.target.classList.remove('remove-scroll-fader');
-        } else {
-          e.target.classList.add('remove-scroll-fader');
-        }
-      }, 10);
-    },
-    [value, index]
-  );
-
-  React.useEffect(() => {
-    if (tabPanelRef.current) {
-      addEventListenerOnce(tabPanelRef.current, setVisibility, '', {
-        capture: true
-      });
-      addEventListenerOnce(tabPanelRef.current, setVisibility, 'resize', {
-        capture: true
-      });
-
-      if (/fulfilled|settled/.test(other.status)) {
-        setVisibility({ target: tabPanelRef.current });
-      }
-    }
-  }, [setVisibility, other.status]);
-
-  return (
-    <>
-      <section
-        role='tabpanel'
-        id={name}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          transform: `translateX(${translateVal}%)`,
-          WebkitTransform: `translateX(${translateVal}%)`,
-          OTransform: `translateX(${translateVal}%)`,
-          overflowY:
-            other.status === 'pending'
-              ? 'hidden'
-              : value === index
-              ? 'auto'
-              : 'hidden',
-          opacity: value === index ? 1 : 0.8,
-          minWidth: '100%'
-        }}
-        ref={tabPanelRef}
-        className={`tab-panel ${
-          value !== index ? 'hide-scroll-fader' : ''
-        } custom-scroll-bar`}
-        aria-labelledby={index}>
-        <Box>{children}</Box>
-      </section>
-      <Box className='scroll-bar-fader' />
-    </>
-  );
-}
-
-function allyProps(index: any) {
-  return {
-    id: index,
-    'aria-controls': index,
-    className: 'tab-link'
-  };
 }
 
 export default ChatLeftPane;

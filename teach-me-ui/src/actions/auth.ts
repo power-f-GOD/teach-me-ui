@@ -32,7 +32,7 @@ import {
   logError,
   delay
 } from '../functions';
-import { displaySnackbar } from './misc';
+import { displaySnackbar, closeWebSocket } from './misc';
 
 export const doForgotPassword = (email: string) => (
   dispatch: Function
@@ -404,17 +404,17 @@ export function auth(payload: AuthState): ReduxAction {
 }
 
 export const requestSignout = () => (dispatch: Function): ReduxAction => {
-  delay(200).then(() => dispatch(signout({ status: 'pending' })));
+  dispatch(closeWebSocket());
+  dispatch(signout({ status: 'pending' }));
 
   if (navigator.cookieEnabled) {
-    localStorage.kanyimuta = JSON.stringify({
-      ...JSON.parse(localStorage.kanyimuta ?? '{}'),
-      id: null,
-      token: null
-    });
+    const username = JSON.parse(localStorage.kanyimuta ?? '{}').username;
+
+    //preserve username in localStorage as it is used to fill signin textbox on signout
+    localStorage.kanyimuta = JSON.stringify({ username });
   }
 
-  delay(300).then(() => {
+  delay(1500).then(() => {
     dispatch(auth({ status: 'fulfilled', isAuthenticated: false }));
     dispatch(
       signout({

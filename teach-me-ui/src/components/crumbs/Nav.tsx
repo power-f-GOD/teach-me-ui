@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
+
+import Container from 'react-bootstrap/Container';
 
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
-import Container from '@material-ui/core/Container';
 import ArrowForward from '@material-ui/icons/ArrowForwardIosSharp';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import IconButton from '@material-ui/core/IconButton';
@@ -16,10 +17,13 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 import InfoRoundedIcon from '@material-ui/icons/InfoRounded';
 import HelpRoundedIcon from '@material-ui/icons/HelpRounded';
+import Badge from '@material-ui/core/Badge';
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 
 import { handleSignoutRequest, getState } from '../../functions';
 import { UserData } from '../../constants';
+import { dispatch } from '../../appStore';
+import { getNotificationsRequest } from '../../actions';
 
 const Nav = (props: any) => {
   const forIndexPage = /index/i.test(props.for);
@@ -77,11 +81,32 @@ function IndexNav(props: any) {
   );
 }
 
+let notifInterval: any = null;
+
 function MainNav(props: any) {
+  const { isAuthenticated, className } = props;
+  const [invisible, setInvisible] = useState(true);
   const username = (getState().userData as UserData).username;
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(getNotificationsRequest(Date.now())(dispatch));
+      notifInterval = setInterval(() => {
+        if (getState().getNotifications.data.notifications[0]) {
+          if (!getState().getNotifications.data.notifications[0].last_seen) {
+            setInvisible(false);
+          }
+        }
+      }, 3000);
+    }
+
+    return () => {
+      clearInterval(notifInterval);
+    };
+  }, [isAuthenticated]);
+
   return (
-    <Box className={`nav-links-wrapper ${props?.className}`}>
+    <Box className={`nav-links-wrapper ${className}`}>
       <NavLink to='/search' className='nav-link'>
         <SearchIcon />
       </NavLink>
@@ -97,7 +122,9 @@ function MainNav(props: any) {
       </NavLink>
 
       <NavLink to='/notifications' className='nav-link'>
-        <NotificationsIcon />
+        <Badge color='secondary' variant='dot' invisible={invisible}>
+          <NotificationsIcon />
+        </Badge>
       </NavLink>
 
       <Box component='span' marginX='1em' />
@@ -116,10 +143,20 @@ function MainNav(props: any) {
 }
 
 function MainNavMenu(props: any) {
+  const { isAuthenticated, className } = props;
   const username = (getState().userData as UserData).username;
+  const noNewNotification = getState().getNotifications.data.notifications[0]
+    ? getState().getNotifications.data.notifications[0].last_seen
+    : true;
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(getNotificationsRequest(Date.now())(dispatch));
+    }
+  }, [isAuthenticated]);
 
   return (
-    <Box className={`nav-links-wrapper ${props?.className}`}>
+    <Box className={`nav-links-wrapper ${className}`}>
       <NavLink to='/search' className='nav-link'>
         <SearchIcon />
         <Box component='span' className='nav-label ml-3'>
@@ -141,7 +178,9 @@ function MainNavMenu(props: any) {
       </NavLink>
 
       <NavLink to='/notifications' className='nav-link'>
-        <NotificationsIcon />
+        <Badge color='secondary' variant='dot' invisible={noNewNotification}>
+          <NotificationsIcon />
+        </Badge>
         <Box component='span' className='nav-label ml-3'>
           Notifications
         </Box>

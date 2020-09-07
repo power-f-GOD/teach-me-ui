@@ -2,21 +2,28 @@
 
 .Home {
   margin-top: 4rem;
-  height: calc(100vh - 4rem);
+  min-height: calc(100vh - 4rem);
 }
 
 .left-pane-col,
 .middle-pane-col,
 .right-pane-col {
-  padding: 1rem 0;
+  padding: 0;
+}
+
+@media (max-width: 767px) {
+  .middle-pane-col {
+    padding: 0rem 0;
+  }
 }
 
 .main-modal {
   background-color: #fff;
-  border-radius: 5px;
+  border-radius: 1.25rem;
   outline: none;
-  width: 35vw;
-  box-shadow: 0 0 7px #ccc;
+  width: 90vw;
+  max-width: 30rem;
+  box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.5);
 
   .post-button {
     height: 2.3em !important;
@@ -60,6 +67,7 @@
 }
 .action-bar {
   border-bottom: 1px solid #ccc;
+  margin-bottom: 0.5rem;
   padding: 10px !important;
   justify-content: flex-end;
 }
@@ -69,6 +77,7 @@
   align-items: center;
   justify-content: center;
 }
+
 
 .left-pane,
 .middle-pane,

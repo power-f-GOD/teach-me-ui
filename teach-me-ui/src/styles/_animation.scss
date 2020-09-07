@@ -30,10 +30,12 @@
 
 @keyframes slideInRight {
   from {
-    transform: translateX(100%);
+    opacity: 0;
+    transform: translateX(200%) scale(2);
   }
   to {
-    transform: translateX(0);
+    opacity: 1;
+    transform: translateX(0) scale(1);
   }
 }
 
@@ -96,14 +98,27 @@
   }
 }
 
+@keyframes scaleUp {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 .hide {
-  transition: 0.35s;
-  visibility: hidden;
+  transition: opacity 0.35s;
+  transition-delay: 0.275s;
+  // visibility: hidden;
   opacity: 0;
 }
 
 .show {
-  transition: 0.35s;
-  visibility: visible;
+  transition: opacity 0.35s;
+  transition-delay: 0.275s;
+  // visibility: visible;
   opacity: 1;
 }

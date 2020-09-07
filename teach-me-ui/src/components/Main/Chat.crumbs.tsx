@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
 
-import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 
 import Box from '@material-ui/core/Box';
@@ -19,20 +18,22 @@ import {
 } from '../../constants/interfaces';
 import { timestampFormatter, formatMapDateString } from '../../functions/utils';
 
-export interface SelectedMessageValue {
-  id: string;
-  deleted: boolean;
-  type: string;
+export interface SelectedMessageValue extends Omit<APIMessageResponse, 'type'> {
+  type: 'incoming' | 'outgoing';
+  sender_username: string;
 }
 
 export type ActionChoice = 'DELETE_FOR_ME' | 'CANCEL' | 'DELETE_FOR_EVERYONE';
 
+let messageTouchTimeout: any = null;
+
 export const Message = (props: {
   message: APIMessageResponse;
   type: 'incoming' | 'outgoing';
+  sender_username: string;
   userId: string;
   className: string;
-  shouldUpdate: any;
+  forceUpdate: any;
   clearSelections: boolean;
   canSelectByClick: boolean;
   participants: string[];
@@ -43,6 +44,7 @@ export const Message = (props: {
     message,
     participants,
     userId,
+    sender_username,
     className,
     clearSelections,
     canSelectByClick,
@@ -53,8 +55,7 @@ export const Message = (props: {
     date: timestamp,
     deleted,
     delivered_to,
-    seen_by,
-    _id: id
+    seen_by
   } = message;
   const [selected, setSelected] = useState<boolean | null>(null);
 
@@ -69,37 +70,57 @@ export const Message = (props: {
     [handleSelectMessage]
   );
 
+  const handleMessageTouchStart = useCallback(() => {
+    messageTouchTimeout = setTimeout(() => {
+      handleSelectMessage();
+    }, 500);
+  }, [handleSelectMessage]);
+
+  const handleMessageTouchEnd = useCallback(() => {
+    clearTimeout(messageTouchTimeout);
+  }, []);
+
   useEffect(() => {
     if (selected !== null) {
-      handleMessageSelection(selected ? String(id) : null, {
-        id,
-        deleted,
-        type
+      handleMessageSelection(selected ? String(message._id) : null, {
+        ...message,
+        type,
+        sender_username
       });
     }
-  }, [selected, deleted, id, type, handleMessageSelection]);
+  }, [selected, type, sender_username, message, handleMessageSelection]);
 
   useEffect(() => {
     if (selected !== null && clearSelections) {
       setSelected(false);
-      handleMessageSelection(null, { id, deleted, type });
+      handleMessageSelection(null, { ...message, type, sender_username });
     }
-  }, [selected, clearSelections, id, deleted, type, handleMessageSelection]);
+  }, [
+    selected,
+    clearSelections,
+    sender_username,
+    message,
+    type,
+    handleMessageSelection
+  ]);
 
   useEffect(
     () => () => {
       setSelected(false);
-      handleMessageSelection(null, { id, deleted, type });
+      handleMessageSelection(null, { ...message, type, sender_username });
     },
-    [id, type, deleted, handleMessageSelection]
+    [type, message, sender_username, handleMessageSelection]
   );
 
   return (
-    <Container
+    <Box
       className={`${type === 'incoming' ? 'incoming' : 'outgoing'} ${
         selected ? 'selected' : ''
       } msg-container ${className} ${deleted ? 'deleted' : ''} p-0 mx-0`}
       onDoubleClick={handleSelectMessage}
+      onTouchStart={handleMessageTouchStart}
+      onTouchEnd={handleMessageTouchEnd}
+      onTouchMove={handleMessageTouchEnd}
       onKeyUp={handleSelectMessageForEnterPress}
       tabIndex={0}
       onClick={canSelectByClick ? handleSelectMessage : undefined}>
@@ -136,22 +157,25 @@ export const Message = (props: {
           />
         </Box>
       </Col>
-    </Container>
+    </Box>
   );
 };
 
 export const ChatTimestamp = (props: {
+  className?: string;
   timestamp: number | string;
   chatStatus?: React.ReactFragment;
 }) => {
-  const { timestamp, chatStatus } = props;
+  const { className, timestamp, chatStatus } = props;
 
   return (
-    <Col as='span' className='chat-timestamp-wrapper p-0'>
-      <Col as='span' className='chat-timestamp d-inline-block'>
+    <Col as='span' className={`chat-timestamp-wrapper p-0`}>
+      <Col
+        as='span'
+        className={`chat-timestamp d-inline-block ${className ?? ''}`}>
         {typeof timestamp === 'string'
           ? timestamp
-          : timestampFormatter(timestamp)}{' '}
+          : timestampFormatter(timestamp).toLowerCase()}{' '}
         {chatStatus ? chatStatus : ''}
       </Col>
     </Col>
@@ -198,11 +222,11 @@ export const ChatDate = ({ timestamp }: { timestamp: number }) => {
   }
 
   return (
-    <Box className='chat-date-wrapper text-center my-5' position='relative'>
+    <div className='chat-date-wrapper text-center my-5'>
       <Box component='span' className='chat-date d-inline-block'>
         {formatMapDateString(timestamp, true)}
       </Box>
-    </Box>
+    </div>
   );
 };
 
@@ -227,21 +251,21 @@ export default function ConfirmDialog(props: {
           onClick={handleClose('DELETE_FOR_ME')}
           color='primary'
           variant='text'
-          className='ml-auto my-2 mr-2'>
+          className='ml-auto my-2 mr-2 btn-secondary uppercase'>
           Delete for Self
         </Button>
         <Button
           onClick={handleClose('CANCEL')}
           color='primary'
           variant='text'
-          className='ml-auto my-2 mr-2'
+          className='ml-auto my-2 mr-2 btn-secondary uppercase'
           autoFocus>
           Cancel
         </Button>
         {canDeleteForEveryone && (
           <Button
             onClick={handleClose('DELETE_FOR_EVERYONE')}
-            className='ml-auto my-2 mr-2'
+            className='ml-auto my-2 mr-2 btn-secondary uppercase'
             variant='text'
             color='primary'>
             Delete for All

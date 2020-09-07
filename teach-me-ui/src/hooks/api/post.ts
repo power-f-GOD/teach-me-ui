@@ -1,16 +1,17 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 
 import useApi from './base';
-import { useApiResponse, Post } from '../../constants';
-
-const cookieEnabled = navigator.cookieEnabled;
-
-let token = '';
-if (cookieEnabled) {
-  token = JSON.parse(localStorage?.kanyimuta ?? '{}')?.token ?? null;
-}
+import { useApiResponse, UserData, Post } from '../../constants';
+import {
+  dispatch,
+  getState,
+  getMentionsFromText,
+  getHashtagsFromText
+} from '../../functions';
+import { createPost } from '../../actions';
 
 const useFetchMentions = (keyword: string): useApiResponse<any> => {
+  const token = (getState().userData as UserData).token;
   const [...r] = useApi<any>({
     endpoint: `/colleagues/find?keyword=${keyword}`,
     method: 'GET',
@@ -20,6 +21,7 @@ const useFetchMentions = (keyword: string): useApiResponse<any> => {
 };
 
 export const useFetchHashtags = (keyword: string): useApiResponse<any> => {
+  const token = (getState().userData as UserData).token;
   const [...r] = useApi<any>({
     endpoint: `/hashtag/suggest?keyword=${keyword}`,
     method: 'GET',
@@ -29,13 +31,25 @@ export const useFetchHashtags = (keyword: string): useApiResponse<any> => {
 };
 
 export const useSubmitPost = (post: Post): useApiResponse<any> => {
+  const token = (getState().userData as UserData).token;
+  const addPost = (payload: any) => {
+    window.scrollTo(0, 0);
+    dispatch(createPost(payload));
+  };
   const [...r] = useApi<any>(
     {
       endpoint: '/post/make',
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` }
     },
-    post
+    {
+      text: post.text,
+      mentions: getMentionsFromText(post.text),
+      hashtags: getHashtagsFromText(post.text),
+      media: post.media
+    },
+    true,
+    addPost
   );
   return r;
 };
@@ -66,34 +80,16 @@ export const useGetFormattedMentionsWithKeyword = (keyword: string) => {
   return [callback];
 };
 
-export const useGetPost = (id: string) => {
+export const useGetRecommendations = () => {
+  const token = (getState().userData as UserData).token;
   const r = useApi<any>(
     {
-      endpoint: `/post/${id}`,
-      method: 'GET'
+      endpoint: `/people/recommendations`,
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` }
     },
     {},
     false
   );
-  useEffect(() => {
-    r[0]();
-    // eslint-disable-next-line
-  }, [id]);
-  return r;
-};
-
-export const useGetPostReplies = (id: string) => {
-  const r = useApi<any>(
-    {
-      endpoint: `/post/${id}/replies?limit=10&skip=0`,
-      method: 'GET'
-    },
-    {},
-    false
-  );
-  useEffect(() => {
-    r[0]();
-    // eslint-disable-next-line
-  }, [id]);
   return r;
 };

@@ -1,9 +1,7 @@
 import React from 'react';
 import { Switch, Route, Link } from 'react-router-dom';
 
-import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
-import Container from '@material-ui/core/Container';
+import Container from 'react-bootstrap/Container';
 import Box from '@material-ui/core/Box';
 
 import {
@@ -20,59 +18,40 @@ const Auth = (props: any) => {
   React.useEffect(() => () => window.scrollTo(0, 0), []);
 
   return (
-    <Grid
-      container
-      className='Auth auth-root-grid custom-scroll-bar fade-in'
-      direction='column'>
+    <Container
+      fluid
+      className='Auth auth-root-grid custom-scroll-bar fade-in p-0'>
       <Box className='auth-main-box' component='main'>
-        <Container className='auth-container'>
-          <Grid
-            className='custom-scroll-bar fade-in'
-            container
-            justify='center'
-            direction='row'
-            alignItems='center'>
-            <Box maxWidth='100%'>
-              <Box
-                width='auto'
-                component='section'
-                className='form-section custom-scroll-bar'>
-                <Box marginY='1.5em' textAlign='center' width='100%'>
-                  <Typography component='div' variant='h4' align='center'>
-                    <Link to='/'>
-                      <Box component='h3' className='logo gradient'>
-                        Kanyimuta!
-                      </Box>
-                    </Link>
-                    {isSignup ? (
-                      <Box component='span' fontSize='1.5rem' fontWeight={900}>
-                        {' '}
-                        - Sign up
-                      </Box>
-                    ) : (
-                      ''
-                    )}
-                  </Typography>
+        <Box component='section' className='form-section custom-scroll-bar'>
+          <Box marginY='1.5em' textAlign='center' width='100%'>
+            <h4 className='text-center'>
+              <Link to='/'>
+                <Box component='h3' className='logo gradient'>
+                  Kanyimuta!
                 </Box>
+              </Link>
+              {isSignup ? (
+                <Box component='span' fontSize='1.5rem' fontWeight={900}>
+                  {' '}
+                  - Sign up
+                </Box>
+              ) : (
+                ''
+              )}
+            </h4>
+          </Box>
 
-                <Switch>
-                  <Route path='/signin' component={Signin} />
-                  <Route path='/signup' component={Signup} />
-                  <Route path='/forgot-password' component={ForgotPassword} />
-                  <Route
-                    exact
-                    path='/password/reset'
-                    component={ResetPassword}
-                  />
-                </Switch>
-              </Box>
-            </Box>
-          </Grid>
-        </Container>
+          <Switch>
+            <Route path='/signin' component={Signin} />
+            <Route path='/signup' component={Signup} />
+            <Route path='/forgot-password' component={ForgotPassword} />
+            <Route exact path='/password/reset' component={ResetPassword} />
+          </Switch>
+        </Box>
       </Box>
 
       <Footer />
-    </Grid>
+    </Container>
   );
 };
 

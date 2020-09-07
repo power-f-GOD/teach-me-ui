@@ -3,6 +3,15 @@
     display: none;
   }
 
+  [class*='container-'],
+  .container {
+    max-width: 1250px;
+  }
+
+  [class*='container-fluid'] {
+    max-width: 100%;
+  }
+
   @media screen and (max-width: 1152px) {
     .drawer {
       display: flex;
@@ -43,6 +52,96 @@
   }
 }
 
+@media screen and (max-width: 991px) {
+  .ChatBox {
+    .chat-left-pane,
+    .chat-middle-pane,
+    .chat-right-pane {
+      transition-delay: 0.275s !important;
+    }
+
+    .chat-right-pane,
+    .chat-left-pane {
+      position: fixed;
+      height: 100vh;
+      width: 100vw;
+      z-index: 5;
+      top: 0;
+      left: 0;
+      max-width: unset;
+    }
+
+    .chat-left-pane {
+      transform: translateX(-100%);
+      transition: opacity 0.35s,
+        transform 0.3s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+
+      &.active-pane {
+        transition: transform 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+        transform: translateX(0);
+      }
+    }
+
+    .chat-middle-pane {
+      width: 100vw;
+      opacity: 0.35;
+      max-width: unset;
+      transform: scale(0.9);
+      transition: opacity 0.5s, transform 0.5s;
+
+      &.active-pane {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .conversation-name-wrapper {
+        .conversation-name-container {
+          max-width: calc(100% - 3.25rem);
+        }
+      }
+
+      .control-wrapper > button {
+        &.minimize-button,
+        &.close-button {
+          display: none;
+        }
+      }
+
+      .conversations-menu-button-wrapper {
+        display: inline-flex;
+      }
+
+      .more-options-wrapper {
+        display: inline-flex;
+      }
+    }
+
+    .chat-right-pane {
+      opacity: 0;
+      animation: unset;
+      transform: scale(4);
+      transition: opacity 0.35s, transform 0.35s;
+
+      &.active-pane {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .back-button {
+        display: inline-flex;
+      }
+    }
+
+    .controls {
+      max-width: 3.25rem;
+    }
+
+    .msg-wrapper {
+      max-width: 70%;
+    }
+  }
+}
+
 @media screen and (max-width: 767px) {
   // landing page styles
   .landing-splash-box {
@@ -69,17 +168,22 @@
       background: none;
     }
 
-    .auth-container {
-      min-height: inherit;
-      background-color: white;
-      // overflow-x: hidden;
+    .form-section {
+      padding: 2em 1.85em;
+      height: auto;
+      box-shadow: none;
+      border: none;
+      background: transparent;
+      align-self: center;
 
-      .form-section {
-        padding: 2em 1em;
-        height: auto;
-        box-shadow: none;
-        border: none;
-        background: transparent;
+      [class*='col'] {
+        padding: 0 0.25em !important;
+      }
+
+      @media screen and (max-width: 330px) {
+        & {
+          padding: 2em 1.25em;
+        }
       }
     }
   }
@@ -95,8 +199,29 @@
     max-width: 22rem;
   }
 
+  //Home style(s)
+  .Home {
+    .middle-pane-col {
+      padding: {
+        left: 0 !important;
+        right: 0 !important;
+      }
+    }
+  }
+
   //Profile style(s)
   .Profile {
+    overflow: hidden;
+
+    .profile-top {
+      height: 17rem;
+    }
+
+    .profile-avatar-x {
+      height: 7rem;
+      width: 7rem;
+    }
+
     .action-buttons-container {
       &.enlarge {
         &::before {
@@ -139,6 +264,39 @@
         transform: translateX(130%);
         visibility: hidden;
       }
+    }
+  }
+
+  //Search page style(s)
+  .Search {
+    padding: 0;
+    padding-top: 3rem;
+
+    .search-box {
+      transform: translateY(25vh);
+
+      &.transform {
+        transform: translateY(0) !important;
+      }
+    }
+
+    .search-container {
+      margin-top: 0;
+      padding: 1.75rem 1rem 1rem;
+      border-radius: 0;
+      width: 100%;
+    }
+
+    .no-results-wrapper {
+      height: calc(100vh - 17.5rem);
+      max-width: 100%;
+      overflow: unset;
+    }
+
+    .search-results-wrapper {
+      max-width: 100%;
+      height: calc(100vh - 10rem);
+      max-height: calc(100vh - 10rem);
     }
   }
 }
@@ -205,7 +363,7 @@
   }
 
   .auth-form-wrapper {
-    width: 100%;
+    max-width: 100%;
   }
 
   //chat box style(s)
@@ -213,8 +371,10 @@
     max-width: 75%;
   }
 
-  .ChatBox .chat-right-pane.d-flex {
-    display: none !important;
+  .ChatBox {
+    .msg-wrapper {
+      max-width: 85%;
+    }
   }
 
   //Profile page styles

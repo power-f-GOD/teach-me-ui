@@ -11,7 +11,7 @@ export const Skeleton = (props: { type?: 'DISPLAY_INFO' | string }) => {
   switch (props.type) {
     case DISPLAY_INFO:
       return (
-        <Col as='span' className='colleague-name skeleton-loader'>
+        <Col as='span' className='conversation-name-wrapper skeleton-loader'>
           <Box component='span' className='chat-avatar mr-2' />
           <Box component='span' className='chat-display-name'>
             <Box component='span' />
@@ -25,6 +25,14 @@ export const Skeleton = (props: { type?: 'DISPLAY_INFO' | string }) => {
 };
 
 const Loader = () => {
+  React.useEffect(() => {
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = 'auto';
+    }
+  }, []);
+
   return (
     <Box className='loader-wrapper fade-in'>
       <Box textAlign='center'>

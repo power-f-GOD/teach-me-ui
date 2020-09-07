@@ -10,10 +10,11 @@
 .auth-main-box {
   width: 100%;
   display: flex;
-  align-content: center;
+  align-items: center;
+  justify-content: center;
   padding: 2.25em 1.5em;
   min-height: inherit;
-  margin-bottom: 5rem;
+  margin-bottom: 3.5rem;
   position: relative;
 
   > * {
@@ -41,12 +42,8 @@
   }
 }
 
-.auth-container {
-  height: inherit;
-  min-height: 100%;
-  max-width: $app-max-width !important;
-  display: flex;
-  align-items: center;
+.auth-form-wrapper {
+  max-width: 100%;
 }
 
 .form-section {
@@ -149,9 +146,4 @@ button.signup-create-button {
   &:focus {
     background-color: $theme-secondary-v4 !important;
   }
-}
-
-.flex-basis-halved {
-  flex-grow: 1;
-  min-width: 47%;
 }

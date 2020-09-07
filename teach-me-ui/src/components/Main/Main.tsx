@@ -10,6 +10,7 @@ import About from '../Index/About';
 import Support from '../Index/Support';
 import Profile from './Profile';
 import Loader from '../crumbs/Loader';
+import ModalFrame from '../crumbs/modals';
 import Chat from './Chat';
 import Search from './Search';
 import Notifications from './Notifications';
@@ -17,25 +18,44 @@ import PostPage from './PostPage';
 import _404 from '../Index/_404';
 
 import createMemo from '../../Memo';
-import { dispatch, getState } from '../../functions/utils';
+import {
+  dispatch,
+  getState,
+  emitUserOnlineStatus
+} from '../../functions/utils';
 import { initWebSocket, closeWebSocket } from '../../actions/misc';
 
 import activateSocketRouters from '../../socket.router';
-import { emitUserOnlineStatus } from '../../App';
+
+import { getConversations } from '../../actions/chat';
+import { SearchState } from '../../constants';
 
 const Memoize = createMemo();
 
 const Main = (props: any) => {
-  const { signout, userData, webSocket: socket } = props;
+  const {
+    signoutStatus,
+    userToken,
+    webSocket: socket,
+    convosLength,
+    convosErr,
+    convosStatus
+  } = props;
 
   useEffect(() => {
-    dispatch(initWebSocket(userData.token as string));
+    if (!convosLength && !convosErr && convosStatus !== 'fulfilled') {
+      dispatch(getConversations()(dispatch));
+    }
+  }, [convosLength, convosErr, convosStatus]);
+
+  useEffect(() => {
+    dispatch(initWebSocket(userToken as string));
     activateSocketRouters();
 
     return () => {
       dispatch(closeWebSocket());
     };
-  }, [userData.token]);
+  }, [userToken]);
 
   useEffect(() => {
     if (socket) {
@@ -56,11 +76,7 @@ const Main = (props: any) => {
     }
   }, [socket]);
 
-  if (!/chat=/.test(window.location.search)) {
-    window.history.replaceState({}, '', window.location.pathname);
-  }
-
-  if (signout.status === 'pending') {
+  if (signoutStatus === 'pending') {
     return <Loader />;
   }
 
@@ -70,22 +86,27 @@ const Main = (props: any) => {
   }
 
   return (
-    <Grid className='Main fade-in'>
-      <Memoize memoizedComponent={Nav} for='main' />
-
-      <Switch>
-        <Route path={['/', '/index', '/home']} exact component={Home} />
-        <Route path='/about' component={About} />
-        <Route path='/support' component={Support} />
-        <Route path='/p/:id' component={PostPage} />
-        <Route path='/@:userId' component={Profile} />
-        <Route path={['/search/:query', '/search']} component={Search} />
-        <Route path='/notifications' component={Notifications} />
-        <Route component={_404} />
-      </Switch>
-
-      <Memoize memoizedComponent={Chat} />
-    </Grid>
+    <>
+      <ModalFrame />
+      <Grid className='Main fade-in'>
+        <Memoize
+          memoizedComponent={Nav}
+          for='main'
+          isAuthenticated={!!userToken}
+        />
+        <Switch>
+          <Route path={['/', '/index', '/home']} exact component={Home} />
+          <Route path='/about' component={About} />
+          <Route path='/support' component={Support} />
+          <Route path='/p/:id' component={PostPage} />
+          <Route path='/@:userId' component={Profile} />
+          <Route path={['/search/:query', '/search']} component={Search} />
+          <Route path='/notifications' component={Notifications} />
+          <Route component={_404} />
+        </Switch>
+        <Memoize memoizedComponent={Chat} location={props.location} />
+      </Grid>
+    </>
   );
 };
 
@@ -98,10 +119,15 @@ document.addEventListener('visibilitychange', () => {
 });
 
 const mapStateToProps = (state: any) => {
+  const convos = state.conversations as SearchState;
+
   return {
-    signout: state.signout,
-    userData: state.userData,
-    webSocket: state.webSocket
+    signoutStatus: state.signout.status,
+    userToken: state.userData.token,
+    webSocket: state.webSocket,
+    convosLength: convos.data?.length,
+    convosStatus: convos.status,
+    convosErr: convos.err
   };
 };
 

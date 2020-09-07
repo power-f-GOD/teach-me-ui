@@ -1,216 +1,161 @@
-import React, { 
+import React, {
   useState, 
-  useRef, 
-  ChangeEvent, 
-  MouseEvent 
+  useRef,
+  ChangeEvent
 } from 'react';
+
+import { connect } from 'react-redux';
 
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import InputTrigger from 'react-input-trigger';
+import AttachmentIcon from '@material-ui/icons/Attachment';
 
 import Row from 'react-bootstrap/Row';
 
-import { 
-  displayModal, 
-  getMentionsFromText, 
-  getHashtagsFromText 
-} from '../../../../functions';
+import { PostEditorState, UserData } from '../../../../constants';
 
-import { 
-  useStyles, 
-  PostEditorState 
-} from '../../../../constants';
+import { sendFilesToServer } from '../../../../actions';
 
-import { 
-  useSubmitPost,
-  /*useGetFormattedMentionsWithKeyword*/
-} from '../../../../hooks/api';
+import Editor from '../../Editor';
 
-let userInfo: any = {};
-let [avatar, displayName, username] = ['', '', ''];
+import { useSubmitPost } from '../../../../hooks/api';
+import { displayModal } from '../../../../functions';
 
-//you can now use the 'userData' props in state to get userInfo; for this component, you can mapToProps or better still, just pass the value you need to it as props from its parent
-if (navigator.cookieEnabled && localStorage.kanyimuta) {
-  userInfo = JSON.parse(localStorage.kanyimuta);
-  displayName = userInfo.displayName;
-  username = userInfo.username;
-}
+const CreatePost = (props: { userData: UserData; sendFiles: any }) => {
+  const { userData, sendFiles } = props;
+  const { avatar, profile_photo, displayName } = userData;
+  const label = useRef<HTMLLabelElement | any>();
 
-const CreatePost: React.FC = () => {
-
-  const avatarSizes = useStyles()
   const [state, setState] = useState<PostEditorState>({
     mentionsKeyword: '',
     post: {
-      text: '',
-      mentions: [],
-      hashtags: []
+      text: ''
     },
-    top: 0,
-    left: 0,
-    showSuggestor: false,
-    mentions: []
+    mentions: [],
+  });
 
-  })
-  // const getMentions = useGetFormattedMentionsWithKeyword(state.mentionsKeyword)[0];
-  const [submitPost, , isSubmitting] = useSubmitPost(state.post);
+  const [submitPost, , isSubmitting] = useSubmitPost({...state.post, media:sendFiles.payload});
 
-  const editor = useRef<HTMLTextAreaElement | any>()
-
-  const toggleSuggestor = (metaInformation: any) => {
-    const { hookType, cursor } = metaInformation;
-
-    if (hookType === 'start') {
-      setState({
-        ...state,
-        showSuggestor: true,
-        left: cursor.left,
-
-        // we need to add the cursor height so that the dropdown doesn't overlap with the `@`.
-        top: (Number(cursor.top) + Number(cursor.height))
-      });
-
-    }
-      
-    if (hookType === 'cancel') {
-      // reset the state
-      
-      setState({
-        ...state,
-        showSuggestor: false,
-        left: 0,
-
-        // we need to add the cursor height so that the dropdown doesn't overlap with the `@`.
-        top: 0
-      });
-    };
-  };
-
-  // const handleMentionInput = (metaInformation: any) => {
-
-  //   setState({
-  //     mentionsKeyword: metaInformation.text
-  //   });
-
-  //   getMentions().then((data: any[]) => {
-  //     setState({ 
-  //       ...state,
-  //       mentions: data
-  //     });
-  //   });
-  // } 
-
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const post = e.target.value;
+  const onUpdate = (value: string) => {
     setState({
       ...state,
-      post: { 
-        text: post, 
-        mentions: getMentionsFromText(post), 
-        hashtags: getHashtagsFromText(post)
+      post: {
+        ...state.post,
+        text: value
       }
-    });
+    })
+  };
+
+  const prev = useRef<HTMLDivElement | any>('');
+
+  const isImage = (file: File) => {
+    return file['type'].split('/')[0] === 'image';
   }
+
+  const preview = (files: File[]) => {
+    for (let file of files) {
+      if (isImage(file)) {
+        let img = document.createElement('img');
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          img.setAttribute('src', e.target!.result as string);
+        }
+        reader.readAsDataURL(file)
+        img.style.height = '100px';
+        img.style.width = '100px';
+        (prev.current as HTMLDivElement).appendChild(img)
+      } else {
+        let div = document.createElement('div');
+        let text = document.createTextNode(`${file.name}`)
+        div.appendChild(text);
+        div.style.width = '100px';
+        div.style.height = '100px';
+        div.style.fontSize = '1.5em';
+        div.style.backgroundColor = '#ccc';
+        div.style.borderRadius = '3px';
+
+        (prev.current as HTMLDivElement).appendChild(div)
+      }
+    }
+  }
+
+  const fileSelectedHandler = (e: ChangeEvent<any>) => {
+    let files: Array<File> = [];
+    for (let file of e.target.files) {
+      if (file.size > 50000000) {
+        label.current.style.display = 'block'
+        return
+      } else {
+        files.push(file)
+      }
+    }
+    preview(files);
+    sendFilesToServer(files)
+  };
   
-  const onPostSubmit = (e: MouseEvent<HTMLButtonElement>) => {
+ 
+  const onPostSubmit = () => {
     if (state.post.text) {
-      submitPost().then((data: any) => {
+      submitPost().then(() => {
         if (!isSubmitting) {
           displayModal(false);
         }
       });
     }
   };
-      
+
   return (
     <Box p={1} pt={0}>
       <Row className='container-fluid p-0 mx-auto'>
-        <Avatar
-          component='span'
-          className='chat-avatar compose-avatar'
-          alt={displayName}
-          src={`/images/${avatar}`}
-        />
+        <Box pr={1}>
+          <Avatar
+            component='span'
+            className='chat-avatar compose-avatar'
+            alt={displayName}
+            src={`/images/${profile_photo || avatar}`}
+          />
+        </Box>
         <div className='d-flex flex-column justify-content-center flex-grow-1'>
-          <span>{displayName}</span>
-          <small>{username}</small>
+          <span>{userData.displayName}</span>
+          <small>{userData.username}</small>
         </div>
       </Row>
       <form>
-      <div
-        id='suggestion-container'
-      >
-        <InputTrigger
-          trigger={{
-            keyCode: 50,
-            shiftKey: true,
-          }}
-          onStart={(metaData: any) => {
-            toggleSuggestor(metaData);
-          }}
-          onCancel={(metaData: any) => {
-            toggleSuggestor(metaData);
-          }}
-          // onType={(metaData: any) => { 
-          //   handleMentionInput(metaData); 
-          // }}
-        >
-          <textarea 
-            autoFocus
-            rows={9}
-            id="post-input" 
-            onChange={(e: any) => {
-              onChange(e)
-            }}
-            placeholder={`What's on your mind, ${displayName.split(' ')[0]}`}
-            ref={editor}
-          >
-          </textarea>
-        </InputTrigger>
-        <div
-          id="suggestor-dropdown"
-          style={{
-            display: state.showSuggestor ? "block" : "none",
-            top: state.top || 0,
-            left: state.left || 0,
-          }}
-        >
-          {
-            state.mentions?.map((mention: any, key: number) => (
-              <div
-                key={key}
-                style={{
-                  padding: '10px 20px'
-                }}  
-              >
-                <Avatar
-                  className={avatarSizes.small}
-                  component='span'
-                  src={`${mention.avatar}`}
-                />
-                { mention.name }
-              </div>
-            ))  
-          }
-        </div>
-      </div>
+        <Editor onUpdate={onUpdate} />
+        <label htmlFor='my-input'>
+          <AttachmentIcon />
+        </label>
+        <label
+          htmlFor='my-input'
+          ref={label}
+          style={{ color: 'red', fontSize: 'small', display: 'none' }}>
+          files should be maximum of 50mb
+        </label>
+        <input
+          multiple={true}
+          id='my-input'
+          onChange={fileSelectedHandler}
+          style={{ display: 'none' }}
+          type={'file'}
+        />
+        <Row className='d-flex mx-auto mt-1'>
+          <div ref={prev} style={{display: 'flex', flexWrap :'wrap'}}>
+            
+          </div>
+        </Row>
         <Row className='d-flex mx-auto mt-1'>
           <Button
             onClick={onPostSubmit}
-            color={state.post.text
-              ? 'primary' 
-              : 'default'
-            }
-            className='post-button p-0 flex-grow-1'>
-            {
-              isSubmitting 
-              ? <CircularProgress size={28} color='inherit'/> 
-              : 'Post'
-            }
+            color={state.post ? 'primary' : 'default'}
+            className='post-button major-button Primary contained p-0 flex-grow-1'>
+            {isSubmitting ? (
+              <CircularProgress size={28} color='inherit' />
+            ) : (
+              'Post'
+            )}
           </Button>
         </Row>
       </form>
@@ -218,5 +163,6 @@ const CreatePost: React.FC = () => {
   );
 };
 
+const mapStateToProps = ({ userData , sendFiles}: any) => ({ userData, sendFiles });
 
-export default CreatePost;
+export default connect(mapStateToProps)(CreatePost);

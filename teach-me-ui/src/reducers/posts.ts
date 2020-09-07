@@ -4,15 +4,27 @@ import {
   CREATE_POST,
   REACT_TO_POST,
   UPDATE_POST,
+  UPDATE_REPOST,
   FETCHED_POSTS,
+  FETCHED_MORE_POSTS,
+  FETCHED_POST,
   FETCH_POST_STARTED,
   FETCH_POST_REJECTED,
   FETCH_POST_RESOLVED,
+  FETCH_A_POST_STARTED,
+  FETCH_A_POST_REJECTED,
+  FETCH_A_POST_RESOLVED,
+  MAKE_REPOST_STARTED,
+  MAKE_REPOST_REJECTED,
+  MAKE_REPOST_RESOLVED,
   PostPropsState,
   ReactPostState,
   FetchPostsState,
+  MakeRepostState,
   fetchPostsState,
+  makeRepostState,
   PostReactionResult,
+  RepostResult,
   Reaction,
   REPLY_TO_POST,
   ReplyState
@@ -30,7 +42,25 @@ export const posts = (
   else if (action.type === UPDATE_POST)
     return updatePost(state, action.payload);
   else if (action.type === FETCHED_POSTS) return [...action.payload];
+  else if (action.type === FETCHED_MORE_POSTS)
+    return [...state, ...action.payload];
+  else if (action.type === UPDATE_REPOST)
+    return updateReposts(state, action.payload);
   else return state;
+};
+
+export const singlePost = (
+  state: Partial<PostPropsState> = {},
+  action: ReduxAction
+): PostPropsState => {
+  if (action.type === REACT_TO_POST) {
+    return reactToPost([state as PostPropsState], action.payload)[0];
+  } else if (action.type === UPDATE_POST) {
+    return updatePost([state as PostPropsState], action.payload)[0];
+  } else if (action.type === FETCHED_POST) return action.payload;
+  else if (action.type === UPDATE_REPOST)
+    return updateReposts([state as PostPropsState], action.payload)[0];
+  else return state as PostPropsState;
 };
 
 export const fetchPostStatus = (
@@ -41,6 +71,34 @@ export const fetchPostStatus = (
     case FETCH_POST_REJECTED:
     case FETCH_POST_RESOLVED:
     case FETCH_POST_STARTED:
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
+export const fetchSinglePostStatus = (
+  state: FetchPostsState = fetchPostsState,
+  action: ReduxAction
+) => {
+  switch (action.type) {
+    case FETCH_A_POST_REJECTED:
+    case FETCH_A_POST_RESOLVED:
+    case FETCH_A_POST_STARTED:
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
+export const makeRepostStatus = (
+  state: MakeRepostState = makeRepostState,
+  action: ReduxAction
+) => {
+  switch (action.type) {
+    case MAKE_REPOST_REJECTED:
+    case MAKE_REPOST_RESOLVED:
+    case MAKE_REPOST_STARTED:
       return action.payload;
     default:
       return state;
@@ -136,6 +194,28 @@ const updatePost = (
   });
 };
 
+const updateReposts = (
+  state: Array<PostPropsState>,
+  result: RepostResult
+): Array<PostPropsState> => {
+  return state.map((post): any => {
+    return (post.id as string) === result.id
+      ? {
+          ...post,
+          reposts: result.count
+        }
+      : (post.parent?.id as string) === result.id
+      ? {
+          ...post,
+          parent: {
+            ...post.parent,
+            reposts: result.count
+          }
+        }
+      : post;
+  });
+};
+
 export const replyToPost = (
   state: ReplyState = replyState,
   action: ReduxAction
@@ -145,6 +225,6 @@ export const replyToPost = (
       ...state,
       ...action.payload
     };
-  };
+  }
   return state;
 };

@@ -21,6 +21,10 @@ $chat-header-min-height: 3.75rem;
     transition: 0.35s;
   }
 
+  a {
+    text-decoration: none;
+  }
+
   .chat-timestamp,
   .tab-panel-item {
     [class*='Icon'] {
@@ -66,9 +70,15 @@ body,
       }
     }
 
+    .offline {
+      .MuiBadge-dot {
+        background-color: #999 !important;
+      }
+    }
+
     .MuiBadge-dot {
       transition: 0.35s;
-      background-color: #999;
+      background-color: $error;
     }
   }
 }
@@ -78,11 +88,11 @@ body,
 
   background-color: $theme-secondary-v5;
   color: white;
-  position: fixed;
+  position: relative;
   height: $size !important;
   width: $size !important;
-  right: 1rem;
-  bottom: 1rem;
+  right: $size + 1rem;
+  bottom: $size + 1rem;
   font-size: 1.85rem !important;
   box-shadow: 0 0 1rem rgba(0, 0, 0, 0.35);
   transition: 0.3s;
@@ -95,13 +105,53 @@ body,
   &.hide {
     transform: scale(0);
   }
+
+  &.ripple {
+    &::before,
+    &::after {
+      @include before-or-after(
+        $h: 100%,
+        $w: 100%,
+        $bg: transparent,
+        $br: inherit
+      );
+      border: 0.125rem solid $theme-secondary-v5;
+      animation: chatButtonRipple 2s infinite;
+    }
+
+    &::after {
+      animation-delay: 0.5s;
+    }
+
+    @keyframes chatButtonRipple {
+      from {
+        opacity: 1;
+        transform: scale(0.85);
+      }
+      to {
+        transform: scale(1.5);
+        opacity: 0;
+      }
+    }
+  }
+
+  [class*='MuiBadge-badge'] {
+    $size: 1.25rem;
+
+    height: $size;
+    width: $size;
+    border-radius: 1rem;
+    font-size: 0.9rem;
+    top: -0.3rem;
+    right: -0.5rem;
+  }
 }
 
 .chat-box-wrapper {
   $box-height: 100%;
   $box-width: 100%;
 
-  overflow: hidden;
+  // overflow: hidden;
   position: fixed;
   width: $box-width;
   height: $box-height;
@@ -112,7 +162,8 @@ body,
   top: 0;
   display: none;
   right: 0;
-  transition: 0.4s;
+  transition: transform 0.4s, opacity 0.4s;
+  transition-delay: 0.25s;
 
   &.minimize {
     transform: translateY(calc(100% - #{$chat-header-min-height}));
@@ -124,61 +175,64 @@ body,
   }
 
   &.visible {
-    display: flex;
+    display: flex !important;
   }
 
   &.hidden {
-    display: none;
+    display: none !important;
   }
 }
 
 .ChatBox header {
-  box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.15);
 }
 
 header.chat-header {
   position: relative;
   font-weight: bold;
-  overflow: hidden;
   z-index: 3;
   background-color: white;
   min-height: $chat-header-min-height;
   max-height: $chat-header-min-height;
-  box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.1);
+
+  // @include debugger();
 }
 
 .chat-avatar {
-  $size: 2.25rem;
+  $size: 2.75rem;
 
   height: $size;
   width: $size;
   border-radius: 50%;
-  margin-right: 0.5rem !important;
   color: $chat-text-color;
 
   + .MuiBadge-dot {
-    $size: 0.8rem;
+    $size: 0.925rem;
 
     border-radius: 50%;
-    border: 0.125rem solid white;
+    border: 0.2rem solid white;
     height: $size;
     width: $size;
-    right: 30%;
+    right: 20%;
   }
 }
 
-.colleague-name,
+.conversation-name-wrapper,
 .controls,
-.minimize-wrapper,
-.close-wrapper {
+.control-wrapper {
   display: inline-flex;
   align-items: center;
   padding: 0;
 }
 
-.colleague-name {
-  padding: 0.5rem 0.5rem;
-  min-width: calc(100% - 5.85rem);
+.controls {
+  justify-content: flex-end;
+  max-width: 6.5rem;
+}
+
+.header-name-control-wrapper {
+  max-width: 100%;
+  // @include debugger();
 }
 
 body.desktop {

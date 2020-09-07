@@ -6,8 +6,6 @@ import React, {
   useMemo
 } from 'react';
 
-import queryString from 'query-string';
-
 import * as api from '../../hooks/api';
 import { Redirect, Link, Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -29,9 +27,8 @@ import SchoolOutlinedIcon from '@material-ui/icons/SchoolOutlined';
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
-import Loader from '../crumbs/Loader';
+import ModalFrame from '../crumbs/modals';
 import Img from '../crumbs/Img';
 import ColleagueView from '../crumbs/ColleagueView';
 import ProfileFeeds from '../crumbs/ProfileFeeds';
@@ -42,6 +39,8 @@ import {
 } from '../../constants/interfaces';
 import { dispatch, cleanUp } from '../../functions';
 import { getProfileData, pingUser } from '../../actions';
+import { getConversations } from '../../actions/chat';
+import Loader from '../crumbs/Loader';
 /**
  * Please, Do not delete any commented code; You can either uncomment them to use them or leave them as they are
  */
@@ -81,7 +80,6 @@ window.addEventListener('popstate', () => {
 });
 
 let [
-  avatar,
   firstname,
   lastname,
   displayName,
@@ -102,12 +100,9 @@ const academicInfoIds = ['institution', 'department', 'level'];
 const Profile = (props: any) => {
   const { profileData, userData } = props;
   const data: UserData = profileData.data[0];
-  const { status } = profileData;
-  const { auth, location } = props;
+  const { auth } = props;
   const { isAuthenticated } = auth;
   const token = (userData as UserData).token as string;
-
-  avatar = data.avatar || 'avatar-1.png';
   firstname = data.firstname || '';
   lastname = data.lastname || '';
   displayName = data.displayName || '';
@@ -196,7 +191,7 @@ const Profile = (props: any) => {
         }
         e.target.id !== 'decline'
           ? await acceptColleagueRequest().then(() => {
-              pingUser([`${data.username}`]);
+              pingUser([`${data.username}`], { type: 'NEW_CONVERSATION' });
             })
           : await declineColleagueRequest();
         break;
@@ -205,6 +200,7 @@ const Profile = (props: any) => {
         break;
     }
     await fetchDeepProfile();
+    dispatch(getConversations('settled')(dispatch));
     setAcceptWasClicked(false);
     setDeclineWasClicked(false);
   };
@@ -222,7 +218,6 @@ const Profile = (props: any) => {
     { name: 'Level', value: level }
   ];
 
-  // const [passedThreshold, setPassedThreshold] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const inputProps = useMemo(() => {}, []);
   const handleBasicInputChange = useCallback(() => {}, []);
@@ -271,19 +266,13 @@ const Profile = (props: any) => {
     setIsEditing(false);
   }, []);
 
-  // const handleAddColleagueClick = useCallback(() => {
-
-  // });
-
   useEffect(() => {
     if (!selfView) {
-      // academicInfo =
       return () => {
         window.scrollTo(0, 0);
       };
     }
 
-    // const trigger = () => setPassedThreshold(window.scrollY > 50);
     let swipeArea: any = null;
 
     //hide M-UI's (invisible) swipeArea element for the sake of it not interfering with the edit buttons on the right when they're tapped on mobile devices
@@ -294,12 +283,10 @@ const Profile = (props: any) => {
         swipeArea.style.display = 'none';
       }
     }, 200);
-    // window.addEventListener('scroll', trigger);
 
     return () => {
       if (swipeArea) swipeArea.style.display = 'block';
 
-      // window.removeEventListener('scroll', trigger);
       window.scrollTo(0, 0);
     };
   }, [selfView]);
@@ -317,32 +304,28 @@ const Profile = (props: any) => {
   } else if (profileData.err || !profileData.data[0]) {
     return <Redirect to='/404' />;
   }
-  // added deepProfileIsLoading to prevent showing the (circular) loading stuff on the (profile) buttons on page [component] (first) load
+
   if (
-    (queryString.parse(location.search)?.chat !== 'open' &&
-      status !== 'fulfilled') ||
-    deepProfileIsLoading
+    !/chat=open/.test(window.location.search) &&
+    profileData.status !== 'fulfilled'
   ) {
     //instead of this, you can use a React Skeleton loader; didn't have the time to add, so I deferred.
     return <Loader />;
   }
 
   return (
-    <Box className={`Profile ${selfView ? 'self-view' : ''} fade-in`}>
+    <Box className={`Profile ${selfView ? 'self-view' : ''} fade-in pb-3`}>
+      <ModalFrame />
       <Box component='div' className='profile-top'>
-        <Img
-          alt={displayName}
-          className='cover-photo'
-          src={`https://source.unsplash.com/user/erondu/1600x900`}
-        />
-        <Box component='div' className='details-container'>
+        <Img alt={displayName} className='cover-photo' src={data.cover_photo} />
+        <Container className='details-container'>
           <Avatar
             component='span'
             className='profile-avatar-x profile-photo'
             alt={displayName}
-            src={`/images/${avatar}`}
+            src={data.profile_photo}
           />
-          <Col className='d-flex flex-column px-4'>
+          <Col className='d-flex flex-column px-4 pt-2'>
             <Col as='span' className='display-name p-0 my-1'>
               {displayName}
             </Col>
@@ -350,8 +333,8 @@ const Profile = (props: any) => {
               {userId}
             </Col>
           </Col>
-        </Box>
-        <div className='profile-nav-bar d-flex align-items-center'>
+        </Container>
+        <div className='profile-nav-bar d-flex justify-content-center align-items-center'>
           <Link to={`/${userId}`}>
             <div
               className={`nav-item ${
@@ -377,16 +360,11 @@ const Profile = (props: any) => {
                   <Button
                     variant='contained'
                     size='small'
-                    className='colleague-action-button add-colleague'
+                    className='colleague-action-button add-colleague primary'
                     color='primary'
+                    disabled={addColleagueIsLoading}
                     onClick={onColleagueActionClick}>
-                    {addColleagueIsLoading || deepProfileIsLoading ? (
-                      <CircularProgress color='inherit' size={28} />
-                    ) : (
-                      <>
-                        <AddColleagueIcon fontSize='inherit' /> Add Colleague
-                      </>
-                    )}
+                    <AddColleagueIcon fontSize='inherit' /> Add Colleague
                   </Button>
                 )}
                 {deepProfileData.status === 'PENDING_REQUEST' && (
@@ -395,14 +373,9 @@ const Profile = (props: any) => {
                     size='small'
                     className='colleague-action-button cancel-request'
                     color='primary'
+                    disabled={removeColleagueRequestIsLoading}
                     onClick={onColleagueActionClick}>
-                    {removeColleagueRequestIsLoading || deepProfileIsLoading ? (
-                      <CircularProgress color='inherit' size={28} />
-                    ) : (
-                      <>
-                        <PendingIcon fontSize='inherit' /> Cancel Request
-                      </>
-                    )}
+                    <PendingIcon fontSize='inherit' /> Cancel Request
                   </Button>
                 )}
                 {deepProfileData.status === 'AWAITING_REQUEST_ACTION' && (
@@ -413,16 +386,11 @@ const Profile = (props: any) => {
                       id='accept'
                       className='colleague-action-button accept-request'
                       color='primary'
+                      disabled={
+                        acceptWasClicked && acceptColleagueRequestIsLoading
+                      }
                       onClick={onColleagueActionClick}>
-                      {acceptWasClicked &&
-                      (acceptColleagueRequestIsLoading ||
-                        deepProfileIsLoading) ? (
-                        <CircularProgress color='inherit' size={28} />
-                      ) : (
-                        <>
-                          <AddColleagueIcon fontSize='inherit' /> Accept Request
-                        </>
-                      )}
+                      <AddColleagueIcon fontSize='inherit' /> Accept Request
                     </Button>
                     <Button
                       variant='contained'
@@ -430,16 +398,13 @@ const Profile = (props: any) => {
                       id='decline'
                       className='colleague-action-button decline-request'
                       color='primary'
+                      disabled={
+                        declineWasClicked &&
+                        (declineColleagueRequestIsLoading ||
+                          deepProfileIsLoading)
+                      }
                       onClick={onColleagueActionClick}>
-                      {declineWasClicked &&
-                      (declineColleagueRequestIsLoading ||
-                        deepProfileIsLoading) ? (
-                        <CircularProgress color='inherit' size={28} />
-                      ) : (
-                        <>
-                          <RejectIcon fontSize='inherit' /> Decline
-                        </>
-                      )}
+                      <RejectIcon fontSize='inherit' /> Decline
                     </Button>
                   </>
                 )}
@@ -447,29 +412,15 @@ const Profile = (props: any) => {
                   <Button
                     variant='contained'
                     size='large'
-                    className='colleague-action-button'
+                    className='colleague-action-button uncolleague'
                     color='primary'
+                    disabled={unColleagueIsLoading}
                     onClick={onColleagueActionClick}>
-                    {unColleagueIsLoading || deepProfileIsLoading ? (
-                      <CircularProgress color='inherit' size={28} />
-                    ) : (
-                      <>
-                        <PendingIcon fontSize='inherit' /> Uncolleague
-                      </>
-                    )}
+                    <PendingIcon fontSize='inherit' /> Uncolleague
                   </Button>
                 )}
               </>
-            ) : !isAuthenticated ? null : (
-              <Button
-                variant='contained'
-                size='small'
-                className='colleague-action-button add-colleague'
-                color='primary'
-                disabled={true}>
-                <CircularProgress color='inherit' size={30} />
-              </Button>
-            ))}
+            ) : null)}
           {false && selfView ? (
             <>
               {isEditing ? (
@@ -507,51 +458,53 @@ const Profile = (props: any) => {
           ) : (
             ''
           )}
-          <Button
-            variant='contained'
-            size='small'
-            className='more-btn'
-            color='primary'
-            onClick={() => {}}>
-            <MoreIcon fontSize='inherit' />
-          </Button>
+          {false && (
+            <Button
+              variant='contained'
+              size='small'
+              className='more-btn'
+              color='primary'
+              onClick={() => {}}>
+              <MoreIcon fontSize='inherit' />
+            </Button>
+          )}
         </div>
       </Box>
-      <Row className='container mt-5 mx-auto'>
-        <Col className='col-4'>
-          {selfView && (
-            <Box className='details-card px-3 py-2 mb-3'>
-              <Col className='py-0 px-2 d-flex justify-content-between align-items-center'>
-                <Box component='h2' className='mr-auto'>
-                  Basic Info
+      <Container className='px-0'>
+        <Row className='mx-0 mt-5 pt-3 align-items-start'>
+          <Col sm={12} md={4} className='hang-in my-3 pb-3 my-sm-0'>
+            {selfView && (
+              <Box className='details-card px-3 py-3 mb-3'>
+                <Col className='py-0 px-2 d-flex justify-content-between align-items-center'>
+                  <Box component='h2' className='mr-auto'>
+                    Basic Info
+                  </Box>
+                  <AccountCircleOutlinedIcon className='' fontSize='large' />
+                </Col>
+                <Box className='basic-info-section-wrapper'>
+                  <Row
+                    className={`basic-info-wrapper ${
+                      isEditing ? 'hide' : ''
+                    } mx-0`}>
+                    {basicInfo.map(({ name, value }: InfoProps) => (
+                      <Info name={name} value={value} key={name} />
+                    ))}
+                  </Row>
+                  <form
+                    className={`basic-info-form mx-0 row ${
+                      isEditing ? 'show' : ''
+                    }`}
+                    noValidate
+                    autoComplete='on'
+                    onSubmit={(e: any) => e.preventDefault()}>
+                    {basicInfoInputsOptions.map((options, key) => (
+                      <InfoInput options={options} key={key} />
+                    ))}
+                  </form>
                 </Box>
-                <AccountCircleOutlinedIcon className='' fontSize='large' />
-              </Col>
-              <Box className='basic-info-section-wrapper'>
-                <Row
-                  className={`basic-info-wrapper ${
-                    isEditing ? 'hide' : ''
-                  } mx-0`}>
-                  {basicInfo.map(({ name, value }: InfoProps) => (
-                    <Info name={name} value={value} key={name} />
-                  ))}
-                </Row>
-                <form
-                  className={`basic-info-form mx-0 row ${
-                    isEditing ? 'show' : ''
-                  }`}
-                  noValidate
-                  autoComplete='on'
-                  onSubmit={(e: any) => e.preventDefault()}>
-                  {basicInfoInputsOptions.map((options, key) => (
-                    <InfoInput options={options} key={key} />
-                  ))}
-                </form>
               </Box>
-            </Box>
-          )}
-          <Box className='details-card px-4 py-2'>
-            <Row as='section'>
+            )}
+            <Box className='details-card px-3 py-3'>
               <Col className='py-0 px-2 d-flex justify-content-between align-items-center'>
                 <Box component='h2' className='mr-auto'>
                   Academic info
@@ -580,22 +533,24 @@ const Profile = (props: any) => {
                   ))}
                 </form>
               </Box>
-            </Row>
-          </Box>
-        </Col>
-        <Switch>
-          {selfView && (
-            <Route
-              path='/@:userId/colleagues'
-              exact
-              component={ColleagueView}
-            />
-          )}
-          <Route path='/@:userId' exact component={ProfileFeeds} />
-          <Redirect to={`/@${data.username}`} />
-        </Switch>
-      </Row>
-      <Container className='rows-wrapper custom-scroll-bar small-bar rounded-bar tertiary-bar p-0'>
+            </Box>
+          </Col>
+          <Col sm={12} md={8} className='px-3'>
+            <Switch>
+              {selfView && (
+                <Route
+                  path='/@:userId/colleagues'
+                  exact
+                  component={ColleagueView}
+                />
+              )}
+              <Route path='/@:userId' exact component={ProfileFeeds} />
+              <Redirect to={`/@${data.username}`} />
+            </Switch>
+          </Col>
+        </Row>
+      </Container>
+      <Container className='rows-wrapper d-none custom-scroll-bar small-bar rounded-bar tertiary-bar p-0'>
         <Row as='section' className='m-0 px-3 flex-column mb-5'>
           <Box
             className={`action-buttons-container ${

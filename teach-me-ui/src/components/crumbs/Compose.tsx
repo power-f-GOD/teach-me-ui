@@ -1,53 +1,45 @@
 import React from 'react';
 
-import Row from 'react-bootstrap/Row';
-
 import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 
 import { displayModal } from '../../functions';
-
-let userInfo: any = {};
-let [avatar, displayName] = ['', ''];
-
-//you can now use the 'userData' props in state to get userInfo; for this component, you can mapToProps or better still, just pass the value you need to it as props from its parent
-if (navigator.cookieEnabled && localStorage.kanyimuta) {
-  userInfo = JSON.parse(localStorage.kanyimuta);
-  displayName = userInfo.displayName;
-}
+import { connect } from 'react-redux';
+import { userDeviceIsMobile } from '../..';
 
 const openCreatePostModal = (e: any) => {
-  displayModal(true, 'CREATE_POST', 'Create Post');
+  displayModal(true, 'CREATE_POST', { title: 'Create Post' });
 };
 
-const Compose: React.FunctionComponent = () => {
+export const Compose: React.FunctionComponent = (props: any) => {
+  const { firstname, profile_photo } = props.userData;
   return (
     <Box
-      className='post-list-page d-flex flex-column'
+      className='post-list-page d-flex flex-column mb-1 mb-md-2'
       borderRadius='5px'
-      p={1}
-      pb={2}
-      mb={1}>
-      <Row className='container-fluid mx-auto align-items-center'>
-        <Avatar
-          component='span'
-          className='chat-avatar compose-avatar'
-          alt={displayName}
-          src={`/images/${avatar}`}
-        />
+      p={1}>
+      <Box display='flex'>
+        <Box px={1}>
+          <Avatar
+            component='span'
+            className='chat-avatar compose-avatar'
+            alt={firstname}
+            src={profile_photo}
+          />
+        </Box>
         <Box
-          className='compose-question flex-grow-1'
+          className='compose-question flex-grow-1 d-flex align-items-center'
           py={1}
           fontSize='16px'
           color='#888'
           onClick={openCreatePostModal}
           role='compose'
           px={2}>
-          What's on your mind {displayName.split(' ')[0]}?
+          What's on your mind{userDeviceIsMobile ? '' : ` ${firstname}`}?
         </Box>
-      </Row>
+      </Box>
     </Box>
   );
 };
 
-export default Compose;
+export default connect(({ userData }: any) => ({ userData }))(Compose);

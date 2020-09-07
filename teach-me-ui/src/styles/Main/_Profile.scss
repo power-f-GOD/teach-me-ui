@@ -5,38 +5,47 @@
   // background-color: #ddd;
   position: relative;
   min-height: 100vh;
+
   .details-card {
     background-color: white;
     border-radius: 0.5rem;
   }
+
   .colleague-container {
     min-height: 15rem;
   }
+
   .profile-top {
     height: 15rem;
-    margin-top: 4rem;
+    margin-top: 3.5rem;
     width: 100%;
     background-color: black;
     position: relative;
     background-color: #00537e;
+
+    &::before {
+      @include before-or-after($zi: 0, $bg: rgba(0, 0, 0, 0.25));
+    }
+
     .details-container {
-      position: absolute;
       display: flex;
       align-items: center;
       color: white;
       padding: 0 2rem;
       top: 0;
       left: 0;
-      background: #0007;
       width: 100%;
       height: 100%;
     }
+
     .cover-photo {
+      position: absolute;
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: center;
     }
+
     .profile-nav-bar {
       background-color: white;
       box-shadow: 0 0 2px #aaa;
@@ -45,10 +54,17 @@
       position: absolute;
       bottom: 0;
       left: 50%;
-      transform: translate(-50%, 50%);
       z-index: 1;
       font-size: small;
       border-radius: 0.4rem;
+      transform: translate(-50%, 50%);
+
+      @media screen and (max-width: 512px) {
+        border-radius: 0;
+        width: 100%;
+        transform: translate(-50%, 100%);
+      }
+
       .more-btn {
         background: #ccc !important;
         color: #000;
@@ -60,11 +76,13 @@
         [class*='Icon'] {
           font-size: 1.8rem;
         }
+
         path {
           fill: black;
           stroke: transparent;
         }
       }
+
       a {
         text-decoration: none;
         .nav-item {
@@ -84,18 +102,19 @@
       }
     }
   }
+
   .removed-request {
     background: #f001;
   }
+
   .view-request-button {
-    font-size: 0.75rem !important;
-    padding: 0.3rem !important;
+    font-size: 0.925rem;
+    padding: 0.3rem 1.25rem !important;
     min-height: unset;
-    background: #00537e !important;
     margin-right: 0.5rem;
 
     &.delete {
-      background: red !important;
+      background-color: $theme-tertiary-v5;
     }
   }
   .request-avatar {
@@ -117,17 +136,7 @@
       }
     }
   }
-  // &::before {
-  //   @include before-or-after(
-  //     linear-gradient(to top, #ccc, #707070),
-  //     $w: calc(100vw + 100rem),
-  //     $h: 50rem,
-  //     $t: -32.5rem,
-  //     $l: -50rem,
-  //     $br: 0 0 50% 50%,
-  //     $zi: 0
-  //   );
-  // }
+
   path:not(.pathignore) {
     stroke: white;
     fill: $theme-primary-v6;
@@ -232,14 +241,12 @@
   }
 
   .colleague-action-button {
-    // padding: 0.55rem 0.85rem;
     position: relative;
     min-width: 9rem;
     justify-content: center;
-    background-color: $theme-tertiary-v1 !important;
     transition: 0.3s;
     box-shadow: none;
-    font-size: small !important;
+    font-size: 0.8rem !important;
     padding: 0 !important;
     margin: 0.5rem 0.8rem;
 
@@ -248,14 +255,17 @@
       margin-right: 0.5rem;
     }
 
+    &.uncolleague {
+      background-color: $theme-tertiary-v6;
+    }
+
     &.decline-request {
-      @extend .add-colleague;
+      background-color: $theme-tertiary-v6;
     }
     &.add-colleague {
-      background: #ccc !important;
-      color: #000;
+      background: $theme-primary-v5;
       path {
-        fill: black;
+        fill: white;
         stroke: transparent;
       }
     }
@@ -267,15 +277,8 @@
         stroke: transparent;
       }
     }
-    &.accept-request {
-      background: #00537e !important;
-      color: #fff;
-
-      path {
-        fill: #fff;
-        stroke: transparent;
-      }
-    }
+    // &.accept-request {
+    // }
     path {
       fill: #fff;
       stroke: transparent;
@@ -378,14 +381,6 @@
       position: relative;
     }
   }
-
-  // .basic-info-card {
-
-  // }
-
-  // .academic-info-card {
-
-  // }
 
   .card-title {
     margin: 0;

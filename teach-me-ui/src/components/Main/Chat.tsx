@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, createRef } from 'react';
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+  createRef
+} from 'react';
 import { connect } from 'react-redux';
 
 import queryString from 'query-string';
@@ -9,6 +15,7 @@ import Col from 'react-bootstrap/Col';
 
 import IconButton from '@material-ui/core/IconButton';
 import ChatIcon from '@material-ui/icons/Chat';
+import Badge from '@material-ui/core/Badge';
 
 import { dispatch, delay, addEventListenerOnce } from '../../functions';
 import {
@@ -28,11 +35,17 @@ import {
   APIConversationResponse
 } from '../../constants/interfaces';
 import ChatLeftPane from './Chat.LeftPane';
-import ChatMiddlePane from './Chat.MiddlePane';
+import ChatMiddlePane, {
+  MiddlePaneHeaderContext,
+  ScrollViewContext,
+  ColleagueNameAndStatusContext
+} from './Chat.MiddlePane';
 import ChatRightPane from './Chat.RightPane';
 import createMemo from '../../Memo';
+import { userDeviceIsMobile } from '../..';
+import { getState } from '../../appStore';
 
-export const placeHolderDisplayName = 'Start a new Conversation';
+export const placeHolderDisplayName = 'Start a Conversation';
 
 interface ChatBoxProps {
   conversation: APIConversationResponse;
@@ -46,13 +59,38 @@ interface ChatBoxProps {
 }
 
 const chatBoxWrapperRef = createRef<any>();
+const leftPaneRef = createRef<any>();
+const middlePaneRef = createRef<any>();
+const rightPaneRef = createRef<any>();
 
 const Memoize = createMemo();
 
 window.addEventListener('popstate', () => {
-  let { chat, cid } = queryString.parse(window.location.search);
+  if (!getState().auth.isAuthenticated) {
+    return;
+  }
 
-  //for the sake of the smooth animation
+  const { chat, id: userId, cid } = queryString.parse(window.location.search);
+
+  if (userDeviceIsMobile && chat) {
+    dispatch(conversation(''));
+    dispatch(conversationInfo({ data: {} }));
+    dispatch(conversationMessages({ data: [] }));
+    delay(300).then(() => {
+      dispatch(
+        chatState({
+          isOpen: false,
+          isMinimized: false,
+          queryString: ''
+        })
+      );
+    });
+    window.history.replaceState({}, '', window.location.pathname);
+
+    return;
+  }
+
+  //for the sake of the (smooth) animation
   if (/min|open/.test(chat) && chatBoxWrapperRef.current) {
     chatBoxWrapperRef.current.style.display = 'flex';
   }
@@ -61,14 +99,35 @@ window.addEventListener('popstate', () => {
     dispatch(conversationInfo({ status: 'settled', data: {} }));
     dispatch(conversation(''));
     dispatch(conversationMessages({ status: 'settled', data: [] }));
+  } else {
+    dispatch(conversationInfo({ user_typing: '' }));
+
+    if (window.navigator.onLine) {
+      dispatch(getConversationInfo(userId)(dispatch));
+      dispatch(
+        getConversationMessages(cid, 'pending', 'loading new')(dispatch)
+      );
+    } else {
+      dispatch(
+        conversationInfo({
+          status: 'settled',
+          err: true,
+          online_status: 'OFFLINE'
+        })
+      );
+      dispatch(
+        conversationMessages({ status: 'pending', err: true, data: [] })
+      );
+    }
+    dispatch(conversation(cid));
   }
 
-  delay(5).then(() => {
+  delay(500).then(() => {
     dispatch(
       chatState({
-        queryString: window.location.search,
-        isOpen: /min|open/.test(chat),
-        isMinimized: chat === 'min'
+        isOpen: !!chat,
+        isMinimized: chat === 'min',
+        queryString: window.location.search
       })
     );
   });
@@ -87,39 +146,151 @@ const ChatBox = (props: ChatBoxProps) => {
   const { isOpen, isMinimized, queryString: qString }: ChatState = _chatState;
   const {
     _id: convoId,
-    associated_username: convoUsername,
-    associated_user_id: convoUid
+    associated_username: convoAssocUsername,
+    participants: convoParticipants,
+    friendship: convoFriendship,
+    type: convoType,
+    conversation_name: convoDisplayName,
+    avatar: convoAvatar
   } = _conversation;
+  const {
+    data: convoMessages,
+    err: convoMessagesErr,
+    status: convoMessagesStatus,
+    statusText: convoMessagesStatusText
+  } = _conversationMessages;
+  const {
+    err: convoInfoErr,
+    status: convoInfoStatus,
+    data: convoInfoData,
+    new_message: convoInfoNewMessage,
+    online_status: convoInfoOnlineStatus,
+    user_typing: convoUserTyping
+  } = _conversationInfo;
+  const {
+    err: convosErr,
+    status: convosStatus,
+    data: convosData
+  } = conversations;
+  const convoInfoLastSeen = convoInfoData?.last_seen;
+  const { chat, id, cid } = queryString.parse(window.location.search);
+  const unopened_count = conversations.data?.reduce(
+    (a, conversation: APIConversationResponse) =>
+      a + (conversation.unread_count ? 1 : 0),
+    0
+  );
 
-  const [visibilityState, setVisibilityState] = React.useState<
-    'visible' | 'hidden'
-  >('hidden');
+  const leftPane = leftPaneRef.current;
+  const middlePane = middlePaneRef.current;
+  const rightPane = rightPaneRef.current;
+
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
+  const [visibilityState, setVisibilityState] = useState<'visible' | 'hidden'>(
+    isOpen || chat ? 'visible' : 'hidden'
+  );
+  const [activePaneIndex, setActivePaneIndex] = useState<number>(0);
+
+  const handleSetActivePaneIndex = useCallback(
+    (index: number) => () => {
+      setActivePaneIndex(index);
+
+      if (index === 1 && windowWidth < 992) {
+        window.history[userDeviceIsMobile ? 'replaceState' : 'pushState'](
+          {},
+          '',
+          window.location.pathname +
+            window.location.search.replace('=min', '=open')
+        );
+      }
+    },
+    [windowWidth]
+  );
+
+  const scrollViewProviderValue = useMemo(() => {
+    return {
+      convoMessagesErr,
+      convoMessagesStatusText,
+      convoParticipants,
+      convoInfoNewMessage
+    };
+  }, [
+    convoMessagesErr,
+    convoMessagesStatusText,
+    convoParticipants,
+    convoInfoNewMessage
+  ]);
+
+  const middlePaneHeaderProviderValue = useMemo(() => {
+    return {
+      chatState: _chatState,
+      convoInfoData,
+      convoAvatar,
+      convoType,
+      convoInfoStatus,
+      convoUserTyping,
+      handleSetActivePaneIndex
+    };
+  }, [
+    _chatState,
+    convoInfoData,
+    convoAvatar,
+    convoType,
+    convoInfoStatus,
+    convoUserTyping,
+    handleSetActivePaneIndex
+  ]);
+
+  const colleagueNameAndStatusContextValue = React.useMemo(() => {
+    return {
+      convoId,
+      convoDisplayName,
+      convoAvatar,
+      convoType,
+      convoInfoStatus,
+      convoUserTyping,
+      convoInfoLastSeen
+    };
+  }, [
+    convoId,
+    convoDisplayName,
+    convoAvatar,
+    convoType,
+    convoInfoStatus,
+    convoUserTyping,
+    convoInfoLastSeen
+  ]);
 
   const handleOpenChatClick = useCallback(() => {
-    const queryString = `?chat=open&id=${
-      convoUid ?? placeHolderDisplayName
-    }&cid=${convoId ?? '0'}`;
+    const queryString = `?chat=${
+      userDeviceIsMobile ? 'min' : 'open'
+    }&id=${placeHolderDisplayName}&cid=0`;
 
+    setActivePaneIndex(0);
     setVisibilityState('visible');
 
     //delay till chatBox display property is set for animation to work
-    delay(5).then(() => {
+    delay(150).then(() => {
       dispatch(
         chatState({
           isOpen: true,
+          isMinimized: false,
           queryString
         })
       );
     });
-    window.history.pushState({}, '', window.location.pathname + queryString);
-  }, [convoId, convoUid]);
+    window.history[userDeviceIsMobile ? 'replaceState' : 'pushState'](
+      {},
+      '',
+      window.location.pathname + queryString
+    );
+  }, []);
 
   const handleChatTransitionEnd = useCallback(
     (e: any) => {
       const { currentTarget } = e;
 
-      delay(400).then(() => {
-        if (!isOpen && !/chat=/.test(window.location.search)) {
+      delay(100).then(() => {
+        if (!queryString.parse(window.location.search).chat) {
           setVisibilityState('hidden');
         }
 
@@ -144,6 +315,54 @@ const ChatBox = (props: ChatBoxProps) => {
   );
 
   useEffect(() => {
+    if (/chat=/.test(window.location.search)) {
+      window.history.replaceState(
+        {},
+        '',
+        window.location.pathname +
+          `?chat=open&id=${placeHolderDisplayName}&cid=0`
+      );
+    }
+
+    window.onresize = (e: any) => setWindowWidth(e.target.innerWidth);
+  }, []);
+
+  useEffect(() => {
+    if (isOpen || isMinimized || chat) {
+      if (windowWidth < 992) {
+        (leftPane ?? {}).inert = true;
+        (middlePane ?? {}).inert = true;
+        (rightPane ?? {}).inert = true;
+
+        switch (activePaneIndex) {
+          case 0:
+            (leftPane ?? {}).inert = false;
+            break;
+          case 1:
+            (middlePane ?? {}).inert = false;
+            break;
+          case 2:
+            (rightPane ?? {}).inert = false;
+            break;
+        }
+      } else {
+        (leftPane ?? {}).inert = false;
+        (middlePane ?? {}).inert = false;
+        (rightPane ?? {}).inert = false;
+      }
+    }
+  }, [
+    leftPane,
+    middlePane,
+    rightPane,
+    activePaneIndex,
+    windowWidth,
+    isOpen,
+    chat,
+    isMinimized
+  ]);
+
+  useEffect(() => {
     const chatBoxWrapper = chatBoxWrapperRef.current;
 
     if (chatBoxWrapper) {
@@ -154,14 +373,14 @@ const ChatBox = (props: ChatBoxProps) => {
   useEffect(() => {
     const timeout = isMinimized ? 500 : 5;
 
-    if (/chat=open/.test(window.location.search) || isMinimized) {
+    if (chat) {
       delay(timeout).then(() => setVisibilityState('visible'));
     }
-  }, [isMinimized]);
+  }, [isMinimized, chat]);
 
   useEffect(() => {
     delay(400).then(() => {
-      if (isOpen && !isMinimized) {
+      if ((chat && chat === 'open') || (isOpen && !isMinimized)) {
         document.body.style.overflow = 'hidden';
         document.querySelectorAll('.Main > *').forEach((component: any) => {
           if (!/ChatBox/.test(component.className)) {
@@ -177,74 +396,63 @@ const ChatBox = (props: ChatBoxProps) => {
         });
       }
     });
-  }, [isOpen, isMinimized]);
+  }, [isOpen, isMinimized, chat]);
 
+  const convosLength = convosData?.length;
   useEffect(() => {
-    const search = window.location.search;
-    let { chat, id, cid } = queryString.parse(search);
+    delay(500).then(() => {
+      let { cid, chat } = queryString.parse(window.location.search);
+      if (
+        ((!isNaN(cid) && cid) || !convoId) &&
+        chat &&
+        isOpen &&
+        userDeviceIsMobile
+      ) {
+        const queryString = `?chat=${
+          userDeviceIsMobile ? 'min' : 'open'
+        }&id=${placeHolderDisplayName}&cid=0`;
+
+        window.history.replaceState(
+          {},
+          '',
+          window.location.pathname + queryString
+        );
+      }
+    });
 
     if (!isOpen) {
       //delay till chatBox display property is set for animation to work
-      delay(500).then(() => {
-        let { chat } = queryString.parse(search);
+      delay(750).then(() => {
+        let { chat } = queryString.parse(window.location.search);
 
         if (chat)
           dispatch(
             chatState({
-              queryString: !!chat ? search : qString,
+              queryString: !!chat ? window.location.search : qString,
               isOpen: true,
-              isMinimized: chat === 'min'
+              isMinimized: chat === 'min' && !userDeviceIsMobile
             })
           );
       });
     }
 
-    if (
-      (isOpen || chat === 'open') &&
-      !conversations.data![0] &&
-      !conversations.err
-    ) {
+    if (chat && !convosLength && !convosErr && convosStatus !== 'fulfilled') {
       dispatch(getConversations()(dispatch));
     }
-
-    if (cid && isNaN(cid)) {
-      let infoStatus = _conversationInfo.status;
-
-      if (
-        window.navigator.onLine &&
-        !_conversationInfo.err &&
-        convoId &&
-        (infoStatus === 'settled' ||
-          (infoStatus === 'fulfilled' && convoId !== cid))
-      ) {
-        dispatch(getConversationInfo(id)(dispatch));
-      }
-
-      if (!convoId || convoId !== cid) {
-        dispatch(conversation(cid));
-      }
-
-      let msgStatus = _conversationMessages.status;
-      if (
-        window.navigator.onLine &&
-        !_conversationMessages.err &&
-        convoId &&
-        (msgStatus === 'settled' ||
-          (msgStatus === 'fulfilled' && convoId !== cid))
-      ) {
-        dispatch(getConversationMessages(cid, 'pending')(dispatch));
-      }
-    }
   }, [
-    conversations.data,
+    convosLength,
+    convosStatus,
     convoId,
     qString,
     isOpen,
-    _conversationInfo.status,
-    _conversationInfo.err,
-    _conversationMessages.err,
-    conversations.err,
-    _conversationMessages.status
+    chat,
+    id,
+    cid,
+    convoInfoStatus,
+    convoInfoErr,
+    convoMessagesErr,
+    convosErr,
+    convoMessagesStatus
   ]);
 
   return (
@@ -254,49 +462,83 @@ const ChatBox = (props: ChatBoxProps) => {
         className={`chat-box-wrapper m-0 ${isMinimized ? 'minimize' : ''} ${
           isOpen ? '' : 'close'
         } ${visibilityState}`}>
-        <Col as='section' md={3} sm={4} className='chat-left-pane p-0'>
+        <Col
+          as='section'
+          lg={3}
+          className={`chat-left-pane ${
+            activePaneIndex === 0 ? 'active-pane ' : ''
+          }p-0`}
+          ref={leftPaneRef}>
           <Memoize
             memoizedComponent={ChatLeftPane}
             conversations={conversations}
             userId={userData.id}
+            userFirstname={userData.firstname}
+            handleSetActivePaneIndex={handleSetActivePaneIndex}
           />
         </Col>
 
         <Col
           as='section'
-          md={convoUsername ? 6 : 9}
-          sm={8}
-          className='chat-middle-pane d-flex flex-column p-0'>
-          <Memoize
-            memoizedComponent={ChatMiddlePane}
-            conversation={_conversation}
-            conversationMessages={_conversationMessages}
-            chatState={_chatState}
-            userData={userData}
-            conversationInfo={_conversationInfo}
-            webSocket={socket}
-          />
+          lg={convoAssocUsername ? 6 : 9}
+          className={`chat-middle-pane ${
+            activePaneIndex === 1 ? 'active-pane ' : ''
+          }d-flex flex-column p-0 `}
+          ref={middlePaneRef}>
+          <MiddlePaneHeaderContext.Provider
+            value={middlePaneHeaderProviderValue}>
+            <ColleagueNameAndStatusContext.Provider
+              value={colleagueNameAndStatusContextValue}>
+              <ScrollViewContext.Provider value={scrollViewProviderValue}>
+                <Memoize
+                  memoizedComponent={ChatMiddlePane}
+                  userData={userData}
+                  convoDisplayName={convoDisplayName}
+                  convoId={convoId}
+                  convoFriendship={convoFriendship}
+                  convoAssocUsername={convoAssocUsername}
+                  convoInfoOnlineStatus={convoInfoOnlineStatus}
+                  convoMessages={convoMessages}
+                  convoMessagesStatus={convoMessagesStatus}
+                  chatState={_chatState}
+                  webSocket={socket}
+                />
+              </ScrollViewContext.Provider>
+            </ColleagueNameAndStatusContext.Provider>
+          </MiddlePaneHeaderContext.Provider>
         </Col>
 
-        {convoUsername && (
+        {convoAssocUsername && (
           <Col
             as='section'
-            md={3}
-            className='chat-right-pane d-flex flex-column p-0'>
+            lg={3}
+            ref={rightPaneRef}
+            className={`chat-right-pane ${
+              activePaneIndex === 2 ? 'active-pane ' : ''
+            }d-flex flex-column p-0`}>
             <Memoize
-              memoizedComponent={ChatRightPane as React.FC}
-              conversation={_conversation}
-              convoInfo={_conversationInfo}
+              memoizedComponent={ChatRightPane}
+              convoType={convoType}
+              convoInfoErr={convoInfoErr}
+              convoInfoData={convoInfoData}
+              convoDisplayName={convoDisplayName}
+              convoAvatar={convoAvatar}
+              convoAssocUsername={convoAssocUsername}
+              handleSetActivePaneIndex={handleSetActivePaneIndex}
             />
           </Col>
         )}
       </Row>
 
       <IconButton
-        className={`chat-button ${isOpen ? 'hide' : ''}`}
+        className={`chat-button ${unopened_count ? 'ripple' : ''} ${
+          isOpen ? 'hide' : ''
+        }`}
         onClick={handleOpenChatClick}
         aria-label='chat'>
-        <ChatIcon fontSize='inherit' />
+        <Badge badgeContent={unopened_count} color='error'>
+          <ChatIcon fontSize='inherit' />
+        </Badge>
       </IconButton>
     </Container>
   );
