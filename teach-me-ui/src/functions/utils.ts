@@ -329,7 +329,7 @@ export const addEventListenerOnce = (
   target: HTMLElement | any,
   callback: Function | any,
   event?: string,
-  options?: { capture?: boolean; once?: boolean }
+  options?: { capture?: boolean; once?: boolean; passive?: boolean }
 ) => {
   event = event ? event : 'transitionend';
 

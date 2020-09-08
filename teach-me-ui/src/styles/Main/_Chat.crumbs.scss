@@ -4,7 +4,7 @@
   width: auto;
   float: right;
   line-height: 260%;
-  color: #777;
+  color: $theme-tertiary-v5;
   font-style: normal;
   margin: {
     right: -0.45rem;
@@ -22,9 +22,11 @@
   }
 }
 
-.chat-date-wrapper {
+.chat-date-wrapper,
+.chat-date-wrapper-sticky {
   transition: opacity 0.3s;
   position: relative;
+  min-height: 2.5rem;
 
   &::before {
     @include before-or-after(
@@ -37,6 +39,19 @@
   }
 }
 
+#chat-date-sticky {
+  pointer-events: none;
+  position: sticky;
+  top: 0rem;
+  z-index: 3;
+  min-height: unset;
+  transition-delay: 0.8s !important;
+
+  &::before {
+    content: unset;
+  }
+}
+
 .chat-date {
   background: white;
   padding: 0.25rem 1rem;
@@ -45,8 +60,17 @@
   z-index: 1;
   font-size: 0.85rem;
   text-transform: capitalize;
-  color: $theme-tertiary-v3;
-  box-shadow: 0 0 0 1rem white;
+  color: $theme-tertiary-v2;
+  // box-shadow: 0 0 0.4rem rgba(0, 0, 0, 0.15), 0 0 0 1rem white;
   border: 0.0625rem solid $theme-tertiary-v8;
   user-select: none;
+}
+
+@keyframes fromTop {
+  from {
+    transform: translateY(-200%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
