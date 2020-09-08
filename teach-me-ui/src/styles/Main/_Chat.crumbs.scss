@@ -45,7 +45,14 @@
   top: 0rem;
   z-index: 3;
   min-height: unset;
-  transition-delay: 0.8s !important;
+
+  &.hide {
+    transition-delay: unset;
+  }
+
+  &.show {
+    transition-delay: 0.8s !important;
+  }
 
   &::before {
     content: unset;

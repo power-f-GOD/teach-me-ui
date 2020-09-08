@@ -278,8 +278,6 @@ export const ChatDate = ({
         } else {
           (chatDateWrapper.children[0] as any).style.opacity = 1;
           chatDateSticky.style.opacity = shouldHideSticky ? 0 : 1;
-
-          // chatDateSticky.classList[shouldHideSticky ? 'add' : 'remove']('hide');
         }
       }
     },
@@ -289,6 +287,7 @@ export const ChatDate = ({
   React.useEffect(() => {
     if (scrollView && chatDateWrapperRef.current) {
       scrollView.addEventListener('scroll', stickDate);
+      chatDateSticky.style.opacity = scrollView!.scrollTop < 106 ? 0 : 1;
     }
 
     return () => {
@@ -296,7 +295,7 @@ export const ChatDate = ({
         scrollView.removeEventListener('scroll', stickDate);
       }
     };
-  }, [scrollView, stickDate, timestamp]);
+  }, [scrollView, stickDate, timestamp, chatDateSticky.style.opacity]);
 
   if (isNaN(timestamp)) {
     return <>{timestamp}</>;
