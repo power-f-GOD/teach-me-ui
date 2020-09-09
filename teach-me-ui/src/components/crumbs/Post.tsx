@@ -73,6 +73,14 @@ const openCreateRepostModal = (meta: any) => (e: any) => {
   });
 };
 
+const media = [
+  'https://source.unsplash.com/user/erondu/400x225',
+  'https://source.unsplash.com/user/erondu/400x225',
+  'https://source.unsplash.com/user/erondu/400x225'
+  // 'https://source.unsplash.com/user/erondu/1600x900',
+  // 'https://source.unsplash.com/user/erondu/1600x900'
+];
+
 const Post: React.FunctionComponent<
   Partial<PostPropsState> & Partial<{ head: boolean }>
 > = (props) => {
@@ -201,6 +209,62 @@ const Post: React.FunctionComponent<
                 ? props.text
                 : props.parent?.text) as string
             )}
+          </Box>
+          <Box
+            pt={1}
+            px={0}
+            ml={5}
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gridTemplateRows: `repeat(${Math.ceil(media.length / 2)}, 1fr)`,
+              gridAutoFlow: 'row',
+              columnGap: '0.2rem',
+              rowGap: '0.2rem'
+            }}>
+            {media.map((m, i, self) => {
+              const style: any = {};
+              switch (i) {
+                case 0:
+                  if (self.length === 1) {
+                    style.gridColumn = '1 / 3';
+                  }
+                  if (self.length === 3) {
+                    style.gridRow = '1 / 3';
+                  }
+                  break;
+                // case 1:
+                //   if (self.length === 3) {
+                //     style.gridColumn = '2';
+                //   }
+                //   if (self.length === 2) {
+                //     style.gridRow = '1/2';
+                //   }
+                //   break;
+                // case 2:
+                //   if (self.length === 3) {
+                //     style.gridRow = '2';
+                //   }
+                //   break;
+                // case 4:
+                //   if (self.length === 5) style.gridColumn = '3/5';
+              }
+              return (
+                <div key={i} style={style}>
+                  <img
+                    src={m}
+                    alt='post'
+                    style={{
+                      borderRadius: '0.3rem',
+                      objectFit: 'cover',
+                      objectPosition: 'center',
+                      width: '100%',
+                      height: '100%'
+                    }}
+                  />
+                </div>
+              );
+            })}
           </Box>
           <Box
             component='small'
