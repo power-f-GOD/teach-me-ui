@@ -166,7 +166,6 @@ export const fetchPosts: Function = (
     })
     .then((state) => {
       if (state.length === 0) {
-        console.log('recycling feeds...');
         dispatch(recycleFeeds(cb));
         return;
       }
