@@ -5,8 +5,6 @@ import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import InputTrigger from 'react-input-trigger';
-
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
@@ -23,80 +21,25 @@ import { makeRepost } from '../../../../actions';
 
 import { useStyles } from '../../../../constants';
 
-// import {
-// //   useSubmitPost
-//   /*useGetFormattedMentionsWithKeyword*/
-// } from '../../../../hooks/api';
-
-let userInfo: any = {};
-let [avatar, displayName, username] = ['', '', ''];
-
-//you can now use the 'userData' props in state to get userInfo; for this component, you can mapToProps or better still, just pass the value you need to it as props from its parent
-if (navigator.cookieEnabled && localStorage.kanyimuta) {
-  userInfo = JSON.parse(localStorage.kanyimuta);
-  displayName = userInfo.displayName;
-  username = userInfo.username;
-}
 
 const CreatePost: React.FC<any> = (props) => {
+  const { userData } = props;
   const avatarSizes = useStyles();
   const [state, setState] = useState<any>({
     mentionsKeyword: '',
     post: {
       text: '',
       mentions: [],
-      hashtags: []
+      hashtags: [],
+      media: []
     },
     top: 0,
     left: 0,
     showSuggestor: false,
     mentions: []
   });
-  // const getMentions = useGetFormattedMentionsWithKeyword(state.mentionsKeyword)[0];
 
   const editor = useRef<HTMLTextAreaElement | any>();
-
-  const toggleSuggestor = (metaInformation: any) => {
-    const { hookType, cursor } = metaInformation;
-
-    if (hookType === 'start') {
-      setState({
-        ...state,
-        showSuggestor: true,
-        left: cursor.left,
-
-        // we need to add the cursor height so that the dropdown doesn't overlap with the `@`.
-        top: Number(cursor.top) + Number(cursor.height)
-      });
-    }
-
-    if (hookType === 'cancel') {
-      // reset the state
-
-      setState({
-        ...state,
-        showSuggestor: false,
-        left: 0,
-
-        // we need to add the cursor height so that the dropdown doesn't overlap with the `@`.
-        top: 0
-      });
-    }
-  };
-
-  // const handleMentionInput = (metaInformation: any) => {
-
-  //   setState({
-  //     mentionsKeyword: metaInformation.text
-  //   });
-
-  //   getMentions().then((data: any[]) => {
-  //     setState({
-  //       ...state,
-  //       mentions: data
-  //     });
-  //   });
-  // }
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const post = e.target.value;
@@ -126,31 +69,16 @@ const CreatePost: React.FC<any> = (props) => {
         <Avatar
           component='span'
           className='chat-avatar compose-avatar'
-          alt={displayName}
-          src={`/images/${avatar}`}
+          alt={userData.displayName}
+          src={`/images/${userData.avatar}`}
         />
         <div className='d-flex flex-column justify-content-center flex-grow-1'>
-          <span>{displayName}</span>
-          <small>{username}</small>
+          <span>{userData.displayName}</span>
+          <small>{userData.username}</small>
         </div>
       </Row>
       <form>
         <div id='suggestion-container'>
-          <InputTrigger
-            trigger={{
-              keyCode: 50,
-              shiftKey: true
-            }}
-            onStart={(metaData: any) => {
-              toggleSuggestor(metaData);
-            }}
-            onCancel={(metaData: any) => {
-              toggleSuggestor(metaData);
-            }}
-            // onType={(metaData: any) => {
-            //   handleMentionInput(metaData);
-            // }}
-          >
             <textarea
               autoFocus
               rows={5}
@@ -158,9 +86,8 @@ const CreatePost: React.FC<any> = (props) => {
               onChange={(e: any) => {
                 onChange(e);
               }}
-              placeholder={`What's on your mind, ${displayName.split(' ')[0]}`}
+              placeholder={`What's on your mind, ${userData.displayName.split(' ')[0]}`}
               ref={editor}></textarea>
-          </InputTrigger>
           <div
             id='suggestor-dropdown'
             style={{
@@ -236,8 +163,9 @@ const CreatePost: React.FC<any> = (props) => {
   );
 };
 
-const mapStateToProps = (state: any) => ({
-  makeRepostStatus: state.makeRepostStatus
+const mapStateToProps = ({ makeRepostStatus, userData }: any) => ({
+  makeRepostStatus,
+  userData
 });
 
 export default connect(mapStateToProps)(CreatePost);

@@ -4,8 +4,7 @@ import {
   UserData,
   NotificationState,
   MentionState,
-  ReplyState,
-  UploadState
+  ReplyState
 } from './interfaces';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -87,9 +86,3 @@ export const useStyles = makeStyles((theme: any) => ({
     height: theme.spacing(7)
   }
 }));
-
-export const uploadState: UploadState = {
-  status: 'settled',
-  err: false,
-  _id:''
-};

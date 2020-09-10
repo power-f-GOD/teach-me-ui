@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import useApi from './base';
-import { useApiResponse, UserData } from '../../constants';
+import { useApiResponse, UserData, Post } from '../../constants';
 import {
   dispatch,
   getState,
@@ -30,7 +30,7 @@ export const useFetchHashtags = (keyword: string): useApiResponse<any> => {
   return r;
 };
 
-export const useSubmitPost = (post: string): useApiResponse<any> => {
+export const useSubmitPost = (post: Post): useApiResponse<any> => {
   const token = (getState().userData as UserData).token;
   const addPost = (payload: any) => {
     window.scrollTo(0, 0);
@@ -43,9 +43,10 @@ export const useSubmitPost = (post: string): useApiResponse<any> => {
       headers: { Authorization: `Bearer ${token}` }
     },
     {
-      text: post,
-      mentions: getMentionsFromText(post),
-      hashtags: getHashtagsFromText(post)
+      text: post.text,
+      mentions: getMentionsFromText(post.text),
+      hashtags: getHashtagsFromText(post.text),
+      media: post.media
     },
     true,
     addPost

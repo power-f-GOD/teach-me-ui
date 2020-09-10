@@ -33,6 +33,7 @@ import MenuIcon from '@material-ui/icons/MenuRounded';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import PersonIcon from '@material-ui/icons/Person';
+import FilterNoneRoundedIcon from '@material-ui/icons/FilterNoneRounded';
 
 import {
   ChatState,
@@ -60,7 +61,8 @@ import {
   preventEnterNewLine,
   formatMapDateString,
   timestampFormatter,
-  addEventListenerOnce
+  addEventListenerOnce,
+  emitUserOnlineStatus
 } from '../../functions/utils';
 import { placeHolderDisplayName } from './Chat';
 import {
@@ -76,7 +78,7 @@ import ConfirmDialog, {
   SelectedMessageValue,
   ActionChoice
 } from './Chat.crumbs';
-import { emitUserOnlineStatus } from '../../App';
+import { displaySnackbar } from '../../actions';
 
 interface ChatMiddlePaneProps {
   userData: UserData;
@@ -114,11 +116,18 @@ export const ColleagueNameAndStatusContext = createContext(
   {} as Partial<ChatMiddlePaneProps>
 );
 
-const scrollViewRef = createRef<HTMLElement | null>();
-const msgBoxRef = createRef<HTMLInputElement | null>();
-const moreOptionsContainerRef = createRef<HTMLElement | any>();
+const scrollViewRef: any = createRef<HTMLElement | null>();
+const msgBoxRef: any = createRef<HTMLInputElement | null>();
+const moreOptionsContainerRef: any = createRef<HTMLElement | any>();
+const messageActionsWrapperRef: any = createRef<HTMLInputElement | null>();
+const messagesStatusSignalRef: any = createRef<HTMLInputElement | null>();
+const headerNameControlWrapperRef: any = createRef<HTMLInputElement | null>();
 
 let scrollView: HTMLElement | null = null;
+let messageActionsWrapper: HTMLElement | any = null;
+let moreOptionsContainer: HTMLElement | any = null;
+let messagesStatusSignal: HTMLElement | any = null;
+let headerNameControlWrapper: HTMLElement | any = null;
 
 const Memoize = createMemo();
 
@@ -156,8 +165,10 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
     );
   }, []);
 
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    messagesStatusSignal = messagesStatusSignalRef.current;
+
+    return () => {
       renderAwayDateTimeout = null;
       _canDisplayAwayDate = false;
       lastSeenForAway = Date.now();
@@ -165,9 +176,8 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
       loadMessagesTimeout = null;
       scrollViewScrollPos = 0;
       messageDrafts = {};
-    },
-    []
-  );
+    };
+  }, []);
 
   useEffect(() => {
     if ((cid || convoId) && msgBoxRef.current) {
@@ -277,6 +287,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
         convoAssocUsername={convoAssocUsername}
         convoId={convoId}
         convoDisplayName={convoDisplayName}
+        username={userData?.username as string}
         userId={userData?.id as string}
         clearSelections={clearSelections}
         selectedMessages={selectedMessages}
@@ -288,7 +299,8 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
 
       <Container
         fluid
-        className='theme-tertiary-lighter d-flex align-items-center justify-content-center messages-status-signal font-bold h-100'>
+        className='theme-tertiary-lighter d-flex align-items-center justify-content-center messages-status-signal font-bold h-100'
+        ref={messagesStatusSignalRef}>
         {convoMessagesStatus === 'fulfilled' &&
         !convoMessages.length &&
         convoId ? (
@@ -378,7 +390,6 @@ function MiddlePaneHeader(props: {
   const { isMinimized, isOpen } = _chatState as ChatState;
 
   const numOfSelectedMessages = Object.keys(selectedMessages).length;
-  const moreOptionsContainer = moreOptionsContainerRef.current;
 
   const [moreOptionsContainerIsVisible, setMoreOptionsIsVisible] = useState<
     boolean
@@ -430,7 +441,7 @@ function MiddlePaneHeader(props: {
       dispatch(conversation(''));
       dispatch(conversationInfo({ data: {} }));
       dispatch(conversationMessages({ data: [] }));
-    }, 400);
+    }, 700);
   }, [isOpen, convoMessagesStatus]);
 
   const handleUserInfoOptionClick = useCallback(() => {
@@ -456,10 +467,13 @@ function MiddlePaneHeader(props: {
   }, []);
 
   useEffect(() => {
+    moreOptionsContainer = moreOptionsContainerRef.current;
+    headerNameControlWrapper = headerNameControlWrapperRef.current;
+
     if (moreOptionsContainer) {
       moreOptionsContainer.inert = true;
     }
-  }, [moreOptionsContainer]);
+  }, []);
 
   useEffect(() => {
     if (moreOptionsContainer) {
@@ -467,14 +481,19 @@ function MiddlePaneHeader(props: {
         moreOptionsContainer.inert = !moreOptionsContainerIsVisible;
       });
     }
-  }, [moreOptionsContainer, moreOptionsContainerIsVisible]);
+  }, [moreOptionsContainerIsVisible]);
+
+  useEffect(() => {
+    if (headerNameControlWrapper) {
+      headerNameControlWrapper.inert = !!numOfSelectedMessages;
+    }
+  }, [numOfSelectedMessages]);
 
   return (
     <>
       <Row
-        className={`title-control-wrapper px-2 mx-0 ${
-          numOfSelectedMessages ? 'hide' : 'show'
-        }`}>
+        className='header-name-control-wrapper px-2 mx-0'
+        ref={headerNameControlWrapperRef}>
         <Memoize
           memoizedComponent={MiddlePandeHeaderColleagueNameAndStatus}
           convoInfoOnlineStatus={convoInfoOnlineStatus}
@@ -513,7 +532,7 @@ function MiddlePaneHeader(props: {
             </IconButton>
 
             <span
-              ref={moreOptionsContainerRef as any}
+              ref={moreOptionsContainerRef}
               className={`more-options-container ${
                 moreOptionsContainerIsVisible ? 'show' : 'hide'
               } ${
@@ -556,6 +575,7 @@ function MiddlePaneHeader(props: {
 
       <Memoize
         memoizedComponent={MiddlePaneHeaderActions}
+        inert={!numOfSelectedMessages}
         numOfSelectedMessages={numOfSelectedMessages}
         selectedMessages={selectedMessages}
         setClearSelections={setClearSelections}
@@ -634,7 +654,7 @@ function MiddlePandeHeaderColleagueNameAndStatus(props: {
   }, [convoInfoOnlineStatus, convoInfoLastSeen, displayAwayDate]);
 
   return (
-    <Col as='span' className='colleague-name'>
+    <Col as='span' className='conversation-name-wrapper'>
       <Box
         component='span'
         className='control-wrapper conversations-menu-button-wrapper'>
@@ -651,7 +671,7 @@ function MiddlePandeHeaderColleagueNameAndStatus(props: {
       {convoType === 'ONE_TO_ONE' ? (
         <Box
           component='span'
-          className='colleague-name-container d-inline-flex align-items-center'
+          className='conversation-name-container d-inline-flex align-items-center'
           onClick={userDeviceIsMobile ? handleUserInfoOptionClick : undefined}>
           <Badge
             anchorOrigin={{
@@ -725,13 +745,15 @@ function MiddlePandeHeaderColleagueNameAndStatus(props: {
 }
 
 function MiddlePaneHeaderActions(props: {
+  inert: boolean;
   numOfSelectedMessages: number;
-  selectedMessages: { [key: string]: any };
+  selectedMessages: { [key: string]: SelectedMessageValue };
   setClearSelections: Function;
   setSelectedMessages: Function;
   webSocket: WebSocket;
 }) {
   const {
+    inert,
     numOfSelectedMessages,
     selectedMessages,
     setClearSelections,
@@ -774,6 +796,48 @@ function MiddlePaneHeaderActions(props: {
     });
   }, [selectedMessages]);
 
+  const handleCopyMessage = useCallback(() => {
+    const selection = window.getSelection();
+    const range = document.createRange();
+    const container = document.createElement('div');
+    const isMulti = numOfSelectedMessages > 1;
+    let messages = '';
+
+    for (const id in selectedMessages) {
+      const { message, date: _date, sender_username } = selectedMessages[id];
+      const [date, time] = [
+        new Date(_date).toLocaleDateString(),
+        timestampFormatter(_date)
+      ];
+
+      if (isMulti) {
+        messages +=
+          `[@${sender_username} | ${date} at ${time}]: ` + message + '\n\n';
+      } else {
+        messages = message;
+      }
+    }
+
+    container.className = 'message-selection-data-container';
+    container.textContent = messages;
+    document.body.appendChild(container);
+    range.selectNodeContents(container);
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+    document.execCommand('copy');
+    document.body.removeChild(container);
+    handleClearSelections();
+    dispatch(
+      displaySnackbar({
+        message: `Message${isMulti ? 's' : ''} copied to clipboard.`,
+        severity: 'info',
+        open: true,
+        autoHide: true,
+        timeout: 1600
+      })
+    );
+  }, [selectedMessages, numOfSelectedMessages, handleClearSelections]);
+
   const handleDeleteMessage = useCallback(() => {
     confirmDeleteMessage().then((choice) => {
       if (choice === 'CANCEL') return;
@@ -811,15 +875,29 @@ function MiddlePaneHeaderActions(props: {
     });
   }, [selectedMessages, confirmDeleteMessage, socket, handleClearSelections]);
 
+  useEffect(() => {
+    if (messageActionsWrapper) {
+      messageActionsWrapper.inert = inert;
+    }
+  }, [inert]);
+
+  useEffect(() => {
+    messageActionsWrapper = messageActionsWrapperRef.current;
+
+    if (messageActionsWrapper) {
+      messageActionsWrapper.inert = true;
+    }
+  }, []);
+
   return (
     <>
-      <Box
-        className={`message-actions-wrapper${
-          numOfSelectedMessages ? ' visible' : ''
-        }`}>
+      <Container
+        fluid
+        className='message-actions-wrapper'
+        ref={messageActionsWrapperRef}>
         <Row
-          className={`message-actions-container ${
-            numOfSelectedMessages ? 'open' : ''
+          className={`message-actions-container${
+            numOfSelectedMessages ? ' open' : ''
           } m-0`}>
           <Box className='action-wrapper text-left'>
             {
@@ -838,16 +916,26 @@ function MiddlePaneHeaderActions(props: {
               </>
             }
           </Box>
-          <Box className='action-wrapper text-right'>
-            <IconButton
-              className='delete-button mr-2'
-              onClick={handleDeleteMessage}
-              aria-label='delete message'>
-              <DeleteIcon />
-            </IconButton>
+          <Box className='d-flex'>
+            <Box className='action-wrapper text-right'>
+              <IconButton
+                className='copy-button mr-1'
+                onClick={handleCopyMessage}
+                aria-label='copy message'>
+                <FilterNoneRoundedIcon />
+              </IconButton>
+            </Box>
+            <Box className='action-wrapper text-right'>
+              <IconButton
+                className='delete-button mr-2'
+                onClick={handleDeleteMessage}
+                aria-label='delete message'>
+                <DeleteIcon />
+              </IconButton>
+            </Box>
           </Box>
         </Row>
-      </Box>
+      </Container>
 
       <Memoize
         memoizedComponent={ConfirmDialog}
@@ -859,8 +947,11 @@ function MiddlePaneHeaderActions(props: {
   );
 }
 
+export const chatDateStickyRef: any = createRef<HTMLInputElement | null>();
+
 function ScrollView(props: {
   userId: string;
+  username: string;
   convoMessages: APIMessageResponse[];
   convoMessagesStatus: SearchState['status'];
   convoFriendship: string;
@@ -875,6 +966,7 @@ function ScrollView(props: {
 }) {
   const {
     userId,
+    username,
     convoMessages,
     convoMessagesStatus,
     convoFriendship,
@@ -917,21 +1009,15 @@ function ScrollView(props: {
           );
           setHasReachedTopOfConvo(false);
         }
-      }, 750);
+      }, 1000);
 
       scrollView.classList.remove('scroll-ended');
       clearTimeout(hideScrollBarTimeout);
       hideScrollBarTimeout = setTimeout(() => {
         scrollView!.classList.add('scroll-ended');
-      }, 800);
+      }, 600);
     }
-  }, [
-    chat,
-    cid,
-    convoId,
-    offset,
-    convoMessagesStatusText
-  ]);
+  }, [chat, cid, convoId, offset, convoMessagesStatusText]);
 
   const handleMessageSelection = useCallback(
     (id: string | null, value: SelectedMessageValue) => {
@@ -939,11 +1025,11 @@ function ScrollView(props: {
       setSelectedMessages((prev: { [id: string]: SelectedMessageValue }) => {
         const newState: { [key: string]: SelectedMessageValue } = {
           ...prev,
-          ...{ [value.id]: value }
+          ...{ [value._id]: value }
         };
 
         if (!id) {
-          delete newState[value.id];
+          delete newState[value._id];
         }
 
         return newState;
@@ -1018,10 +1104,12 @@ function ScrollView(props: {
         convoMessages?.length &&
         /settled|fulfilled/.test(convoMessagesStatus as string)
       ) {
-        delay(700).then(() => {
+        (messagesStatusSignal ?? {}).inert = true;
+        delay(900).then(() => {
           scrollView!.classList.remove('hide-messages');
         });
       } else {
+        (messagesStatusSignal ?? {}).inert = false;
         scrollView.classList.add('hide-messages');
       }
 
@@ -1044,12 +1132,23 @@ function ScrollView(props: {
 
   return (
     <Col
-      ref={scrollViewRef as any}
+      ref={scrollViewRef}
       as='section'
       className={`chat-scroll-view custom-scroll-bar grey-scrollbar`}
       onScroll={handleScrollViewScroll}>
       <Box
-        className={`more-messages-loader theme-primary-lighter ${
+        id='chat-date-sticky'
+        className={`chat-date-wrapper text-center ${
+          convoMessages.length ? 'show' : 'hide'
+        }`}>
+        <Container
+          as='span'
+          className='chat-date d-inline-block w-auto'
+          ref={chatDateStickyRef}></Container>
+      </Box>
+
+      <Box
+        className={`more-messages-loader theme-tertiary-darker ${
           convoMessagesStatus === 'settled' &&
           /offset/.test(convoMessagesStatusText as string) &&
           !convoMessagesErr
@@ -1060,14 +1159,14 @@ function ScrollView(props: {
         <CircularProgress thickness={5} color='inherit' size={25} />
       </Box>
       <Box
-        className={`pt-4 mb-4 text-center theme-tertiary-lighter ${
+        className={`pt-2 mb-1 text-center theme-tertiary-lighter ${
           convoMessagesStatus === 'fulfilled' && hasReachedTopOfConvo
             ? 'd-block'
             : 'd-none'
         }`}
         fontSize='0.85rem'>
         This is the beginning of your conversation with{' '}
-        {convoDisplayName ?? 'your colleague'}.
+        <b className='font-bold'>{convoDisplayName ?? 'your colleague'}</b>.
       </Box>
       {convoMessages?.map((message, key: number) => {
         const { sender_id, date, delivered_to, deleted, seen_by } = message;
@@ -1114,11 +1213,19 @@ function ScrollView(props: {
 
         return (
           <React.Fragment key={key}>
-            {shouldRenderDate && <ChatDate timestamp={Number(date)} />}
+            {shouldRenderDate && (
+              <ChatDate
+                scrollView={scrollView as HTMLElement}
+                timestamp={Number(date)}
+              />
+            )}
             <Memoize
               memoizedComponent={Message}
               message={message as APIMessageResponse}
               type={type}
+              sender_username={
+                type === 'incoming' ? convoAssocUsername : username
+              }
               clearSelections={
                 message._id! in selectedMessages && clearSelections
                   ? true
@@ -1136,7 +1243,7 @@ function ScrollView(props: {
           </React.Fragment>
         );
       })}
-      {!convoFriendship && convoMessagesStatus === 'fulfilled' && (
+      {!convoFriendship && convoMessagesStatus === 'fulfilled' && chat && (
         <Box className='text-center py-5 my-2'>
           You are not colleagues with{' '}
           <Box fontWeight='bold'>{convoDisplayName}.</Box>
@@ -1192,6 +1299,7 @@ function MessageBox(props: { convoId: string; webSocket: WebSocket }) {
         dispatch(conversationMessages({ data: [{ ...msg }] }));
         msgBox.value = '';
         setMsgBoxRowsMax(1);
+        delete messageDrafts[convoId];
         socket.send(JSON.stringify(msg));
       } else {
         emitUserOnlineStatus(true, false, {
@@ -1300,7 +1408,8 @@ function MessageBox(props: { convoId: string; webSocket: WebSocket }) {
             inputProps={{
               onKeyDown: handleMsgInputChange,
               onKeyUp: handleMsgInputChange,
-              onKeyPress: preventEnterNewLine
+              onKeyPress: preventEnterNewLine,
+              onInput: handleMsgInputChange
             }}
           />
         </Col>

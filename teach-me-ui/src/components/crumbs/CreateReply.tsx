@@ -16,7 +16,10 @@ import {
   // preventEnterNewLine
 } from '../../functions';
 
-import { UserData, Post} from '../../constants/interfaces';
+import { 
+  UserData, 
+  Reply
+} from '../../constants/interfaces';
 
 import Row from 'react-bootstrap/Row';
 
@@ -26,16 +29,13 @@ import Avatar from '@material-ui/core/Avatar';
 
 import { pingUser } from "../../actions";
 
-// import CircularProgress from '@material-ui/core/CircularProgress';
-// import SendIcon from '@material-ui/icons/Send';
-
 
 const CreateReply: React.FC<any> = (props) => {
   const userData = getState().userData as UserData;
 
   const input = useRef<HTMLInputElement | any>('')
 
-  const [state, setState] = useState<{ reply: Post }>({
+  const [state, setState] = useState<{ reply: Reply }>({
     reply: {
       text:'',
       mentions: [],

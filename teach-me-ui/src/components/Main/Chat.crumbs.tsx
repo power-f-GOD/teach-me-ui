@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 
+import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 
 import Box from '@material-ui/core/Box';
@@ -16,12 +17,16 @@ import {
   APIMessageResponse,
   APIConversationResponse
 } from '../../constants/interfaces';
-import { timestampFormatter, formatMapDateString } from '../../functions/utils';
+import {
+  timestampFormatter,
+  formatMapDateString,
+  addEventListenerOnce
+} from '../../functions/utils';
+import { chatDateStickyRef } from './Chat.MiddlePane';
 
-export interface SelectedMessageValue {
-  id: string;
-  deleted: boolean;
-  type: string;
+export interface SelectedMessageValue extends Omit<APIMessageResponse, 'type'> {
+  type: 'incoming' | 'outgoing';
+  sender_username: string;
 }
 
 export type ActionChoice = 'DELETE_FOR_ME' | 'CANCEL' | 'DELETE_FOR_EVERYONE';
@@ -31,6 +36,7 @@ let messageTouchTimeout: any = null;
 export const Message = (props: {
   message: APIMessageResponse;
   type: 'incoming' | 'outgoing';
+  sender_username: string;
   userId: string;
   className: string;
   forceUpdate: any;
@@ -44,6 +50,7 @@ export const Message = (props: {
     message,
     participants,
     userId,
+    sender_username,
     className,
     clearSelections,
     canSelectByClick,
@@ -54,10 +61,10 @@ export const Message = (props: {
     date: timestamp,
     deleted,
     delivered_to,
-    seen_by,
-    _id: id
+    seen_by
   } = message;
   const [selected, setSelected] = useState<boolean | null>(null);
+  const messageElRef = React.useRef<HTMLDivElement>(null) as any;
 
   const handleSelectMessage = useCallback(() => {
     setSelected((prev) => !prev);
@@ -73,7 +80,7 @@ export const Message = (props: {
   const handleMessageTouchStart = useCallback(() => {
     messageTouchTimeout = setTimeout(() => {
       handleSelectMessage();
-    }, 700);
+    }, 500);
   }, [handleSelectMessage]);
 
   const handleMessageTouchEnd = useCallback(() => {
@@ -81,41 +88,73 @@ export const Message = (props: {
   }, []);
 
   useEffect(() => {
-    if (selected !== null) {
-      handleMessageSelection(selected ? String(id) : null, {
-        id,
-        deleted,
-        type
+    const messageEl = messageElRef.current;
+
+    if (messageEl) {
+      ([
+        { event: 'dblclick', handler: handleSelectMessage },
+        { event: 'touchstart', handler: handleMessageTouchStart },
+        { event: 'touchend', handler: handleMessageTouchEnd },
+        { event: 'touchmove', handler: handleMessageTouchEnd }
+      ] as {
+        event: string;
+        handler: Function;
+      }[]).map(({ event, handler }) => {
+        return addEventListenerOnce(messageEl, handler, event, {
+          once: false,
+          passive: true
+        });
       });
     }
-  }, [selected, deleted, id, type, handleMessageSelection]);
+  }, [
+    messageElRef,
+    handleSelectMessage,
+    handleMessageTouchStart,
+    handleMessageTouchEnd
+  ]);
+
+  useEffect(() => {
+    if (selected !== null) {
+      handleMessageSelection(selected ? String(message._id) : null, {
+        ...message,
+        type,
+        sender_username
+      });
+    }
+  }, [selected, type, sender_username, message, handleMessageSelection]);
 
   useEffect(() => {
     if (selected !== null && clearSelections) {
       setSelected(false);
-      handleMessageSelection(null, { id, deleted, type });
+      handleMessageSelection(null, { ...message, type, sender_username });
     }
-  }, [selected, clearSelections, id, deleted, type, handleMessageSelection]);
+  }, [
+    selected,
+    clearSelections,
+    sender_username,
+    message,
+    type,
+    handleMessageSelection
+  ]);
 
   useEffect(
     () => () => {
       setSelected(false);
-      handleMessageSelection(null, { id, deleted, type });
+      handleMessageSelection(null, { ...message, type, sender_username });
     },
-    [id, type, deleted, handleMessageSelection]
+    [type, message, sender_username, handleMessageSelection]
   );
 
   return (
-    <Box
+    <Container
+      fluid
       className={`${type === 'incoming' ? 'incoming' : 'outgoing'} ${
         selected ? 'selected' : ''
       } msg-container ${className} ${deleted ? 'deleted' : ''} p-0 mx-0`}
-      onDoubleClick={handleSelectMessage}
-      onTouchStart={handleMessageTouchStart}
-      onTouchEnd={handleMessageTouchEnd}
       onKeyUp={handleSelectMessageForEnterPress}
+      onClick={canSelectByClick ? handleSelectMessage : undefined}
       tabIndex={0}
-      onClick={canSelectByClick ? handleSelectMessage : undefined}>
+      ref={messageElRef}>
       <Col
         as='div'
         className='msg-wrapper scroll-view-msg-wrapper d-inline-flex flex-column justify-content-end'>
@@ -149,7 +188,7 @@ export const Message = (props: {
           />
         </Box>
       </Col>
-    </Box>
+    </Container>
   );
 };
 
@@ -208,17 +247,71 @@ export const ChatStatus = (props: {
   return element ? <>{element}</> : <></>;
 };
 
-export const ChatDate = ({ timestamp }: { timestamp: number }) => {
+export const ChatDate = ({
+  timestamp,
+  scrollView
+}: {
+  timestamp: number;
+  scrollView?: HTMLElement;
+}) => {
+  const dateStamp = formatMapDateString(timestamp, true);
+  const chatDateWrapperRef = React.useRef<HTMLDivElement>(null);
+  const chatDateSticky = chatDateStickyRef.current;
+
+  const stickDate = useCallback(
+    (e: any) => {
+      const chatDateWrapper = chatDateWrapperRef.current;
+
+      if (chatDateWrapper) {
+        const { top } = (chatDateWrapper as any).getBoundingClientRect();
+        const shouldHideSticky = scrollView!.scrollTop < 106;
+
+        if (top < 69) {
+          if (chatDateSticky) {
+            chatDateSticky.textContent = dateStamp;
+          }
+
+          (chatDateWrapper.children[0] as any).style.opacity = !shouldHideSticky
+            ? 0
+            : 1;
+          chatDateSticky.style.opacity = shouldHideSticky ? 0 : 1;
+        } else {
+          (chatDateWrapper.children[0] as any).style.opacity = 1;
+          chatDateSticky.style.opacity = shouldHideSticky ? 0 : 1;
+        }
+      }
+    },
+    [dateStamp, chatDateSticky, scrollView]
+  );
+
+  React.useEffect(() => {
+    if (scrollView && chatDateWrapperRef.current) {
+      scrollView.addEventListener('scroll', stickDate);
+      chatDateSticky.style.opacity = scrollView!.scrollTop < 106 ? 0 : 1;
+    }
+
+    return () => {
+      if (scrollView) {
+        scrollView.removeEventListener('scroll', stickDate);
+      }
+    };
+  }, [scrollView, stickDate, timestamp, chatDateSticky.style.opacity]);
+
   if (isNaN(timestamp)) {
     return <>{timestamp}</>;
   }
 
   return (
-    <div className='chat-date-wrapper text-center my-5'>
-      <Box component='span' className='chat-date d-inline-block'>
-        {formatMapDateString(timestamp, true)}
-      </Box>
-    </div>
+    <>
+      <div
+        id={String(timestamp)}
+        className='chat-date-wrapper text-center my-5'
+        ref={chatDateWrapperRef}>
+        <Box component='span' className='chat-date d-inline-block'>
+          {dateStamp}
+        </Box>
+      </div>
+    </>
   );
 };
 
@@ -243,21 +336,21 @@ export default function ConfirmDialog(props: {
           onClick={handleClose('DELETE_FOR_ME')}
           color='primary'
           variant='text'
-          className='ml-auto my-2 mr-2 btn-secondary'>
+          className='ml-auto my-2 mr-2 btn-secondary uppercase'>
           Delete for Self
         </Button>
         <Button
           onClick={handleClose('CANCEL')}
           color='primary'
           variant='text'
-          className='ml-auto my-2 mr-2 btn-secondary'
+          className='ml-auto my-2 mr-2 btn-secondary uppercase'
           autoFocus>
           Cancel
         </Button>
         {canDeleteForEveryone && (
           <Button
             onClick={handleClose('DELETE_FOR_EVERYONE')}
-            className='ml-auto my-2 mr-2 btn-secondary'
+            className='ml-auto my-2 mr-2 btn-secondary uppercase'
             variant='text'
             color='primary'>
             Delete for All
