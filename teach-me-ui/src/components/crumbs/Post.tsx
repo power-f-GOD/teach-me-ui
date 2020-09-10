@@ -212,9 +212,11 @@ const Post: React.FunctionComponent<
               style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',
-                gridTemplateRows: `repeat(${Math.ceil(
-                  (props.media as any[]).length / 2
-                )}, 1fr)`,
+                gridTemplateRows: `repeat(${
+                  (props.media as any[]).length === 1
+                    ? 2
+                    : Math.ceil((props.media as any[]).length / 2)
+                }, 9rem)`,
                 gridAutoFlow: 'row',
                 columnGap: '0.2rem',
                 rowGap: '0.2rem'
@@ -225,14 +227,11 @@ const Post: React.FunctionComponent<
                   case 0:
                     if (self.length === 1) {
                       style.gridColumn = '1 / 3';
-                    }
-                    if (self.length === 3) {
                       style.gridRow = '1 / 3';
                     }
-                    break;
-                  case 2:
-                    if (self.length === 5) {
-                      style.gridRow = '2 / 4';
+                    if (self.length === 3 || self.length === 5) {
+                      style.gridColumn = '1';
+                      style.gridRow = '1 / 3';
                     }
                     break;
                 }
