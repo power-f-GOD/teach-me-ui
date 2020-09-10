@@ -15,6 +15,7 @@ import { PostPropsState } from '../../constants';
 const post: PostPropsState = {
   sender_id: '1',
   id: '1',
+  media: [],
   posted_at: 123456,
   reposts: 1,
   sender_name: 'Benjamin Chibuzor-Orie',
