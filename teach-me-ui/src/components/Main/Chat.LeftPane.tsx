@@ -285,7 +285,8 @@ function PaneItem({
     online_status,
     user_typing,
     unread_count,
-    created_at
+    created_at,
+    last_activity
   } = _conversation ?? {};
   const hasRecent: boolean = { ...(last_message as any) }.is_recent;
 
@@ -295,7 +296,8 @@ function PaneItem({
 
   delete (last_message as any)?.is_recent;
 
-  const lastMessageTimestamp = last_message?.date ?? Date.now();
+  const lastMessageTimestamp =
+    last_message?.date ?? last_activity ?? Date.now();
   const lastMessageDate = new Date(Number(lastMessageTimestamp)).toDateString();
   const lastMessageDateString = new Date(lastMessageTimestamp)
     .toLocaleString()

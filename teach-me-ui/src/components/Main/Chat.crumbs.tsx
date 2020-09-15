@@ -257,6 +257,7 @@ export const ChatDate = ({
   const dateStamp = formatMapDateString(timestamp, true);
   const chatDateWrapperRef = React.useRef<HTMLDivElement>(null);
   const chatDateSticky = chatDateStickyRef.current;
+  const pxRatio = window.devicePixelRatio;
 
   const stickDate = useCallback(
     (e: any) => {
@@ -264,9 +265,9 @@ export const ChatDate = ({
 
       if (chatDateWrapper) {
         const { top } = (chatDateWrapper as any).getBoundingClientRect();
-        const shouldHideSticky = scrollView!.scrollTop < 106;
+        const shouldHideSticky = scrollView!.scrollTop < 78 + pxRatio;
 
-        if (top < 69) {
+        if (top < 65) {
           if (chatDateSticky) {
             chatDateSticky.textContent = dateStamp;
           }
@@ -281,13 +282,14 @@ export const ChatDate = ({
         }
       }
     },
-    [dateStamp, chatDateSticky, scrollView]
+    [dateStamp, chatDateSticky, pxRatio, scrollView]
   );
 
   React.useEffect(() => {
     if (scrollView && chatDateWrapperRef.current) {
       scrollView.addEventListener('scroll', stickDate);
-      chatDateSticky.style.opacity = scrollView!.scrollTop < 106 ? 0 : 1;
+      chatDateSticky.style.opacity =
+        scrollView!.scrollTop < 78 + pxRatio ? 0 : 1;
     }
 
     return () => {
@@ -295,23 +297,31 @@ export const ChatDate = ({
         scrollView.removeEventListener('scroll', stickDate);
       }
     };
-  }, [scrollView, stickDate, timestamp, chatDateSticky.style.opacity]);
+  }, [scrollView, stickDate, timestamp, chatDateSticky.style.opacity, pxRatio]);
 
   if (isNaN(timestamp)) {
     return <>{timestamp}</>;
   }
 
   return (
-    <>
-      <div
-        id={String(timestamp)}
-        className='chat-date-wrapper text-center my-5'
-        ref={chatDateWrapperRef}>
-        <Box component='span' className='chat-date d-inline-block'>
-          {dateStamp}
-        </Box>
-      </div>
-    </>
+    <div
+      id={String(timestamp)}
+      className='chat-date-wrapper text-center my-4'
+      ref={chatDateWrapperRef}>
+      <Box component='span' className='chat-date d-inline-block'>
+        {dateStamp}
+      </Box>
+    </div>
+  );
+};
+
+export const NewMessageBar = ({ unreadCount }: { unreadCount: number }) => {
+  return (
+    <Box className='new-messages-bar'>
+      <Container as='span' className='new-messages-count d-inline-block w-auto'>
+        {unreadCount} new message{unreadCount > 1 ? 's' : ''}
+      </Container>
+    </Box>
   );
 };
 
