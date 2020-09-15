@@ -429,3 +429,8 @@ export interface PostEditorState {
   [key: string]: any;
 }
 
+export interface UploadState {
+  error: boolean;
+  status:  'settled' | 'pending' | 'fulfilled';
+  data: Array<string>;
+}

@@ -12,33 +12,34 @@ import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import AttachmentIcon from '@material-ui/icons/Attachment';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import Row from 'react-bootstrap/Row';
 
 import { PostEditorState, UserData } from '../../../../constants';
 
-import { sendFilesToServer } from '../../../../actions';
+import { sendFilesToServer, sendFiles } from '../../../../actions';
 
 import Editor from '../../Editor';
 
 import { useSubmitPost } from '../../../../hooks/api';
-import { displayModal } from '../../../../functions';
+import { displayModal, dispatch } from '../../../../functions';
 
-const CreatePost = (props: { userData: UserData; sendFiles: any }) => {
-  const { userData, sendFiles } = props;
+const CreatePost = (props: { userData: UserData; sendFile: any }) => {
+  const { userData, sendFile } = props;
   const { avatar, profile_photo, displayName } = userData;
   const label = useRef<HTMLLabelElement | any>();
+  const label1 = useRef<HTMLLabelElement | any>();
 
   const [state, setState] = useState<PostEditorState>({
     mentionsKeyword: '',
     post: {
       text: ''
     },
-    fileCount: 0,
     selectedFiles: []
   });
 
-  const [submitPost, , isSubmitting] = useSubmitPost({...state.post, media:sendFiles.payload});
+  const [submitPost, , isSubmitting] = useSubmitPost({...state.post, media:sendFile.data});
 
   const onUpdate = (value: string) => {
     setState({
@@ -56,72 +57,99 @@ const CreatePost = (props: { userData: UserData; sendFiles: any }) => {
     return file['type'].split('/')[0] === 'image';
   }
 
+  const removeFile = (e: any) => {
+    console.log(state.selectedFiles);
+    label.current.style.display = 'none';
+    label1.current.style.display = 'none';
+    prev.current.removeChild(e.target!.parentNode)
+    let selectedFiles = [];
+    for (let file of state.selectedFiles) {
+      console.log(e.target.previousElementSibling.getAttribute('title'), file.name);
+      if (e.target.previousElementSibling.getAttribute('title') === file.name) continue;
+      
+      selectedFiles.push(file);
+    }
+    setState({
+      ...state,
+      selectedFiles
+    })
+  };
+
   const preview = (files: File[]) => {
     for (let file of files) {
+      let div = document.createElement('div');
+      let button = document.createElement('button');
+      let cancelText = document.createTextNode('x');
+      button.appendChild(cancelText);
+      div.classList.add('col-4', 'div-wrapper');
+      button.setAttribute('type', 'button');
+      button.classList.add('remove-img-btn', 'rounded-circle');
+      button.onclick = removeFile;
       if (isImage(file)) {
         let img = document.createElement('img');
         let reader = new FileReader();
         reader.onload = (e) => {
           img.setAttribute('src', e.target!.result as string);
         }
-        reader.readAsDataURL(file)
-        img.style.height = '100px';
-        img.style.width = '100px';
-        (prev.current as HTMLDivElement).appendChild(img)
+        reader.readAsDataURL(file);
+
+        img.classList.add('img');
+        img.setAttribute('title', `${file.name}`);
+        div.appendChild(img);
+        div.appendChild(button);
+        (prev.current as HTMLDivElement).appendChild(div);
       } else {
-        let div = document.createElement('div');
         let text = document.createTextNode(`${file.name}`)
         div.appendChild(text);
-        div.style.width = '100px';
-        div.style.height = '100px';
-        div.style.fontSize = '1.5em';
-        div.style.backgroundColor = '#ccc';
-        div.style.borderRadius = '3px';
+        div.appendChild(button);
 
-        (prev.current as HTMLDivElement).appendChild(div)
+        (prev.current as HTMLDivElement).appendChild(div);
       }
     }
   }
 
+  
 
   const fileSelectedHandler = (e: ChangeEvent<any>) => {
-    let numOfFiles = state.fileCount;
+    label.current.style.display = 'none';
+    label1.current.style.display = 'none';
     let selectedFiles = state.selectedFiles;
     let files: Array<File> = [];
     for (let file of e.target.files) {
       if (file.size > 50000000) {
-        files = []
-        label.current.style.display = 'block'
-        return
+        files = [];
+        label.current.style.display = 'block';
+        return;
       } else {
-        if (numOfFiles >= 5) break;
-        numOfFiles++
-        files.push(file)
+        if (selectedFiles.length >= 5) {
+          label1.current.style.display = 'block';
+          break;
+        };
+        files.push(file);
       }
     }
-    Array.prototype.push.apply(selectedFiles, files)
+    Array.prototype.push.apply(selectedFiles, files);
     preview(files);
     setState({
       ...state,
-      fileCount: numOfFiles,
       selectedFiles
     })
   };
   
  
   const onPostSubmit = () => {
-
-    state.selectedFiles[0] && sendFilesToServer(state.selectedFiles)
-  
-    if (state.selectedFiles[0] && !sendFiles.payload) return;
     if (state.post.text) {
-      submitPost().then(() => {
-        if (!isSubmitting) {
-          displayModal(false);
-        }
-      });
+      if (state.selectedFiles[0]) {
+        sendFilesToServer(state.selectedFiles, submitPost, displayModal)
+      } else {
+        submitPost().then(() => {
+          if (!isSubmitting) {
+            displayModal(false);
+          }
+        });
+      }
     }
-  };
+  }
 
   return (
     <Box p={1} pt={0}>
@@ -142,7 +170,9 @@ const CreatePost = (props: { userData: UserData; sendFiles: any }) => {
       <form>
         <Editor onUpdate={onUpdate} />
         <label htmlFor='my-input'>
-          <AttachmentIcon />
+          <Tooltip title='add files' placement='top-start'>
+            <AttachmentIcon style={{cursor: 'pointer'}}/>
+          </Tooltip>
         </label>
         <label
           htmlFor='my-input'
@@ -152,8 +182,9 @@ const CreatePost = (props: { userData: UserData; sendFiles: any }) => {
         </label>
         <label
           htmlFor='my-input'
-          style={{ color: 'green', fontSize: 'small'}}>
-          * you can upload a maximum of five files
+          ref={label1}
+          style={{ color: 'red', fontSize: 'small', display: 'none'}}>
+          You can upload a maximum of five files, only first five files were selected
         </label>
         <input
           multiple={true}
@@ -174,6 +205,8 @@ const CreatePost = (props: { userData: UserData; sendFiles: any }) => {
             className='post-button major-button Primary contained p-0 flex-grow-1'>
             {isSubmitting ? (
               <CircularProgress size={28} color='inherit' />
+            ) : sendFile.status === 'pending' ? (
+              'uploading files...'
             ) : (
               'Post'
             )}
@@ -184,6 +217,6 @@ const CreatePost = (props: { userData: UserData; sendFiles: any }) => {
   );
 };
 
-const mapStateToProps = ({ userData , sendFiles}: any) => ({ userData, sendFiles });
+const mapStateToProps = ({ userData , sendFiles}: any) => ({ userData, sendFile: sendFiles });
 
 export default connect(mapStateToProps)(CreatePost);

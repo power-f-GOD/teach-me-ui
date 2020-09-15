@@ -569,3 +569,15 @@ export const formatNotification = (entities: any, text: string) => {
   });
   return string;
 };
+
+export const countNewNotifications = (notifications: any) => {
+  let newNotifications = 0;
+  for (let notification of notifications) {
+    if (notification.last_seen) {
+      break
+    } else {
+      newNotifications++
+    }
+  }
+  return newNotifications;
+}

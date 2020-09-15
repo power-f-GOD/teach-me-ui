@@ -10,7 +10,7 @@ export const sendFiles = (
   if (action.type === SEND_FILES) {
     return {
       ...state,
-      payload: action.payload
+      ...action.payload
     };
   };
   return state;

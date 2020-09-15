@@ -1,21 +1,24 @@
 import axios from 'axios';
 
-import { getState, dispatch } from '../functions'
+import { getState, dispatch, logError } from '../functions'
 
 import { 
   apiBaseURL as baseURL, 
   SEND_FILES 
 } from '../constants'
 
-const sendFiles = (payload: any) => {
+export const sendFiles = (payload: any = undefined) => {
   return {
     type: SEND_FILES,
     payload
   }
 }
 
-export const sendFilesToServer = (files: Array<File>) => {
-  let token = getState().userData.token
+export const sendFilesToServer = (files: Array<File>, sendPost: Function, displayModal: Function) => {
+  dispatch(sendFiles({
+    status: 'pending'
+  }));
+  let token = getState().userData.token;
   let ids: string[] = [];
   const recursiveUploadReturnsArrayOfId = (files1: Array<File>) => {
     const nextFile = files1.shift()
@@ -33,11 +36,22 @@ export const sendFilesToServer = (files: Array<File>) => {
         },
         data: formData
       }).then(({ data }: any) => {
-        ids.push(data._id);
-        recursiveUploadReturnsArrayOfId(files1)
+        if (data.error) {
+          logError(sendFiles);
+        } else {
+          ids.push(data._id);
+          recursiveUploadReturnsArrayOfId(files1)
+        }
       });
     } else {
-      dispatch(sendFiles(ids))
+      dispatch(sendFiles({
+        status: 'fulfilled',
+        data: ids,
+        error: false
+      }));
+      sendPost().then(() => {
+        displayModal(false);
+      })
     }
   }
   recursiveUploadReturnsArrayOfId(Array.from(files))

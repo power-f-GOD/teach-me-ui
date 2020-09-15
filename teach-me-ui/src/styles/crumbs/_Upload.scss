@@ -1,0 +1,36 @@
+.div-wrapper
+{
+  transition: 0.3s;
+  padding-right: 3px !important;
+  padding-left: 3px !important;
+
+  .img
+  { 
+    width: 100%; 
+    border-width: 5px; 
+    border-radius: 5px;
+  }
+  
+  .remove-img-btn
+  {
+    position: absolute;
+    font-size: 12px;
+    font-weight: bolder;
+    height: 20px;
+    width: 20px;
+    top: -4px;
+    right: -1px;
+    z-index: 2;
+    color: white;
+    border: none;
+    background: red;
+    transition: 0.25s;
+    cursor: pointer;
+    border-radius: 50%;
+
+    &:hover
+    {
+      background: darkred;
+    }
+  }
+}

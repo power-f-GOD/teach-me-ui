@@ -103,5 +103,5 @@ export const setLastseen = (id: string) => {
     data: {
       'notification_id': id
     }
-  })
+  }).then((data) => {console.log(data, token)})
 }
