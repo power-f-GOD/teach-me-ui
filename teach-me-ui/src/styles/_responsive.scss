@@ -195,10 +195,6 @@
     }
   }
 
-  .scroll-view-msg-wrapper {
-    max-width: 22rem;
-  }
-
   //Home style(s)
   .Home {
     .middle-pane-col {
@@ -367,14 +363,35 @@
   }
 
   //chat box style(s)
-  .scroll-view-msg-wrapper {
-    max-width: 75%;
-  }
-
   .ChatBox {
     .msg-wrapper {
-      max-width: 85%;
+      max-width: 87.5%;
+      font-size: 0.925rem;
     }
+
+    header {
+      .conversation-name-wrapper {
+        .display-name {
+          transform: translateY(0.1rem);
+          font-size: 1.025rem;
+        }
+        .status {
+          font-size: 0.875rem;
+        }
+      }
+    }
+  }
+
+  .chat-date {
+    font-size: 0.75rem;
+  }
+
+  .chat-timestamp {
+    font-size: 0.7rem;
+  }
+
+  .the-beginning {
+    font-size: 0.75rem;
   }
 
   //Profile page styles
@@ -391,5 +408,23 @@
     [class*='-info-card'] {
       padding: 1.5rem 1rem;
     }
+  }
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2),
+  (-moz-min-device-pixel-ratio: 2),
+  (-o-min-device-pixel-ratio: 2),
+  (-moz-min-device-pixel-ratio: 2) {
+  #chat-date-sticky {
+    top: calc(-1rem + 5px);
+  }
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 3),
+  (-moz-min-device-pixel-ratio: 3),
+  (-o-min-device-pixel-ratio: 3),
+  (-moz-min-device-pixel-ratio: 3) {
+  #chat-date-sticky {
+    top: calc(-1rem + 4px);
   }
 }
