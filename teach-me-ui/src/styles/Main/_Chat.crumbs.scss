@@ -23,7 +23,8 @@
 }
 
 .chat-date-wrapper,
-.chat-date-wrapper-sticky {
+.chat-date-wrapper-sticky,
+.new-messages-bar {
   transition: opacity 0.3s;
   position: relative;
   min-height: 2.5rem;
@@ -36,7 +37,6 @@
       $bg: #eee,
       $zi: unset
     );
-    // content: unset;
   }
 }
 
@@ -62,26 +62,21 @@
 }
 
 .new-messages-bar {
-  $bg-val: 80;
-
-  padding: 0.35rem;
   text-align: center;
-  background: rgba($sec-r + $bg-val, $sec-g + $bg-val, $sec-b + $bg-val, 0.3);
-  box-shadow: 0 0.125rem 0
-    rgba($sec-r + $bg-val, $sec-g + $bg-val, $sec-b + $bg-val, 0.6);
-  border-radius: 0.35rem;
-  color: white;
   margin: 1.75rem -0.75rem;
-  animation: scaleX 0.35s ease 0.8s;
+  animation: scaleY 0.8s ease 0.8s;
 
-  @keyframes scaleX {
+  &::before {
+    background-color: $theme-tertiary-v2;
+    height: 0.25rem;
+  }
+
+  @keyframes scaleY {
     from {
-      transform: scaleX(0);
-      border-radius: 2rem;
+      transform: scaleY(0);
     }
     to {
-      transform: scaleX(1);
-      border-radius: 0.35rem;
+      transform: scaleY(1);
     }
   }
 }
@@ -96,17 +91,18 @@
   font-size: 0.85rem;
   text-transform: capitalize;
   color: $theme-tertiary-v2;
-  // box-shadow: 0 0 0.4rem rgba(0, 0, 0, 0.15), 0 0 0 1rem white;
   border: 0.0625rem solid $theme-tertiary-v8;
   user-select: none;
 }
 
 .new-messages-count {
-  background-color: $theme-secondary-v6;
+  background-color: $theme-tertiary-v2;
   color: white;
   font-size: inherit;
   border: none;
-  padding: 0.4rem 1rem;
+  text-transform: unset;
+  padding: 0.5rem 1.25rem;
+  margin-top: -0.1rem;
 }
 
 @keyframes fromTop {

@@ -265,7 +265,7 @@ export const ChatDate = ({
 
       if (chatDateWrapper) {
         const { top } = (chatDateWrapper as any).getBoundingClientRect();
-        const shouldHideSticky = scrollView!.scrollTop < 78 + pxRatio;
+        const shouldHideSticky = scrollView!.scrollTop < 84 + pxRatio * pxRatio;
 
         if (top < 65) {
           if (chatDateSticky) {
