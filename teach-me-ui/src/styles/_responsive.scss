@@ -365,33 +365,17 @@
   //chat box style(s)
   .ChatBox {
     .msg-wrapper {
-      max-width: 87.5%;
-      font-size: 0.925rem;
-    }
-
-    header {
-      .conversation-name-wrapper {
-        .display-name {
-          transform: translateY(0.1rem);
-          font-size: 1.025rem;
-        }
-        .status {
-          font-size: 0.875rem;
-        }
-      }
+      max-width: 82.5%;
+      font-size: 0.95rem;
     }
   }
 
   .chat-date {
-    font-size: 0.75rem;
+    font-size: 0.85rem;
   }
 
   .chat-timestamp {
-    font-size: 0.7rem;
-  }
-
-  .the-beginning {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
   }
 
   //Profile page styles
@@ -407,6 +391,15 @@
 
     [class*='-info-card'] {
       padding: 1.5rem 1rem;
+    }
+  }
+}
+
+@media screen and (max-width: 360px) {
+  //chat box style(s)
+  .ChatBox {
+    .msg-wrapper {
+      max-width: 92.5%;
     }
   }
 }
