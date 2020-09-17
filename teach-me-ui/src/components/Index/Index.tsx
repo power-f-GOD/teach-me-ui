@@ -12,12 +12,13 @@ import Footer from '../crumbs/Footer';
 import _404 from './_404';
 import Search from '../Main/Search';
 import Profile from '../Main/Profile';
+import ProfileRedirect from '../Main/ProfileRedirect';
 
 const Index = (props: any) => {
   React.useEffect(() => () => window.scrollTo(0, 0), []);
 
   if (props.location.search) {
-    return <Redirect to={`/home${props.location.search}`} />
+    return <Redirect to={`/home${props.location.search}`} />;
   }
 
   return (
@@ -29,13 +30,12 @@ const Index = (props: any) => {
           <Route path={['/', '/index']} exact component={Landing} />
           <Route path='/about' component={About} />
           <Route path='/support' component={Support} />
-          <Route 
-            path={['/search/:query', '/search']} 
-            component={Search} />
+          <Route path={['/search/:query', '/search']} component={Search} />
           <Route
             path={['/@:userId', '/@:userId/colleagues']}
             component={Profile}
           />
+          <Route path={'/profile/:id'} component={ProfileRedirect} />
           <Route component={_404} />
         </Switch>
       </Box>
