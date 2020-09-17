@@ -76,7 +76,8 @@ import ConfirmDialog, {
   Message,
   ChatDate,
   SelectedMessageValue,
-  ActionChoice
+  ActionChoice,
+  NewMessageBar
 } from './Chat.crumbs';
 import { displaySnackbar } from '../../actions';
 
@@ -949,6 +950,8 @@ function MiddlePaneHeaderActions(props: {
 
 export const chatDateStickyRef: any = createRef<HTMLInputElement | null>();
 
+let hasRenderedNewMessageBar = false;
+
 function ScrollView(props: {
   userId: string;
   username: string;
@@ -1009,7 +1012,7 @@ function ScrollView(props: {
           );
           setHasReachedTopOfConvo(false);
         }
-      }, 1000);
+      }, 800);
 
       scrollView.classList.remove('scroll-ended');
       clearTimeout(hideScrollBarTimeout);
@@ -1041,8 +1044,15 @@ function ScrollView(props: {
   useEffect(() => {
     if (convoId) {
       setHasReachedTopOfConvo(false);
+      hasRenderedNewMessageBar = false;
     }
   }, [convoId]);
+
+  useEffect(() => {
+    if (convoMessagesErr) {
+      hasRenderedNewMessageBar = false;
+    }
+  }, [convoMessagesErr]);
 
   useEffect(() => {
     if (!scrollView) scrollView = scrollViewRef.current;
@@ -1156,10 +1166,10 @@ function ScrollView(props: {
             : 'hide'
         }`}
         textAlign='center'>
-        <CircularProgress thickness={5} color='inherit' size={25} />
+        <CircularProgress thickness={4} color='inherit' size={20} />
       </Box>
       <Box
-        className={`pt-2 mb-1 text-center theme-tertiary-lighter ${
+        className={`the-beginning pt-2 mb-1 text-center theme-tertiary-lighter ${
           convoMessagesStatus === 'fulfilled' && hasReachedTopOfConvo
             ? 'd-block'
             : 'd-none'
@@ -1213,6 +1223,19 @@ function ScrollView(props: {
 
         return (
           <React.Fragment key={key}>
+            {(() => {
+              if (
+                type === 'incoming' &&
+                !seen_by.includes(userId) &&
+                !hasRenderedNewMessageBar
+              ) {
+                hasRenderedNewMessageBar = true;
+                return (
+                  <NewMessageBar unreadCount={convoMessages.length - key} />
+                );
+              }
+              return null;
+            })()}
             {shouldRenderDate && (
               <ChatDate
                 scrollView={scrollView as HTMLElement}
