@@ -39,6 +39,16 @@
       opacity: 1;
     }
   }
+
+  .the-beginning {
+    height: 3rem;
+    top: 1.35rem;
+    left: 0;
+    padding: 0 0.75rem;
+    width: 100%;
+    text-align: center;
+    position: absolute;
+  }
 }
 
 .control-wrapper {
@@ -177,6 +187,10 @@
       width: calc(100% + #{$pad-x / 2});
     }
 
+    .new-messages-bar {
+      margin-right: -1.25rem;
+    }
+
     .outgoing {
       .msg-wrapper {
         transform: translateX(0.5rem);
@@ -215,10 +229,8 @@
 
   .more-messages-loader {
     transition: opacity 0.3s;
-    position: absolute;
+    padding-bottom: 1.75rem;
     width: 100%;
-    top: 0.75rem;
-    left: 0;
 
     &.hide {
       transition: unset;
@@ -253,10 +265,6 @@
 $incoming-outgoing-spacing: 1.25rem;
 $msgs-spacing: 0.1875rem;
 $msg-radius: 1.25rem;
-
-.scroll-view-msg {
-  padding: 0.5rem 0.65rem;
-}
 
 body.desktop {
   .chat-scroll-view {
