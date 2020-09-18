@@ -61,7 +61,8 @@ import {
   preventEnterNewLine,
   formatMapDateString,
   timestampFormatter,
-  addEventListenerOnce
+  addEventListenerOnce,
+  emitUserOnlineStatus
 } from '../../functions/utils';
 import { placeHolderDisplayName } from './Chat';
 import {
@@ -77,7 +78,6 @@ import ConfirmDialog, {
   SelectedMessageValue,
   ActionChoice
 } from './Chat.crumbs';
-import { emitUserOnlineStatus } from '../../App';
 import { displaySnackbar } from '../../actions';
 
 interface ChatMiddlePaneProps {
@@ -287,6 +287,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
         convoAssocUsername={convoAssocUsername}
         convoId={convoId}
         convoDisplayName={convoDisplayName}
+        username={userData?.username as string}
         userId={userData?.id as string}
         clearSelections={clearSelections}
         selectedMessages={selectedMessages}
@@ -491,9 +492,7 @@ function MiddlePaneHeader(props: {
   return (
     <>
       <Row
-        className={`header-name-control-wrapper px-2 mx-0${
-          numOfSelectedMessages ? ' hide' : ' show'
-        }`}
+        className='header-name-control-wrapper px-2 mx-0'
         ref={headerNameControlWrapperRef}>
         <Memoize
           memoizedComponent={MiddlePandeHeaderColleagueNameAndStatus}
@@ -805,7 +804,7 @@ function MiddlePaneHeaderActions(props: {
     let messages = '';
 
     for (const id in selectedMessages) {
-      const { message, date: _date, type } = selectedMessages[id];
+      const { message, date: _date, sender_username } = selectedMessages[id];
       const [date, time] = [
         new Date(_date).toLocaleDateString(),
         timestampFormatter(_date)
@@ -813,11 +812,7 @@ function MiddlePaneHeaderActions(props: {
 
       if (isMulti) {
         messages +=
-          `[${
-            type === 'incoming' ? 'Colleague' : 'You'
-          } | ${date} at ${time}]: ` +
-          message +
-          '\n\n';
+          `[@${sender_username} | ${date} at ${time}]: ` + message + '\n\n';
       } else {
         messages = message;
       }
@@ -898,9 +893,7 @@ function MiddlePaneHeaderActions(props: {
     <>
       <Container
         fluid
-        className={`message-actions-wrapper${
-          numOfSelectedMessages ? ' visible' : ''
-        }`}
+        className='message-actions-wrapper'
         ref={messageActionsWrapperRef}>
         <Row
           className={`message-actions-container${
@@ -954,8 +947,11 @@ function MiddlePaneHeaderActions(props: {
   );
 }
 
+export const chatDateStickyRef: any = createRef<HTMLInputElement | null>();
+
 function ScrollView(props: {
   userId: string;
+  username: string;
   convoMessages: APIMessageResponse[];
   convoMessagesStatus: SearchState['status'];
   convoFriendship: string;
@@ -970,6 +966,7 @@ function ScrollView(props: {
 }) {
   const {
     userId,
+    username,
     convoMessages,
     convoMessagesStatus,
     convoFriendship,
@@ -1140,6 +1137,17 @@ function ScrollView(props: {
       className={`chat-scroll-view custom-scroll-bar grey-scrollbar`}
       onScroll={handleScrollViewScroll}>
       <Box
+        id='chat-date-sticky'
+        className={`chat-date-wrapper text-center ${
+          convoMessages.length ? 'show' : 'hide'
+        }`}>
+        <Container
+          as='span'
+          className='chat-date d-inline-block w-auto'
+          ref={chatDateStickyRef}></Container>
+      </Box>
+
+      <Box
         className={`more-messages-loader theme-tertiary-darker ${
           convoMessagesStatus === 'settled' &&
           /offset/.test(convoMessagesStatusText as string) &&
@@ -1151,14 +1159,14 @@ function ScrollView(props: {
         <CircularProgress thickness={5} color='inherit' size={25} />
       </Box>
       <Box
-        className={`pt-4 mb-4 text-center theme-tertiary-lighter ${
+        className={`pt-2 mb-1 text-center theme-tertiary-lighter ${
           convoMessagesStatus === 'fulfilled' && hasReachedTopOfConvo
             ? 'd-block'
             : 'd-none'
         }`}
         fontSize='0.85rem'>
         This is the beginning of your conversation with{' '}
-        {convoDisplayName ?? 'your colleague'}.
+        <b className='font-bold'>{convoDisplayName ?? 'your colleague'}</b>.
       </Box>
       {convoMessages?.map((message, key: number) => {
         const { sender_id, date, delivered_to, deleted, seen_by } = message;
@@ -1205,11 +1213,19 @@ function ScrollView(props: {
 
         return (
           <React.Fragment key={key}>
-            {shouldRenderDate && <ChatDate timestamp={Number(date)} />}
+            {shouldRenderDate && (
+              <ChatDate
+                scrollView={scrollView as HTMLElement}
+                timestamp={Number(date)}
+              />
+            )}
             <Memoize
               memoizedComponent={Message}
               message={message as APIMessageResponse}
               type={type}
+              sender_username={
+                type === 'incoming' ? convoAssocUsername : username
+              }
               clearSelections={
                 message._id! in selectedMessages && clearSelections
                   ? true
@@ -1227,7 +1243,7 @@ function ScrollView(props: {
           </React.Fragment>
         );
       })}
-      {!convoFriendship && convoMessagesStatus === 'fulfilled' && (
+      {!convoFriendship && convoMessagesStatus === 'fulfilled' && chat && (
         <Box className='text-center py-5 my-2'>
           You are not colleagues with{' '}
           <Box fontWeight='bold'>{convoDisplayName}.</Box>

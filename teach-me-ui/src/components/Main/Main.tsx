@@ -18,11 +18,15 @@ import PostPage from './PostPage';
 import _404 from '../Index/_404';
 
 import createMemo from '../../Memo';
-import { dispatch, getState } from '../../functions/utils';
+import {
+  dispatch,
+  getState,
+  emitUserOnlineStatus
+} from '../../functions/utils';
 import { initWebSocket, closeWebSocket } from '../../actions/misc';
 
 import activateSocketRouters from '../../socket.router';
-import { emitUserOnlineStatus } from '../../App';
+
 import { getConversations } from '../../actions/chat';
 import { SearchState } from '../../constants';
 

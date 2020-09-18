@@ -1,3 +1,7 @@
+import moment from 'moment';
+
+import queryString from 'query-string';
+
 import {
   ReduxAction,
   StatusPropsState,
@@ -5,7 +9,12 @@ import {
   UserData,
   NetworkAction,
   Reaction,
-  ONLINE_STATUS
+  ONLINE_STATUS,
+  AuthState,
+  ConversationMessages,
+  SearchState,
+  APIConversationResponse,
+  ConversationInfo
 } from '../constants';
 
 import store from '../appStore';
@@ -13,12 +22,146 @@ import {
   displaySnackbar,
   setUserData,
   profileData as _profileData,
+  initWebSocket,
+  closeWebSocket
 } from '../actions';
 import { userDeviceIsMobile } from '../';
-
-import moment from 'moment';
+import activateSocketRouters from '../socket.router';
+import {
+  getConversations,
+  getConversationMessages,
+  getConversationInfo,
+  conversations,
+  conversationInfo,
+  conversationMessages
+} from '../actions/chat';
 
 export const { dispatch, getState }: any = store;
+
+export const emitUserOnlineStatus = (
+  shouldReInitWebSocket?: boolean,
+  connectionIsDead?: boolean,
+  snackBarOptions?: {
+    open?: boolean;
+    severity?: 'error' | 'success' | 'info';
+    message?: string;
+    autoHide?: boolean;
+  }
+) => {
+  const { open, severity, message, autoHide } = snackBarOptions ?? {};
+
+  if (connectionIsDead) {
+    dispatch(
+      displaySnackbar({
+        open: true,
+        autoHide: false,
+        message: message ? message : 'You are offline.',
+        severity: severity ? severity : 'error'
+      })
+    );
+  } else if (open) {
+    dispatch(
+      displaySnackbar({
+        open: true,
+        autoHide: autoHide !== undefined ? autoHide : true,
+        message: message ? message : 'You are back online.',
+        severity: severity ? severity : 'success'
+      })
+    );
+  }
+
+  const userData = getState().userData as UserData & APIConversationResponse;
+  const auth = getState().auth as AuthState;
+  const _conversations = getState().conversations as SearchState;
+  const _conversationInfo = getState().conversationInfo as ConversationInfo;
+  const _conversationMessages = getState()
+    .conversationMessages as ConversationMessages;
+  const { cid = undefined, id = undefined, stateCid, stateId } = {
+    ...(queryString.parse(window.location.search) ?? {}),
+    stateCid: _conversationInfo.data?._id,
+    stateId: _conversationInfo.data?.associated_user_id
+  };
+  let timeToEmitOnlineStatus: any = undefined;
+
+  if (auth.isAuthenticated && !connectionIsDead) {
+    if (shouldReInitWebSocket) {
+      dispatch(initWebSocket(userData.token as string));
+      activateSocketRouters();
+    }
+
+    if (_conversations.err) {
+      dispatch(getConversations()(dispatch));
+    }
+
+    if ((cid || stateCid) && _conversationMessages.err) {
+      dispatch(
+        getConversationMessages(
+          cid || (stateCid as string),
+          'settled',
+          'updating message list...'
+        )(dispatch)
+      );
+    }
+
+    if ((id || stateId) && _conversationInfo.err) {
+      dispatch(getConversationInfo(id || (stateId as string))(dispatch));
+    }
+
+    return function recurse() {
+      clearTimeout(timeToEmitOnlineStatus);
+      timeToEmitOnlineStatus = setTimeout(() => {
+        //make sure to use updated/reinitialized webSock from state as former would have been closed
+        const socket = getState().webSocket as WebSocket;
+        const docIsVisible = document.visibilityState === 'visible';
+
+        if (socket.readyState === 1) {
+          socket.send(
+            JSON.stringify({
+              online_status: docIsVisible ? 'ONLINE' : 'AWAY',
+              pipe: ONLINE_STATUS
+            })
+          );
+          dispatch(
+            setUserData({
+              online_status: docIsVisible ? 'ONLINE' : 'AWAY'
+            })
+          );
+        } else {
+          if (window.navigator.onLine && docIsVisible) {
+            recurse();
+          }
+        }
+      }, 2000);
+    };
+  }
+
+  return () => {
+    if (auth.isAuthenticated && connectionIsDead) {
+      const updateConversations = _conversations.data?.map(
+        (conversation): APIConversationResponse => {
+          return { ...conversation, online_status: 'OFFLINE' };
+        }
+      ) as SearchState['data'];
+
+      dispatch(closeWebSocket());
+      dispatch(conversations({ err: true, data: [...updateConversations] }));
+      dispatch(
+        conversationInfo({
+          online_status: 'OFFLINE',
+          err: true,
+          status: 'settled',
+          data: { ...getState().conversationInfo.data, last_seen: undefined }
+        })
+      );
+      dispatch(conversationMessages({ status: 'settled', err: true }));
+      dispatch(
+        setUserData({
+          online_status: 'OFFLINE'
+        })
+      );
+    }
+  };
+};
 
 export const cleanUp = (isUnmount: boolean) => {
   let shouldCleanUp =
@@ -186,7 +329,7 @@ export const addEventListenerOnce = (
   target: HTMLElement | any,
   callback: Function | any,
   event?: string,
-  options?: { capture?: boolean; once?: boolean }
+  options?: { capture?: boolean; once?: boolean; passive?: boolean }
 ) => {
   event = event ? event : 'transitionend';
 

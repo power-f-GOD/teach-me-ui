@@ -1,4 +1,4 @@
-$convo-spacer: 0.25rem;
+$convo-spacer: 0.0625rem;
 $avatar-size: 3rem;
 
 .chat-left-pane {
@@ -83,16 +83,8 @@ $avatar-size: 3rem;
   top: 0;
   left: 0;
   min-width: 100%;
-  transition: opacity 0.35s, transform 0.35s;
+  transition: opacity 0.25s, transform 0.23s;
   transition-delay: 0.3s;
-
-  &.hidden {
-    overflow-y: hidden;
-  }
-
-  &.auto {
-    overflow-y: auto;
-  }
 
   &.custom-scroll-bar {
     padding: $convo-spacer;
@@ -105,12 +97,21 @@ $avatar-size: 3rem;
     }
 
     &.hide-scroll-fader,
-    &.remove-scroll-fader {
+    &.remove-scroll-fader,
+    &.hidden {
       & + .scroll-bar-fader {
         z-index: -1 !important;
         opacity: 0;
       }
     }
+  }
+
+  &.hidden {
+    overflow-y: hidden;
+  }
+
+  &.auto {
+    overflow-y: auto;
   }
 }
 
@@ -222,14 +223,16 @@ $avatar-size: 3rem;
   }
 
   .conversation-name-wrapper {
+    $bg-sub: 30;
+    $bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
+
     padding: 0.75rem 0.5rem;
     border-radius: $convo-spacer + 0.15rem;
-    background: $theme-primary-v3;
-    border: 0.0625rem solid rgba($prim-r - 75, $prim-g - 75, $prim-b - 75, 0.5);
+    background: $bg;
     transition: color 0.2s, background-color 0.35s;
 
     .MuiBadge-dot {
-      border-color: $theme-primary-v3;
+      border-color: $bg;
       right: 30%;
     }
   }

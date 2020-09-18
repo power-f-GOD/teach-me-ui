@@ -22,6 +22,7 @@ export interface InputErrState {
 
 export interface PostPropsState {
   userAvatar: string;
+  media: any[];
   reaction: Reaction;
   sender_id: string;
   sender_name: string;

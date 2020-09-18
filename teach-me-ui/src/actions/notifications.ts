@@ -37,7 +37,7 @@ export const getNotificationsRequest = (date: number) => (
   
 
   axios({
-    url: `/notifications?limit=20&offset=${date}`,
+    url: `/notifications?offset=${date}`,
     baseURL,
     method: 'GET',
     headers: {
@@ -93,7 +93,7 @@ export const setLastseen = (id: string) => {
   let token = getState().userData.token
 
   axios({
-    url: 'notification/seen',
+    url: 'notifications/id/seen',
     baseURL,
     method: 'POST',
     headers: {
@@ -103,5 +103,5 @@ export const setLastseen = (id: string) => {
     data: {
       'notification_id': id
     }
-  }).then((data) => {console.log(data, token)})
+  })
 }

@@ -182,10 +182,13 @@ hr {
   }
 }
 
+button {
+  font-size: 1rem;
+}
+
 button,
 a {
   text-transform: unset !important;
-  font-size: 1rem;
 
   &[class*='outlined'] {
     display: inline-flex;
@@ -437,6 +440,10 @@ div {
   width: auto !important;
   z-index: 1550;
   background: transparent !important;
+}
+
+.MuiBackdrop-root {
+  background-color: rgba(0, 0, 0, 0.75);
 }
 
 .logo {

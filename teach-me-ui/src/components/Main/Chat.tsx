@@ -194,7 +194,7 @@ const ChatBox = (props: ChatBoxProps) => {
     (index: number) => () => {
       setActivePaneIndex(index);
 
-      if (index === 1) {
+      if (index === 1 && windowWidth < 992) {
         window.history[userDeviceIsMobile ? 'replaceState' : 'pushState'](
           {},
           '',
@@ -203,7 +203,7 @@ const ChatBox = (props: ChatBoxProps) => {
         );
       }
     },
-    []
+    [windowWidth]
   );
 
   const scrollViewProviderValue = useMemo(() => {
@@ -315,6 +315,15 @@ const ChatBox = (props: ChatBoxProps) => {
   );
 
   useEffect(() => {
+    if (/chat=/.test(window.location.search)) {
+      window.history.replaceState(
+        {},
+        '',
+        window.location.pathname +
+          `?chat=open&id=${placeHolderDisplayName}&cid=0`
+      );
+    }
+
     window.onresize = (e: any) => setWindowWidth(e.target.innerWidth);
   }, []);
 

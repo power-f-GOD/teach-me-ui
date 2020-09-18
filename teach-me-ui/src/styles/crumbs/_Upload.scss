@@ -34,3 +34,87 @@
     }
   }
 }
+
+.upload-label {
+  color: red;
+  font-size: small;
+  display: none;
+}
+
+#grid-box {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.drop-menu {
+  background-color:#ddd;
+  color: black;
+  border-radius: 4px;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+}
+
+#menu-divider {
+  color: black !important;
+  background-color: black !important;
+}
+
+#dropdown {
+  background-color: white;
+  border: none;
+}
+
+#divider {
+  height: 1px;
+  background-color: white;
+}
+
+.menu-options {
+  cursor: pointer;
+  padding-left: 5px;
+  padding-right: 5px;
+  display: block;
+  
+  &:hover {
+    background-color: #aaa;
+  }
+}
+
+.scroll-image {
+  overflow-y: scroll;
+  max-height: 250px;
+  width: 100%
+}
+
+.check-button {
+  position: absolute;
+  font-size: 12px;
+  font-weight: bolder;
+  height: 20px;
+  width: 20px;
+  top: 0px;
+  right: 3px;
+  z-index: 2;
+  color: white;
+  border: 1px solid white;
+  background-color: grey;
+  transition: 0.25s;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.check-button-selected {
+  position: absolute;
+  font-size: 12px;
+  font-weight: bolder;
+  height: 20px;
+  width: 20px;
+  top: 0px;
+  right: 3px;
+  z-index: 2;
+  color: white;
+  border: none;
+  background-color: green;
+  transition: 0.25s;
+  cursor: pointer;
+  border-radius: 50%;
+}

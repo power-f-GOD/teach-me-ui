@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import Container from 'react-bootstrap/Container';
 
@@ -86,25 +87,16 @@ function IndexNav(props: any) {
   );
 }
 
-let notifInterval: any = null;
 
 function MainNav(props: any) {
-  const { isAuthenticated, className } = props;
-  const [badgeContent, setBadgeContent] = useState(0);
+  const { isAuthenticated, className, getNotifications } = props;
   const username = (getState().userData as UserData).username;
+  const numberOfNewNotifications = countNewNotifications(getNotifications.data.notifications);
 
   useEffect(() => {
     if (isAuthenticated) {
       dispatch(getNotificationsRequest(Date.now())(dispatch));
-      notifInterval = setInterval(() => {
-        const numberOfNewNotifications = countNewNotifications(getState().getNotifications.data.notifications);
-        badgeContent !== numberOfNewNotifications && setBadgeContent(numberOfNewNotifications);
-      }, 3000);
     }
-
-    return () => {
-      clearInterval(notifInterval);
-    };
   }, [isAuthenticated]);
 
   return (
@@ -124,7 +116,7 @@ function MainNav(props: any) {
       </NavLink>
 
       <NavLink to='/notifications' className='nav-link'>
-        <Badge color='secondary' badgeContent={badgeContent}>
+        <Badge color='secondary' badgeContent={numberOfNewNotifications}>
           <NotificationsIcon />
         </Badge>
       </NavLink>
@@ -145,9 +137,9 @@ function MainNav(props: any) {
 }
 
 function MainNavMenu(props: any) {
-  const { isAuthenticated, className } = props;
+  const { isAuthenticated, className, getNotifications } = props;
   const username = (getState().userData as UserData).username;
-  const numberOfNewNotifications = countNewNotifications(getState().getNotifications.data.notifications);
+  const numberOfNewNotifications = countNewNotifications(getNotifications.data.notifications);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -290,4 +282,6 @@ function TemporaryDrawer(props: any) {
   );
 }
 
-export default Nav;
+const mapStateToProps = ({ getNotifications }: any) => ({ getNotifications });
+
+export default connect(mapStateToProps)(Nav);
