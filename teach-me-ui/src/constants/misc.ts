@@ -4,7 +4,8 @@ import {
   UserData,
   NotificationState,
   MentionState,
-  ReplyState
+  ReplyState,
+  UploadState
 } from './interfaces';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -69,6 +70,12 @@ export const replyState: ReplyState = {
   error: false,
   data: undefined
 };
+
+export const uploadState: UploadState ={
+  status: 'settled',
+  error: false,
+  data: []
+}
 
 export const useStyles = makeStyles((theme: any) => ({
   root: {

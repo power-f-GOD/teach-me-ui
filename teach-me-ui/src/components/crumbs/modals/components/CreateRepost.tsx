@@ -165,7 +165,7 @@ const CreatePost: React.FC<any> = (props) => {
 
 const mapStateToProps = ({ makeRepostStatus, userData }: any) => ({
   makeRepostStatus,
-  userData
 });
 
 export default connect(mapStateToProps)(CreatePost);
+

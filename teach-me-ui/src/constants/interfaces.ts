@@ -427,7 +427,11 @@ export interface ReplyState {
 export interface PostEditorState {
   post: Post;
   mentionsKeyword: string;
-  mentions: any[];
   [key: string]: any;
 }
 
+export interface UploadState {
+  error: boolean;
+  status:  'settled' | 'pending' | 'fulfilled';
+  data: Array<string>;
+}
