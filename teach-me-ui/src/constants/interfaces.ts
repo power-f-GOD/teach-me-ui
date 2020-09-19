@@ -419,7 +419,7 @@ export interface ReplyResult extends ReplyProps {
 }
 
 export interface ReplyState {
-  error?: boolean;
+  err?: boolean;
   data?: ReplyResult;
   status: 'settled' | 'pending' | 'fulfilled';
 }
@@ -431,7 +431,11 @@ export interface PostEditorState {
 }
 
 export interface UploadState {
-  error: boolean;
+  err: boolean;
   status:  'settled' | 'pending' | 'fulfilled';
   data: Array<string>;
+}
+
+export interface MakePostState {
+  status: 'settled' | 'pending' | 'fulfilled';
 }

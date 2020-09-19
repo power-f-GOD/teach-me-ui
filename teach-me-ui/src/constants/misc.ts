@@ -67,13 +67,13 @@ export const userDataState: UserData = {
 
 export const replyState: ReplyState = {
   status: 'settled',
-  error: false,
+  err: false,
   data: undefined
 };
 
 export const uploadState: UploadState ={
   status: 'settled',
-  error: false,
+  err: false,
   data: []
 }
 

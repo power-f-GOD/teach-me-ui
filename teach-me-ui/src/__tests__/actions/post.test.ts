@@ -8,6 +8,9 @@ import {
   SEND_REPLY_TO_SERVER, 
   ReduxAction, 
   SocketProps,
+  Post,
+  SUBMIT_POST,
+  MAKE_POST
 } from '../../constants';
 
 import { dispatch } from '../../appStore';
@@ -26,14 +29,14 @@ it("sends reply of a post to the sever", () => {
   
   const mockReplyState: ReplyState = {
     status: expect.any(String),
-    error: expect.any(Boolean),
+    err: expect.any(Boolean),
     data: expect.any(Object)
   }
   const replyToPostAction: ReduxAction = {
     type: REPLY_TO_POST,
     payload: {
       status: expect.any(String),
-      error: expect.any(Boolean),
+      err: expect.any(Boolean),
       data: expect.any(Object)
     }
   };
@@ -52,4 +55,38 @@ it("sends reply of a post to the sever", () => {
   expect(sendReplyToServerMockFunc).toHaveBeenCalledWith(mockReplyProps);
   expect(actions.replyToPost(mockReplyState)).toMatchObject(replyToPostAction);
   // expect(actions.sendReplyToServer(mockReplyProps)(dispatch)).toMatchObject(sendReplyToServerAction);
+});
+
+it("sends post to the sever", () => {
+  const mockPostProps: Post = {
+    text: expect.any(String),
+  };
+  
+  const mockPostState: ReplyState = {
+    status: expect.any(String),
+  }
+
+  const makePostAction: ReduxAction = {
+    type: MAKE_POST,
+    payload: {
+      status: expect.any(String),
+    }
+  };
+
+  const submitPostAction: ReduxAction = {
+    type: SUBMIT_POST
+  };
+
+  const mockMedia = expect.any(Array)
+
+  const submitPostMockFunc = jest.fn((payload: Post, media: Array<string>) => {
+    return (dispatch: Function) => {
+      actions.makePost(mockPostState);
+    }
+  });
+
+  submitPostMockFunc(mockPostProps, mockMedia);
+  expect(submitPostMockFunc).toHaveBeenCalledWith(mockPostProps, mockMedia);
+  expect(actions.makePost(mockPostState)).toMatchObject(makePostAction);
+  // expect(actions.submitPost(mockPostProps, mockMedia)(dispatch)).toMatchObject(submitPostAction);
 });

@@ -27,7 +27,10 @@ import {
   RepostResult,
   Reaction,
   REPLY_TO_POST,
-  ReplyState
+  MAKE_POST,
+  ReplyState,
+  makePostState,
+  MakePostState
 } from '../constants';
 
 import { resultantReaction } from '../functions';
@@ -228,3 +231,16 @@ export const replyToPost = (
   }
   return state;
 };
+
+export const makePost = (
+  state: MakePostState = makePostState,
+  action: ReduxAction
+) => {
+  if (action.type === MAKE_POST) {
+    return {
+      ...state,
+      ...action.payload
+    };
+  }
+  return state;
+}
