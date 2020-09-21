@@ -72,13 +72,11 @@ const CreatePost = (props: any) => {
   }
 
   const removeUpload = (e: any) => {
-    console.log(state.tempSelectedUploads);
     label.current.style.display = 'none';
     label1.current.style.display = 'none';
     prev.current.removeChild(e.target!.parentNode)
     let selectedUploads = [];
     for (let file of state.selectedUploads) {
-      console.log(e.target.previousElementSibling.getAttribute('src'), file.url);
       if (e.target.previousElementSibling.getAttribute('src') === file.url) continue;
       
       selectedUploads.push(file);
@@ -90,14 +88,12 @@ const CreatePost = (props: any) => {
   }
 
   const removeFile = (e: any) => {
-    console.log(state.selectedFiles, state.selectedUploads);
     label.current.style.display = 'none';
     label1.current.style.display = 'none';
     prev.current.removeChild(e.target!.parentNode)
     let selectedFiles = [];
     let removed = false
     for (let file of state.selectedFiles) {
-      console.log(e.target.previousElementSibling.getAttribute('title'), file.name);
       if (e.target.previousElementSibling.getAttribute('title') === file.name && !removed) {
         removed = true;
         continue;
@@ -201,14 +197,14 @@ const CreatePost = (props: any) => {
     setState({
       ...state,
       selectedFiles
-    })
+    });
   };
   
  
   const onPostSubmit = () => {
     if (state.post.text) {
       if (state.selectedFiles[0] || state.selectedUploads[0]) {
-        sendFilesToServer(state.selectedFiles, submitPost, state.selectedUploads, state.post)
+        sendFilesToServer(state.selectedFiles, submitPost, state.selectedUploads, state.post);
       } else {
         dispatch(submitPost(state.post, [])(dispatch));
       }
@@ -217,7 +213,7 @@ const CreatePost = (props: any) => {
 
   const toggleSelectPreUpload = (e: any) => {
     label1.current.style.display = 'none';
-    const numberOfUploads = (state.selectedFiles.length + state.selectedUploads.length + state.tempSelectedUploads.length)
+    const numberOfUploads = (state.selectedFiles.length + state.selectedUploads.length + state.tempSelectedUploads.length);
     const button = e.target;
     if (button.classList[0] === 'check-button') {
       if (numberOfUploads >= 5) {
@@ -228,7 +224,13 @@ const CreatePost = (props: any) => {
       button.classList.remove('check-button');
       setState({
         ...state,
-        tempSelectedUploads: [...state.tempSelectedUploads, {url: button.previousElementSibling.getAttribute('src'), id: button.previousElementSibling.getAttribute('id')}]
+        tempSelectedUploads: [
+          ...state.tempSelectedUploads, 
+          {
+            url: button.previousElementSibling.getAttribute('src'), 
+            id: button.previousElementSibling.getAttribute('id')
+          }
+        ]
       })
 
     } else {
@@ -261,7 +263,10 @@ const CreatePost = (props: any) => {
     }))
     setState({
       ...state,
-      selectedUploads: [...state.selectedUploads, ...tempUploads],
+      selectedUploads: [
+        ...state.selectedUploads, 
+        ...tempUploads
+      ],
       tempSelectedUploads : []
     })
   }
@@ -321,7 +326,11 @@ const CreatePost = (props: any) => {
             <AttachmentIcon style={{cursor: 'pointer'}}/>
         </Dropdown.Toggle>
         <Dropdown.Menu className='drop-menu'>
-            <label htmlFor='my-input' onClick={hideUploadedFiles} className='menu-options'>
+            <label 
+              htmlFor='my-input' 
+              onClick={hideUploadedFiles} 
+              className='menu-options'
+            >
               local Disk
             </label>
             <div id='divider'></div>
@@ -361,13 +370,22 @@ const CreatePost = (props: any) => {
           You can upload a maximum of five files
         </p>
         <Row className='d-flex mx-auto mt-1'>
-          <div id='grid-box' className='scroll-image' style={{display: 'none'}} ref={preUploadedFiles}>
+          <div 
+            id='grid-box' 
+            className='scroll-image' 
+            style={{display: 'none'}} ref={preUploadedFiles}
+          >
             {uploadsProp.status === 'pending' 
             ? <CircularProgress style={{margin: 'auto', color: 'green'}}/> 
             : uploadsProp.data[0] 
             ? uploadsProp.data.map((file: any, i: number) => (
               <div key={i} className='col-4 div-wrapper'>
-                <img src={file.url} className='img' alt={file.public_id} id={file._id}/>
+                <img 
+                  src={file.url} 
+                  className='img' 
+                  alt={file.public_id} 
+                  id={file._id}
+                />
                 <button onClick={toggleSelectPreUpload} type='button' className='check-button'>
                   ✓
                 </button>

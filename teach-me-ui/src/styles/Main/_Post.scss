@@ -52,3 +52,8 @@
     overflow: hidden !important;
   }
 }
+
+.notranslate.public-DraftEditor-content > div {
+  overflow-y: auto;
+  height: 140px;
+}

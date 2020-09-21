@@ -57,7 +57,6 @@ export const sendFilesToServer = (files: Array<File>, action: Function, selected
       for (let localUpload of selectedUploads) {
         ids.push(localUpload.id);
       }
-      console.log(ids);
       dispatch(sendFiles({
         status: 'fulfilled',
         data: ids,
