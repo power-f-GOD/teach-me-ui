@@ -391,7 +391,7 @@ const CreatePost = (props: any) => {
                 </button>
               </div>
             ))
-            : <p style={{margin: 'auto', width: '50%'}}>you have no uploads</p>
+            : <p style={{margin: 'auto', width: '10em'}}>You have no uploads</p>
             }
           </div>
         </Row>
