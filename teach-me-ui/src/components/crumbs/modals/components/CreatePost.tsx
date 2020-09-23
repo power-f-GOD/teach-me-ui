@@ -352,12 +352,10 @@ const CreatePost = (props: any) => {
           </div>
         </Row>
         <h4 style={{
-          width: '7em', 
-          margin: 'auto', 
-          fontWeight: 'bold', 
           display: uploadsProp.status === 'fulfilled' && uploadsProp.data[0] ? 'block' : 'none', 
-          lineHeight: '35px'
-        }}>Select files</h4>
+        }}
+          className='select-header'
+        >Select files</h4>
           <p
           ref={label}
           className='upload-label'>
@@ -391,7 +389,7 @@ const CreatePost = (props: any) => {
                 </button>
               </div>
             ))
-            : <p style={{margin: 'auto', width: '10em'}}>You have no uploads</p>
+            : <p className='no-uploads'>You have no uploads</p>
             }
           </div>
         </Row>
