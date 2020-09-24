@@ -435,3 +435,9 @@ export interface UploadState {
   status:  'settled' | 'pending' | 'fulfilled';
   data: Array<string>;
 }
+
+export interface EditProfileState {
+  err?: boolean;
+  status:  'settled' | 'pending' | 'fulfilled';
+  data?: Object;
+}

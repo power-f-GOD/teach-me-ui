@@ -7,5 +7,6 @@ export * from './modals';
 export * from './posts';
 export * from './uploads';
 export * from './profile';
+export * from './profile.edit';
 export * from './notifications';
 export * from './colleague';

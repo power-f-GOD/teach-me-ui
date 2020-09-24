@@ -11,6 +11,7 @@ import * as search from './search';
 import * as profile from './profile';
 import * as colleague from './colleague';
 import * as notifications from './notifications';
+import * as editProfile from './profile.edit';
 
 import { ReduxAction, SIGNOUT_USER } from '../constants';
 
@@ -30,6 +31,7 @@ export default function reducers(state: any, action: ReduxAction) {
     ...search,
     ...profile,
     ...colleague,
+    ...editProfile,
     ...notifications
   })(state, action);
 }
