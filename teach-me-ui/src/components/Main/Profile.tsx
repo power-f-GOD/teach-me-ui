@@ -421,6 +421,7 @@ const Profile = (props: any) => {
                 )}
               </>
             ) : null)}
+          {false && selfView ? (
             <>
               {isEditing ? (
                 <>
@@ -454,6 +455,9 @@ const Profile = (props: any) => {
                 </>
               )}
             </>
+          ) : (
+            ''
+          )}
           {false && (
             <Button
               variant='contained'
@@ -571,6 +575,7 @@ const Profile = (props: any) => {
                       <>
                         <CreateOutlinedIcon fontSize='inherit' /> Edit Profile
                       </>
+                    )}
                   </Button>
                   <Button
                     variant='contained'
