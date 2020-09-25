@@ -37,6 +37,7 @@ import {
 } from '../../actions/chat';
 import { ChatTimestamp, ChatStatus } from './Chat.crumbs';
 import createMemo from '../../Memo';
+import { scrollViewRef } from './Chat.MiddlePane';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -195,8 +196,7 @@ function TabPanel(props: TabPanelProps) {
         style={{
           transform: `translateX(${translateVal}%)`,
           WebkitTransform: `translateX(${translateVal}%)`,
-          OTransform: `translateX(${translateVal}%)`,
-          opacity: value === index ? 1 : 0
+          OTransform: `translateX(${translateVal}%)`
         }}
         ref={tabPanelRef}
         className={`tab-panel ${value !== index ? 'hide-scroll-fader' : ''} ${
@@ -247,6 +247,7 @@ function PaneItems(props: {
               last_message?._id +
               last_message?.delivered_to +
               last_message?.seen_by +
+              last_message?.deleted +
               unread_count +
               user_typing +
               online_status
@@ -338,6 +339,14 @@ function PaneItem({
         const { id, cid } = queryString.parse(window.location.search);
         const { convoId, userId } = extra;
 
+        if (window.innerWidth < 992) {
+          const scrollView = scrollViewRef.current;
+
+          if (scrollView) {
+            scrollView.scrollTop = scrollView.scrollHeight;
+          }
+        }
+
         delay(300).then(() => {
           handleSetActivePaneIndex(1)();
         });
@@ -365,6 +374,7 @@ function PaneItem({
           dispatch(
             getConversationMessages(convoId, 'pending', 'loading new')(dispatch)
           );
+          //delay so that state conversation unread_count is not updated immediately when the conversation opens
           delay(1500).then(() => {
             dispatch(
               conversations({ data: [{ unread_count: 0, _id: convoId }] })
@@ -384,7 +394,7 @@ function PaneItem({
         }
 
         dispatch(chatState(chatInfo));
-        dispatch(conversation(convoId));
+        dispatch(conversation(convoId, {}));
       };
     },
     [handleSetActivePaneIndex]
@@ -424,7 +434,7 @@ function PaneItem({
 
             <ChatTimestamp
               className={`${
-                _conversation.unread_count ? 'theme-secondary-lighter' : ''
+                _conversation.unread_count ? 'theme-secondary-lightest' : ''
               }`}
               timestamp={
                 lastMessageSentYesterday
@@ -442,7 +452,7 @@ function PaneItem({
               width='100%'>
               <Box
                 className={`last-message mt-1 ${
-                  last_message?.deleted ? 'font-italic' : ''
+                  last_message?.deleted && !user_typing ? 'font-italic' : ''
                 } ${user_typing ? 'theme-secondary-lightest' : ''}`}
                 maxWidth={unread_count ? 'calc(100% - 2.25rem)' : '100%'}
                 title={last_message?.message ?? ''}>
@@ -455,7 +465,10 @@ function PaneItem({
                       className={user_typing ? 'show' : 'hide'}>
                       typing...
                     </Box>
-                    <Box className={user_typing ? 'hide' : 'show'}>
+                    <Box
+                      className={`${user_typing ? 'hide' : 'show'} ${
+                        unread_count ? 'font-bold' : ''
+                      } pr-1`}>
                       <ChatStatus
                         type={
                           last_message?.sender_id === userId

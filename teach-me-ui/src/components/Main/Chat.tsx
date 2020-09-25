@@ -72,7 +72,7 @@ window.addEventListener('popstate', () => {
 
   const { chat, id: userId, cid } = queryString.parse(window.location.search);
 
-  if (userDeviceIsMobile && chat) {
+  if (window.innerWidth < 992 && chat) {
     dispatch(conversation(''));
     dispatch(conversationInfo({ data: {} }));
     dispatch(conversationMessages({ data: [] }));
@@ -151,7 +151,9 @@ const ChatBox = (props: ChatBoxProps) => {
     friendship: convoFriendship,
     type: convoType,
     conversation_name: convoDisplayName,
-    avatar: convoAvatar
+    avatar: convoAvatar,
+    unread_count: convoUnreadCount,
+    last_read: convoLastReadDate
   } = _conversation;
   const {
     data: convoMessages,
@@ -179,7 +181,6 @@ const ChatBox = (props: ChatBoxProps) => {
       a + (conversation.unread_count ? 1 : 0),
     0
   );
-
   const leftPane = leftPaneRef.current;
   const middlePane = middlePaneRef.current;
   const rightPane = rightPaneRef.current;
@@ -211,13 +212,17 @@ const ChatBox = (props: ChatBoxProps) => {
       convoMessagesErr,
       convoMessagesStatusText,
       convoParticipants,
-      convoInfoNewMessage
+      convoInfoNewMessage,
+      convoUnreadCount,
+      convoLastReadDate
     };
   }, [
     convoMessagesErr,
     convoMessagesStatusText,
     convoParticipants,
-    convoInfoNewMessage
+    convoInfoNewMessage,
+    convoUnreadCount,
+    convoLastReadDate
   ]);
 
   const middlePaneHeaderProviderValue = useMemo(() => {
@@ -262,7 +267,7 @@ const ChatBox = (props: ChatBoxProps) => {
 
   const handleOpenChatClick = useCallback(() => {
     const queryString = `?chat=${
-      userDeviceIsMobile ? 'min' : 'open'
+      windowWidth < 992 ? 'min' : 'open'
     }&id=${placeHolderDisplayName}&cid=0`;
 
     setActivePaneIndex(0);
@@ -283,7 +288,7 @@ const ChatBox = (props: ChatBoxProps) => {
       '',
       window.location.pathname + queryString
     );
-  }, []);
+  }, [windowWidth]);
 
   const handleChatTransitionEnd = useCallback(
     (e: any) => {
@@ -315,13 +320,10 @@ const ChatBox = (props: ChatBoxProps) => {
   );
 
   useEffect(() => {
+    const search = `?chat=open&id=${placeHolderDisplayName}&cid=0`;
+
     if (/chat=/.test(window.location.search)) {
-      window.history.replaceState(
-        {},
-        '',
-        window.location.pathname +
-          `?chat=open&id=${placeHolderDisplayName}&cid=0`
-      );
+      window.history.replaceState({}, '', window.location.pathname + search);
     }
 
     window.onresize = (e: any) => setWindowWidth(e.target.innerWidth);
@@ -406,10 +408,10 @@ const ChatBox = (props: ChatBoxProps) => {
         ((!isNaN(cid) && cid) || !convoId) &&
         chat &&
         isOpen &&
-        userDeviceIsMobile
+        windowWidth < 992
       ) {
         const queryString = `?chat=${
-          userDeviceIsMobile ? 'min' : 'open'
+          windowWidth < 992 ? 'min' : 'open'
         }&id=${placeHolderDisplayName}&cid=0`;
 
         window.history.replaceState(
@@ -430,7 +432,7 @@ const ChatBox = (props: ChatBoxProps) => {
             chatState({
               queryString: !!chat ? window.location.search : qString,
               isOpen: true,
-              isMinimized: chat === 'min' && !userDeviceIsMobile
+              isMinimized: chat === 'min' && !(windowWidth < 992)
             })
           );
       });
@@ -448,6 +450,7 @@ const ChatBox = (props: ChatBoxProps) => {
     chat,
     id,
     cid,
+    windowWidth,
     convoInfoStatus,
     convoInfoErr,
     convoMessagesErr,
