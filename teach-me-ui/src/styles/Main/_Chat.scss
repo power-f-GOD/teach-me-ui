@@ -163,7 +163,7 @@ body,
   display: none;
   right: 0;
   transition: transform 0.4s, opacity 0.4s;
-  transition-delay: 0.25s;
+  transition-delay: 0.65s;
 
   &.minimize {
     transform: translateY(calc(100% - #{$chat-header-min-height}));
@@ -191,6 +191,7 @@ header.chat-header {
   position: relative;
   font-weight: bold;
   z-index: 4;
+  background: inherit;
   background-color: white;
   min-height: $chat-header-min-height;
   max-height: $chat-header-min-height;
@@ -261,6 +262,8 @@ body.desktop {
       }
 
       & + .scroll-bar-fader {
+        // pointer-events: none;
+
         @include before-or-after(
           $w: 0.5rem,
           $l: unset,

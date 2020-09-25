@@ -36,7 +36,7 @@
       $w: calc(100% + 1.25rem),
       $l: -0.75rem,
       $br: 0.25rem,
-      $bg: $theme-tertiary-v9,
+      $bg: rgba(255, 255, 255, 0.2),
       $zi: unset
     );
   }
@@ -117,18 +117,18 @@
 
 .chat-date,
 button.new-messages-count {
-  background: #fff;
-  padding: 0.25rem 0.75rem;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 0.25rem 0.95rem;
   border-radius: 2rem;
   position: relative;
   z-index: 1;
   font-size: 0.85rem;
   text-transform: capitalize;
   color: $theme-tertiary-v1;
-  border: 0.0625rem solid $theme-tertiary-v7;
-  box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.15) !important;
+  border: 0.0625rem solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.05rem 0.05rem rgba(0, 0, 0, 0.15) !important;
   user-select: none;
-  transition: transform 0.4s ease 0.5s;
+  transition: transform 0.4s ease 1.35s;
 }
 
 button.new-messages-count {
