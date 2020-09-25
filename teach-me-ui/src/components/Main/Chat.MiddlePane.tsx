@@ -165,7 +165,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
   const handleProfileLinkClick = useCallback(() => {
     dispatch(
       chatState({
-        queryString: window.location.search.replace('open', 'min'),
+        queryString: window.location.search.replace('o1', 'm2'),
         isMinimized: true
       })
     );
@@ -197,7 +197,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
 
   useEffect(() => {
     if (!!convoMessages[0] && userData?.online_status === 'ONLINE') {
-      const [_isOpen, _isMinimized] = [!!chat, chat === 'min'];
+      const [_isOpen, _isMinimized] = [!!chat, chat === 'm2'];
       const isSameCid = convoId === cid;
       const userId = userData.id;
 
@@ -306,7 +306,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
 
       <Container
         fluid
-        className='theme-tertiary d-flex align-items-center justify-content-center messages-status-signal font-bold h-100'
+        className='theme-tertiary d-flex align-items-center justify-content-center messages-status-signal h-100'
         ref={messagesStatusSignalRef}>
         {convoMessagesStatus === 'fulfilled' &&
         !convoMessages.length &&
@@ -332,8 +332,8 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
                   className='font-bold theme-secondary-lighter'
                   onClick={handleProfileLinkClick}
                   to={`/@${convoAssocUsername}${window.location.search.replace(
-                    'open',
-                    'min'
+                    'o1',
+                    'm2'
                   )}`}>
                   {convoDisplayName?.split(' ')[0]}
                 </Link>{' '}
@@ -359,7 +359,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
             <ChatIcon fontSize='large' />
             <br />
             <br />
-            Start a Conversation.
+            Start a Conversation
           </Box>
         )}
       </Container>
@@ -408,22 +408,20 @@ function MiddlePaneHeader(props: {
     (shouldActuallyMinimize?: any) => {
       const { isMinimized, queryString: qString } = _chatState as ChatState;
       let queryString = qString!.replace(
-        isMinimized ? 'chat=min' : 'chat=open',
-        isMinimized ? 'chat=open' : 'chat=min'
+        isMinimized ? 'chat=m2' : 'chat=o1',
+        isMinimized ? 'chat=o1' : 'chat=m2'
       );
 
       queryString = shouldActuallyMinimize
         ? queryString
-        : queryString.replace('=open', '=min');
+        : queryString.replace('=o1', '=m2');
 
-      delay(500).then(() => {
-        dispatch(
-          chatState({
-            isMinimized: shouldActuallyMinimize ? !isMinimized : false,
-            queryString
-          })
-        );
-      });
+      dispatch(
+        chatState({
+          isMinimized: shouldActuallyMinimize ? !isMinimized : false,
+          queryString
+        })
+      );
       window.history.replaceState({}, '', queryString);
     },
     [_chatState]
@@ -435,6 +433,9 @@ function MiddlePaneHeader(props: {
       return;
     }
 
+    dispatch(conversation(''));
+    dispatch(conversationInfo({ data: {} }));
+    dispatch(conversationMessages({ data: [] }));
     clearTimeout(clickTimeout.current);
     clickTimeout.current = window.setTimeout(() => {
       dispatch(
@@ -449,10 +450,7 @@ function MiddlePaneHeader(props: {
         '',
         window.location.pathname
       );
-      dispatch(conversation(''));
-      dispatch(conversationInfo({ data: {} }));
-      dispatch(conversationMessages({ data: [] }));
-    }, 700);
+    }, 500);
   }, [isOpen, convoMessagesStatus]);
 
   const handleUserInfoOptionClick = useCallback(() => {
@@ -508,7 +506,9 @@ function MiddlePaneHeader(props: {
   return (
     <>
       <Row
-        className='header-name-control-wrapper px-2 mx-0'
+        className={`header-name-control-wrapper ${
+          convoId ? '' : 'chat-bg'
+        } px-2 mx-0`}
         ref={headerNameControlWrapperRef}>
         <Memoize
           memoizedComponent={MiddlePandeHeaderColleagueNameAndStatus}
@@ -746,8 +746,8 @@ function MiddlePandeHeaderColleagueNameAndStatus(props: {
           </Col>
         </Box>
       ) : !convoId ? (
-        <Col as='span' className='ml-0 p-0'>
-          {placeHolderDisplayName}
+        <Col as='span' className='theme-tertiary-darker ml-2 p-0'>
+          {placeHolderDisplayName}...
         </Col>
       ) : (
         <>
@@ -1215,7 +1215,8 @@ function ScrollView(props: {
         textAlign='center'>
         <CircularProgress thickness={4} color='inherit' size={20} />
       </Box>
-      <NewMessageBar
+      <Memoize
+        memoizedComponent={NewMessageBar}
         type='sticky'
         convoUnreadCount={+convoUnreadCount!}
         scrollView={scrollView as HTMLElement}
@@ -1279,7 +1280,7 @@ function ScrollView(props: {
             : ''
         }`;
 
-        const willRenderNewMessageBar =
+        let willRenderNewMessageBar =
           prevTimestamp === convoLastReadDate && !!convoUnreadCount;
 
         if (willRenderNewMessageBar) {
@@ -1291,7 +1292,8 @@ function ScrollView(props: {
 
         return (
           <React.Fragment key={key}>
-            <NewMessageBar
+            <Memoize
+              memoizedComponent={NewMessageBar}
               type='relative'
               convoUnreadCount={+newMessageCount}
               scrollView={scrollView as HTMLElement}
@@ -1337,8 +1339,8 @@ function ScrollView(props: {
             className='font-bold'
             onClick={handleProfileLinkClick}
             to={`/@${convoAssocUsername}${window.location.search.replace(
-              'open',
-              'min'
+              'o1',
+              'm2'
             )}`}>
             {convoDisplayName?.split(' ')[0]}
           </Link>{' '}

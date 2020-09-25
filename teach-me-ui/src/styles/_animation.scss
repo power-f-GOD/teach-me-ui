@@ -109,6 +109,29 @@
   }
 }
 
+// Chat style(s)
+@keyframes outgoingMessageSlideInWithNoScroll {
+  from {
+    opacity: 0;
+    transform: translateX(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0rem);
+  }
+}
+
+@keyframes incomingMessageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .hide {
   transition: opacity 0.35s;
   transition-delay: 0.275s;
