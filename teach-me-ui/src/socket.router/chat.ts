@@ -33,7 +33,7 @@ export default function chat(message: APIMessageResponse & UserData) {
   const { _id: convoId, unread_count } =
     _conversation ?? ({} as APIConversationResponse);
   const { cid, chat } = queryString.parse(window.location.search) ?? {};
-  const [isOpen, isMinimized] = [!!chat, chat === 'min'];
+  const [isOpen, isMinimized] = [!!chat, chat === 'm2'];
 
   if (socket) {
     const {

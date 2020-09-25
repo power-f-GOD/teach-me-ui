@@ -6,11 +6,15 @@
     size: 25rem;
     position: center;
     color: #fff;
-    // repeat: no-repeat;
   }
 
   .header-name-control-wrapper {
     flex-grow: 1;
+    background: white;
+
+    &.chat-bg {
+      background: inherit;
+    }
   }
 
   .conversation-name-wrapper {
@@ -22,7 +26,7 @@
   }
 
   .display-name {
-    font-weight: 600;
+    font-weight: bold;
     font-size: 1.1rem;
     display: block;
     white-space: nowrap;
@@ -180,7 +184,7 @@
   }
 
   * {
-    font-weight: 600 !important;
+    font-weight: bold !important;
   }
 }
 
@@ -392,6 +396,10 @@ body.mobile {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   transition: opacity 0.3s;
 
+  $diff: 112;
+  $bg-incoming: #fff;
+  $bg-outgoing: rgb($sec-r + $diff, $sec-g + $diff, $sec-b + $diff);
+
   &.deleted {
     font-style: italic;
 
@@ -476,41 +484,17 @@ body.mobile {
     }
   }
 
-  @keyframes outgoingMessageSlideInWithNoScroll {
-    from {
-      opacity: 0;
-      transform: translateX(2rem);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0rem);
-    }
-  }
-
-  @keyframes incomingMessageSlideIn {
-    from {
-      opacity: 0;
-      transform: translateX(-2rem);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
   $br: 0.35rem;
 
   &.incoming {
     margin: 0;
 
     .msg-wrapper {
-      $bg-color: #f4f4f4;
-
-      background: $bg-color;
+      background: $bg-incoming;
       box-shadow: 0 0.0625rem 0 $theme-tertiary-v8;
 
       &::before {
-        background-color: $bg-color;
+        background-color: $bg-incoming;
         top: 0;
         left: -$msg-radius + 0.5rem;
         clip-path: polygon(0 0, 80% 0, 70% 75%, 0 0.25rem, 0 0);
@@ -553,7 +537,7 @@ body.mobile {
       &.delayed {
         .msg-wrapper {
           &::before {
-            background-color: #f4f4f4;
+            background-color: $bg-incoming;
           }
         }
 
@@ -577,14 +561,12 @@ body.mobile {
     margin: 0;
 
     .msg-wrapper {
-      $bg-color: $theme-secondary-v9;
-
-      background: $bg-color;
+      background: $bg-outgoing;
       align-self: flex-end;
       box-shadow: 0 0.0625rem 0 $theme-secondary-v8;
 
       &::before {
-        background-color: $bg-color;
+        background-color: $bg-outgoing;
         top: 0;
         right: -$msg-radius + 0.5rem;
         clip-path: polygon(20% 0, 100% 0, 100% 0.25rem, 30% 75%, 0 0);
@@ -627,7 +609,7 @@ body.mobile {
       &.delayed {
         .msg-wrapper {
           &::before {
-            background-color: $theme-secondary-v9;
+            background-color: $bg-outgoing;
           }
         }
 

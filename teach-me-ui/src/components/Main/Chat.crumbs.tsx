@@ -317,7 +317,7 @@ export const ChatDate = ({
 
 let stickyNewMessageBar: HTMLElement | null;
 let relativeNewMessageBar: HTMLElement | null;
-let relativeIsVisible = false;
+let relativeIsVisible = true;
 
 export const NewMessageBar = (props: {
   type: 'relative' | 'sticky';
@@ -327,10 +327,12 @@ export const NewMessageBar = (props: {
   className?: string;
 }) => {
   const { convoUnreadCount, scrollView, shouldRender, type, className } = props;
-  
+
   relativeIsVisible = false;
 
   const handleStickyClick = useCallback(() => {
+    if (!scrollView) return;
+
     const Button = (scrollView.querySelector(
       '.new-messages-bar.relative .new-messages-count'
     ) as any)!;
@@ -346,7 +348,7 @@ export const NewMessageBar = (props: {
     addEventListenerOnce(
       scrollView,
       () => {
-        relativeIsVisible = true;
+        relativeIsVisible = !relativeIsVisible;
       },
       'click'
     );
@@ -404,7 +406,6 @@ export const NewMessageBar = (props: {
   }, [scrollView, type, convoUnreadCount]);
 
   if (type === 'sticky' && relativeNewMessageBar) {
-    relativeIsVisible = true;
     return null;
   }
 
@@ -422,7 +423,7 @@ export const NewMessageBar = (props: {
         <Container as='span' className='p-0'>
           {convoUnreadCount} new message{convoUnreadCount > 1 ? 's' : ''}{' '}
         </Container>
-        {!relativeIsVisible && <ArrowUpwardIcon fontSize='small' />}
+        {type === 'sticky' && <ArrowUpwardIcon fontSize='small' />}
       </Button>
     </Container>
   );
