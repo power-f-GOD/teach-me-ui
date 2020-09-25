@@ -32,6 +32,7 @@ import {
   displayModal, 
   dispatch 
 } from '../../../../functions';
+import { Container } from '@material-ui/core';
 
 const CreatePost = (props: any) => {
   const { userData, sendFile, uploadsProp, makePostProp } = props;
@@ -65,7 +66,6 @@ const CreatePost = (props: any) => {
   };
 
   const prev = useRef<HTMLDivElement | any>('');
-  const preUploadedFiles = useRef<HTMLDivElement | any>();
 
   const isImage = (file: File) => {
     return file['type'].split('/')[0] === 'image';
@@ -173,7 +173,6 @@ const CreatePost = (props: any) => {
   
 
   const fileSelectedHandler = (e: ChangeEvent<any>) => {
-    preUploadedFiles.current.style.display = 'none';
     label.current.style.display = 'none';
     label1.current.style.display = 'none';
     let selectedFiles = state.selectedFiles;
@@ -254,7 +253,6 @@ const CreatePost = (props: any) => {
     label1.current.style.display = 'none';
     const tempUploads = state.tempSelectedUploads;
     prev.current.style.display = 'flex';
-    preUploadedFiles.current.style.display = 'none';
     preview(tempUploads, true);
     dispatch(uploads({
       status: 'settled',
@@ -275,7 +273,6 @@ const CreatePost = (props: any) => {
     label.current.style.display = 'none';
     label1.current.style.display = 'none';
     prev.current.style.display = 'flex';
-    preUploadedFiles.current.style.display = 'none';
     dispatch(uploads({
       status: 'settled',
       data: [],
@@ -291,11 +288,9 @@ const CreatePost = (props: any) => {
     document.dispatchEvent(new MouseEvent('click'));
     dispatch(getUploads);
     prev.current.style.display = 'none';
-    preUploadedFiles.current.style.display = 'flex';
   }
 
   const hideUploadedFiles = (e: any) => {
-    preUploadedFiles.current.style.display = 'none';
     dispatch(uploads({
       status: 'settled',
       data: [],
@@ -321,9 +316,9 @@ const CreatePost = (props: any) => {
       </Row>
       <form>
       <Editor onUpdate={onUpdate} />
-      <Dropdown drop='up' style={{display: uploadsProp.status === 'fulfilled' && uploadsProp.data[0] ? 'none' : 'block'}}>
+      <Dropdown drop='up' className={`${uploadsProp.status === 'fulfilled' && uploadsProp.data[0] ? 'display-none' : 'display-block'}`}>
         <Dropdown.Toggle id='dropdown'>
-            <AttachmentIcon style={{cursor: 'pointer'}}/>
+            <AttachmentIcon className='cursor-pointer'/>
         </Dropdown.Toggle>
         <Dropdown.Menu className='drop-menu'>
             <label 
@@ -343,41 +338,42 @@ const CreatePost = (props: any) => {
           multiple={true}
           id='my-input'
           onChange={fileSelectedHandler}
-          style={{ display: 'none' }}
+          className='display-none'
           type={'file'}
         />
         <Row className='d-flex mx-auto mt-1'>
-          <div ref={prev} id='grid-box'>
+          <Container component='div' ref={prev} id='grid-box'>
             
-          </div>
+          </Container>
         </Row>
-        <h4 style={{
-          display: uploadsProp.status === 'fulfilled' && uploadsProp.data[0] ? 'block' : 'none', 
-        }}
-          className='select-header'
-        >Select files</h4>
-          <p
+        <Row as='h4'
+        className={`${uploadsProp.status === 'fulfilled' && uploadsProp.data[0] ? 'display-block' : 'display-none'} select-header`}
+        >Select files</Row>
+        <Container
+          component='p'
           ref={label}
           className='upload-label'>
           files should be maximum of 50mb
-        </p>
-        <p
+        </Container>
+        <Container
+          component='p'
           ref={label1}
           className='upload-label'
           >
           You can upload a maximum of five files
-        </p>
+        </Container>
         <Row className='d-flex mx-auto mt-1'>
-          <div 
+          <Box
+            component='div'
             id='grid-box' 
-            className='scroll-image' 
-            style={{display: 'none'}} ref={preUploadedFiles}
+            className='scroll-image'
+            
           >
             {uploadsProp.status === 'pending' 
-            ? <CircularProgress style={{margin: 'auto', color: 'green'}}/> 
+            ? <CircularProgress className='upload-progress margin-auto'/> 
             : uploadsProp.data[0] 
             ? uploadsProp.data.map((file: any, i: number) => (
-              <div key={i} className='col-4 div-wrapper'>
+              <Container component='div' key={i} className='col-4 div-wrapper'>
                 <img 
                   src={file.url} 
                   className='img' 
@@ -387,14 +383,18 @@ const CreatePost = (props: any) => {
                 <button onClick={toggleSelectPreUpload} type='button' className='check-button'>
                   ✓
                 </button>
-              </div>
+              </Container>
             ))
-            : <p className='no-uploads'>You have no uploads</p>
+            : <Row 
+                as='p' 
+                className={`no-uploads ${uploadsProp.status !== 'settled' ? 'display-block' : 'display-none'}`}
+              >You have no uploads</Row>
             }
-          </div>
+          </Box>
         </Row>
         <Row className='d-flex mx-auto mt-1'>
-          <div style={{display: uploadsProp.status === 'fulfilled' && uploadsProp.data[0] ? 'block' : 'none', width: '100%'}}>
+          <Container component='div' className={`${uploadsProp.status === 'fulfilled' && uploadsProp.data[0] ? 'display-block' : 'display-none'} width-100`}
+          >
           <Button 
             onClick={handleSelectUpload}
             variant='contained'
@@ -408,15 +408,15 @@ const CreatePost = (props: any) => {
             color='secondary'>
               cancel
           </Button>
-          </div>
+          </Container>
           
         </Row>
         <Row className='d-flex mx-auto mt-1'>
           <Button
-            style={{display: uploadsProp.status === 'fulfilled' && uploadsProp.data[0] ? 'none' : 'block'}}
+            className={`${uploadsProp.status === 'fulfilled' && uploadsProp.data[0] ? 'display-none' : 'display-block'} post-button major-button Primary contained p-0 flex-grow-1`}
             onClick={onPostSubmit}
             color={state.post ? 'primary' : 'default'}
-            className='post-button major-button Primary contained p-0 flex-grow-1'>
+          >
             {makePostProp.status === 'pending' ? (
               <CircularProgress size={28} color='inherit' />
             ) : sendFile.status === 'pending' ? (
