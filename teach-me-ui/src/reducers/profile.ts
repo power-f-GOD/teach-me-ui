@@ -28,7 +28,9 @@ import {
   FETCH_COLLEAGUE_REQUESTS_STARTED,
   FETCH_COLLEAGUE_REQUESTS_REJECTED,
   FETCH_COLLEAGUE_REQUESTS_RESOLVED,
-  requestState
+  requestState,
+  FETCHED_COLLEAGUES,
+  FETCHED_COLLEAGUE_REQUESTS
 } from '../constants';
 
 export const profileData = (
@@ -127,6 +129,55 @@ export const unColleagueStatus = (
     case UNCOLLEAGUE_REJECTED:
     case UNCOLLEAGUE_RESOLVED:
     case UNCOLLEAGUE_STARTED:
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
+export const fetchColleaguesStatus = (
+  state: RequestState = requestState,
+  action: ReduxAction
+) => {
+  switch (action.type) {
+    case FETCH_COLLEAGUES_REJECTED:
+    case FETCH_COLLEAGUES_RESOLVED:
+    case FETCH_COLLEAGUES_STARTED:
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
+export const colleagues = (state: Array<any> = [], action: ReduxAction) => {
+  switch (action.type) {
+    case FETCHED_COLLEAGUES:
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
+export const fetchColleagueRequestsStatus = (
+  state: RequestState = requestState,
+  action: ReduxAction
+) => {
+  switch (action.type) {
+    case FETCH_COLLEAGUE_REQUESTS_REJECTED:
+    case FETCH_COLLEAGUE_REQUESTS_RESOLVED:
+    case FETCH_COLLEAGUE_REQUESTS_STARTED:
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
+export const colleagueRequests = (
+  state: Array<any> = [],
+  action: ReduxAction
+) => {
+  switch (action.type) {
+    case FETCHED_COLLEAGUE_REQUESTS:
       return action.payload;
     default:
       return state;

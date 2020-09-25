@@ -14,6 +14,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 import AddColleagueIcon from '@material-ui/icons/PersonAdd';
@@ -144,7 +145,7 @@ const Profile = (props: any) => {
         await dispatch(api.addColleague(data.id, data.username));
         break;
       case 'PENDING_REQUEST':
-        await api.removeColleague(deepData.request_id as string);
+        await dispatch(api.removeColleague(deepData.request_id as string));
         break;
       case 'AWAITING_REQUEST_ACTION':
         if (e.target.id !== 'decline') {
@@ -164,8 +165,8 @@ const Profile = (props: any) => {
         await dispatch(api.unColleague(data.id));
         break;
     }
-    await dispatch(api.fetchDeepProfile(data.id));
     dispatch(getConversations('settled')(dispatch));
+    dispatch(api.fetchDeepProfile(data.id));
     setAcceptWasClicked(false);
     setDeclineWasClicked(false);
   };
@@ -277,7 +278,6 @@ const Profile = (props: any) => {
     //instead of this, you can use a React Skeleton loader; didn't have the time to add, so I deferred.
     return <Loader />;
   }
-
   return (
     <Box className={`Profile ${selfView ? 'self-view' : ''} fade-in pb-3`}>
       <ModalFrame />
@@ -329,7 +329,15 @@ const Profile = (props: any) => {
                     color='primary'
                     disabled={addColleagueStatus.status === 'pending'}
                     onClick={onColleagueActionClick}>
-                    <AddColleagueIcon fontSize='inherit' /> Add Colleague
+                    {addColleagueStatus.status === 'pending' ? (
+                      <Box textAlign='center'>
+                        <CircularProgress size='2rem' />
+                      </Box>
+                    ) : (
+                      <>
+                        <AddColleagueIcon fontSize='inherit' /> Add Colleague
+                      </>
+                    )}
                   </Button>
                 )}
                 {deepProfileData.status === 'PENDING_REQUEST' && (
@@ -340,7 +348,15 @@ const Profile = (props: any) => {
                     color='primary'
                     disabled={removeColleagueStatus.status === 'pending'}
                     onClick={onColleagueActionClick}>
-                    <PendingIcon fontSize='inherit' /> Cancel Request
+                    {removeColleagueStatus.status === 'pending' ? (
+                      <Box textAlign='center'>
+                        <CircularProgress size='2rem' />
+                      </Box>
+                    ) : (
+                      <>
+                        <PendingIcon fontSize='inherit' /> Cancel Request
+                      </>
+                    )}
                   </Button>
                 )}
                 {deepProfileData.status === 'AWAITING_REQUEST_ACTION' && (
@@ -356,7 +372,16 @@ const Profile = (props: any) => {
                         acceptColleagueStatus.status === 'pending'
                       }
                       onClick={onColleagueActionClick}>
-                      <AddColleagueIcon fontSize='inherit' /> Accept Request
+                      {acceptWasClicked &&
+                      acceptColleagueStatus.status === 'pending' ? (
+                        <Box textAlign='center'>
+                          <CircularProgress size='2rem' />
+                        </Box>
+                      ) : (
+                        <>
+                          <AddColleagueIcon fontSize='inherit' /> Accept Request
+                        </>
+                      )}
                     </Button>
                     <Button
                       variant='contained'
@@ -370,7 +395,17 @@ const Profile = (props: any) => {
                           fetchDeepProfileStatus.status === 'pending')
                       }
                       onClick={onColleagueActionClick}>
-                      <RejectIcon fontSize='inherit' /> Decline
+                      {declineWasClicked &&
+                      (declineColleagueStatus.status === 'pending' ||
+                        fetchDeepProfileStatus.status === 'pending') ? (
+                        <Box textAlign='center'>
+                          <CircularProgress size='2rem' />
+                        </Box>
+                      ) : (
+                        <>
+                          <RejectIcon fontSize='inherit' /> Decline
+                        </>
+                      )}
                     </Button>
                   </>
                 )}
@@ -382,7 +417,15 @@ const Profile = (props: any) => {
                     color='primary'
                     disabled={unColleagueStatus.status === 'pending'}
                     onClick={onColleagueActionClick}>
-                    <PendingIcon fontSize='inherit' /> Uncolleague
+                    {unColleagueStatus.status === 'pending' ? (
+                      <Box textAlign='center'>
+                        <CircularProgress size='2rem' />
+                      </Box>
+                    ) : (
+                      <>
+                        <PendingIcon fontSize='inherit' /> Uncolleague
+                      </>
+                    )}
                   </Button>
                 )}
               </>

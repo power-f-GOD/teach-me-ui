@@ -31,14 +31,23 @@ import {
   Reaction,
   ReplyState,
   CREATE_POST,
-  Post
+  Post,
+  GET_TRENDS_RESOLVED,
+  GET_TRENDS_STARTED,
+  GET_TRENDS_REJECTED,
+  GET_RECOMMENDATIONS_STARTED,
+  GET_RECOMMENDATIONS_REJECTED,
+  GET_RECOMMENDATIONS_RESOLVED,
+  FETCHED_RECOMMENDATIONS,
+  RequestState,
+  FETCHED_TRENDS
 } from '../constants';
 
-import { 
-  getState, 
-  callNetworkStatusCheckerFor, 
-  getMentionsFromText, 
-  getHashtagsFromText, 
+import {
+  getState,
+  callNetworkStatusCheckerFor,
+  getMentionsFromText,
+  getHashtagsFromText,
   logError
 } from '../functions';
 
@@ -361,15 +370,17 @@ export const makePost = (payload: any): ReduxAction => {
   return {
     type: MAKE_POST,
     payload
-  }
-}
+  };
+};
 
 export const submitPost = (post: Post, media: Array<string>) => (
   dispatch: Function
 ) => {
-  dispatch(makePost({
-    status: 'pending'
-  }))
+  dispatch(
+    makePost({
+      status: 'pending'
+    })
+  );
   const token = (getState().userData as UserData).token;
   const addPost = (payload: any) => {
     window.scrollTo(0, 0);
@@ -387,7 +398,7 @@ export const submitPost = (post: Post, media: Array<string>) => (
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content_Type': 'application/json'
+      Content_Type: 'application/json'
     },
     data: {
       text: post.text,
@@ -395,13 +406,149 @@ export const submitPost = (post: Post, media: Array<string>) => (
       hashtags: getHashtagsFromText(post.text),
       media
     }
-  }).then(({ data }) => {
-    addPost(data);
-    dispatch(makePost({
-      status: 'fulfilled'
-    }));
-  }).catch(logError(makePost))
+  })
+    .then(({ data }) => {
+      addPost(data);
+      dispatch(
+        makePost({
+          status: 'fulfilled'
+        })
+      );
+    })
+    .catch(logError(makePost));
   return {
     type: SUBMIT_POST
-  }
+  };
+};
+
+export const getTrendsStarted = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: GET_TRENDS_STARTED,
+    payload: { ...payload, status: 'pending' }
+  };
+};
+export const getTrendsResolved = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: GET_TRENDS_RESOLVED,
+    payload: { ...payload, status: 'resolved' }
+  };
+};
+export const getTrendsRejected = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: GET_TRENDS_REJECTED,
+    payload: { ...payload, status: 'rejected' }
+  };
+};
+
+export const fetchedTrends = (payload?: Partial<RequestState>): ReduxAction => {
+  return {
+    type: FETCHED_TRENDS,
+    payload
+  };
+};
+
+export const getTrends = () => (dispatch: Function) => {
+  dispatch(getTrendsStarted());
+  const userData = getState().userData as UserData;
+  const token = userData.token as string;
+  Axios({
+    url: `/hashtag/trending`,
+    baseURL,
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+    .then((res) => {
+      if (res.data.error) {
+        throw new Error(res.data.message);
+      }
+      return res.data;
+    })
+    .then((state) => {
+      dispatch(fetchedTrends(state.hashtags));
+      dispatch(
+        getTrendsResolved({
+          error: false,
+          message: state.message
+        })
+      );
+    })
+    .catch((err) => {
+      dispatch(getTrendsRejected({ error: true, message: err.message }));
+    });
+};
+
+export const getRecommendationsStarted = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: GET_RECOMMENDATIONS_STARTED,
+    payload: { ...payload, status: 'pending' }
+  };
+};
+export const getRecommendationsResolved = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: GET_RECOMMENDATIONS_RESOLVED,
+    payload: { ...payload, status: 'resolved' }
+  };
+};
+export const getRecommendationsRejected = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: GET_RECOMMENDATIONS_REJECTED,
+    payload: { ...payload, status: 'rejected' }
+  };
+};
+
+export const fetchedRecommendations = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: FETCHED_RECOMMENDATIONS,
+    payload
+  };
+};
+
+export const getRecommendations = () => (dispatch: Function) => {
+  dispatch(getRecommendationsStarted());
+  const userData = getState().userData as UserData;
+  const token = userData.token as string;
+  Axios({
+    url: `/people/recommendations`,
+    baseURL,
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+    .then((res) => {
+      if (res.data.error) {
+        throw new Error(res.data.message);
+      }
+      return res.data;
+    })
+    .then((state) => {
+      dispatch(fetchedRecommendations(state.recommendations));
+      dispatch(
+        getRecommendationsResolved({
+          error: false,
+          message: state.message
+        })
+      );
+    })
+    .catch((err) => {
+      dispatch(
+        getRecommendationsRejected({ error: true, message: err.message })
+      );
+    });
 };

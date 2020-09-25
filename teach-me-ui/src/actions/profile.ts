@@ -29,9 +29,11 @@ import {
   FETCH_COLLEAGUES_STARTED,
   FETCH_COLLEAGUES_REJECTED,
   FETCH_COLLEAGUES_RESOLVED,
+  FETCHED_COLLEAGUES,
   FETCH_COLLEAGUE_REQUESTS_STARTED,
   FETCH_COLLEAGUE_REQUESTS_REJECTED,
   FETCH_COLLEAGUE_REQUESTS_RESOLVED,
+  FETCHED_COLLEAGUE_REQUESTS,
   FETCHED_DEEP_PROFILE_DATA
 } from '../constants';
 import { callNetworkStatusCheckerFor, getState, logError } from '../functions';
@@ -130,7 +132,7 @@ export const addColleague = (userId: string, username: string) => (
   const userData = getState().userData as UserData;
   const token = userData.token as string;
   Axios({
-    url: `/colleague/requests`,
+    url: `/colleague/request`,
     baseURL,
     method: 'POST',
     headers: {
@@ -478,6 +480,48 @@ export const fetchColleaguesRejected = (
     payload: { ...payload, status: 'rejected' }
   };
 };
+
+export const fetchedColleagues = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: FETCHED_COLLEAGUES,
+    payload
+  };
+};
+
+export const fetchColleagues = () => (dispatch: Function) => {
+  dispatch(fetchColleaguesStarted());
+  const userData = getState().userData as UserData;
+  const token = userData.token as string;
+  Axios({
+    url: `/colleagues/find`,
+    baseURL,
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+    .then((res) => {
+      if (res.data.error) {
+        throw new Error(res.data.message);
+      }
+      return res.data;
+    })
+    .then((state) => {
+      dispatch(fetchedColleagues(state.colleagues));
+      dispatch(
+        fetchColleaguesResolved({
+          error: false,
+          message: state.message
+        })
+      );
+    })
+    .catch((err) => {
+      dispatch(fetchColleaguesRejected({ error: true, message: err.message }));
+    });
+};
+
 export const fetchColleagueRequestsStarted = (
   payload?: Partial<RequestState>
 ): ReduxAction => {
@@ -501,4 +545,46 @@ export const fetchColleagueRequestsRejected = (
     type: FETCH_COLLEAGUE_REQUESTS_REJECTED,
     payload: { ...payload, status: 'rejected' }
   };
+};
+export const fetchedColleagueRequests = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: FETCHED_COLLEAGUE_REQUESTS,
+    payload
+  };
+};
+
+export const fetchColleagueRequests = () => (dispatch: Function) => {
+  dispatch(fetchColleagueRequestsStarted());
+  const userData = getState().userData as UserData;
+  const token = userData.token as string;
+  Axios({
+    url: `/colleague/requests`,
+    baseURL,
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+    .then((res) => {
+      if (res.data.error) {
+        throw new Error(res.data.message);
+      }
+      return res.data;
+    })
+    .then((state) => {
+      dispatch(fetchedColleagueRequests(state));
+      dispatch(
+        fetchColleagueRequestsResolved({
+          error: false,
+          message: state.message
+        })
+      );
+    })
+    .catch((err) => {
+      dispatch(
+        fetchColleagueRequestsRejected({ error: true, message: err.message })
+      );
+    });
 };
