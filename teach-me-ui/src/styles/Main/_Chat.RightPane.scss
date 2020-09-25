@@ -20,7 +20,7 @@
 
       &::before {
         @include before-or-after(
-          $bg: #ddd,
+          $bg: #eee,
           $zi: 0,
           $h: 22.5rem,
           $w: calc(100% + 3rem),

@@ -113,12 +113,12 @@
   transition: opacity 0.35s;
   transition-delay: 0.275s;
   // visibility: hidden;
-  opacity: 0;
+  opacity: 0 !important;
 }
 
 .show {
   transition: opacity 0.35s;
   transition-delay: 0.275s;
   // visibility: visible;
-  opacity: 1;
+  opacity: 1 !important;
 }
