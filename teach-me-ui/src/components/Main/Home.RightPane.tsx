@@ -1,25 +1,28 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import Container from 'react-bootstrap/Container';
-// import Row from 'react-bootstrap/Row';
-// import Col from 'react-bootstrap/Col';
 
 import Box from '@material-ui/core/Box';
 
 import { TopicPropsState } from '../../constants/interfaces';
 
-import { useGetTrends } from '../../hooks/api';
 import { bigNumberFormat } from '../../functions/utils';
+import { connect } from 'react-redux';
+import { dispatch } from '../../appStore';
+import { getTrends } from '../../actions';
 
-const RightPane: React.FunctionComponent = () => {
-  const [, trends, getTrendsIsLoading] = useGetTrends();
+const RightPane: React.FunctionComponent = (props: any) => {
+  const { trends, getTrendsStatus } = props;
+  useEffect(() => {
+    dispatch(getTrends());
+  }, []);
 
   return (
     <Container fluid className='right-pane'>
       <h4>Trending Hashtags</h4>
-      {!getTrendsIsLoading && trends !== null && (
+      {getTrendsStatus.status !== 'pending' && (
         <ul>
-          {trends.hashtags.map((topic: any, i: number) => (
+          {trends.map((topic: any, i: number) => (
             <Topic
               topic={topic.hashtag}
               key={i}
@@ -28,7 +31,7 @@ const RightPane: React.FunctionComponent = () => {
           ))}
         </ul>
       )}
-      {(trends === null || trends.hashtags.length === 0) && (
+      {trends.length === 0 && (
         <Box
           display='flex'
           justifyContent='center'
@@ -50,4 +53,7 @@ const Topic: React.FunctionComponent<TopicPropsState> = (props) => {
   );
 };
 
-export default RightPane;
+export default connect((state: any) => ({
+  trends: state.trends,
+  getTrendsStatus: state.getTrendsStatus
+}))(RightPane);

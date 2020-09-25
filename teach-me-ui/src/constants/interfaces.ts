@@ -108,6 +108,12 @@ export interface FetchPostsState {
   message?: string;
 }
 
+export interface RequestState {
+  status: 'pending' | 'rejected' | 'resolved';
+  error?: boolean;
+  message?: string;
+}
+
 export interface MakeRepostState extends FetchPostsState {}
 
 export interface TopicPropsState {
@@ -433,7 +439,7 @@ export interface PostEditorState {
 
 export interface UploadState {
   err: boolean;
-  status:  'settled' | 'pending' | 'fulfilled';
+  status: 'settled' | 'pending' | 'fulfilled';
   data: Array<string>;
 }
 
