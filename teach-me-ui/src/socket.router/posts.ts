@@ -42,7 +42,7 @@ export default function post(data: any) {
           dispatch(
             replyToPost({
               status: 'fulfilled',
-              error: false,
+              err: false,
               data
             })
           );
@@ -50,7 +50,7 @@ export default function post(data: any) {
           dispatch(
             replyToPost({
               status: 'fulfilled',
-              error: true,
+              err: true,
               data
             })
           );

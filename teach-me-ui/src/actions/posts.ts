@@ -16,6 +16,8 @@ import {
   FETCHED_MORE_POSTS,
   FETCHED_POST,
   REPLY_TO_POST,
+  MAKE_POST,
+  SUBMIT_POST,
   SEND_REPLY_TO_SERVER,
   PostPropsState,
   ReactPostState,
@@ -28,10 +30,17 @@ import {
   RepostResult,
   Reaction,
   ReplyState,
-  CREATE_POST
+  CREATE_POST,
+  Post
 } from '../constants';
 
-import { getState, callNetworkStatusCheckerFor } from '../functions';
+import { 
+  getState, 
+  callNetworkStatusCheckerFor, 
+  getMentionsFromText, 
+  getHashtagsFromText, 
+  logError
+} from '../functions';
 
 import Axios from 'axios';
 
@@ -346,4 +355,53 @@ const fetchPostRejected = (payload?: Partial<FetchPostsState>): ReduxAction => {
     type: FETCH_A_POST_REJECTED,
     payload: { ...payload, status: 'rejected' }
   };
+};
+
+export const makePost = (payload: any): ReduxAction => {
+  return {
+    type: MAKE_POST,
+    payload
+  }
+}
+
+export const submitPost = (post: Post, media: Array<string>) => (
+  dispatch: Function
+) => {
+  dispatch(makePost({
+    status: 'pending'
+  }))
+  const token = (getState().userData as UserData).token;
+  const addPost = (payload: any) => {
+    window.scrollTo(0, 0);
+    dispatch(createPost(payload));
+  };
+
+  callNetworkStatusCheckerFor({
+    name: 'replyToPost',
+    func: replyToPost
+  });
+
+  Axios({
+    url: `post/make`,
+    baseURL,
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content_Type': 'application/json'
+    },
+    data: {
+      text: post.text,
+      mentions: getMentionsFromText(post.text),
+      hashtags: getHashtagsFromText(post.text),
+      media
+    }
+  }).then(({ data }) => {
+    addPost(data);
+    dispatch(makePost({
+      status: 'fulfilled'
+    }));
+  }).catch(logError(makePost))
+  return {
+    type: SUBMIT_POST
+  }
 };
