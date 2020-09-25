@@ -54,12 +54,6 @@
 
 @media screen and (max-width: 991px) {
   .ChatBox {
-    .chat-left-pane,
-    .chat-middle-pane,
-    .chat-right-pane {
-      transition-delay: 0.275s !important;
-    }
-
     .chat-right-pane,
     .chat-left-pane {
       position: fixed;
@@ -72,26 +66,26 @@
     }
 
     .chat-left-pane {
-      transform: translateX(-100%);
-      transition: opacity 0.35s,
-        transform 0.3s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+      opacity: 0;
+      transform: translateY(10rem);
+      transition: opacity 0.2s, transform 0.35s;
 
       &.active-pane {
-        transition: transform 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
-        transform: translateX(0);
+        opacity: 1;
+        transform: translateY(0);
       }
     }
 
     .chat-middle-pane {
       width: 100vw;
-      opacity: 0.35;
+      opacity: 0;
       max-width: unset;
-      transform: scale(0.9);
-      transition: opacity 0.5s, transform 0.5s;
+      transform: translateY(-10rem);
+      transition: opacity 0.2s, transform 0.35s;
 
       &.active-pane {
         opacity: 1;
-        transform: scale(1);
+        transform: translateY(0);
       }
 
       .conversation-name-wrapper {
@@ -120,7 +114,7 @@
       opacity: 0;
       animation: unset;
       transform: scale(4);
-      transition: opacity 0.35s, transform 0.35s;
+      transition: opacity 0.3s, transform 0.4s;
 
       &.active-pane {
         opacity: 1;
@@ -365,7 +359,7 @@
   //chat box style(s)
   .ChatBox {
     .msg-wrapper {
-      max-width: 82.5%;
+      max-width: 85%;
       font-size: 0.95rem;
     }
   }
@@ -410,6 +404,10 @@
   (-moz-min-device-pixel-ratio: 2) {
   #chat-date-sticky {
     top: calc(-1rem + 5px);
+  }
+
+  .new-messages-bar {
+    top: -0.95rem;
   }
 }
 

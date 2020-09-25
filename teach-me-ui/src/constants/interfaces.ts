@@ -357,6 +357,7 @@ export interface APIConversationResponse {
   friendship: string;
   online_status: OnlineStatus;
   last_seen: number;
+  last_read: number;
   conversation_name: string;
   associated_username: string;
   associated_user_id: string;

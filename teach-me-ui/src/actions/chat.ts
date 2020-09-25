@@ -142,17 +142,12 @@ export const conversations = (_payload: SearchState): ReduxAction => {
     last_seen,
     unread_count,
     user_typing,
-    _id: convoId
+    _id: convoId,
+    last_read
   } = (payload.data ?? [])[0] ?? {};
-  const message = (payload.data ?? [])[0] ?? ({} as APIMessageResponse);
-  const [
-    initialConversations,
-    _conversationInfo,
-    conversationMessages,
-    userData
-  ] = [
+  const message = ((payload.data ?? [])[0] ?? {}) as APIMessageResponse;
+  const [initialConversations, conversationMessages, userData] = [
     (getState().conversations.data ?? []) as Partial<APIConversationResponse>[],
-    getState().conversationInfo as ConversationInfo,
     getState().conversationMessages.data as ConversationMessages['data'],
     getState().userData as UserData
   ];
@@ -214,13 +209,11 @@ export const conversations = (_payload: SearchState): ReduxAction => {
                   ? [...delivered_to]
                   : [delivered_to]
                 : draft.delivered_to;
-
               draft.seen_by = seen_by
                 ? Array.isArray(seen_by)
                   ? [...seen_by]
                   : [seen_by]
                 : draft.seen_by;
-
               draft.deleted = deleted !== undefined ? deleted : false;
             }
           ) as unknown) as APIMessageResponse;
@@ -236,18 +229,24 @@ export const conversations = (_payload: SearchState): ReduxAction => {
             initialConversations.splice(indexOfInitial, 1);
             initialConversations.unshift(actualConvo);
           } else {
-            const [id, convoId] = [
-              queryString.parse(window.location.search)?.id,
-              _conversationInfo.data?.id
-            ];
-
             if (
               actualConvo.last_message?._id === message._id &&
-              pipe === CHAT_MESSAGE_DELETED_FOR
+              /message_deleted/i.test(pipe)
             ) {
-              if (convoId === id && convoId) {
-                const last_message = conversationMessages?.slice(-2)[0];
-                actualConvo.last_message = last_message as any;
+              switch (pipe) {
+                case CHAT_MESSAGE_DELETED:
+                  actualConvo.last_message = {
+                    ...actualConvo.last_message,
+                    deleted: true
+                  } as any;
+                  break;
+                case CHAT_MESSAGE_DELETED_FOR:
+                  if (convoId === message.conversation_id) {
+                    actualConvo.last_message = {
+                      ...conversationMessages?.slice(-2)[0]
+                    } as any;
+                  }
+                  break;
               }
             } else if (pipe === CHAT_TYPING) {
               actualConvo.user_typing = user_typing;
@@ -283,21 +282,31 @@ export const conversations = (_payload: SearchState): ReduxAction => {
       }
     } else if (!initialConversations.length || _payload.data.length > 1) {
       payload.data = [..._payload.data];
-    } else if (unread_count !== undefined && !payload?.status) {
+    } else if (!payload?.status) {
       actualConvo = initialConversations?.find((conversation, i) => {
         if (convoId === conversation._id) {
           indexOfInitial = i;
           return true;
         }
+
         return false;
       });
+
       if (actualConvo) {
-        actualConvo.unread_count = unread_count;
-        initialConversations[indexOfInitial] = actualConvo as Partial<
+        if (last_read) {
+          actualConvo.last_read = last_read;
+        }
+
+        if (!isNaN(unread_count)) {
+          actualConvo.unread_count = unread_count;
+        }
+
+        initialConversations[indexOfInitial] = { ...actualConvo } as Partial<
           APIConversationResponse
         >;
-        payload.data = initialConversations;
       }
+
+      payload.data = initialConversations;
     }
   }
 
@@ -497,6 +506,12 @@ export const getConversationMessages = (
                         pipe: CHAT_READ_RECEIPT
                       })
                     );
+                    //update last_read state var (to avoid bugs)
+                    dispatch(
+                      conversations({
+                        data: [{ _id: convoId, last_read: message.date }]
+                      })
+                    );
                   }
                 }
               }
@@ -655,11 +670,31 @@ export const conversationMessages = (payload: ConversationMessages) => {
   };
 };
 
-export const conversation = (conversationId: string): ReduxAction => {
-  const payload = (getState().conversations.data?.find(
+export const conversation = (
+  conversationId: string,
+  data?: Partial<APIConversationResponse>,
+  shouldUpdateAll?: boolean
+): ReduxAction => {
+  let payload: APIConversationResponse;
+  let dataFromConvos = (getState().conversations.data?.find(
     (conversation: APIConversationResponse) =>
       conversationId === conversation?._id
   ) ?? {}) as APIConversationResponse;
+  let dataFromConvo = getState().conversation as APIConversationResponse;
+
+  if (!data) {
+    payload = { ...dataFromConvos };
+  } else {
+    if (shouldUpdateAll) {
+      payload = { ...dataFromConvos, ...data };
+    } else {
+      if (conversationId === dataFromConvo._id) {
+        payload = { ...dataFromConvos, ...dataFromConvo, ...data };
+      } else {
+        payload = { ...dataFromConvos, ...data };
+      }
+    }
+  }
 
   payload.avatar = payload.avatar ? payload.avatar : 'avatar-1.png';
 
