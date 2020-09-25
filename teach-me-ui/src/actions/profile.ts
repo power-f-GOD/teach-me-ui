@@ -1,24 +1,41 @@
-import axios from 'axios';
+import Axios from 'axios';
 
 import {
   ReduxAction,
-  BasicInputState,
   SearchState,
   UserData,
-  // REQUEST_ADD_COLLEAGUE,
   GET_PROFILE_DATA,
   PROFILE_DATA,
-  ADD_COLLEAGUE,
-  apiBaseURL as baseURL
+  apiBaseURL as baseURL,
+  RequestState,
+  ADD_COLLEAGUE_STARTED,
+  ADD_COLLEAGUE_RESOLVED,
+  ADD_COLLEAGUE_REJECTED,
+  FETCH_DEEP_PROFILE_STARTED,
+  FETCH_DEEP_PROFILE_REJECTED,
+  FETCH_DEEP_PROFILE_RESOLVED,
+  REMOVE_COLLEAGUE_STARTED,
+  REMOVE_COLLEAGUE_REJECTED,
+  REMOVE_COLLEAGUE_RESOLVED,
+  ACCEPT_COLLEAGUE_STARTED,
+  ACCEPT_COLLEAGUE_REJECTED,
+  ACCEPT_COLLEAGUE_RESOLVED,
+  DECLINE_COLLEAGUE_STARTED,
+  DECLINE_COLLEAGUE_REJECTED,
+  DECLINE_COLLEAGUE_RESOLVED,
+  UNCOLLEAGUE_STARTED,
+  UNCOLLEAGUE_REJECTED,
+  UNCOLLEAGUE_RESOLVED,
+  FETCH_COLLEAGUES_STARTED,
+  FETCH_COLLEAGUES_REJECTED,
+  FETCH_COLLEAGUES_RESOLVED,
+  FETCH_COLLEAGUE_REQUESTS_STARTED,
+  FETCH_COLLEAGUE_REQUESTS_REJECTED,
+  FETCH_COLLEAGUE_REQUESTS_RESOLVED,
+  FETCHED_DEEP_PROFILE_DATA
 } from '../constants';
-import { callNetworkStatusCheckerFor, logError } from '../functions';
-
-export const addColleague = (payload: BasicInputState): ReduxAction => {
-  return {
-    type: ADD_COLLEAGUE,
-    payload
-  };
-};
+import { callNetworkStatusCheckerFor, getState, logError } from '../functions';
+import { pingUser } from './notifications';
 
 export const profileData = (payload: SearchState): ReduxAction => {
   return {
@@ -36,7 +53,7 @@ export const getProfileData = (userId: string) => (
   });
   dispatch(profileData({ status: 'pending' }));
 
-  axios({
+  Axios({
     url: `/profile/${userId}`,
     baseURL,
     method: 'GET'
@@ -78,5 +95,410 @@ export const getProfileData = (userId: string) => (
   return {
     type: GET_PROFILE_DATA,
     newState: userId
+  };
+};
+
+export const addColleagueStarted = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: ADD_COLLEAGUE_STARTED,
+    payload: { ...payload, status: 'pending' }
+  };
+};
+export const addColleagueResolved = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: ADD_COLLEAGUE_RESOLVED,
+    payload: { ...payload, status: 'resolved' }
+  };
+};
+export const addColleagueRejected = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: ADD_COLLEAGUE_REJECTED,
+    payload: { ...payload, status: 'rejected' }
+  };
+};
+
+export const addColleague = (userId: string, username: string) => (
+  dispatch: Function
+) => {
+  dispatch(addColleagueStarted());
+  const userData = getState().userData as UserData;
+  const token = userData.token as string;
+  Axios({
+    url: `/colleague/requests`,
+    baseURL,
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    data: { colleague: userId }
+  })
+    .then((res) => {
+      if (res.data.error) {
+        throw new Error(res.data.message);
+      }
+      return res.data;
+    })
+    .then((state) => {
+      dispatch(
+        addColleagueResolved({
+          error: false,
+          message: state.message
+        })
+      );
+      pingUser([`${username}`]);
+    })
+    .catch((err) => {
+      dispatch(addColleagueRejected({ error: true, message: err.message }));
+    });
+};
+
+export const fetchDeepProfileStarted = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: FETCH_DEEP_PROFILE_STARTED,
+    payload: { ...payload, status: 'pending' }
+  };
+};
+export const fetchDeepProfileResolved = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: FETCH_DEEP_PROFILE_RESOLVED,
+    payload: { ...payload, status: 'resolved' }
+  };
+};
+export const fetchDeepProfileRejected = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: FETCH_DEEP_PROFILE_REJECTED,
+    payload: { ...payload, status: 'rejected' }
+  };
+};
+
+export const fetchedDeepProfileData = (payload: any): ReduxAction => {
+  return {
+    type: FETCHED_DEEP_PROFILE_DATA,
+    payload
+  };
+};
+
+export const fetchDeepProfile = (id: string) => (dispatch: Function) => {
+  dispatch(fetchDeepProfileStarted());
+  const userData = getState().userData as UserData;
+  const token = userData.token as string;
+  Axios({
+    url: `/deep/profile/${id}`,
+    baseURL,
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    data: { colleague: id }
+  })
+    .then((res) => {
+      if (res.data.error) {
+        throw new Error(res.data.message);
+      }
+      return res.data;
+    })
+    .then((state) => {
+      dispatch(fetchedDeepProfileData(state));
+      dispatch(
+        fetchDeepProfileResolved({
+          error: false,
+          message: state.message
+        })
+      );
+    })
+    .catch((err) => {
+      dispatch(fetchDeepProfileRejected({ error: true, message: err.message }));
+    });
+};
+
+export const removeColleagueStarted = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: REMOVE_COLLEAGUE_STARTED,
+    payload: { ...payload, status: 'pending' }
+  };
+};
+export const removeColleagueResolved = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: REMOVE_COLLEAGUE_RESOLVED,
+    payload: { ...payload, status: 'resolved' }
+  };
+};
+export const removeColleagueRejected = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: REMOVE_COLLEAGUE_REJECTED,
+    payload: { ...payload, status: 'rejected' }
+  };
+};
+
+export const removeColleague = (id: string) => (dispatch: Function) => {
+  dispatch(removeColleagueStarted());
+  const userData = getState().userData as UserData;
+  const token = userData.token as string;
+  Axios({
+    url: `/colleague/request/remove`,
+    baseURL,
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    data: { request_id: id }
+  })
+    .then((res) => {
+      if (res.data.error) {
+        throw new Error(res.data.message);
+      }
+      return res.data;
+    })
+    .then((state) => {
+      dispatch(
+        removeColleagueResolved({
+          error: false,
+          message: state.message
+        })
+      );
+    })
+    .catch((err) => {
+      dispatch(removeColleagueRejected({ error: true, message: err.message }));
+    });
+};
+
+export const acceptColleagueStarted = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: ACCEPT_COLLEAGUE_STARTED,
+    payload: { ...payload, status: 'pending' }
+  };
+};
+export const acceptColleagueResolved = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: ACCEPT_COLLEAGUE_RESOLVED,
+    payload: { ...payload, status: 'resolved' }
+  };
+};
+export const acceptColleagueRejected = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: ACCEPT_COLLEAGUE_REJECTED,
+    payload: { ...payload, status: 'rejected' }
+  };
+};
+
+export const acceptColleague = (id: string, username: string) => (
+  dispatch: Function
+) => {
+  dispatch(acceptColleagueStarted());
+  const userData = getState().userData as UserData;
+  const token = userData.token as string;
+  Axios({
+    url: `/colleague/request/accept`,
+    baseURL,
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    data: { request_id: id }
+  })
+    .then((res) => {
+      if (res.data.error) {
+        throw new Error(res.data.message);
+      }
+      return res.data;
+    })
+    .then((state) => {
+      dispatch(
+        acceptColleagueResolved({
+          error: false,
+          message: state.message
+        })
+      );
+      pingUser([`${username}`], { type: 'NEW_CONVERSATION' });
+    })
+    .catch((err) => {
+      dispatch(acceptColleagueRejected({ error: true, message: err.message }));
+    });
+};
+
+export const declineColleagueStarted = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: DECLINE_COLLEAGUE_STARTED,
+    payload: { ...payload, status: 'pending' }
+  };
+};
+export const declineColleagueResolved = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: DECLINE_COLLEAGUE_RESOLVED,
+    payload: { ...payload, status: 'resolved' }
+  };
+};
+export const declineColleagueRejected = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: DECLINE_COLLEAGUE_REJECTED,
+    payload: { ...payload, status: 'rejected' }
+  };
+};
+
+export const declineColleague = (id: string) => (dispatch: Function) => {
+  dispatch(declineColleagueStarted());
+  const userData = getState().userData as UserData;
+  const token = userData.token as string;
+  Axios({
+    url: `/colleague/request/decline`,
+    baseURL,
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    data: { request_id: id }
+  })
+    .then((res) => {
+      if (res.data.error) {
+        throw new Error(res.data.message);
+      }
+      return res.data;
+    })
+    .then((state) => {
+      dispatch(
+        declineColleagueResolved({
+          error: false,
+          message: state.message
+        })
+      );
+    })
+    .catch((err) => {
+      dispatch(declineColleagueRejected({ error: true, message: err.message }));
+    });
+};
+
+export const unColleagueStarted = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: UNCOLLEAGUE_STARTED,
+    payload: { ...payload, status: 'pending' }
+  };
+};
+export const unColleagueResolved = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: UNCOLLEAGUE_RESOLVED,
+    payload: { ...payload, status: 'resolved' }
+  };
+};
+export const unColleagueRejected = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: UNCOLLEAGUE_REJECTED,
+    payload: { ...payload, status: 'rejected' }
+  };
+};
+
+export const unColleague = (id: string) => (dispatch: Function) => {
+  dispatch(unColleagueStarted());
+  const userData = getState().userData as UserData;
+  const token = userData.token as string;
+  Axios({
+    url: `/uncolleague`,
+    baseURL,
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    data: { colleague: id }
+  })
+    .then((res) => {
+      if (res.data.error) {
+        throw new Error(res.data.message);
+      }
+      return res.data;
+    })
+    .then((state) => {
+      dispatch(
+        unColleagueResolved({
+          error: false,
+          message: state.message
+        })
+      );
+    })
+    .catch((err) => {
+      dispatch(unColleagueRejected({ error: true, message: err.message }));
+    });
+};
+
+export const fetchColleaguesStarted = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: FETCH_COLLEAGUES_STARTED,
+    payload: { ...payload, status: 'pending' }
+  };
+};
+export const fetchColleaguesResolved = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: FETCH_COLLEAGUES_RESOLVED,
+    payload: { ...payload, status: 'resolved' }
+  };
+};
+export const fetchColleaguesRejected = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: FETCH_COLLEAGUES_REJECTED,
+    payload: { ...payload, status: 'rejected' }
+  };
+};
+export const fetchColleagueRequestsStarted = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: FETCH_COLLEAGUE_REQUESTS_STARTED,
+    payload: { ...payload, status: 'pending' }
+  };
+};
+export const fetchColleagueRequestsResolved = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: FETCH_COLLEAGUE_REQUESTS_RESOLVED,
+    payload: { ...payload, status: 'resolved' }
+  };
+};
+export const fetchColleagueRequestsRejected = (
+  payload?: Partial<RequestState>
+): ReduxAction => {
+  return {
+    type: FETCH_COLLEAGUE_REQUESTS_REJECTED,
+    payload: { ...payload, status: 'rejected' }
   };
 };
