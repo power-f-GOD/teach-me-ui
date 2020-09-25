@@ -357,6 +357,7 @@ export interface APIConversationResponse {
   friendship: string;
   online_status: OnlineStatus;
   last_seen: number;
+  last_read: number;
   conversation_name: string;
   associated_username: string;
   associated_user_id: string;
@@ -419,7 +420,7 @@ export interface ReplyResult extends ReplyProps {
 }
 
 export interface ReplyState {
-  error?: boolean;
+  err?: boolean;
   data?: ReplyResult;
   status: 'settled' | 'pending' | 'fulfilled';
 }
@@ -431,7 +432,7 @@ export interface PostEditorState {
 }
 
 export interface UploadState {
-  error: boolean;
+  err: boolean;
   status:  'settled' | 'pending' | 'fulfilled';
   data: Array<string>;
 }
@@ -440,4 +441,8 @@ export interface EditProfileState {
   err?: boolean;
   status:  'settled' | 'pending' | 'fulfilled';
   data?: Object;
+}
+
+export interface MakePostState {
+  status: 'settled' | 'pending' | 'fulfilled';
 }

@@ -9,12 +9,21 @@ import CloseIcon from '@material-ui/icons/Close';
 
 import { connect } from 'react-redux';
 
-import { displayModal } from '../../../functions';
+import { 
+  displayModal,
+  dispatch 
+} from '../../../functions';
+import { uploads } from '../../../actions';
 import CreatePost from './components/CreatePost';
 import CreateRepost from './components/CreateRepost';
 
 const removeModal = (event: any) => {
   displayModal(false);
+  dispatch(uploads({
+    status: 'settled',
+    err: false,
+    data: []
+  }))
 };
 
 const ModalFrame = (props: any) => {

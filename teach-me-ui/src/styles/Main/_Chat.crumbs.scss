@@ -4,7 +4,7 @@
   width: auto;
   float: right;
   line-height: 260%;
-  color: $theme-tertiary-v5;
+  color: rgba($tert-r - 100, $tert-g - 100, $tert-b - 100, 0.6);
   font-style: normal;
   margin: {
     right: -0.45rem;
@@ -33,8 +33,10 @@
     @include before-or-after(
       $h: 0.0625rem,
       $t: calc(40% - 0.0625rem),
+      $w: calc(100% + 1.25rem),
+      $l: -0.75rem,
       $br: 0.25rem,
-      $bg: #eee,
+      $bg: $theme-tertiary-v9,
       $zi: unset
     );
   }
@@ -49,7 +51,12 @@
   min-height: unset;
 
   &.hide {
-    transition-delay: unset;
+    opacity: 1;
+
+    .chat-date {
+      transition-delay: unset;
+      transform: translateY(-3rem);
+    }
   }
 
   &.show {
@@ -63,46 +70,91 @@
 
 .new-messages-bar {
   text-align: center;
-  margin: 1.75rem -0.75rem;
-  animation: scaleY 0.8s ease 0.8s;
+  height: 0;
+  min-height: 0;
+  margin: {
+    top: 1.5rem;
+    bottom: 4rem;
+    left: -0.5rem;
+  }
+  max-width: unset !important;
+  width: calc(100% + 1.25rem);
+  left: -0.5rem;
+  z-index: 3;
+  top: -0.45rem;
+  opacity: 0;
+  position: sticky;
+  animation: scaleY 0.35s forwards ease 1.15s;
+  transition: 0.35s;
 
-  &::before {
-    background-color: $theme-tertiary-v2;
-    height: 0.25rem;
+  &.sticky {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
   }
 
-  @keyframes scaleY {
-    from {
-      transform: scaleY(0);
+  &::before {
+    background-color: rgba(0, 0, 0, 0.35);
+    border: {
+      right: none;
+      left: none;
     }
-    to {
-      transform: scaleY(1);
-    }
+    height: 2.75rem;
+    border-radius: 0.25rem 0.25rem 0.75rem 0.75rem;
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.2);
+  }
+}
+
+@keyframes scaleY {
+  from {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
   }
 }
 
 .chat-date,
-.new-messages-count {
-  background: white;
-  padding: 0.25rem 1rem;
+button.new-messages-count {
+  background: #fff;
+  padding: 0.25rem 0.75rem;
   border-radius: 2rem;
   position: relative;
   z-index: 1;
   font-size: 0.85rem;
   text-transform: capitalize;
-  color: $theme-tertiary-v2;
-  border: 0.0625rem solid $theme-tertiary-v8;
+  color: $theme-tertiary-v1;
+  border: 0.0625rem solid $theme-tertiary-v7;
+  box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.15) !important;
   user-select: none;
+  transition: transform 0.4s ease 0.5s;
 }
 
-.new-messages-count {
-  background-color: $theme-tertiary-v2;
+button.new-messages-count {
+  background-color: $theme-primary-v6 !important;
   color: white;
-  font-size: inherit;
+  font-size: 0.9rem;
   border: none;
+  box-shadow: none !important;
   text-transform: unset;
-  padding: 0.5rem 1.25rem;
-  margin-top: -0.1rem;
+  min-height: unset;
+  min-width: 15rem;
+  justify-content: space-evenly !important;
+  padding: 0.4rem 1rem;
+  position: relative;
+  top: 0.125rem;
+
+  &:disabled {
+    background-color: $theme-primary-v6 !important;
+    color: white !important;
+  }
+
+  &.hide-icon {
+    [class*=Icon] {
+      display: none;
+    }
+  }
 }
 
 @keyframes fromTop {

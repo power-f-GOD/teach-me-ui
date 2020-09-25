@@ -52,7 +52,8 @@ const Notifications = (props: any) => {
                   <React.Fragment key={i}>
                     <Skeleton width={300} className='skeleton-loader notifications-skeleton'/><br/>
                     <Skeleton width={250} className='skeleton-loader notifications-skeleton'/><br/>
-                    <Skeleton width={70} className='skeleton-loader notifications-skeleton'/><br style={{display: i !== 5 ? 'block' : 'none'}}/><br style={{display: i !== 5 ? 'block' : 'none'}}/>
+                    <Skeleton width={70} className='skeleton-loader notifications-skeleton'/><br className={`${ i !== 5 ? 'display-block' : 'display-none'}`}/>
+                    <br className={`${ i !== 5 ? 'display-block' : 'display-none'}`}/>
                   </React.Fragment>
                 ))}
               </Box>
@@ -73,16 +74,14 @@ const Notifications = (props: any) => {
                       notification.last_seen && makeReadTrue();
                       const action = notification.action || '';
                       const date = new Date(notification.date);
-                      const dateColor = read ? '#888' : 'rgb(0, 115, 160)';
-                      const textColor = read ? '#888' : '#000';
                       const notificationDate = formatDate(date);
-                      const notificationMessage = `<div style="color: ${textColor}">${formatNotification(entities,notification.message)}
-                        <p style="margin: 0 ; padding: 0; border: 0;color: ${dateColor}">${notificationDate}</p></div>`;
+                      const notificationMessage = `<div class="${read ? 'read-notifications' : 'unread-notifications'}">${formatNotification(entities,notification.message)}
+                        <p class="no-space ${read ? 'read-notifications-date' : 'unread-notifications-date'}">${notificationDate}</p></div>`;
                     
                       return (
-                        <Link to={`${action}`} style={{textDecoration: 'none'}} key={key}> 
-                          <ListItem key={key} className='notification-result' style={{backgroundColor: read ? '#fff' : '#ddd'}}>
-                            <div style={{ color: 'black' }} className='d-flex'>
+                        <Link to={`${action}`} className='textdecoration-none' key={key}> 
+                          <ListItem key={key} className={`notification-result ${ read ? 'notification-background-read' : 'notification-background-unread'}`}>
+                            <div className='d-flex color-black'>
                               <Avatar
                                 component='span'
                                 className='profile-avatar-x profile-photo'
@@ -90,8 +89,7 @@ const Notifications = (props: any) => {
                               />
 
                               <div
-                                className=''
-                                style={{ paddingLeft: '0.4em' }}
+                                className='padding-left-0.4'
                                 dangerouslySetInnerHTML={{
                                   __html: notificationMessage
                                 }}></div>

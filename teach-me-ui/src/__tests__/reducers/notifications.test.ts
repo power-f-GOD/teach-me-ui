@@ -4,8 +4,7 @@ import {
   ReduxAction,
   NotificationState,
   notificationState,
-  GET_NOTIFICATIONS,
-  GET_NOTIFICATIONS_REQUEST
+  GET_NOTIFICATIONS
 } from '../../constants';
 import { getNotifications } from '../../reducers/notifications';
 
@@ -31,13 +30,7 @@ it("notifications reducers should be called with 'state' and 'action' params and
     getNotifications(state, action)
   );
 
-  const getNotificationsRequestAction: ReduxAction = {
-    type: GET_NOTIFICATIONS_REQUEST,
-    newState: expect.any(Number)
-  };
-
-
-  getNotificationsMockFunc(notificationState, getNotificationsRequestAction);
-  expect(getNotificationsMockFunc).toHaveBeenCalledWith(notificationState, getNotificationsRequestAction);
-  expect(getNotifications(notificationState, getNotificationsRequestAction)).toMatchObject(mockNotificationState);
+  getNotificationsMockFunc(notificationState, getNotificationsAction);
+  expect(getNotificationsMockFunc).toHaveBeenCalledWith(notificationState, getNotificationsAction);
+  expect(getNotifications(notificationState, getNotificationsAction)).toMatchObject(mockNotificationState);
 });

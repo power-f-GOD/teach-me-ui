@@ -1,6 +1,6 @@
 @import '../constants';
 
-$chat-text-color: #333;
+$chat-text-color: $theme-tertiary-v1;
 $chat-header-min-height: 3.75rem;
 
 .ChatBox {
@@ -170,7 +170,7 @@ body,
   }
 
   &.close {
-    transform: scale(0.925);
+    transform: scale(0.9);
     opacity: 0;
   }
 
@@ -184,17 +184,16 @@ body,
 }
 
 .ChatBox header {
-  box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 1.75rem rgba(0, 0, 0, 0.2);
 }
 
 header.chat-header {
   position: relative;
   font-weight: bold;
-  z-index: 3;
+  z-index: 4;
   background-color: white;
   min-height: $chat-header-min-height;
   max-height: $chat-header-min-height;
-
   // @include debugger();
 }
 

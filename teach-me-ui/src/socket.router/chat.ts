@@ -1,6 +1,10 @@
 import queryString from 'query-string';
 
-import { APIMessageResponse, UserData } from '../constants/interfaces';
+import {
+  APIMessageResponse,
+  UserData,
+  APIConversationResponse
+} from '../constants/interfaces';
 import { getState, dispatch } from '../functions/utils';
 import {
   CHAT_NEW_MESSAGE,
@@ -13,15 +17,21 @@ import {
 import {
   conversationMessages,
   conversationInfo,
-  conversations
+  conversations,
+  conversation
 } from '../actions/chat';
 
 let userTypingTimeout: any = null;
 let conversationTypingTimeouts: any = {};
 
 export default function chat(message: APIMessageResponse & UserData) {
-  const { webSocket: socket, userData, conversation } = getState();
-  const { _id: convoId } = conversation ?? {};
+  const {
+    webSocket: socket,
+    userData,
+    conversation: _conversation
+  } = getState();
+  const { _id: convoId, unread_count } =
+    _conversation ?? ({} as APIConversationResponse);
   const { cid, chat } = queryString.parse(window.location.search) ?? {};
   const [isOpen, isMinimized] = [!!chat, chat === 'min'];
 
@@ -38,35 +48,82 @@ export default function chat(message: APIMessageResponse & UserData) {
     } = message;
 
     //if state to be removed when typing is added and handled
-    if (pipe !== CHAT_TYPING)
+    if (pipe !== CHAT_TYPING) {
       dispatch(conversations({ data: [{ ...message }] }));
+    }
 
     switch (pipe) {
       case CHAT_NEW_MESSAGE:
-        if (sender_id !== userData.id && socket.readyState === 1) {
-          if (delivered_to && !delivered_to!?.includes(userData.id)) {
-            socket.send(
-              JSON.stringify({
-                message_id: _id,
-                pipe: CHAT_MESSAGE_DELIVERED
-              })
-            );
-          }
+        if (socket.readyState === 1) {
+          const type = sender_id !== userData.id ? 'incoming' : 'outgoing';
 
-          if (
-            userData.online_status === 'ONLINE' &&
-            isOpen &&
-            !isMinimized &&
-            cid === conversation_id &&
-            seen_by &&
-            !seen_by!?.includes(userData.id)
-          ) {
-            socket.send(
-              JSON.stringify({
-                message_id: message._id,
-                pipe: CHAT_READ_RECEIPT
-              })
-            );
+          if (type === 'incoming') {
+            if (delivered_to && !delivered_to!?.includes(userData.id)) {
+              socket.send(
+                JSON.stringify({
+                  message_id: _id,
+                  pipe: CHAT_MESSAGE_DELIVERED
+                })
+              );
+            }
+
+            if (
+              userData.online_status === 'ONLINE' &&
+              isOpen &&
+              !isMinimized &&
+              cid === conversation_id &&
+              seen_by &&
+              !seen_by!?.includes(userData.id)
+            ) {
+              socket.send(
+                JSON.stringify({
+                  message_id: message._id,
+                  pipe: CHAT_READ_RECEIPT
+                })
+              );
+              //update last_read state var (to avoid bugs)
+              dispatch(
+                conversations({
+                  data: [{ _id: convoId, last_read: message.date }]
+                })
+              );
+            } else {
+              if (convoId === conversation_id && convoId) {
+                dispatch(
+                  conversation(convoId, {
+                    unread_count: unread_count + 1
+                  })
+                );
+
+                dispatch(
+                  conversations({
+                    data: [
+                      {
+                        _id: convoId,
+                        unread_count: unread_count + 1
+                      }
+                    ]
+                  })
+                );
+              }
+            }
+          } else {
+            if (convoId === conversation_id && convoId) {
+              dispatch(
+                conversation(convoId, {
+                  last_read: message.date,
+                  unread_count: 0
+                })
+              );
+
+              dispatch(
+                conversations({
+                  data: [
+                    { _id: convoId, last_read: message.date, unread_count: 0 }
+                  ]
+                })
+              );
+            }
           }
         }
 
@@ -112,7 +169,7 @@ export default function chat(message: APIMessageResponse & UserData) {
           dispatch(conversationInfo({ user_typing: user_id }));
           userTypingTimeout = setTimeout(() => {
             dispatch(conversationInfo({ user_typing: '' }));
-          }, 750);
+          }, 500);
         }
 
         clearTimeout(conversationTypingTimeouts[user_id as string]);
@@ -121,7 +178,7 @@ export default function chat(message: APIMessageResponse & UserData) {
         );
         conversationTypingTimeouts[user_id as string] = setTimeout(() => {
           dispatch(conversations({ data: [{ ...message, user_typing: '' }] }));
-        }, 750);
+        }, 500);
         break;
       case CHAT_MESSAGE_DELETED:
       case CHAT_MESSAGE_DELETED_FOR:
@@ -129,10 +186,7 @@ export default function chat(message: APIMessageResponse & UserData) {
           dispatch(
             conversationMessages({
               statusText: 'from socket',
-              pipe:
-                pipe === CHAT_MESSAGE_DELETED
-                  ? CHAT_MESSAGE_DELETED
-                  : CHAT_MESSAGE_DELETED_FOR,
+              pipe,
               data: [{ deleted: true, _id }]
             })
           );

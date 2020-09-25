@@ -6,7 +6,8 @@ import {
   apiBaseURL as baseURL, 
   SEND_FILES,
   UPLOADS,
-  GET_UPLOADS
+  GET_UPLOADS,
+  Post
 } from '../constants'
 
 export const sendFiles = (payload: any) => {
@@ -23,7 +24,7 @@ export const uploads = (payload: any)=> {
   } 
 }
 
-export const sendFilesToServer = (files: Array<File>, sendPost: Function, displayModal: Function, selectedUploads: Array<any>) => {
+export const sendFilesToServer = (files: Array<File>, action: Function, selectedUploads: Array<any>, post: Post) => {
   dispatch(sendFiles({
     status: 'pending'
   }));
@@ -46,32 +47,29 @@ export const sendFilesToServer = (files: Array<File>, sendPost: Function, displa
         data: formData
       }).then(({ data }: any) => {
         if (data.error) {
-          logError(sendFiles);
+          logError(sendFiles)(data.error);
         } else {
           ids.push(data._id);
           recursiveUploadReturnsArrayOfId(files1)
         }
-      });
+      }).catch(logError(sendFiles));
     } else {
       for (let localUpload of selectedUploads) {
         ids.push(localUpload.id);
       }
-      console.log(ids);
       dispatch(sendFiles({
         status: 'fulfilled',
         data: ids,
-        error: false
+        err: false
       }));
-      sendPost().then(() => {
-        displayModal(false);
-        dispatch(sendFiles({
-          status: 'settled',
-          data: []
-        }));
-      })
+      dispatch(action(post, ids)(dispatch));
+      dispatch(sendFiles({
+        status: 'settled',
+        data: []
+      }));
     }
   }
-  recursiveUploadReturnsArrayOfId(Array.from(files))
+  recursiveUploadReturnsArrayOfId(Array.from(files));
 }
 
 export const getUploads = () => {
@@ -88,17 +86,15 @@ export const getUploads = () => {
       Authorization: `Bearer ${token}`
     }
   }).then(({ data }) => {
-    console.log(data);
-    
     if (data.error) {
       dispatch(uploads({
         status: 'fulfilled',
-        error: true
+        err: true
       }))
     } else {
       dispatch(uploads({
         status: 'fulfilled',
-        error: false,
+        err: false,
         data: data.uploads
       }))
     }

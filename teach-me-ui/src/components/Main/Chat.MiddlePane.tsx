@@ -62,7 +62,8 @@ import {
   formatMapDateString,
   timestampFormatter,
   addEventListenerOnce,
-  emitUserOnlineStatus
+  emitUserOnlineStatus,
+  promisedDispatch
 } from '../../functions/utils';
 import { placeHolderDisplayName } from './Chat';
 import {
@@ -80,12 +81,14 @@ import ConfirmDialog, {
   NewMessageBar
 } from './Chat.crumbs';
 import { displaySnackbar } from '../../actions';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 interface ChatMiddlePaneProps {
   userData: UserData;
   chatState: ChatState;
   webSocket: WebSocket;
   search: string;
+  chat: string;
   convoFriendship: string;
   convoParticipants: string[];
   convoId: string;
@@ -94,6 +97,7 @@ interface ChatMiddlePaneProps {
   convoDisplayName: string;
   convoAvatar: string;
   convoAssocUsername: string;
+  convoUnreadCount: number;
   convoMessages: Partial<APIMessageResponse>[];
   convoMessagesErr: boolean;
   convoMessagesStatus: SearchState['status'];
@@ -104,6 +108,7 @@ interface ChatMiddlePaneProps {
   convoInfoOnlineStatus: OnlineStatus;
   convoInfoNewMessage: Partial<APIMessageResponse>;
   convoInfoLastSeen: number;
+  convoLastReadDate: number;
   handleSetActivePaneIndex(index: number): any;
 }
 
@@ -117,7 +122,7 @@ export const ColleagueNameAndStatusContext = createContext(
   {} as Partial<ChatMiddlePaneProps>
 );
 
-const scrollViewRef: any = createRef<HTMLElement | null>();
+export const scrollViewRef: any = createRef<HTMLElement | null>();
 const msgBoxRef: any = createRef<HTMLInputElement | null>();
 const moreOptionsContainerRef: any = createRef<HTMLElement | any>();
 const messageActionsWrapperRef: any = createRef<HTMLInputElement | null>();
@@ -134,7 +139,7 @@ const Memoize = createMemo();
 
 let hideScrollBarTimeout: any;
 let loadMessagesTimeout: any;
-let scrollViewScrollPos = 0;
+let scrollViewPrevScrollPos = 0;
 let messageDrafts: any = {};
 
 const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
@@ -175,7 +180,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
       lastSeenForAway = Date.now();
       hideScrollBarTimeout = null;
       loadMessagesTimeout = null;
-      scrollViewScrollPos = 0;
+      scrollViewPrevScrollPos = 0;
       messageDrafts = {};
     };
   }, []);
@@ -212,7 +217,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
             if (_isOpen) {
               const isDelivered = message.delivered_to?.includes(userId);
 
-              if (userDeviceIsMobile) {
+              if (window.innerWidth < 992) {
                 if (!isDelivered) {
                   socket.send(
                     JSON.stringify({
@@ -271,6 +276,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
       <Col as='header' className='chat-header d-flex p-0'>
         <Memoize
           memoizedComponent={MiddlePaneHeader}
+          convoId={convoId}
           convoInfoOnlineStatus={convoInfoOnlineStatus}
           convoMessagesStatus={convoMessagesStatus}
           selectedMessages={selectedMessages}
@@ -300,7 +306,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
 
       <Container
         fluid
-        className='theme-tertiary-lighter d-flex align-items-center justify-content-center messages-status-signal font-bold h-100'
+        className='theme-tertiary d-flex align-items-center justify-content-center messages-status-signal font-bold h-100'
         ref={messagesStatusSignalRef}>
         {convoMessagesStatus === 'fulfilled' &&
         !convoMessages.length &&
@@ -369,6 +375,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
 
 function MiddlePaneHeader(props: {
   convoMessagesStatus: SearchState['status'];
+  convoId: string;
   convoInfoOnlineStatus: OnlineStatus;
   setSelectedMessages: Function;
   setClearSelections: Function;
@@ -377,6 +384,7 @@ function MiddlePaneHeader(props: {
 }) {
   const {
     convoMessagesStatus,
+    convoId,
     convoInfoOnlineStatus,
     selectedMessages,
     setClearSelections,
@@ -408,12 +416,14 @@ function MiddlePaneHeader(props: {
         ? queryString
         : queryString.replace('=open', '=min');
 
-      dispatch(
-        chatState({
-          isMinimized: shouldActuallyMinimize ? !isMinimized : false,
-          queryString
-        })
-      );
+      delay(500).then(() => {
+        dispatch(
+          chatState({
+            isMinimized: shouldActuallyMinimize ? !isMinimized : false,
+            queryString
+          })
+        );
+      });
       window.history.replaceState({}, '', queryString);
     },
     [_chatState]
@@ -447,7 +457,7 @@ function MiddlePaneHeader(props: {
 
   const handleUserInfoOptionClick = useCallback(() => {
     handleMinimizeChatClick(false);
-    delay(isMinimized ? 500 : 250).then(() => {
+    delay(isMinimized ? 1100 : 350).then(() => {
       handleSetActivePaneIndex!(2)();
     });
   }, [isMinimized, handleMinimizeChatClick, handleSetActivePaneIndex]);
@@ -458,10 +468,15 @@ function MiddlePaneHeader(props: {
 
   const handleConversationsMenuClick = useCallback(() => {
     handleMinimizeChatClick(false);
-    delay(isMinimized ? 500 : 1).then(() => {
+    delay(isMinimized ? 1100 : 350).then(() => {
       handleSetActivePaneIndex!(0)();
+      promisedDispatch(
+        conversations({ data: [{ _id: convoId, unread_count: 0 }] })
+      ).then(() => {
+        dispatch(conversation(convoId));
+      });
     });
-  }, [isMinimized, handleMinimizeChatClick, handleSetActivePaneIndex]);
+  }, [isMinimized, convoId, handleMinimizeChatClick, handleSetActivePaneIndex]);
 
   const hideMoreOptionsOnClick = useCallback(() => {
     setMoreOptionsIsVisible(false);
@@ -522,55 +537,61 @@ function MiddlePaneHeader(props: {
             </IconButton>
           </Box>
 
-          <Box
-            component='span'
-            className='control-wrapper more-options-wrapper ml-1'>
-            <IconButton
-              className='more-button'
-              onClick={toggleMoreOptionsPopover}
-              aria-label='more'>
-              <MoreVertIcon />
-            </IconButton>
+          <ClickAwayListener
+            onClickAway={() =>
+              moreOptionsContainerIsVisible ? toggleMoreOptionsPopover() : null
+            }>
+            <Box
+              component='span'
+              className='control-wrapper more-options-wrapper ml-1'>
+              <IconButton
+                className='more-button'
+                onClick={toggleMoreOptionsPopover}
+                aria-label='more'>
+                <MoreVertIcon />
+              </IconButton>
 
-            <span
-              ref={moreOptionsContainerRef}
-              className={`more-options-container ${
-                moreOptionsContainerIsVisible ? 'show' : 'hide'
-              } ${
-                isMinimized ? 'transform-upwards' : ''
-              } d-inline-flex flex-column p-0`}
-              onClick={hideMoreOptionsOnClick}>
-              <Button
-                variant='contained'
-                className='user-info-button'
-                onClick={handleUserInfoOptionClick}>
-                <PersonIcon /> User Info
-              </Button>
+              <Container
+                as='span'
+                ref={moreOptionsContainerRef}
+                className={`more-options-container ${
+                  moreOptionsContainerIsVisible ? 'show' : 'hide'
+                } ${
+                  isMinimized ? 'transform-upwards' : ''
+                } d-inline-flex flex-column p-0 w-auto`}
+                onClick={hideMoreOptionsOnClick}>
+                <Button
+                  variant='contained'
+                  className='user-info-button'
+                  onClick={handleUserInfoOptionClick}>
+                  <PersonIcon /> User Info
+                </Button>
 
-              <Button
-                variant='contained'
-                className='minimize-button'
-                onClick={handleMinimizeChatClick}>
-                {!isMinimized ? (
-                  <>
-                    <MinimizeIcon /> Minimize
-                  </>
-                ) : (
-                  <>
-                    <WebAssetIcon />
-                    Maximize
-                  </>
-                )}
-              </Button>
+                <Button
+                  variant='contained'
+                  className='minimize-button'
+                  onClick={handleMinimizeChatClick}>
+                  {!isMinimized ? (
+                    <>
+                      <MinimizeIcon /> Minimize
+                    </>
+                  ) : (
+                    <>
+                      <WebAssetIcon />
+                      Maximize
+                    </>
+                  )}
+                </Button>
 
-              <Button
-                variant='contained'
-                className='close-button'
-                onClick={handleCloseChatClick}>
-                <CloseIcon /> Close
-              </Button>
-            </span>
-          </Box>
+                <Button
+                  variant='contained'
+                  className='close-button'
+                  onClick={handleCloseChatClick}>
+                  <CloseIcon /> Close
+                </Button>
+              </Container>
+            </Box>
+          </ClickAwayListener>
         </Col>
       </Row>
 
@@ -673,7 +694,7 @@ function MiddlePandeHeaderColleagueNameAndStatus(props: {
         <Box
           component='span'
           className='conversation-name-container d-inline-flex align-items-center'
-          onClick={userDeviceIsMobile ? handleUserInfoOptionClick : undefined}>
+          onClick={handleUserInfoOptionClick}>
           <Badge
             anchorOrigin={{
               vertical: 'bottom',
@@ -877,6 +898,24 @@ function MiddlePaneHeaderActions(props: {
   }, [selectedMessages, confirmDeleteMessage, socket, handleClearSelections]);
 
   useEffect(() => {
+    addEventListenerOnce(
+      window,
+      (e: any) => {
+        if (numOfSelectedMessages) {
+          if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+            handleCopyMessage();
+          }
+
+          if (((e.ctrlKey || e.metaKey) && e.key === 'd') || e.keyCode === 46) {
+            handleDeleteMessage();
+          }
+        }
+      },
+      'keyup'
+    );
+  }, [numOfSelectedMessages, handleCopyMessage, handleDeleteMessage]);
+
+  useEffect(() => {
     if (messageActionsWrapper) {
       messageActionsWrapper.inert = inert;
     }
@@ -949,8 +988,7 @@ function MiddlePaneHeaderActions(props: {
 }
 
 export const chatDateStickyRef: any = createRef<HTMLInputElement | null>();
-
-let hasRenderedNewMessageBar = false;
+let newMessageCount = 0;
 
 function ScrollView(props: {
   userId: string;
@@ -986,21 +1024,26 @@ function ScrollView(props: {
     convoMessagesErr,
     convoMessagesStatusText,
     convoParticipants,
-    convoInfoNewMessage
+    convoInfoNewMessage,
+    convoUnreadCount,
+    convoLastReadDate
   } = useContext(ScrollViewContext);
-  const { chat, cid } = queryString.parse(window.location.search) ?? {};
+  const { chat } = queryString.parse(window.location.search) ?? {};
 
   const [hasReachedTopOfConvo, setHasReachedTopOfConvo] = useState(false);
 
   const offset = (convoMessages![0] ?? {}).date;
   const handleScrollViewScroll = useCallback(() => {
-    if (scrollView && cid && (convoId || isNaN(cid)) && chat) {
+    if (scrollView && convoId && chat) {
       clearTimeout(loadMessagesTimeout);
-      scrollViewScrollPos = scrollView.scrollHeight - scrollView.scrollTop;
+
       loadMessagesTimeout = setTimeout(() => {
+        scrollViewPrevScrollPos =
+          scrollView!.scrollHeight - scrollView!.scrollTop;
+
         if (
           scrollView!?.scrollTop <= 100 &&
-          !/end|socket/.test(convoMessagesStatusText as string)
+          !/end/.test(convoMessagesStatusText as string)
         ) {
           dispatch(
             getConversationMessages(
@@ -1020,7 +1063,7 @@ function ScrollView(props: {
         scrollView!.classList.add('scroll-ended');
       }, 600);
     }
-  }, [chat, cid, convoId, offset, convoMessagesStatusText]);
+  }, [chat, convoId, offset, convoMessagesStatusText]);
 
   const handleMessageSelection = useCallback(
     (id: string | null, value: SelectedMessageValue) => {
@@ -1044,18 +1087,14 @@ function ScrollView(props: {
   useEffect(() => {
     if (convoId) {
       setHasReachedTopOfConvo(false);
-      hasRenderedNewMessageBar = false;
+      newMessageCount = 0;
     }
   }, [convoId]);
 
   useEffect(() => {
-    if (convoMessagesErr) {
-      hasRenderedNewMessageBar = false;
+    if (!scrollView) {
+      scrollView = scrollViewRef.current;
     }
-  }, [convoMessagesErr]);
-
-  useEffect(() => {
-    if (!scrollView) scrollView = scrollViewRef.current;
 
     if (scrollView) {
       scrollView.style.marginBottom = 'calc(21.5px - 1.25rem)';
@@ -1086,13 +1125,16 @@ function ScrollView(props: {
       const canAddScrollPadding =
         scrollView.scrollHeight > scrollView.offsetHeight;
 
-      const scrollPos = scrollView.scrollHeight - scrollViewScrollPos;
+      const scrollViewNewSrollPos =
+        scrollView.scrollHeight - scrollViewPrevScrollPos;
 
       if (
         !convoMessagesStatusText ||
         /new/.test(convoMessagesStatusText as string)
       ) {
-        scrollView.scrollTop = scrollView.scrollHeight;
+        delay(50).then(() => {
+          scrollView!.scrollTop += scrollView!.scrollHeight;
+        });
       } else {
         //the code block below implies that if the request for or receipt of (a) new message(s) is not coming from a socket or message hasn't gotten to the very first message of the conversation and the receipt is coming from a request for previous messages (offset) in the conversation, scroll scrollView to the initial scroll position before messages were loaded.
         if (
@@ -1100,7 +1142,7 @@ function ScrollView(props: {
           convoMessagesStatus === 'fulfilled' &&
           !/end|socket|new/.test(convoMessagesStatusText as string)
         ) {
-          scrollView.scrollTop = scrollPos;
+          scrollView.scrollTop = scrollViewNewSrollPos;
         }
       }
 
@@ -1115,7 +1157,7 @@ function ScrollView(props: {
         /settled|fulfilled/.test(convoMessagesStatus as string)
       ) {
         (messagesStatusSignal ?? {}).inert = true;
-        delay(900).then(() => {
+        delay(1000).then(() => {
           scrollView!.classList.remove('hide-messages');
         });
       } else {
@@ -1125,7 +1167,10 @@ function ScrollView(props: {
 
       if (convoMessages && canAdjustScrollTop) {
         // animate (to prevent flicker) if scrollView is at very top else don't animate
-        if (scrollView.scrollTop < scrollView.scrollHeight - 300) {
+        if (
+          scrollView.scrollTop < scrollView.scrollHeight - 300 &&
+          scrollView.scrollTop > 100
+        ) {
           interval(
             () => {
               scrollView!.scrollTop += 100;
@@ -1139,6 +1184,8 @@ function ScrollView(props: {
       }
     }
   }, [convoMessages, convoMessagesStatus, convoMessagesStatusText]);
+
+  newMessageCount = +convoUnreadCount!;
 
   return (
     <Col
@@ -1168,16 +1215,25 @@ function ScrollView(props: {
         textAlign='center'>
         <CircularProgress thickness={4} color='inherit' size={20} />
       </Box>
+      <NewMessageBar
+        type='sticky'
+        convoUnreadCount={+convoUnreadCount!}
+        scrollView={scrollView as HTMLElement}
+        shouldRender={!!convoUnreadCount}
+        className={convoId && convoUnreadCount ? '' : 'd-none'}
+      />
+
       <Box
-        className={`the-beginning pt-2 mb-1 text-center theme-tertiary-lighter ${
+        className={`the-beginning pt-3 mb-1 text-center theme-tertiary ${
           convoMessagesStatus === 'fulfilled' && hasReachedTopOfConvo
             ? 'd-block'
             : 'd-none'
         }`}
         fontSize='0.85rem'>
-        This is the beginning of your conversation with{' '}
+        This is the beginning of your conversation with <br />
         <b className='font-bold'>{convoDisplayName ?? 'your colleague'}</b>.
       </Box>
+
       {convoMessages?.map((message, key: number) => {
         const { sender_id, date, delivered_to, deleted, seen_by } = message;
         const prevDate = new Date(
@@ -1194,6 +1250,8 @@ function ScrollView(props: {
           date! - (convoMessages![key - 1]?.date ?? date!) >= 18e5;
         const nextDelayed =
           (convoMessages[key + 1]?.date ?? date!) - date! >= 18e5;
+        const prevTimestamp =
+          (convoMessages[key - 1] ?? {}).date ?? (0 as number);
 
         const type =
           sender_id && sender_id !== userId ? 'incoming' : 'outgoing';
@@ -1221,21 +1279,24 @@ function ScrollView(props: {
             : ''
         }`;
 
+        const willRenderNewMessageBar =
+          prevTimestamp === convoLastReadDate && !!convoUnreadCount;
+
+        if (willRenderNewMessageBar) {
+          newMessageCount = 0;
+          newMessageCount = convoMessages
+            .slice(key)
+            .reduce((a, b) => (b.sender_id !== userId ? a + 1 : a), 0);
+        }
+
         return (
           <React.Fragment key={key}>
-            {(() => {
-              if (
-                type === 'incoming' &&
-                !seen_by.includes(userId) &&
-                !hasRenderedNewMessageBar
-              ) {
-                hasRenderedNewMessageBar = true;
-                return (
-                  <NewMessageBar unreadCount={convoMessages.length - key} />
-                );
-              }
-              return null;
-            })()}
+            <NewMessageBar
+              type='relative'
+              convoUnreadCount={+newMessageCount}
+              scrollView={scrollView as HTMLElement}
+              shouldRender={willRenderNewMessageBar}
+            />
             {shouldRenderDate && (
               <ChatDate
                 scrollView={scrollView as HTMLElement}
@@ -1308,6 +1369,8 @@ function MessageBox(props: { convoId: string; webSocket: WebSocket }) {
       _id: 'ddd'
     } as APIMessageResponse;
 
+    msgBox.focus();
+
     if (!msg.message) {
       setMsgBoxRowsMax(msgBoxRowsMax < 6 ? msgBoxRowsMax + 1 : msgBoxRowsMax);
       return;
@@ -1315,15 +1378,13 @@ function MessageBox(props: { convoId: string; webSocket: WebSocket }) {
 
     try {
       if (socket && socket.readyState === 1) {
-        if (scrollView) {
-          scrollView.style.marginBottom = `calc(21.5px - 1.25rem)`;
-        }
-
+        scrollView!.style.marginBottom = `calc(21.5px - 1.25rem)`;
         dispatch(conversationMessages({ data: [{ ...msg }] }));
         msgBox.value = '';
         setMsgBoxRowsMax(1);
         delete messageDrafts[convoId];
         socket.send(JSON.stringify(msg));
+        dispatch(conversation(convoId, { unread_count: 0 }));
       } else {
         emitUserOnlineStatus(true, false, {
           open: true,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 
 import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
@@ -12,6 +12,7 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import ArrowUpwardIcon from '@material-ui/icons/KeyboardArrowUp';
 
 import {
   APIMessageResponse,
@@ -20,7 +21,9 @@ import {
 import {
   timestampFormatter,
   formatMapDateString,
-  addEventListenerOnce
+  addEventListenerOnce,
+  delay,
+  interval
 } from '../../functions/utils';
 import { chatDateStickyRef } from './Chat.MiddlePane';
 
@@ -255,37 +258,34 @@ export const ChatDate = ({
   scrollView?: HTMLElement;
 }) => {
   const dateStamp = formatMapDateString(timestamp, true);
-  const chatDateWrapperRef = React.useRef<HTMLDivElement>(null);
+  const chatDateWrapperRef = useRef<HTMLDivElement>(null);
   const chatDateSticky = chatDateStickyRef.current;
   const pxRatio = window.devicePixelRatio;
 
-  const stickDate = useCallback(
-    (e: any) => {
-      const chatDateWrapper = chatDateWrapperRef.current;
+  const stickDate = useCallback(() => {
+    const chatDateWrapper = chatDateWrapperRef.current;
 
-      if (chatDateWrapper) {
-        const { top } = (chatDateWrapper as any).getBoundingClientRect();
-        const shouldHideSticky = scrollView!.scrollTop < 84 + pxRatio * pxRatio;
+    if (chatDateWrapper) {
+      const { top } = (chatDateWrapper as any).getBoundingClientRect();
+      const shouldHideSticky = scrollView!.scrollTop < 105 + pxRatio * pxRatio;
 
-        if (top < 65) {
-          if (chatDateSticky) {
-            chatDateSticky.textContent = dateStamp;
-          }
-
-          (chatDateWrapper.children[0] as any).style.opacity = !shouldHideSticky
-            ? 0
-            : 1;
-          chatDateSticky.style.opacity = shouldHideSticky ? 0 : 1;
-        } else {
-          (chatDateWrapper.children[0] as any).style.opacity = 1;
-          chatDateSticky.style.opacity = shouldHideSticky ? 0 : 1;
+      if (top < 65) {
+        if (chatDateSticky) {
+          chatDateSticky.textContent = dateStamp;
         }
-      }
-    },
-    [dateStamp, chatDateSticky, pxRatio, scrollView]
-  );
 
-  React.useEffect(() => {
+        (chatDateWrapper.children[0] as any).style.opacity = !shouldHideSticky
+          ? 0
+          : 1;
+        chatDateSticky.style.opacity = shouldHideSticky ? 0 : 1;
+      } else {
+        (chatDateWrapper.children[0] as any).style.opacity = 1;
+        chatDateSticky.style.opacity = shouldHideSticky ? 0 : 1;
+      }
+    }
+  }, [dateStamp, chatDateSticky, pxRatio, scrollView]);
+
+  useEffect(() => {
     if (scrollView && chatDateWrapperRef.current) {
       scrollView.addEventListener('scroll', stickDate);
       chatDateSticky.style.opacity =
@@ -306,7 +306,7 @@ export const ChatDate = ({
   return (
     <div
       id={String(timestamp)}
-      className='chat-date-wrapper text-center my-4'
+      className='chat-date-wrapper text-center mt-5 mb-4'
       ref={chatDateWrapperRef}>
       <Box component='span' className='chat-date d-inline-block'>
         {dateStamp}
@@ -315,13 +315,116 @@ export const ChatDate = ({
   );
 };
 
-export const NewMessageBar = ({ unreadCount }: { unreadCount: number }) => {
+let stickyNewMessageBar: HTMLElement | null;
+let relativeNewMessageBar: HTMLElement | null;
+let relativeIsVisible = false;
+
+export const NewMessageBar = (props: {
+  type: 'relative' | 'sticky';
+  convoUnreadCount: number;
+  scrollView: HTMLElement;
+  shouldRender?: boolean;
+  className?: string;
+}) => {
+  const { convoUnreadCount, scrollView, shouldRender, type, className } = props;
+  
+  relativeIsVisible = false;
+
+  const handleStickyClick = useCallback(() => {
+    const Button = (scrollView.querySelector(
+      '.new-messages-bar.relative .new-messages-count'
+    ) as any)!;
+
+    if (relativeNewMessageBar) {
+      relativeIsVisible =
+        relativeNewMessageBar!.getBoundingClientRect().top > 64;
+
+      Button.disabled = relativeIsVisible;
+      Button.classList[relativeIsVisible ? 'add' : 'remove']('hide-icon');
+    }
+
+    addEventListenerOnce(
+      scrollView,
+      () => {
+        relativeIsVisible = true;
+      },
+      'click'
+    );
+
+    if (scrollView && !relativeIsVisible) {
+      interval(
+        () => {
+          scrollView.scrollTop -= 100;
+
+          if (relativeNewMessageBar) {
+            delay(25).then(() => {
+              relativeIsVisible =
+                relativeNewMessageBar!.getBoundingClientRect().top > 64;
+
+              if (Button && relativeIsVisible) {
+                Button.classList.add('hide-icon');
+              }
+            });
+          }
+        },
+        16,
+        () => relativeIsVisible
+      );
+    }
+  }, [scrollView]);
+
+  useEffect(() => {
+    if (scrollView) {
+      delay(type === 'relative' ? 10 : 125).then(() => {
+        stickyNewMessageBar = scrollView?.querySelector(
+          '.new-messages-bar.sticky'
+        ) as HTMLElement;
+        relativeNewMessageBar = scrollView?.querySelector(
+          '.new-messages-bar.relative'
+        );
+
+        if (relativeNewMessageBar) {
+          //do the next line as animation was part of delay in displaying bar
+          relativeNewMessageBar.style.animation = 'scaleY 0s forwards 0s';
+          stickyNewMessageBar?.classList.add('d-none');
+        } else {
+          stickyNewMessageBar?.classList.remove('d-none');
+        }
+
+        if (!convoUnreadCount) {
+          stickyNewMessageBar?.classList.add('d-none');
+        }
+      });
+    }
+
+    return () => {
+      relativeNewMessageBar = null;
+      relativeIsVisible = false;
+    };
+  }, [scrollView, type, convoUnreadCount]);
+
+  if (type === 'sticky' && relativeNewMessageBar) {
+    relativeIsVisible = true;
+    return null;
+  }
+
+  if (!convoUnreadCount || !shouldRender) {
+    return null;
+  }
+
   return (
-    <Box className='new-messages-bar'>
-      <Container as='span' className='new-messages-count d-inline-block w-auto'>
-        {unreadCount} new message{unreadCount > 1 ? 's' : ''}
-      </Container>
-    </Box>
+    <Container className={`new-messages-bar ${type} ${className ?? ''}`}>
+      <Button
+        className='new-messages-count btn-primary contained uppercase d-inline-flex align-items-center'
+        variant='contained'
+        disabled={relativeIsVisible}
+        onClick={handleStickyClick}>
+        <Container as='span' className='p-0'>
+          {convoUnreadCount} new message{convoUnreadCount > 1 ? 's' : ''}{' '}
+        </Container>
+        {!relativeIsVisible && <ArrowUpwardIcon fontSize='small' />}
+      </Button>
+    </Container>
   );
 };
 
