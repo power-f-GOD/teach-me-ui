@@ -59,7 +59,6 @@
   .the-beginning {
     height: 3rem;
     top: 1.35rem;
-    left: 0.25rem;
     padding: 0 0.75rem;
     width: 100%;
     text-align: center;
@@ -194,6 +193,14 @@
   padding: 0.5rem $pad-x 1rem $pad-x;
   overflow-x: hidden;
   position: relative;
+  display: flex;
+  flex-direction: column;
+
+  > *,
+  > div {
+    max-width: 39rem;
+    align-self: center;
+  }
 
   &.custom-scroll-bar {
     &::-webkit-scrollbar-track {
@@ -396,7 +403,7 @@ body.mobile {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   transition: opacity 0.3s;
 
-  $diff: 112;
+  $diff: 120;
   $bg-incoming: #fff;
   $bg-outgoing: rgb($sec-r + $diff, $sec-g + $diff, $sec-b + $diff);
 
@@ -416,6 +423,7 @@ body.mobile {
       $h: calc(100% + 0.19rem),
       $l: -2rem,
       $t: unset,
+      $br: 0.25rem,
       $b: -0.125rem,
       $bg: rgba($prim-r + 50, $prim-g + 50, $prim-b + 50, 0.35)
     );

@@ -68,7 +68,7 @@
     .chat-left-pane {
       opacity: 0;
       transform: translateY(10rem);
-      transition: opacity 0.3s, transform 0.35s;
+      transition: opacity 0.2s, transform 0.3s;
 
       &.active-pane {
         opacity: 1;
@@ -81,7 +81,7 @@
       opacity: 0;
       max-width: unset;
       transform: translateY(-10rem);
-      transition: opacity 0.3s, transform 0.35s;
+      transition: opacity 0.2s, transform 0.3s;
 
       &.active-pane {
         opacity: 1;
@@ -361,7 +361,7 @@
   //chat box style(s)
   .ChatBox {
     .msg-wrapper {
-      max-width: 85%;
+      max-width: 90%;
       font-size: 0.95rem;
     }
   }
@@ -392,12 +392,6 @@
 }
 
 @media screen and (max-width: 360px) {
-  //chat box style(s)
-  .ChatBox {
-    .msg-wrapper {
-      max-width: 92.5%;
-    }
-  }
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2),

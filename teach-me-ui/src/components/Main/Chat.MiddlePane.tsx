@@ -832,6 +832,11 @@ function MiddlePaneHeaderActions(props: {
         timestampFormatter(_date)
       ];
 
+      if (!message) {
+        if (!isMulti) return;
+        continue;
+      }
+
       if (isMulti) {
         messages +=
           `[@${sender_username} | ${date} at ${time}]: ` + message + '\n\n';
@@ -1028,13 +1033,12 @@ function ScrollView(props: {
     convoUnreadCount,
     convoLastReadDate
   } = useContext(ScrollViewContext);
-  const { chat } = queryString.parse(window.location.search) ?? {};
 
   const [hasReachedTopOfConvo, setHasReachedTopOfConvo] = useState(false);
 
   const offset = (convoMessages![0] ?? {}).date;
   const handleScrollViewScroll = useCallback(() => {
-    if (scrollView && convoId && chat) {
+    if (scrollView && convoId) {
       clearTimeout(loadMessagesTimeout);
 
       loadMessagesTimeout = setTimeout(() => {
@@ -1063,7 +1067,7 @@ function ScrollView(props: {
         scrollView!.classList.add('scroll-ended');
       }, 600);
     }
-  }, [chat, convoId, offset, convoMessagesStatusText]);
+  }, [convoId, offset, convoMessagesStatusText]);
 
   const handleMessageSelection = useCallback(
     (id: string | null, value: SelectedMessageValue) => {
@@ -1130,11 +1134,9 @@ function ScrollView(props: {
 
       if (
         !convoMessagesStatusText ||
-        /new/.test(convoMessagesStatusText as string)
+        /new/i.test(convoMessagesStatusText as string)
       ) {
-        delay(50).then(() => {
-          scrollView!.scrollTop += scrollView!.scrollHeight;
-        });
+        scrollView!.scrollTop += scrollView!.scrollHeight + 100;
       } else {
         //the code block below implies that if the request for or receipt of (a) new message(s) is not coming from a socket or message hasn't gotten to the very first message of the conversation and the receipt is coming from a request for previous messages (offset) in the conversation, scroll scrollView to the initial scroll position before messages were loaded.
         if (
@@ -1329,7 +1331,7 @@ function ScrollView(props: {
           </React.Fragment>
         );
       })}
-      {!convoFriendship && convoMessagesStatus === 'fulfilled' && chat && (
+      {!convoFriendship && convoMessagesStatus === 'fulfilled' && convoId && (
         <Box className='text-center py-5 my-2'>
           You are not colleagues with{' '}
           <Box fontWeight='bold'>{convoDisplayName}.</Box>
