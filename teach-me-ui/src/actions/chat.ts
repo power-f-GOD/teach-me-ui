@@ -84,7 +84,7 @@ export const conversations = (_payload: SearchState): ReduxAction => {
     last_seen,
     unread_count,
     user_typing,
-    _id: convoId,
+    _id,
     last_read
   } = (payload.data ?? [])[0] ?? {};
   const message = ((payload.data ?? [])[0] ?? {}) as APIMessageResponse;
@@ -93,6 +93,7 @@ export const conversations = (_payload: SearchState): ReduxAction => {
     getState().conversationMessages.data as ConversationMessages['data'],
     getState().userData as UserData
   ];
+  let convoId = pipe ? message.conversation_id : _id;
   let indexOfInitial = -1;
   let actualConvo = {} as
     | Partial<

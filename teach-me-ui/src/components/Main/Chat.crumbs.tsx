@@ -80,11 +80,16 @@ export const Message = (props: {
     [handleSelectMessage]
   );
 
-  const handleMessageTouchStart = useCallback(() => {
-    messageTouchTimeout = setTimeout(() => {
-      handleSelectMessage();
-    }, 500);
-  }, [handleSelectMessage]);
+  const handleMessageTouchStart = useCallback(
+    (e: any) => {
+      if (e.touches && e.touches.length === 1) {
+        messageTouchTimeout = setTimeout(() => {
+          handleSelectMessage();
+        }, 500);
+      }
+    },
+    [handleSelectMessage]
+  );
 
   const handleMessageTouchEnd = useCallback(() => {
     clearTimeout(messageTouchTimeout);
