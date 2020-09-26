@@ -125,8 +125,8 @@ button.new-messages-count {
   font-size: 0.85rem;
   text-transform: capitalize;
   color: $theme-tertiary-v1;
-  border: 0.0625rem solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 0.05rem 0.05rem rgba(0, 0, 0, 0.15) !important;
+  border: 0.0625rem solid rgba(0, 0, 0, 0.15);
+  // box-shadow: 0 0.05rem 1rem rgba(0, 0, 0, 0.1) !important;
   user-select: none;
   transition: transform 0.4s ease 1.35s;
 }
