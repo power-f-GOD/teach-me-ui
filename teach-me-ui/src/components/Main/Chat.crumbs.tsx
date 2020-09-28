@@ -13,6 +13,9 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import ArrowUpwardIcon from '@material-ui/icons/KeyboardArrowUp';
+import ReplyRoundedIcon from '@material-ui/icons/ReplyRounded';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 
 import {
   APIMessageResponse,
@@ -40,6 +43,7 @@ export const Message = (props: {
   message: APIMessageResponse;
   type: 'incoming' | 'outgoing';
   sender_username: string;
+  headSenderUsername: string;
   userId: string;
   className: string;
   forceUpdate: any;
@@ -54,6 +58,7 @@ export const Message = (props: {
     participants,
     userId,
     sender_username,
+    headSenderUsername,
     className,
     clearSelections,
     canSelectByClick,
@@ -64,7 +69,8 @@ export const Message = (props: {
     date: timestamp,
     deleted,
     delivered_to,
-    seen_by
+    seen_by,
+    parent
   } = message;
   const [selected, setSelected] = useState<boolean | null>(null);
   const messageElRef = React.useRef<HTMLDivElement>(null) as any;
@@ -156,6 +162,7 @@ export const Message = (props: {
   return (
     <Container
       fluid
+      id={message._id}
       className={`${type === 'incoming' ? 'incoming' : 'outgoing'} ${
         selected ? 'selected' : ''
       } msg-container ${className} ${deleted ? 'deleted' : ''} p-0 mx-0`}
@@ -167,6 +174,15 @@ export const Message = (props: {
         as='div'
         className='msg-wrapper scroll-view-msg-wrapper d-inline-flex flex-column justify-content-end'>
         <Box>
+          {!deleted && parent && (
+            <ChatHead
+              head={{
+                ...parent,
+                sender_username: headSenderUsername,
+                type: parent?.sender_id === userId ? 'outgoing' : 'incoming'
+              }}
+            />
+          )}
           {deleted ? (
             type === 'outgoing' ? (
               <>
@@ -196,6 +212,52 @@ export const Message = (props: {
           />
         </Box>
       </Col>
+    </Container>
+  );
+};
+
+export const ChatHead = (props: {
+  head: SelectedMessageValue | null;
+  type?: 'reply' | 'head';
+  headCopy?: SelectedMessageValue | null;
+  setMessageHead?: Function;
+}) => {
+  const { type, head, headCopy, setMessageHead } = props;
+  const { sender_username: senderUsername, message: text, type: messageType } =
+    head ?? headCopy ?? {};
+  const isReply = type === 'reply';
+  const senderIsSelf = messageType === 'outgoing';
+
+  const handleCloseReplyMessage = useCallback(() => {
+    if (setMessageHead) {
+      setMessageHead(null);
+    }
+  }, [setMessageHead]);
+
+  return (
+    <Container
+      className={`chat-head ${senderIsSelf ? 'self' : 'other'} ${
+        isReply ? 'slide-in-top' : ''
+      }`}>
+      <Container
+        as='span'
+        className='chat-head-sender p-0 d-flex justify-content-start align-items-center'>
+        <Container as='span' className='p-0 m-0 w-auto'>
+          @{senderUsername}{' '}
+        </Container>
+        {isReply && <ReplyRoundedIcon fontSize='inherit' />}
+      </Container>
+      {text}
+      {isReply && (
+        <IconButton
+          className={`close-reply-button  ml-2 ${!head ? 'hide' : ''}`}
+          onClick={handleCloseReplyMessage}
+          aria-label='close reply button'
+          aria-hidden={!head}
+          tabIndex={head ? 0 : -1}>
+          <CloseIcon />
+        </IconButton>
+      )}
     </Container>
   );
 };

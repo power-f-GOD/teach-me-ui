@@ -54,6 +54,12 @@
 
 @media screen and (max-width: 991px) {
   .ChatBox {
+    .chat-box-wrapper {
+      &.close {
+        transform: scale(0.8);
+      }
+    }
+
     .chat-right-pane,
     .chat-left-pane {
       position: fixed;
