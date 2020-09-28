@@ -453,7 +453,7 @@ function PaneItem({
               <Box
                 className={`last-message mt-1 ${
                   last_message?.deleted ? 'font-italic' : ''
-                }`}
+                } fade-in`}
                 maxWidth={unread_count ? 'calc(100% - 2.25rem)' : '100%'}
                 title={last_message?.message ?? ''}>
                 {!last_message ? (

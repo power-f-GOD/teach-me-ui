@@ -345,6 +345,7 @@ export interface APIMessageResponse {
   timestamp_id?: string;
   __v: number;
   pipe: SocketPipe;
+  parent?: APIMessageResponse;
   user_id?: string;
 }
 
