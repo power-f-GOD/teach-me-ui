@@ -322,9 +322,11 @@ const ChatBox = (props: ChatBoxProps) => {
 
     if (/chat=/.test(window.location.search)) {
       window.history.replaceState({}, '', window.location.pathname + search);
+      props.location.search = search;
     }
 
     window.onresize = (e: any) => setWindowWidth(e.target.innerWidth);
+    //eslint-disable-next-line
   }, []);
 
   useEffect(() => {

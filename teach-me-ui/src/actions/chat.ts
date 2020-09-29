@@ -454,6 +454,7 @@ export const getConversationMessages = (
                     pipe: CHAT_MESSAGE_DELIVERED
                   })
                 );
+                message.delivered_to.push(userId);
               }
 
               if (!message.seen_by!.includes(userId)) {
@@ -471,6 +472,7 @@ export const getConversationMessages = (
                         data: [{ _id: convoId, last_read: message.date }]
                       })
                     );
+                    message.seen_by.push(userId);
                   }
                 }
               }
@@ -568,11 +570,11 @@ export const conversationMessages = (payload: ConversationMessages) => {
       }
     }
   } else {
-    const msg_id = payload.data![0]._id;
+    const messageId = payload.data![0]._id;
     let indexOfInitial = -1;
     let initialMessage =
       previousMessages?.find((message, i) => {
-        if (message._id === msg_id) {
+        if (message._id === messageId) {
           indexOfInitial = i;
           return true;
         }
@@ -586,7 +588,8 @@ export const conversationMessages = (payload: ConversationMessages) => {
 
           if (
             initialMessage &&
-            !initialMessage.delivered_to!.includes(deliveeId)
+            !initialMessage.delivered_to!.includes(deliveeId) &&
+            deliveeId
           ) {
             initialMessage.delivered_to?.push(deliveeId);
             previousMessages[indexOfInitial] = initialMessage;
@@ -595,7 +598,11 @@ export const conversationMessages = (payload: ConversationMessages) => {
         case CHAT_READ_RECEIPT:
           const seerId = payload.data![0].seen_by![0];
 
-          if (initialMessage && !initialMessage.seen_by!.includes(seerId)) {
+          if (
+            initialMessage &&
+            !initialMessage.seen_by!.includes(seerId) &&
+            seerId
+          ) {
             initialMessage.seen_by?.push(seerId);
             previousMessages[indexOfInitial] = initialMessage;
           }

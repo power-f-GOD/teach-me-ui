@@ -74,7 +74,8 @@ import {
   CHAT_READ_RECEIPT,
   CHAT_MESSAGE_DELIVERED
 } from '../../constants/chat';
-import ConfirmDialog, {
+import {
+  ConfirmDialog,
   Message,
   ChatDate,
   SelectedMessageValue,
@@ -211,7 +212,8 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
         dispatch(conversations({ data: [{ unread_count: 0, _id: convoId }] }));
       }
 
-      for (const message of convoMessages) {
+      for (const i in convoMessages) {
+        const message = { ...convoMessages[i] };
         const isSeen = message.seen_by?.includes(userId);
 
         if (!message.sender_id || userId === message.sender_id || isSeen) {
@@ -225,30 +227,62 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
 
               if (window.innerWidth < 992) {
                 if (!isDelivered) {
-                  socket.send(
+                  socket!.send(
                     JSON.stringify({
                       message_id: message._id,
                       pipe: CHAT_MESSAGE_DELIVERED
                     })
                   );
+
+                  dispatch(
+                    conversationMessages({
+                      statusText: 'from socket',
+                      pipe: CHAT_MESSAGE_DELIVERED,
+                      data: [{ delivered_to: [userId], _id: message._id }]
+                    })
+                  );
                 }
 
                 if (!_isMinimized) {
-                  socket.send(
+                  socket!.send(
                     JSON.stringify({
                       message_id: message._id,
                       pipe: CHAT_READ_RECEIPT
                     })
                   );
+                  dispatch(
+                    conversationMessages({
+                      statusText: 'from socket',
+                      pipe: CHAT_READ_RECEIPT,
+                      data: [{ seen_by: [userId], _id: message._id }]
+                    })
+                  );
                 }
               } else {
-                socket.send(
+                const pipe =
+                  _isMinimized && !isDelivered
+                    ? CHAT_MESSAGE_DELIVERED
+                    : CHAT_READ_RECEIPT;
+
+                socket!.send(
                   JSON.stringify({
                     message_id: message._id,
-                    pipe:
-                      _isMinimized && !isDelivered
-                        ? CHAT_MESSAGE_DELIVERED
-                        : CHAT_READ_RECEIPT
+                    pipe
+                  })
+                );
+
+                dispatch(
+                  conversationMessages({
+                    statusText: 'from socket',
+                    pipe,
+                    data: [
+                      {
+                        [pipe === CHAT_READ_RECEIPT
+                          ? 'seen_by'
+                          : 'delivered_to']: [userId],
+                        _id: message._id
+                      }
+                    ]
                   })
                 );
               }
@@ -676,6 +710,11 @@ function MiddlePandeHeaderColleagueNameAndStatus(props: {
         setCanDisplayAwayDate(true);
       }
     }, 10000);
+
+    if ((_canDisplayAwayDate = Date.now() - lastSeenForAway > 300000)) {
+      clearTimeout(renderAwayDateTimeout);
+      setCanDisplayAwayDate(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -916,7 +955,7 @@ function MiddlePaneHeaderActions(props: {
             emitUserOnlineStatus(true, false, {
               open: true,
               message:
-                "Something went wrong. Seems you are/were offline. We'll try to reconnect then you can perform action again.",
+                "Something went wrong. Seems you are/were offline. We'll try to reconnect then you can try again.",
               severity: 'info',
               autoHide: false
             });
@@ -1052,6 +1091,7 @@ function MiddlePaneHeaderActions(props: {
         memoizedComponent={ConfirmDialog}
         open={openConfirmDialog}
         action={dialogAction}
+        numOfSelectedMessages={numOfSelectedMessages}
         canDeleteForEveryone={canDeleteForEveryone}
       />
     </>
@@ -1304,28 +1344,35 @@ function ScrollView(props: {
       </Box>
 
       {convoMessages?.map((message, key: number) => {
-        const { sender_id, date, delivered_to, deleted, seen_by } = message;
-        const prevDate = new Date(
-          Number(convoMessages![key - 1]?.date)
-        ).toDateString();
-        const nextDate = new Date(
-          Number(convoMessages![key + 1]?.date)
-        ).toDateString();
-        const selfDate = new Date(Number(message.date)).toDateString();
-        const prevAndSelfSentSameDay = prevDate === selfDate;
-        const nextAndSelfSentSameDay = nextDate === selfDate;
-        const shouldRenderDate = !prevAndSelfSentSameDay;
-        const prevDelayed =
-          date! - (convoMessages![key - 1]?.date ?? date!) >= 18e5;
-        const nextDelayed =
-          (convoMessages[key + 1]?.date ?? date!) - date! >= 18e5;
-        const prevTimestamp =
-          (convoMessages[key - 1] ?? {}).date ?? (0 as number);
-
+        const {
+          sender_id,
+          date,
+          delivered_to,
+          deleted,
+          seen_by,
+          _id,
+          timestamp_id,
+          parent: head
+        } = message;
         const type =
           sender_id && sender_id !== userId ? 'incoming' : 'outgoing';
-        const prevSenderId = (convoMessages![key - 1] ?? {}).sender_id;
-        const nextSenderId = (convoMessages![key + 1] ?? {}).sender_id;
+        const [prevMessage, nextMessage] = [
+          convoMessages![key - 1],
+          convoMessages![key + 1]
+        ];
+
+        const prevDate = new Date(Number(prevMessage?.date)).toDateString();
+        const nextDate = new Date(Number(nextMessage?.date)).toDateString();
+        const selfDate = new Date(Number(date)).toDateString();
+
+        const prevAndSelfSentSameDay = prevDate === selfDate;
+        const nextAndSelfSentSameDay = nextDate === selfDate;
+        const prevDelayed = date! - (prevMessage?.date ?? date!) >= 18e5;
+        const nextDelayed = (nextMessage?.date ?? date!) - date! >= 18e5;
+
+        const prevSenderId = (prevMessage ?? {}).sender_id;
+        const nextSenderId = (nextMessage ?? {}).sender_id;
+
         const isFirstOfStack =
           prevSenderId !== sender_id || !prevAndSelfSentSameDay;
         const isOnlyOfStack =
@@ -1338,18 +1385,23 @@ function ScrollView(props: {
           prevAndSelfSentSameDay;
         const isLastOfStack =
           nextSenderId !== sender_id || !nextAndSelfSentSameDay || nextDelayed;
+
+        const shouldRenderDate = !prevAndSelfSentSameDay;
         const className = `${prevDelayed ? 'delayed mt-3' : ''}${
           isFirstOfStack ? ' first' : ''
         }${isOnlyOfStack ? ' only' : ''}${isLastOfStack ? ' last' : ''}${
           isMiddleOfStack ? ' middle' : ''
         }${
-          convoInfoNewMessage?._id === message._id || message.timestamp_id
+          convoInfoNewMessage?._id === _id || timestamp_id
             ? ' last-message'
             : ''
         }`;
-
-        let willRenderNewMessageBar =
-          prevTimestamp === convoLastReadDate && !!convoUnreadCount;
+        const lastRead = +convoLastReadDate!;
+        const willRenderNewMessageBar =
+          date > lastRead &&
+          prevMessage?.date <= lastRead &&
+          !!convoUnreadCount &&
+          prevMessage?.date;
 
         if (willRenderNewMessageBar) {
           newMessageCount = 0;
@@ -1382,14 +1434,10 @@ function ScrollView(props: {
                 type === 'incoming' ? convoAssocUsername : username
               }
               headSenderUsername={
-                message.parent?.sender_id === userId
-                  ? username
-                  : convoAssocUsername
+                head?.sender_id === userId ? username : convoAssocUsername
               }
               clearSelections={
-                message._id! in selectedMessages && clearSelections
-                  ? true
-                  : false
+                _id! in selectedMessages && clearSelections ? true : false
               }
               forceUpdate={
                 String(deleted) + delivered_to?.length + seen_by?.length
@@ -1459,7 +1507,10 @@ function MessageBox(props: {
 
     try {
       if (socket && socket.readyState === 1) {
-        scrollView!.scrollTop = scrollView!.scrollHeight;
+        if (messageHead) {
+          setMessageHead(null);
+        }
+
         dispatch(
           conversationMessages({
             data: [
@@ -1475,15 +1526,14 @@ function MessageBox(props: {
         delete messageDrafts[convoId];
         socket.send(JSON.stringify({ ...msg, parent: messageHead?._id }));
         dispatch(conversation(convoId, { unread_count: 0 }));
-
-        if (messageHead) {
-          setMessageHead(null);
-        }
+        delay(50).then(() => {
+          scrollView!.scrollTop = scrollView!.scrollHeight;
+        });
       } else {
         emitUserOnlineStatus(true, false, {
           open: true,
           message:
-            "Something went wrong. Seems you are/were offline. We'll try to reconnect then you can perform action again.",
+            "Something went wrong. Seems you are/were offline. We'll try to reconnect then you can try again.",
           severity: 'info',
           autoHide: false
         });
