@@ -447,6 +447,11 @@ div {
   background-color: rgba(0, 0, 0, 0.75);
 }
 
+.MuiDialogActions-root {
+  width: 19rem !important;
+  max-width: 100%;
+}
+
 .logo {
   // min-width: 10rem;
   width: auto !important;

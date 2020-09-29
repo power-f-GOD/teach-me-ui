@@ -12,6 +12,7 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
 import ArrowUpwardIcon from '@material-ui/icons/KeyboardArrowUp';
 import ReplyRoundedIcon from '@material-ui/icons/ReplyRounded';
 import IconButton from '@material-ui/core/IconButton';
@@ -481,7 +482,7 @@ export const NewMessageBar = (props: {
   }
 
   return (
-    <Container className={`new-messages-bar ${type} ${className ?? ''}`}>
+    <Container className={`new-messages-bar ${type} ${className ?? ''} p-0`}>
       <Button
         className='new-messages-count btn-primary contained uppercase d-inline-flex align-items-center'
         variant='contained'
@@ -496,12 +497,18 @@ export const NewMessageBar = (props: {
   );
 };
 
-export default function ConfirmDialog(props: {
+export function ConfirmDialog(props: {
   open: boolean;
   action(choice: ActionChoice): any;
   canDeleteForEveryone: boolean;
+  numOfSelectedMessages: number;
 }) {
-  const { open, action, canDeleteForEveryone } = props;
+  const {
+    open,
+    action,
+    canDeleteForEveryone,
+    numOfSelectedMessages: nMessages
+  } = props;
 
   const handleClose = (choice: ActionChoice) => () => action(choice);
   return (
@@ -509,29 +516,32 @@ export default function ConfirmDialog(props: {
       open={open}
       onClose={handleClose('CANCEL')}
       aria-labelledby='alert-dialog-title'>
-      <DialogTitle id='alert-dialog-title'>Delete Message?</DialogTitle>
-      <DialogActions
-        className='text-right d-flex flex-column'
-        style={{ minWidth: '19rem' }}>
+      <DialogTitle id='alert-dialog-title' className='pb-1'>
+        Delete Message{nMessages > 1 ? 's' : ''}?
+      </DialogTitle>
+      <DialogContent className='theme-tertiary-lighter'>
+        Sure you want to do this?
+      </DialogContent>
+      <DialogActions className='text-right d-flex flex-column'>
         <Button
           onClick={handleClose('DELETE_FOR_ME')}
           color='primary'
           variant='text'
-          className='ml-auto my-2 mr-2 btn-secondary uppercase'>
+          className='ml-auto mb-2 mt-1 mr-2 btn-secondary uppercase'>
           Delete for Self
         </Button>
         <Button
           onClick={handleClose('CANCEL')}
           color='primary'
           variant='text'
-          className='ml-auto my-2 mr-2 btn-secondary uppercase'
+          className='ml-auto mb-2 mr-2 btn-secondary uppercase'
           autoFocus>
           Cancel
         </Button>
         {canDeleteForEveryone && (
           <Button
             onClick={handleClose('DELETE_FOR_EVERYONE')}
-            className='ml-auto my-2 mr-2 btn-secondary uppercase'
+            className='ml-auto mb-2 mr-2 btn-secondary uppercase'
             variant='text'
             color='primary'>
             Delete for All
