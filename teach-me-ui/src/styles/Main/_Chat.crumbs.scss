@@ -1,3 +1,272 @@
+$incoming-outgoing-spacing: 1.25rem;
+$msgs-spacing: 0.1875rem;
+$msg-radius: 1.5rem;
+
+.msg-container {
+  position: relative;
+  user-select: none;
+  cursor: pointer;
+  opacity: 1;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  transition: opacity 0.3s;
+
+  $diff: 120;
+  $bg-incoming: #fff;
+  $bg-outgoing: rgb($sec-r + $diff, $sec-g + $diff, $sec-b + $diff);
+
+  &.deleted {
+    font-style: italic;
+
+    .msg-wrapper {
+      opacity: 0.45;
+    }
+  }
+
+  &::after {
+    @include before-or-after(
+      $tr: 0.2s,
+      $zi: unset,
+      $w: calc(100% + 4rem),
+      $h: calc(100% + 0.19rem),
+      $l: -2rem,
+      $t: unset,
+      $br: 0.25rem,
+      $b: -0.125rem,
+      $bg: rgba($prim-r + 50, $prim-g + 50, $prim-b + 50, 0.35)
+    );
+    transform: scale(1, 0);
+  }
+
+  &:focus {
+    &.outgoing .msg-wrapper {
+      background-color: $theme-secondary-v8;
+      transition: transform 0.35s, background-color 0.35s, border-radius 0.35s;
+
+      &::before {
+        background-color: $theme-secondary-v8;
+      }
+    }
+
+    &.incoming .msg-wrapper {
+      background-color: $theme-tertiary-v8;
+      transition: transform 0.35s, background-color 0.35s, border-radius 0.35s;
+
+      &::before {
+        background-color: $theme-tertiary-v8;
+      }
+    }
+  }
+
+  &.selected {
+    &,
+    &.deleted {
+      &::after {
+        transform: scale(1, 1);
+      }
+    }
+
+    &,
+    &.deleted {
+      &.outgoing {
+        .msg-wrapper {
+          transition: transform 0.35s, background-color 0.35s,
+            border-radius 0.35s;
+          transform: translateX(-1.25rem) !important;
+        }
+      }
+
+      &.incoming {
+        .msg-wrapper {
+          transition: transform 0.35s, background-color 0.35s,
+            border-radius 0.35s;
+          transform: translateX(1.5rem);
+        }
+      }
+    }
+  }
+
+  &.last-message {
+    &.incoming {
+      .msg-wrapper {
+        animation: incomingMessageSlideIn 1s;
+      }
+    }
+
+    &.outgoing {
+      .msg-wrapper {
+        animation: outgoingMessageSlideInWithNoScroll 1s;
+      }
+    }
+  }
+
+  $br: 0.5rem;
+
+  &.incoming {
+    margin: 0;
+
+    .chat-head {
+      border-top-right-radius: $msg-radius - 0.25rem;
+      border-right: 0.15rem solid;
+    }
+
+    .msg-wrapper {
+      background: $bg-incoming;
+      box-shadow: 0 0.0625rem 0 $theme-tertiary-v8;
+
+      &::before {
+        background-color: $bg-incoming;
+        top: 0;
+        left: -$msg-radius + 0.75rem;
+        clip-path: polygon(0 0, 95% 0, 70% 75%, 0 0.25rem, 0 0);
+      }
+    }
+
+    &.first {
+      .msg-wrapper {
+        border-radius: 0.5rem $msg-radius $msg-radius $br;
+      }
+    }
+
+    &.only {
+      .msg-wrapper {
+        border-radius: $br $msg-radius $msg-radius;
+      }
+    }
+
+    &.middle {
+      .msg-wrapper {
+        border-radius: $br $msg-radius $msg-radius $br;
+      }
+    }
+
+    &.last {
+      .msg-wrapper {
+        border-radius: $br $msg-radius $msg-radius;
+      }
+    }
+
+    + .incoming.msg-container {
+      margin-top: $msgs-spacing;
+
+      .msg-wrapper {
+        &::before {
+          content: unset;
+        }
+      }
+
+      &.delayed {
+        .msg-wrapper {
+          &::before {
+            content: '';
+          }
+        }
+      }
+    }
+  }
+
+  &.incoming + .outgoing.msg-container {
+    margin-top: $incoming-outgoing-spacing !important;
+  }
+
+  &.outgoing {
+    text-align: right;
+    margin: 0;
+
+    .chat-head {
+      border-top-left-radius: $msg-radius - 0.25rem;
+      border-left: 0.15rem solid;
+    }
+
+    .msg-wrapper {
+      background: $bg-outgoing;
+      align-self: flex-end;
+      box-shadow: 0 0.0625rem 0 $theme-secondary-v8;
+
+      &::before {
+        background-color: $bg-outgoing;
+        top: 0;
+        right: -$msg-radius + 0.75rem;
+        clip-path: polygon(25% 0, 100% 0, 100% 0.25rem, 30% 75%, 0 0);
+      }
+    }
+
+    &.first {
+      .msg-wrapper {
+        border-radius: $msg-radius 0.5rem $br $msg-radius;
+      }
+    }
+
+    &.only {
+      .msg-wrapper {
+        border-radius: $msg-radius $br $msg-radius $msg-radius;
+      }
+    }
+
+    &.middle {
+      .msg-wrapper {
+        border-radius: $msg-radius $br $br $msg-radius;
+      }
+    }
+
+    &.last {
+      .msg-wrapper {
+        border-radius: $msg-radius $br $msg-radius $msg-radius;
+      }
+    }
+
+    + .outgoing.msg-container {
+      margin-top: $msgs-spacing;
+
+      .msg-wrapper {
+        &::before {
+          content: unset;
+        }
+      }
+
+      &.delayed {
+        .msg-wrapper {
+          &::before {
+            content: '';
+          }
+        }
+      }
+    }
+  }
+
+  &.outgoing + .incoming.msg-container {
+    margin-top: $incoming-outgoing-spacing !important;
+  }
+
+  .msg-wrapper {
+    padding: 0.5rem 0.6rem;
+    text-align: left;
+    white-space: pre-wrap;
+    word-break: break-word;
+    width: auto;
+    max-width: 70%;
+
+    &::before {
+      position: absolute;
+      content: ' ';
+      background: inherit;
+      height: $msg-radius - 0.25rem;
+      width: $msg-radius - 0.25rem;
+      z-index: 0;
+      transition: inherit;
+    }
+
+    > div {
+      border-radius: inherit;
+    }
+  }
+
+  [class*='Icon'] {
+    margin-bottom: -0.175rem;
+    font-size: 1.1rem;
+  }
+}
+
 .chat-timestamp-wrapper {
   font-size: 0.75rem;
   text-align: right;
@@ -15,7 +284,7 @@
     transition: 0.35s;
     padding: 0;
     padding: {
-      right: 0.35rem;
+      right: 0.5rem;
       left: 0.55rem;
     }
     white-space: nowrap;
@@ -139,7 +408,7 @@ button.new-messages-count {
   box-shadow: none !important;
   text-transform: unset;
   min-height: unset;
-  min-width: 15rem;
+  min-width: 14rem;
   justify-content: space-evenly !important;
   padding: 0.4rem 1rem;
   position: relative;
@@ -151,7 +420,7 @@ button.new-messages-count {
   }
 
   &.hide-icon {
-    [class*=Icon] {
+    [class*='Icon'] {
       display: none;
     }
   }
@@ -164,4 +433,57 @@ button.new-messages-count {
   to {
     transform: translateY(0);
   }
+}
+
+.chat-head {
+  // @include debugger();
+  border-radius: 1rem 1rem 0.5rem 0.5rem;
+  border-top-right-radius: inherit;
+  border-top-left-radius: inherit;
+  margin-bottom: 0.5rem;
+  max-height: 5.6rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: pre-wrap;
+  font-size: 0.85rem;
+  padding: 0.35rem 0.5rem 0.25rem;
+  background: rgba(0, 0, 0, 0.1);
+
+  &.self {
+    border-color: $theme-primary-v7 !important;
+
+    .chat-head-sender {
+      color: $theme-primary-v6;
+    }
+  }
+
+  &.other {
+    border-color: purple !important;
+
+    .chat-head-sender {
+      color: purple;
+    }
+  }
+
+  button {
+    $size: 2rem;
+
+    height: $size;
+    width: $size;
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    color: rgba(0, 0, 0, 0.55);
+  }
+
+  [class*='Icon'] {
+    font-size: 1.25rem;
+    align-self: center;
+    line-height: 0;
+    margin-right: auto;
+  }
+}
+
+.chat-head-sender {
+  font-weight: 500;
 }

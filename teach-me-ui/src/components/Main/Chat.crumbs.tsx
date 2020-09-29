@@ -12,7 +12,11 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
 import ArrowUpwardIcon from '@material-ui/icons/KeyboardArrowUp';
+import ReplyRoundedIcon from '@material-ui/icons/ReplyRounded';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 
 import {
   APIMessageResponse,
@@ -40,6 +44,7 @@ export const Message = (props: {
   message: APIMessageResponse;
   type: 'incoming' | 'outgoing';
   sender_username: string;
+  headSenderUsername: string;
   userId: string;
   className: string;
   forceUpdate: any;
@@ -54,6 +59,7 @@ export const Message = (props: {
     participants,
     userId,
     sender_username,
+    headSenderUsername,
     className,
     clearSelections,
     canSelectByClick,
@@ -64,7 +70,8 @@ export const Message = (props: {
     date: timestamp,
     deleted,
     delivered_to,
-    seen_by
+    seen_by,
+    parent
   } = message;
   const [selected, setSelected] = useState<boolean | null>(null);
   const messageElRef = React.useRef<HTMLDivElement>(null) as any;
@@ -156,6 +163,7 @@ export const Message = (props: {
   return (
     <Container
       fluid
+      id={message._id}
       className={`${type === 'incoming' ? 'incoming' : 'outgoing'} ${
         selected ? 'selected' : ''
       } msg-container ${className} ${deleted ? 'deleted' : ''} p-0 mx-0`}
@@ -167,6 +175,15 @@ export const Message = (props: {
         as='div'
         className='msg-wrapper scroll-view-msg-wrapper d-inline-flex flex-column justify-content-end'>
         <Box>
+          {!deleted && parent && (
+            <ChatHead
+              head={{
+                ...parent,
+                sender_username: headSenderUsername,
+                type: parent?.sender_id === userId ? 'outgoing' : 'incoming'
+              }}
+            />
+          )}
           {deleted ? (
             type === 'outgoing' ? (
               <>
@@ -196,6 +213,52 @@ export const Message = (props: {
           />
         </Box>
       </Col>
+    </Container>
+  );
+};
+
+export const ChatHead = (props: {
+  head: SelectedMessageValue | null;
+  type?: 'reply' | 'head';
+  headCopy?: SelectedMessageValue | null;
+  setMessageHead?: Function;
+}) => {
+  const { type, head, headCopy, setMessageHead } = props;
+  const { sender_username: senderUsername, message: text, type: messageType } =
+    head ?? headCopy ?? {};
+  const isReply = type === 'reply';
+  const senderIsSelf = messageType === 'outgoing';
+
+  const handleCloseReplyMessage = useCallback(() => {
+    if (setMessageHead) {
+      setMessageHead(null);
+    }
+  }, [setMessageHead]);
+
+  return (
+    <Container
+      className={`chat-head ${senderIsSelf ? 'self' : 'other'} ${
+        isReply ? 'slide-in-top' : ''
+      }`}>
+      <Container
+        as='span'
+        className='chat-head-sender p-0 d-flex justify-content-start align-items-center'>
+        <Container as='span' className='p-0 m-0 w-auto'>
+          @{senderUsername}{' '}
+        </Container>
+        {isReply && <ReplyRoundedIcon fontSize='inherit' />}
+      </Container>
+      {text}
+      {isReply && (
+        <IconButton
+          className={`close-reply-button  ml-2 ${!head ? 'hide' : ''}`}
+          onClick={handleCloseReplyMessage}
+          aria-label='close reply button'
+          aria-hidden={!head}
+          tabIndex={head ? 0 : -1}>
+          <CloseIcon />
+        </IconButton>
+      )}
     </Container>
   );
 };
@@ -419,7 +482,7 @@ export const NewMessageBar = (props: {
   }
 
   return (
-    <Container className={`new-messages-bar ${type} ${className ?? ''}`}>
+    <Container className={`new-messages-bar ${type} ${className ?? ''} p-0`}>
       <Button
         className='new-messages-count btn-primary contained uppercase d-inline-flex align-items-center'
         variant='contained'
@@ -434,12 +497,18 @@ export const NewMessageBar = (props: {
   );
 };
 
-export default function ConfirmDialog(props: {
+export function ConfirmDialog(props: {
   open: boolean;
   action(choice: ActionChoice): any;
   canDeleteForEveryone: boolean;
+  numOfSelectedMessages: number;
 }) {
-  const { open, action, canDeleteForEveryone } = props;
+  const {
+    open,
+    action,
+    canDeleteForEveryone,
+    numOfSelectedMessages: nMessages
+  } = props;
 
   const handleClose = (choice: ActionChoice) => () => action(choice);
   return (
@@ -447,29 +516,32 @@ export default function ConfirmDialog(props: {
       open={open}
       onClose={handleClose('CANCEL')}
       aria-labelledby='alert-dialog-title'>
-      <DialogTitle id='alert-dialog-title'>Delete Message?</DialogTitle>
-      <DialogActions
-        className='text-right d-flex flex-column'
-        style={{ minWidth: '19rem' }}>
+      <DialogTitle id='alert-dialog-title' className='pb-1'>
+        Delete Message{nMessages > 1 ? 's' : ''}?
+      </DialogTitle>
+      <DialogContent className='theme-tertiary-lighter'>
+        Sure you want to do this?
+      </DialogContent>
+      <DialogActions className='text-right d-flex flex-column'>
         <Button
           onClick={handleClose('DELETE_FOR_ME')}
           color='primary'
           variant='text'
-          className='ml-auto my-2 mr-2 btn-secondary uppercase'>
+          className='ml-auto mb-2 mt-1 mr-2 btn-secondary uppercase'>
           Delete for Self
         </Button>
         <Button
           onClick={handleClose('CANCEL')}
           color='primary'
           variant='text'
-          className='ml-auto my-2 mr-2 btn-secondary uppercase'
+          className='ml-auto mb-2 mr-2 btn-secondary uppercase'
           autoFocus>
           Cancel
         </Button>
         {canDeleteForEveryone && (
           <Button
             onClick={handleClose('DELETE_FOR_EVERYONE')}
-            className='ml-auto my-2 mr-2 btn-secondary uppercase'
+            className='ml-auto mb-2 mr-2 btn-secondary uppercase'
             variant='text'
             color='primary'>
             Delete for All

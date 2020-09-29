@@ -1,5 +1,8 @@
+$bg-sub: 40;
+
 $convo-spacer: 0.25rem;
 $avatar-size: 3rem;
+$tab-item-bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
 
 .chat-left-pane {
   background-color: $theme-primary-v3;
@@ -64,7 +67,7 @@ $avatar-size: 3rem;
       transform: scale(1, 1);
     }
     50% {
-      transform: scale(1, 1.25);
+      transform: scale(1, 1.1);
       opacity: 0.9;
     }
     100% {
@@ -92,7 +95,7 @@ $avatar-size: 3rem;
     overflow-x: hidden;
 
     & + .scroll-bar-fader {
-      background: $theme-primary-v2 !important;
+      background: $theme-primary-v3 !important;
     }
 
     &.hide-scroll-fader,
@@ -222,16 +225,13 @@ $avatar-size: 3rem;
   }
 
   .conversation-name-wrapper {
-    $bg-sub: 30;
-    $bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
-
     padding: 0.75rem 0.5rem;
-    border-radius: $convo-spacer + 0.15rem;
-    background: $bg;
+    border-radius: $convo-spacer;
+    background: $tab-item-bg;
     transition: color 0.2s, background-color 0.35s;
 
     .MuiBadge-dot {
-      border-color: $bg;
+      border-color: $tab-item-bg;
       right: 30%;
     }
   }

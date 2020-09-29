@@ -34,6 +34,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import PersonIcon from '@material-ui/icons/Person';
 import FilterNoneRoundedIcon from '@material-ui/icons/FilterNoneRounded';
+import ReplyRoundedIcon from '@material-ui/icons/ReplyRounded';
 
 import {
   ChatState,
@@ -73,12 +74,14 @@ import {
   CHAT_READ_RECEIPT,
   CHAT_MESSAGE_DELIVERED
 } from '../../constants/chat';
-import ConfirmDialog, {
+import {
+  ConfirmDialog,
   Message,
   ChatDate,
   SelectedMessageValue,
   ActionChoice,
-  NewMessageBar
+  NewMessageBar,
+  ChatHead
 } from './Chat.crumbs';
 import { displaySnackbar } from '../../actions';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
@@ -130,6 +133,7 @@ const messagesStatusSignalRef: any = createRef<HTMLInputElement | null>();
 const headerNameControlWrapperRef: any = createRef<HTMLInputElement | null>();
 
 let scrollView: HTMLElement | null = null;
+let msgBox: HTMLInputElement | null = null;
 let messageActionsWrapper: HTMLElement | any = null;
 let moreOptionsContainer: HTMLElement | any = null;
 let messagesStatusSignal: HTMLElement | any = null;
@@ -161,6 +165,9 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
     [id: string]: SelectedMessageValue;
   }>({});
   const [clearSelections, setClearSelections] = useState<boolean>(false);
+  const [messageHead, setMessageHead] = useState<SelectedMessageValue | null>(
+    null
+  );
 
   const handleProfileLinkClick = useCallback(() => {
     dispatch(
@@ -205,7 +212,8 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
         dispatch(conversations({ data: [{ unread_count: 0, _id: convoId }] }));
       }
 
-      for (const message of convoMessages) {
+      for (const i in convoMessages) {
+        const message = { ...convoMessages[i] };
         const isSeen = message.seen_by?.includes(userId);
 
         if (!message.sender_id || userId === message.sender_id || isSeen) {
@@ -219,30 +227,62 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
 
               if (window.innerWidth < 992) {
                 if (!isDelivered) {
-                  socket.send(
+                  socket!.send(
                     JSON.stringify({
                       message_id: message._id,
                       pipe: CHAT_MESSAGE_DELIVERED
                     })
                   );
+
+                  dispatch(
+                    conversationMessages({
+                      statusText: 'from socket',
+                      pipe: CHAT_MESSAGE_DELIVERED,
+                      data: [{ delivered_to: [userId], _id: message._id }]
+                    })
+                  );
                 }
 
                 if (!_isMinimized) {
-                  socket.send(
+                  socket!.send(
                     JSON.stringify({
                       message_id: message._id,
                       pipe: CHAT_READ_RECEIPT
                     })
                   );
+                  dispatch(
+                    conversationMessages({
+                      statusText: 'from socket',
+                      pipe: CHAT_READ_RECEIPT,
+                      data: [{ seen_by: [userId], _id: message._id }]
+                    })
+                  );
                 }
               } else {
-                socket.send(
+                const pipe =
+                  _isMinimized && !isDelivered
+                    ? CHAT_MESSAGE_DELIVERED
+                    : CHAT_READ_RECEIPT;
+
+                socket!.send(
                   JSON.stringify({
                     message_id: message._id,
-                    pipe:
-                      _isMinimized && !isDelivered
-                        ? CHAT_MESSAGE_DELIVERED
-                        : CHAT_READ_RECEIPT
+                    pipe
+                  })
+                );
+
+                dispatch(
+                  conversationMessages({
+                    statusText: 'from socket',
+                    pipe,
+                    data: [
+                      {
+                        [pipe === CHAT_READ_RECEIPT
+                          ? 'seen_by'
+                          : 'delivered_to']: [userId],
+                        _id: message._id
+                      }
+                    ]
                   })
                 );
               }
@@ -279,6 +319,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
           convoId={convoId}
           convoInfoOnlineStatus={convoInfoOnlineStatus}
           convoMessagesStatus={convoMessagesStatus}
+          setMessageHead={setMessageHead}
           selectedMessages={selectedMessages}
           setClearSelections={setClearSelections}
           setSelectedMessages={setSelectedMessages}
@@ -364,11 +405,15 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
         )}
       </Container>
 
-      <Memoize
-        memoizedComponent={MessageBox}
-        convoId={convoId}
-        webSocket={socket}
-      />
+      {convoId && (
+        <Memoize
+          memoizedComponent={MessageBox}
+          convoId={convoId}
+          messageHead={messageHead}
+          webSocket={socket}
+          setMessageHead={setMessageHead}
+        />
+      )}
     </>
   );
 };
@@ -377,6 +422,7 @@ function MiddlePaneHeader(props: {
   convoMessagesStatus: SearchState['status'];
   convoId: string;
   convoInfoOnlineStatus: OnlineStatus;
+  setMessageHead: Function;
   setSelectedMessages: Function;
   setClearSelections: Function;
   selectedMessages: { [key: string]: any };
@@ -386,6 +432,7 @@ function MiddlePaneHeader(props: {
     convoMessagesStatus,
     convoId,
     convoInfoOnlineStatus,
+    setMessageHead,
     selectedMessages,
     setClearSelections,
     setSelectedMessages,
@@ -599,6 +646,7 @@ function MiddlePaneHeader(props: {
         memoizedComponent={MiddlePaneHeaderActions}
         inert={!numOfSelectedMessages}
         numOfSelectedMessages={numOfSelectedMessages}
+        setMessageHead={setMessageHead}
         selectedMessages={selectedMessages}
         setClearSelections={setClearSelections}
         setSelectedMessages={setSelectedMessages}
@@ -662,6 +710,11 @@ function MiddlePandeHeaderColleagueNameAndStatus(props: {
         setCanDisplayAwayDate(true);
       }
     }, 10000);
+
+    if ((_canDisplayAwayDate = Date.now() - lastSeenForAway > 300000)) {
+      clearTimeout(renderAwayDateTimeout);
+      setCanDisplayAwayDate(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -769,6 +822,7 @@ function MiddlePandeHeaderColleagueNameAndStatus(props: {
 function MiddlePaneHeaderActions(props: {
   inert: boolean;
   numOfSelectedMessages: number;
+  setMessageHead: Function;
   selectedMessages: { [key: string]: SelectedMessageValue };
   setClearSelections: Function;
   setSelectedMessages: Function;
@@ -777,11 +831,21 @@ function MiddlePaneHeaderActions(props: {
   const {
     inert,
     numOfSelectedMessages,
+    setMessageHead,
     selectedMessages,
     setClearSelections,
     setSelectedMessages,
     webSocket: socket
   } = props;
+  const oneSelected = numOfSelectedMessages === 1;
+
+  const [canShowReplyButton, setCanShowReplyButton] = useState<boolean>(
+    oneSelected
+  );
+  const [
+    messageToReply,
+    setMessageToReply
+  ] = useState<APIMessageResponse | null>(null);
   const [openConfirmDialog, setOpenConfirmDialog] = useState<boolean>(false);
   const [dialogAction, setDialogAction] = useState<any>(
     (choice: ActionChoice) => choice
@@ -794,6 +858,14 @@ function MiddlePaneHeaderActions(props: {
     setClearSelections(true);
     delay(10).then(() => setSelectedMessages({}));
   }, [setClearSelections, setSelectedMessages]);
+
+  const handleReplyMessage = useCallback(() => {
+    if (oneSelected && messageToReply) {
+      msgBox?.focus();
+      setMessageHead(messageToReply.deleted ? null : { ...messageToReply });
+      handleClearSelections();
+    }
+  }, [oneSelected, messageToReply, setMessageHead, handleClearSelections]);
 
   const confirmDeleteMessage = useCallback((): Promise<ActionChoice> => {
     return new Promise((resolve) => {
@@ -883,7 +955,7 @@ function MiddlePaneHeaderActions(props: {
             emitUserOnlineStatus(true, false, {
               open: true,
               message:
-                "Something went wrong. Seems you are/were offline. We'll try to reconnect then you can perform action again.",
+                "Something went wrong. Seems you are/were offline. We'll try to reconnect then you can try again.",
               severity: 'info',
               autoHide: false
             });
@@ -903,22 +975,46 @@ function MiddlePaneHeaderActions(props: {
   }, [selectedMessages, confirmDeleteMessage, socket, handleClearSelections]);
 
   useEffect(() => {
+    if (oneSelected) {
+      const message = selectedMessages[Object.keys(selectedMessages)[0]];
+
+      setCanShowReplyButton(!message.deleted);
+      setMessageToReply(message);
+    } else {
+      setCanShowReplyButton(false);
+    }
+
     addEventListenerOnce(
       window,
       (e: any) => {
         if (numOfSelectedMessages) {
           if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+            e.preventDefault();
             handleCopyMessage();
           }
 
           if (((e.ctrlKey || e.metaKey) && e.key === 'd') || e.keyCode === 46) {
+            e.preventDefault();
             handleDeleteMessage();
+          }
+
+          if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+            e.preventDefault();
+            handleReplyMessage();
           }
         }
       },
       'keyup'
     );
-  }, [numOfSelectedMessages, handleCopyMessage, handleDeleteMessage]);
+  }, [
+    oneSelected,
+    numOfSelectedMessages,
+    setMessageHead,
+    selectedMessages,
+    handleReplyMessage,
+    handleCopyMessage,
+    handleDeleteMessage
+  ]);
 
   useEffect(() => {
     if (messageActionsWrapper) {
@@ -941,27 +1037,36 @@ function MiddlePaneHeaderActions(props: {
         className='message-actions-wrapper'
         ref={messageActionsWrapperRef}>
         <Row
-          className={`message-actions-container${
-            numOfSelectedMessages ? ' open' : ''
+          className={`message-actions-container ${
+            numOfSelectedMessages ? 'open' : ''
           } m-0`}>
           <Box className='action-wrapper text-left'>
-            {
-              <>
-                <IconButton
-                  className='clear-selection-button ml-2'
-                  onClick={handleClearSelections}
-                  aria-label='cancel action button'>
-                  <CloseIcon />
-                </IconButton>
-                <Col as='span' className='ml-2 px-0'>
-                  {numOfSelectedMessages
-                    ? `${numOfSelectedMessages} selected`
-                    : 'Cleared'}
-                </Col>
-              </>
-            }
+            <IconButton
+              className='clear-selection-button ml-2'
+              onClick={handleClearSelections}
+              aria-label='cancel action button'>
+              <CloseIcon />
+            </IconButton>
+            <Col as='span' className='ml-2 px-0'>
+              {numOfSelectedMessages
+                ? `${numOfSelectedMessages} selected`
+                : 'Cleared'}
+            </Col>
           </Box>
           <Box className='d-flex'>
+            <Box
+              className={`action-wrapper ${
+                canShowReplyButton ? 'scale-up' : 'scale-down'
+              }-forwards text-right`}>
+              <IconButton
+                className='reply-button mr-1'
+                onClick={handleReplyMessage}
+                aria-label='reply message'
+                tabIndex={canShowReplyButton ? 0 : -1}
+                aria-hidden={!canShowReplyButton}>
+                <ReplyRoundedIcon />
+              </IconButton>
+            </Box>
             <Box className='action-wrapper text-right'>
               <IconButton
                 className='copy-button mr-1'
@@ -986,6 +1091,7 @@ function MiddlePaneHeaderActions(props: {
         memoizedComponent={ConfirmDialog}
         open={openConfirmDialog}
         action={dialogAction}
+        numOfSelectedMessages={numOfSelectedMessages}
         canDeleteForEveryone={canDeleteForEveryone}
       />
     </>
@@ -1238,28 +1344,35 @@ function ScrollView(props: {
       </Box>
 
       {convoMessages?.map((message, key: number) => {
-        const { sender_id, date, delivered_to, deleted, seen_by } = message;
-        const prevDate = new Date(
-          Number(convoMessages![key - 1]?.date)
-        ).toDateString();
-        const nextDate = new Date(
-          Number(convoMessages![key + 1]?.date)
-        ).toDateString();
-        const selfDate = new Date(Number(message.date)).toDateString();
-        const prevAndSelfSentSameDay = prevDate === selfDate;
-        const nextAndSelfSentSameDay = nextDate === selfDate;
-        const shouldRenderDate = !prevAndSelfSentSameDay;
-        const prevDelayed =
-          date! - (convoMessages![key - 1]?.date ?? date!) >= 18e5;
-        const nextDelayed =
-          (convoMessages[key + 1]?.date ?? date!) - date! >= 18e5;
-        const prevTimestamp =
-          (convoMessages[key - 1] ?? {}).date ?? (0 as number);
-
+        const {
+          sender_id,
+          date,
+          delivered_to,
+          deleted,
+          seen_by,
+          _id,
+          timestamp_id,
+          parent: head
+        } = message;
         const type =
           sender_id && sender_id !== userId ? 'incoming' : 'outgoing';
-        const prevSenderId = (convoMessages![key - 1] ?? {}).sender_id;
-        const nextSenderId = (convoMessages![key + 1] ?? {}).sender_id;
+        const [prevMessage, nextMessage] = [
+          convoMessages![key - 1],
+          convoMessages![key + 1]
+        ];
+
+        const prevDate = new Date(Number(prevMessage?.date)).toDateString();
+        const nextDate = new Date(Number(nextMessage?.date)).toDateString();
+        const selfDate = new Date(Number(date)).toDateString();
+
+        const prevAndSelfSentSameDay = prevDate === selfDate;
+        const nextAndSelfSentSameDay = nextDate === selfDate;
+        const prevDelayed = date! - (prevMessage?.date ?? date!) >= 18e5;
+        const nextDelayed = (nextMessage?.date ?? date!) - date! >= 18e5;
+
+        const prevSenderId = (prevMessage ?? {}).sender_id;
+        const nextSenderId = (nextMessage ?? {}).sender_id;
+
         const isFirstOfStack =
           prevSenderId !== sender_id || !prevAndSelfSentSameDay;
         const isOnlyOfStack =
@@ -1272,18 +1385,23 @@ function ScrollView(props: {
           prevAndSelfSentSameDay;
         const isLastOfStack =
           nextSenderId !== sender_id || !nextAndSelfSentSameDay || nextDelayed;
+
+        const shouldRenderDate = !prevAndSelfSentSameDay;
         const className = `${prevDelayed ? 'delayed mt-3' : ''}${
           isFirstOfStack ? ' first' : ''
         }${isOnlyOfStack ? ' only' : ''}${isLastOfStack ? ' last' : ''}${
           isMiddleOfStack ? ' middle' : ''
         }${
-          convoInfoNewMessage?._id === message._id || message.timestamp_id
+          convoInfoNewMessage?._id === _id || timestamp_id
             ? ' last-message'
             : ''
         }`;
-
-        let willRenderNewMessageBar =
-          prevTimestamp === convoLastReadDate && !!convoUnreadCount;
+        const lastRead = +convoLastReadDate!;
+        const willRenderNewMessageBar =
+          date > lastRead &&
+          prevMessage?.date <= lastRead &&
+          !!convoUnreadCount &&
+          prevMessage?.date;
 
         if (willRenderNewMessageBar) {
           newMessageCount = 0;
@@ -1294,6 +1412,13 @@ function ScrollView(props: {
 
         return (
           <React.Fragment key={key}>
+            {shouldRenderDate && (
+              <Memoize
+                memoizedComponent={ChatDate}
+                scrollView={scrollView as HTMLElement}
+                timestamp={Number(date)}
+              />
+            )}
             <Memoize
               memoizedComponent={NewMessageBar}
               type='relative'
@@ -1301,12 +1426,6 @@ function ScrollView(props: {
               scrollView={scrollView as HTMLElement}
               shouldRender={willRenderNewMessageBar}
             />
-            {shouldRenderDate && (
-              <ChatDate
-                scrollView={scrollView as HTMLElement}
-                timestamp={Number(date)}
-              />
-            )}
             <Memoize
               memoizedComponent={Message}
               message={message as APIMessageResponse}
@@ -1314,10 +1433,11 @@ function ScrollView(props: {
               sender_username={
                 type === 'incoming' ? convoAssocUsername : username
               }
+              headSenderUsername={
+                head?.sender_id === userId ? username : convoAssocUsername
+              }
               clearSelections={
-                message._id! in selectedMessages && clearSelections
-                  ? true
-                  : false
+                _id! in selectedMessages && clearSelections ? true : false
               }
               forceUpdate={
                 String(deleted) + delivered_to?.length + seen_by?.length
@@ -1353,13 +1473,18 @@ function ScrollView(props: {
   );
 }
 
-function MessageBox(props: { convoId: string; webSocket: WebSocket }) {
-  const { convoId, webSocket: socket } = props;
+let messageHeadCopy: SelectedMessageValue | null = null;
+
+function MessageBox(props: {
+  convoId: string;
+  messageHead: SelectedMessageValue | null;
+  webSocket: WebSocket;
+  setMessageHead: Function;
+}) {
+  const { convoId, webSocket: socket, messageHead, setMessageHead } = props;
   const msgBoxInitHeight = 19;
 
-  const [msgBoxCurrentHeight, setMsgBoxCurrentHeight] = useState<number>(
-    msgBoxInitHeight
-  );
+  const chatHeadWrapperRef: any = useRef<HTMLElement | null>();
   const [msgBoxRowsMax, setMsgBoxRowsMax] = useState<number>(1);
 
   const handleSendMsgClick = useCallback(() => {
@@ -1376,24 +1501,39 @@ function MessageBox(props: { convoId: string; webSocket: WebSocket }) {
     msgBox.focus();
 
     if (!msg.message) {
-      setMsgBoxRowsMax(msgBoxRowsMax < 6 ? msgBoxRowsMax + 1 : msgBoxRowsMax);
+      setMsgBoxRowsMax(msgBoxRowsMax < 5 ? msgBoxRowsMax + 1 : msgBoxRowsMax);
       return;
     }
 
     try {
       if (socket && socket.readyState === 1) {
-        scrollView!.style.marginBottom = `calc(21.5px - 1.25rem)`;
-        dispatch(conversationMessages({ data: [{ ...msg }] }));
+        if (messageHead) {
+          setMessageHead(null);
+        }
+
+        dispatch(
+          conversationMessages({
+            data: [
+              {
+                ...msg,
+                parent: (messageHead ? { ...messageHead } : null) as any
+              }
+            ]
+          })
+        );
         msgBox.value = '';
         setMsgBoxRowsMax(1);
         delete messageDrafts[convoId];
-        socket.send(JSON.stringify(msg));
+        socket.send(JSON.stringify({ ...msg, parent: messageHead?._id }));
         dispatch(conversation(convoId, { unread_count: 0 }));
+        delay(50).then(() => {
+          scrollView!.scrollTop = scrollView!.scrollHeight;
+        });
       } else {
         emitUserOnlineStatus(true, false, {
           open: true,
           message:
-            "Something went wrong. Seems you are/were offline. We'll try to reconnect then you can perform action again.",
+            "Something went wrong. Seems you are/were offline. We'll try to reconnect then you can try again.",
           severity: 'info',
           autoHide: false
         });
@@ -1406,14 +1546,13 @@ function MessageBox(props: { convoId: string; webSocket: WebSocket }) {
         severity: 'error'
       });
     }
-  }, [msgBoxRowsMax, convoId, socket]);
+  }, [messageHead, setMessageHead, msgBoxRowsMax, convoId, socket]);
 
   const handleMsgInputChange = useCallback(
     (e: any) => {
       const scrollView = scrollViewRef.current!;
       const elevation = e.target.offsetHeight;
       const chatBoxMaxHeight = msgBoxInitHeight * msgBoxRowsMax;
-      const remValue = elevation > msgBoxInitHeight * 4 ? 1.25 : 1.25;
 
       messageDrafts[convoId as string] = e.target.value;
 
@@ -1429,16 +1568,6 @@ function MessageBox(props: { convoId: string; webSocket: WebSocket }) {
           (e.shiftKey && userDeviceIsMobile)
         ) {
           handleSendMsgClick();
-
-          if (
-            scrollView.scrollTop + scrollView.offsetHeight + 50 >=
-            scrollView.scrollHeight - 100
-          ) {
-            delay(0).then(() => {
-              scrollView.scrollTop = scrollView.scrollHeight;
-            });
-          }
-
           return false;
         }
       }
@@ -1447,32 +1576,54 @@ function MessageBox(props: { convoId: string; webSocket: WebSocket }) {
         setMsgBoxRowsMax(msgBoxRowsMax < 7 ? msgBoxRowsMax + 1 : msgBoxRowsMax);
       }
 
-      if (scrollView) {
-        scrollView.style.marginBottom = `calc(${
-          elevation + 1.5
-        }px - ${remValue}rem)`;
-      }
-      setMsgBoxCurrentHeight(elevation);
-
       if (
         elevation <= chatBoxMaxHeight + 19 &&
         scrollView.scrollTop + scrollView.offsetHeight + 50 >=
-          scrollView.scrollHeight - 100
+          scrollView.scrollHeight - 200
       ) {
-        if (elevation > msgBoxCurrentHeight) {
-          //makes sure right amount of scrollTop is set when scrollView scroll position is at the very bottom
-          delay(0).then(() => {
-            scrollView.scrollTop = scrollView.scrollHeight;
-          });
-        }
+        delay(0).then(() => {
+          scrollView.scrollTop = scrollView.scrollHeight;
+        });
       }
     },
-    [socket, convoId, msgBoxCurrentHeight, msgBoxRowsMax, handleSendMsgClick]
+    [socket, convoId, msgBoxRowsMax, handleSendMsgClick]
   );
 
+  useEffect(() => {
+    const chatHeadWrapper = chatHeadWrapperRef.current as HTMLElement;
+
+    if (chatHeadWrapper) {
+      const chatHead = chatHeadWrapper.querySelector(
+        '.chat-head'
+      ) as HTMLElement;
+
+      chatHeadWrapper.style.height = `${
+        messageHead ? chatHead.offsetHeight + 4 : 0
+      }px`;
+
+      delay(350).then(() => {
+        messageHeadCopy = (messageHead ? { ...messageHead } : null) as any;
+      });
+    }
+
+    if (!msgBox) {
+      msgBox = msgBoxRef.current!;
+    }
+  }, [messageHead]);
+
   return (
-    !!convoId && (
-      <Col as='section' className={`chat-msg-box p-0`}>
+    <Col
+      as='section'
+      className={`chat-msg-box ${messageHead ? 'open-reply' : ''} px-0`}>
+      <Container className='chat-head-wrapper p-0 m-0' ref={chatHeadWrapperRef}>
+        <ChatHead
+          type='reply'
+          head={messageHead}
+          headCopy={messageHeadCopy}
+          setMessageHead={setMessageHead}
+        />
+      </Container>
+      <Container className='d-flex p-0'>
         <Col as='span' className='emoji-wrapper p-0'>
           <IconButton
             className='emoji-button d-none'
@@ -1509,8 +1660,8 @@ function MessageBox(props: { convoId: string; webSocket: WebSocket }) {
             <SendIcon fontSize='inherit' />
           </IconButton>
         </Col>
-      </Col>
-    )
+      </Container>
+    </Col>
   );
 }
 
