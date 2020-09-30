@@ -28,7 +28,6 @@ $tab-item-bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
     transition: 0.35s;
     border-radius: $convo-spacer + 0.15rem;
     background: $theme-primary-v4;
-    // border: 0.0625rem solid rgba($prim-r - 75, $prim-g - 75, $prim-b - 75, 0.5);
 
     &:last-child {
       margin-bottom: 0;
@@ -86,7 +85,7 @@ $tab-item-bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
   top: 0;
   left: 0;
   min-width: 100%;
-  transition: transform 0.25s ease 0.3s;
+  transition: transform 0.3s ease 0.35s;
 
   &.custom-scroll-bar {
     padding: $convo-spacer;

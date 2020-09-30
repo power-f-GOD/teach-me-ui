@@ -29,7 +29,7 @@ import {
   delay,
   interval
 } from '../../functions/utils';
-import { chatDateStickyRef } from './Chat.MiddlePane';
+import { chatDateStickyRef, msgBoxRef } from './Chat.MiddlePane';
 
 export interface SelectedMessageValue extends Omit<APIMessageResponse, 'type'> {
   type: 'incoming' | 'outgoing';
@@ -230,6 +230,10 @@ export const ChatHead = (props: {
   const senderIsSelf = messageType === 'outgoing';
 
   const handleCloseReplyMessage = useCallback(() => {
+    if (msgBoxRef.current) {
+      msgBoxRef.current.focus();
+    }
+
     if (setMessageHead) {
       setMessageHead(null);
     }

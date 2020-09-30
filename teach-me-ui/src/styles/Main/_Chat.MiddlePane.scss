@@ -357,27 +357,11 @@ body.mobile {
   }
 
   .msg-container {
-    &.last-message.incoming,
-    &.delayed.incoming,
-    &.incoming {
-      .msg-wrapper {
-        &::before {
-          left: -$msg-radius + 0.65rem !important;
-          clip-path: polygon(0 0, 80% 0, 70% 75%, 0 0.25rem, 0 0);
-        }
-      }
-    }
-
     &.last-message.outgoing,
     &.delayed.outgoing,
     &.outgoing {
       .msg-wrapper {
         transform: translateX(0);
-
-        &::before {
-          right: -$msg-radius + 0.65rem;
-          clip-path: polygon(20% 0, 100% 0, 100% 0.25rem, 30% 75%, 0 0);
-        }
       }
     }
 
@@ -413,8 +397,9 @@ body.mobile {
   min-height: $height;
   background: transparent;
   border-top: 0.0625rem solid rgba(0, 0, 0, 0.125);
-  transition: 0.3s, background-color 0.1s, height 0.2s;
   border-radius: 0;
+  transition: 0.3s, background-color 0.3s, height 0.2s;
+  transition-delay: 0.35s;
 
   &.open-reply {
     background: white;
@@ -437,6 +422,7 @@ body.mobile {
     border-radius: inherit;
     margin-bottom: 0.45rem !important;
     transition: height 0.3s, opacity 0.3s;
+    transition-delay: 0.35s;
   }
 
   .chat-head {
@@ -449,7 +435,7 @@ body.mobile {
     margin: 0.25rem 0.25rem 0;
     font-size: 0.9rem;
     border: none;
-    max-height: 5.75rem;
+    max-height: 5.65rem;
 
     &.self {
       border-bottom: 0.2rem solid $theme-primary-v7;

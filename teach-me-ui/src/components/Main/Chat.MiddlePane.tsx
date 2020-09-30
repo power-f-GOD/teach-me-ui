@@ -126,7 +126,7 @@ export const ColleagueNameAndStatusContext = createContext(
 );
 
 export const scrollViewRef: any = createRef<HTMLElement | null>();
-const msgBoxRef: any = createRef<HTMLInputElement | null>();
+export const msgBoxRef: any = createRef<HTMLInputElement | null>();
 const moreOptionsContainerRef: any = createRef<HTMLElement | any>();
 const messageActionsWrapperRef: any = createRef<HTMLInputElement | null>();
 const messagesStatusSignalRef: any = createRef<HTMLInputElement | null>();
