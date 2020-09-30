@@ -183,7 +183,10 @@ export const fetchPosts: Function = (
       return res.data.posts;
     })
     .then((state) => {
-      if (state.length === 0) {
+      if (state.length === 0 && type === 'FEED') {
+        if (!update) {
+          dispatch(fetchedPosts(state as Array<PostPropsState>));
+        }
         dispatch(recycleFeeds(cb));
         return;
       }
