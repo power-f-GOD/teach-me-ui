@@ -1,4 +1,4 @@
-import React, { useState, FunctionComponent } from 'react';
+import React, { useState, FunctionComponent, useEffect } from 'react';
 
 import { connect } from 'react-redux';
 
@@ -10,20 +10,16 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Collapse from '@material-ui/core/Collapse';
 
-import {
-  useFetchColleagueRequests,
-  useDeclineColleagueRequest,
-  useFetchColleagues,
-  useUnColleague
-} from '../../hooks/api';
+import { useDeclineColleagueRequest, useUnColleague } from '../../hooks/api';
 import {
   UserData,
   ColleagueRequestProps,
   ColleagueProps
 } from '../../constants';
-import { cleanUp } from '../../functions';
+import { cleanUp, dispatch } from '../../functions';
+import { fetchColleagueRequests, fetchColleagues } from '../../actions';
 
-export default (props: any) => {
+export default () => {
   const [active, setActive] = useState<'1' | '2'>('1');
 
   const onTabClick = (e: any) => {
@@ -67,17 +63,17 @@ const Empty = (props: any) => (
 );
 
 const ColleaguesBase = (props: any) => {
-  const { userData } = props;
+  const { userData, fetchColleaguesStatus } = props;
 
   const token = (userData as UserData).token as string;
 
-  const [, fetchColleaguesData, fetchColleagueIsLoading] = useFetchColleagues(
-    token
-  );
-  const colleagues = fetchColleaguesData?.colleagues || [];
+  const { colleagues } = props;
+  useEffect(() => {
+    dispatch(fetchColleagues());
+  }, []);
 
   return colleagues.length === 0 ? (
-    <Empty loading={fetchColleagueIsLoading} />
+    <Empty loading={fetchColleaguesStatus.status === 'pending'} />
   ) : (
     <>
       {colleagues.map((x: ColleagueProps, i: number) => (
@@ -98,11 +94,11 @@ const Colleague: FunctionComponent<{
   const [collapsed, setCollapsed] = useState<boolean>(false);
   const [fn, , fnLoading] = useUnColleague(colleague.id, props.token);
 
-  const onView = (e: any) => {
+  const onView = () => {
     cleanUp(true);
     history.push(`/@${colleague.username}`);
   };
-  const onRemove = (e: any) => {
+  const onRemove = () => {
     fn().then((_) => {
       setRemoved(true);
       setTimeout(() => {
@@ -154,17 +150,14 @@ const Colleague: FunctionComponent<{
 };
 
 const ColleagueRequestsBase = (props: any) => {
-  const { userData } = props;
+  const { userData, colleagueRequests, fetchColleagueRequestsStatus } = props;
   const token = (userData as UserData).token as string;
-  const [
-    ,
-    fetchRequestsData,
-    fetchColleagueRequestsIsLoading
-  ] = useFetchColleagueRequests(token);
-  const colleagueRequests = fetchRequestsData?.requests || [];
 
+  useEffect(() => {
+    dispatch(fetchColleagueRequests());
+  }, []);
   return colleagueRequests.length === 0 ? (
-    <Empty loading={fetchColleagueRequestsIsLoading} />
+    <Empty loading={fetchColleagueRequestsStatus.status === 'pending'} />
   ) : (
     <>
       {colleagueRequests.map((x: ColleagueRequestProps, i: number) => (
@@ -188,11 +181,11 @@ const Request: FunctionComponent<{
     props.token
   );
 
-  const onView = (e: any) => {
+  const onView = () => {
     cleanUp(true);
     history.push(`/@${request.sender.username}`);
   };
-  const onRemove = (e: any) => {
+  const onRemove = () => {
     fn().then((_) => {
       setRemoved(true);
       setTimeout(() => {
@@ -247,7 +240,12 @@ const Request: FunctionComponent<{
 };
 
 const mapStateToProps = (state: any) => ({
-  userData: state.userData
+  userData: state.userData,
+  colleagues: state.colleagues,
+  colleagueRequests: state.colleagueRequests,
+  fetchColleaguesStatus: state.fetchColleaguesStatus,
+  fetchColleagueRequestsStatus: state.fetchColleagueRequestsStatus,
+  unColleagueStatus: state.unColleagueStatus
 });
 
 const ColleagueRequests = connect(mapStateToProps)(ColleagueRequestsBase);

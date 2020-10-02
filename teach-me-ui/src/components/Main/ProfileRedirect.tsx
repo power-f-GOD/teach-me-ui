@@ -27,7 +27,7 @@ const ProfileRedirect = (props: any) => {
   }
 
   if (
-    !/chat=open/.test(window.location.search) &&
+    !/chat=o1/.test(window.location.search) &&
     profileData.status !== 'fulfilled'
   ) {
     //instead of this, you can use a React Skeleton loader; didn't have the time to add, so I deferred.

@@ -28,12 +28,14 @@ export default function chat(message: APIMessageResponse & UserData) {
   const {
     webSocket: socket,
     userData,
-    conversation: _conversation
+    conversation: _conversation,
+    conversationMessages: _conversationMessages
   } = getState();
   const { _id: convoId, unread_count } =
     _conversation ?? ({} as APIConversationResponse);
   const { cid, chat } = queryString.parse(window.location.search) ?? {};
-  const [isOpen, isMinimized] = [!!chat, chat === 'min'];
+  const userId = userData.id;
+  const [isOpen, isMinimized] = [!!chat, chat === 'm2'];
 
   if (socket) {
     const {
@@ -54,17 +56,24 @@ export default function chat(message: APIMessageResponse & UserData) {
 
     switch (pipe) {
       case CHAT_NEW_MESSAGE:
+        let willEmitDelivered = false;
+        let willEmitSeen = false;
+
         if (socket.readyState === 1) {
-          const type = sender_id !== userData.id ? 'incoming' : 'outgoing';
+          const type = sender_id !== userId ? 'incoming' : 'outgoing';
 
           if (type === 'incoming') {
-            if (delivered_to && !delivered_to!?.includes(userData.id)) {
+            const delivered = delivered_to!?.includes(userId);
+            const seen = seen_by!?.includes(userId);
+
+            if (delivered_to && !delivered) {
               socket.send(
                 JSON.stringify({
                   message_id: _id,
                   pipe: CHAT_MESSAGE_DELIVERED
                 })
               );
+              willEmitDelivered = true;
             }
 
             if (
@@ -73,7 +82,7 @@ export default function chat(message: APIMessageResponse & UserData) {
               !isMinimized &&
               cid === conversation_id &&
               seen_by &&
-              !seen_by!?.includes(userData.id)
+              !seen
             ) {
               socket.send(
                 JSON.stringify({
@@ -81,7 +90,8 @@ export default function chat(message: APIMessageResponse & UserData) {
                   pipe: CHAT_READ_RECEIPT
                 })
               );
-              //update last_read state var (to avoid bugs)
+              willEmitSeen = true;
+              //update only last_read for conversations (and not conversation) in state (to avoid bugs)
               dispatch(
                 conversations({
                   data: [{ _id: convoId, last_read: message.date }]
@@ -89,49 +99,32 @@ export default function chat(message: APIMessageResponse & UserData) {
               );
             } else {
               if (convoId === conversation_id && convoId) {
-                dispatch(
-                  conversation(convoId, {
-                    unread_count: unread_count + 1
-                  })
-                );
-
-                dispatch(
-                  conversations({
-                    data: [
-                      {
-                        _id: convoId,
-                        unread_count: unread_count + 1
-                      }
-                    ]
-                  })
-                );
+                updateConversation(convoId, {
+                  unread_count: unread_count + 1
+                });
               }
             }
           } else {
             if (convoId === conversation_id && convoId) {
-              dispatch(
-                conversation(convoId, {
-                  last_read: message.date,
-                  unread_count: 0
-                })
-              );
-
-              dispatch(
-                conversations({
-                  data: [
-                    { _id: convoId, last_read: message.date, unread_count: 0 }
-                  ]
-                })
-              );
+              updateConversation(convoId, {
+                last_read: message.date,
+                unread_count: 0
+              });
             }
           }
         }
 
-        if (convoId && conversation_id === cid) {
+        if (convoId && conversation_id === convoId) {
           dispatch(
             conversationMessages({
               statusText: 'from socket',
-              data: [{ ...message }]
+              data: [
+                {
+                  ...message,
+                  delivered_to: willEmitDelivered ? [userId] : [],
+                  seen_by: willEmitSeen ? [userId] : []
+                }
+              ]
             })
           );
         }
@@ -180,9 +173,17 @@ export default function chat(message: APIMessageResponse & UserData) {
           dispatch(conversations({ data: [{ ...message, user_typing: '' }] }));
         }, 500);
         break;
-      case CHAT_MESSAGE_DELETED:
+      //deliberately not using a break keyword after this
       case CHAT_MESSAGE_DELETED_FOR:
-        if (deleted && convoId && conversation_id === cid) {
+        if (convoId === conversation_id && convoId) {
+          updateConversation(convoId, {
+            unread_count: 0,
+            last_read: _conversationMessages.data.slice(-1)[0].date
+          });
+        }
+      //eslint-disable-next-line
+      case CHAT_MESSAGE_DELETED:
+        if (deleted && convoId && conversation_id === convoId) {
           dispatch(
             conversationMessages({
               statusText: 'from socket',
@@ -194,4 +195,16 @@ export default function chat(message: APIMessageResponse & UserData) {
         break;
     }
   }
+}
+
+function updateConversation(
+  convoId: string,
+  data: Partial<APIConversationResponse>
+) {
+  dispatch(conversation(convoId, { ...data }));
+  dispatch(
+    conversations({
+      data: [{ _id: convoId, ...data }]
+    })
+  );
 }

@@ -162,15 +162,16 @@ body,
   top: 0;
   display: none;
   right: 0;
-  transition: transform 0.4s, opacity 0.4s;
-  transition-delay: 0.25s;
+  transition: transform 0.35s, opacity 0.3s;
+  transition-delay: 0.65s;
 
   &.minimize {
     transform: translateY(calc(100% - #{$chat-header-min-height}));
   }
 
   &.close {
-    transform: scale(0.9);
+    transition-delay: 0s;
+    transform: scale(0) translateY(150vh);
     opacity: 0;
   }
 
@@ -191,6 +192,8 @@ header.chat-header {
   position: relative;
   font-weight: bold;
   z-index: 4;
+  flex: none;
+  background: inherit;
   background-color: white;
   min-height: $chat-header-min-height;
   max-height: $chat-header-min-height;
@@ -261,11 +264,13 @@ body.desktop {
       }
 
       & + .scroll-bar-fader {
+        // pointer-events: none;
+
         @include before-or-after(
           $w: 0.5rem,
           $l: unset,
           $r: 0,
-          $bg: white,
+          $bg: inherit,
           $zi: 2,
           $t: 0
         );

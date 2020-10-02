@@ -312,7 +312,7 @@ function PaneItem({
     ) /
       864e5 ===
     1;
-  const _queryString = `?chat=open&id=${_userId}&cid=${convoId}`;
+  const _queryString = `?id=${_userId}&chat=o1&cid=${convoId}`;
   const _chatState: ChatState = {
     isOpen: true,
     isMinimized: false,
@@ -353,8 +353,8 @@ function PaneItem({
 
         if (cid === convoId || userId === id) {
           const queryString = window.location.search.replace(
-            'chat=min',
-            'chat=open'
+            'chat=m2',
+            'chat=o1'
           );
 
           dispatch(chatState({ queryString }));
@@ -452,8 +452,8 @@ function PaneItem({
               width='100%'>
               <Box
                 className={`last-message mt-1 ${
-                  last_message?.deleted && !user_typing ? 'font-italic' : ''
-                } ${user_typing ? 'theme-secondary-lightest' : ''}`}
+                  last_message?.deleted ? 'font-italic' : ''
+                } fade-in`}
                 maxWidth={unread_count ? 'calc(100% - 2.25rem)' : '100%'}
                 title={last_message?.message ?? ''}>
                 {!last_message ? (
@@ -462,7 +462,9 @@ function PaneItem({
                   <>
                     <Box
                       position='absolute'
-                      className={user_typing ? 'show' : 'hide'}>
+                      className={`theme-secondary-lightest font-normal ${
+                        user_typing ? 'show' : 'hide'
+                      }`}>
                       typing...
                     </Box>
                     <Box

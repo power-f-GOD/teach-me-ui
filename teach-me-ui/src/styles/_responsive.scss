@@ -54,6 +54,12 @@
 
 @media screen and (max-width: 991px) {
   .ChatBox {
+    .chat-box-wrapper {
+      &.close {
+        transform: scale(0.8);
+      }
+    }
+
     .chat-right-pane,
     .chat-left-pane {
       position: fixed;
@@ -68,7 +74,7 @@
     .chat-left-pane {
       opacity: 0;
       transform: translateY(10rem);
-      transition: opacity 0.2s, transform 0.35s;
+      transition: opacity 0.2s, transform 0.3s;
 
       &.active-pane {
         opacity: 1;
@@ -81,7 +87,7 @@
       opacity: 0;
       max-width: unset;
       transform: translateY(-10rem);
-      transition: opacity 0.2s, transform 0.35s;
+      transition: opacity 0.2s, transform 0.3s;
 
       &.active-pane {
         opacity: 1;
@@ -113,12 +119,12 @@
     .chat-right-pane {
       opacity: 0;
       animation: unset;
-      transform: scale(4);
-      transition: opacity 0.3s, transform 0.4s;
+      transform: scale(5) translateY(15rem);
+      transition: opacity 0.25s, transform 0.5s;
 
       &.active-pane {
         opacity: 1;
-        transform: scale(1);
+        transform: scale(1) translateY(0);
       }
 
       .back-button {
@@ -260,12 +266,14 @@
   //Search page style(s)
   .Search {
     padding: 0;
-    padding-top: 3rem;
+    padding-top: 3.25rem;
 
     .search-box {
+      border-radius: 3rem;
       transform: translateY(25vh);
 
       &.transform {
+        border-radius: 0.5rem;
         transform: translateY(0) !important;
       }
     }
@@ -278,7 +286,7 @@
     }
 
     .no-results-wrapper {
-      height: calc(100vh - 17.5rem);
+      height: calc(100vh - 18rem);
       max-width: 100%;
       overflow: unset;
     }
@@ -286,7 +294,7 @@
     .search-results-wrapper {
       max-width: 100%;
       height: calc(100vh - 10rem);
-      max-height: calc(100vh - 10rem);
+      max-height: calc(100vh - 10.5rem);
     }
   }
 }
@@ -359,7 +367,7 @@
   //chat box style(s)
   .ChatBox {
     .msg-wrapper {
-      max-width: 85%;
+      max-width: 90%;
       font-size: 0.95rem;
     }
   }
@@ -390,12 +398,6 @@
 }
 
 @media screen and (max-width: 360px) {
-  //chat box style(s)
-  .ChatBox {
-    .msg-wrapper {
-      max-width: 92.5%;
-    }
-  }
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2),

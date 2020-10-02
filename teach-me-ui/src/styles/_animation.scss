@@ -76,6 +76,10 @@
   }
 }
 
+.slide-in-top {
+  animation: slideInTop 0.35s;
+}
+
 @keyframes slideInTop {
   from {
     transform: translateY(-100%);
@@ -98,6 +102,14 @@
   }
 }
 
+.scale-up {
+  animation: scaleUp 0.35s;
+}
+
+.scale-up-forwards {
+  animation: scaleUp 0.35s forwards;
+}
+
 @keyframes scaleUp {
   from {
     transform: scale(0);
@@ -109,11 +121,54 @@
   }
 }
 
+.scale-down {
+  animation: scaleDown 0.35s;
+}
+
+.scale-down-forwards {
+  animation: scaleDown 0.35s forwards;
+}
+
+@keyframes scaleDown {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+// Chat style(s)
+@keyframes outgoingMessageSlideInWithNoScroll {
+  from {
+    opacity: 0;
+    transform: translateX(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0rem);
+  }
+}
+
+@keyframes incomingMessageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .hide {
   transition: opacity 0.35s;
   transition-delay: 0.275s;
   // visibility: hidden;
   opacity: 0 !important;
+  pointer-events: none;
 }
 
 .show {

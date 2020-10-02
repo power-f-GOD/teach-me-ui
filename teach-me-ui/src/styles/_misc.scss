@@ -447,6 +447,11 @@ div {
   background-color: rgba(0, 0, 0, 0.75);
 }
 
+.MuiDialogActions-root {
+  width: 19rem !important;
+  max-width: 100%;
+}
+
 .logo {
   // min-width: 10rem;
   width: auto !important;
@@ -511,8 +516,12 @@ div {
   font-style: italic;
 }
 
+.font-normal {
+  font-style: normal;
+}
+
 .font-weight-norm {
-  font-weight: normal;
+  font-weight: normal !important;
 }
 
 .font-bold {
@@ -610,4 +619,8 @@ div {
 
 [class*='theme-'] {
   font-weight: inherit;
+}
+
+.pointer-events-none {
+  pointer-events: none;
 }

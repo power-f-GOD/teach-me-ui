@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import { useHistory } from 'react-router-dom';
@@ -15,29 +15,27 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { UserData } from '../../constants';
-import { useGetRecommendations } from '../../hooks/api';
 
 import { userDeviceIsMobile } from '../../index';
+import { dispatch } from '../../functions';
+import { getRecommendations } from '../../actions';
 
 const Recommendations = (props: any) => {
-  const [
-    ,
-    recommendations,
-    getRecommendationsIsLoading
-  ] = useGetRecommendations();
+  const { recommendations, getRecommendationsStatus } = props;
+  useEffect(() => {
+    dispatch(getRecommendations());
+  }, []);
   return (
     <>
-      {!getRecommendationsIsLoading &&
-        recommendations !== null &&
-        !recommendations.error &&
-        recommendations.recommendations.length > 0 && (
+      {getRecommendationsStatus.status !== 'pending' &&
+        recommendations.length > 0 && (
           <Box
             className='recommendations pb-1 pb-md-2'
             style={{
-              gridTemplateColumns: `repeat(${recommendations.recommendations.length}, 13rem)`,
+              gridTemplateColumns: `repeat(${recommendations.length}, 13rem)`,
               columnGap: userDeviceIsMobile ? '.25rem' : '.5rem'
             }}>
-            {recommendations.recommendations.map((recommendation: any) => (
+            {recommendations.map((recommendation: any) => (
               <Recommendation
                 {...recommendation}
                 key={recommendation.id}
@@ -127,6 +125,7 @@ const Recommendation = (props: any) => {
   );
 };
 
-export default connect((state: any) => ({ userData: state.userData }))(
-  Recommendations
-);
+export default connect((state: any) => ({
+  getRecommendationsStatus: state.getRecommendationsStatus,
+  recommendations: state.recommendations
+}))(Recommendations);
