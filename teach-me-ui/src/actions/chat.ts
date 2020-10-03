@@ -610,12 +610,14 @@ export const conversationMessages = (payload: ConversationMessages) => {
         case CHAT_MESSAGE_DELETED:
           if (initialMessage && !initialMessage.deleted) {
             initialMessage.deleted = true;
+            initialMessage.message = '';
             previousMessages[indexOfInitial] = initialMessage;
           }
           break;
         case CHAT_MESSAGE_DELETED_FOR:
           if (initialMessage) {
             initialMessage.deleted = true;
+            initialMessage.message = '';
             previousMessages.splice(indexOfInitial, 1);
           }
           break;

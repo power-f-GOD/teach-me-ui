@@ -141,6 +141,28 @@
 }
 
 // Chat style(s)
+.animate-highlight {
+  &::after {
+    transform: scale(1) !important;
+    background-color: rgba(
+      $tert-r - 25,
+      $tert-g - 25,
+      $tert-b - 25,
+      0.3
+    ) !important;
+    animation: animateHighlight 3s;
+  }
+}
+
+@keyframes animateHighlight {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
 @keyframes outgoingMessageSlideInWithNoScroll {
   from {
     opacity: 0;
