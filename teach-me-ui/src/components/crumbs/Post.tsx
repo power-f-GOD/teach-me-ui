@@ -26,6 +26,7 @@ import { displayModal } from '../../functions';
 import { triggerSearchKanyimuta } from '../../actions/search';
 
 import { LazyLoadImage as LazyImg } from 'react-lazy-load-image-component';
+import Axios from 'axios';
 
 const stopProp = (e: any) => {
   e.stopPropagation();
@@ -163,7 +164,12 @@ const Post: React.FunctionComponent<
           {props.media && props.media.length && (
             <Fade in={true}>
               <LazyImg
-                src={JSON.parse((props.media as any[])[selectedMedia]).url}
+                src={
+                  JSON.parse((props.media as any[])[selectedMedia]).type ===
+                  'raw'
+                    ? '/images/file-icon.svg'
+                    : JSON.parse((props.media as any[])[selectedMedia]).url
+                }
                 alt='post'
                 style={{
                   maxHeight: '70vh',
@@ -319,12 +325,32 @@ const Post: React.FunctionComponent<
                       break;
                   }
                   const mData = JSON.parse(m);
+                  const url =
+                    mData.type === 'raw' ? '/images/file-icon.svg' : mData.url;
                   return (
                     <div key={i} style={style}>
                       <LazyImg
                         id={i.toString()}
-                        onClick={showModal}
-                        src={mData.url}
+                        onClick={
+                          mData.type === 'raw' || true
+                            ? () => {
+                                Axios({
+                                  url: mData.url,
+                                  method: 'GET',
+                                  responseType: 'blob'
+                                }).then((res) => {
+                                  const dataURL = URL.createObjectURL(
+                                    new Blob([res.data])
+                                  );
+                                  const a = document.createElement('a');
+                                  a.href = dataURL;
+                                  a.download = 'file';
+                                  a.click();
+                                });
+                              }
+                            : showModal
+                        }
+                        src={url}
                         alt='post'
                         style={{
                           borderRadius: '0.2rem',
