@@ -27,7 +27,8 @@ import {
   formatMapDateString,
   addEventListenerOnce,
   delay,
-  interval
+  interval,
+  createObserver
 } from '../../functions/utils';
 import { chatDateStickyRef, msgBoxRef } from './Chat.MiddlePane';
 
@@ -51,6 +52,7 @@ export const Message = (props: {
   clearSelections: boolean;
   canSelectByClick: boolean;
   participants: string[];
+  scrollView: HTMLElement;
   handleMessageSelection(id: string | null, value: SelectedMessageValue): void;
 }) => {
   const {
@@ -63,6 +65,7 @@ export const Message = (props: {
     className,
     clearSelections,
     canSelectByClick,
+    scrollView,
     handleMessageSelection
   } = props;
   const {
@@ -163,7 +166,7 @@ export const Message = (props: {
   return (
     <Container
       fluid
-      id={message._id}
+      id={`message-${message._id}`}
       className={`${type === 'incoming' ? 'incoming' : 'outgoing'} ${
         selected ? 'selected' : ''
       } msg-container ${className} ${deleted ? 'deleted' : ''} p-0 mx-0`}
@@ -182,6 +185,7 @@ export const Message = (props: {
                 sender_username: headSenderUsername,
                 type: parent?.sender_id === userId ? 'outgoing' : 'incoming'
               }}
+              scrollView={scrollView}
             />
           )}
           {deleted ? (
@@ -217,17 +221,26 @@ export const Message = (props: {
   );
 };
 
+let headIsVisible = false;
+
 export const ChatHead = (props: {
   head: SelectedMessageValue | null;
   type?: 'reply' | 'head';
   headCopy?: SelectedMessageValue | null;
   setMessageHead?: Function;
+  scrollView?: HTMLElement | null;
 }) => {
-  const { type, head, headCopy, setMessageHead } = props;
-  const { sender_username: senderUsername, message: text, type: messageType } =
-    head ?? headCopy ?? {};
+  const { type, head, headCopy, setMessageHead, scrollView } = props;
+  const {
+    sender_username: senderUsername,
+    message: text,
+    type: messageType,
+    _id: messageId
+  } = head ?? headCopy ?? {};
   const isReply = type === 'reply';
   const senderIsSelf = messageType === 'outgoing';
+
+  const [headElement, setHeadElement] = useState<HTMLElement | null>();
 
   const handleCloseReplyMessage = useCallback(() => {
     if (msgBoxRef.current) {
@@ -239,11 +252,81 @@ export const ChatHead = (props: {
     }
   }, [setMessageHead]);
 
+  const handleScrollToMessage = useCallback(() => {
+    if (!scrollView || !headElement) return;
+
+    headIsVisible = headElement!.getBoundingClientRect().top > 64;
+
+    const observer = createObserver(scrollView, (entries) => {
+      const entry = entries[0];
+      const target = entry.target;
+
+      headIsVisible = entry.boundingClientRect.top > 64;
+
+      if (headIsVisible) {
+        highlightTarget(target);
+      }
+    });
+
+    observer.observe(headElement);
+
+    if (
+      !headIsVisible &&
+      !headElement.classList.contains('animate-highlight')
+    ) {
+      interval(
+        () => {
+          scrollView.scrollTop -= 100;
+
+          if (headIsVisible) {
+            observer.unobserve(headElement);
+          }
+        },
+        16,
+        () => headIsVisible
+      );
+    } else {
+      highlightTarget(headElement);
+      observer.unobserve(headElement);
+    }
+
+    addEventListenerOnce(
+      scrollView,
+      () => {
+        headIsVisible = !headIsVisible;
+      },
+      'click'
+    );
+
+    function highlightTarget(target: Element) {
+      target.classList.add('animate-highlight');
+      addEventListenerOnce(
+        target,
+        () => target.classList.remove('animate-highlight'),
+        'animationend'
+      );
+    }
+  }, [headElement, scrollView]);
+
+  useEffect(() => {
+    setHeadElement(
+      scrollView?.querySelector(`#message-${messageId}`) as HTMLElement
+    );
+  }, [messageId, scrollView]);
+
+  useEffect(() => {
+    return () => {
+      headIsVisible = false;
+    };
+  }, [headElement, scrollView]);
+
   return (
     <Container
       className={`chat-head ${senderIsSelf ? 'self' : 'other'} ${
         isReply ? 'slide-in-top' : ''
-      }`}>
+      }`}
+      onClick={handleScrollToMessage}
+      tabIndex={0}>
       <Container
         as='span'
         className='chat-head-sender p-0 d-flex justify-content-start align-items-center'>
@@ -358,6 +441,7 @@ export const ChatDate = ({
   }, [dateStamp, chatDateSticky, pxRatio, scrollView]);
 
   useEffect(() => {
+    //remove 2 > 3 in if expression
     if (scrollView && chatDateWrapperRef.current) {
       scrollView.addEventListener('scroll', stickDate);
       chatDateSticky.style.opacity =
@@ -409,12 +493,23 @@ export const NewMessageBar = (props: {
       '.new-messages-bar.relative .new-messages-count'
     ) as any)!;
 
+    const observer = createObserver(scrollView, (entries) => {
+      relativeIsVisible = entries[0].boundingClientRect.top > 64;
+
+      if (Button && relativeIsVisible) {
+        Button.classList.add('hide-icon');
+      }
+    });
+
     if (relativeNewMessageBar) {
       relativeIsVisible =
         relativeNewMessageBar!.getBoundingClientRect().top > 64;
 
       Button.disabled = relativeIsVisible;
       Button.classList[relativeIsVisible ? 'add' : 'remove']('hide-icon');
+      observer[relativeIsVisible ? 'unobserve' : 'observe'](
+        relativeNewMessageBar
+      );
     }
 
     addEventListenerOnce(
@@ -431,14 +526,11 @@ export const NewMessageBar = (props: {
           scrollView.scrollTop -= 100;
 
           if (relativeNewMessageBar) {
-            delay(25).then(() => {
-              relativeIsVisible =
-                relativeNewMessageBar!.getBoundingClientRect().top > 64;
+            observer.observe(relativeNewMessageBar);
 
-              if (Button && relativeIsVisible) {
-                Button.classList.add('hide-icon');
-              }
-            });
+            if (relativeIsVisible) {
+              observer.unobserve(relativeNewMessageBar);
+            }
           }
         },
         16,
