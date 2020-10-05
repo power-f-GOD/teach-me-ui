@@ -862,8 +862,10 @@ function MiddlePaneHeaderActions(props: {
   const handleReplyMessage = useCallback(() => {
     if (oneSelected && messageToReply) {
       msgBox?.focus();
-      setMessageHead(messageToReply.deleted ? null : { ...messageToReply });
       handleClearSelections();
+      delay(userDeviceIsMobile ? 400 : 10).then(() =>
+        setMessageHead(messageToReply.deleted ? null : { ...messageToReply })
+      );
     }
   }, [oneSelected, messageToReply, setMessageHead, handleClearSelections]);
 
@@ -911,7 +913,7 @@ function MiddlePaneHeaderActions(props: {
 
       if (isMulti) {
         messages +=
-          `[@${sender_username} | ${date} at ${time}]: ` + message + '\n\n';
+          `[@${sender_username} | ${date} at ${time}]:\n` + message + '\n\n';
       } else {
         messages = message;
       }
@@ -1445,6 +1447,7 @@ function ScrollView(props: {
               className={className}
               userId={userId}
               participants={convoParticipants}
+              scrollView={scrollView as HTMLElement}
               canSelectByClick={!!Object.keys(selectedMessages)[0]}
               handleMessageSelection={handleMessageSelection}
             />

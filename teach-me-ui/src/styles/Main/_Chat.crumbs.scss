@@ -35,6 +35,7 @@ $msg-radius: 1.5rem;
       $b: -0.125rem,
       $bg: rgba($prim-r + 50, $prim-g + 50, $prim-b + 50, 0.35)
     );
+    opacity: 0;
     transform: scale(1, 0);
   }
 
@@ -63,6 +64,7 @@ $msg-radius: 1.5rem;
     &.deleted {
       &::after {
         transform: scale(1, 1);
+        opacity: 1;
       }
     }
 
@@ -108,6 +110,22 @@ $msg-radius: 1.5rem;
     .chat-head {
       border-top-right-radius: $msg-radius - 0.25rem;
       border-right: 0.15rem solid;
+
+      &.self {
+        border-right-color: $theme-primary-v7;
+
+        :focus {
+          border-color: $theme-primary-v7;
+        }
+      }
+
+      &.other {
+        border-right-color: purple !important;
+
+        :focus {
+          border-color: purple !important;
+        }
+      }
     }
 
     .msg-wrapper {
@@ -115,7 +133,7 @@ $msg-radius: 1.5rem;
       box-shadow: 0 0.0625rem 0 $theme-tertiary-v8;
 
       &::before {
-        background-color: $bg-incoming;
+        background: $bg-incoming;
         top: 0;
         left: -$msg-radius + 0.9rem;
         clip-path: polygon(0 0, 95% 0, 70% 75%, 0 0.25rem, 0 0);
@@ -151,6 +169,7 @@ $msg-radius: 1.5rem;
 
       .msg-wrapper {
         &::before {
+          background: transparent;
           content: unset;
         }
       }
@@ -158,6 +177,7 @@ $msg-radius: 1.5rem;
       &.delayed {
         .msg-wrapper {
           &::before {
+            background: inherit;
             content: '';
           }
         }
@@ -176,6 +196,14 @@ $msg-radius: 1.5rem;
     .chat-head {
       border-top-left-radius: $msg-radius - 0.25rem;
       border-left: 0.15rem solid;
+
+      &.self {
+        border-left-color: $theme-primary-v7;
+      }
+
+      &.other {
+        border-left-color: purple !important;
+      }
     }
 
     .msg-wrapper {
@@ -184,7 +212,7 @@ $msg-radius: 1.5rem;
       box-shadow: 0 0.0625rem 0 $theme-secondary-v8;
 
       &::before {
-        background-color: $bg-outgoing;
+        background: $bg-outgoing;
         top: 0;
         right: -$msg-radius + 0.9rem;
         clip-path: polygon(25% 0, 100% 0, 100% 0.25rem, 30% 75%, 0 0);
@@ -220,6 +248,7 @@ $msg-radius: 1.5rem;
 
       .msg-wrapper {
         &::before {
+          background: transparent;
           content: unset;
         }
       }
@@ -227,6 +256,7 @@ $msg-radius: 1.5rem;
       &.delayed {
         .msg-wrapper {
           &::before {
+            background: inherit;
             content: '';
           }
         }
@@ -250,6 +280,7 @@ $msg-radius: 1.5rem;
       position: absolute;
       content: ' ';
       background: inherit;
+      background: transparent;
       height: $msg-radius - 0.1rem;
       width: $msg-radius - 0.45rem;
       z-index: 0;
@@ -448,20 +479,26 @@ button.new-messages-count {
   font-size: 0.85rem;
   padding: 0.35rem 0.5rem 0.25rem;
   background: rgba(0, 0, 0, 0.1);
+  border: 0.0625rem solid transparent;
+  transition: 0.25s;
 
   &.self {
-    border-color: $theme-primary-v7 !important;
-
     .chat-head-sender {
       color: $theme-primary-v6;
+    }
+
+    &:focus {
+      border-color: $theme-primary-v7 !important;
     }
   }
 
   &.other {
-    border-color: purple !important;
-
     .chat-head-sender {
       color: purple;
+    }
+
+    &:focus {
+      border-color: purple !important;
     }
   }
 

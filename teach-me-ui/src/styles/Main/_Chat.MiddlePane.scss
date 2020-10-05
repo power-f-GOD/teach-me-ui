@@ -1,10 +1,11 @@
 .chat-middle-pane {
   // @include debugger();
   position: relative;
+  transition: 0.15s;
   background: {
     image: url('/images/chat-bg.jpeg');
     size: 25rem;
-    position: center;
+    position: left;
     color: #fff;
   }
 
