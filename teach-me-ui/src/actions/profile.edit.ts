@@ -165,7 +165,8 @@ export const getUserDetailsRequest = () => (
             ...data,
             displayName,
             dob: data.date_of_birth,
-            institution
+            institution,
+            token
           });
         }
       });
