@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { validateEmail } from '.';
 
 import { 
   GET_USER_DETAILS,
@@ -13,6 +14,7 @@ import {
   UPDATE_USER_DATA_REQUEST,
   UPDATE_ACADEMIC_DATA,
   UPDATE_ACADEMIC_DATA_REQUEST,
+  UPDATE_PROFILE_REQUEST,
   EditProfileState,
   ReduxAction,
   apiBaseURL as baseURL,
@@ -21,9 +23,67 @@ import {
 import { 
   logError, 
   callNetworkStatusCheckerFor, 
-  getState 
+  getState, populateStateWithUserData 
 } from '../functions';
+import { validateUsername } from './validate';
 
+
+export const updateProfileRequest = (data: any) => (
+  dispatch: Function
+): ReduxAction => {
+
+  let {
+    firstname,
+    lastname,
+    username,
+    email,
+    dob,
+    department,
+    level
+  } = data;
+  const [day, month, year] = dob.split('/');
+  const date_of_birth = `${year}-${month}-${day}`;
+
+  firstname = `${firstname[0].toUpperCase()}${firstname
+    .slice(1)
+    .toLowerCase()}`;
+  lastname = `${lastname[0].toUpperCase()}${lastname.slice(1).toLowerCase()}`;
+  username = username.toLowerCase();
+  email = email.toLowerCase();
+
+  const userData = getState().userData;
+
+  dispatch(updateUserDataRequest({
+    firstname,
+    lastname,
+    date_of_birth
+  })(dispatch));
+
+  if (level !== userData.level) {
+    dispatch(updateAcademicDataRequest(
+      level, 
+      department
+    )(dispatch));
+  } else {
+    dispatch(updateAcademicData({status: 'fulfilled'}))
+  }
+
+  if (username !== userData.username) {
+    dispatch(updateUsernameRequest(username)(dispatch));
+  } else {
+    dispatch(updateUsername({status: 'fulfilled'}))
+  }
+
+  if (email !== userData.email) {
+    dispatch(updateEmailRequest(email)(dispatch));
+  } else {
+    dispatch(updateEmail({status: 'fulfilled'}))
+  }
+
+  return {
+    type: UPDATE_PROFILE_REQUEST
+  };
+};
 
 export const getUserDetails = (payload: EditProfileState) => {
   return {
@@ -91,10 +151,28 @@ export const getUserDetailsRequest = () => (
   })
   .then(({ data }: any) => {
     if (!data.error) {
+      const displayName = `${data.firstname} ${data.lastname}`;
+      const institution = `${data.institution.name}, ${data.institution.country}`
+      populateStateWithUserData({
+        ...data,
+        displayName,
+        institution
+      }).then(() => {
+
+        //set token for user session and subsequent authentication
+        if (navigator.cookieEnabled) {
+          localStorage.kanyimuta = JSON.stringify({
+            ...data,
+            displayName,
+            dob: data.date_of_birth,
+            institution
+          });
+        }
+      });
       dispatch(
         getUserDetails({
           status: 'fulfilled',
-          err: true,
+          err: false,
           data
         })
       );
@@ -102,7 +180,7 @@ export const getUserDetailsRequest = () => (
       dispatch(
         getUserDetails({
           status: 'fulfilled',
-          err: false,
+          err: true,
           data
         })
       );
@@ -145,7 +223,7 @@ export const updateAcademicDataRequest = (level: number, department: string) => 
       dispatch(
         updateAcademicData({
           status: 'fulfilled',
-          err: true,
+          err: false,
           data
         })
       );
@@ -153,7 +231,7 @@ export const updateAcademicDataRequest = (level: number, department: string) => 
       dispatch(
         updateAcademicData({
           status: 'fulfilled',
-          err: false,
+          err: true,
           data
         })
       );
@@ -195,16 +273,16 @@ export const updateEmailRequest = (email: string) => (
       dispatch(
         updateEmail({
           status: 'fulfilled',
-          err: true,
+          err: false,
           data
         })
       );
     } else {
       dispatch(
-        updateEmail({
-          status: 'fulfilled',
-          err: false,
-          data
+        validateEmail({
+          value: email,
+          err: true,
+          helperText: data.message
         })
       );
     }
@@ -246,7 +324,7 @@ export const updatePasswordRequest = (current_password: string, new_password: st
       dispatch(
         updatePassword({
           status: 'fulfilled',
-          err: true,
+          err: false,
           data
         })
       );
@@ -254,7 +332,7 @@ export const updatePasswordRequest = (current_password: string, new_password: st
       dispatch(
         updatePassword({
           status: 'fulfilled',
-          err: false,
+          err: true,
           data
         })
       );
@@ -296,16 +374,16 @@ export const updateUsernameRequest = (username: string) => (
       dispatch(
         updateUsername({
           status: 'fulfilled',
-          err: true,
+          err: false,
           data
         })
       );
     } else {
       dispatch(
-        updateUsername({
-          status: 'fulfilled',
-          err: false,
-          data
+        validateUsername({
+          value: username,
+          err: true,
+          helperText: data.message
         })
       );
     }
@@ -344,7 +422,7 @@ export const updateUserDataRequest = (data: Object) => (
       dispatch(
         updateUserData({
           status: 'fulfilled',
-          err: true,
+          err: false,
           data
         })
       );
@@ -352,7 +430,7 @@ export const updateUserDataRequest = (data: Object) => (
       dispatch(
         updateUserData({
           status: 'fulfilled',
-          err: false,
+          err: true,
           data
         })
       );

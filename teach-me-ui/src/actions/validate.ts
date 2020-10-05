@@ -184,7 +184,7 @@ export const matchingInstitutions = (payload: SearchState) => {
 //use this to delay search in case user types very fast to ensure the right results display
 let departmentSearchTimeout: any = null;
 
-export const getMatchingDepartments = (keyword: string) => (
+export const getMatchingDepartments = (keyword: string, isEditProfile: boolean = false) => (
   dispatch: Function
 ): ReduxAction => {
   const institution: InstitutionInputState = getState().institution;
@@ -201,7 +201,53 @@ export const getMatchingDepartments = (keyword: string) => (
 
   if (keyword) {
     departmentSearchTimeout = window.setTimeout(() => {
-      if (institutionUid) {
+      if (!isEditProfile) {
+        if (institutionUid) {
+          dispatch(matchingDepartments({ status: 'pending' }));
+
+          axios({
+            url: `/department/search?keyword=${keyword.trim()}&institution=${institutionName}&limit=15`,
+            baseURL,
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+            .then((response: any) => {
+              const { error, departments } = response.data as {
+                error: boolean;
+                departments: string[];
+              };
+
+              if (!error && !!departments[0]) {
+                dispatch(
+                  matchingDepartments({
+                    status: 'fulfilled',
+                    err: false,
+                    data: departments
+                  })
+                );
+              } else {
+                dispatch(
+                  matchingDepartments({
+                    status: 'fulfilled',
+                    err: true,
+                    data: []
+                  })
+                );
+              }
+            })
+            .catch(logError(matchingDepartments));
+        } else {
+          dispatch(
+            validateDepartment({
+              err: true,
+              helperText: 'You need to select an institution from its dropdown.'
+            })
+          );
+        }
+      } else {
+        
         dispatch(matchingDepartments({ status: 'pending' }));
 
         axios({
@@ -212,38 +258,31 @@ export const getMatchingDepartments = (keyword: string) => (
             'Content-Type': 'application/json'
           }
         })
-          .then((response: any) => {
-            const { error, departments } = response.data as {
-              error: boolean;
-              departments: string[];
-            };
+        .then((response: any) => {
+          const { error, departments } = response.data as {
+            error: boolean;
+            departments: string[];
+          };
 
-            if (!error && !!departments[0]) {
-              dispatch(
-                matchingDepartments({
-                  status: 'fulfilled',
-                  err: false,
-                  data: departments
-                })
-              );
-            } else {
-              dispatch(
-                matchingDepartments({
-                  status: 'fulfilled',
-                  err: true,
-                  data: []
-                })
-              );
-            }
-          })
-          .catch(logError(matchingDepartments));
-      } else {
-        dispatch(
-          validateDepartment({
-            err: true,
-            helperText: 'You need to select an institution from its dropdown.'
-          })
-        );
+          if (!error && !!departments[0]) {
+            dispatch(
+              matchingDepartments({
+                status: 'fulfilled',
+                err: false,
+                data: departments
+              })
+            );
+          } else {
+            dispatch(
+              matchingDepartments({
+                status: 'fulfilled',
+                err: true,
+                data: []
+              })
+            );
+          }
+        })
+        .catch(logError(matchingDepartments));
       }
     }, 100);
   }
@@ -264,7 +303,7 @@ export const matchingDepartments = (payload: SearchState) => {
 //use this to delay search in case user types very fast to ensure the right results display
 let levelSearchTimeout: any = null;
 
-export const getMatchingLevels = (keyword: string) => (
+export const getMatchingLevels = (keyword: string, isEditProfile: boolean = false) => (
   dispatch: Function
 ): ReduxAction => {
   const { institution, department } = getState();
@@ -279,57 +318,113 @@ export const getMatchingLevels = (keyword: string) => (
 
   if (keyword) {
     levelSearchTimeout = window.setTimeout(() => {
-      if (_department && institutionUid) {
-        dispatch(matchingLevels({ status: 'pending' }));
+      if (!isEditProfile) {
 
-        axios({
-          url: `/level/search?keyword=${keyword.trim()}&department=${_department}&institution=${_institution}&limit=15`,
-          baseURL,
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-          .then((response: any) => {
-            const { error, levels } = response.data as {
-              error: boolean;
-              levels: string[];
-            };
+        if (_department && institutionUid) {
+          dispatch(matchingLevels({ status: 'pending' }));
 
-            if (!error && !!levels[0]) {
-              dispatch(
-                matchingLevels({
-                  status: 'fulfilled',
-                  err: false,
-                  data: levels
-                })
-              );
-            } else {
-              dispatch(
-                matchingLevels({
-                  status: 'fulfilled',
-                  err: true,
-                  data: []
-                })
-              );
+          axios({
+            url: `/level/search?keyword=${keyword.trim()}&department=${_department}&institution=${_institution}&limit=15`,
+            baseURL,
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
             }
           })
-          .catch(logError(matchingLevels));
+            .then((response: any) => {
+              const { error, levels } = response.data as {
+                error: boolean;
+                levels: string[];
+              };
+
+              if (!error && !!levels[0]) {
+                dispatch(
+                  matchingLevels({
+                    status: 'fulfilled',
+                    err: false,
+                    data: levels
+                  })
+                );
+              } else {
+                dispatch(
+                  matchingLevels({
+                    status: 'fulfilled',
+                    err: true,
+                    data: []
+                  })
+                );
+              }
+            })
+            .catch(logError(matchingLevels));
+        } else {
+          dispatch(
+            validateLevel({
+              err: true,
+              helperText:
+                'You need to select an institution and input a department.'
+            })
+          );
+          dispatch(
+            matchingLevels({
+              status: 'settled',
+              err: true,
+              data: []
+            })
+          );
+        }
       } else {
-        dispatch(
-          validateLevel({
-            err: true,
-            helperText:
-              'You need to select an institution and input a department.'
+        if (_department) {
+          dispatch(matchingLevels({ status: 'pending' }));
+  
+          axios({
+            url: `/level/search?keyword=${keyword.trim()}&department=${_department}&institution=${_institution}&limit=15`,
+            baseURL,
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            }
           })
-        );
-        dispatch(
-          matchingLevels({
-            status: 'settled',
-            err: true,
-            data: []
-          })
-        );
+            .then((response: any) => {
+              const { error, levels } = response.data as {
+                error: boolean;
+                levels: string[];
+              };
+  
+              if (!error && !!levels[0]) {
+                dispatch(
+                  matchingLevels({
+                    status: 'fulfilled',
+                    err: false,
+                    data: levels
+                  })
+                );
+              } else {
+                dispatch(
+                  matchingLevels({
+                    status: 'fulfilled',
+                    err: true,
+                    data: []
+                  })
+                );
+              }
+            })
+            .catch(logError(matchingLevels));
+        } else {
+          dispatch(
+            validateLevel({
+              err: true,
+              helperText:
+                'You need to select a department.'
+            })
+          );
+          dispatch(
+            matchingLevels({
+              status: 'settled',
+              err: true,
+              data: []
+            })
+          );
+        }
       }
     }, 100);
   }

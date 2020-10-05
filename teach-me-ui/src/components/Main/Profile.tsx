@@ -34,7 +34,7 @@ import Img from '../crumbs/Img';
 import ColleagueView from '../crumbs/ColleagueView';
 import ProfileFeeds from '../crumbs/ProfileFeeds';
 import { UserData, DeepProfileProps } from '../../constants/interfaces';
-import { dispatch, cleanUp } from '../../functions';
+import { dispatch, cleanUp, displayModal } from '../../functions';
 import { getProfileData } from '../../actions';
 import { getConversations } from '../../actions/chat';
 import Loader from '../crumbs/Loader';
@@ -222,9 +222,14 @@ const Profile = (props: any) => {
       };
     });
 
+  const openEditProfileModal = () => {
+    displayModal(true, 'EDIT_PROFILE', { title: 'Edit Profile' });
+  };
+
   const handleEditClick = useCallback(() => {
     if (!isEditing) {
       setIsEditing(true);
+      openEditProfileModal();
     }
   }, [isEditing]);
 
@@ -430,7 +435,7 @@ const Profile = (props: any) => {
                 )}
               </>
             ) : null)}
-          {false && selfView ? (
+          {selfView ? (
             <>
               {isEditing ? (
                 <>
