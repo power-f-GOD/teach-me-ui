@@ -444,6 +444,12 @@ export interface UploadState {
   data: Array<string>;
 }
 
+export interface EditProfileState {
+  err?: boolean;
+  status:  'settled' | 'pending' | 'fulfilled';
+  data?: Object;
+}
+
 export interface MakePostState {
   status: 'settled' | 'pending' | 'fulfilled';
 }

@@ -16,6 +16,7 @@ import {
 import { uploads } from '../../../actions';
 import CreatePost from './components/CreatePost';
 import CreateRepost from './components/CreateRepost';
+import EditProfile from './components/Profile.edit';
 
 const removeModal = (event: any) => {
   displayModal(false);
@@ -35,6 +36,9 @@ const ModalFrame = (props: any) => {
       break;
     case 'CREATE_REPOST':
       modalBody = <CreateRepost {...props.modal.meta?.post} />;
+      break;
+    case 'EDIT_PROFILE':
+      modalBody = <EditProfile />;
   }
   return (
     <Modal
@@ -66,7 +70,7 @@ const ModalFrame = (props: any) => {
               </Box>
             </div>
           </div>
-          <Box padding='7px'>{modalBody}</Box>
+          <Box padding={props.modal.type === 'EDIT_PROFILE' ? '20px' : '7px'}>{modalBody}</Box>
         </Box>
       </Fade>
     </Modal>

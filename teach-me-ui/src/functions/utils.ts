@@ -734,7 +734,7 @@ export const formatNotification = (entities: any, text: string) => {
   return string;
 };
 
-export const countNewNotifications = (notifications: any) => {
+export const countNewNotifications = (notifications: Array<any>) => {
   let newNotifications = 0;
   for (let notification of notifications) {
     if (notification.last_seen) {

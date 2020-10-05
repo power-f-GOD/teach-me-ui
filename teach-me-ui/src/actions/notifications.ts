@@ -98,7 +98,7 @@ export const setLastseen = (id: string) => {
   axios({
     url: `notifications/${id}/seen`,
     baseURL,
-    method: 'POST',
+    method: 'GET',
     headers: {
       Authorization: `Bearer ${token}`,
       'Content_Type': 'application/json'
