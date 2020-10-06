@@ -298,8 +298,7 @@ export const ChatHead = (props: {
       'click'
     );
 
-    async function highlightTarget(target: Element) {
-      await delay(250);
+    function highlightTarget(target: Element) {
       target.classList.add('animate-highlight');
       addEventListenerOnce(
         target,
@@ -315,11 +314,7 @@ export const ChatHead = (props: {
     );
   }, [messageId, scrollView]);
 
-  useEffect(() => {
-    return () => {
-      headIsVisible = false;
-    };
-  }, [headElement, scrollView]);
+  useEffect(() => () => void (headIsVisible = false), []);
 
   return (
     <Container
