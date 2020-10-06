@@ -1612,8 +1612,10 @@ function MessageBox(props: {
   }, [messageHead]);
 
   useEffect(() => {
-    setMessageHead(null);
-  }, [convoId]);
+    if (convoId) {
+      setMessageHead(null);
+    }
+  }, [convoId, setMessageHead]);
 
   return (
     <Col
