@@ -229,11 +229,9 @@
       width: 100%;
     }
 
-    &:hover {
-      .outgoing {
-        .msg-wrapper {
-          transform: translateX(0);
-        }
+    .outgoing {
+      .msg-wrapper {
+        transform: translateX(0.5rem);
       }
     }
 
@@ -253,26 +251,7 @@
         opacity: 1;
       }
 
-      .incoming {
-        .msg-wrapper {
-          transition: transform 0.4s, opacity 0.4s, background-color 0.35s;
-        }
-      }
-
-      .outgoing {
-        .msg-wrapper {
-          transition: transform 0.4s, opacity 0.4s, background-color 0.35s;
-          transform: translateX(0.5rem);
-        }
-      }
-
       &:hover {
-        .outgoing {
-          .msg-wrapper {
-            transform: translateX(0.5rem);
-          }
-        }
-
         & + .scroll-bar-fader {
           opacity: 1 !important;
           z-index: 2 !important;
@@ -383,6 +362,12 @@ body.mobile {
       }
     }
   }
+
+  .chat-msg-box {
+    .chat-head-wrapper {
+      transition-delay: 0.6s;
+    }
+  }
 }
 
 .chat-msg-box {
@@ -400,7 +385,6 @@ body.mobile {
   border-top: 0.0625rem solid rgba(0, 0, 0, 0.125);
   border-radius: 0;
   transition: 0.3s, background-color 0.3s, height 0.2s;
-  transition-delay: 0.35s;
 
   &.open-reply {
     background: white;
@@ -423,7 +407,6 @@ body.mobile {
     border-radius: inherit;
     margin-bottom: 0.45rem !important;
     transition: height 0.3s, opacity 0.3s;
-    transition-delay: 0.35s;
   }
 
   .chat-head {

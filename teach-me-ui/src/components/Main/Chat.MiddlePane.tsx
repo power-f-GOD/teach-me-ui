@@ -862,9 +862,7 @@ function MiddlePaneHeaderActions(props: {
     if (oneSelected && messageToReply) {
       msgBox?.focus();
       handleClearSelections();
-      delay(userDeviceIsMobile ? 400 : 10).then(() =>
-        setMessageHead(messageToReply.deleted ? null : { ...messageToReply })
-      );
+      setMessageHead(messageToReply.deleted ? null : { ...messageToReply });
     }
   }, [oneSelected, messageToReply, setMessageHead, handleClearSelections]);
 
