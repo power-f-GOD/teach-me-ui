@@ -276,7 +276,7 @@ export const ChatHead = (props: {
     ) {
       interval(
         () => {
-          scrollView.scrollTop -= 100;
+          scrollView.scrollTop -= 150;
 
           if (headIsVisible) {
             observer.unobserve(headElement);
@@ -298,7 +298,8 @@ export const ChatHead = (props: {
       'click'
     );
 
-    function highlightTarget(target: Element) {
+    async function highlightTarget(target: Element) {
+      await delay(250);
       target.classList.add('animate-highlight');
       addEventListenerOnce(
         target,

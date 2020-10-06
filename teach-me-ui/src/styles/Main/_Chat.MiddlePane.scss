@@ -1,12 +1,12 @@
 .chat-middle-pane {
   // @include debugger();
   position: relative;
-  transition: 0.15s;
+  transition: flex 0.1s, max-width 0.1s;
   background: {
     image: url('/images/chat-bg.jpeg');
     size: 25rem;
     position: left;
-    color: #fff;
+    color: #e6dcd3;
   }
 
   .header-name-control-wrapper {

@@ -169,7 +169,6 @@ $msg-radius: 1.5rem;
 
       .msg-wrapper {
         &::before {
-          background: transparent;
           content: unset;
         }
       }
@@ -177,7 +176,6 @@ $msg-radius: 1.5rem;
       &.delayed {
         .msg-wrapper {
           &::before {
-            background: inherit;
             content: '';
           }
         }
@@ -248,7 +246,6 @@ $msg-radius: 1.5rem;
 
       .msg-wrapper {
         &::before {
-          background: transparent;
           content: unset;
         }
       }
@@ -256,7 +253,6 @@ $msg-radius: 1.5rem;
       &.delayed {
         .msg-wrapper {
           &::before {
-            background: inherit;
             content: '';
           }
         }

@@ -721,12 +721,11 @@ function MiddlePandeHeaderColleagueNameAndStatus(props: {
     lastSeenForAway = convoInfoLastSeen as number;
     displayAwayDate();
 
-    if (convoInfoOnlineStatus !== 'AWAY') {
+    if (convoId && convoInfoOnlineStatus !== 'AWAY') {
       clearTimeout(renderAwayDateTimeout);
       setCanDisplayAwayDate(false);
-    } else {
     }
-  }, [convoInfoOnlineStatus, convoInfoLastSeen, displayAwayDate]);
+  }, [convoId, convoInfoOnlineStatus, convoInfoLastSeen, displayAwayDate]);
 
   return (
     <Col as='span' className='conversation-name-wrapper'>

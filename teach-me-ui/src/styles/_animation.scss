@@ -145,10 +145,10 @@
   &::after {
     transform: scale(1) !important;
     background-color: rgba(
-      $tert-r - 25,
-      $tert-g - 25,
-      $tert-b - 25,
-      0.3
+      $tert-r + 25,
+      $tert-g + 25,
+      $tert-b + 25,
+      0.35
     ) !important;
     animation: animateHighlight 3s;
   }
