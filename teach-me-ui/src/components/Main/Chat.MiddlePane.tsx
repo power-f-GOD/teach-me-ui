@@ -1611,6 +1611,10 @@ function MessageBox(props: {
     }
   }, [messageHead]);
 
+  useEffect(() => {
+    setMessageHead(null);
+  }, [convoId]);
+
   return (
     <Col
       as='section'
