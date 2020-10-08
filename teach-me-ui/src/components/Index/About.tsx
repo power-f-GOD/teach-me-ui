@@ -5,7 +5,7 @@ import Container from '@material-ui/core/Container';
 
 const About = () => {
   React.useEffect(() => () => window.scrollTo(0, 0), []);
-  
+
   return (
     <Box className='fade-in' paddingY='100px'>
       <Container>

@@ -1,4 +1,4 @@
-import { FetchPostsState, MakeRepostState } from './interfaces';
+import { FetchPostsState, MakeRepostState, MakePostState } from './interfaces';
 
 export const CREATE_POST = 'CREATE_POST';
 export const REACT_TO_POST = 'REACT_TO_POST';
@@ -18,6 +18,16 @@ export const UPDATE_POST = 'UPDATE_POST';
 export const UPDATE_REPOST = 'UPDATE_REPOST';
 export const REPLY_TO_POST = 'REPLY_TO_POST';
 export const SEND_REPLY_TO_SERVER = 'SEND_REPLY_TO_SERVER';
+export const SUBMIT_POST = 'SUBMIT_POST';
+export const MAKE_POST = 'MAKE_POST';
+export const GET_TRENDS_STARTED = 'GET_TRENDS_STARTED';
+export const GET_TRENDS_REJECTED = 'GET_TRENDS_REJECTED';
+export const GET_TRENDS_RESOLVED = 'GET_TRENDS_RESOLVED';
+export const FETCHED_TRENDS = 'FETCHED_TRENDS';
+export const GET_RECOMMENDATIONS_STARTED = 'GET_RECOMMENDATIONS_STARTED';
+export const GET_RECOMMENDATIONS_REJECTED = 'GET_RECOMMENDATIONS_REJECTED';
+export const GET_RECOMMENDATIONS_RESOLVED = 'GET_RECOMMENDATIONS_RESOLVED';
+export const FETCHED_RECOMMENDATIONS = 'FETCHED_RECOMMENDATIONS';
 
 export const fetchPostsState: FetchPostsState = {
   status: 'pending'
@@ -25,4 +35,8 @@ export const fetchPostsState: FetchPostsState = {
 
 export const makeRepostState: MakeRepostState = {
   status: 'resolved'
+};
+
+export const makePostState: MakePostState = {
+  status: 'settled'
 };

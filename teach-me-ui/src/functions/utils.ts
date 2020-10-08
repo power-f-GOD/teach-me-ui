@@ -38,6 +38,27 @@ import {
 
 export const { dispatch, getState }: any = store;
 
+export const createObserver = (
+  root: HTMLElement,
+  callback: IntersectionObserverCallback,
+  options?: IntersectionObserverInit
+) => {
+  const { rootMargin, threshold } = options || {};
+
+  return new IntersectionObserver(
+    callback,
+    options
+      ? { rootMargin: rootMargin ?? '0px', threshold: threshold ?? 1.0, root }
+      : {
+          root,
+          rootMargin: '0px',
+          threshold: Array(101)
+            .fill(0)
+            .map((_, i) => Number((i / 100).toFixed(2)))
+        }
+  );
+};
+
 export const emitUserOnlineStatus = (
   shouldReInitWebSocket?: boolean,
   connectionIsDead?: boolean,
@@ -114,7 +135,7 @@ export const emitUserOnlineStatus = (
         const socket = getState().webSocket as WebSocket;
         const docIsVisible = document.visibilityState === 'visible';
 
-        if (socket.readyState === 1) {
+        if (socket && socket.readyState === 1) {
           socket.send(
             JSON.stringify({
               online_status: docIsVisible ? 'ONLINE' : 'AWAY',
@@ -329,7 +350,7 @@ export const addEventListenerOnce = (
   target: HTMLElement | any,
   callback: Function | any,
   event?: string,
-  options?: { capture?: boolean; once?: boolean }
+  options?: { capture?: boolean; once?: boolean; passive?: boolean }
 ) => {
   event = event ? event : 'transitionend';
 
@@ -712,3 +733,15 @@ export const formatNotification = (entities: any, text: string) => {
   });
   return string;
 };
+
+export const countNewNotifications = (notifications: Array<any>) => {
+  let newNotifications = 0;
+  for (let notification of notifications) {
+    if (notification.last_seen) {
+      break
+    } else {
+      newNotifications++
+    }
+  }
+  return newNotifications;
+}

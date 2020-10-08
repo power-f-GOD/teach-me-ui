@@ -1,16 +1,32 @@
 import { 
   SEND_FILES, 
-  ReduxAction 
+  ReduxAction, 
+  UPLOADS,
+  UploadState,
+  uploadState
 } from '../constants';
 
 export const sendFiles = (
-  state: string[] = [],
+  state: UploadState = uploadState,
   action: ReduxAction
 ) => {
   if (action.type === SEND_FILES) {
     return {
       ...state,
-      payload: action.payload
+      ...action.payload
+    };
+  };
+  return state;
+};
+
+export const uploads = (
+  state: UploadState = uploadState,
+  action: ReduxAction
+) => {
+  if (action.type === UPLOADS) {
+    return {
+      ...state,
+      ...action.payload
     };
   };
   return state;

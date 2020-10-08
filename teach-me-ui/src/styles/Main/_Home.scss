@@ -16,7 +16,14 @@
     padding: 0rem 0;
   }
 }
-
+.carousel-btn {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  background: #aaaa;
+}
 .main-modal {
   background-color: #fff;
   border-radius: 1.25rem;
@@ -77,7 +84,6 @@
   align-items: center;
   justify-content: center;
 }
-
 
 .left-pane,
 .middle-pane,

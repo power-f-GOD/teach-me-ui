@@ -19,7 +19,7 @@ body {
 * {
   box-sizing: border-box;
   font-family: 'Hind Madurai', 'Trebuchet MS', sans-serif !important;
-  font-weight: 400;
+  font-weight: inherit;
   outline: none;
 }
 
@@ -184,6 +184,7 @@ hr {
 
 button {
   font-size: 1rem;
+  font-weight: normal;
 }
 
 button,
@@ -446,6 +447,11 @@ div {
   background-color: rgba(0, 0, 0, 0.75);
 }
 
+.MuiDialogActions-root {
+  width: 19rem !important;
+  max-width: 100%;
+}
+
 .logo {
   // min-width: 10rem;
   width: auto !important;
@@ -508,6 +514,14 @@ div {
 
 .font-italic {
   font-style: italic;
+}
+
+.font-normal {
+  font-style: normal;
+}
+
+.font-weight-norm {
+  font-weight: normal !important;
 }
 
 .font-bold {
@@ -579,10 +593,10 @@ div {
 }
 
 .theme-tertiary {
-  color: $theme-tertiary;
+  color: $theme-tertiary !important;
 }
 .theme-tertiary-darker {
-  color: $theme-tertiary-v3;
+  color: $theme-tertiary-v3 !important;
 }
 .theme-tertiary-lighter {
   color: $theme-tertiary-v7 !important;
@@ -605,4 +619,8 @@ div {
 
 [class*='theme-'] {
   font-weight: inherit;
+}
+
+.pointer-events-none {
+  pointer-events: none;
 }

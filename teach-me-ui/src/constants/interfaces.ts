@@ -22,6 +22,7 @@ export interface InputErrState {
 
 export interface PostPropsState {
   userAvatar: string;
+  media: any[];
   reaction: Reaction;
   sender_id: string;
   sender_name: string;
@@ -102,6 +103,12 @@ export interface RepostResult {
 export type Reaction = 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL';
 
 export interface FetchPostsState {
+  status: 'pending' | 'rejected' | 'resolved';
+  error?: boolean;
+  message?: string;
+}
+
+export interface RequestState {
   status: 'pending' | 'rejected' | 'resolved';
   error?: boolean;
   message?: string;
@@ -338,6 +345,7 @@ export interface APIMessageResponse {
   timestamp_id?: string;
   __v: number;
   pipe: SocketPipe;
+  parent?: APIMessageResponse;
   user_id?: string;
 }
 
@@ -356,6 +364,7 @@ export interface APIConversationResponse {
   friendship: string;
   online_status: OnlineStatus;
   last_seen: number;
+  last_read: number;
   conversation_name: string;
   associated_username: string;
   associated_user_id: string;
@@ -418,7 +427,7 @@ export interface ReplyResult extends ReplyProps {
 }
 
 export interface ReplyState {
-  error?: boolean;
+  err?: boolean;
   data?: ReplyResult;
   status: 'settled' | 'pending' | 'fulfilled';
 }
@@ -426,7 +435,21 @@ export interface ReplyState {
 export interface PostEditorState {
   post: Post;
   mentionsKeyword: string;
-  mentions: any[];
   [key: string]: any;
 }
 
+export interface UploadState {
+  err: boolean;
+  status: 'settled' | 'pending' | 'fulfilled';
+  data: Array<string>;
+}
+
+export interface EditProfileState {
+  err?: boolean;
+  status:  'settled' | 'pending' | 'fulfilled';
+  data?: Object;
+}
+
+export interface MakePostState {
+  status: 'settled' | 'pending' | 'fulfilled';
+}

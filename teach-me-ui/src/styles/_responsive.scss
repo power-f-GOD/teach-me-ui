@@ -54,10 +54,10 @@
 
 @media screen and (max-width: 991px) {
   .ChatBox {
-    .chat-left-pane,
-    .chat-middle-pane,
-    .chat-right-pane {
-      transition-delay: 0.275s !important;
+    .chat-box-wrapper {
+      &.close {
+        transform: scale(0.8);
+      }
     }
 
     .chat-right-pane,
@@ -72,26 +72,26 @@
     }
 
     .chat-left-pane {
-      transform: translateX(-100%);
-      transition: opacity 0.35s,
-        transform 0.3s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+      opacity: 0;
+      transform: translateY(10rem);
+      transition: opacity 0.2s, transform 0.3s;
 
       &.active-pane {
-        transition: transform 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
-        transform: translateX(0);
+        opacity: 1;
+        transform: translateY(0);
       }
     }
 
     .chat-middle-pane {
       width: 100vw;
-      opacity: 0.35;
+      opacity: 0;
       max-width: unset;
-      transform: scale(0.9);
-      transition: opacity 0.5s, transform 0.5s;
+      transform: translateY(-10rem);
+      transition: opacity 0.2s, transform 0.3s;
 
       &.active-pane {
         opacity: 1;
-        transform: scale(1);
+        transform: translateY(0);
       }
 
       .conversation-name-wrapper {
@@ -119,12 +119,12 @@
     .chat-right-pane {
       opacity: 0;
       animation: unset;
-      transform: scale(4);
-      transition: opacity 0.35s, transform 0.35s;
+      transform: scale(5) translateY(15rem);
+      transition: opacity 0.25s, transform 0.5s;
 
       &.active-pane {
         opacity: 1;
-        transform: scale(1);
+        transform: scale(1) translateY(0);
       }
 
       .back-button {
@@ -193,10 +193,6 @@
       width: 230vw !important;
       left: -65vw !important;
     }
-  }
-
-  .scroll-view-msg-wrapper {
-    max-width: 22rem;
   }
 
   //Home style(s)
@@ -270,12 +266,14 @@
   //Search page style(s)
   .Search {
     padding: 0;
-    padding-top: 3rem;
+    padding-top: 3.25rem;
 
     .search-box {
+      border-radius: 3rem;
       transform: translateY(25vh);
 
       &.transform {
+        border-radius: 0.5rem;
         transform: translateY(0) !important;
       }
     }
@@ -288,7 +286,7 @@
     }
 
     .no-results-wrapper {
-      height: calc(100vh - 17.5rem);
+      height: calc(100vh - 18rem);
       max-width: 100%;
       overflow: unset;
     }
@@ -296,7 +294,7 @@
     .search-results-wrapper {
       max-width: 100%;
       height: calc(100vh - 10rem);
-      max-height: calc(100vh - 10rem);
+      max-height: calc(100vh - 10.5rem);
     }
   }
 }
@@ -367,14 +365,19 @@
   }
 
   //chat box style(s)
-  .scroll-view-msg-wrapper {
-    max-width: 75%;
-  }
-
   .ChatBox {
     .msg-wrapper {
-      max-width: 85%;
+      max-width: 90%;
+      font-size: 0.95rem;
     }
+  }
+
+  .chat-date {
+    font-size: 0.85rem;
+  }
+
+  .chat-timestamp {
+    font-size: 0.8rem;
   }
 
   //Profile page styles
@@ -391,5 +394,30 @@
     [class*='-info-card'] {
       padding: 1.5rem 1rem;
     }
+  }
+}
+
+@media screen and (max-width: 360px) {
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2),
+  (-moz-min-device-pixel-ratio: 2),
+  (-o-min-device-pixel-ratio: 2),
+  (-moz-min-device-pixel-ratio: 2) {
+  #chat-date-sticky {
+    top: calc(-1rem + 5px);
+  }
+
+  .new-messages-bar {
+    top: -0.95rem;
+  }
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 3),
+  (-moz-min-device-pixel-ratio: 3),
+  (-o-min-device-pixel-ratio: 3),
+  (-moz-min-device-pixel-ratio: 3) {
+  #chat-date-sticky {
+    top: calc(-1rem + 4px);
   }
 }

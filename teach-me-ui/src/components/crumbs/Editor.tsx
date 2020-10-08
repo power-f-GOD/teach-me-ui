@@ -84,7 +84,6 @@ const EditorBase: React.FC<any> = (props) => {
   );
   const [suggestions, setSuggestions] = useState([]);
 
-  // const [,] = useSubmitPost(state.post);
 
   const onChange = (editorState: EditorState) => {
     setEditorState(editorState);

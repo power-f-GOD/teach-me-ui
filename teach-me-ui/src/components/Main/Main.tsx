@@ -9,6 +9,7 @@ import Home from './Home';
 import About from '../Index/About';
 import Support from '../Index/Support';
 import Profile from './Profile';
+import ProfileRedirect from './ProfileRedirect';
 import Loader from '../crumbs/Loader';
 import ModalFrame from '../crumbs/modals';
 import Chat from './Chat';
@@ -100,6 +101,7 @@ const Main = (props: any) => {
           <Route path='/support' component={Support} />
           <Route path='/p/:id' component={PostPage} />
           <Route path='/@:userId' component={Profile} />
+          <Route path='/profile/:id' component={ProfileRedirect} />
           <Route path={['/search/:query', '/search']} component={Search} />
           <Route path='/notifications' component={Notifications} />
           <Route component={_404} />

@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import Container from 'react-bootstrap/Container';
 
@@ -20,7 +21,12 @@ import HelpRoundedIcon from '@material-ui/icons/HelpRounded';
 import Badge from '@material-ui/core/Badge';
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 
-import { handleSignoutRequest, getState } from '../../functions';
+import { 
+  handleSignoutRequest,
+  getState,
+  countNewNotifications
+} from '../../functions';
+
 import { UserData } from '../../constants';
 import { dispatch } from '../../appStore';
 import { getNotificationsRequest } from '../../actions';
@@ -81,28 +87,16 @@ function IndexNav(props: any) {
   );
 }
 
-let notifInterval: any = null;
 
 function MainNav(props: any) {
-  const { isAuthenticated, className } = props;
-  const [invisible, setInvisible] = useState(true);
+  const { isAuthenticated, className, getNotifications } = props;
   const username = (getState().userData as UserData).username;
+  const numberOfNewNotifications = countNewNotifications(getNotifications.data.notifications);
 
   useEffect(() => {
     if (isAuthenticated) {
       dispatch(getNotificationsRequest(Date.now())(dispatch));
-      notifInterval = setInterval(() => {
-        if (getState().getNotifications.data.notifications[0]) {
-          if (!getState().getNotifications.data.notifications[0].last_seen) {
-            setInvisible(false);
-          }
-        }
-      }, 3000);
     }
-
-    return () => {
-      clearInterval(notifInterval);
-    };
   }, [isAuthenticated]);
 
   return (
@@ -122,7 +116,7 @@ function MainNav(props: any) {
       </NavLink>
 
       <NavLink to='/notifications' className='nav-link'>
-        <Badge color='secondary' variant='dot' invisible={invisible}>
+        <Badge color='secondary' badgeContent={numberOfNewNotifications}>
           <NotificationsIcon />
         </Badge>
       </NavLink>
@@ -143,11 +137,9 @@ function MainNav(props: any) {
 }
 
 function MainNavMenu(props: any) {
-  const { isAuthenticated, className } = props;
+  const { isAuthenticated, className, getNotifications } = props;
   const username = (getState().userData as UserData).username;
-  const noNewNotification = getState().getNotifications.data.notifications[0]
-    ? getState().getNotifications.data.notifications[0].last_seen
-    : true;
+  const numberOfNewNotifications = countNewNotifications(getNotifications.data.notifications);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -178,7 +170,7 @@ function MainNavMenu(props: any) {
       </NavLink>
 
       <NavLink to='/notifications' className='nav-link'>
-        <Badge color='secondary' variant='dot' invisible={noNewNotification}>
+        <Badge color='secondary' badgeContent={numberOfNewNotifications}>
           <NotificationsIcon />
         </Badge>
         <Box component='span' className='nav-label ml-3'>
@@ -290,4 +282,6 @@ function TemporaryDrawer(props: any) {
   );
 }
 
-export default Nav;
+const mapStateToProps = ({ getNotifications }: any) => ({ getNotifications });
+
+export default connect(mapStateToProps)(Nav);

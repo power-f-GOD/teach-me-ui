@@ -169,3 +169,4 @@ const mapStateToProps = ({ makeRepostStatus, userData }: any) => ({
 });
 
 export default connect(mapStateToProps)(CreatePost);
+

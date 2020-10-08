@@ -8,7 +8,10 @@ import {
   handleForgotPasswordRequest,
   handleResetPasswordRequest,
   validateEmailFn,
-  validateResetPasswordFn
+  validateResetPasswordFn,
+  countNewNotifications,
+  getMentionsFromText,
+  getHashtagsFromText
 } from '../../functions';
 import { ReduxAction, UserData } from '../../constants';
 
@@ -92,4 +95,18 @@ it("logError should be called with an 'action' as param and return undefined.", 
   expect(mockFunc).toHaveBeenCalledWith(action);
   expect(mockFunc).toHaveBeenCalledWith(error);
   expect(logError(action)(error)).toBeUndefined();
+});
+
+
+it('checks if function to count new notifications acts accordingly', () => {
+  expect(countNewNotifications([])).toBe(0);
+  expect(countNewNotifications([{},{},{last_seen: 78}])).toBe(2);
+  expect(countNewNotifications([{last_seen: 67}])).toBe(0);
+});
+
+it('checks if functions for getting mentions and hashtags acts accordingly', () => {
+  expect(getMentionsFromText('@backend, @prince')).toStrictEqual(['backend', 'prince']);
+  expect(getHashtagsFromText('#bnbnb #hhhhh, #bnnm6*')).toStrictEqual(['#bnbnb', '#hhhhh', '#bnnm6']);
+  expect(getHashtagsFromText('')).toStrictEqual([]);
+  expect(getMentionsFromText('')).toStrictEqual([]);
 });

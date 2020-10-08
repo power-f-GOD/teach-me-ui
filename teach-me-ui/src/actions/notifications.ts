@@ -12,8 +12,11 @@ import {
 import { 
   logError, 
   callNetworkStatusCheckerFor, 
-  getState 
+  getState,
+  dispatch,
 } from '../functions';
+
+import { displaySnackbar } from '../actions';
 
 
 export const getNotifications = (payload: NotificationState) => {
@@ -37,7 +40,7 @@ export const getNotificationsRequest = (date: number) => (
   
 
   axios({
-    url: `/notifications?limit=20&offset=${date}`,
+    url: `/notifications?offset=${date}`,
     baseURL,
     method: 'GET',
     headers: {
@@ -93,15 +96,26 @@ export const setLastseen = (id: string) => {
   let token = getState().userData.token
 
   axios({
-    url: 'notification/seen',
+    url: `notifications/${id}/seen`,
     baseURL,
-    method: 'POST',
+    method: 'GET',
     headers: {
       Authorization: `Bearer ${token}`,
       'Content_Type': 'application/json'
-    },
-    data: {
-      'notification_id': id
     }
+  }).catch((e: any) => {
+    let message = /network/i.test(e.message)
+    ? 'A network error occurred. Check your internet connection.'
+    : e.message;
+
+    dispatch(
+      displaySnackbar({
+        open: true,
+        message: navigator.onLine
+          ? `${message[0].toUpperCase()}${message.slice(1)}.`
+          : 'You are offline.',
+        severity: 'error'
+      })
+    );
   })
 }

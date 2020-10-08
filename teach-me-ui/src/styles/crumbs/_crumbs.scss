@@ -58,3 +58,74 @@
     font-size: 1.05rem;
   }
 }
+
+.display-none {
+  display: none;
+}
+
+.display-block {
+  display: block;
+}
+
+.display-flex {
+  display: flex;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.margin-auto {
+  margin: auto;
+}
+
+.upload-progress {
+  color: green;
+}
+
+.width-100 {
+  width: 100%;
+  padding: 0 !important;
+}
+
+.read-notifications-date {
+  color: #888
+}
+
+.unread-notifications-date {
+  color: rgb(0, 115, 160);
+}
+
+.unread-notifications {
+  color: #000;
+}
+
+.read-notifications {
+  color: #888;
+}
+
+.no-space {
+  margin: 0; 
+  padding: 0; 
+  border: 0;
+}
+
+.textdecoration-none {
+  text-decoration: none;
+}
+
+.notification-background-read {
+  color: #fff;
+}
+
+.notification-background-unread {
+  color: #ddd;
+}
+
+.color-black {
+  color: black;
+}
+
+.padding-left-0.4 {
+  padding-left: 0.4em;
+}

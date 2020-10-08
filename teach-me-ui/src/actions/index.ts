@@ -7,3 +7,4 @@ export * from './colleague';
 export * from './notifications';
 export * from './profile';
 export * from './upload';
+export * from './profile.edit';

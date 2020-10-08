@@ -1,6 +1,6 @@
 @import '../constants';
 
-$chat-text-color: #333;
+$chat-text-color: $theme-tertiary-v1;
 $chat-header-min-height: 3.75rem;
 
 .ChatBox {
@@ -157,20 +157,22 @@ body,
   height: $box-height;
   max-height: 100vh;
   box-shadow: 0 0.25rem 1.5rem rgba(0, 0, 0, 0.2);
-  background-color: white;
+  background: white;
   left: 0;
   top: 0;
   display: none;
   right: 0;
-  transition: transform 0.4s, opacity 0.4s;
-  transition-delay: 0.25s;
+  transition: 0.35s;
+  transition-delay: 0.65s;
 
   &.minimize {
     transform: translateY(calc(100% - #{$chat-header-min-height}));
   }
 
   &.close {
-    transform: scale(0.925);
+    transition: 0.2s;
+    transition-delay: 0s;
+    transform: scale(0.8);
     opacity: 0;
   }
 
@@ -184,17 +186,18 @@ body,
 }
 
 .ChatBox header {
-  box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 1.75rem rgba(0, 0, 0, 0.2);
 }
 
 header.chat-header {
   position: relative;
   font-weight: bold;
-  z-index: 3;
+  z-index: 4;
+  flex: none;
+  background: inherit;
   background-color: white;
   min-height: $chat-header-min-height;
   max-height: $chat-header-min-height;
-
   // @include debugger();
 }
 
@@ -262,11 +265,13 @@ body.desktop {
       }
 
       & + .scroll-bar-fader {
+        // pointer-events: none;
+
         @include before-or-after(
           $w: 0.5rem,
           $l: unset,
           $r: 0,
-          $bg: white,
+          $bg: inherit,
           $zi: 2,
           $t: 0
         );

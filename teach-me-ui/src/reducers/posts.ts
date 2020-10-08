@@ -27,7 +27,20 @@ import {
   RepostResult,
   Reaction,
   REPLY_TO_POST,
-  ReplyState
+  MAKE_POST,
+  ReplyState,
+  makePostState,
+  MakePostState,
+  GET_TRENDS_STARTED,
+  GET_TRENDS_REJECTED,
+  GET_TRENDS_RESOLVED,
+  FETCHED_TRENDS,
+  RequestState,
+  requestState,
+  GET_RECOMMENDATIONS_REJECTED,
+  GET_RECOMMENDATIONS_STARTED,
+  GET_RECOMMENDATIONS_RESOLVED,
+  FETCHED_RECOMMENDATIONS
 } from '../constants';
 
 import { resultantReaction } from '../functions';
@@ -77,6 +90,32 @@ export const fetchPostStatus = (
   }
 };
 
+export const getRecommendationsStatus = (
+  state: RequestState = requestState,
+  action: ReduxAction
+) => {
+  switch (action.type) {
+    case GET_RECOMMENDATIONS_REJECTED:
+    case GET_RECOMMENDATIONS_RESOLVED:
+    case GET_RECOMMENDATIONS_STARTED:
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
+export const recommendations = (
+  state: Array<any> = [],
+  action: ReduxAction
+) => {
+  switch (action.type) {
+    case FETCHED_RECOMMENDATIONS:
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
 export const fetchSinglePostStatus = (
   state: FetchPostsState = fetchPostsState,
   action: ReduxAction
@@ -85,6 +124,29 @@ export const fetchSinglePostStatus = (
     case FETCH_A_POST_REJECTED:
     case FETCH_A_POST_RESOLVED:
     case FETCH_A_POST_STARTED:
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
+export const getTrendsStatus = (
+  state: FetchPostsState = fetchPostsState,
+  action: ReduxAction
+) => {
+  switch (action.type) {
+    case GET_TRENDS_STARTED:
+    case GET_TRENDS_REJECTED:
+    case GET_TRENDS_RESOLVED:
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
+export const trends = (state: Array<any> = [], action: ReduxAction) => {
+  switch (action.type) {
+    case FETCHED_TRENDS:
       return action.payload;
     default:
       return state;
@@ -221,6 +283,19 @@ export const replyToPost = (
   action: ReduxAction
 ) => {
   if (action.type === REPLY_TO_POST) {
+    return {
+      ...state,
+      ...action.payload
+    };
+  }
+  return state;
+};
+
+export const makePost = (
+  state: MakePostState = makePostState,
+  action: ReduxAction
+) => {
+  if (action.type === MAKE_POST) {
     return {
       ...state,
       ...action.payload

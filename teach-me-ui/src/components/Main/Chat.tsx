@@ -72,19 +72,17 @@ window.addEventListener('popstate', () => {
 
   const { chat, id: userId, cid } = queryString.parse(window.location.search);
 
-  if (userDeviceIsMobile && chat) {
+  if (window.innerWidth < 992 && chat) {
+    dispatch(
+      chatState({
+        isOpen: false,
+        isMinimized: false,
+        queryString: ''
+      })
+    );
     dispatch(conversation(''));
     dispatch(conversationInfo({ data: {} }));
     dispatch(conversationMessages({ data: [] }));
-    delay(300).then(() => {
-      dispatch(
-        chatState({
-          isOpen: false,
-          isMinimized: false,
-          queryString: ''
-        })
-      );
-    });
     window.history.replaceState({}, '', window.location.pathname);
 
     return;
@@ -122,11 +120,11 @@ window.addEventListener('popstate', () => {
     dispatch(conversation(cid));
   }
 
-  delay(500).then(() => {
+  delay(100).then(() => {
     dispatch(
       chatState({
         isOpen: !!chat,
-        isMinimized: chat === 'min',
+        isMinimized: chat === 'm2',
         queryString: window.location.search
       })
     );
@@ -151,7 +149,9 @@ const ChatBox = (props: ChatBoxProps) => {
     friendship: convoFriendship,
     type: convoType,
     conversation_name: convoDisplayName,
-    avatar: convoAvatar
+    avatar: convoAvatar,
+    unread_count: convoUnreadCount,
+    last_read: convoLastReadDate
   } = _conversation;
   const {
     data: convoMessages,
@@ -179,7 +179,6 @@ const ChatBox = (props: ChatBoxProps) => {
       a + (conversation.unread_count ? 1 : 0),
     0
   );
-
   const leftPane = leftPaneRef.current;
   const middlePane = middlePaneRef.current;
   const rightPane = rightPaneRef.current;
@@ -199,77 +198,23 @@ const ChatBox = (props: ChatBoxProps) => {
           {},
           '',
           window.location.pathname +
-            window.location.search.replace('=min', '=open')
+            window.location.search.replace('=m2', '=o1')
         );
       }
     },
     [windowWidth]
   );
 
-  const scrollViewProviderValue = useMemo(() => {
-    return {
-      convoMessagesErr,
-      convoMessagesStatusText,
-      convoParticipants,
-      convoInfoNewMessage
-    };
-  }, [
-    convoMessagesErr,
-    convoMessagesStatusText,
-    convoParticipants,
-    convoInfoNewMessage
-  ]);
-
-  const middlePaneHeaderProviderValue = useMemo(() => {
-    return {
-      chatState: _chatState,
-      convoInfoData,
-      convoAvatar,
-      convoType,
-      convoInfoStatus,
-      convoUserTyping,
-      handleSetActivePaneIndex
-    };
-  }, [
-    _chatState,
-    convoInfoData,
-    convoAvatar,
-    convoType,
-    convoInfoStatus,
-    convoUserTyping,
-    handleSetActivePaneIndex
-  ]);
-
-  const colleagueNameAndStatusContextValue = React.useMemo(() => {
-    return {
-      convoId,
-      convoDisplayName,
-      convoAvatar,
-      convoType,
-      convoInfoStatus,
-      convoUserTyping,
-      convoInfoLastSeen
-    };
-  }, [
-    convoId,
-    convoDisplayName,
-    convoAvatar,
-    convoType,
-    convoInfoStatus,
-    convoUserTyping,
-    convoInfoLastSeen
-  ]);
-
   const handleOpenChatClick = useCallback(() => {
-    const queryString = `?chat=${
-      userDeviceIsMobile ? 'min' : 'open'
-    }&id=${placeHolderDisplayName}&cid=0`;
+    const queryString = `?id=${placeHolderDisplayName}&chat=${
+      windowWidth < 992 ? 'm2' : 'o1'
+    }&cid=0`;
 
     setActivePaneIndex(0);
     setVisibilityState('visible');
 
     //delay till chatBox display property is set for animation to work
-    delay(150).then(() => {
+    delay(100).then(() => {
       dispatch(
         chatState({
           isOpen: true,
@@ -283,7 +228,7 @@ const ChatBox = (props: ChatBoxProps) => {
       '',
       window.location.pathname + queryString
     );
-  }, []);
+  }, [windowWidth]);
 
   const handleChatTransitionEnd = useCallback(
     (e: any) => {
@@ -314,17 +259,74 @@ const ChatBox = (props: ChatBoxProps) => {
     [isOpen, isMinimized]
   );
 
+  const scrollViewProviderValue = useMemo(() => {
+    return {
+      convoMessagesErr,
+      convoMessagesStatusText,
+      convoParticipants,
+      convoInfoNewMessage,
+      convoUnreadCount,
+      convoLastReadDate
+    };
+  }, [
+    convoMessagesErr,
+    convoMessagesStatusText,
+    convoParticipants,
+    convoInfoNewMessage,
+    convoUnreadCount,
+    convoLastReadDate
+  ]);
+
+  const middlePaneHeaderProviderValue = useMemo(() => {
+    return {
+      chatState: _chatState,
+      convoInfoData,
+      convoAvatar,
+      convoType,
+      convoInfoStatus,
+      convoUserTyping,
+      handleSetActivePaneIndex
+    };
+  }, [
+    _chatState,
+    convoInfoData,
+    convoAvatar,
+    convoType,
+    convoInfoStatus,
+    convoUserTyping,
+    handleSetActivePaneIndex
+  ]);
+
+  const colleagueNameAndStatusContextValue = useMemo(() => {
+    return {
+      convoId,
+      convoDisplayName,
+      convoAvatar,
+      convoType,
+      convoInfoStatus,
+      convoUserTyping,
+      convoInfoLastSeen
+    };
+  }, [
+    convoId,
+    convoDisplayName,
+    convoAvatar,
+    convoType,
+    convoInfoStatus,
+    convoUserTyping,
+    convoInfoLastSeen
+  ]);
+
   useEffect(() => {
+    const search = `?id=${placeHolderDisplayName}&chat=o1&cid=0`;
+
     if (/chat=/.test(window.location.search)) {
-      window.history.replaceState(
-        {},
-        '',
-        window.location.pathname +
-          `?chat=open&id=${placeHolderDisplayName}&cid=0`
-      );
+      window.history.replaceState({}, '', window.location.pathname + search);
+      props.location.search = search;
     }
 
     window.onresize = (e: any) => setWindowWidth(e.target.innerWidth);
+    //eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -380,7 +382,7 @@ const ChatBox = (props: ChatBoxProps) => {
 
   useEffect(() => {
     delay(400).then(() => {
-      if ((chat && chat === 'open') || (isOpen && !isMinimized)) {
+      if ((chat && chat === 'o1') || (isOpen && !isMinimized)) {
         document.body.style.overflow = 'hidden';
         document.querySelectorAll('.Main > *').forEach((component: any) => {
           if (!/ChatBox/.test(component.className)) {
@@ -406,11 +408,11 @@ const ChatBox = (props: ChatBoxProps) => {
         ((!isNaN(cid) && cid) || !convoId) &&
         chat &&
         isOpen &&
-        userDeviceIsMobile
+        windowWidth < 992
       ) {
-        const queryString = `?chat=${
-          userDeviceIsMobile ? 'min' : 'open'
-        }&id=${placeHolderDisplayName}&cid=0`;
+        const queryString = `?id=${placeHolderDisplayName}&chat=${
+          windowWidth < 992 ? 'm2' : 'o1'
+        }&cid=0`;
 
         window.history.replaceState(
           {},
@@ -422,7 +424,7 @@ const ChatBox = (props: ChatBoxProps) => {
 
     if (!isOpen) {
       //delay till chatBox display property is set for animation to work
-      delay(750).then(() => {
+      delay(150).then(() => {
         let { chat } = queryString.parse(window.location.search);
 
         if (chat)
@@ -430,7 +432,7 @@ const ChatBox = (props: ChatBoxProps) => {
             chatState({
               queryString: !!chat ? window.location.search : qString,
               isOpen: true,
-              isMinimized: chat === 'min' && !userDeviceIsMobile
+              isMinimized: chat === 'm2' && !(windowWidth < 992)
             })
           );
       });
@@ -448,6 +450,7 @@ const ChatBox = (props: ChatBoxProps) => {
     chat,
     id,
     cid,
+    windowWidth,
     convoInfoStatus,
     convoInfoErr,
     convoMessagesErr,
