@@ -85,7 +85,7 @@ $tab-item-bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
   top: 0;
   left: 0;
   min-width: 100%;
-  transition: transform 0.3s ease 0.35s;
+  transition: transform 0.25s ease 0.3s;
 
   &.custom-scroll-bar {
     padding: $convo-spacer;

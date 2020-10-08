@@ -276,7 +276,7 @@ export const ChatHead = (props: {
     ) {
       interval(
         () => {
-          scrollView.scrollTop -= 100;
+          scrollView.scrollTop -= 150;
 
           if (headIsVisible) {
             observer.unobserve(headElement);
@@ -314,11 +314,7 @@ export const ChatHead = (props: {
     );
   }, [messageId, scrollView]);
 
-  useEffect(() => {
-    return () => {
-      headIsVisible = false;
-    };
-  }, [headElement, scrollView]);
+  useEffect(() => () => void (headIsVisible = false), []);
 
   return (
     <Container

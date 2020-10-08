@@ -721,12 +721,11 @@ function MiddlePandeHeaderColleagueNameAndStatus(props: {
     lastSeenForAway = convoInfoLastSeen as number;
     displayAwayDate();
 
-    if (convoInfoOnlineStatus !== 'AWAY') {
+    if (convoId && convoInfoOnlineStatus !== 'AWAY') {
       clearTimeout(renderAwayDateTimeout);
       setCanDisplayAwayDate(false);
-    } else {
     }
-  }, [convoInfoOnlineStatus, convoInfoLastSeen, displayAwayDate]);
+  }, [convoId, convoInfoOnlineStatus, convoInfoLastSeen, displayAwayDate]);
 
   return (
     <Col as='span' className='conversation-name-wrapper'>
@@ -863,9 +862,7 @@ function MiddlePaneHeaderActions(props: {
     if (oneSelected && messageToReply) {
       msgBox?.focus();
       handleClearSelections();
-      delay(userDeviceIsMobile ? 400 : 10).then(() =>
-        setMessageHead(messageToReply.deleted ? null : { ...messageToReply })
-      );
+      setMessageHead(messageToReply.deleted ? null : { ...messageToReply });
     }
   }, [oneSelected, messageToReply, setMessageHead, handleClearSelections]);
 
@@ -1613,6 +1610,12 @@ function MessageBox(props: {
       msgBox = msgBoxRef.current!;
     }
   }, [messageHead]);
+
+  useEffect(() => {
+    if (convoId) {
+      setMessageHead(null);
+    }
+  }, [convoId, setMessageHead]);
 
   return (
     <Col
