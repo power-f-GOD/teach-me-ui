@@ -9,7 +9,8 @@ import {
   SET_CONVERSATIONS,
   SET_CONVERSATION_MESSAGES,
   SET_CONVERSATION_INFO,
-  SET_CONVERSATION
+  SET_CONVERSATION,
+  SET_CONVERSATIONS_MESSAGES
 } from '../constants/chat';
 import {
   ChatState,
@@ -51,10 +52,10 @@ export const conversations = (
 };
 
 export const conversationsMessages = (
-  state: ConversationsMessages = {},
+  state = {} as ConversationsMessages,
   action: ReduxAction
 ): ConversationsMessages => {
-  if (action.type === SET_CONVERSATION_MESSAGES) {
+  if (action.type === SET_CONVERSATIONS_MESSAGES) {
     return {
       ...state,
       ...action.payload

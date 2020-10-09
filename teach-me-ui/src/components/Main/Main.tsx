@@ -28,7 +28,7 @@ import { initWebSocket, closeWebSocket } from '../../actions/misc';
 
 import activateSocketRouters from '../../socket.router';
 
-import { getConversations } from '../../actions/chat';
+import { getConversations, getConversationsMessages } from '../../actions/chat';
 import { SearchState } from '../../constants';
 
 const Memoize = createMemo();
@@ -42,6 +42,10 @@ const Main = (props: any) => {
     convosErr,
     convosStatus
   } = props;
+
+  useEffect(() => {
+    dispatch(getConversationsMessages()(dispatch));
+  }, []);
 
   useEffect(() => {
     if (!convosLength && !convosErr && convosStatus !== 'fulfilled') {
