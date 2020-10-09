@@ -18,7 +18,8 @@ import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
 import {
   chatState,
   getConversationInfo,
-  conversationMessages
+  conversationMessages,
+  conversationsMessages
 } from '../../actions/chat';
 import { dispatch, addEventListenerOnce, delay } from '../../functions/utils';
 import {
@@ -26,7 +27,9 @@ import {
   ConversationInfo,
   APIConversationResponse,
   SearchState,
-  APIMessageResponse
+  APIMessageResponse,
+  ConversationMessages,
+  ConversationsMessages
 } from '../../constants/interfaces';
 import { Skeleton, DISPLAY_INFO } from '../crumbs/Loader';
 import {
@@ -38,6 +41,7 @@ import {
 import { ChatTimestamp, ChatStatus } from './Chat.crumbs';
 import createMemo from '../../Memo';
 import { scrollViewRef } from './Chat.MiddlePane';
+import { getState } from '../../appStore';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -338,6 +342,18 @@ function PaneItem({
       return (e: any) => {
         const { id, cid } = queryString.parse(window.location.search);
         const { convoId, userId } = extra;
+        const {
+          conversation: _conversation,
+          conversationMessages: _conversationMessages
+          // conversationsMessages: _conversationsMessages
+        } = getState() as {
+          conversation: APIConversationResponse;
+          conversationMessages: ConversationMessages;
+          conversationsMessages: ConversationsMessages;
+        };
+        // const cachedConvoMessages = _conversationsMessages.data![convoId];
+        const { _id: prevChatConvoId } = _conversation;
+        const prevChatConvoMessages = _conversationMessages.data;
 
         if (window.innerWidth < 992) {
           const scrollView = scrollViewRef.current;
@@ -351,7 +367,7 @@ function PaneItem({
           handleSetActivePaneIndex(1)();
         });
 
-        if (cid === convoId || userId === id) {
+        if (cid === convoId || userId === id || prevChatConvoId === convoId) {
           const queryString = window.location.search.replace(
             'chat=m2',
             'chat=o1'
@@ -367,6 +383,14 @@ function PaneItem({
           return;
         }
 
+        //update store for previous chat before updating/populating current chat
+        dispatch(
+          conversationsMessages({
+            convoId: prevChatConvoId,
+            statusText: 'replace messages',
+            data: { [prevChatConvoId]: [...prevChatConvoMessages] }
+          })
+        );
         dispatch(conversationInfo({ user_typing: '' }));
 
         if (window.navigator.onLine) {

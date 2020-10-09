@@ -38,6 +38,46 @@ import {
 
 export const { dispatch, getState }: any = store;
 
+export function loop<T>(
+  _data: T[],
+  callback: (datum: T) => any,
+  options?: {
+    type?: 'find' | 'native';
+    includeIndex?: boolean;
+    rightToLeft?: boolean;
+    returnReverse?: boolean;
+    makeCopyBeforeLoop?: boolean;
+  }
+): { value: any; index: number } | T[] | T | object {
+  const { type, rightToLeft, includeIndex, returnReverse, makeCopyBeforeLoop } =
+    options || {};
+  const data = makeCopyBeforeLoop ? _data.slice() : _data;
+  const lim = data.length - 1;
+  const dataReversed = [];
+  const reverse = rightToLeft || returnReverse;
+  let i = reverse ? lim : 0;
+
+  for (; reverse ? i >= 0 : i <= lim; reverse ? i-- : i++) {
+    const datum = data[i];
+
+    switch (type) {
+      case 'find':
+        if (!!callback(datum)) {
+          return includeIndex ? { value: datum, index: i } : datum;
+        }
+        break;
+      default:
+        callback(datum);
+
+        if (returnReverse) {
+          dataReversed.push(datum);
+        }
+    }
+  }
+
+  return type === 'find' ? {} : returnReverse ? dataReversed : data;
+}
+
 export const createObserver = (
   root: HTMLElement,
   callback: IntersectionObserverCallback,
@@ -738,10 +778,10 @@ export const countNewNotifications = (notifications: Array<any>) => {
   let newNotifications = 0;
   for (let notification of notifications) {
     if (notification.last_seen) {
-      break
+      break;
     } else {
-      newNotifications++
+      newNotifications++;
     }
   }
   return newNotifications;
-}
+};

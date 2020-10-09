@@ -137,6 +137,7 @@ const ChatBox = (props: ChatBoxProps) => {
     conversations,
     chatState: _chatState,
     conversationMessages: _conversationMessages,
+    // conversationsMessages: _conversationsMessages,
     conversationInfo: _conversationInfo,
     userData,
     webSocket: socket
@@ -553,6 +554,7 @@ const mapStateToProps = (state: any) => {
     conversation: state.conversation,
     conversations: state.conversations,
     conversationMessages: state.conversationMessages,
+    conversationsMessages: state.conversationsMessages,
     conversationInfo: state.conversationInfo,
     userData: state.userData,
     webSocket: state.webSocket
