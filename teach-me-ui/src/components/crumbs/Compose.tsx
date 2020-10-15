@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { userDeviceIsMobile } from '../..';
 
 const openCreatePostModal = (e: any) => {
-  displayModal(true, 'CREATE_POST', { title: 'Create Post' });
+  displayModal(true, false, 'CREATE_POST', { title: 'Create Post' });
 };
 
 export const Compose: React.FunctionComponent = (props: any) => {

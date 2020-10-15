@@ -1,6 +1,4 @@
-import React, {
-  useEffect
-} from 'react';
+import React from 'react';
 
 import Skeleton from 'react-loading-skeleton';
 
@@ -19,27 +17,17 @@ import {
   formatDate, 
   formatNotification 
 } from '../../../../functions/utils';
-import { setLastseen } from '../../../../actions';
+import { displayModal } from '../../../../functions';
 
 const Notifications = (props: any) => {
   const { getNotifications } = props;
   const result = getNotifications.data.notifications;
   const entities = getNotifications.data.entities;
-  const lastNotificationId = result[0] ? result[0]._id : '';
-
-  useEffect(() => {
-    return () => {
-      if (result[0] && !result[0].last_seen && !getNotifications.fromPing) {
-        setLastseen(lastNotificationId);
-      }
-    }
-  })
 
   let read = false;
   const makeReadTrue = () => {
     read = true;
   }
-
 
   return (
     <Box className='dropdown-contents'>
@@ -78,13 +66,13 @@ const Notifications = (props: any) => {
                         <p class="no-space ${read ? 'read-notifications-date' : 'unread-notifications-date'}">${notificationDate}</p></div>`;
                     
                       return (
-                        <Link to={`${action}`} key={key}> 
-                          <ListItem key={key} className={`notification-result textdecoration-none ${ read ? 'notification-background-read' : 'notification-background-unread'}`}>
+                        <Link to={`${action}`} key={key} style={{textDecoration: 'none'}} onClick={(e: any) => {displayModal(false, true)}}> 
+                          <ListItem key={key} className={`notification-result ${ read ? 'notification-background-read' : 'notification-background-unread'}`}>
                             <div className='d-flex color-black'>
                               <Avatar
                                 component='span'
-                                className='profile-avatar-x profile-photo'
-                                src={'/images/avatar-1.png'}
+                                className='profile-avatar-x profile-photo notification-avatar'
+                                src={notification.profile_photo ? notification.profile_photo : '/images/avatar-1.png'}
                               />
 
                               <div

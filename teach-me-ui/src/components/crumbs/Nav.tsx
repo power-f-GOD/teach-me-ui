@@ -115,11 +115,15 @@ function MainNav(props: any) {
         <AccountCircleRoundedIcon className='nav-icon' />
       </NavLink>
 
-      <div className='nav-link' onClick={(e: any) => {displayModal(true, 'NOTIFICATIONS', { title: 'Notifications' })}}>
+      <NavLink 
+        to='#' 
+        className='nav-link' 
+        onClick={(e: any) => {displayModal(true, false, 'NOTIFICATIONS', { title: 'Notifications' })}}
+        isActive={(match: any, location: any) => false}>
         <Badge color='secondary' badgeContent={numberOfNewNotifications}>
           <NotificationsIcon />
         </Badge>
-      </div>
+      </NavLink>
 
       <Box component='span' marginX='1em' />
 
@@ -169,14 +173,18 @@ function MainNavMenu(props: any) {
         </Box>
       </NavLink>
 
-      <div className='nav-link' onClick={(e: any) => {displayModal(true, 'NOTIFICATIONS', { title: 'Notifications' })}}>
+      <NavLink 
+        to='#' 
+        className='nav-link' 
+        onClick={(e: any) => {displayModal(true, false, 'NOTIFICATIONS', { title: 'Notifications' })}}
+        isActive={(match: any, location: any) => false}>
         <Badge color='secondary' badgeContent={numberOfNewNotifications}>
           <NotificationsIcon />
         </Badge>
         <Box component='span' className='nav-label ml-3'>
           Notifications
         </Box>
-      </div>
+      </NavLink>
 
       <Button
         variant='contained'

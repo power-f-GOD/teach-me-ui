@@ -29,6 +29,10 @@ const removeModal = (event: any) => {
   }))
 };
 
+const removeNotificationModal = (event: any) => {
+  displayModal(false, true);
+}
+
 const ModalFrame = (props: any) => {
   let modalBody = null;
 
@@ -50,7 +54,7 @@ const ModalFrame = (props: any) => {
   }
   return (
     <Modal
-      onClose={removeModal}
+      onClose={props.modal.type === 'NOTIFICATIONS' ? removeNotificationModal : removeModal}
       className='modal-wrapper'
       open={props.modal.open}
       closeAfterTransition
@@ -66,7 +70,7 @@ const ModalFrame = (props: any) => {
           <div style={{marginBottom: props.modal.type === 'NOTIFICATIONS' ? '0px' : '0.5rem'}} className=' d-flex container justify-content-between action-bar p-0'>
             <span></span>
             <h4 className='m-0 text-center align-self-center font-bold'>{props.modal.meta?.title}</h4>
-            <div onClick={removeModal}>
+            <div onClick={props.modal.type === 'NOTIFICATIONS' ? removeNotificationModal : removeModal}>
               <Box
                 component='button'
                 className='close-btn'

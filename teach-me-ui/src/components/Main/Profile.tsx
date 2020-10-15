@@ -165,7 +165,7 @@ const Profile = (props: any) => {
   ];
 
   const openEditProfileModal = () => {
-    displayModal(true, 'EDIT_PROFILE', { title: 'Edit Profile' });
+    displayModal(true, false, 'EDIT_PROFILE', { title: 'Edit Profile' });
   };
 
   const handleEditClick = () => {
@@ -220,11 +220,11 @@ const Profile = (props: any) => {
   }
 
   const openProfilePhotoEditModal = () => {
-    displayModal(true, 'SELECT_PHOTO', { title: 'Select Profile Photo' });
+    displayModal(true, false, 'SELECT_PHOTO', { title: 'Select Profile Photo' });
   }
 
   const openCoverPhotoEditModal = (e: any) => {
-    displayModal(true, 'SELECT_PHOTO', { title: 'Select Cover Photo' });
+    displayModal(true, false, 'SELECT_PHOTO', { title: 'Select Cover Photo' });
   }
 
   return (
