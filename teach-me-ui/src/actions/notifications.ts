@@ -24,7 +24,7 @@ export const getNotifications = (payload: NotificationState) => {
   };
 };
 
-export const getNotificationsRequest = (date: number) => (
+export const getNotificationsRequest = (date: number, fromPing: boolean = false) => (
   dispatch: Function
 ): ReduxAction => {
   let token = getState().userData.token;
@@ -33,7 +33,7 @@ export const getNotificationsRequest = (date: number) => (
     name: 'getNotifications',
     func: getNotifications
   });
-  dispatch(getNotifications({ status: 'pending' }));
+  dispatch(getNotifications({ status: 'pending', fromPing}));
 
   axios({
     url: `/notifications?offset=${date}`,
@@ -58,14 +58,16 @@ export const getNotificationsRequest = (date: number) => (
             data: {
               notifications,
               entities
-            }
+            },
+            fromPing
           })
         );
       } else {
         dispatch(
           getNotifications({
             status: 'fulfilled',
-            err: true
+            err: true,
+            fromPing
           })
         );
       }
@@ -104,6 +106,8 @@ export const setLastseen = (id: string) => {
       Authorization: `Bearer ${token}`,
       Content_Type: 'application/json'
     }
+  }).then(() => {
+    dispatch(getNotificationsRequest(Date.now())(dispatch));
   }).catch((e: any) => {
     let message = /network/i.test(e.message)
       ? 'A network error occurred. Check your internet connection.'

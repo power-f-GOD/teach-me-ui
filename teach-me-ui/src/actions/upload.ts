@@ -7,7 +7,6 @@ import {
   SEND_FILES,
   UPLOADS,
   GET_UPLOADS,
-  Post
 } from '../constants'
 
 export const sendFiles = (payload: any) => {
@@ -24,7 +23,7 @@ export const uploads = (payload: any)=> {
   } 
 }
 
-export const sendFilesToServer = (files: Array<File>, action: Function, selectedUploads: Array<any>, post: Post) => {
+export const sendFilesToServer = (files: Array<File>, action: Function, para: any, selectedUploads: Array<any> = []) => {
   dispatch(sendFiles({
     status: 'pending'
   }));
@@ -62,7 +61,13 @@ export const sendFilesToServer = (files: Array<File>, action: Function, selected
         data: ids,
         err: false
       }));
-      dispatch(action(post, ids)(dispatch));
+      if (para.profilePhoto) {
+        dispatch(action({profile_photo: ids[0]}, true)(dispatch));
+      } else if (para.coverPhoto) {
+        dispatch(action({cover_photo: ids[0]}, true)(dispatch));
+      } else {
+        dispatch(action(para, ids)(dispatch));
+      }
       dispatch(sendFiles({
         status: 'settled',
         data: []
