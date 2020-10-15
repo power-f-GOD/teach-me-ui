@@ -17,7 +17,8 @@ import { uploads } from '../../../actions';
 import CreatePost from './components/CreatePost';
 import CreateRepost from './components/CreateRepost';
 import EditProfile from './components/Profile.edit';
-import UploadsPreview from './components/UploadsPreview'
+import UploadsPreview from './components/UploadsPreview';
+import Notifications from './components/Notifications';
 
 const removeModal = (event: any) => {
   displayModal(false);
@@ -42,7 +43,10 @@ const ModalFrame = (props: any) => {
       modalBody = <EditProfile />;
       break;
     case 'SELECT_PHOTO':
-      modalBody = <UploadsPreview title={props.modal.meta?.title}/>
+      modalBody = <UploadsPreview title={props.modal.meta?.title} />;
+      break;
+    case 'NOTIFICATIONS':
+      modalBody = <Notifications />;
   }
   return (
     <Modal
@@ -54,14 +58,14 @@ const ModalFrame = (props: any) => {
       BackdropProps={{
         timeout: 300,
         style: {
-          background: 'rgba(0,0,0,0.6)'
+          background: 'rgba(0,0,0,0.5)'
         }
       }}>
       <Fade in={props.modal.open}>
-        <Box className='main-modal'>
-          <div className=' d-flex container justify-content-between action-bar p-0'>
+        <Box className='main-modal' style={{width: props.modal.type === 'NOTIFICATIONS' ? 'max-content' : '90vw'}}>
+          <div style={{marginBottom: props.modal.type === 'NOTIFICATIONS' ? '0px' : '0.5rem'}} className=' d-flex container justify-content-between action-bar p-0'>
             <span></span>
-            <h4 className='m-0 text-center align-self-center theme-primary-darker'>{props.modal.meta?.title}</h4>
+            <h4 className='m-0 text-center align-self-center font-bold'>{props.modal.meta?.title}</h4>
             <div onClick={removeModal}>
               <Box
                 component='button'
@@ -74,7 +78,7 @@ const ModalFrame = (props: any) => {
               </Box>
             </div>
           </div>
-          <Box padding={props.modal.type === 'EDIT_PROFILE' ? '20px' : '7px'}>{modalBody}</Box>
+          <Box padding={props.modal.type === 'EDIT_PROFILE' ? '20px' : props.modal.type === 'NOTIFICATIONS' ? '0px' : '7px'}>{modalBody}</Box>
         </Box>
       </Fade>
     </Modal>

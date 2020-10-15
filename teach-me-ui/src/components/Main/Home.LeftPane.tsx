@@ -37,7 +37,7 @@ const LeftPane = (props: any) => {
               component='span'
               className='chat-avatar'
               alt={displayName}
-              src={`/images/${avatar}`}
+              src={userData.profile_photo ? userData.profile_photo : `images/${avatar}`}
             />
           </Col>
           <Col className='flex-column p-0 safari-fix-d-block'>

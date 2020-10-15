@@ -18,8 +18,8 @@ import {
   // dispatch, 
   formatDate, 
   formatNotification 
-} from '../../functions/utils';
-import { setLastseen } from '../../actions';
+} from '../../../../functions/utils';
+import { setLastseen } from '../../../../actions';
 
 const Notifications = (props: any) => {
   const { getNotifications } = props;
@@ -42,13 +42,12 @@ const Notifications = (props: any) => {
 
 
   return (
-    <Box className='dropdown-contents' marginTop='7rem'>
+    <Box className='dropdown-contents'>
       {getNotifications.status === 'pending' ? (
-        <Box className='Notifications '>
-          <div className='Notifications-div'>
-            <Container className='d-flex flex-column justify-content-center'>
+        // <Box className='Notifications '>
+        //   <div className='Notifications-div'>
+        //     <Container className='d-flex flex-column justify-content-center'>
               <Box className='notification-container mx-auto'>
-                <h2 className='notification-text'>Notifications</h2>
                 {Array(6).fill('').map((j,i) => (
                   <React.Fragment key={i}>
                     <Skeleton width={300} className='skeleton-loader notifications-skeleton'/><br/>
@@ -58,17 +57,16 @@ const Notifications = (props: any) => {
                   </React.Fragment>
                 ))}
               </Box>
-            </Container>
-          </div>
-        </Box>
+        //     </Container>
+        //   </div>
+        // </Box>
       ) : (
-        <Box
-          className='Notifications '
-        >
-          <div className='Notifications-div'>
+        // <Box
+        //   className='Notifications '
+        // >
+        //   <div className='Notifications-div'>
             <Container className='d-flex flex-column justify-content-center notification-container1'>
               <Box className='notification-container mx-auto'>
-                <h2 className='notification-text'>Notifications</h2>
 
                 {result[0]
                   ? result.map((notification: any, key: number) => {
@@ -103,8 +101,8 @@ const Notifications = (props: any) => {
                 }
               </Box>
             </Container>
-          </div>
-        </Box>
+        //   </div>
+        // </Box>
       )}
     </Box>
   );

@@ -70,7 +70,7 @@ const CreatePost: React.FC<any> = (props) => {
           component='span'
           className='chat-avatar compose-avatar'
           alt={userData.displayName}
-          src={`/images/${userData.avatar}`}
+          src={userData.profile_photo ? userData.profile_photo : `images/${userData.avatar}`}
         />
         <div className='d-flex flex-column justify-content-center flex-grow-1'>
           <span>{userData.displayName}</span>
