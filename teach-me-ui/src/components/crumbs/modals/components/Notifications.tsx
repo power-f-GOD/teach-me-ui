@@ -78,8 +78,8 @@ const Notifications = (props: any) => {
                         <p class="no-space ${read ? 'read-notifications-date' : 'unread-notifications-date'}">${notificationDate}</p></div>`;
                     
                       return (
-                        <Link to={`${action}`} className='textdecoration-none' key={key}> 
-                          <ListItem key={key} className={`notification-result ${ read ? 'notification-background-read' : 'notification-background-unread'}`}>
+                        <Link to={`${action}`} key={key}> 
+                          <ListItem key={key} className={`notification-result textdecoration-none ${ read ? 'notification-background-read' : 'notification-background-unread'}`}>
                             <div className='d-flex color-black'>
                               <Avatar
                                 component='span'
