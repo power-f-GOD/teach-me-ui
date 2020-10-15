@@ -17,6 +17,7 @@ import { uploads } from '../../../actions';
 import CreatePost from './components/CreatePost';
 import CreateRepost from './components/CreateRepost';
 import EditProfile from './components/Profile.edit';
+import UploadsPreview from './components/UploadsPreview'
 
 const removeModal = (event: any) => {
   displayModal(false);
@@ -39,6 +40,9 @@ const ModalFrame = (props: any) => {
       break;
     case 'EDIT_PROFILE':
       modalBody = <EditProfile />;
+      break;
+    case 'SELECT_PHOTO':
+      modalBody = <UploadsPreview title={props.modal.meta?.title}/>
   }
   return (
     <Modal

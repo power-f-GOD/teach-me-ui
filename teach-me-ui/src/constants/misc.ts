@@ -41,7 +41,8 @@ export const notificationState: NotificationState = {
   data: {
     notifications: [],
     entities: {}
-  }
+  },
+  fromPing: false
 };
 
 export const mentionState: MentionState = {

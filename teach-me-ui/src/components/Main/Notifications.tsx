@@ -25,12 +25,13 @@ const Notifications = (props: any) => {
   const { getNotifications } = props;
   const result = getNotifications.data.notifications;
   const entities = getNotifications.data.entities;
-  const lastNotificationId = result[0] ? result[0]._id : false;
+  const lastNotificationId = result[0] ? result[0]._id : '';
 
   useEffect(() => {
     return () => {
-      result[0] && setLastseen(lastNotificationId)
-      // dispatch(getNotificationsRequest(Date.now())(dispatch));
+      if (result[0] && !result[0].last_seen && !getNotifications.fromPing) {
+        setLastseen(lastNotificationId);
+      }
     }
   })
 

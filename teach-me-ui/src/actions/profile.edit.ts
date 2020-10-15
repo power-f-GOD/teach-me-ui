@@ -395,10 +395,10 @@ export const updateUsernameRequest = (username: string) => (
   };
 }; 
 
-export const updateUserDataRequest = (data: Object) => (
+export const updateUserDataRequest = (data: Object, updateState: boolean = false) => (
   dispatch: Function
 ): ReduxAction => {
-
+  console.log(data)
   let token = getState().userData.token
 
   callNetworkStatusCheckerFor({
@@ -427,6 +427,7 @@ export const updateUserDataRequest = (data: Object) => (
           data
         })
       );
+      updateState && dispatch(getUserDetailsRequest()(dispatch));
     } else {
       dispatch(
         updateUserData({

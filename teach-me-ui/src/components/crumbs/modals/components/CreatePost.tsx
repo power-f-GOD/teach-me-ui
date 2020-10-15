@@ -203,7 +203,7 @@ const CreatePost = (props: any) => {
   const onPostSubmit = () => {
     if (state.post.text) {
       if (state.selectedFiles[0] || state.selectedUploads[0]) {
-        sendFilesToServer(state.selectedFiles, submitPost, state.selectedUploads, state.post);
+        sendFilesToServer(state.selectedFiles, submitPost, state.post, state.selectedUploads);
       } else {
         dispatch(submitPost(state.post, [])(dispatch));
       }
@@ -321,17 +321,17 @@ const CreatePost = (props: any) => {
             <AttachmentIcon className='cursor-pointer'/>
         </Dropdown.Toggle>
         <Dropdown.Menu className='drop-menu'>
-            <label 
-              htmlFor='my-input' 
-              onClick={hideUploadedFiles} 
-              className='menu-options'
-            >
-              local Disk
-            </label>
-            <div id='divider'></div>
-            <div className='menu-options' onClick={displayUploads}>
-              uploaded files
-            </div>
+          <label 
+            htmlFor='my-input' 
+            onClick={hideUploadedFiles} 
+            className='menu-options'
+          >
+            local Disk
+          </label>
+          <div id='divider'></div>
+          <div className='menu-options' onClick={displayUploads}>
+            uploaded files
+          </div>
         </Dropdown.Menu>
       </Dropdown>
         <input
@@ -360,7 +360,7 @@ const CreatePost = (props: any) => {
           ref={label1}
           className='upload-label'
           >
-          You can upload a maximum of five files
+          You can select a maximum of five files
         </Container>
         <Row className='d-flex mx-auto mt-1'>
           <Box

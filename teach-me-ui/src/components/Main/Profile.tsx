@@ -1,9 +1,7 @@
 import React, {
   useState,
-  useCallback,
   useEffect,
   createRef,
-  useMemo
 } from 'react';
 
 import * as api from '../../actions/profile';
@@ -18,16 +16,14 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 import AddColleagueIcon from '@material-ui/icons/PersonAdd';
+import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
 import MoreIcon from '@material-ui/icons/MoreHoriz';
 import PendingIcon from '@material-ui/icons/RemoveCircle';
 import RejectIcon from '@material-ui/icons/Close';
 import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
-import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
 import SchoolOutlinedIcon from '@material-ui/icons/SchoolOutlined';
-import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 
 import ModalFrame from '../crumbs/modals';
 import Img from '../crumbs/Img';
@@ -45,19 +41,6 @@ import Loader from '../crumbs/Loader';
 interface InfoProps {
   name: string;
   value: string;
-}
-
-interface InfoInputProps {
-  id: string;
-  label?: string;
-  type?: string;
-  value?: string;
-  defaultValue?: string;
-  inputRef: any;
-  error: boolean;
-  helperText: string;
-  onChange: Function;
-  inputProps: any;
 }
 
 export const refs: any = {
@@ -82,7 +65,7 @@ let [
   displayName,
   username,
   email,
-  dob,
+  // dob,
   institution,
   department,
   level
@@ -90,9 +73,6 @@ let [
 
 let basicInfo: InfoProps[];
 let academicInfo: InfoProps[];
-
-const basicInfoIds = ['firstname', 'lastname', 'username', 'dob', 'email'];
-const academicInfoIds = ['institution', 'department', 'level'];
 
 const Profile = (props: any) => {
   const {
@@ -114,7 +94,7 @@ const Profile = (props: any) => {
   displayName = data.displayName || '';
   email = data.email || '';
   email = email + '';
-  dob = data.date_of_birth?.split('-').reverse().join('-') || '';
+  // dob = data.date_of_birth?.split('-').reverse().join('-') || '';
   institution = data.institution || '';
   department = data.department || '';
   level = data.level || '';
@@ -184,58 +164,13 @@ const Profile = (props: any) => {
     { name: 'Level', value: level }
   ];
 
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const inputProps = useMemo(() => {}, []);
-  const handleBasicInputChange = useCallback(() => {}, []);
-
-  const handleAcademicInputChange = useCallback(() => {}, []);
-
-  const basicInfoInputsOptions: InfoInputProps[] = Array(5)
-    .fill({})
-    .map((_, idx) => {
-      const id = basicInfoIds[idx];
-
-      return {
-        id,
-        defaultValue: id === 'dob' ? dob : profileData[id],
-        error: false,
-        helperText: ' ',
-        inputRef: refs[`${id}Input`],
-        onChange: handleBasicInputChange,
-        inputProps
-      };
-    });
-
-  const academicInfoInputsOptions: Array<InfoInputProps> = Array(3)
-    .fill({})
-    .map((_, idx) => {
-      const id = academicInfoIds[idx];
-
-      return {
-        id,
-        defaultValue: profileData[id],
-        error: false,
-        helperText: ' ',
-        inputRef: refs[`${id}Input`],
-        onChange: handleAcademicInputChange,
-        inputProps
-      };
-    });
-
   const openEditProfileModal = () => {
     displayModal(true, 'EDIT_PROFILE', { title: 'Edit Profile' });
   };
 
-  const handleEditClick = useCallback(() => {
-    if (!isEditing) {
-      setIsEditing(true);
+  const handleEditClick = () => {
       openEditProfileModal();
-    }
-  }, [isEditing]);
-
-  const handleCancelEditClick = useCallback(() => {
-    setIsEditing(false);
-  }, []);
+  };
 
   useEffect(() => {
     if (!selfView) {
@@ -283,18 +218,33 @@ const Profile = (props: any) => {
     //instead of this, you can use a React Skeleton loader; didn't have the time to add, so I deferred.
     return <Loader />;
   }
+
+  const openProfilePhotoEditModal = () => {
+    displayModal(true, 'SELECT_PHOTO', { title: 'Select Profile Photo' });
+  }
+
+  const openCoverPhotoEditModal = (e: any) => {
+    displayModal(true, 'SELECT_PHOTO', { title: 'Select Cover Photo' });
+  }
+
   return (
     <Box className={`Profile ${selfView ? 'self-view' : ''} fade-in pb-3`}>
       <ModalFrame />
       <Box component='div' className='profile-top'>
         <Img alt={displayName} className='cover-photo' src={data.cover_photo} />
         <Container className='details-container'>
-          <Avatar
-            component='span'
-            className='profile-avatar-x profile-photo'
-            alt={displayName}
-            src={data.profile_photo}
-          />
+          <div>
+            <Avatar
+              component='span'
+              className='profile-avatar-x profile-photo'
+              alt={displayName}
+              src={data.profile_photo}
+            />
+            <div onClick={openProfilePhotoEditModal} className='profile-photo-change-container'>
+              <PhotoCameraIcon className='profile-photo-change'/>
+            </div>
+          </div>
+
           <Col className='d-flex flex-column px-4 pt-2'>
             <Col as='span' className='display-name p-0 my-1'>
               {displayName}
@@ -436,27 +386,6 @@ const Profile = (props: any) => {
               </>
             ) : null)}
           {selfView ? (
-            <>
-              {isEditing ? (
-                <>
-                  <Button
-                    variant='contained'
-                    size='large'
-                    className='colleague-action-button add-colleague'
-                    color='primary'
-                    onClick={handleEditClick}>
-                    <SaveOutlinedIcon /> Save Edit
-                  </Button>
-                  <Button
-                    variant='contained'
-                    size='large'
-                    className='colleague-action-button add-colleague'
-                    color='primary'
-                    onClick={handleCancelEditClick}>
-                    <CloseOutlinedIcon fontSize='inherit' /> Cancel Edit
-                  </Button>
-                </>
-              ) : (
                 <>
                   <Button
                     variant='contained'
@@ -467,11 +396,7 @@ const Profile = (props: any) => {
                     <CreateOutlinedIcon fontSize='inherit' /> Edit Profile
                   </Button>
                 </>
-              )}
-            </>
-          ) : (
-            ''
-          )}
+              ) : ''}
           {false && (
             <Button
               variant='contained'
@@ -482,6 +407,16 @@ const Profile = (props: any) => {
               <MoreIcon fontSize='inherit' />
             </Button>
           )}
+        </div>
+        <div className='change-cover'>
+          <Button
+            variant='contained'
+            size='small'
+            className='cover-button'
+            color='default'
+            onClick={openCoverPhotoEditModal}>
+              <PhotoCameraIcon fontSize='inherit' /> Edit Cover Photo
+          </Button>
         </div>
       </Box>
       <Container className='px-0'>
@@ -497,24 +432,11 @@ const Profile = (props: any) => {
                 </Col>
                 <Box className='basic-info-section-wrapper'>
                   <Row
-                    className={`basic-info-wrapper ${
-                      isEditing ? 'hide' : ''
-                    } mx-0`}>
+                    className='basic-info-wrapper mx-0'>
                     {basicInfo.map(({ name, value }: InfoProps) => (
                       <Info name={name} value={value} key={name} />
                     ))}
                   </Row>
-                  <form
-                    className={`basic-info-form mx-0 row ${
-                      isEditing ? 'show' : ''
-                    }`}
-                    noValidate
-                    autoComplete='on'
-                    onSubmit={(e: any) => e.preventDefault()}>
-                    {basicInfoInputsOptions.map((options, key) => (
-                      <InfoInput options={options} key={key} />
-                    ))}
-                  </form>
                 </Box>
               </Box>
             )}
@@ -527,25 +449,11 @@ const Profile = (props: any) => {
               </Col>
               <Box className='academic-info-section-wrapper'>
                 <Row
-                  className={`academic-info-wrapper ${
-                    isEditing ? 'hide' : ''
-                  } mx-0`}>
+                  className='academic-info-wrapper mx-0'>
                   {academicInfo.map(({ name, value }: InfoProps) => (
                     <Info name={name} value={value} key={name} />
                   ))}
                 </Row>
-
-                <form
-                  className={`academic-info-form mx-0 row ${
-                    isEditing ? 'show' : ''
-                  }`}
-                  noValidate
-                  autoComplete='on'
-                  onSubmit={(e: any) => e.preventDefault()}>
-                  {academicInfoInputsOptions.map((options, key) => (
-                    <InfoInput options={options} key={key} />
-                  ))}
-                </form>
               </Box>
             </Box>
           </Col>
@@ -568,12 +476,9 @@ const Profile = (props: any) => {
         <Row as='section' className='m-0 px-3 flex-column mb-5'>
           <Box
             className={`action-buttons-container ${
-              isEditing ? 'enlarge' : ''
-            } ${
               /*passedThreshold*/ 'apiNotReady' && false ? 'add-background' : ''
             } ${selfView ? 'self-view' : ''}`}>
-            {false &&
-              (selfView ? (
+            {selfView ? (
                 <>
                   <Button
                     variant='contained'
@@ -581,28 +486,10 @@ const Profile = (props: any) => {
                     className='edit-button'
                     color='primary'
                     onClick={handleEditClick}>
-                    {isEditing ? (
-                      <>
-                        <SaveOutlinedIcon /> Save Edit
-                      </>
-                    ) : (
-                      <>
                         <CreateOutlinedIcon fontSize='inherit' /> Edit Profile
-                      </>
-                    )}
-                  </Button>
-                  <Button
-                    variant='contained'
-                    size='large'
-                    className='close-edit-button'
-                    color='primary'
-                    onClick={handleCancelEditClick}>
-                    <CloseOutlinedIcon fontSize='inherit' /> Cancel Edit
                   </Button>
                 </>
-              ) : (
-                ''
-              ))}
+                ) : '' }
           </Box>
 
           {/* <Col className='p-0 d-flex justify-content-center'>
@@ -647,25 +534,11 @@ const Profile = (props: any) => {
 
                 <Box className='basic-info-section-wrapper'>
                   <Row
-                    className={`basic-info-wrapper ${
-                      isEditing ? 'hide' : ''
-                    } mx-0`}>
+                    className='basic-info-wrapper mx-0'>
                     {basicInfo.map(({ name, value }: InfoProps) => (
                       <Info name={name} value={value} key={name} />
                     ))}
                   </Row>
-
-                  <form
-                    className={`basic-info-form mx-0 row ${
-                      isEditing ? 'show' : ''
-                    }`}
-                    noValidate
-                    autoComplete='on'
-                    onSubmit={(e: any) => e.preventDefault()}>
-                    {basicInfoInputsOptions.map((options, key) => (
-                      <InfoInput options={options} key={key} />
-                    ))}
-                  </form>
                 </Box>
               </Row>
             </Col>
@@ -687,25 +560,11 @@ const Profile = (props: any) => {
 
                 <Box className='academic-info-section-wrapper'>
                   <Row
-                    className={`academic-info-wrapper ${
-                      isEditing ? 'hide' : ''
-                    } mx-0`}>
+                    className='academic-info-wrapper mx-0'>
                     {academicInfo.map(({ name, value }: InfoProps) => (
                       <Info name={name} value={value} key={name} />
                     ))}
                   </Row>
-
-                  <form
-                    className={`academic-info-form mx-0 row ${
-                      isEditing ? 'show' : ''
-                    }`}
-                    noValidate
-                    autoComplete='on'
-                    onSubmit={(e: any) => e.preventDefault()}>
-                    {academicInfoInputsOptions.map((options, key) => (
-                      <InfoInput options={options} key={key} />
-                    ))}
-                  </form>
                 </Box>
               </Row>
             </Col>
@@ -728,28 +587,6 @@ function Info({ name, value }: any) {
         <Box component='span' className='info-value'>
           {value}
         </Box>
-      </Col>
-    </Col>
-  );
-}
-
-function InfoInput(props: any) {
-  const id = props.options.id;
-
-  return (
-    <Col
-      xs={/email|institution/i.test(id) ? 12 : 6}
-      className='info p-0 d-flex mb-1'>
-      <Col as='span' className='py-0 d-flex flex-column align-items-start px-2'>
-        <Box component='span' className='info-name'>
-          {id}:
-        </Box>
-        <TextField
-          variant='outlined'
-          size='small'
-          fullWidth
-          {...props.options}
-        />
       </Col>
     </Col>
   );
