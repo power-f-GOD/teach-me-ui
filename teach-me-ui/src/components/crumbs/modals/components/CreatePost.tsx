@@ -36,7 +36,7 @@ import { Container } from '@material-ui/core';
 
 const CreatePost = (props: any) => {
   const { userData, sendFile, uploadsProp, makePostProp } = props;
-  const { avatar, profile_photo, displayName } = userData;
+  const { profile_photo, displayName } = userData;
   const label = useRef<HTMLLabelElement | any>();
   const label1 = useRef<HTMLLabelElement | any>();
 
@@ -306,7 +306,7 @@ const CreatePost = (props: any) => {
             component='span'
             className='chat-avatar compose-avatar'
             alt={displayName}
-            src={`/images/${profile_photo || avatar}`}
+            src={profile_photo ? profile_photo : `images/${userData.avatar}`}
           />
         </Box>
         <div className='d-flex flex-column justify-content-center flex-grow-1'>

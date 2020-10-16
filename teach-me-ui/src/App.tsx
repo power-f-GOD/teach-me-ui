@@ -42,11 +42,10 @@ const App = (props: any) => {
                     '/@:userId',
                     '/@:userId/colleagues',
                     '/search',
-                    '/notifications',
                     '/p/:id',
                     '/*'
                   ]
-                : ['/home', '/search', '/notifications']
+                : ['/home', '/search']
             }
             exact
             component={Main}

@@ -1,6 +1,4 @@
-import React, {
-  useEffect
-} from 'react';
+import React from 'react';
 
 import Skeleton from 'react-loading-skeleton';
 
@@ -18,37 +16,26 @@ import {
   // dispatch, 
   formatDate, 
   formatNotification 
-} from '../../functions/utils';
-import { setLastseen } from '../../actions';
+} from '../../../../functions/utils';
+import { displayModal } from '../../../../functions';
 
 const Notifications = (props: any) => {
   const { getNotifications } = props;
   const result = getNotifications.data.notifications;
   const entities = getNotifications.data.entities;
-  const lastNotificationId = result[0] ? result[0]._id : '';
-
-  useEffect(() => {
-    return () => {
-      if (result[0] && !result[0].last_seen && !getNotifications.fromPing) {
-        setLastseen(lastNotificationId);
-      }
-    }
-  })
 
   let read = false;
   const makeReadTrue = () => {
     read = true;
   }
 
-
   return (
-    <Box className='dropdown-contents' marginTop='7rem'>
+    <Box className='dropdown-contents'>
       {getNotifications.status === 'pending' ? (
-        <Box className='Notifications '>
-          <div className='Notifications-div'>
-            <Container className='d-flex flex-column justify-content-center'>
+        // <Box className='Notifications '>
+        //   <div className='Notifications-div'>
+        //     <Container className='d-flex flex-column justify-content-center'>
               <Box className='notification-container mx-auto'>
-                <h2 className='notification-text'>Notifications</h2>
                 {Array(6).fill('').map((j,i) => (
                   <React.Fragment key={i}>
                     <Skeleton width={300} className='skeleton-loader notifications-skeleton'/><br/>
@@ -58,17 +45,16 @@ const Notifications = (props: any) => {
                   </React.Fragment>
                 ))}
               </Box>
-            </Container>
-          </div>
-        </Box>
+        //     </Container>
+        //   </div>
+        // </Box>
       ) : (
-        <Box
-          className='Notifications '
-        >
-          <div className='Notifications-div'>
+        // <Box
+        //   className='Notifications '
+        // >
+        //   <div className='Notifications-div'>
             <Container className='d-flex flex-column justify-content-center notification-container1'>
               <Box className='notification-container mx-auto'>
-                <h2 className='notification-text'>Notifications</h2>
 
                 {result[0]
                   ? result.map((notification: any, key: number) => {
@@ -80,13 +66,13 @@ const Notifications = (props: any) => {
                         <p class="no-space ${read ? 'read-notifications-date' : 'unread-notifications-date'}">${notificationDate}</p></div>`;
                     
                       return (
-                        <Link to={`${action}`} className='textdecoration-none' key={key}> 
+                        <Link to={`${action}`} key={key} style={{textDecoration: 'none'}} onClick={(e: any) => {displayModal(false, true)}}> 
                           <ListItem key={key} className={`notification-result ${ read ? 'notification-background-read' : 'notification-background-unread'}`}>
                             <div className='d-flex color-black'>
                               <Avatar
                                 component='span'
-                                className='profile-avatar-x profile-photo'
-                                src={'/images/avatar-1.png'}
+                                className='profile-avatar-x profile-photo notification-avatar'
+                                src={notification.profile_photo ? notification.profile_photo : '/images/avatar-1.png'}
                               />
 
                               <div
@@ -103,8 +89,8 @@ const Notifications = (props: any) => {
                 }
               </Box>
             </Container>
-          </div>
-        </Box>
+        //   </div>
+        // </Box>
       )}
     </Box>
   );

@@ -24,7 +24,7 @@ import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 import { 
   handleSignoutRequest,
   getState,
-  countNewNotifications
+  countNewNotifications, displayModal
 } from '../../functions';
 
 import { UserData } from '../../constants';
@@ -115,7 +115,11 @@ function MainNav(props: any) {
         <AccountCircleRoundedIcon className='nav-icon' />
       </NavLink>
 
-      <NavLink to='/notifications' className='nav-link'>
+      <NavLink 
+        to='#' 
+        className='nav-link' 
+        onClick={(e: any) => {displayModal(true, false, 'NOTIFICATIONS', { title: 'Notifications' })}}
+        isActive={(match: any, location: any) => false}>
         <Badge color='secondary' badgeContent={numberOfNewNotifications}>
           <NotificationsIcon />
         </Badge>
@@ -169,7 +173,11 @@ function MainNavMenu(props: any) {
         </Box>
       </NavLink>
 
-      <NavLink to='/notifications' className='nav-link'>
+      <NavLink 
+        to='#' 
+        className='nav-link' 
+        onClick={(e: any) => {displayModal(true, false, 'NOTIFICATIONS', { title: 'Notifications' })}}
+        isActive={(match: any, location: any) => false}>
         <Badge color='secondary' badgeContent={numberOfNewNotifications}>
           <NotificationsIcon />
         </Badge>

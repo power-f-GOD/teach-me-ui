@@ -83,7 +83,7 @@ const CreateReply: React.FC<any> = (props) => {
           className='comment-avatar'
           component='span'
           alt={userData.displayName}
-          src={`/images/${userData.avatar}`}
+          src={userData.profile_photo ? userData.profile_photo : `images/${userData.avatar}`}
         />
         <TextField
             onChange={onChange}

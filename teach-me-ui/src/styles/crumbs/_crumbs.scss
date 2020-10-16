@@ -115,15 +115,16 @@
 }
 
 .notification-background-read {
-  color: #fff;
+  background-color: #fff;
 }
 
 .notification-background-unread {
-  color: #ddd;
+  background-color: #edf8b9 !important;
 }
 
 .color-black {
   color: black;
+  background-color: inherit;
 }
 
 .padding-left-0.4 {

@@ -76,7 +76,7 @@ export const processPostFn = (post: string) => {
 };
 
 const openCreateRepostModal = (meta: any) => (e: any) => {
-  displayModal(true, 'CREATE_REPOST', {
+  displayModal(true, false, 'CREATE_REPOST', {
     title: 'Create Repost',
     post: meta
   });

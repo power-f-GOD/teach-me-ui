@@ -14,7 +14,7 @@ import Loader from '../crumbs/Loader';
 import ModalFrame from '../crumbs/modals';
 import Chat from './Chat';
 import Search from './Search';
-import Notifications from './Notifications';
+// import Notifications from './Notifications';
 import PostPage from './PostPage';
 import _404 from '../Index/_404';
 
@@ -103,7 +103,7 @@ const Main = (props: any) => {
           <Route path='/@:userId' component={Profile} />
           <Route path='/profile/:id' component={ProfileRedirect} />
           <Route path={['/search/:query', '/search']} component={Search} />
-          <Route path='/notifications' component={Notifications} />
+          {/* <Route path='/notifications' component={Notifications} /> */}
           <Route component={_404} />
         </Switch>
         <Memoize memoizedComponent={Chat} location={props.location} />
