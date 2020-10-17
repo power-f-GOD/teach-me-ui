@@ -1152,7 +1152,8 @@ function ScrollView(props: {
 
         if (
           scrollView!?.scrollTop <= 100 &&
-          !/end/.test(convoMessagesStatusText as string)
+          !/end/.test(convoMessagesStatusText as string) &&
+          scrollView?.querySelector('.msg-container')
         ) {
           dispatch(
             getConversationMessages(

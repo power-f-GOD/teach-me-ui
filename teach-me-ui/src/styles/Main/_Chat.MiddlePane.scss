@@ -315,6 +315,10 @@ body.desktop {
             animation: outgoingMessageSlideInWithScroll 1s;
           }
         }
+
+        &::after {
+          width: calc(100% + 4.5rem);
+        }
       }
     }
   }
