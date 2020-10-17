@@ -52,7 +52,7 @@ export const conversations = (
 };
 
 export const conversationsMessages = (
-  state = {} as ConversationsMessages,
+  state = { ...searchState } as ConversationsMessages,
   action: ReduxAction
 ): ConversationsMessages => {
   if (action.type === SET_CONVERSATIONS_MESSAGES) {

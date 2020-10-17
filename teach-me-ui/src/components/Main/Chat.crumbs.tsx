@@ -28,9 +28,11 @@ import {
   addEventListenerOnce,
   delay,
   interval,
-  createObserver
+  createObserver,
+  dispatch
 } from '../../functions/utils';
 import { chatDateStickyRef, msgBoxRef } from './Chat.MiddlePane';
+import { conversationInfo } from '../../actions/chat';
 
 export interface SelectedMessageValue extends Omit<APIMessageResponse, 'type'> {
   type: 'incoming' | 'outgoing';
@@ -106,7 +108,7 @@ export const Message = (props: {
   }, []);
 
   useEffect(() => {
-    const messageEl = messageElRef.current;
+    const messageEl = messageElRef.current as HTMLElement;
 
     if (messageEl) {
       ([
@@ -123,6 +125,10 @@ export const Message = (props: {
           passive: true
         });
       });
+
+      if (messageEl.classList.contains('last-message')) {
+        dispatch(conversationInfo({ new_message: {} }));
+      }
     }
   }, [
     messageElRef,
@@ -490,7 +496,9 @@ export const NewMessageBar = (props: {
     ) as any)!;
 
     const observer = createObserver(scrollView, (entries) => {
-      relativeIsVisible = entries[0].boundingClientRect.top > 64;
+      const { top } = entries[0].boundingClientRect;
+
+      relativeIsVisible = top > 64;
 
       if (Button && relativeIsVisible) {
         Button.classList.add('hide-icon');
@@ -498,12 +506,12 @@ export const NewMessageBar = (props: {
     });
 
     if (relativeNewMessageBar) {
-      relativeIsVisible =
-        relativeNewMessageBar!.getBoundingClientRect().top > 64;
+      const { top } = relativeNewMessageBar!.getBoundingClientRect();
+      relativeIsVisible = top > 64;
 
       Button.disabled = relativeIsVisible;
       Button.classList[relativeIsVisible ? 'add' : 'remove']('hide-icon');
-      observer[relativeIsVisible ? 'unobserve' : 'observe'](
+      observer[relativeIsVisible ? 'observe' || 'unobserve' : 'observe'](
         relativeNewMessageBar
       );
     }

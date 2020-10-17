@@ -14,6 +14,8 @@ import Badge from '@material-ui/core/Badge';
 import BlockIcon from '@material-ui/icons/Block';
 import CloudOffIcon from '@material-ui/icons/CloudOff';
 import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
+import ForumIcon from '@material-ui/icons/Forum';
+import ChatIcon from '@material-ui/icons/Chat';
 
 import {
   chatState,
@@ -91,8 +93,18 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
           value={value}
           onChange={handleChange}
           aria-label='Chat left pane tab panels'>
-          <Tab label={CV} {...allyProps(0)} style={{ minWidth: '50%' }} />
-          <Tab label={CR} {...allyProps(1)} style={{ minWidth: '50%' }} />
+          <Tab
+            label='Conversations'
+            icon={<ChatIcon />}
+            {...allyProps(0)}
+            style={{ minWidth: '50%' }}
+          />
+          <Tab
+            label='Groups'
+            icon={<ForumIcon />}
+            {...allyProps(1)}
+            style={{ minWidth: '50%' }}
+          />
         </Tabs>
       </AppBar>
       <Box className='tab-panels-wrapper d-flex' position='relative'>
@@ -280,7 +292,6 @@ function PaneItem({
   forceUpdate: string;
 }) {
   const {
-    avatar,
     conversation_name: displayName,
     associated_user_id: _userId,
     _id: convoId,
@@ -291,7 +302,8 @@ function PaneItem({
     user_typing,
     unread_count,
     created_at,
-    last_activity
+    last_activity,
+    profile_photo
   } = _conversation ?? {};
   const hasRecent: boolean = { ...(last_message as any) }.is_recent;
 
@@ -347,6 +359,7 @@ function PaneItem({
           conversationMessages: _conversationMessages
           // conversationsMessages: _conversationsMessages
         } = getState() as {
+          //using getState here to prevent rerenders that would be cause if props is used
           conversation: APIConversationResponse;
           conversationMessages: ConversationMessages;
           conversationsMessages: ConversationsMessages;
@@ -384,13 +397,16 @@ function PaneItem({
         }
 
         //update store for previous chat before updating/populating current chat
-        dispatch(
-          conversationsMessages({
-            convoId: prevChatConvoId,
-            statusText: 'replace messages',
-            data: { [prevChatConvoId]: [...prevChatConvoMessages] }
-          })
-        );
+        if (prevChatConvoId) {
+          dispatch(
+            conversationsMessages({
+              convoId: prevChatConvoId,
+              statusText: 'replace messages',
+              data: { [prevChatConvoId]: [...prevChatConvoMessages] }
+            })
+          );
+        }
+
         dispatch(conversationInfo({ user_typing: '' }));
 
         if (window.navigator.onLine) {
@@ -447,9 +463,9 @@ function PaneItem({
           variant='dot'>
           <Avatar
             component='span'
-            className='chat-avatar mr-2'
+            className={'chat-avatar mr-2'}
             alt={displayName}
-            src={`/images/${avatar ?? 'avatar-1.png'}`}
+            src={profile_photo || ''}
           />
         </Badge>{' '}
         <Box width='100%' maxWidth='calc(100% - 3.65rem)'>

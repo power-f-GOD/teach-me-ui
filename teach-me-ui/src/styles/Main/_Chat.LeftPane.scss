@@ -117,14 +117,28 @@ $tab-item-bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
 }
 
 .tab-link {
+  // @include debugger();
   flex-grow: 1;
   padding: 0;
-  font-size: 1rem;
+  font-size: 0.65rem;
   opacity: 0.5;
-  color: white;
+  color: rgba(255, 255, 255, 0.5);
   font-weight: normal;
   min-height: $chat-header-min-height;
   background: $theme-primary-v4;
+
+  .MuiTab-wrapper {
+    align-self: center;
+    padding-bottom: 0.5rem;
+    height: calc(100% + 0.5rem);
+    justify-content: flex-end;
+  }
+
+  [class*='Icon'] {
+    color: white;
+    font-size: 1.65rem;
+    margin: 0 !important;
+  }
 
   &:hover,
   &:focus {
@@ -154,6 +168,12 @@ $tab-item-bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
   .chat-avatar {
     height: $avatar-size;
     width: $avatar-size;
+    background-color: rgba(255, 255, 255, 0.25);
+    color: $theme-primary-v9 !important;
+
+    [class*='Icon'] {
+      color: #eee;
+    }
   }
 
   .conversation-name-wrapper {
@@ -201,6 +221,15 @@ $tab-item-bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
     .display-name {
       color: white !important;
     }
+
+    .chat-avatar {
+      background-color: $theme-secondary-v6;
+      color: $theme-secondary-v4 !important;
+
+      [class*='Icon'] {
+        color: #fff;
+      }
+    }
   }
 
   &.active {
@@ -217,6 +246,11 @@ $tab-item-bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
     .display-name {
       color: white !important;
     }
+
+    .chat-avatar {
+      background-color: $theme-primary-v6;
+      color: $theme-primary-v4 !important;
+    }
   }
 
   &.uncolleagued {
@@ -231,7 +265,7 @@ $tab-item-bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
 
     .MuiBadge-dot {
       border-color: $tab-item-bg;
-      right: 30%;
+      right: 27%;
     }
   }
 
@@ -242,12 +276,12 @@ $tab-item-bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
   }
 
   .display-name {
-    font-weight: bold;
+    font-weight: bolder;
     display: inline-block;
     overflow: hidden;
     color: #eee;
     white-space: nowrap;
-    max-width: calc(100% - 4rem);
+    max-width: calc(100% - 4.25rem);
     text-overflow: ellipsis;
   }
 
@@ -275,8 +309,10 @@ $tab-item-bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
       width: $size;
       opacity: 0;
       top: 0.25rem;
+      transition-duration: 0.1s;
 
       &.show-badge {
+        transition-duration: 0.3s;
         opacity: 1;
         transform: scale(1);
       }
@@ -289,6 +325,7 @@ $tab-item-bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
       font-size: 0.8rem;
       height: $size;
       width: auto;
+      font-weight: 600;
       background-color: $theme-secondary-v6;
       color: white;
     }
@@ -307,6 +344,7 @@ $tab-item-bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      font-weight: 300;
     }
 
     [class*='Icon'] {

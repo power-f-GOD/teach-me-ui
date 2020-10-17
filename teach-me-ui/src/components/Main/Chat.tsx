@@ -42,7 +42,6 @@ import ChatMiddlePane, {
 } from './Chat.MiddlePane';
 import ChatRightPane from './Chat.RightPane';
 import createMemo from '../../Memo';
-import { userDeviceIsMobile } from '../..';
 import { getState } from '../../appStore';
 
 export const placeHolderDisplayName = 'Start a Conversation';
@@ -137,7 +136,6 @@ const ChatBox = (props: ChatBoxProps) => {
     conversations,
     chatState: _chatState,
     conversationMessages: _conversationMessages,
-    // conversationsMessages: _conversationsMessages,
     conversationInfo: _conversationInfo,
     userData,
     webSocket: socket
@@ -195,7 +193,7 @@ const ChatBox = (props: ChatBoxProps) => {
       setActivePaneIndex(index);
 
       if (index === 1 && windowWidth < 992) {
-        window.history[userDeviceIsMobile ? 'replaceState' : 'pushState'](
+        window.history.replaceState(
           {},
           '',
           window.location.pathname +
@@ -224,11 +222,7 @@ const ChatBox = (props: ChatBoxProps) => {
         })
       );
     });
-    window.history[userDeviceIsMobile ? 'replaceState' : 'pushState'](
-      {},
-      '',
-      window.location.pathname + queryString
-    );
+    window.history.pushState({}, '', window.location.pathname + queryString);
   }, [windowWidth]);
 
   const handleChatTransitionEnd = useCallback(
