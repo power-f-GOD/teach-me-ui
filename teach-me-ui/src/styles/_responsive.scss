@@ -56,7 +56,8 @@
   .ChatBox {
     .chat-box-wrapper {
       &.close {
-        transform: scale(0.8);
+        transition-duration: 0.2s;
+        transform: scale(0.85);
       }
     }
 
@@ -116,6 +117,13 @@
       }
     }
 
+    .chat-scroll-view {
+      > *,
+      > div {
+        max-width: 40rem !important;
+      }
+    }
+
     .chat-right-pane {
       opacity: 0;
       animation: unset;
@@ -137,7 +145,7 @@
     }
 
     .msg-wrapper {
-      max-width: 70%;
+      max-width: 80%;
     }
   }
 }

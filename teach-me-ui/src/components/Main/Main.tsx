@@ -44,7 +44,7 @@ const Main = (props: any) => {
   } = props;
 
   useEffect(() => {
-    dispatch(getConversationsMessages()(dispatch));
+    dispatch(getConversationsMessages(null, 'getting new')(dispatch));
   }, []);
 
   useEffect(() => {

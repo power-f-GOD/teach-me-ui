@@ -321,6 +321,7 @@ export interface RoomInfo {
 
 export interface ConversationsMessages extends StatusPropsState {
   convoId?: string;
+  pipe?: SocketPipe;
   data?: { [convoId: string]: ConversationMessages['data'] };
 }
 
@@ -377,6 +378,8 @@ export interface APIConversationResponse {
   associated_user_id: string;
   unread_count: number;
   user_typing: string;
+  profile_photo: string;
+  cover_photo: string;
 }
 
 export interface NotificationState extends StatusPropsState {
