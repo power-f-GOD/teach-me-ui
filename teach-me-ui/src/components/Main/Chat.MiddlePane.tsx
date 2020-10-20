@@ -1120,7 +1120,7 @@ function ScrollView(props: {
           scrollView!.scrollHeight - scrollView!.scrollTop;
 
         if (
-          scrollView!?.scrollTop <= 100 &&
+          scrollView!?.scrollTop <= 200 &&
           !/end/.test(convoMessagesStatusText as string) &&
           scrollView?.querySelector('.msg-container')
         ) {
@@ -1134,7 +1134,7 @@ function ScrollView(props: {
           );
           setHasReachedTopOfConvo(false);
         }
-      }, 800);
+      }, 350);
 
       scrollView.classList.remove('scroll-ended');
       clearTimeout(hideScrollBarTimeout);
@@ -1228,17 +1228,14 @@ function ScrollView(props: {
         scrollView.classList.remove('add-scroll-padding');
       }
 
-      if (
-        convoMessages?.length &&
-        /settled|fulfilled/.test(convoMessagesStatus as string)
-      ) {
-        (messagesStatusSignal ?? {}).inert = true;
-        delay(600).then(() => {
-          scrollView!.classList.remove('hide-messages');
-        });
-      } else {
-        (messagesStatusSignal ?? {}).inert = false;
-        scrollView.classList.add('hide-messages');
+      if (/settled|fulfilled/.test(convoMessagesStatus as string)) {
+        if (convoMessages?.length) {
+          (messagesStatusSignal ?? {}).inert = true;
+          scrollView!.classList.remove('show-status-signal');
+        } else {
+          (messagesStatusSignal ?? {}).inert = false;
+          scrollView.classList.add('show-status-signal');
+        }
       }
 
       if (convoMessages && canAdjustScrollTop) {
@@ -1426,8 +1423,8 @@ function ScrollView(props: {
           </React.Fragment>
         );
       })}
-      {!convoFriendship && convoMessagesStatus === 'fulfilled' && convoId && (
-        <Box className='text-center py-5 my-2'>
+      {!convoFriendship && convoId && (
+        <Box className='text-center py-5 px-3 my-2'>
           You are not colleagues with{' '}
           <Box fontWeight='bold'>{convoDisplayName}.</Box>
           <br />

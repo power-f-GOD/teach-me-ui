@@ -493,7 +493,7 @@ function PaneItem({
               <Box
                 className={`last-message mt-1 ${
                   last_message?.deleted ? 'font-italic' : ''
-                } fade-in`}
+                }`}
                 maxWidth={unread_count ? 'calc(100% - 2.25rem)' : '100%'}
                 title={last_message?.message ?? ''}>
                 {!last_message ? (
@@ -503,7 +503,7 @@ function PaneItem({
                     <Box
                       position='absolute'
                       className={`theme-secondary-lightest font-normal ${
-                        user_typing ? 'show' : 'hide'
+                        user_typing ? 'show font-bold' : 'hide'
                       }`}>
                       typing...
                     </Box>

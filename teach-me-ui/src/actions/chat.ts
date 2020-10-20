@@ -86,7 +86,7 @@ export const getConversations = (
             } = getState() as { conversationsMessages: ConversationsMessages };
             const convoMessages = _conversationMessages.data![convo._id!];
 
-            if (!convoMessages?.length && convo._id) {
+            if (!convoMessages?.length && convo._id && convo.last_message) {
               dispatch(
                 conversationsMessages({
                   statusText: 'replace messages',
@@ -481,13 +481,11 @@ export const conversationsMessages = (
     if (initialMessage || pipe === CHAT_NEW_MESSAGE) {
       switch (pipe) {
         case CHAT_NEW_MESSAGE: {
-          payload.data = {
-            [convoId]: [...prevConvoMessages, newConvoMessage]
-          };
+          //see code after switch block for the update
           break;
         }
         case CHAT_MESSAGE_DELIVERED: {
-          const deliveeId = newConvoMessage.delivered_to![0];
+          const deliveeId = (newConvoMessage.delivered_to as unknown) as string;
 
           if (
             initialMessage &&
@@ -500,7 +498,7 @@ export const conversationsMessages = (
           break;
         }
         case CHAT_READ_RECEIPT: {
-          const seerId = newConvoMessage.seen_by![0];
+          const seerId = (newConvoMessage.seen_by as unknown) as string;
 
           if (
             initialMessage &&
@@ -518,10 +516,6 @@ export const conversationsMessages = (
             initialMessage.message = '';
             prevConvoMessages[index] = initialMessage;
           }
-
-          payload.data = {
-            [convoId]: [...prevConvoMessages]
-          };
           break;
         case CHAT_MESSAGE_DELETED_FOR: {
           if (initialMessage) {
@@ -529,13 +523,17 @@ export const conversationsMessages = (
             initialMessage.message = '';
             prevConvoMessages.splice(index, 1);
           }
-
-          payload.data = {
-            [convoId]: [...prevConvoMessages]
-          };
           break;
         }
       }
+
+      payload.data = {
+        ...prevData,
+        [convoId]:
+          pipe === CHAT_NEW_MESSAGE
+            ? [...prevConvoMessages, newConvoMessage]
+            : [...prevConvoMessages]
+      };
     } else {
       payload.data = { ...prevData };
     }
@@ -586,7 +584,7 @@ export const getConversationMessages = (
     const hasCachedData =
       cachedConvoMessages.length &&
       (cachedConvoMessages.length >= limit ||
-        cachedConvoMessages.slice(-1)[0]._id === last_message?._id);
+        cachedConvoMessages.slice(-1)[0]?._id === last_message?._id);
 
     dispatch(
       conversationMessages({
@@ -609,7 +607,7 @@ export const getConversationMessages = (
         data.error = false;
 
         if (isUpdating) {
-          const target = cachedConvoMessages.slice(-1)[0].date;
+          const target = cachedConvoMessages.slice(-1)[0]?.date;
           const response: AxiosResponse<MessagesResponse> = await axios({
             url: `${baseURL}/conversations/${convoId}/messages?limit=${unread_count}target=${target}`,
             method: 'GET',
@@ -704,10 +702,6 @@ export const getConversationMessages = (
                     data: [{ _id: convoId, last_read: message.date }]
                   })
                 );
-
-                // if (type === 'outgoing') {
-                //   hasUpdatedConvo = false;
-                // }
 
                 if (!hasUpdatedConvo || type === 'outgoing') {
                   dispatch(conversation(convoId, { last_read: message.date }));
@@ -845,7 +839,7 @@ export const conversationMessages = (payload: ConversationMessages) => {
       switch (payload.pipe) {
         case CHAT_MESSAGE_DELIVERED:
           const deliveeId = payload.data![0].delivered_to![0];
-
+          console.log(initialMessage, payload.data);
           if (
             initialMessage &&
             !initialMessage.delivered_to!?.includes(deliveeId) &&

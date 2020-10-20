@@ -129,6 +129,13 @@ export const Message = (props: {
       if (messageEl.classList.contains('last-message')) {
         dispatch(conversationInfo({ new_message: {} }));
       }
+
+      messageEl.classList.add('fade-in');
+      addEventListenerOnce(
+        messageEl,
+        () => messageEl.classList.remove('fade-in'),
+        'animationend'
+      );
     }
   }, [
     messageElRef,
@@ -443,6 +450,19 @@ export const ChatDate = ({
   }, [dateStamp, chatDateSticky, pxRatio, scrollView]);
 
   useEffect(() => {
+    const chatDateWrapper = chatDateWrapperRef.current;
+
+    if (chatDateWrapper) {
+      chatDateWrapper.classList.add('fade-in');
+      addEventListenerOnce(
+        chatDateWrapper,
+        () => chatDateWrapper.classList.remove('fade-in'),
+        'animationend'
+      );
+    }
+  }, []);
+
+  useEffect(() => {
     //remove 2 > 3 in if expression
     if (scrollView && chatDateWrapperRef.current) {
       scrollView.addEventListener('scroll', stickDate);
@@ -582,7 +602,10 @@ export const NewMessageBar = (props: {
   }
 
   return (
-    <Container className={`new-messages-bar ${type} ${className ?? ''} p-0`}>
+    <Container
+      className={`new-messages-bar fade-in ${type} ${className ?? ''} ${
+        type === 'sticky' ? 'd-none' : ''
+      } p-0`}>
       <Button
         className='new-messages-count btn-primary contained uppercase d-inline-flex align-items-center'
         variant='contained'

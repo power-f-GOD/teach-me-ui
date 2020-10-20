@@ -9,6 +9,10 @@
     color: #e6dcd3;
   }
 
+  a {
+    color: $theme-secondary-v6;
+  }
+
   .header-name-control-wrapper {
     flex-grow: 1;
     background: white;
@@ -302,19 +306,13 @@
     }
     height: 100%;
     width: 100%;
-    transition: opacity 0.3s;
+    transition: opacity 0.25s;
   }
 
-  &.hide-messages {
+  &.show-status-signal {
     overflow: hidden;
-
-    .msg-container {
-      opacity: 0;
-    }
-
-    .new-messages-bar {
-      opacity: 0 !important;
-    }
+    pointer-events: none;
+    opacity: 0;
 
     & ~ .messages-status-signal {
       opacity: 1;
