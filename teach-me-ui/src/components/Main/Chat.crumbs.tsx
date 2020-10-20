@@ -28,9 +28,11 @@ import {
   addEventListenerOnce,
   delay,
   interval,
-  createObserver
+  createObserver,
+  dispatch
 } from '../../functions/utils';
 import { chatDateStickyRef, msgBoxRef } from './Chat.MiddlePane';
+import { conversationInfo } from '../../actions/chat';
 
 export interface SelectedMessageValue extends Omit<APIMessageResponse, 'type'> {
   type: 'incoming' | 'outgoing';
@@ -106,7 +108,7 @@ export const Message = (props: {
   }, []);
 
   useEffect(() => {
-    const messageEl = messageElRef.current;
+    const messageEl = messageElRef.current as HTMLElement;
 
     if (messageEl) {
       ([
@@ -123,6 +125,17 @@ export const Message = (props: {
           passive: true
         });
       });
+
+      if (messageEl.classList.contains('last-message')) {
+        dispatch(conversationInfo({ new_message: {} }));
+      }
+
+      messageEl.classList.add('fade-in');
+      addEventListenerOnce(
+        messageEl,
+        () => messageEl.classList.remove('fade-in'),
+        'animationend'
+      );
     }
   }, [
     messageElRef,
@@ -437,6 +450,19 @@ export const ChatDate = ({
   }, [dateStamp, chatDateSticky, pxRatio, scrollView]);
 
   useEffect(() => {
+    const chatDateWrapper = chatDateWrapperRef.current;
+
+    if (chatDateWrapper) {
+      chatDateWrapper.classList.add('fade-in');
+      addEventListenerOnce(
+        chatDateWrapper,
+        () => chatDateWrapper.classList.remove('fade-in'),
+        'animationend'
+      );
+    }
+  }, []);
+
+  useEffect(() => {
     //remove 2 > 3 in if expression
     if (scrollView && chatDateWrapperRef.current) {
       scrollView.addEventListener('scroll', stickDate);
@@ -490,7 +516,9 @@ export const NewMessageBar = (props: {
     ) as any)!;
 
     const observer = createObserver(scrollView, (entries) => {
-      relativeIsVisible = entries[0].boundingClientRect.top > 64;
+      const { top } = entries[0].boundingClientRect;
+
+      relativeIsVisible = top > 64;
 
       if (Button && relativeIsVisible) {
         Button.classList.add('hide-icon');
@@ -498,12 +526,12 @@ export const NewMessageBar = (props: {
     });
 
     if (relativeNewMessageBar) {
-      relativeIsVisible =
-        relativeNewMessageBar!.getBoundingClientRect().top > 64;
+      const { top } = relativeNewMessageBar!.getBoundingClientRect();
+      relativeIsVisible = top > 64;
 
       Button.disabled = relativeIsVisible;
       Button.classList[relativeIsVisible ? 'add' : 'remove']('hide-icon');
-      observer[relativeIsVisible ? 'unobserve' : 'observe'](
+      observer[relativeIsVisible ? 'observe' || 'unobserve' : 'observe'](
         relativeNewMessageBar
       );
     }
@@ -574,7 +602,10 @@ export const NewMessageBar = (props: {
   }
 
   return (
-    <Container className={`new-messages-bar ${type} ${className ?? ''} p-0`}>
+    <Container
+      className={`new-messages-bar fade-in ${type} ${className ?? ''} ${
+        type === 'sticky' ? 'd-none' : ''
+      } p-0`}>
       <Button
         className='new-messages-count btn-primary contained uppercase d-inline-flex align-items-center'
         variant='contained'

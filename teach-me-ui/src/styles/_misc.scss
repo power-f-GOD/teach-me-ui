@@ -18,9 +18,9 @@ body {
 
 * {
   box-sizing: border-box;
-  font-family: 'Hind Madurai', 'Trebuchet MS', sans-serif !important;
-  font-weight: inherit;
+  font-family: 'Quicksand', 'Nunito', 'Trebuchet MS', sans-serif !important;
   outline: none;
+  font-weight: inherit;
 }
 
 body {
@@ -135,11 +135,11 @@ input {
 }
 
 a {
-  color: $theme-secondary-v7;
+  color: $theme-secondary-v6;
   text-decoration: none;
 
   &:visited {
-    color: $theme-secondary-v5;
+    color: $theme-secondary-v4;
   }
 
   &:hover,
@@ -525,7 +525,7 @@ div {
 }
 
 .font-bold {
-  font-weight: bold !important;
+  font-weight: bolder !important;
 }
 
 .uppercase {

@@ -56,7 +56,8 @@
   .ChatBox {
     .chat-box-wrapper {
       &.close {
-        transform: scale(0.8);
+        transition-duration: 0.2s;
+        transform: scale(0.85);
       }
     }
 
@@ -74,7 +75,7 @@
     .chat-left-pane {
       opacity: 0;
       transform: translateY(10rem);
-      transition: opacity 0.2s, transform 0.3s;
+      transition: opacity 0.2s, transform 0.25s;
 
       &.active-pane {
         opacity: 1;
@@ -87,7 +88,7 @@
       opacity: 0;
       max-width: unset;
       transform: translateY(-10rem);
-      transition: opacity 0.2s, transform 0.3s;
+      transition: opacity 0.2s, transform 0.25s;
 
       &.active-pane {
         opacity: 1;
@@ -116,11 +117,22 @@
       }
     }
 
+    .chat-scroll-view {
+      > *,
+      > div {
+        max-width: 40rem;
+      }
+
+      .new-messages-bar {
+        max-width: 42rem !important;
+      }
+    }
+
     .chat-right-pane {
       opacity: 0;
       animation: unset;
-      transform: scale(5) translateY(15rem);
-      transition: opacity 0.25s, transform 0.5s;
+      transform: scale(5) translateY(12rem);
+      transition: opacity 0.3s, transform 0.35s;
 
       &.active-pane {
         opacity: 1;
@@ -137,7 +149,7 @@
     }
 
     .msg-wrapper {
-      max-width: 70%;
+      max-width: 80%;
     }
   }
 }

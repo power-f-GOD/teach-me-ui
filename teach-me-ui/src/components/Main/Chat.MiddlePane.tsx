@@ -225,67 +225,40 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
             if (_isOpen) {
               const isDelivered = message.delivered_to?.includes(userId);
 
-              if (window.innerWidth < 992) {
-                if (!isDelivered) {
-                  socket!.send(
-                    JSON.stringify({
-                      message_id: message._id,
-                      pipe: CHAT_MESSAGE_DELIVERED
-                    })
-                  );
-
-                  dispatch(
-                    conversationMessages({
-                      statusText: 'from socket',
-                      pipe: CHAT_MESSAGE_DELIVERED,
-                      data: [{ delivered_to: [userId], _id: message._id }]
-                    })
-                  );
-                }
-
-                if (!_isMinimized) {
-                  socket!.send(
-                    JSON.stringify({
-                      message_id: message._id,
-                      pipe: CHAT_READ_RECEIPT
-                    })
-                  );
-                  dispatch(
-                    conversationMessages({
-                      statusText: 'from socket',
-                      pipe: CHAT_READ_RECEIPT,
-                      data: [{ seen_by: [userId], _id: message._id }]
-                    })
-                  );
-                }
-              } else {
-                const pipe =
-                  _isMinimized && !isDelivered
-                    ? CHAT_MESSAGE_DELIVERED
-                    : CHAT_READ_RECEIPT;
-
+              if (!isDelivered) {
                 socket!.send(
                   JSON.stringify({
                     message_id: message._id,
-                    pipe
+                    pipe: CHAT_MESSAGE_DELIVERED
                   })
                 );
 
                 dispatch(
                   conversationMessages({
                     statusText: 'from socket',
-                    pipe,
-                    data: [
-                      {
-                        [pipe === CHAT_READ_RECEIPT
-                          ? 'seen_by'
-                          : 'delivered_to']: [userId],
-                        _id: message._id
-                      }
-                    ]
+                    pipe: CHAT_MESSAGE_DELIVERED,
+                    data: [{ delivered_to: [userId], _id: message._id }]
                   })
                 );
               }
+
+              if (!_isMinimized) {
+                socket!.send(
+                  JSON.stringify({
+                    message_id: message._id,
+                    pipe: CHAT_READ_RECEIPT
+                  })
+                );
+                dispatch(
+                  conversationMessages({
+                    statusText: 'from socket',
+                    pipe: CHAT_READ_RECEIPT,
+                    data: [{ seen_by: [userId], _id: message._id }]
+                  })
+                );
+              }
+              // if (window.innerWidth < 992) {
+              // }
             } else continue;
           } else break;
         } catch (e) {
@@ -492,11 +465,7 @@ function MiddlePaneHeader(props: {
           queryString: ''
         })
       );
-      window.history[userDeviceIsMobile ? 'replaceState' : 'pushState'](
-        {},
-        '',
-        window.location.pathname
-      );
+      window.history.replaceState({}, '', window.location.pathname);
     }, 500);
   }, [isOpen, convoMessagesStatus]);
 
@@ -763,7 +732,7 @@ function MiddlePandeHeaderColleagueNameAndStatus(props: {
               component='span'
               className='chat-avatar'
               alt={convoDisplayName}
-              src={`/images/${convoAvatar}`}
+              src={convoInfoData?.profile_photo || ''}
             />
           </Badge>{' '}
           <Col as='span' className='ml-2 p-0'>
@@ -1151,8 +1120,9 @@ function ScrollView(props: {
           scrollView!.scrollHeight - scrollView!.scrollTop;
 
         if (
-          scrollView!?.scrollTop <= 100 &&
-          !/end/.test(convoMessagesStatusText as string)
+          scrollView!?.scrollTop <= 200 &&
+          !/end/.test(convoMessagesStatusText as string) &&
+          scrollView?.querySelector('.msg-container')
         ) {
           dispatch(
             getConversationMessages(
@@ -1164,13 +1134,13 @@ function ScrollView(props: {
           );
           setHasReachedTopOfConvo(false);
         }
-      }, 800);
+      }, 350);
 
       scrollView.classList.remove('scroll-ended');
       clearTimeout(hideScrollBarTimeout);
       hideScrollBarTimeout = setTimeout(() => {
         scrollView!.classList.add('scroll-ended');
-      }, 600);
+      }, 400);
     }
   }, [convoId, offset, convoMessagesStatusText]);
 
@@ -1232,8 +1202,7 @@ function ScrollView(props: {
         scrollView.scrollTop + scrollView.offsetHeight + 50 >=
         scrollView.scrollHeight - 300;
       const canAddScrollPadding =
-        scrollView.scrollHeight > scrollView.offsetHeight;
-
+        scrollView.scrollHeight >= scrollView.offsetHeight;
       const scrollViewNewSrollPos =
         scrollView.scrollHeight - scrollViewPrevScrollPos;
 
@@ -1259,17 +1228,14 @@ function ScrollView(props: {
         scrollView.classList.remove('add-scroll-padding');
       }
 
-      if (
-        convoMessages?.length &&
-        /settled|fulfilled/.test(convoMessagesStatus as string)
-      ) {
-        (messagesStatusSignal ?? {}).inert = true;
-        delay(1000).then(() => {
-          scrollView!.classList.remove('hide-messages');
-        });
-      } else {
-        (messagesStatusSignal ?? {}).inert = false;
-        scrollView.classList.add('hide-messages');
+      if (/settled|fulfilled/.test(convoMessagesStatus as string)) {
+        if (convoMessages?.length) {
+          (messagesStatusSignal ?? {}).inert = true;
+          scrollView!.classList.remove('show-status-signal');
+        } else {
+          (messagesStatusSignal ?? {}).inert = false;
+          scrollView.classList.add('show-status-signal');
+        }
       }
 
       if (convoMessages && canAdjustScrollTop) {
@@ -1312,7 +1278,7 @@ function ScrollView(props: {
       </Box>
 
       <Box
-        className={`more-messages-loader theme-tertiary-darker ${
+        className={`more-messages-loader theme-tertiary-darker mt-auto ${
           convoMessagesStatus === 'settled' &&
           /offset/.test(convoMessagesStatusText as string) &&
           !convoMessagesErr
@@ -1320,14 +1286,16 @@ function ScrollView(props: {
             : 'hide'
         }`}
         textAlign='center'>
-        <CircularProgress thickness={4} color='inherit' size={20} />
+        <CircularProgress thickness={4} color='inherit' size={28} />
       </Box>
       <Memoize
         memoizedComponent={NewMessageBar}
         type='sticky'
         convoUnreadCount={+convoUnreadCount!}
         scrollView={scrollView as HTMLElement}
-        shouldRender={!!convoUnreadCount}
+        shouldRender={
+          !!convoUnreadCount && convoUnreadCount !== convoMessages.length
+        }
         className={convoId && convoUnreadCount ? '' : 'd-none'}
       />
 
@@ -1359,6 +1327,16 @@ function ScrollView(props: {
           convoMessages![key - 1],
           convoMessages![key + 1]
         ];
+
+        const lastRead = +convoLastReadDate!;
+        const willRenderNewMessageBar =
+          date > lastRead &&
+          ((prevMessage?.date <= lastRead &&
+            !!convoUnreadCount &&
+            prevMessage?.date) ||
+            (!!convoUnreadCount &&
+              key === 0 &&
+              convoUnreadCount === convoMessages.length));
 
         const prevDate = new Date(Number(prevMessage?.date)).toDateString();
         const nextDate = new Date(Number(nextMessage?.date)).toDateString();
@@ -1395,12 +1373,6 @@ function ScrollView(props: {
             ? ' last-message'
             : ''
         }`;
-        const lastRead = +convoLastReadDate!;
-        const willRenderNewMessageBar =
-          date > lastRead &&
-          prevMessage?.date <= lastRead &&
-          !!convoUnreadCount &&
-          prevMessage?.date;
 
         if (willRenderNewMessageBar) {
           newMessageCount = 0;
@@ -1411,7 +1383,7 @@ function ScrollView(props: {
 
         return (
           <React.Fragment key={key}>
-            {shouldRenderDate && (
+            {shouldRenderDate && convoUnreadCount !== convoMessages.length && (
               <Memoize
                 memoizedComponent={ChatDate}
                 scrollView={scrollView as HTMLElement}
@@ -1451,8 +1423,8 @@ function ScrollView(props: {
           </React.Fragment>
         );
       })}
-      {!convoFriendship && convoMessagesStatus === 'fulfilled' && convoId && (
-        <Box className='text-center py-5 my-2'>
+      {!convoFriendship && convoId && (
+        <Box className='text-center py-5 px-3 my-2'>
           You are not colleagues with{' '}
           <Box fontWeight='bold'>{convoDisplayName}.</Box>
           <br />

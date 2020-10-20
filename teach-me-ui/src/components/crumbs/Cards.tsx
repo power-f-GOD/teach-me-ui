@@ -13,6 +13,7 @@ export interface InfoCardProps {
   boxShadow?: string;
   padding?: string;
   borderRadius?: string;
+  className?: string;
 }
 
 export function InfoCard(props: InfoCardProps) {
@@ -23,13 +24,14 @@ export function InfoCard(props: InfoCardProps) {
     bgcolor,
     boxShadow,
     padding,
-    borderRadius
+    borderRadius,
+    className
   } = props;
 
   return (
     <Box
       component='section'
-      className='InfoCard text-left'
+      className={`InfoCard text-left ${className}`}
       bgcolor={bgcolor ? bgcolor : 'white'}
       boxShadow={boxShadow ? boxShadow : '0 0 2.5rem rgba(0, 0, 0, 0.2)'}
       padding={padding ? padding : '1rem'}
@@ -60,7 +62,7 @@ export function Info({ name, value }: InfoCardProps['data'][0]) {
   return (
     <Col
       xs={/email|institution|department/i.test(name) ? 12 : 6}
-      className='info p-0 d-flex mb-3 mt-2'>
+      className='info p-0 d-flex mb-3 mt-2 fade-in'>
       <Col as='span' className='py-0 d-flex flex-column align-items-start px-2'>
         <Box component='span' className='info-name'>
           {name}:

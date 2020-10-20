@@ -2,6 +2,11 @@ export type Partial<T> = {
   [P in keyof T]?: T[P];
 };
 
+export type LoopFind<valueType> = {
+  value: valueType;
+  index: number;
+};
+
 export interface NetworkAction {
   name: string;
   func: Function;
@@ -315,11 +320,13 @@ export interface RoomInfo {
 }
 
 export interface ConversationsMessages extends StatusPropsState {
-  [convoId: string]: any;
+  convoId?: string;
+  pipe?: SocketPipe;
+  data?: { [convoId: string]: ConversationMessages['data'] };
 }
 
 export interface ConversationMessages extends Omit<SearchState, 'data'> {
-  conversationId?: string;
+  convoId?: string;
   pipe?: SocketPipe;
   data?: Partial<APIMessageResponse>[];
 }
@@ -347,6 +354,7 @@ export interface APIMessageResponse {
   pipe: SocketPipe;
   parent?: APIMessageResponse;
   user_id?: string;
+  is_recent?: boolean;
 }
 
 export type OnlineStatus = 'ONLINE' | 'AWAY' | 'OFFLINE';
@@ -370,6 +378,8 @@ export interface APIConversationResponse {
   associated_user_id: string;
   unread_count: number;
   user_typing: string;
+  profile_photo: string;
+  cover_photo: string;
 }
 
 export interface NotificationState extends StatusPropsState {
@@ -446,7 +456,7 @@ export interface UploadState {
 
 export interface EditProfileState {
   err?: boolean;
-  status:  'settled' | 'pending' | 'fulfilled';
+  status: 'settled' | 'pending' | 'fulfilled';
   data?: Object;
 }
 
