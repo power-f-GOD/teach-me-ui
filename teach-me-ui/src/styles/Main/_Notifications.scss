@@ -59,11 +59,11 @@
     }
   }
 
-@media only screen and (max-width: 600px) {
-  .dropdown-contents {
-  margin-top: 2rem;
-  }
+@media only screen and (max-width: 480px) {
 
+  .dropdown-contents {
+    width: 100%;
+  }
     .notification-result {
       margin-bottom: 0.3em;
       padding: 0.3rem 0.2rem;
@@ -71,7 +71,6 @@
 
     .notification-container1 {
       width: 100%;
-      height: auto !important;
       margin: 0em !important;
       padding: 0em !important;
     }
@@ -84,7 +83,6 @@
       overflow: inherit;
       overflow-x: hidden;
       background: white;
-
       max-width: 100%;
       border-radius: 0px;
       box-shadow: none;
@@ -105,4 +103,8 @@
 .notification-avatar {
   width: 3rem;
   height: 3rem;
+}
+
+.underline-hover:hover {
+  text-decoration: underline;
 }

@@ -116,10 +116,18 @@
 
 .notification-background-read {
   background-color: #fff;
+
+  &:hover {
+    background-color: #eee;
+  }
 }
 
 .notification-background-unread {
   background-color: #edf8b9 !important;
+
+  &:hover {
+    background-color: #ebfaa1 !important;
+  }
 }
 
 .color-black {
@@ -129,4 +137,8 @@
 
 .padding-left-0.4 {
   padding-left: 0.4em;
+}
+
+.first-skeleton {
+  padding-top: 0.6rem;
 }

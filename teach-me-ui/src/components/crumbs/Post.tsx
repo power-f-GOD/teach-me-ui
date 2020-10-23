@@ -219,7 +219,7 @@ const Post: React.FunctionComponent<
                 ? props.sender_name
                 : props.parent?.sender_name
             }
-            src={`/images/${props.userAvatar}`}
+            src={props.profile_photo ? props.profile_photo : `/images/${props.userAvatar}`}
           />
           <Col className='d-flex flex-column bio-post'>
             {props.sender_name ? (
@@ -396,7 +396,7 @@ const Post: React.FunctionComponent<
                 component='span'
                 className='post-avatar'
                 alt={props.parent?.sender_name}
-                src={`/images/${props.parent?.userAvatar}`}
+                src={props.parent?.profile_photo ? props.parent?.profile_photo : `/images/${props.parent?.userAvatar}`}
               />
               <Col className='d-flex flex-grow-1 flex-column'>
                 <Box component='div' fontWeight='bold'>
@@ -574,7 +574,7 @@ const Post: React.FunctionComponent<
                 component='span'
                 className='post-avatar'
                 alt={props.sender_name}
-                src={`/images/${props.userAvatar}`}
+                src={props.profile_photo ? props.profile_photo : `/images/${props.userAvatar}`}
               />
               <Col className='d-flex flex-grow-1 flex-column'>
                 <Box component='div' fontWeight='bold'>

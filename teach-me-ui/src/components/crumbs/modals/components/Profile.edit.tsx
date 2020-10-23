@@ -391,6 +391,7 @@ const EditProfile = (props: any) => {
       </Box>
 
       <form
+        className='edit'
         noValidate
         autoComplete='on'
         onSubmit={(e: any) => e.preventDefault()}>

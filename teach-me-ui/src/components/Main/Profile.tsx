@@ -240,9 +240,11 @@ const Profile = (props: any) => {
               alt={displayName}
               src={data.profile_photo}
             />
-            <div onClick={openProfilePhotoEditModal} className='profile-photo-change-container'>
-              <PhotoCameraIcon className='profile-photo-change'/>
-            </div>
+            {selfView && (
+              <div onClick={openProfilePhotoEditModal} className='profile-photo-change-container'>
+                <PhotoCameraIcon className='profile-photo-change'/>
+              </div>
+            )}
           </div>
 
           <Col className='d-flex flex-column px-4 pt-2'>
@@ -409,14 +411,16 @@ const Profile = (props: any) => {
           )}
         </div>
         <div className='change-cover'>
-          <Button
-            variant='contained'
-            size='small'
-            className='cover-button'
-            color='default'
-            onClick={openCoverPhotoEditModal}>
-              <PhotoCameraIcon fontSize='inherit' /> Edit Cover Photo
-          </Button>
+          {selfView && (
+            <Button
+              variant='contained'
+              size='small'
+              className='cover-button'
+              color='default'
+              onClick={openCoverPhotoEditModal}>
+                <PhotoCameraIcon fontSize='inherit' /> Edit Cover Photo
+            </Button>
+          )}
         </div>
       </Box>
       <Container className='px-0'>

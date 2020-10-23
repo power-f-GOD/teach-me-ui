@@ -421,3 +421,47 @@
     top: calc(-1rem + 4px);
   }
 }
+
+@media only screen and (max-width: 480px) {
+  .edit {
+    overflow-y: auto;
+  }
+
+  #grid-box1 {
+    max-height: 75vh;
+  }
+
+  .modal-contents {
+    height: 94% !important;
+    overflow-y: auto !important;
+  }
+
+  .main-modal {
+    height: 100vh;
+    width: 100vw !important;
+    border-radius: 0;
+
+    ::-webkit-scrollbar {
+      width: 0.5rem;
+      border-radius: 7px;
+    }
+  
+    /* Track */
+    ::-webkit-scrollbar-track {
+      border-radius: 7px;
+      width: 15px;
+    }
+  
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: rgb(194, 194, 197);
+      border-radius: 0.5rem;
+      width: 0.5rem;
+    }
+  
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgb(170, 168, 168);
+    }
+  }
+}

@@ -24,7 +24,7 @@ export const getNotifications = (payload: NotificationState) => {
   };
 };
 
-export const getNotificationsRequest = (date: number, fromPing: boolean = false) => (
+export const getNotificationsRequest = (date: number) => (
   dispatch: Function
 ): ReduxAction => {
   let token = getState().userData.token;
@@ -33,7 +33,7 @@ export const getNotificationsRequest = (date: number, fromPing: boolean = false)
     name: 'getNotifications',
     func: getNotifications
   });
-  dispatch(getNotifications({ status: 'pending', fromPing}));
+  dispatch(getNotifications({ status: 'pending'}));
 
   axios({
     url: `/notifications?offset=${date}`,
@@ -58,16 +58,14 @@ export const getNotificationsRequest = (date: number, fromPing: boolean = false)
             data: {
               notifications,
               entities
-            },
-            fromPing
+            }
           })
         );
       } else {
         dispatch(
           getNotifications({
             status: 'fulfilled',
-            err: true,
-            fromPing
+            err: true
           })
         );
       }

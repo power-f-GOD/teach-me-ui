@@ -157,7 +157,7 @@ const Search = (props: any) => {
                           component='span'
                           className='profile-avatar'
                           alt={'P'}
-                          src={`/images/${result.avatar ?? ''}`}
+                          src={result.profile_photo ? result.profile_photo : `/images/${result.avatar ?? ''}`}
                         />
                         <div
                           className=''

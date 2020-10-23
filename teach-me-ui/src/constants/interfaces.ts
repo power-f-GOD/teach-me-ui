@@ -35,6 +35,7 @@ export interface PostPropsState {
   replies: number;
   reposts: number;
   posted_at: number;
+  profile_photo?: string;
   _extra?: PostExtraProps;
   parent?: PostParentProps;
 }
@@ -60,6 +61,7 @@ interface PostParentProps {
   reaction?: Reaction;
   reposts: number;
   posted_at?: number;
+  profile_photo?: string;
 }
 
 export interface SocketProps extends SocketStruct {
@@ -149,6 +151,7 @@ interface HeaderProps {
 }
 
 export interface ColleagueProps {
+  [x: string]: any;
   firstname: string;
   lastname: string;
   id: string;
@@ -161,6 +164,7 @@ export interface ColleagueRequestProps {
 }
 
 interface ColleagueRequestSender {
+  [x: string]: any;
   firstname: string;
   date_of_birth: string;
   id: string;

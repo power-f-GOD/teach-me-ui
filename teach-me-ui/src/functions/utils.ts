@@ -721,7 +721,7 @@ export const formatNotification = (entities: any, text: string) => {
     /(^{{)[A-Za-z0-9-]+(}}$)/.test(w)
       ? entities[w.substring(2, w.length - 2)].action
         ? (string = string.concat(
-            ` <a style="color: rgb(0, 115, 160)" href='${
+            ` <a class='underline-hover' style=" color: rgb(0, 115, 160)" href='${
               entities[w.substring(2, w.length - 2)].action
             }'>${entities[w.substring(2, w.length - 2)].subject}</a>`
           ))

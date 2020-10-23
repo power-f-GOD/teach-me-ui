@@ -98,7 +98,7 @@ const UploadsPreview = (props: any) => {
       <Row className='d-flex mx-auto mt-1'>
         <Box
           component='div'
-          id='grid-box' 
+          id='grid-box1' 
           className='scroll-image'  
         >
           {uploads.status === 'pending' 

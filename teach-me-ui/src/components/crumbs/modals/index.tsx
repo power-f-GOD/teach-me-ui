@@ -82,7 +82,7 @@ const ModalFrame = (props: any) => {
               </Box>
             </div>
           </div>
-          <Box padding={props.modal.type === 'EDIT_PROFILE' ? '20px' : props.modal.type === 'NOTIFICATIONS' ? '0px' : '7px'}>{modalBody}</Box>
+          <Box className='modal-contents' padding={props.modal.type === 'EDIT_PROFILE' ? '20px' : props.modal.type === 'NOTIFICATIONS' ? '0px' : '7px'}>{modalBody}</Box>
         </Box>
       </Fade>
     </Modal>
