@@ -94,10 +94,10 @@ const EditorBase: React.FC<any> = (props) => {
     setSuggestions([]);
     fetchMentionsFn(value).then((suggestions) => {
       setSuggestions(
-        suggestions.map(({ firstname, lastname, username }: any) => ({
+        suggestions.map(({ firstname, lastname, username, profile_photo }: any) => ({
           displayname: `${firstname} ${lastname}`,
           name: username,
-          avatar: '/images/avatar-1.png'
+          avatar: profile_photo
         }))
       );
     });
