@@ -117,7 +117,7 @@ function MainNav(props: any) {
 
       <NavLink 
         to='#' 
-        className='nav-link' 
+        className='notification-link' 
         onClick={(e: any) => {displayModal(true, false, 'NOTIFICATIONS', { title: 'Notifications' })}}
         isActive={(match: any, location: any) => false}>
         <Badge color='secondary' badgeContent={numberOfNewNotifications}>
@@ -175,7 +175,7 @@ function MainNavMenu(props: any) {
 
       <NavLink 
         to='#' 
-        className='nav-link' 
+        className='notification-link' 
         onClick={(e: any) => {displayModal(true, false, 'NOTIFICATIONS', { title: 'Notifications' })}}
         isActive={(match: any, location: any) => false}>
         <Badge color='secondary' badgeContent={numberOfNewNotifications}>

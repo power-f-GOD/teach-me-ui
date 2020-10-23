@@ -14,11 +14,14 @@ import Badge from '@material-ui/core/Badge';
 import BlockIcon from '@material-ui/icons/Block';
 import CloudOffIcon from '@material-ui/icons/CloudOff';
 import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
+import ForumIcon from '@material-ui/icons/Forum';
+import ChatIcon from '@material-ui/icons/Chat';
 
 import {
   chatState,
   getConversationInfo,
-  conversationMessages
+  conversationMessages,
+  conversationsMessages
 } from '../../actions/chat';
 import { dispatch, addEventListenerOnce, delay } from '../../functions/utils';
 import {
@@ -26,7 +29,9 @@ import {
   ConversationInfo,
   APIConversationResponse,
   SearchState,
-  APIMessageResponse
+  APIMessageResponse,
+  ConversationMessages,
+  ConversationsMessages
 } from '../../constants/interfaces';
 import { Skeleton, DISPLAY_INFO } from '../crumbs/Loader';
 import {
@@ -38,6 +43,7 @@ import {
 import { ChatTimestamp, ChatStatus } from './Chat.crumbs';
 import createMemo from '../../Memo';
 import { scrollViewRef } from './Chat.MiddlePane';
+import { getState } from '../../appStore';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -87,8 +93,18 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
           value={value}
           onChange={handleChange}
           aria-label='Chat left pane tab panels'>
-          <Tab label={CV} {...allyProps(0)} style={{ minWidth: '50%' }} />
-          <Tab label={CR} {...allyProps(1)} style={{ minWidth: '50%' }} />
+          <Tab
+            label='Conversations'
+            icon={<ChatIcon />}
+            {...allyProps(0)}
+            style={{ minWidth: '50%' }}
+          />
+          <Tab
+            label='Groups'
+            icon={<ForumIcon />}
+            {...allyProps(1)}
+            style={{ minWidth: '50%' }}
+          />
         </Tabs>
       </AppBar>
       <Box className='tab-panels-wrapper d-flex' position='relative'>
@@ -276,7 +292,6 @@ function PaneItem({
   forceUpdate: string;
 }) {
   const {
-    avatar,
     conversation_name: displayName,
     associated_user_id: _userId,
     _id: convoId,
@@ -287,7 +302,8 @@ function PaneItem({
     user_typing,
     unread_count,
     created_at,
-    last_activity
+    last_activity,
+    profile_photo
   } = _conversation ?? {};
   const hasRecent: boolean = { ...(last_message as any) }.is_recent;
 
@@ -338,6 +354,19 @@ function PaneItem({
       return (e: any) => {
         const { id, cid } = queryString.parse(window.location.search);
         const { convoId, userId } = extra;
+        const {
+          conversation: _conversation,
+          conversationMessages: _conversationMessages
+          // conversationsMessages: _conversationsMessages
+        } = getState() as {
+          //using getState here to prevent rerenders that would be cause if props is used
+          conversation: APIConversationResponse;
+          conversationMessages: ConversationMessages;
+          conversationsMessages: ConversationsMessages;
+        };
+        // const cachedConvoMessages = _conversationsMessages.data![convoId];
+        const { _id: prevChatConvoId } = _conversation;
+        const prevChatConvoMessages = _conversationMessages.data;
 
         if (window.innerWidth < 992) {
           const scrollView = scrollViewRef.current;
@@ -351,7 +380,7 @@ function PaneItem({
           handleSetActivePaneIndex(1)();
         });
 
-        if (cid === convoId || userId === id) {
+        if (cid === convoId || userId === id || prevChatConvoId === convoId) {
           const queryString = window.location.search.replace(
             'chat=m2',
             'chat=o1'
@@ -365,6 +394,17 @@ function PaneItem({
             window.location.pathname + queryString
           );
           return;
+        }
+
+        //update store for previous chat before updating/populating current chat
+        if (prevChatConvoId) {
+          dispatch(
+            conversationsMessages({
+              convoId: prevChatConvoId,
+              statusText: 'replace messages',
+              data: { [prevChatConvoId]: [...prevChatConvoMessages] }
+            })
+          );
         }
 
         dispatch(conversationInfo({ user_typing: '' }));
@@ -423,9 +463,9 @@ function PaneItem({
           variant='dot'>
           <Avatar
             component='span'
-            className='chat-avatar mr-2'
+            className={'chat-avatar mr-2'}
             alt={displayName}
-            src={`/images/${avatar ?? 'avatar-1.png'}`}
+            src={profile_photo || ''}
           />
         </Badge>{' '}
         <Box width='100%' maxWidth='calc(100% - 3.65rem)'>
@@ -453,7 +493,7 @@ function PaneItem({
               <Box
                 className={`last-message mt-1 ${
                   last_message?.deleted ? 'font-italic' : ''
-                } fade-in`}
+                }`}
                 maxWidth={unread_count ? 'calc(100% - 2.25rem)' : '100%'}
                 title={last_message?.message ?? ''}>
                 {!last_message ? (
@@ -463,7 +503,7 @@ function PaneItem({
                     <Box
                       position='absolute'
                       className={`theme-secondary-lightest font-normal ${
-                        user_typing ? 'show' : 'hide'
+                        user_typing ? 'show font-bold' : 'hide'
                       }`}>
                       typing...
                     </Box>

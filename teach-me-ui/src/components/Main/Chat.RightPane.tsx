@@ -28,14 +28,13 @@ const ChatRightPane = (props: ChatRightPaneProps) => {
   const {
     convoType,
     convoDisplayName,
-    convoAvatar,
     convoAssocUsername,
     convoInfoErr,
     convoInfoData,
     handleSetActivePaneIndex
   } = props;
   const { institution, department, level } = convoInfoData ?? ({} as UserData);
-  
+
   return (
     <>
       <Col
@@ -63,7 +62,7 @@ const ChatRightPane = (props: ChatRightPaneProps) => {
                 component='span'
                 className='chat-avatar d-inline-block'
                 alt={convoDisplayName}
-                src={`/images/${convoAvatar}`}
+                src={convoInfoData?.profile_photo || ''}
               />
             </Col>
             <Col className='p-0 text-center'>
@@ -77,7 +76,9 @@ const ChatRightPane = (props: ChatRightPaneProps) => {
           </Row>
 
           <Box
-            className={`info-card-wrapper text-center ${convoInfoErr ? 'hide' : 'show'}`}>
+            className={`info-card-wrapper text-center ${
+              convoInfoErr ? 'hide' : 'show'
+            }`}>
             <InfoCard
               title='Academic Info'
               icon={SchoolIcon}

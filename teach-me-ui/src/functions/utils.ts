@@ -1,7 +1,5 @@
 import moment from 'moment';
 
-import queryString from 'query-string';
-
 import {
   ReduxAction,
   StatusPropsState,
@@ -14,7 +12,7 @@ import {
   ConversationMessages,
   SearchState,
   APIConversationResponse,
-  ConversationInfo
+  LoopFind
 } from '../constants';
 
 import store from '../appStore';
@@ -37,6 +35,57 @@ import {
 } from '../actions/chat';
 
 export const { dispatch, getState }: any = store;
+
+export function loopThru<T>(
+  _data: T[],
+  callback: (datum: T) => any,
+  options?: {
+    type?: 'find' | 'findIndex' | 'native';
+    includeIndex?: boolean;
+    rightToLeft?: boolean;
+    returnReverse?: boolean;
+    preserveOriginal?: boolean;
+  }
+): LoopFind<T> | T[] | T | number | null {
+  const { type, rightToLeft, includeIndex, returnReverse, preserveOriginal } =
+    options || {};
+  const data = preserveOriginal ? _data.slice() : _data;
+  const lim = data.length - 1;
+  const dataReversed = [];
+  const reverse = rightToLeft || returnReverse;
+  let i = reverse ? lim : 0;
+
+  for (; reverse ? i >= 0 : i <= lim; reverse ? i-- : i++) {
+    const datum = data[i];
+
+    switch (type) {
+      case 'find':
+        if (!!callback(datum)) {
+          return includeIndex ? { value: datum, index: i } : datum;
+        }
+        break;
+      case 'findIndex':
+        if (!!callback(datum)) {
+          return i;
+        }
+        break;
+      default:
+        callback(datum);
+
+        if (returnReverse) {
+          dataReversed.push(datum);
+        }
+    }
+  }
+
+  return type === 'find'
+    ? null
+    : type === 'findIndex'
+    ? -1
+    : returnReverse
+    ? dataReversed
+    : data;
+}
 
 export const createObserver = (
   root: HTMLElement,
@@ -91,16 +140,22 @@ export const emitUserOnlineStatus = (
     );
   }
 
-  const userData = getState().userData as UserData & APIConversationResponse;
-  const auth = getState().auth as AuthState;
-  const _conversations = getState().conversations as SearchState;
-  const _conversationInfo = getState().conversationInfo as ConversationInfo;
-  const _conversationMessages = getState()
-    .conversationMessages as ConversationMessages;
-  const { cid = undefined, id = undefined, stateCid, stateId } = {
-    ...(queryString.parse(window.location.search) ?? {}),
-    stateCid: _conversationInfo.data?._id,
-    stateId: _conversationInfo.data?.associated_user_id
+  const {
+    userData,
+    auth,
+    conversation: _conversation,
+    conversations: _conversations,
+    conversationMessages: _conversationMessages
+  } = getState() as {
+    userData: UserData & APIConversationResponse;
+    auth: AuthState;
+    conversation: APIConversationResponse;
+    conversations: SearchState;
+    conversationMessages: ConversationMessages;
+  };
+  const { convoId, convoAssocUserId } = {
+    convoId: _conversation._id,
+    convoAssocUserId: _conversation.associated_user_id
   };
   let timeToEmitOnlineStatus: any = undefined;
 
@@ -114,18 +169,18 @@ export const emitUserOnlineStatus = (
       dispatch(getConversations()(dispatch));
     }
 
-    if ((cid || stateCid) && _conversationMessages.err) {
+    if (convoId && _conversationMessages.err) {
       dispatch(
         getConversationMessages(
-          cid || (stateCid as string),
+          convoId as string,
           'settled',
           'updating message list...'
         )(dispatch)
       );
     }
 
-    if ((id || stateId) && _conversationInfo.err) {
-      dispatch(getConversationInfo(id || (stateId as string))(dispatch));
+    if (convoAssocUserId && getState().conversationInfo.err) {
+      dispatch(getConversationInfo(convoAssocUserId as string)(dispatch));
     }
 
     return function recurse() {
@@ -738,10 +793,10 @@ export const countNewNotifications = (notifications: Array<any>) => {
   let newNotifications = 0;
   for (let notification of notifications) {
     if (notification.last_seen) {
-      break
+      break;
     } else {
-      newNotifications++
+      newNotifications++;
     }
   }
   return newNotifications;
-}
+};

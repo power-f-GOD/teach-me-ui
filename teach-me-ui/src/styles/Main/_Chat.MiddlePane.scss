@@ -9,6 +9,10 @@
     color: #e6dcd3;
   }
 
+  a {
+    color: $theme-secondary-v6;
+  }
+
   .header-name-control-wrapper {
     flex-grow: 1;
     background: white;
@@ -42,7 +46,7 @@
   }
 
   .status {
-    color: $theme-tertiary-v6;
+    color: $theme-tertiary-v5;
     font-size: 0.95rem;
     font-weight: normal;
     opacity: 0;
@@ -59,7 +63,7 @@
 
   .the-beginning {
     height: 3rem;
-    top: 1.35rem;
+    top: 1.55rem;
     padding: 0 0.75rem;
     width: 100%;
     text-align: center;
@@ -195,6 +199,7 @@
 }
 
 .chat-scroll-view {
+  // @include debugger();
   $pad-x: 1.5rem;
 
   margin-bottom: 0 !important;
@@ -209,7 +214,7 @@
 
   > *,
   > div {
-    max-width: 39rem;
+    max-width: 35rem;
     align-self: center;
   }
 
@@ -225,8 +230,8 @@
     }
 
     .new-messages-bar {
-      margin-right: -1.25rem;
-      width: 100%;
+      width: calc(100% + 1rem);
+      margin-left: 0.5rem;
     }
 
     .outgoing {
@@ -238,7 +243,7 @@
     & + .scroll-bar-fader {
       opacity: 0;
       width: 0.55rem !important;
-      transition: opacity 0.35s !important;
+      transition: opacity 0.25s !important;
 
       &:hover {
         opacity: 0 !important;
@@ -268,11 +273,22 @@
 
   .more-messages-loader {
     transition: opacity 0.3s;
-    padding-bottom: 1.75rem;
+    padding-bottom: 1.25rem;
     width: 100%;
+
+    .MuiCircularProgress-root {
+      background-color: white;
+      padding: 0.3rem;
+      border-radius: 50%;
+      box-shadow: 0 0 1rem rgba(0, 0, 0, 0.25);
+    }
 
     &.hide {
       transition: unset;
+
+      .MuiCircularProgress-root {
+        animation: unset;
+      }
     }
   }
 
@@ -285,20 +301,18 @@
     background: {
       image: url('/images/chat-bg.jpeg');
       size: 25rem;
-      position: center;
+      position: left;
       color: #fff;
     }
     height: 100%;
     width: 100%;
-    transition: opacity 0.3s;
+    transition: opacity 0.25s;
   }
 
-  &.hide-messages {
+  &.show-status-signal {
     overflow: hidden;
-
-    .msg-container {
-      opacity: 0;
-    }
+    pointer-events: none;
+    opacity: 0;
 
     & ~ .messages-status-signal {
       opacity: 1;
@@ -314,6 +328,10 @@ body.desktop {
           .msg-wrapper {
             animation: outgoingMessageSlideInWithScroll 1s;
           }
+        }
+
+        &::after {
+          width: calc(100% + 4.5rem);
         }
       }
     }

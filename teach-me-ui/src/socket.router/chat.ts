@@ -18,7 +18,8 @@ import {
   conversationMessages,
   conversationInfo,
   conversations,
-  conversation
+  conversation,
+  conversationsMessages
 } from '../actions/chat';
 
 let userTypingTimeout: any = null;
@@ -48,10 +49,18 @@ export default function chat(message: APIMessageResponse & UserData) {
       seen_by,
       deleted
     } = message;
+    const type = sender_id !== userId ? 'incoming' : 'outgoing';
 
     //if state to be removed when typing is added and handled
     if (pipe !== CHAT_TYPING) {
       dispatch(conversations({ data: [{ ...message }] }));
+      dispatch(
+        conversationsMessages({
+          pipe,
+          statusText: 'update from socket',
+          data: { [conversation_id]: [message] }
+        })
+      );
     }
 
     switch (pipe) {
@@ -60,12 +69,11 @@ export default function chat(message: APIMessageResponse & UserData) {
         let willEmitSeen = false;
 
         if (socket.readyState === 1) {
-          const type = sender_id !== userId ? 'incoming' : 'outgoing';
-
           if (type === 'incoming') {
             const delivered = delivered_to!?.includes(userId);
             const seen = seen_by!?.includes(userId);
 
+            //remove 0 here later
             if (delivered_to && !delivered) {
               socket.send(
                 JSON.stringify({
@@ -76,6 +84,7 @@ export default function chat(message: APIMessageResponse & UserData) {
               willEmitDelivered = true;
             }
 
+            //remove 0 here later
             if (
               userData.online_status === 'ONLINE' &&
               isOpen &&
@@ -104,6 +113,14 @@ export default function chat(message: APIMessageResponse & UserData) {
                 });
               }
             }
+
+            // dispatch(
+            //   conversationsMessages({
+            //     pipe,
+            //     statusText: 'update from socket',
+            //     data: { [conversation_id]: [message] }
+            //   })
+            // );
           } else {
             if (convoId === conversation_id && convoId) {
               updateConversation(convoId, {
@@ -192,6 +209,14 @@ export default function chat(message: APIMessageResponse & UserData) {
             })
           );
         }
+
+        // dispatch(
+        //   conversationsMessages({
+        //     pipe,
+        //     statusText: 'update from socket',
+        //     data: { [conversation_id]: [message] }
+        //   })
+        // );
         break;
     }
   }
