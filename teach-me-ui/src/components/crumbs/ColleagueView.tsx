@@ -113,7 +113,7 @@ const Colleague: FunctionComponent<{
           component='span'
           className='chat-avatar request-avatar mr-2'
           alt={colleague.firstname}
-          src={`/images/avatar-1.png`}
+          src={colleague.profile_photo ? colleague.profile_photo : '/images/avatar-1.png' }
         />
         <div className='d-flex justify-content-around flex-column'>
           <div className='font-bold'>
@@ -200,7 +200,7 @@ const Request: FunctionComponent<{
           component='span'
           className='chat-avatar request-avatar mr-2'
           alt={request.sender.firstname}
-          src={`/images/avatar-1.png`}
+          src={request.sender.profile_photo ? request.sender.profile_photo : '/images/avatar-1.png' }
         />
         <div className='d-flex justify-content-around flex-column'>
           <div>

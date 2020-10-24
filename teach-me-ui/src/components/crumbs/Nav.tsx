@@ -141,15 +141,10 @@ function MainNav(props: any) {
 }
 
 function MainNavMenu(props: any) {
-  const { isAuthenticated, className, getNotifications } = props;
+  const { className, getNotifications } = props;
   const username = (getState().userData as UserData).username;
   const numberOfNewNotifications = countNewNotifications(getNotifications.data.notifications);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      dispatch(getNotificationsRequest(Date.now())(dispatch));
-    }
-  }, [isAuthenticated]);
 
   return (
     <Box className={`nav-links-wrapper ${className}`}>

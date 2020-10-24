@@ -52,6 +52,7 @@ import {
 } from '../functions';
 
 import Axios from 'axios';
+import { pingUser } from './notifications';
 
 export const replyToPost = (payload: ReplyState) => {
   return {
@@ -391,8 +392,8 @@ export const submitPost = (post: Post, media: Array<string>) => (
   };
 
   callNetworkStatusCheckerFor({
-    name: 'replyToPost',
-    func: replyToPost
+    name: 'makePost',
+    func: makePost
   });
 
   Axios({
@@ -417,6 +418,7 @@ export const submitPost = (post: Post, media: Array<string>) => (
           status: 'fulfilled'
         })
       );
+      getMentionsFromText(post.text) && pingUser(getMentionsFromText(post.text));
     })
     .catch(logError(makePost));
   return {

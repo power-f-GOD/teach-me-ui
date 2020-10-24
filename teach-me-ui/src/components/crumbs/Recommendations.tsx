@@ -73,7 +73,7 @@ const Recommendation = (props: any) => {
                 component='div'
                 className='recommendation-avatar text-center'
                 alt={displayName}
-                src={`/images/${avatar}`}
+                src={props.profile_photo ? props.profile_photo : `/images/${avatar}`}
               />
             </Col>
             <Col className='flex-column p-0 safari-fix-d-block'>
