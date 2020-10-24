@@ -72,7 +72,7 @@ const Notifications = (props: any) => {
                         <div className='d-flex color-black'>
                           <Avatar
                             component='span'
-                            className='profile-avatar-x profile-photo notification-avatar'
+                            className='notification-avatar'
                             src={notification.profile_photo ? notification.profile_photo : '/images/avatar-1.png'}
                           />
 

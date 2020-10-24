@@ -61,12 +61,19 @@
 
 @media only screen and (max-width: 480px) {
 
+  .notification-avatar {
+    display: block;
+    width: 3.4rem !important;
+    height: 3.5rem !important;
+    margin-right: 0.4rem;
+  }
+
   .dropdown-contents {
     width: 100%;
   }
     .notification-result {
-      margin-bottom: 0.3em;
-      padding: 0.3rem 0.2rem;
+      margin-bottom: 0.18em;
+      padding: 0.3rem 0.5rem;
     }
 
     .notification-container1 {

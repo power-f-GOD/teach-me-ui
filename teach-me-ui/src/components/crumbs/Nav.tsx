@@ -282,7 +282,8 @@ function TemporaryDrawer(props: any) {
         anchor='right'
         open={open}
         onOpen={toggleDrawer(true)}
-        onClose={toggleDrawer(false)}>
+        onClose={toggleDrawer(false)}
+        onClick={toggleDrawer(false)}>
         {props.children}
       </SwipeableDrawer>
     </Box>
