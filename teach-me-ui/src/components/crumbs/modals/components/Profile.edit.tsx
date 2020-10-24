@@ -380,7 +380,7 @@ const EditProfile = (props: any) => {
   return (
     <Box 
     width='45rem'
-    className='auth-form-wrapper fade-in d-flex flex-column justify-content-center'>
+    className='auth-form-wrapper fade-in d-flex flex-column justify-content-center edit'>
       <Box
         component='h2'
         marginY='0.5em'
@@ -391,7 +391,6 @@ const EditProfile = (props: any) => {
       </Box>
 
       <form
-        className='edit'
         noValidate
         autoComplete='on'
         onSubmit={(e: any) => e.preventDefault()}>

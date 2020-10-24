@@ -434,10 +434,14 @@
   }
 }
 
-@media only screen and (max-width: 480px) {
-  .edit {
-    overflow-y: auto;
+@media only screen and (max-width: 575px) {
+  .modal-contents {
+    overflow-y: auto !important;
+    max-height: 80vh;
   }
+}
+
+@media only screen and (max-width: 480px) {
 
   #grid-box1 {
     max-height: 75vh;
@@ -445,7 +449,7 @@
 
   .modal-contents {
     height: 94% !important;
-    overflow-y: auto !important;
+    max-height: 94% !important;
   }
 
   .main-modal {
