@@ -23,10 +23,22 @@ const Notifications = (props: any) => {
   const result = getNotifications.data.notifications;
   const entities = getNotifications.data.entities;
 
+  const removeModal = () => {
+    displayModal(false, true);
+  }
+
+  const closeModal = (e: any) => {
+    if (String(window.location.hash)  === '') removeModal();
+  }
+
+  window.onhashchange = closeModal;
+
   let read = false;
   const makeReadTrue = () => {
     read = true;
   }
+
+  window.location.hash = 'modal';
 
   return (
     <Box className='dropdown-contents'>
@@ -55,12 +67,12 @@ const Notifications = (props: any) => {
                     <p class="no-space ${read ? 'read-notifications-date' : 'unread-notifications-date'}">${notificationDate}</p></div>`;
                 
                   return (
-                    <Link to={`${action}`} key={key} style={{textDecoration: 'none'}} onClick={(e: any) => {displayModal(false, true)}}> 
+                    <Link to={`${action}`} key={key} style={{textDecoration: 'none'}} onClick={(e: any) => {removeModal()}}> 
                       <ListItem key={key} className={`notification-result ${ read ? 'notification-background-read' : 'notification-background-unread'}`}>
                         <div className='d-flex color-black'>
                           <Avatar
                             component='span'
-                            className='profile-avatar-x profile-photo notification-avatar'
+                            className='notification-avatar'
                             src={notification.profile_photo ? notification.profile_photo : '/images/avatar-1.png'}
                           />
 

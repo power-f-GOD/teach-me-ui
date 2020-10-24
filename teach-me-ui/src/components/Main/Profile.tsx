@@ -166,6 +166,7 @@ const Profile = (props: any) => {
 
   const openEditProfileModal = () => {
     displayModal(true, false, 'EDIT_PROFILE', { title: 'Edit Profile' });
+    window.location.hash = 'modal';
   };
 
   const handleEditClick = () => {
@@ -268,7 +269,7 @@ const Profile = (props: any) => {
           {selfView && (
             <Link to={`/${userId}/colleagues`}>
               <div
-                className={`nav-item ${
+                className={`nav-item colleague-nav ${
                   /colleagues/.test(props.location.pathname) ? 'active' : ''
                 }`}>
                 COLLEAGUES

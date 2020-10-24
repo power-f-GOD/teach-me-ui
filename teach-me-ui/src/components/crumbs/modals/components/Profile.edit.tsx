@@ -59,6 +59,16 @@ export const refs: any = {
 
 const Memoize = createMemo();
 
+const removeModal = () => {
+  displayModal(false, true);
+}
+
+const closeModal = (e: any) => {
+  if (String(window.location.hash)  === '') removeModal();
+}
+
+window.onhashchange = closeModal;
+
 const EditProfile = (props: any) => {
   const {
     firstname,

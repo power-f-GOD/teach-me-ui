@@ -12,7 +12,8 @@ import {
   getMentionsFromText,
   getHashtagsFromText,
   formatDate,
-  dispatch
+  dispatch,
+  displayModal
 } from '../../../../functions';
 
 import { connect } from 'react-redux';
@@ -52,6 +53,18 @@ const CreatePost: React.FC<any> = (props) => {
       }
     });
   };
+
+  const removeModal = () => {
+    displayModal(false, true);
+  }
+
+  const closeModal = (e: any) => {
+    if (String(window.location.hash)  === '') removeModal();
+  }
+
+  window.onhashchange = closeModal;
+
+  window.location.hash = 'modal';
 
   const onPostSubmit = (e: MouseEvent<HTMLButtonElement>) => {
     dispatch(

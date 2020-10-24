@@ -443,19 +443,32 @@
 
 @media only screen and (max-width: 480px) {
 
+  .colleague-nav {
+    padding: 0 !important;
+    margin: 0 0.8rem !important;
+  }
+
+  .cancel-modal {
+    position: fixed;
+    top: 0;
+  }
+
   #grid-box1 {
-    max-height: 75vh;
+    max-height: 73vh;
   }
 
   .modal-contents {
-    height: 94% !important;
-    max-height: 94% !important;
+    position: fixed !important;
+    max-height: 92vh !important;
+    top: 3.22rem;
+    width: 100%;
   }
 
   .main-modal {
-    height: 100vh;
+    height: 110vh;
     width: 100vw !important;
     border-radius: 0;
+    box-shadow: none;
 
     ::-webkit-scrollbar {
       width: 0.5rem;

@@ -55,6 +55,18 @@ const CreatePost = (props: any) => {
     displayModal(false);
   }
 
+  const removeModal = () => {
+    displayModal(false, true);
+  }
+
+  const closeModal = (e: any) => {
+    if (String(window.location.hash)  === '') removeModal();
+  }
+
+  window.onhashchange = closeModal;
+
+  window.location.hash = 'modal';
+
   const onUpdate = (value: string) => {
     setState({
       ...state,
