@@ -19,6 +19,7 @@ import CreateRepost from './components/CreateRepost';
 import EditProfile from './components/Profile.edit';
 import UploadsPreview from './components/UploadsPreview';
 import Notifications from './components/Notifications';
+import { userDeviceIsMobile } from '../../..';
 
 const removeModal = (event: any) => {
   displayModal(false);
@@ -62,7 +63,7 @@ const ModalFrame = (props: any) => {
       BackdropProps={{
         timeout: 300,
         style: {
-          background: 'rgba(0,0,0,0.5)'
+          background: userDeviceIsMobile ? 'rgba(255,255,255,1)' : 'rgba(0,0,0,0.5)'
         }
       }}>
       <Fade in={props.modal.open}>

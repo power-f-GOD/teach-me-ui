@@ -268,7 +268,7 @@ const Profile = (props: any) => {
           {selfView && (
             <Link to={`/${userId}/colleagues`}>
               <div
-                className={`nav-item ${
+                className={`nav-item colleague-nav ${
                   /colleagues/.test(props.location.pathname) ? 'active' : ''
                 }`}>
                 COLLEAGUES

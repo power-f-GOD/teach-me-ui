@@ -23,10 +23,18 @@ const Notifications = (props: any) => {
   const result = getNotifications.data.notifications;
   const entities = getNotifications.data.entities;
 
+  const removeModal = (e: any) => {
+    if (String(window.location.hash)  === '') displayModal(false, true);
+  }
+
+  window.onhashchange = removeModal;
+
   let read = false;
   const makeReadTrue = () => {
     read = true;
   }
+
+  window.location.hash = 'notifications';
 
   return (
     <Box className='dropdown-contents'>
@@ -55,7 +63,7 @@ const Notifications = (props: any) => {
                     <p class="no-space ${read ? 'read-notifications-date' : 'unread-notifications-date'}">${notificationDate}</p></div>`;
                 
                   return (
-                    <Link to={`${action}`} key={key} style={{textDecoration: 'none'}} onClick={(e: any) => {displayModal(false, true)}}> 
+                    <Link to={`${action}`} key={key} style={{textDecoration: 'none'}}> 
                       <ListItem key={key} className={`notification-result ${ read ? 'notification-background-read' : 'notification-background-unread'}`}>
                         <div className='d-flex color-black'>
                           <Avatar
