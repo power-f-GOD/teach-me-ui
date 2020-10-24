@@ -29,6 +29,18 @@ const UploadsPreview = (props: any) => {
     dispatch(getUploads)
   },[])
 
+  const removeModal = () => {
+    displayModal(false, true);
+  }
+
+  const closeModal = (e: any) => {
+    if (String(window.location.hash)  === '') removeModal();
+  }
+
+  window.onhashchange = closeModal;
+
+  window.location.hash = 'modal';
+
   const {
     sendFiles,
     uploads,

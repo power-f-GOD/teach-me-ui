@@ -166,6 +166,7 @@ const Profile = (props: any) => {
 
   const openEditProfileModal = () => {
     displayModal(true, false, 'EDIT_PROFILE', { title: 'Edit Profile' });
+    window.location.hash = 'modal';
   };
 
   const handleEditClick = () => {

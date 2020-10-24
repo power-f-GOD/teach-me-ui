@@ -38,7 +38,7 @@ const Notifications = (props: any) => {
     read = true;
   }
 
-  window.location.hash = 'notifications';
+  window.location.hash = 'modal';
 
   return (
     <Box className='dropdown-contents'>
