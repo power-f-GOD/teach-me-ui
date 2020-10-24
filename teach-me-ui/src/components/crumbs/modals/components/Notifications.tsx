@@ -23,11 +23,15 @@ const Notifications = (props: any) => {
   const result = getNotifications.data.notifications;
   const entities = getNotifications.data.entities;
 
-  const removeModal = (e: any) => {
-    if (String(window.location.hash)  === '') displayModal(false, true);
+  const removeModal = () => {
+    displayModal(false, true);
   }
 
-  window.onhashchange = removeModal;
+  const closeModal = (e: any) => {
+    if (String(window.location.hash)  === '') removeModal();
+  }
+
+  window.onhashchange = closeModal;
 
   let read = false;
   const makeReadTrue = () => {
@@ -63,7 +67,7 @@ const Notifications = (props: any) => {
                     <p class="no-space ${read ? 'read-notifications-date' : 'unread-notifications-date'}">${notificationDate}</p></div>`;
                 
                   return (
-                    <Link to={`${action}`} key={key} style={{textDecoration: 'none'}}> 
+                    <Link to={`${action}`} key={key} style={{textDecoration: 'none'}} onClick={(e: any) => {removeModal()}}> 
                       <ListItem key={key} className={`notification-result ${ read ? 'notification-background-read' : 'notification-background-unread'}`}>
                         <div className='d-flex color-black'>
                           <Avatar
