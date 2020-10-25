@@ -800,3 +800,11 @@ export const countNewNotifications = (notifications: Array<any>) => {
   }
   return newNotifications;
 };
+
+export const isImage = (file: File) => {
+  return file['type'].split('/')[0] === 'image';
+}
+
+export const getFileExtension = (filename: string) => {
+  return filename.split('.').pop();
+}

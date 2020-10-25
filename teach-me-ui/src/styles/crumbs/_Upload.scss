@@ -42,6 +42,14 @@
 }
 
 #grid-box {
+  max-height: 15rem;
+  overflow-y: auto;
+  padding-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#grid-box-uploads {
   display: flex;
   flex-wrap: wrap;
 }
@@ -117,15 +125,6 @@
   transition: 0.25s;
   cursor: pointer;
   border-radius: 50%;
-}
-
-.dropup {
-  height: 20px !important;
-  overflow: hidden;
-}
-
-#dropdown {
-  margin-top: -3.2px;
 }
 
 .non-image-files {

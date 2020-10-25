@@ -1,6 +1,4 @@
-import React, {
-  useEffect
-} from 'react';  
+import React from 'react';  
 
 import { connect } from 'react-redux';
 
@@ -16,7 +14,6 @@ import {
 } from '../../../../functions';
 import { 
   getUploads, 
-  getUserDetails, 
   sendFilesToServer, 
   updateUserDataRequest 
 } from '../../../../actions';
@@ -25,9 +22,9 @@ import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
 
 const UploadsPreview = (props: any) => {
 
-  useEffect(() => {
-    dispatch(getUploads)
-  },[])
+  if (props.uploads.status !== 'pending' && !props.uploads.data[0]) {
+    dispatch(getUploads);
+  }
 
   const removeModal = () => {
     displayModal(false, true);
@@ -43,14 +40,8 @@ const UploadsPreview = (props: any) => {
 
   const {
     sendFiles,
-    uploads,
-    getUserDetailsProp
+    uploads
   } = props;
-
-  if (getUserDetailsProp.status === 'fulfilled') {
-    displayModal(false);
-    dispatch(getUserDetails({status: 'settled'}));
-  }
 
   const fileSelectedHandler = (e: any) => {
     if (props.title === 'Select Profile Photo') {
@@ -74,6 +65,7 @@ const UploadsPreview = (props: any) => {
     } else {
       dispatch(updateUserDataRequest({cover_photo: id}, true)(dispatch));
     }
+    displayModal(false);
   }
 
   return (
@@ -104,7 +96,7 @@ const UploadsPreview = (props: any) => {
         </label>
       </Row>
       <Row as='h4'
-        className={`${uploads.status === 'fulfilled' && uploads.data[0] ? 'display-block' : 'display-none'} select-header`}
+        className={`${uploads.data[0] ? 'display-block' : 'display-none'} select-header margin-top-1`}
         > Uploads
       </Row>
       <Row className='d-flex mx-auto mt-1'>
@@ -144,10 +136,8 @@ const UploadsPreview = (props: any) => {
 const mapStateToProps = ({
   sendFiles,
   uploads,
-  getUserDetails
 }: any) => ({
   sendFiles,
   uploads,
-  getUserDetailsProp: getUserDetails
 })
 export default connect(mapStateToProps)(UploadsPreview);

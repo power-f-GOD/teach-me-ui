@@ -25,7 +25,6 @@ import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined'
 import SchoolOutlinedIcon from '@material-ui/icons/SchoolOutlined';
 import Button from '@material-ui/core/Button';
 
-import ModalFrame from '../crumbs/modals';
 import Img from '../crumbs/Img';
 import ColleagueView from '../crumbs/ColleagueView';
 import ProfileFeeds from '../crumbs/ProfileFeeds';
@@ -152,16 +151,16 @@ const Profile = (props: any) => {
   };
 
   basicInfo = [
-    { name: 'Firstname', value: firstname },
-    { name: 'Lastname', value: lastname },
-    { name: 'Username', value: username }
+    { name: 'Firstname', value: selfView ? userData.firstname : firstname },
+    { name: 'Lastname', value: selfView ? userData.lastname : lastname },
+    { name: 'Username', value: selfView ? userData.username : username }
     // { name: 'Date of birth', value: dob },
     // { name: 'Email', value: email }
   ];
   academicInfo = [
-    { name: 'Institution', value: institution },
-    { name: 'Department', value: department },
-    { name: 'Level', value: level }
+    { name: 'Institution', value: selfView ? userData.institution : institution },
+    { name: 'Department', value: selfView ? userData.department : department },
+    { name: 'Level', value: selfView ? userData.level : level }
   ];
 
   const openEditProfileModal = () => {
@@ -230,16 +229,15 @@ const Profile = (props: any) => {
 
   return (
     <Box className={`Profile ${selfView ? 'self-view' : ''} fade-in pb-3`}>
-      <ModalFrame />
       <Box component='div' className='profile-top'>
-        <Img alt={displayName} className='cover-photo' src={data.cover_photo} />
+        <Img alt={displayName} className='cover-photo' src={selfView ? userData.cover_photo : data.cover_photo} />
         <Container className='details-container'>
           <div>
             <Avatar
               component='span'
               className='profile-avatar-x profile-photo'
               alt={displayName}
-              src={data.profile_photo}
+              src={selfView ? userData.profile_photo : data.profile_photo}
             />
             {selfView && (
               <div onClick={openProfilePhotoEditModal} className='profile-photo-change-container'>
@@ -250,10 +248,10 @@ const Profile = (props: any) => {
 
           <Col className='d-flex flex-column px-4 pt-2'>
             <Col as='span' className='display-name p-0 my-1'>
-              {displayName}
+              {selfView ? userData.displayName : displayName}
             </Col>
             <Col as='span' className='username p-0 mb-3'>
-              {userId}
+              {selfView? `@${userData.username}` : userId}
             </Col>
           </Col>
         </Container>
