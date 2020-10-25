@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { getState, dispatch, logError } from '../functions'
+import { getState, dispatch, logError, displayModal } from '../functions'
 
 import { 
   apiBaseURL as baseURL, 
@@ -61,9 +61,12 @@ export const sendFilesToServer = (files: Array<File>, action: Function, para: an
         data: ids,
         err: false
       }));
+      dispatch(getUploads);
       if (para.profilePhoto) {
+        displayModal(false);
         dispatch(action({profile_photo: ids[0]}, true)(dispatch));
       } else if (para.coverPhoto) {
+        displayModal(false);
         dispatch(action({cover_photo: ids[0]}, true)(dispatch));
       } else {
         dispatch(action(para, ids)(dispatch));

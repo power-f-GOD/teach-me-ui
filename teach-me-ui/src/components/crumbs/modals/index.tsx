@@ -10,22 +10,20 @@ import CloseIcon from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
 
 import { 
+  dispatch,
   displayModal,
-  dispatch 
 } from '../../../functions';
-import { uploads } from '../../../actions';
 import CreatePost from './components/CreatePost';
 import CreateRepost from './components/CreateRepost';
 import EditProfile from './components/Profile.edit';
 import UploadsPreview from './components/UploadsPreview';
 import Notifications from './components/Notifications';
+import { uploads } from '../../../actions';
 
 const removeModal = (event: any) => {
   displayModal(false);
   dispatch(uploads({
-    status: 'settled',
-    err: false,
-    data: []
+    showUploads: false
   }))
 };
 

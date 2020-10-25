@@ -8,7 +8,6 @@ import Col from 'react-bootstrap/Col';
 
 import Box from '@material-ui/core/Box';
 
-import ModalFrame from '../crumbs/modals';
 import RightPane from './Home.RightPane';
 import Post from '../crumbs/Post';
 import Loader from '../crumbs/Loader';
@@ -35,7 +34,6 @@ const PostPage = (props: any) => {
   }
   return (
     <>
-      <ModalFrame />
       <Container className='Home fade-in'>
         <Row className='flex-row m-2 justify-content-between'>
           <Col lg={9} md={9} className='middle-pane-col pr-2'>

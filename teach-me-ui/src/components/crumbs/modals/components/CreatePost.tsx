@@ -21,16 +21,18 @@ import { PostEditorState } from '../../../../constants';
 import { 
   sendFilesToServer,
   getUploads,
-  uploads,
   makePost,
-  submitPost
+  submitPost,
+  uploads
 } from '../../../../actions';
 
 import Editor from '../../Editor';
 
 import { 
   displayModal, 
-  dispatch 
+  dispatch,
+  isImage,
+  getFileExtension
 } from '../../../../functions';
 import { Container } from '@material-ui/core';
 
@@ -56,6 +58,9 @@ const CreatePost = (props: any) => {
   }
 
   const removeModal = () => {
+    dispatch(uploads({
+      showUploads: false
+    }))
     displayModal(false, true);
   }
 
@@ -78,10 +83,6 @@ const CreatePost = (props: any) => {
   };
 
   const prev = useRef<HTMLDivElement | any>('');
-
-  const isImage = (file: File) => {
-    return file['type'].split('/')[0] === 'image';
-  }
 
   const removeUpload = (e: any) => {
     label.current.style.display = 'none';
@@ -118,10 +119,6 @@ const CreatePost = (props: any) => {
       selectedFiles
     })
   };
-
-  const getFileExtension = (filename: string) => {
-    return filename.split('.').pop();
-  }
 
   const preview = (files: any, online: boolean = false) => {
     if (online) {
@@ -261,35 +258,29 @@ const CreatePost = (props: any) => {
   }
 
   const handleSelectUpload = (e: any) => {
-    label.current.style.display = 'none';
-    label1.current.style.display = 'none';
-    const tempUploads = state.tempSelectedUploads;
-    prev.current.style.display = 'flex';
-    preview(tempUploads, true);
-    dispatch(uploads({
-      status: 'settled',
-      data: [],
-      error: false
-    }))
-    setState({
-      ...state,
-      selectedUploads: [
-        ...state.selectedUploads, 
-        ...tempUploads
-      ],
-      tempSelectedUploads : []
-    })
+    if (state.tempSelectedUploads[0]) {
+      label.current.style.display = 'none';
+      label1.current.style.display = 'none';
+      const tempUploads = state.tempSelectedUploads;
+      prev.current.style.display = 'flex';
+      preview(tempUploads, true);
+      dispatch(uploads({showUploads: false}));
+      setState({
+        ...state,
+        selectedUploads: [
+          ...state.selectedUploads, 
+          ...tempUploads
+        ],
+        tempSelectedUploads : []
+      })
+    }
   }
 
   const cancelSelectUpload = (e: any) => {
     label.current.style.display = 'none';
     label1.current.style.display = 'none';
     prev.current.style.display = 'flex';
-    dispatch(uploads({
-      status: 'settled',
-      data: [],
-      error: false
-    }));
+    dispatch(uploads({showUploads: false}));
     setState({
       ...state,
       tempSelectedUploads : []
@@ -298,16 +289,15 @@ const CreatePost = (props: any) => {
 
   const displayUploads = (e: any) => {
     document.dispatchEvent(new MouseEvent('click'));
-    dispatch(getUploads);
+    if (uploadsProp.status !== 'pending' && !uploadsProp.data[0]) {
+      dispatch(getUploads);
+    }
+    dispatch(uploads({showUploads: true}));
     prev.current.style.display = 'none';
   }
 
   const hideUploadedFiles = (e: any) => {
-    dispatch(uploads({
-      status: 'settled',
-      data: [],
-      error: false
-    }))
+    dispatch(uploads({showUploads: false}));
   }
 
   return (
@@ -328,7 +318,7 @@ const CreatePost = (props: any) => {
       </Row>
       <form>
       <Editor onUpdate={onUpdate} />
-      <Dropdown drop='up' className={`${uploadsProp.status === 'fulfilled' && uploadsProp.data[0] ? 'display-none' : 'display-block'}`}>
+      <Dropdown drop='up' className={`${uploadsProp.showUploads && uploadsProp.data[0] ? 'display-none' : 'display-block'}`}>
         <Dropdown.Toggle id='dropdown'>
             <AttachmentIcon className='cursor-pointer'/>
         </Dropdown.Toggle>
@@ -359,7 +349,7 @@ const CreatePost = (props: any) => {
           </Container>
         </Row>
         <Row as='h4'
-        className={`${uploadsProp.status === 'fulfilled' && uploadsProp.data[0] ? 'display-block' : 'display-none'} select-header`}
+        className={`${uploadsProp.showUploads && uploadsProp.data[0] ? 'display-block' : 'display-none'} select-header`}
         >Select files</Row>
         <Container
           component='p'
@@ -372,40 +362,42 @@ const CreatePost = (props: any) => {
           ref={label1}
           className='upload-label'
           >
-          You can select a maximum of five files
+          You can post with a maximum of five files
         </Container>
         <Row className='d-flex mx-auto mt-1'>
           <Box
             component='div'
-            id='grid-box' 
+            id='grid-box-uploads' 
             className='scroll-image'
             
           >
-            {uploadsProp.status === 'pending' 
-            ? <CircularProgress className='upload-progress margin-auto'/> 
-            : uploadsProp.data[0] 
-            ? uploadsProp.data.map((file: any, i: number) => (
-              <Container component='div' key={i} className='col-4 div-wrapper'>
-                <img 
-                  src={file.url} 
-                  className='img' 
-                  alt={file.public_id} 
-                  id={file._id}
-                />
-                <button onClick={toggleSelectPreUpload} type='button' className='check-button'>
-                  ✓
-                </button>
-              </Container>
-            ))
-            : <Row 
-                as='p' 
-                className={`no-uploads ${uploadsProp.status !== 'settled' ? 'display-block' : 'display-none'}`}
-              >You have no uploads</Row>
+            {uploadsProp.showUploads ?
+              uploadsProp.status === 'pending' 
+              ? <CircularProgress className='upload-progress margin-auto'/> 
+              : uploadsProp.data[0] 
+              ? uploadsProp.data.map((file: any, i: number) => (
+                <Container component='div' key={i} className='col-4 div-wrapper'>
+                  <img 
+                    src={file.url} 
+                    className='img' 
+                    alt={file.public_id} 
+                    id={file._id}
+                  />
+                  <button onClick={toggleSelectPreUpload} type='button' className='check-button'>
+                    ✓
+                  </button>
+                </Container>
+              ))
+              : <Row 
+                  as='p' 
+                  className={`no-uploads ${uploadsProp.status !== 'settled' ? 'display-block' : 'display-none'}`}
+                >You have no uploads</Row>
+              : ''
             }
           </Box>
         </Row>
         <Row className='d-flex mx-auto mt-1'>
-          <Container component='div' className={`${uploadsProp.status === 'fulfilled' && uploadsProp.data[0] ? 'display-block' : 'display-none'} width-100`}
+          <Container component='div' className={`${uploadsProp.showUploads && uploadsProp.data[0] ? 'display-block' : 'display-none'} width-100`}
           >
           <Button 
             onClick={handleSelectUpload}
@@ -421,11 +413,10 @@ const CreatePost = (props: any) => {
               cancel
           </Button>
           </Container>
-          
         </Row>
         <Row className='d-flex mx-auto mt-1'>
           <Button
-            className={`${uploadsProp.status === 'fulfilled' && uploadsProp.data[0] ? 'display-none' : 'display-block'} post-button major-button Primary contained p-0 flex-grow-1`}
+            className={`${uploadsProp.showUploads && uploadsProp.data[0] ? 'display-none' : 'display-block'} post-button major-button Primary contained p-0 flex-grow-1`}
             onClick={onPostSubmit}
             color={state.post ? 'primary' : 'default'}
           >
