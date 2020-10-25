@@ -443,6 +443,10 @@
 
 @media only screen and (max-width: 480px) {
 
+  .post {
+    min-height: 60vh;
+  }
+
   .margin-top-1 {
     margin-top: 1rem;
     padding-left: 1rem;

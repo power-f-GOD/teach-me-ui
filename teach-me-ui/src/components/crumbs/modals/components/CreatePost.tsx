@@ -131,13 +131,26 @@ const CreatePost = (props: any) => {
         button.setAttribute('type', 'button');
         button.classList.add('remove-img-btn', 'rounded-circle');
         button.onclick = removeUpload;
-        let img = document.createElement('img');
-        img.classList.add('img');
-        img.setAttribute('title', 'from uploads');
-        img.setAttribute('src', `${file.url}`)
-        div.appendChild(img);
-        div.appendChild(button);
         (prev.current as HTMLDivElement).appendChild(div);
+        if (file.image) {
+          let img = document.createElement('img');
+          img.classList.add('img');
+          img.setAttribute('title', `${file.title !== 'untitled' ? file.title : 'from uploads'}`);
+          img.setAttribute('src', `${file.url}`)
+          div.appendChild(img);
+          div.appendChild(button);
+          (prev.current as HTMLDivElement).appendChild(div);
+        } else {
+          let p = document.createElement('p');
+          let text = document.createTextNode(file.title);
+          div.classList.remove('div-wrapper');
+          div.classList.add('non-image-files');
+          div.setAttribute('title', `${file.title}`)
+          p.appendChild(text);
+          div.appendChild(p);
+          div.appendChild(button);
+          (prev.current as HTMLDivElement).appendChild(div);
+        }
       }
     } else {
       for (let file of files) {
@@ -236,7 +249,9 @@ const CreatePost = (props: any) => {
           ...state.tempSelectedUploads, 
           {
             url: button.previousElementSibling.getAttribute('src'), 
-            id: button.previousElementSibling.getAttribute('id')
+            id: button.previousElementSibling.getAttribute('id'),
+            title: button.previousElementSibling.getAttribute('title'),
+            image: (button.previousElementSibling.classList[0] === 'img')
           }
         ]
       })
@@ -300,8 +315,14 @@ const CreatePost = (props: any) => {
     dispatch(uploads({showUploads: false}));
   }
 
+  let greyOut;
+
+  if (makePostProp.status === 'pending' || sendFile.status === 'pending' || !(state.post.text)) {
+    greyOut = true;
+  }
+
   return (
-    <Box p={1} pt={0}>
+    <Box p={1} pt={0} className='post'>
       <Row className='container-fluid p-0 mx-auto'>
         <Box pr={1}>
           <Avatar
@@ -319,7 +340,7 @@ const CreatePost = (props: any) => {
       <form>
       <Editor onUpdate={onUpdate} />
       <Dropdown drop='up' className={`${uploadsProp.showUploads && uploadsProp.data[0] ? 'display-none' : 'display-block'}`}>
-        <Dropdown.Toggle id='dropdown'>
+        <Dropdown.Toggle title='attach file(s)' id='dropdown'>
             <AttachmentIcon className='cursor-pointer'/>
         </Dropdown.Toggle>
         <Dropdown.Menu className='drop-menu'>
@@ -377,12 +398,22 @@ const CreatePost = (props: any) => {
               : uploadsProp.data[0] 
               ? uploadsProp.data.map((file: any, i: number) => (
                 <Container component='div' key={i} className='col-4 div-wrapper'>
-                  <img 
-                    src={file.url} 
-                    className='img' 
-                    alt={file.public_id} 
+                  {file.type === 'image' ? (
+                    <img 
+                      src={file.thumbnail ? file.thumbnail : file.url} 
+                      className='img' 
+                      alt={file.public_id} 
+                      id={file._id}
+                      title={`${file.title ? file.title : ''}`}
+                    />
+                  ) : (
+                  <div 
                     id={file._id}
-                  />
+                    title={file.title} 
+                    className='div-wrapper non-image-uploads'>
+                      <p>{file.title}</p>
+                  </div>
+                  )}
                   <button onClick={toggleSelectPreUpload} type='button' className='check-button'>
                     ✓
                   </button>
@@ -416,6 +447,7 @@ const CreatePost = (props: any) => {
         </Row>
         <Row className='d-flex mx-auto mt-1'>
           <Button
+            id={`${ greyOut ? 'background-grey' : ''}`}
             className={`${uploadsProp.showUploads && uploadsProp.data[0] ? 'display-none' : 'display-block'} post-button major-button Primary contained p-0 flex-grow-1`}
             onClick={onPostSubmit}
             color={state.post ? 'primary' : 'default'}

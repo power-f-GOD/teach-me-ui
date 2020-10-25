@@ -624,3 +624,10 @@ div {
 .pointer-events-none {
   pointer-events: none;
 }
+
+#background-grey{
+  transition: 0s;
+  &::before, &::after {
+    background: #aaa!important;
+  }
+}
