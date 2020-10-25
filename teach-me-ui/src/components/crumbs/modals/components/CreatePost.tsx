@@ -340,7 +340,7 @@ const CreatePost = (props: any) => {
       <form>
       <Editor onUpdate={onUpdate} />
       <Dropdown drop='up' className={`${uploadsProp.showUploads && uploadsProp.data[0] ? 'display-none' : 'display-block'}`}>
-        <Dropdown.Toggle id='dropdown'>
+        <Dropdown.Toggle title='attach file(s)' id='dropdown'>
             <AttachmentIcon className='cursor-pointer'/>
         </Dropdown.Toggle>
         <Dropdown.Menu className='drop-menu'>
