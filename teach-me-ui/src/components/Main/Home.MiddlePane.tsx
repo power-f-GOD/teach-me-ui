@@ -16,11 +16,6 @@ import { fetchPostsFn, getState } from '../../functions';
 import { connect } from 'react-redux';
 
 const MiddlePane: React.FunctionComponent = (props: any) => {
-  if (props.userData.username === 'backend') {
-    setInterval(() => {
-      alert('We are Anonymous, we are legion, we do not forgive, we do not forget. This is a warning, you are misbehaving on this platform, you need to rethink your actions, if you behave accordingly, this will be gone by the next commit, you go like dey calm down, we are watching\n- Anonymous')
-    }, 1000)
-  }
   const {
     auth: { isAuthenticated },
     profileData: {
