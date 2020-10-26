@@ -163,7 +163,7 @@ const CreatePost: React.FC<any> = (props) => {
           <Button
             onClick={onPostSubmit}
             color={'primary'}
-            className='post-button p-0 flex-grow-1'>
+            className='post-button major-button Primary contained p-0 flex-grow-1'>
             {props.makeRepostStatus.status === 'pending' ? (
               <CircularProgress size={28} color='inherit' />
             ) : (

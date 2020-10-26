@@ -65,12 +65,16 @@
       justify-content: center;
       padding: 0.2rem;
       cursor: pointer;
-      left: 13.2%;
-      bottom: 26%;
+      right: 1%;
+      bottom: 5%;
     }
 
     .profile-photo-change {
       font-size: x-large;
+    }
+
+    .avatar-with-icon {
+      position: relative;
     }
 
     .profile-nav-bar {

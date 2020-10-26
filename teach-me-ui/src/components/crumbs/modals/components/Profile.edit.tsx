@@ -405,7 +405,7 @@ const EditProfile = (props: any) => {
         autoComplete='on'
         onSubmit={(e: any) => e.preventDefault()}>
         <Row className='mx-0'>
-          <Col xs={12} sm={6} className='pl-0'>
+          <Col xs={12} sm={6} className='pl-0 shift2'>
             <Box marginY='0.25em'>
               <Memoize
                 memoizedComponent={TextField}
@@ -428,7 +428,7 @@ const EditProfile = (props: any) => {
               />
             </Box>
           </Col>
-          <Col xs={12} sm={6} className='pr-0'>
+          <Col xs={12} sm={6} className='pr-0 shift'>
             <Box marginY='0.25em'>
               <Memoize
                 memoizedComponent={TextField}
@@ -454,7 +454,7 @@ const EditProfile = (props: any) => {
         </Row>
 
         <Row className='mx-0'>
-          <Col xs={12} sm={6} className='pl-0'>
+          <Col xs={12} sm={6} className='pl-0 shift2'>
             <Box component='div' marginY='0.25em' minWidth='100%'>
               <Memoize
                 memoizedComponent={TextField}
@@ -477,7 +477,7 @@ const EditProfile = (props: any) => {
               />
             </Box>
           </Col>
-          <Col xs={12} sm={6} className='pr-0'>
+          <Col xs={12} sm={6} className='pr-0 shift'>
             <Box component='div' marginY='0.25em' minWidth='100%'>
               <Memoize
                 memoizedComponent={TextField}
@@ -504,7 +504,7 @@ const EditProfile = (props: any) => {
         </Row>
 
         <Row className='mx-0'>
-          <Col xs={12} sm={16} className='pl-0'>
+          <Col xs={12} sm={16} className='pl-0 shift2'>
             <Box component='div' marginY='0.25em' minWidth='100%'>
               <Memoize 
                 memoizedComponent={DatePicker} 
@@ -528,7 +528,7 @@ const EditProfile = (props: any) => {
         </Box>
 
         <Row className='mx-0'>
-          <Col xs={12} sm={6} className='pl-0'>
+          <Col xs={12} sm={6} className='pl-0 shift2'>
             <Box
               component='div'
               marginY='0.25em'
@@ -562,7 +562,7 @@ const EditProfile = (props: any) => {
               {matchingInstitutionsList}
             </Box>
           </Col>
-          <Col xs={12} sm={6} className='pr-0'>
+          <Col xs={12} sm={6} className='pr-0 shift'>
             <Box
               component='div'
               marginY='0.25em'
@@ -603,7 +603,7 @@ const EditProfile = (props: any) => {
         </Row>
 
         <Row className='mx-0'>
-          <Col xs={12} sm={6} className='pl-0'>
+          <Col xs={12} sm={6} className='pl-0 shift2'>
             <Box
               component='div'
               marginY='0.25em'
