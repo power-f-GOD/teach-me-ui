@@ -178,24 +178,8 @@ const Profile = (props: any) => {
         window.scrollTo(0, 0);
       };
     }
-
-    let swipeArea: any = null;
-
-    //hide M-UI's (invisible) swipeArea element for the sake of it not interfering with the edit buttons on the right when they're tapped on mobile devices
-    window.setTimeout(() => {
-      swipeArea = document.querySelector("[class*='SwipeArea']") as any;
-
-      if (swipeArea) {
-        swipeArea.style.display = 'none';
-      }
-    }, 200);
-
-    return () => {
-      if (swipeArea) swipeArea.style.display = 'block';
-
-      window.scrollTo(0, 0);
-    };
   }, [selfView]);
+  
   useEffect(() => {
     cleanUp(true);
     dispatch(getProfileData(userId.replace('@', ''))(dispatch));
@@ -232,7 +216,7 @@ const Profile = (props: any) => {
       <Box component='div' className='profile-top'>
         <Img alt={displayName} className='cover-photo' src={selfView ? userData.cover_photo : data.cover_photo} />
         <Container className='details-container'>
-          <div>
+          <div className='avatar-with-icon'>
             <Avatar
               component='span'
               className='profile-avatar-x profile-photo'
@@ -409,18 +393,18 @@ const Profile = (props: any) => {
             </Button>
           )}
         </div>
-        <div className='change-cover'>
-          {selfView && (
+        {selfView && (
+          <div className='change-cover'>
             <Button
               variant='contained'
               size='small'
               className='cover-button'
               color='default'
               onClick={openCoverPhotoEditModal}>
-                <PhotoCameraIcon fontSize='inherit' /> Edit Cover Photo
+                <PhotoCameraIcon fontSize='inherit' /> <span className='edit-cover-photo'>Edit Cover Photo</span>
             </Button>
-          )}
-        </div>
+          </div>
+        )}
       </Box>
       <Container className='px-0'>
         <Row className='mx-0 mt-5 pt-3 align-items-start'>

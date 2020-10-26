@@ -441,6 +441,37 @@
   }
 }
 
+@media only screen and (max-width: 950px) {
+  .change-cover {
+    bottom: 15% !important;
+  }
+
+  .cover-button {
+    padding: 0;
+    padding-right: 0.2rem;
+  }
+}
+
+@media only screen and (max-width: 512px) {
+  .cover-button {
+    border-radius: 10px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+
+    .edit-cover-photo {
+      display: none;
+    }
+  }
+
+  .change-cover {
+    margin: 0 !important;
+    padding: 0 !important;
+    bottom: 2% !important;
+    right: 2% !important;
+  }
+}
+
 @media only screen and (max-width: 480px) {
 
   .post {
@@ -510,5 +541,15 @@
     ::-webkit-scrollbar-thumb:hover {
       background: rgb(170, 168, 168);
     }
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .shift {
+    margin-left: -0.47rem;
+  }
+
+  .shift2 {
+    margin-left: 0.5rem;
   }
 }

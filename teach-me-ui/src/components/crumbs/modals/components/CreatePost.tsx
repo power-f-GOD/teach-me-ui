@@ -135,7 +135,7 @@ const CreatePost = (props: any) => {
         if (file.image) {
           let img = document.createElement('img');
           img.classList.add('img');
-          img.setAttribute('title', `${file.title !== 'untitled' ? file.title : 'from uploads'}`);
+          img.setAttribute('title', `${file.title !== 'Untitled' ? file.title : 'from uploads'}`);
           img.setAttribute('src', `${file.url}`)
           div.appendChild(img);
           div.appendChild(button);
