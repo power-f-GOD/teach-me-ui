@@ -9,7 +9,7 @@ import {
   INIT_WEB_SOCKET,
   CLOSE_WEB_SOCKET
 } from '../constants';
-import { getState, emitUserOnlineStatus } from '../functions/utils';
+import { getState } from '../functions/utils';
 import { dispatch } from '../appStore';
 
 export const displaySnackbar = (payload: SnackbarState): ReduxAction => {
@@ -51,9 +51,6 @@ export function initWebSocket(token: string): ReduxAction {
           time_stamp_id: Date.now()
         })
       );
-    } else {
-      //make first arg always false to prevent an infinite recursion
-      emitUserOnlineStatus(false, !connectionIsAlive)();
     }
 
     const timeout = setTimeout(pollServer, 20000);

@@ -49,7 +49,7 @@ export default function chat(message: APIMessageResponse & UserData) {
       seen_by,
       deleted
     } = message;
-    const type = sender_id !== userId ? 'incoming' : 'outgoing';
+    const type = sender_id === userId ? 'outgoing' : 'incoming';
 
     //if state to be removed when typing is added and handled
     if (pipe !== CHAT_TYPING) {
@@ -58,7 +58,7 @@ export default function chat(message: APIMessageResponse & UserData) {
         conversationsMessages({
           pipe,
           statusText: 'update from socket',
-          data: { [conversation_id]: [message] }
+          data: { [conversation_id]: [{ ...message }] }
         })
       );
     }
@@ -93,17 +93,11 @@ export default function chat(message: APIMessageResponse & UserData) {
               seen_by &&
               !seen
             ) {
+              willEmitSeen = true;
               socket.send(
                 JSON.stringify({
                   message_id: message._id,
                   pipe: CHAT_READ_RECEIPT
-                })
-              );
-              willEmitSeen = true;
-              //update only last_read for conversations (and not conversation) in state (to avoid bugs)
-              dispatch(
-                conversations({
-                  data: [{ _id: convoId, last_read: message.date }]
                 })
               );
             } else {
@@ -129,6 +123,13 @@ export default function chat(message: APIMessageResponse & UserData) {
               });
             }
           }
+
+          //update only last_read for conversations (and not conversation) in state (to avoid bugs)
+          dispatch(
+            conversations({
+              data: [{ _id: convoId, last_read: message.date }]
+            })
+          );
         }
 
         if (convoId && conversation_id === convoId) {

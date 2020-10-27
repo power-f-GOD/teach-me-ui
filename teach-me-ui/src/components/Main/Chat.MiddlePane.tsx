@@ -1202,7 +1202,7 @@ function ScrollView(props: {
         scrollView.scrollTop + scrollView.offsetHeight + 50 >=
         scrollView.scrollHeight - 300;
       const canAddScrollPadding =
-        scrollView.scrollHeight >= scrollView.offsetHeight;
+        scrollView.scrollHeight > scrollView.offsetHeight;
       const scrollViewNewSrollPos =
         scrollView.scrollHeight - scrollViewPrevScrollPos;
 
@@ -1294,13 +1294,15 @@ function ScrollView(props: {
         convoUnreadCount={+convoUnreadCount!}
         scrollView={scrollView as HTMLElement}
         shouldRender={
-          !!convoUnreadCount && convoUnreadCount !== convoMessages.length
+          !!convoUnreadCount &&
+          convoUnreadCount !== convoMessages.length &&
+          convoMessages.length >= 20
         }
         className={convoId && convoUnreadCount ? '' : 'd-none'}
       />
 
       <Box
-        className={`the-beginning pt-3 mb-1 text-center theme-tertiary ${
+        className={`the-beginning text-center theme-tertiary ${
           convoMessagesStatus === 'fulfilled' && hasReachedTopOfConvo
             ? 'd-block'
             : 'd-none'
@@ -1364,14 +1366,12 @@ function ScrollView(props: {
           nextSenderId !== sender_id || !nextAndSelfSentSameDay || nextDelayed;
 
         const shouldRenderDate = !prevAndSelfSentSameDay;
-        const className = `${prevDelayed ? 'delayed mt-3' : ''}${
-          isFirstOfStack ? ' first' : ''
-        }${isOnlyOfStack ? ' only' : ''}${isLastOfStack ? ' last' : ''}${
-          isMiddleOfStack ? ' middle' : ''
-        }${
-          convoInfoNewMessage?._id === _id || timestamp_id
-            ? ' last-message'
-            : ''
+        const className = `${prevDelayed ? 'delayed mt-3' : ''} ${
+          isFirstOfStack ? 'first' : ''
+        } ${isOnlyOfStack ? 'only' : ''} ${isLastOfStack ? 'last' : ''} ${
+          isMiddleOfStack ? 'middle' : ''
+        } ${
+          convoInfoNewMessage?._id === _id || timestamp_id ? 'last-message' : ''
         }`;
 
         if (willRenderNewMessageBar) {
@@ -1523,8 +1523,6 @@ function MessageBox(props: {
   const handleMsgInputChange = useCallback(
     (e: any) => {
       const scrollView = scrollViewRef.current!;
-      const elevation = e.target.offsetHeight;
-      const chatBoxMaxHeight = msgBoxInitHeight * msgBoxRowsMax;
 
       messageDrafts[convoId as string] = e.target.value;
 
@@ -1549,9 +1547,8 @@ function MessageBox(props: {
       }
 
       if (
-        elevation <= chatBoxMaxHeight + 19 &&
         scrollView.scrollTop + scrollView.offsetHeight + 50 >=
-          scrollView.scrollHeight - 200
+        scrollView.scrollHeight - 100
       ) {
         delay(0).then(() => {
           scrollView.scrollTop = scrollView.scrollHeight;
