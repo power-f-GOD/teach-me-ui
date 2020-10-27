@@ -21,7 +21,6 @@ import { dispatch, delay, addEventListenerOnce } from '../../functions';
 import {
   chatState,
   conversationMessages,
-  getConversations,
   getConversationMessages,
   conversation,
   getConversationInfo,
@@ -432,10 +431,6 @@ const ChatBox = (props: ChatBoxProps) => {
             })
           );
       });
-    }
-
-    if (chat && !convosLength && !convosErr && convosStatus !== 'fulfilled') {
-      dispatch(getConversations()(dispatch));
     }
   }, [
     convosLength,

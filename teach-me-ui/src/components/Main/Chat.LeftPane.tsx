@@ -30,8 +30,7 @@ import {
   APIConversationResponse,
   SearchState,
   APIMessageResponse,
-  ConversationMessages,
-  ConversationsMessages
+  ConversationMessages
 } from '../../constants/interfaces';
 import { Skeleton, DISPLAY_INFO } from '../crumbs/Loader';
 import {
@@ -113,7 +112,7 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
           value={value}
           index={0}
           status={_conversations.status}>
-          {_conversations.status === 'pending' && !_conversations.err ? (
+          {_conversations.status === 'pending' ? (
             Array(Math.floor(window.innerHeight / 60))
               .fill('')
               .map((_, key) => <Skeleton type={DISPLAY_INFO} key={key} />)
@@ -305,11 +304,11 @@ function PaneItem({
     last_activity,
     profile_photo
   } = _conversation ?? {};
-  const hasRecent: boolean = { ...(last_message as any) }.is_recent;
+  const isRecent: boolean = { ...(last_message as any) }.is_recent;
 
   const [recent, setRecent] = React.useState<number>(0);
 
-  if (hasRecent) setRecent(index);
+  if (isRecent) setRecent(index);
 
   delete (last_message as any)?.is_recent;
 
@@ -357,14 +356,11 @@ function PaneItem({
         const {
           conversation: _conversation,
           conversationMessages: _conversationMessages
-          // conversationsMessages: _conversationsMessages
         } = getState() as {
-          //using getState here to prevent rerenders that would be cause if props is used
+          //using getState here to prevent rerenders that would be caused if props is used
           conversation: APIConversationResponse;
           conversationMessages: ConversationMessages;
-          conversationsMessages: ConversationsMessages;
         };
-        // const cachedConvoMessages = _conversationsMessages.data![convoId];
         const { _id: prevChatConvoId } = _conversation;
         const prevChatConvoMessages = _conversationMessages.data;
 
@@ -397,7 +393,7 @@ function PaneItem({
         }
 
         //update store for previous chat before updating/populating current chat
-        if (prevChatConvoId) {
+        if (prevChatConvoId && prevChatConvoMessages?.length) {
           dispatch(
             conversationsMessages({
               convoId: prevChatConvoId,
@@ -408,14 +404,15 @@ function PaneItem({
         }
 
         dispatch(conversationInfo({ user_typing: '' }));
+        dispatch(
+          getConversationMessages(convoId, 'pending', 'loading new')(dispatch)
+        );
 
         if (window.navigator.onLine) {
           dispatch(getConversationInfo(userId)(dispatch));
-          dispatch(
-            getConversationMessages(convoId, 'pending', 'loading new')(dispatch)
-          );
+
           //delay so that state conversation unread_count is not updated immediately when the conversation opens
-          delay(1500).then(() => {
+          delay(1250).then(() => {
             dispatch(
               conversations({ data: [{ unread_count: 0, _id: convoId }] })
             );
@@ -428,9 +425,7 @@ function PaneItem({
               online_status: 'OFFLINE'
             })
           );
-          dispatch(
-            conversationMessages({ status: 'pending', err: true, data: [] })
-          );
+          dispatch(conversationMessages({ status: 'pending', err: true }));
         }
 
         dispatch(chatState(chatInfo));
@@ -443,8 +438,8 @@ function PaneItem({
   return (
     <NavLink
       to={navLinkTo}
-      className={`tab-panel-item${!friendship ? ' uncolleagued' : ''}${
-        recent === index ? ' recent' : ''
+      className={`tab-panel-item ${!friendship ? 'uncolleagued' : ''} ${
+        recent === index ? 'recent' : ''
       }`}
       key={convoId}
       isActive={navLinkActive}
@@ -517,6 +512,7 @@ function PaneItem({
                             ? 'outgoing'
                             : 'incoming'
                         }
+                        isRecent={!!last_message.pipe}
                         shouldUpdate={
                           last_message?.delivered_to!?.length +
                           last_message?.seen_by!?.length
