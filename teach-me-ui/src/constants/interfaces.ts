@@ -214,6 +214,10 @@ export interface SearchState extends StatusPropsState {
   data?: any[];
 }
 
+export interface SearchStateV2<T> extends StatusPropsState {
+  data?: T;
+}
+
 export interface SignupPropsState {
   firstname: BasicInputState;
   lastname: BasicInputState;
@@ -325,18 +329,20 @@ export interface ConversationsMessages extends StatusPropsState {
   data?: { [convoId: string]: ConversationMessages['data'] };
 }
 
-export interface ConversationMessages extends Omit<SearchState, 'data'> {
+export interface ConversationMessages
+  extends SearchStateV2<Partial<APIMessageResponse>[]> {
   convoId?: string;
   pipe?: SocketPipe;
-  data?: Partial<APIMessageResponse>[];
 }
 
-export interface ConversationInfo extends Omit<SearchState, 'data'> {
+export interface ConversationInfo
+  extends SearchStateV2<
+    Partial<Omit<UserData, 'token'> & APIConversationResponse>
+  > {
   user_typing?: string;
   online_status?: OnlineStatus;
   conversationId?: string;
   new_message?: Partial<APIMessageResponse>;
-  data?: Partial<Omit<UserData, 'token'> & APIConversationResponse>;
 }
 
 export interface APIMessageResponse {
