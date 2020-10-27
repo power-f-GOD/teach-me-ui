@@ -448,7 +448,7 @@ const CreatePost = (props: any) => {
         <Row className='d-flex mx-auto mt-1'>
           <Button
             id={`${ greyOut ? 'background-grey' : ''}`}
-            className={`${uploadsProp.showUploads && uploadsProp.data[0] ? 'display-none' : 'display-block'} post-button major-button Primary contained p-0 flex-grow-1`}
+            className={`${uploadsProp.showUploads && uploadsProp.data[0] ? 'display-none' : ''} post-button major-button Primary contained p-0 flex-grow-1`}
             onClick={onPostSubmit}
             color={state.post ? 'primary' : 'default'}
           >
@@ -458,7 +458,7 @@ const CreatePost = (props: any) => {
               'uploading files...'
             ) : (
               'Post'
-            )}
+            )} 
           </Button>
         </Row>
       </form>

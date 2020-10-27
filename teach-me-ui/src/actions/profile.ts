@@ -147,6 +147,7 @@ export const addColleague = (userId: string, username: string) => (
       return res.data;
     })
     .then((state) => {
+      dispatch(fetchDeepProfile(userId));
       dispatch(
         addColleagueResolved({
           error: false,
@@ -250,7 +251,7 @@ export const removeColleagueRejected = (
   };
 };
 
-export const removeColleague = (id: string) => (dispatch: Function) => {
+export const removeColleague = (id: string, userId: string) => (dispatch: Function) => {
   dispatch(removeColleagueStarted());
   const userData = getState().userData as UserData;
   const token = userData.token as string;
@@ -270,6 +271,7 @@ export const removeColleague = (id: string) => (dispatch: Function) => {
       return res.data;
     })
     .then((state) => {
+      dispatch(fetchDeepProfile(userId));
       dispatch(
         removeColleagueResolved({
           error: false,
@@ -307,7 +309,7 @@ export const acceptColleagueRejected = (
   };
 };
 
-export const acceptColleague = (id: string, username: string) => (
+export const acceptColleague = (id: string, username: string, userId: string) => (
   dispatch: Function
 ) => {
   dispatch(acceptColleagueStarted());
@@ -329,6 +331,7 @@ export const acceptColleague = (id: string, username: string) => (
       return res.data;
     })
     .then((state) => {
+      dispatch(fetchDeepProfile(userId));
       dispatch(
         acceptColleagueResolved({
           error: false,
@@ -367,7 +370,7 @@ export const declineColleagueRejected = (
   };
 };
 
-export const declineColleague = (id: string) => (dispatch: Function) => {
+export const declineColleague = (id: string, userId: string) => (dispatch: Function) => {
   dispatch(declineColleagueStarted());
   const userData = getState().userData as UserData;
   const token = userData.token as string;
@@ -387,6 +390,7 @@ export const declineColleague = (id: string) => (dispatch: Function) => {
       return res.data;
     })
     .then((state) => {
+      dispatch(fetchDeepProfile(userId));
       dispatch(
         declineColleagueResolved({
           error: false,
@@ -444,6 +448,7 @@ export const unColleague = (id: string) => (dispatch: Function) => {
       return res.data;
     })
     .then((state) => {
+      dispatch(fetchDeepProfile(id));
       dispatch(
         unColleagueResolved({
           error: false,

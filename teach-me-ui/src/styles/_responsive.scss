@@ -474,6 +474,21 @@
 
 @media only screen and (max-width: 480px) {
 
+  .decline-request {
+    min-width: 3rem !important;
+    max-width: 5rem;
+    [class*='Icon'] {
+      margin: 0 !important;
+    }
+    .MuiButton-label {
+      width: max-content !important;
+    }
+    .colleaguing-text {
+      display: none !important;
+    }
+  }
+  
+
   .post {
     min-height: 60vh;
   }
@@ -484,8 +499,9 @@
   }
 
   .colleague-nav {
-    padding: 0 !important;
+    padding-left: 0 !important;
     margin: 0 0.8rem !important;
+    padding-right: 0 !important;
   }
 
   .cancel-modal {
