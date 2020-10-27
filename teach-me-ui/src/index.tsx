@@ -6,7 +6,7 @@ import HttpsRedirect from 'react-https-redirect';
 import { StylesProvider } from '@material-ui/core/styles';
 
 import './styles/bootstrap-grid.min.css';
-import './styles/index.min.css';
+import './styles/index.scss';
 
 import App from './App';
 import store from './appStore';

@@ -126,14 +126,17 @@ export const Message = (props: {
         });
       });
 
+      //this is for to remove the last-message slide-in animation after the animation has ended; Would have used an animationend listener but the fade-in animation after this block makes the slide-in animation of non-effect
       if (messageEl.classList.contains('last-message')) {
-        dispatch(conversationInfo({ new_message: {} }));
+        delay(850).then(() => dispatch(conversationInfo({ new_message: {} })));
       }
 
       messageEl.classList.add('fade-in');
       addEventListenerOnce(
         messageEl,
-        () => messageEl.classList.remove('fade-in'),
+        () => {
+          messageEl.classList.remove('fade-in');
+        },
         'animationend'
       );
     }
@@ -219,6 +222,7 @@ export const Message = (props: {
             chatStatus={
               <ChatStatus
                 type={type}
+                isRecent={!!message.pipe}
                 userId={userId}
                 message={message}
                 shouldUpdate={
@@ -382,12 +386,13 @@ export const ChatTimestamp = (props: {
 
 export const ChatStatus = (props: {
   type: string;
+  isRecent: boolean;
   userId: string;
   shouldUpdate: any;
   message: Partial<APIMessageResponse & APIConversationResponse>;
   participants: string[];
 }) => {
-  const { type, userId, message, participants } = props;
+  const { type, userId, message, participants, isRecent } = props;
   const { timestamp_id, deleted, delivered_to, seen_by } = message ?? {};
   const isDelivered =
     type === 'outgoing' &&
@@ -406,7 +411,9 @@ export const ChatStatus = (props: {
     (timestamp_id ? (
       <ScheduleIcon />
     ) : isSeen || isDelivered ? (
-      <DoneAllIcon className={isSeen ? 'read' : ''} />
+      <DoneAllIcon
+        className={`${isSeen ? 'read' : ''} ${isRecent ? 'animate' : ''}`}
+      />
     ) : (
       <DoneIcon />
     ));

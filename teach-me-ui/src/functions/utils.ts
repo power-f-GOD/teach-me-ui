@@ -12,7 +12,8 @@ import {
   ConversationMessages,
   SearchState,
   APIConversationResponse,
-  LoopFind
+  LoopFind,
+  ConversationInfo
 } from '../constants';
 
 import store from '../appStore';
@@ -27,11 +28,11 @@ import { userDeviceIsMobile } from '../';
 import activateSocketRouters from '../socket.router';
 import {
   getConversations,
-  getConversationMessages,
   getConversationInfo,
   conversations,
   conversationInfo,
-  conversationMessages
+  getConversationsMessages,
+  conversationsMessages
 } from '../actions/chat';
 
 export const { dispatch, getState }: any = store;
@@ -44,12 +45,12 @@ export function loopThru<T>(
     includeIndex?: boolean;
     rightToLeft?: boolean;
     returnReverse?: boolean;
-    preserveOriginal?: boolean;
+    makeCopy?: boolean;
   }
 ): LoopFind<T> | T[] | T | number | null {
-  const { type, rightToLeft, includeIndex, returnReverse, preserveOriginal } =
+  const { type, rightToLeft, includeIndex, returnReverse, makeCopy } =
     options || {};
-  const data = preserveOriginal ? _data.slice() : _data;
+  const data = makeCopy ? _data.slice() : _data;
   const lim = data.length - 1;
   const dataReversed = [];
   const reverse = rightToLeft || returnReverse;
@@ -126,7 +127,7 @@ export const emitUserOnlineStatus = (
         open: true,
         autoHide: false,
         message: message ? message : 'You are offline.',
-        severity: severity ? severity : 'error'
+        severity: severity ? severity : 'info'
       })
     );
   } else if (open) {
@@ -145,18 +146,17 @@ export const emitUserOnlineStatus = (
     auth,
     conversation: _conversation,
     conversations: _conversations,
-    conversationMessages: _conversationMessages
+    conversationsMessages: _conversationsMessages,
+    conversationInfo: _conversationInfo
   } = getState() as {
     userData: UserData & APIConversationResponse;
     auth: AuthState;
     conversation: APIConversationResponse;
     conversations: SearchState;
-    conversationMessages: ConversationMessages;
+    conversationsMessages: ConversationMessages;
+    conversationInfo: ConversationInfo;
   };
-  const { convoId, convoAssocUserId } = {
-    convoId: _conversation._id,
-    convoAssocUserId: _conversation.associated_user_id
-  };
+  const { associated_user_id: convoAssocUserId } = _conversation;
   let timeToEmitOnlineStatus: any = undefined;
 
   if (auth.isAuthenticated && !connectionIsDead) {
@@ -166,20 +166,14 @@ export const emitUserOnlineStatus = (
     }
 
     if (_conversations.err) {
-      dispatch(getConversations()(dispatch));
+      dispatch(getConversations('settled')(dispatch));
     }
 
-    if (convoId && _conversationMessages.err) {
-      dispatch(
-        getConversationMessages(
-          convoId as string,
-          'settled',
-          'updating message list...'
-        )(dispatch)
-      );
+    if (_conversationsMessages.err) {
+      dispatch(getConversationsMessages('updating message list...')(dispatch));
     }
 
-    if (convoAssocUserId && getState().conversationInfo.err) {
+    if (convoAssocUserId && _conversationInfo.err) {
       dispatch(getConversationInfo(convoAssocUserId as string)(dispatch));
     }
 
@@ -207,7 +201,7 @@ export const emitUserOnlineStatus = (
             recurse();
           }
         }
-      }, 2000);
+      }, 1000);
     };
   }
 
@@ -220,7 +214,13 @@ export const emitUserOnlineStatus = (
       ) as SearchState['data'];
 
       dispatch(closeWebSocket());
-      dispatch(conversations({ err: true, data: [...updateConversations] }));
+      dispatch(
+        conversations({
+          err: true,
+          data: [...updateConversations],
+          status: 'settled'
+        })
+      );
       dispatch(
         conversationInfo({
           online_status: 'OFFLINE',
@@ -229,7 +229,7 @@ export const emitUserOnlineStatus = (
           data: { ...getState().conversationInfo.data, last_seen: undefined }
         })
       );
-      dispatch(conversationMessages({ status: 'settled', err: true }));
+      dispatch(conversationsMessages({ status: 'settled', err: true }));
       dispatch(
         setUserData({
           online_status: 'OFFLINE'
@@ -380,7 +380,7 @@ export async function populateStateWithUserData(
 
 export const logError = (action: Function) => (error: any) => {
   let message = /network/i.test(error.message)
-    ? 'A network error occurred. Check your internet connection.'
+    ? 'A network error occurred. Check your internet connection'
     : error.message;
 
   dispatch(
@@ -395,7 +395,7 @@ export const logError = (action: Function) => (error: any) => {
       message: navigator.onLine
         ? `${message[0].toUpperCase()}${message.slice(1)}.`
         : 'You are offline.',
-      severity: 'error'
+      severity: navigator.onLine && !/network/.test(message) ? 'error' : 'info'
     })
   );
   console.error('An error occured: ', error);

@@ -14,7 +14,6 @@ import Loader from '../crumbs/Loader';
 import ModalFrame from '../crumbs/modals';
 import Chat from './Chat';
 import Search from './Search';
-// import Notifications from './Notifications';
 import PostPage from './PostPage';
 import _404 from '../Index/_404';
 
@@ -29,29 +28,11 @@ import { initWebSocket, closeWebSocket } from '../../actions/misc';
 import activateSocketRouters from '../../socket.router';
 
 import { getConversations, getConversationsMessages } from '../../actions/chat';
-import { SearchState } from '../../constants';
 
 const Memoize = createMemo();
 
 const Main = (props: any) => {
-  const {
-    signoutStatus,
-    userToken,
-    webSocket: socket,
-    convosLength,
-    convosErr,
-    convosStatus
-  } = props;
-
-  useEffect(() => {
-    dispatch(getConversationsMessages(null, 'getting new')(dispatch));
-  }, []);
-
-  useEffect(() => {
-    if (!convosLength && !convosErr && convosStatus !== 'fulfilled') {
-      dispatch(getConversations()(dispatch));
-    }
-  }, [convosLength, convosErr, convosStatus]);
+  const { signoutStatus, userToken, webSocket: socket } = props;
 
   useEffect(() => {
     dispatch(initWebSocket(userToken as string));
@@ -78,6 +59,9 @@ const Main = (props: any) => {
       socket.addEventListener('close', () => {
         console.log('Sockets called it a day! :|');
       });
+
+      dispatch(getConversations()(dispatch));
+      dispatch(getConversationsMessages('getting new')(dispatch));
     }
   }, [socket]);
 
@@ -107,7 +91,6 @@ const Main = (props: any) => {
           <Route path='/@:userId' component={Profile} />
           <Route path='/profile/:id' component={ProfileRedirect} />
           <Route path={['/search/:query', '/search']} component={Search} />
-          {/* <Route path='/notifications' component={Notifications} /> */}
           <Route component={_404} />
         </Switch>
         <Memoize memoizedComponent={Chat} location={props.location} />
@@ -125,15 +108,10 @@ document.addEventListener('visibilitychange', () => {
 });
 
 const mapStateToProps = (state: any) => {
-  const convos = state.conversations as SearchState;
-
   return {
     signoutStatus: state.signout.status,
     userToken: state.userData.token,
-    webSocket: state.webSocket,
-    convosLength: convos.data?.length,
-    convosStatus: convos.status,
-    convosErr: convos.err
+    webSocket: state.webSocket
   };
 };
 
