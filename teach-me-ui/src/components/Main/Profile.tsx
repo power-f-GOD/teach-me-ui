@@ -117,38 +117,38 @@ const Profile = (props: any) => {
 
   const [acceptWasClicked, setAcceptWasClicked] = useState(false);
   const [declineWasClicked, setDeclineWasClicked] = useState(false);
-  const onColleagueActionClick = async (e: any) => {
+  const [colleagueButtonWasClicked, setColleagueButtonWasClicked] = useState(false);
+  const onColleagueActionClick = async (e: any, decline?: boolean) => {
+    setColleagueButtonWasClicked(true);
     const deepData = deepProfileData as DeepProfileProps;
     switch (deepData.status) {
       case 'NOT_COLLEAGUES':
         await dispatch(api.addColleague(data.id, data.username));
         break;
       case 'PENDING_REQUEST':
-        await dispatch(api.removeColleague(deepData.request_id as string));
+        await dispatch(api.removeColleague(deepData.request_id as string, data.id));
         break;
       case 'AWAITING_REQUEST_ACTION':
-        if (e.target.id !== 'decline') {
+        if (decline) {
           setAcceptWasClicked(false);
           setDeclineWasClicked(true);
         } else {
           setAcceptWasClicked(true);
           setDeclineWasClicked(false);
         }
-        e.target.id !== 'decline'
+        !decline
           ? await dispatch(
-              api.acceptColleague(deepData.request_id as string, data.username)
+              api.acceptColleague(deepData.request_id as string, data.username, data.id)
             )
-          : await dispatch(api.declineColleague(deepData.request_id as string));
+          : await dispatch(api.declineColleague(deepData.request_id as string, data.id));
         break;
       case 'IS_COLLEAGUE':
         await dispatch(api.unColleague(data.id));
         break;
     }
     dispatch(getConversations('settled')(dispatch));
-    dispatch(api.fetchDeepProfile(data.id));
-    setAcceptWasClicked(false);
-    setDeclineWasClicked(false);
   };
+  
 
   basicInfo = [
     { name: 'Firstname', value: selfView ? userData.firstname : firstname },
@@ -267,11 +267,15 @@ const Profile = (props: any) => {
                     size='small'
                     className='colleague-action-button add-colleague primary'
                     color='primary'
-                    disabled={addColleagueStatus.status === 'pending'}
+                    disabled={colleagueButtonWasClicked && 
+                              (addColleagueStatus.status === 'pending' || 
+                              fetchDeepProfileStatus.status === 'pending')}
                     onClick={onColleagueActionClick}>
-                    {addColleagueStatus.status === 'pending' ? (
+                    {colleagueButtonWasClicked &&
+                    (addColleagueStatus.status === 'pending' ||
+                    fetchDeepProfileStatus.status === 'pending') ? (
                       <Box textAlign='center'>
-                        <CircularProgress size='2rem' />
+                        <CircularProgress size={28} color='inherit' />
                       </Box>
                     ) : (
                       <>
@@ -286,11 +290,16 @@ const Profile = (props: any) => {
                     size='small'
                     className='colleague-action-button cancel-request'
                     color='primary'
-                    disabled={removeColleagueStatus.status === 'pending'}
+                    disabled={
+                      colleagueButtonWasClicked &&
+                      (removeColleagueStatus.status === 'pending' || 
+                      fetchDeepProfileStatus.status === 'pending')}
                     onClick={onColleagueActionClick}>
-                    {removeColleagueStatus.status === 'pending' ? (
+                    {colleagueButtonWasClicked &&
+                    (removeColleagueStatus.status === 'pending' || 
+                    fetchDeepProfileStatus.status === 'pending') ? (
                       <Box textAlign='center'>
-                        <CircularProgress size='2rem' />
+                        <CircularProgress size={28} color='inherit' />
                       </Box>
                     ) : (
                       <>
@@ -308,14 +317,18 @@ const Profile = (props: any) => {
                       className='colleague-action-button accept-request'
                       color='primary'
                       disabled={
+                        colleagueButtonWasClicked && 
                         acceptWasClicked &&
-                        acceptColleagueStatus.status === 'pending'
+                        (acceptColleagueStatus.status === 'pending' || 
+                        fetchDeepProfileStatus.status === 'pending')
                       }
                       onClick={onColleagueActionClick}>
-                      {acceptWasClicked &&
-                      acceptColleagueStatus.status === 'pending' ? (
+                      {colleagueButtonWasClicked &&
+                      acceptWasClicked &&
+                      (acceptColleagueStatus.status === 'pending' || 
+                      fetchDeepProfileStatus.status === 'pending') ? (
                         <Box textAlign='center'>
-                          <CircularProgress size='2rem' />
+                          <CircularProgress size={28} color='inherit' />
                         </Box>
                       ) : (
                         <>
@@ -330,20 +343,22 @@ const Profile = (props: any) => {
                       className='colleague-action-button decline-request'
                       color='primary'
                       disabled={
+                        colleagueButtonWasClicked &&
                         declineWasClicked &&
                         (declineColleagueStatus.status === 'pending' ||
                           fetchDeepProfileStatus.status === 'pending')
                       }
-                      onClick={onColleagueActionClick}>
-                      {declineWasClicked &&
+                      onClick={(e: any) => {onColleagueActionClick(e, true)}}>
+                      {colleagueButtonWasClicked &&
+                       declineWasClicked &&
                       (declineColleagueStatus.status === 'pending' ||
                         fetchDeepProfileStatus.status === 'pending') ? (
                         <Box textAlign='center'>
-                          <CircularProgress size='2rem' />
+                          <CircularProgress size={28} color='inherit' />
                         </Box>
                       ) : (
                         <>
-                          <RejectIcon fontSize='inherit' /> Decline
+                          <RejectIcon fontSize='inherit' /> <span className='colleaguing-text'>Decline</span>
                         </>
                       )}
                     </Button>
@@ -355,11 +370,16 @@ const Profile = (props: any) => {
                     size='large'
                     className='colleague-action-button uncolleague'
                     color='primary'
-                    disabled={unColleagueStatus.status === 'pending'}
+                    disabled={
+                      colleagueButtonWasClicked && 
+                      (unColleagueStatus.status === 'pending' || 
+                      fetchDeepProfileStatus.status === 'pending')}
                     onClick={onColleagueActionClick}>
-                    {unColleagueStatus.status === 'pending' ? (
+                    {colleagueButtonWasClicked && 
+                    (unColleagueStatus.status === 'pending' || 
+                    fetchDeepProfileStatus.status === 'pending') ? (
                       <Box textAlign='center'>
-                        <CircularProgress size='2rem' />
+                        <CircularProgress size={28} color='inherit'/>
                       </Box>
                     ) : (
                       <>
