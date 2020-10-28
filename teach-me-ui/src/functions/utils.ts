@@ -115,7 +115,7 @@ export const emitUserOnlineStatus = (
   snackBarOptions?: {
     open?: boolean;
     severity?: 'error' | 'success' | 'info';
-    message?: string;
+    message?: string | null;
     autoHide?: boolean;
   }
 ) => {
@@ -674,6 +674,7 @@ export const formatDate = (dateTime: Date | number) => {
       : 'just now';
   }
 };
+
 export const formatMapDateString = (
   timestamp: number | string,
   includeDay?: boolean,
@@ -803,8 +804,8 @@ export const countNewNotifications = (notifications: Array<any>) => {
 
 export const isImage = (file: File) => {
   return file['type'].split('/')[0] === 'image';
-}
+};
 
 export const getFileExtension = (filename: string) => {
   return filename.split('.').pop();
-}
+};

@@ -58,10 +58,15 @@ const Main = (props: any) => {
 
       socket.addEventListener('close', () => {
         console.log('Sockets called it a day! :|');
+        emitUserOnlineStatus(navigator.onLine, !navigator.onLine, {
+          message: navigator.onLine ? "You're disconnected." : null
+        })();
       });
 
-      dispatch(getConversations()(dispatch));
-      dispatch(getConversationsMessages('getting new')(dispatch));
+      if (!getState().conversations.data.length) {
+        dispatch(getConversations()(dispatch));
+        dispatch(getConversationsMessages('getting new')(dispatch));
+      }
     }
   }, [socket]);
 
