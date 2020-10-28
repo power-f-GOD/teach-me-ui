@@ -98,6 +98,7 @@
       .conversation-name-wrapper {
         .conversation-name-container {
           max-width: calc(100% - 3.25rem);
+          cursor: pointer;
         }
       }
 
@@ -492,7 +493,6 @@
 }
 
 @media only screen and (max-width: 480px) {
-
   .decline-request {
     min-width: 3rem !important;
     max-width: 5rem;
@@ -506,7 +506,6 @@
       display: none !important;
     }
   }
-  
 
   .post {
     min-height: 60vh;
@@ -556,7 +555,6 @@
     ::-webkit-scrollbar {
       width: 0.2rem;
       border-radius: 0px;
-
     }
 
     /* Track */
@@ -564,14 +562,14 @@
       border-radius: 0px;
       width: 0.25rem;
     }
-  
+
     /* Handle */
     ::-webkit-scrollbar-thumb {
       background: rgb(194, 194, 197);
       border-radius: 0rem;
       width: 0.2rem;
     }
-  
+
     /* Handle on hover */
     ::-webkit-scrollbar-thumb:hover {
       background: rgb(170, 168, 168);

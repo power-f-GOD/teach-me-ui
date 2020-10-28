@@ -658,7 +658,7 @@ export const getConversationMessages = (
           url: `${baseURL}/conversations/${convoId}/messages?limit=${limit}${`&offset=${
             offset
               ? offset
-              : !hasCachedData
+              : hasCachedData
               ? cachedConvoMessages[0].date
               : Date.now()
           }`}`,

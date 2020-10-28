@@ -1,3 +1,5 @@
+@import '../constants';
+
 .chat-right-pane {
   background-color: #fff;
   height: 100vh;
@@ -22,7 +24,7 @@
         @include before-or-after(
           $bg: #eee,
           $zi: 0,
-          $h: 22.5rem,
+          $h: 25.25rem,
           $w: calc(100% + 3rem),
           $t: -7rem,
           $l: -1.5rem
@@ -57,6 +59,47 @@
 
     .username {
       color: #555;
+    }
+
+    .online-status {
+      color: #888;
+      font-size: 0.9rem;
+      position: relative;
+      margin-left: 1rem;
+      display: inline-block !important;
+      width: auto;
+      font-weight: bold;
+
+      &::before {
+        @include before-or-after(
+          $t: 0.125rem,
+          $h: 1.15rem,
+          $w: 1.15rem,
+          $zi: unset,
+          $l: -1.25rem,
+          $br: 50%,
+          $bg: #999
+        );
+        border: 0.2rem solid white;
+      }
+
+      &.online {
+        &::before {
+          background-color: limegreen;
+        }
+      }
+
+      &.away {
+        &::before {
+          background-color: orange;
+        }
+      }
+
+      &.offline {
+        &::before {
+          background-color: #999;
+        }
+      }
     }
 
     .info {
