@@ -112,6 +112,7 @@ interface ChatMiddlePaneProps {
   convoInfoNewMessage: Partial<APIMessageResponse>;
   convoInfoLastSeen: number;
   convoLastReadDate: number;
+  setOnlineStatus: Function;
   handleSetActivePaneIndex(index: number): any;
 }
 
@@ -648,7 +649,8 @@ function MiddlePandeHeaderColleagueNameAndStatus(props: {
     convoType,
     convoInfoStatus,
     convoUserTyping,
-    convoInfoLastSeen
+    convoInfoLastSeen,
+    setOnlineStatus
   } = useContext(ColleagueNameAndStatusContext);
   const [canDisplayAwayDate, setCanDisplayAwayDate] = useState(false);
   const [lastSeenDate, lastSeenTime] = [
@@ -662,6 +664,15 @@ function MiddlePandeHeaderColleagueNameAndStatus(props: {
     ' ',
     ''
   )}`;
+  const onlineStatus = convoUserTyping
+    ? 'typing...'
+    : convoInfoOnlineStatus === 'ONLINE'
+    ? 'online'
+    : convoInfoOnlineStatus === 'AWAY'
+    ? lastAwayDate
+    : lastSeenDate
+    ? lastOnlineDate
+    : '...';
 
   const displayAwayDate = useCallback(() => {
     renderAwayDateTimeout = setTimeout(() => {
@@ -685,6 +696,10 @@ function MiddlePandeHeaderColleagueNameAndStatus(props: {
       setCanDisplayAwayDate(true);
     }
   }, []);
+
+  useEffect(() => {
+    setOnlineStatus!(onlineStatus);
+  }, [onlineStatus, setOnlineStatus]);
 
   useEffect(() => {
     lastSeenForAway = convoInfoLastSeen as number;
@@ -754,15 +769,7 @@ function MiddlePandeHeaderColleagueNameAndStatus(props: {
                   ? 'show'
                   : ''
               } p-0`}>
-              {convoUserTyping
-                ? 'typing...'
-                : convoInfoOnlineStatus === 'ONLINE'
-                ? 'online'
-                : convoInfoOnlineStatus === 'AWAY'
-                ? lastAwayDate
-                : lastSeenDate
-                ? lastOnlineDate
-                : '...'}
+              {onlineStatus}
             </Col>
           </Col>
         </Box>
@@ -1478,7 +1485,9 @@ function MessageBox(props: {
     }
 
     try {
-      if (socket && socket.readyState === 1) {
+      const online = navigator.onLine;
+
+      if (online && socket && socket.readyState === 1) {
         if (messageHead) {
           setMessageHead(null);
         }
@@ -1502,10 +1511,11 @@ function MessageBox(props: {
           scrollView!.scrollTop = scrollView!.scrollHeight;
         });
       } else {
-        emitUserOnlineStatus(true, false, {
+        emitUserOnlineStatus(online, !online, {
           open: true,
-          message:
-            "Something went wrong. Seems you are/were offline. We'll try to reconnect then you can try again.",
+          message: online
+            ? "Something went wrong. Seems you are/were offline. We'll try to reconnect then you can try again."
+            : null,
           severity: 'info',
           autoHide: false
         });

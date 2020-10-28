@@ -187,6 +187,7 @@ const ChatBox = (props: ChatBoxProps) => {
     isOpen || chat ? 'visible' : 'hidden'
   );
   const [activePaneIndex, setActivePaneIndex] = useState<number>(0);
+  const [onlineStatus, setOnlineStatus] = useState<string>('');
 
   const handleSetActivePaneIndex = useCallback(
     (index: number) => () => {
@@ -300,7 +301,8 @@ const ChatBox = (props: ChatBoxProps) => {
       convoType,
       convoInfoStatus,
       convoUserTyping,
-      convoInfoLastSeen
+      convoInfoLastSeen,
+      setOnlineStatus
     };
   }, [
     convoId,
@@ -309,7 +311,8 @@ const ChatBox = (props: ChatBoxProps) => {
     convoType,
     convoInfoStatus,
     convoUserTyping,
-    convoInfoLastSeen
+    convoInfoLastSeen,
+    setOnlineStatus
   ]);
 
   useEffect(() => {
@@ -518,6 +521,7 @@ const ChatBox = (props: ChatBoxProps) => {
               convoDisplayName={convoDisplayName}
               convoAvatar={convoAvatar}
               convoAssocUsername={convoAssocUsername}
+              onlineStatus={onlineStatus}
               handleSetActivePaneIndex={handleSetActivePaneIndex}
             />
           </Col>

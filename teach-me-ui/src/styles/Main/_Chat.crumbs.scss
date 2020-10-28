@@ -484,8 +484,6 @@ button.new-messages-count {
   margin-bottom: 0.5rem;
   max-height: 5.55rem;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: pre-wrap;
   font-size: 0.85rem;
   padding: 0.2rem 0.4rem 0.2rem;
   background: rgba(0, 0, 0, 0.1);
@@ -493,6 +491,12 @@ button.new-messages-count {
   z-index: 1;
   border: 0.0625rem solid transparent;
   transition: 0.25s;
+  display: -webkit-box;
+  display: -moz-box;
+  -webkit-line-clamp: 3;
+  -moz-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
 
   &.self {
     .chat-head-sender {
