@@ -21,7 +21,8 @@ import {
   statusPropsState,
   InstitutionInputState,
   POPULATE_MATCHING_LEVELS,
-  POPULATE_MATCHING_DEPARTMENTS
+  POPULATE_MATCHING_DEPARTMENTS,
+  BIO_VALIDATE
 } from '../constants';
 
 export const firstname = (
@@ -45,6 +46,29 @@ export const firstname = (
       value,
       err,
       helperText
+    };
+  }
+  return state;
+};
+
+export const bio = (
+  state: BasicInputState = basicInputState,
+  action: ReduxAction
+) => {
+  if (action.type === BIO_VALIDATE) {
+    let { payload } = action;
+    let { value } = payload;
+    let err = !value || value.length > 150
+    let helperText = !value
+        ? ' Bio required.'
+        : value.length > 150
+          ? 'Bio should be 150 characters or less'
+          : ' ';
+
+    return {
+      value,
+      helperText,
+      err
     };
   }
   return state;

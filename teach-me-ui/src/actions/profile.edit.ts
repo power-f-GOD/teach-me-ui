@@ -25,6 +25,7 @@ import {
   callNetworkStatusCheckerFor, 
   getState, populateStateWithUserData 
 } from '../functions';
+
 import { validateUsername } from './validate';
 
 
@@ -39,7 +40,8 @@ export const updateProfileRequest = (data: any) => (
     email,
     dob,
     department,
-    level
+    level,
+    bio
   } = data;
   const [day, month, year] = dob.split('/');
   const date_of_birth = `${year}-${month}-${day}`;
@@ -56,7 +58,8 @@ export const updateProfileRequest = (data: any) => (
   dispatch(updateUserDataRequest({
     firstname,
     lastname,
-    date_of_birth
+    date_of_birth,
+    bio
   })(dispatch));
 
   if (level !== userData.level) {

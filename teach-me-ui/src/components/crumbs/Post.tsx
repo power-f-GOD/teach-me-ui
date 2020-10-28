@@ -224,13 +224,20 @@ const Post: React.FunctionComponent<
           <Col className='d-flex flex-column bio-post'>
             {props.sender_name ? (
               <>
-                <Box component='div' fontWeight='bold'>
+                <Link to={`@${
+                  props.sec_type === 'REPLY'
+                  ? props.parent?.sender_username
+                  : props.text
+                  ? props.sender_username
+                  : props.parent?.sender_username
+                }`} 
+                  className='post-sender'>
                   {props.sec_type === 'REPLY'
                     ? props.parent?.sender_name
                     : props.text
                     ? props.sender_name
                     : props.parent?.sender_name}
-                </Box>
+                </Link>
                 <Box component='div' color='#777'>
                   @
                   {props.sec_type === 'REPLY'
@@ -399,9 +406,9 @@ const Post: React.FunctionComponent<
                 src={props.parent?.profile_photo ? props.parent?.profile_photo : `/images/${props.parent?.userAvatar}`}
               />
               <Col className='d-flex flex-grow-1 flex-column'>
-                <Box component='div' fontWeight='bold'>
+                <Link  to={`@${props.parent?.sender_username}`} className='post-sender'>
                   {props.parent?.sender_name}
-                </Box>
+                </Link>
                 <Box component='div' color='#777'>
                   @{props.parent?.sender_username}
                 </Box>
@@ -577,9 +584,9 @@ const Post: React.FunctionComponent<
                 src={props.profile_photo ? props.profile_photo : `/images/${props.userAvatar}`}
               />
               <Col className='d-flex flex-grow-1 flex-column'>
-                <Box component='div' fontWeight='bold'>
+                <Link to={`@${props.sender_username}`} className='post-sender'>
                   {props.sender_name}
-                </Box>
+                </Link>
                 <Box component='div' color='#777'>
                   @{props.sender_username}
                 </Box>

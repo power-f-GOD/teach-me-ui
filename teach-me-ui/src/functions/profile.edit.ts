@@ -33,6 +33,8 @@ export function handleEditProfileInputChange({
       return dispatch(actions.validateLastname({ value }));
     case 'username':
       return dispatch(actions.validateUsername({ value }));
+    case 'bio':
+      return dispatch(actions.validateBio({ value }));
     case 'email':
       return dispatch(actions.validateEmail({ value }));
     case 'dob':
@@ -63,18 +65,6 @@ export function handleEditProfileRequest() {
 
     switch (target.id) {
       case 'institution':
-        // if (
-        //   !_institution.value!.uid &&
-        //   !!matchingInstitutions!.data![0] &&
-        //   target.value
-        // ) {
-        //   dispatch(
-        //     actions.validateInstitution({
-        //       err: true,
-        //       helperText: 'You need to select an institution from the dropdown.'
-        //     })
-        //   );
-        // } else
           dispatch(actions.getMatchingInstitutions(target.value)(dispatch));
         break;
       case 'department':
@@ -99,7 +89,8 @@ export function handleEditProfileRequest() {
     dob,
     institution,
     department,
-    level
+    level,
+    bio
   } = (getState() as unknown) as any;
 
   if (
@@ -110,7 +101,8 @@ export function handleEditProfileRequest() {
     dob.err ||
     institution.err ||
     department.err ||
-    level.err
+    level.err || 
+    bio.err
   ) {
     editProfileFormValidated = false;
   }
@@ -123,11 +115,11 @@ export function handleEditProfileRequest() {
     dob: dob.value as string,
     institution: institution.value!.uid as string,
     department: department.value as string,
-    level: level.value as string
+    level: level.value as string,
+    bio: bio.value as string
   };
 
   if (editProfileFormValidated) {
-    //dispatch signup user action here and signup user...
     dispatch(updateProfileRequest({ ...formData })(dispatch));
   }
 }
