@@ -26,10 +26,6 @@
     max-width: 100%;
   }
 
-  .conversation-name-container {
-    cursor: pointer;
-  }
-
   .display-name {
     font-weight: bold;
     font-size: 1.1rem;
@@ -101,6 +97,7 @@
   top: calc(100% + 0.5rem);
   border-radius: 0.5rem;
   overflow: hidden;
+  min-width: 8rem !important;
   max-width: unset !important;
   background-color: white;
   opacity: 0;

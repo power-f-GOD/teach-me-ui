@@ -21,6 +21,7 @@ interface ChatRightPaneProps {
   convoAssocUsername: string;
   convoInfoData?: ConversationInfo['data'];
   convoInfoErr: boolean;
+  onlineStatus: string;
   handleSetActivePaneIndex(index: number): any;
 }
 
@@ -31,9 +32,15 @@ const ChatRightPane = (props: ChatRightPaneProps) => {
     convoAssocUsername,
     convoInfoErr,
     convoInfoData,
+    onlineStatus,
     handleSetActivePaneIndex
   } = props;
   const { institution, department, level } = convoInfoData ?? ({} as UserData);
+  const badgeStatus = /last seen/i.test(onlineStatus)
+    ? 'offline'
+    : /away/i.test(onlineStatus)
+    ? 'away'
+    : 'online';
 
   return (
     <>
@@ -71,6 +78,12 @@ const ChatRightPane = (props: ChatRightPaneProps) => {
               </Col>
               <Col className='username p-0 d-flex justify-content-center mb-4'>
                 @{convoAssocUsername}
+              </Col>
+              <Col
+                className={`online-status ${
+                  convoInfoErr || /^\.\.\.$/.test(onlineStatus) ? 'hide' : 'show'
+                } ${!convoInfoErr ? badgeStatus : 'offline'} px-1 mb-4`}>
+                {onlineStatus}
               </Col>
             </Col>
           </Row>
