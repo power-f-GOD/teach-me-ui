@@ -13,6 +13,7 @@ export const UPDATE_USER_DATA_REQUEST = 'UPDATE_USER_DATA_REQUEST';
 export const UPDATE_ACADEMIC_DATA = 'UPDATE_ACADEMIC_DATA';
 export const UPDATE_ACADEMIC_DATA_REQUEST = 'UPDATE_ACADEMIC_DATA_REQUEST';
 export const UPDATE_PROFILE_REQUEST = 'UPDATE_PROFILE_REQUEST';
+export const BIO_VALIDATE = 'BIO_VALIDATE';
 
 export const editProfileState: EditProfileState = {
   err: false,

@@ -112,6 +112,13 @@
   height: 3rem;
 }
 
-.underline-hover:hover {
-  text-decoration: underline;
+.underline-hover {
+  &:hover {
+    text-decoration: underline;
+  }
+  font-weight: 410;
+  color: #8ba22a !important;
+  &:visited {
+    color: #597000 !important;
+  }
 }

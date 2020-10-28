@@ -276,6 +276,7 @@ export interface ModalState {
 }
 
 export interface UserData {
+  bio?: string;
   avatar?: string;
   cover_photo?: string;
   profile_photo?: string;

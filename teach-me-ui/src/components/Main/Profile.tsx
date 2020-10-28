@@ -64,11 +64,12 @@ let [
   displayName,
   username,
   email,
-  // dob,
+  dob,
   institution,
   department,
-  level
-] = Array(10).fill('');
+  level,
+  bio
+] = Array(11).fill('');
 
 let basicInfo: InfoProps[];
 let academicInfo: InfoProps[];
@@ -93,10 +94,11 @@ const Profile = (props: any) => {
   displayName = data.displayName || '';
   email = data.email || '';
   email = email + '';
-  // dob = data.date_of_birth?.split('-').reverse().join('-') || '';
+  dob = data.date_of_birth?.split('-').reverse().join('-') || '';
   institution = data.institution || '';
   department = data.department || '';
   level = data.level || '';
+  bio = data.bio || 'Hey there, I use Kanyimuta';
 
   //username of currently authenticated user which will be used to check if the current profile data requested is for another user or currently authenticated user in order to render the views accordingly
   username = '@' + (userData.username || '');
@@ -153,9 +155,10 @@ const Profile = (props: any) => {
   basicInfo = [
     { name: 'Firstname', value: selfView ? userData.firstname : firstname },
     { name: 'Lastname', value: selfView ? userData.lastname : lastname },
-    { name: 'Username', value: selfView ? userData.username : username }
-    // { name: 'Date of birth', value: dob },
-    // { name: 'Email', value: email }
+    { name: 'Username', value: selfView ? userData.username : username },
+    // { name: 'Bio', value: selfView ? userData.bio ? userData.bio : 'Hey there, I use Kanyimuta' : bio },
+    { name: 'Date of birth', value: selfView ? userData.dob : dob },
+    { name: 'Email', value: selfView ? userData.email : email }
   ];
   academicInfo = [
     { name: 'Institution', value: selfView ? userData.institution : institution },
@@ -230,12 +233,15 @@ const Profile = (props: any) => {
             )}
           </div>
 
-          <Col className='d-flex flex-column px-4 pt-2'>
+          <Col className='d-flex flex-column px-4 pt-1'>
             <Col as='span' className='display-name p-0 my-1'>
               {selfView ? userData.displayName : displayName}
             </Col>
-            <Col as='span' className='username p-0 mb-3'>
+            <Col as='span' className='username p-0 mb-1'>
               {selfView? `@${userData.username}` : userId}
+            </Col>
+            <Col as='span' className='bio p-0'>
+            { selfView ? userData.bio : bio }
             </Col>
           </Col>
         </Container>
@@ -429,8 +435,12 @@ const Profile = (props: any) => {
       <Container className='px-0'>
         <Row className='mx-0 mt-5 pt-3 align-items-start'>
           <Col sm={12} md={4} className='hang-in my-3 pb-3 my-sm-0'>
-            {selfView && (
               <Box className='details-card px-3 py-3 mb-3'>
+                <Col as='span' className='bio2 p-0 m-0'>
+                  <Box component='h4' className='p-0 m-0'>
+                    { selfView ? userData.bio : bio }
+                  </Box>
+                </Col>
                 <Col className='py-0 px-2 d-flex justify-content-between align-items-center'>
                   <Box component='h2' className='mr-auto'>
                     Basic Info
@@ -446,7 +456,6 @@ const Profile = (props: any) => {
                   </Row>
                 </Box>
               </Box>
-            )}
             <Box className='details-card px-3 py-3'>
               <Col className='py-0 px-2 d-flex justify-content-between align-items-center'>
                 <Box component='h2' className='mr-auto'>

@@ -38,6 +38,9 @@ import {
 } from '../../../../functions/profile.edit';
 import { dispatch, displayModal } from '../../../../functions';
 import {
+  matchingDepartments,
+  matchingInstitutions,
+  matchingLevels,
   getMatchingInstitutions,
   getMatchingDepartments,
   getMatchingLevels, 
@@ -54,23 +57,16 @@ export const refs: any = {
   dobInput: createRef<HTMLInputElement>(),
   institutionInput: createRef<HTMLInputElement>(),
   departmentInput: createRef<HTMLInputElement>(),
-  levelInput: createRef<HTMLInputElement>()
+  levelInput: createRef<HTMLInputElement>(),
+  bioInput: createRef<HTMLInputElement>()
 };
 
 const Memoize = createMemo();
 
-const removeModal = () => {
-  displayModal(false, true);
-}
-
-const closeModal = (e: any) => {
-  if (String(window.location.hash)  === '') removeModal();
-}
-
-window.onhashchange = closeModal;
 
 const EditProfile = (props: any) => {
   const {
+    bio,
     firstname,
     lastname,
     username,
@@ -79,9 +75,9 @@ const EditProfile = (props: any) => {
     institution,
     department,
     level,
-    matchingInstitutions,
-    matchingDepartments,
-    matchingLevels,
+    matchingInstitutionsProp,
+    matchingDepartmentsProp,
+    matchingLevelsProp,
     userData,
     updateAcademicData,
     updateUserData,
@@ -89,6 +85,16 @@ const EditProfile = (props: any) => {
     updateUsername,
     getUserDetailsProp
   } = props;
+
+  const removeModal = () => {
+    displayModal(false, true);
+  }
+  
+  const closeModal = (e: any) => {
+    if (String(window.location.hash)  === '') removeModal();
+  }
+  
+  window.onhashchange = closeModal;
 
   if (updateAcademicData.status === 'fulfilled'
       && updateUserData.status === 'fulfilled'
@@ -105,7 +111,10 @@ const EditProfile = (props: any) => {
 
   if (getUserDetailsProp.status === 'fulfilled') {
     displayModal(false);
-    dispatch(getUserDetails({status: 'settled'}));
+    dispatch(getUserDetails({status: 'settled', data: []}));
+    dispatch(matchingDepartments({ status: 'settled', data: []}));
+    dispatch(matchingInstitutions({ status: 'settled', data: []}));
+    dispatch(matchingLevels({ status: 'settled', data: []}));
   }
 
   const [hideInstitutionsList, setHideInstitutionsList] = useState(Boolean);
@@ -119,6 +128,7 @@ const EditProfile = (props: any) => {
   const [institutionValue, setInstitutionValue] = useState(`${userData.institution}`)
   const [departmentValue, setDepartmentValue] = useState(`${userData.department}`)
   const [levelValue, setLevelValue] = useState(`${userData.level}`)
+  const [bioValue, setBioValue] = useState(`${userData.bio ? userData.bio : 'Hey there, I use Kanyimuta'}`)
 
   const handleInstitutionChange = useCallback(
     (e: any) => {
@@ -249,7 +259,7 @@ const EditProfile = (props: any) => {
             : 'close'
         }`}
         aria-label='institutions list'>
-        {matchingInstitutions?.data?.slice(0, 15).map((_institution: any, key: number) => (
+        {matchingInstitutionsProp?.data?.slice(0, 15).map((_institution: any, key: number) => (
           <ListItem
             button
             divider
@@ -299,7 +309,7 @@ const EditProfile = (props: any) => {
             : 'close'
         }`}
         aria-label='departments list'>
-        {matchingDepartments?.data
+        {matchingDepartmentsProp?.data
           ?.slice(0, 15)
           .map((_department: string, key: number) => (
             <ListItem
@@ -347,7 +357,7 @@ const EditProfile = (props: any) => {
           level.value && !level.err && !hideLevelsList ? 'open' : 'close'
         }`}
         aria-label='institutions list'>
-        {matchingLevels?.data
+        {matchingLevelsProp?.data
           ?.slice(0, 15)
           .map((_level: string, key: number) => (
             <ListItem
@@ -504,7 +514,7 @@ const EditProfile = (props: any) => {
         </Row>
 
         <Row className='mx-0'>
-          <Col xs={12} sm={16} className='pl-0 shift2'>
+          <Col xs={12} sm={6} className='pl-0 shift2'>
             <Box component='div' marginY='0.25em' minWidth='100%'>
               <Memoize 
                 memoizedComponent={DatePicker} 
@@ -513,6 +523,28 @@ const EditProfile = (props: any) => {
                 onChange={(e: any) => {
                   setDateOfBirthValue(e.target.value);
                 }} 
+              />
+            </Box>
+          </Col>
+          <Col xs={12} sm={6} className='pr-0 shift'>
+            <Box component='div' marginY='0.25em' minWidth='100%'>
+              <Memoize
+                error={bio.err}
+                helperText={bio.helperText}
+                memoizedComponent={TextField}
+                variant='outlined'
+                id='bio'
+                label='Bio'
+                size='medium'
+                type='bio'
+                inputRef={refs.bioInput}
+                fullWidth
+                value={bioValue}
+                onChange={(e: any) => {
+                  setBioValue(e.target.value);
+                  handleEditProfileInputChange(e);
+                }}
+                inputProps={inputProps}
               />
             </Box>
           </Col>
@@ -556,7 +588,7 @@ const EditProfile = (props: any) => {
                 }}
                 inputProps={inputProps}
               />
-              {matchingInstitutions.status === 'pending' && (
+              {matchingInstitutionsProp.status === 'pending' && (
                 <LinearProgress color='primary' />
               )}
               {matchingInstitutionsList}
@@ -594,7 +626,7 @@ const EditProfile = (props: any) => {
                 }}
                 inputProps={inputProps}
               />
-              {matchingDepartments.status === 'pending' && (
+              {matchingDepartmentsProp.status === 'pending' && (
                 <LinearProgress color='primary' />
               )}
               {matchingDepartmentsList}
@@ -635,13 +667,13 @@ const EditProfile = (props: any) => {
                 }}
                 inputProps={inputProps}
               />
-              {matchingLevels.status === 'pending' && (
+              {matchingLevelsProp.status === 'pending' && (
                 <LinearProgress color='primary' />
               )}
               {matchingLevelsList}
             </Box>
           </Col>
-          <Col xs={12} sm={6} className='pr-0' key='button'>
+          <Col xs={12} sm={6} className='pr-0 shift' key='button'>
             <Box component='div' marginY='0.25em' minWidth='100%'>
               <Memoize
                 memoizedComponent={Button}
@@ -722,6 +754,7 @@ function DatePicker({ dob }: any) {
 
 const mapStateToProps = (state: any) => {
   return {
+    bio: state.bio,
     userData: state.userData,
     firstname: state.firstname,
     lastname: state.lastname,
@@ -732,10 +765,10 @@ const mapStateToProps = (state: any) => {
     institution: state.institution,
     department: state.department,
     level: state.level,
-    matchingInstitutions: state.matchingInstitutions,
-    matchingDepartments: state.matchingDepartments,
+    matchingInstitutionsProp: state.matchingInstitutions,
+    matchingDepartmentsProp: state.matchingDepartments,
     createDepartment: state.createDepartment,
-    matchingLevels: state.matchingLevels,
+    matchingLevelsProp: state.matchingLevels,
     createLevel: state.createLevel,
     updateEmail: state.updateEmail,
     updateUsername: state.updateUsername,

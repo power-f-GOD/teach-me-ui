@@ -55,7 +55,7 @@ const LeftPane = (props: any) => {
               as='span'
               className='status p-0 px-3 d-flex safari-fix-d-block align-content-around'>
               <CreateIcon className='mr-2' />
-              Currently creating some amazing sturvs...
+              {userData.bio || 'Hey there, I am on Kanyimuta'}
             </Col>
           </Col>
         </Row>

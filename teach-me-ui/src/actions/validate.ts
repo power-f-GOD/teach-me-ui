@@ -21,6 +21,7 @@ import {
   POPULATE_MATCHING_LEVELS,
   GET_MATCHING_DEPARTMENTS,
   GET_MATCHING_LEVELS,
+  BIO_VALIDATE,
   InstitutionInputState,
   apiBaseURL as baseURL
 } from '../constants';
@@ -29,6 +30,13 @@ import { logError, getState, callNetworkStatusCheckerFor } from '../functions';
 export const validateFirstname = (payload: BasicInputState): ReduxAction => {
   return {
     type: FIRSTNAME_VALIDATE,
+    payload
+  };
+};
+
+export const validateBio = (payload: BasicInputState): ReduxAction => {
+  return {
+    type: BIO_VALIDATE,
     payload
   };
 };
