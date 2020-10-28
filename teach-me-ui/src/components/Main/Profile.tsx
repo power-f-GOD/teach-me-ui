@@ -64,7 +64,7 @@ let [
   displayName,
   username,
   email,
-  dob,
+  // dob,
   institution,
   department,
   level,
@@ -94,7 +94,7 @@ const Profile = (props: any) => {
   displayName = data.displayName || '';
   email = data.email || '';
   email = email + '';
-  dob = data.date_of_birth?.split('-').reverse().join('-') || '';
+  // dob = data.date_of_birth?.split('-').reverse().join('-') || '';
   institution = data.institution || '';
   department = data.department || '';
   level = data.level || '';
@@ -157,8 +157,8 @@ const Profile = (props: any) => {
     { name: 'Lastname', value: selfView ? userData.lastname : lastname },
     { name: 'Username', value: selfView ? userData.username : username },
     // { name: 'Bio', value: selfView ? userData.bio ? userData.bio : 'Hey there, I use Kanyimuta' : bio },
-    { name: 'Date of birth', value: selfView ? userData.dob : dob },
-    { name: 'Email', value: selfView ? userData.email : email }
+    // { name: 'Date of birth', value: selfView ? userData.dob : dob },
+    // { name: 'Email', value: selfView ? userData.email : email }
   ];
   academicInfo = [
     { name: 'Institution', value: selfView ? userData.institution : institution },
