@@ -53,7 +53,8 @@ import {
   conversationInfo,
   getConversationMessages,
   conversations,
-  conversation
+  conversation,
+  conversationsMessages
 } from '../../actions/chat';
 import {
   dispatch,
@@ -64,7 +65,9 @@ import {
   timestampFormatter,
   addEventListenerOnce,
   emitUserOnlineStatus,
-  promisedDispatch
+  promisedDispatch,
+  loopThru,
+  getState
 } from '../../functions/utils';
 import { placeHolderDisplayName } from './Chat';
 import {
@@ -98,7 +101,7 @@ interface ChatMiddlePaneProps {
   convoUserTyping: string;
   convoType: string;
   convoDisplayName: string;
-  convoAvatar: string;
+  convoProfilePhoto: string;
   convoAssocUsername: string;
   convoUnreadCount: number;
   convoMessages: Partial<APIMessageResponse>[];
@@ -106,12 +109,14 @@ interface ChatMiddlePaneProps {
   convoMessagesStatus: SearchState['status'];
   convoMessagesStatusText: string;
   convoInfoErr: boolean;
+  convosErr: boolean;
   convoInfoData: ConversationInfo['data'];
   convoInfoStatus: ConversationInfo['status'];
-  convoInfoOnlineStatus: OnlineStatus;
+  convoOnlineStatus: OnlineStatus;
   convoInfoNewMessage: Partial<APIMessageResponse>;
-  convoInfoLastSeen: number;
+  convoLastSeen: number;
   convoLastReadDate: number;
+  activePaneIndex: number;
   setOnlineStatus: Function;
   handleSetActivePaneIndex(index: number): any;
 }
@@ -154,9 +159,10 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
     convoId,
     convoFriendship,
     convoAssocUsername,
-    convoInfoOnlineStatus,
+    convoOnlineStatus,
     convoMessages: data,
     convoMessagesStatus,
+    activePaneIndex,
     webSocket: socket
   } = props;
   const convoMessages = data as Partial<APIMessageResponse>[];
@@ -204,7 +210,11 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
   }, [convoId, cid]);
 
   useEffect(() => {
-    if (!!convoMessages[0] && userData?.online_status === 'ONLINE') {
+    if (
+      +activePaneIndex! > -1 &&
+      !!convoMessages[0] &&
+      userData?.online_status === 'ONLINE'
+    ) {
       const [_isOpen, _isMinimized] = [!!chat, chat === 'm2'];
       const isSameCid = convoId === cid;
       const userId = userData.id;
@@ -213,67 +223,74 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
         dispatch(conversations({ data: [{ unread_count: 0, _id: convoId }] }));
       }
 
-      for (const i in convoMessages) {
-        const message = { ...convoMessages[i] };
-        const isSeen = message.seen_by?.includes(userId);
+      loopThru(
+        convoMessages,
+        (convoMessage): any => {
+          const message = { ...convoMessage };
 
-        if (!message.sender_id || userId === message.sender_id || isSeen) {
-          continue;
-        }
+          if (!message.sender_id || userId === message.sender_id) {
+            return;
+          }
 
-        try {
-          if (socket && socket.readyState === 1 && isSameCid) {
-            if (_isOpen) {
-              const isDelivered = message.delivered_to?.includes(userId);
+          const isSeen = message.seen_by?.includes(userId);
 
-              if (!isDelivered) {
-                socket!.send(
-                  JSON.stringify({
-                    message_id: message._id,
-                    pipe: CHAT_MESSAGE_DELIVERED
-                  })
-                );
+          if (isSeen) {
+            return 'break';
+          }
 
-                dispatch(
-                  conversationMessages({
-                    statusText: 'from socket',
-                    pipe: CHAT_MESSAGE_DELIVERED,
-                    data: [{ delivered_to: [userId], _id: message._id }]
-                  })
-                );
-              }
+          try {
+            if (socket && socket.readyState === 1 && isSameCid) {
+              if (_isOpen) {
+                const isDelivered = message.delivered_to?.includes(userId);
 
-              if (!_isMinimized) {
-                socket!.send(
-                  JSON.stringify({
-                    message_id: message._id,
-                    pipe: CHAT_READ_RECEIPT
-                  })
-                );
-                dispatch(
-                  conversationMessages({
-                    statusText: 'from socket',
-                    pipe: CHAT_READ_RECEIPT,
-                    data: [{ seen_by: [userId], _id: message._id }]
-                  })
-                );
-              }
-              // if (window.innerWidth < 992) {
-              // }
-            } else continue;
-          } else break;
-        } catch (e) {
-          emitUserOnlineStatus(false, true, {
-            open: true,
-            message:
-              e +
-              'An error occurred. Could not establish connection with server.',
-            severity: 'error'
-          });
-          console.error('An error occurred. Error:', e);
-          break;
-        }
-      }
+                if (!isDelivered) {
+                  socket!.send(
+                    JSON.stringify({
+                      message_id: message._id,
+                      pipe: CHAT_MESSAGE_DELIVERED
+                    })
+                  );
+
+                  dispatch(
+                    conversationMessages({
+                      statusText: 'from socket',
+                      pipe: CHAT_MESSAGE_DELIVERED,
+                      data: [{ delivered_to: [userId], _id: message._id }]
+                    })
+                  );
+                }
+
+                if (!_isMinimized) {
+                  socket!.send(
+                    JSON.stringify({
+                      message_id: message._id,
+                      pipe: CHAT_READ_RECEIPT
+                    })
+                  );
+                  dispatch(
+                    conversationMessages({
+                      statusText: 'from socket',
+                      pipe: CHAT_READ_RECEIPT,
+                      data: [{ seen_by: [userId], _id: message._id }]
+                    })
+                  );
+                }
+              } else return;
+            } else return 'break';
+          } catch (e) {
+            emitUserOnlineStatus(false, true, {
+              open: true,
+              message:
+                e +
+                'An error occurred. Could not establish connection with server.',
+              severity: 'error'
+            });
+            console.error('An error occurred. Error:', e);
+            return 'break';
+          }
+        },
+        { rightToLeft: true }
+      );
     }
   }, [
     cid,
@@ -281,7 +298,8 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
     chat,
     userData,
     convoMessages,
-    convoInfoOnlineStatus,
+    convoOnlineStatus,
+    activePaneIndex,
     socket
   ]);
 
@@ -291,8 +309,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
         <Memoize
           memoizedComponent={MiddlePaneHeader}
           convoId={convoId}
-          convoInfoOnlineStatus={convoInfoOnlineStatus}
-          convoMessagesStatus={convoMessagesStatus}
+          convoOnlineStatus={convoOnlineStatus}
           setMessageHead={setMessageHead}
           selectedMessages={selectedMessages}
           setClearSelections={setClearSelections}
@@ -393,9 +410,8 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
 };
 
 function MiddlePaneHeader(props: {
-  convoMessagesStatus: SearchState['status'];
   convoId: string;
-  convoInfoOnlineStatus: OnlineStatus;
+  convoOnlineStatus: OnlineStatus;
   setMessageHead: Function;
   setSelectedMessages: Function;
   setClearSelections: Function;
@@ -403,20 +419,17 @@ function MiddlePaneHeader(props: {
   webSocket: WebSocket;
 }) {
   const {
-    convoMessagesStatus,
     convoId,
-    convoInfoOnlineStatus,
+    convoOnlineStatus,
     setMessageHead,
     selectedMessages,
     setClearSelections,
     setSelectedMessages,
     webSocket: socket
   } = props;
-  const {
-    chatState: _chatState,
-    convoInfoData,
-    handleSetActivePaneIndex
-  } = useContext(MiddlePaneHeaderContext);
+  const { chatState: _chatState, handleSetActivePaneIndex } = useContext(
+    MiddlePaneHeaderContext
+  );
   const { isMinimized, isOpen } = _chatState as ChatState;
 
   const numOfSelectedMessages = Object.keys(selectedMessages).length;
@@ -450,8 +463,19 @@ function MiddlePaneHeader(props: {
 
   const clickTimeout: any = useRef();
   const handleCloseChatClick = useCallback(() => {
-    if (!isOpen || convoMessagesStatus === 'pending') {
+    if (!isOpen) {
       return;
+    }
+
+    //store/save updated convoMessages in state before close
+    if (convoId) {
+      dispatch(
+        conversationsMessages({
+          convoId,
+          statusText: 'replace messages',
+          data: { [convoId]: [...getState().conversationMessages.data] }
+        })
+      );
     }
 
     dispatch(conversation(''));
@@ -468,7 +492,7 @@ function MiddlePaneHeader(props: {
       );
       window.history.replaceState({}, '', window.location.pathname);
     }, 500);
-  }, [isOpen, convoMessagesStatus]);
+  }, [isOpen, convoId]);
 
   const handleUserInfoOptionClick = useCallback(() => {
     handleMinimizeChatClick(false);
@@ -528,9 +552,8 @@ function MiddlePaneHeader(props: {
         } px-2 mx-0`}
         ref={headerNameControlWrapperRef}>
         <Memoize
-          memoizedComponent={MiddlePandeHeaderColleagueNameAndStatus}
-          convoInfoOnlineStatus={convoInfoOnlineStatus}
-          convoInfoData={convoInfoData}
+          memoizedComponent={MiddlePandeHeaderConversationNameAndStatus}
+          convoOnlineStatus={convoOnlineStatus}
           handleConversationsMenuClick={handleConversationsMenuClick}
           handleUserInfoOptionClick={handleUserInfoOptionClick}
         />
@@ -630,32 +653,30 @@ let renderAwayDateTimeout: any;
 let _canDisplayAwayDate = false;
 let lastSeenForAway = Date.now();
 
-function MiddlePandeHeaderColleagueNameAndStatus(props: {
-  convoInfoOnlineStatus: OnlineStatus;
-  convoInfoData: ConversationInfo['data'];
+function MiddlePandeHeaderConversationNameAndStatus(props: {
+  convoOnlineStatus: OnlineStatus;
   handleConversationsMenuClick: React.MouseEventHandler;
   handleUserInfoOptionClick: React.MouseEventHandler;
 }) {
   const {
-    convoInfoOnlineStatus,
-    convoInfoData,
+    convoOnlineStatus,
     handleConversationsMenuClick,
     handleUserInfoOptionClick
   } = props;
   const {
     convoId,
     convoDisplayName,
-    convoAvatar,
+    convoProfilePhoto,
+    convosErr,
     convoType,
-    convoInfoStatus,
     convoUserTyping,
-    convoInfoLastSeen,
+    convoLastSeen,
     setOnlineStatus
   } = useContext(ColleagueNameAndStatusContext);
   const [canDisplayAwayDate, setCanDisplayAwayDate] = useState(false);
   const [lastSeenDate, lastSeenTime] = [
-    formatMapDateString(convoInfoData?.last_seen as number),
-    timestampFormatter(convoInfoData?.last_seen)
+    formatMapDateString(convoLastSeen as number),
+    timestampFormatter(convoLastSeen)
   ];
   const lastAwayDate = `away ${
     canDisplayAwayDate ? 'since ' + lastSeenTime + ', ' + lastSeenDate : ''
@@ -666,9 +687,9 @@ function MiddlePandeHeaderColleagueNameAndStatus(props: {
   )}`;
   const onlineStatus = convoUserTyping
     ? 'typing...'
-    : convoInfoOnlineStatus === 'ONLINE'
+    : convoOnlineStatus === 'ONLINE'
     ? 'online'
-    : convoInfoOnlineStatus === 'AWAY'
+    : convoOnlineStatus === 'AWAY'
     ? lastAwayDate
     : lastSeenDate
     ? lastOnlineDate
@@ -702,14 +723,14 @@ function MiddlePandeHeaderColleagueNameAndStatus(props: {
   }, [onlineStatus, setOnlineStatus]);
 
   useEffect(() => {
-    lastSeenForAway = convoInfoLastSeen as number;
+    lastSeenForAway = convoLastSeen as number;
     displayAwayDate();
 
-    if (convoId && convoInfoOnlineStatus !== 'AWAY') {
+    if (convoId && convoOnlineStatus !== 'AWAY') {
       clearTimeout(renderAwayDateTimeout);
       setCanDisplayAwayDate(false);
     }
-  }, [convoId, convoInfoOnlineStatus, convoInfoLastSeen, displayAwayDate]);
+  }, [convoId, convoOnlineStatus, convoLastSeen, displayAwayDate]);
 
   return (
     <Col as='span' className='conversation-name-wrapper'>
@@ -737,9 +758,7 @@ function MiddlePandeHeaderColleagueNameAndStatus(props: {
               horizontal: 'right'
             }}
             className={`online-badge ${
-              convoInfoStatus === 'fulfilled'
-                ? convoInfoOnlineStatus?.toLowerCase()
-                : 'offline'
+              !convosErr ? convoOnlineStatus?.toLowerCase() : 'offline'
             }`}
             overlap='circle'
             variant='dot'>
@@ -747,26 +766,22 @@ function MiddlePandeHeaderColleagueNameAndStatus(props: {
               component='span'
               className='chat-avatar'
               alt={convoDisplayName}
-              src={convoInfoData?.profile_photo || ''}
+              src={convoProfilePhoto}
             />
           </Badge>{' '}
           <Col as='span' className='ml-2 p-0'>
             <Col
               as='span'
               className={`display-name ${
-                convoInfoStatus === 'pending'
-                  ? 'status-hidden'
-                  : !convoInfoData?.last_seen
-                  ? 'status-hidden'
-                  : ''
+                !convoLastSeen || convosErr ? 'status-hidden' : ''
               } p-0`}>
               {convoDisplayName ?? placeHolderDisplayName}
             </Col>
             <Col
               as='span'
-              className={`status ${
-                convoInfoStatus === 'fulfilled' && convoInfoData?.last_seen
-                  ? 'show'
+              className={`status ${convoLastSeen && !convosErr ? 'show' : ''} ${
+                /typing/.test(onlineStatus)
+                  ? 'font-bold theme-secondary-lighter'
                   : ''
               } p-0`}>
               {onlineStatus}
@@ -783,7 +798,7 @@ function MiddlePandeHeaderColleagueNameAndStatus(props: {
             component='span'
             className='chat-avatar ml-0'
             alt='Emmanuel Sunday'
-            src={`/images/${convoAvatar}`}
+            src={`/images/${convoProfilePhoto}`}
           />
           <Col as='span' className='ml-2 p-0'>
             {convoDisplayName ?? placeHolderDisplayName}
@@ -1532,11 +1547,19 @@ function MessageBox(props: {
 
   const handleMsgInputChange = useCallback(
     (e: any) => {
+      const value = e.target.value.trim();
       const scrollView = scrollViewRef.current!;
 
-      messageDrafts[convoId as string] = e.target.value;
+      messageDrafts[convoId as string] = value;
 
-      if (socket && socket.readyState === 1) {
+      if (
+        socket &&
+        socket.readyState === 1 &&
+        !/Tab|Arrow|Shift|Meta|Control|Alt/i.test(e?.key) &&
+        !e.ctrlKey &&
+        !e.metaKey &&
+        value
+      ) {
         socket.send(
           JSON.stringify({ conversation_id: convoId, pipe: CHAT_TYPING })
         );

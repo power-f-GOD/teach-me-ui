@@ -17,7 +17,7 @@ import { InfoCard } from '../crumbs/Cards';
 interface ChatRightPaneProps {
   convoType: string;
   convoDisplayName: string;
-  convoAvatar: string;
+  convoProfilePhoto: string;
   convoAssocUsername: string;
   convoInfoData?: ConversationInfo['data'];
   convoInfoErr: boolean;
@@ -32,6 +32,7 @@ const ChatRightPane = (props: ChatRightPaneProps) => {
     convoAssocUsername,
     convoInfoErr,
     convoInfoData,
+    convoProfilePhoto,
     onlineStatus,
     handleSetActivePaneIndex
   } = props;
@@ -69,7 +70,7 @@ const ChatRightPane = (props: ChatRightPaneProps) => {
                 component='span'
                 className='chat-avatar d-inline-block'
                 alt={convoDisplayName}
-                src={convoInfoData?.profile_photo || ''}
+                src={convoProfilePhoto || ''}
               />
             </Col>
             <Col className='p-0 text-center'>
@@ -81,8 +82,14 @@ const ChatRightPane = (props: ChatRightPaneProps) => {
               </Col>
               <Col
                 className={`online-status ${
-                  convoInfoErr || /^\.\.\.$/.test(onlineStatus) ? 'hide' : 'show'
-                } ${!convoInfoErr ? badgeStatus : 'offline'} px-1 mb-4`}>
+                  convoInfoErr || /^\.\.\.$/.test(onlineStatus)
+                    ? 'hide'
+                    : 'show'
+                } ${!convoInfoErr ? badgeStatus : 'offline'} ${
+                  /typing/.test(onlineStatus)
+                    ? 'font-bold theme-secondary-lighter'
+                    : ''
+                } px-1 mb-4`}>
                 {onlineStatus}
               </Col>
             </Col>

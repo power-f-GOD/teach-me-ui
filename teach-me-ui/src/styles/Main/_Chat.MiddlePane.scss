@@ -212,8 +212,12 @@
 
   > *,
   > div {
-    max-width: 35rem;
+    max-width: calc(min(95%, 40rem));
     align-self: center;
+  }
+
+  .new-messages-bar {
+    max-width: calc(min(110%, 42rem)) !important;
   }
 
   &.custom-scroll-bar {
