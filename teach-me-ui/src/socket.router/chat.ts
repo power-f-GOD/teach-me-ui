@@ -105,14 +105,6 @@ export default function chat(message: APIMessageResponse & UserData) {
                 });
               }
             }
-
-            // dispatch(
-            //   conversationsMessages({
-            //     pipe,
-            //     statusText: 'update from socket',
-            //     data: { [conversation_id]: [message] }
-            //   })
-            // );
           } else {
             if (convoId === conversation_id && convoId) {
               updateConversation(convoId, {
