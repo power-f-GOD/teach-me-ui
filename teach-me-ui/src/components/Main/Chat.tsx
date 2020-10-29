@@ -135,7 +135,6 @@ const ChatBox = (props: ChatBoxProps) => {
     conversations,
     chatState: _chatState,
     conversationMessages: _conversationMessages,
-    // conversationsMessages: _conversationsMessages,
     conversationInfo: _conversationInfo,
     userData,
     webSocket: socket
@@ -148,9 +147,11 @@ const ChatBox = (props: ChatBoxProps) => {
     friendship: convoFriendship,
     type: convoType,
     conversation_name: convoDisplayName,
-    avatar: convoAvatar,
     unread_count: convoUnreadCount,
-    last_read: convoLastReadDate
+    last_read: convoLastReadDate,
+    online_status: convoOnlineStatus,
+    last_seen: convoLastSeen,
+    profile_photo: convoProfilePhoto
   } = _conversation;
   const {
     data: convoMessages,
@@ -163,7 +164,6 @@ const ChatBox = (props: ChatBoxProps) => {
     status: convoInfoStatus,
     data: convoInfoData,
     new_message: convoInfoNewMessage,
-    online_status: convoInfoOnlineStatus,
     user_typing: convoUserTyping
   } = _conversationInfo;
   const {
@@ -171,7 +171,6 @@ const ChatBox = (props: ChatBoxProps) => {
     status: convosStatus,
     data: convosData
   } = conversations;
-  const convoInfoLastSeen = convoInfoData?.last_seen;
   const { chat, id, cid } = queryString.parse(window.location.search);
   const unopened_count = conversations.data?.reduce(
     (a, conversation: APIConversationResponse) =>
@@ -276,8 +275,6 @@ const ChatBox = (props: ChatBoxProps) => {
   const middlePaneHeaderProviderValue = useMemo(() => {
     return {
       chatState: _chatState,
-      convoInfoData,
-      convoAvatar,
       convoType,
       convoInfoStatus,
       convoUserTyping,
@@ -285,8 +282,6 @@ const ChatBox = (props: ChatBoxProps) => {
     };
   }, [
     _chatState,
-    convoInfoData,
-    convoAvatar,
     convoType,
     convoInfoStatus,
     convoUserTyping,
@@ -297,21 +292,23 @@ const ChatBox = (props: ChatBoxProps) => {
     return {
       convoId,
       convoDisplayName,
-      convoAvatar,
+      convoProfilePhoto,
       convoType,
       convoInfoStatus,
       convoUserTyping,
-      convoInfoLastSeen,
+      convoLastSeen,
+      convosErr,
       setOnlineStatus
     };
   }, [
     convoId,
     convoDisplayName,
-    convoAvatar,
+    convoProfilePhoto,
     convoType,
     convoInfoStatus,
     convoUserTyping,
-    convoInfoLastSeen,
+    convoLastSeen,
+    convosErr,
     setOnlineStatus
   ]);
 
@@ -477,7 +474,7 @@ const ChatBox = (props: ChatBoxProps) => {
 
         <Col
           as='section'
-          lg={convoAssocUsername ? 6 : 9}
+          lg={convoId ? 6 : 9}
           className={`chat-middle-pane ${
             activePaneIndex === 1 ? 'active-pane ' : ''
           }d-flex flex-column p-0 `}
@@ -494,9 +491,10 @@ const ChatBox = (props: ChatBoxProps) => {
                   convoId={convoId}
                   convoFriendship={convoFriendship}
                   convoAssocUsername={convoAssocUsername}
-                  convoInfoOnlineStatus={convoInfoOnlineStatus}
+                  convoOnlineStatus={convoOnlineStatus}
                   convoMessages={convoMessages}
                   convoMessagesStatus={convoMessagesStatus}
+                  activePaneIndex={activePaneIndex}
                   chatState={_chatState}
                   webSocket={socket}
                 />
@@ -519,7 +517,7 @@ const ChatBox = (props: ChatBoxProps) => {
               convoInfoErr={convoInfoErr}
               convoInfoData={convoInfoData}
               convoDisplayName={convoDisplayName}
-              convoAvatar={convoAvatar}
+              convoProfilePhoto={convoProfilePhoto}
               convoAssocUsername={convoAssocUsername}
               onlineStatus={onlineStatus}
               handleSetActivePaneIndex={handleSetActivePaneIndex}

@@ -118,17 +118,6 @@
       }
     }
 
-    .chat-scroll-view {
-      > *,
-      > div {
-        max-width: 40rem;
-      }
-
-      .new-messages-bar {
-        max-width: 42rem !important;
-      }
-    }
-
     .chat-right-pane {
       opacity: 0;
       animation: unset;
@@ -147,10 +136,6 @@
 
     .controls {
       max-width: 3.25rem;
-    }
-
-    .msg-wrapper {
-      max-width: 80%;
     }
   }
 }
@@ -380,7 +365,6 @@
   //chat box style(s)
   .ChatBox {
     .msg-wrapper {
-      max-width: 90%;
       font-size: 0.95rem;
     }
   }
@@ -450,7 +434,6 @@
     justify-content: center;
     align-items: center;
     font-style: italic;
-    
   }
 }
 
