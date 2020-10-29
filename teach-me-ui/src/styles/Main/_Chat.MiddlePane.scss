@@ -405,22 +405,22 @@ body.mobile {
 
   .chat-head {
     background: rgba(0, 0, 0, 0.1);
-    border-radius: inherit;
+    border-radius: 1.25rem;
     border-bottom-left-radius: 0.25rem;
     border-bottom-right-radius: 0.25rem;
     padding: 0.35rem 0.65rem;
-    width: calc(100% - 0.5rem);
-    margin: 0.25rem 0.25rem 0;
+    width: calc(100% - 0.6rem);
+    margin: 0.25rem 0.3rem 0;
     font-size: 0.9rem;
     border: none;
-    max-height: 5.65rem;
+    max-height: 5.55rem;
 
     &.self {
-      border-bottom: 0.2rem solid $theme-primary-v7;
+      border-bottom: 0.125rem solid $theme-primary-v7;
     }
 
     &.other {
-      border-bottom: 0.2rem solid purple;
+      border-bottom: 0.125rem solid purple;
     }
   }
 }

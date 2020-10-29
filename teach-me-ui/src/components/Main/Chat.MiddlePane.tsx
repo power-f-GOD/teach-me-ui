@@ -1387,7 +1387,8 @@ function ScrollView(props: {
         const isLastOfStack =
           nextSenderId !== sender_id || !nextAndSelfSentSameDay || nextDelayed;
 
-        const shouldRenderDate = !prevAndSelfSentSameDay;
+        const shouldRenderDate =
+          !prevAndSelfSentSameDay && convoUnreadCount !== convoMessages.length;
         const className = `${prevDelayed ? 'delayed mt-3' : ''} ${
           isFirstOfStack ? 'first' : ''
         } ${isOnlyOfStack ? 'only' : ''} ${isLastOfStack ? 'last' : ''} ${
@@ -1405,7 +1406,7 @@ function ScrollView(props: {
 
         return (
           <React.Fragment key={key}>
-            {shouldRenderDate && convoUnreadCount !== convoMessages.length && (
+            {shouldRenderDate && (
               <Memoize
                 memoizedComponent={ChatDate}
                 scrollView={scrollView as HTMLElement}
