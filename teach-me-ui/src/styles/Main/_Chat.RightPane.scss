@@ -66,15 +66,14 @@
       font-size: 0.9rem;
       position: relative;
       margin-left: 1rem;
-      display: inline-block !important;
-      width: auto;
-      font-weight: bold;
+      display: inline;
 
       &::before {
         @include before-or-after(
           $t: 0.125rem,
-          $h: 1.15rem,
-          $w: 1.15rem,
+          $h: 1rem,
+          $w: 1rem,
+          $tr: 0.3s,
           $zi: unset,
           $l: -1.25rem,
           $br: 50%,

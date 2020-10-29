@@ -58,7 +58,7 @@ const Main = (props: any) => {
 
       socket.addEventListener('close', () => {
         console.log('Sockets called it a day! :|');
-        emitUserOnlineStatus(navigator.onLine, !navigator.onLine, {
+        emitUserOnlineStatus(false, !navigator.onLine, {
           message: navigator.onLine ? "You're disconnected." : null
         })();
       });

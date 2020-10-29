@@ -290,7 +290,7 @@ $msg-radius: 1.5rem;
     white-space: pre-wrap;
     word-break: break-word;
     width: auto;
-    max-width: 80%;
+    max-width: calc(min(32rem, 90%));
 
     &::before {
       position: absolute;
@@ -400,7 +400,7 @@ $msg-radius: 1.5rem;
   }
 
   &::before {
-    background-color: rgba(0, 0, 0, 0.35);
+    background-color: rgba(0, 0, 0, 0.3);
     border: {
       right: none;
       left: none;
