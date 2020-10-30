@@ -526,6 +526,10 @@ export const conversationsMessages = (
     ) ?? {}) as LoopFind<APIMessageResponse>;
 
     if (initialMessage || pipe === CHAT_NEW_MESSAGE) {
+      if (newConvoMessage.timestamp_id) {
+        delete newConvoMessage.timestamp_id;
+      }
+
       switch (pipe) {
         case CHAT_NEW_MESSAGE: {
           //see code after switch block for the update
@@ -552,6 +556,7 @@ export const conversationsMessages = (
             !initialMessage.seen_by!?.includes(seerId) &&
             seerId
           ) {
+            console.log('inextensible:', initialMessage, seerId);
             initialMessage.seen_by?.push(seerId);
             prevConvoMessages[index] = initialMessage;
           }

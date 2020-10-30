@@ -131,14 +131,7 @@ export const Message = (props: {
         delay(850).then(() => dispatch(conversationInfo({ new_message: {} })));
       }
 
-      messageEl.classList.add('fade-in');
-      addEventListenerOnce(
-        messageEl,
-        () => {
-          messageEl.classList.remove('fade-in');
-        },
-        'animationend'
-      );
+      
     }
   }, [
     messageElRef,
@@ -185,7 +178,9 @@ export const Message = (props: {
       id={`message-${message._id}`}
       className={`${type === 'incoming' ? 'incoming' : 'outgoing'} ${
         selected ? 'selected' : ''
-      } msg-container ${className} ${deleted ? 'deleted' : ''} p-0 mx-0`}
+      } msg-container ${className} ${
+        deleted ? 'deleted' : ''
+      } fade-in-slide-down p-0 mx-0`}
       onKeyUp={handleSelectMessageForEnterPress}
       onClick={canSelectByClick ? handleSelectMessage : undefined}
       tabIndex={0}
@@ -457,20 +452,6 @@ export const ChatDate = ({
   }, [dateStamp, chatDateSticky, pxRatio, scrollView]);
 
   useEffect(() => {
-    const chatDateWrapper = chatDateWrapperRef.current;
-
-    if (chatDateWrapper) {
-      chatDateWrapper.classList.add('fade-in');
-      addEventListenerOnce(
-        chatDateWrapper,
-        () => chatDateWrapper.classList.remove('fade-in'),
-        'animationend'
-      );
-    }
-  }, []);
-
-  useEffect(() => {
-    //remove 2 > 3 in if expression
     if (scrollView && chatDateWrapperRef.current) {
       scrollView.addEventListener('scroll', stickDate);
       chatDateSticky.style.opacity =
@@ -491,7 +472,7 @@ export const ChatDate = ({
   return (
     <div
       id={String(timestamp)}
-      className='chat-date-wrapper text-center mt-5 mb-4'
+      className='chat-date-wrapper text-center fade-in-slide-down mt-5 mb-4'
       ref={chatDateWrapperRef}>
       <Box component='span' className='chat-date d-inline-block'>
         {dateStamp}
