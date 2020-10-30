@@ -1,11 +1,26 @@
 .fade-in {
-  animation: fadeIn 0.5s;
+  animation: fadeInSlideUp 0.5s;
 }
 
-@keyframes fadeIn {
+@keyframes fadeInSlideUp {
   from {
     opacity: 0;
     transform: translateY(1.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-slide-down {
+  animation: fadeInSlideDown 0.5s;
+}
+
+@keyframes fadeInSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-1rem);
   }
   to {
     opacity: 1;
