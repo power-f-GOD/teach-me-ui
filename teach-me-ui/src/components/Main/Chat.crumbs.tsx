@@ -472,7 +472,7 @@ export const ChatDate = ({
   return (
     <div
       id={String(timestamp)}
-      className='chat-date-wrapper text-center fade-in-slide-down mt-5 mb-4'
+      className='chat-date-wrapper text-center fade-in-opacity mt-5 mb-4'
       ref={chatDateWrapperRef}>
       <Box component='span' className='chat-date d-inline-block'>
         {dateStamp}

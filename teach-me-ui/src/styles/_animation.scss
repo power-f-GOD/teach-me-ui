@@ -13,6 +13,19 @@
   }
 }
 
+.fade-in-opacity {
+  animation: fadeInOpacity 0.5s;
+}
+
+@keyframes fadeInOpacity {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .fade-in-slide-down {
   animation: fadeInSlideDown 0.5s;
 }
