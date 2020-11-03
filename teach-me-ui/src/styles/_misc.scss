@@ -213,7 +213,7 @@ a {
   &[class*='primary'],
   &[class*='Secondary'],
   &[class*='btn-secondary'] {
-    min-height: 2.5rem;
+    min-height: 2.25rem;
     border-radius: 0.25rem;
     background-color: $theme-primary;
 
@@ -452,6 +452,10 @@ div {
   max-width: 100%;
 }
 
+.MuiToolbar-regular {
+  height: 3.5rem !important;
+}
+
 .logo {
   // min-width: 10rem;
   width: auto !important;
@@ -625,9 +629,10 @@ div {
   pointer-events: none;
 }
 
-#background-grey{
+#background-grey {
   transition: 0s;
-  &::before, &::after {
-    background: #aaa!important;
+  &::before,
+  &::after {
+    background: #aaa !important;
   }
 }

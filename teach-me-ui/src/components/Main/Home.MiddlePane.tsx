@@ -61,7 +61,7 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
     fetchPostsFn(type, userId);
     // eslint-disable-next-line
   }, [props.type]);
-  const posts = document.querySelectorAll('.post-list-page');
+  const posts = document.querySelectorAll('.Post');
   useEffect(() => {
     if (props.type === 'FEED') {
       posts.forEach((post) => {

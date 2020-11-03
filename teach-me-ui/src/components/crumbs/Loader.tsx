@@ -34,7 +34,7 @@ const Loader = () => {
   }, []);
 
   return (
-    <Box className='loader-wrapper fade-in'>
+    <Box className='loader-wrapper fade-in-opacity'>
       <Box textAlign='center'>
         <Box>
           <CircularProgress color='inherit' size='3rem' thickness={4} />

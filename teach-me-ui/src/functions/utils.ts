@@ -384,7 +384,7 @@ export async function populateStateWithUserData(
 }
 
 export const logError = (action: Function) => (error: any) => {
-  let message = /network/i.test(error.message)
+  let message = /network|connection/i.test(error.message)
     ? 'A network error occurred. Check your internet connection'
     : error.message;
 
@@ -400,7 +400,7 @@ export const logError = (action: Function) => (error: any) => {
       message: navigator.onLine
         ? `${message[0].toUpperCase()}${message.slice(1)}.`
         : 'You are offline.',
-      severity: navigator.onLine && !/network/i.test(message) ? 'error' : 'info'
+      severity: navigator.onLine && !/network|connection/i.test(message) ? 'error' : 'info'
     })
   );
   console.error('An error occured: ', error);
