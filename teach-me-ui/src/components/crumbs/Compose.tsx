@@ -5,7 +5,6 @@ import Avatar from '@material-ui/core/Avatar';
 
 import { displayModal } from '../../functions';
 import { connect } from 'react-redux';
-import { userDeviceIsMobile } from '../..';
 
 const openCreatePostModal = (e: any) => {
   displayModal(true, false, 'CREATE_POST', { title: 'Create Post' });
@@ -14,12 +13,9 @@ const openCreatePostModal = (e: any) => {
 export const Compose: React.FunctionComponent = (props: any) => {
   const { firstname, profile_photo } = props.userData;
   return (
-    <Box
-      className='post-list-page d-flex flex-column mb-1 mb-md-2'
-      borderRadius='5px'
-      p={1}>
+    <Box className='Compose d-flex flex-column'>
       <Box display='flex'>
-        <Box px={1}>
+        <Box pr={1}>
           <Avatar
             component='span'
             className='chat-avatar compose-avatar'
@@ -28,14 +24,10 @@ export const Compose: React.FunctionComponent = (props: any) => {
           />
         </Box>
         <Box
-          className='compose-question flex-grow-1 d-flex align-items-center'
-          py={1}
-          fontSize='16px'
-          color='#888'
+          className='compose-question theme-tertiary-lighter'
           onClick={openCreatePostModal}
-          role='compose'
-          px={2}>
-          What's on your mind{userDeviceIsMobile ? '' : ` ${firstname}`}?
+          role='compose'>
+          {firstname}, have any educative thought?
         </Box>
       </Box>
     </Box>

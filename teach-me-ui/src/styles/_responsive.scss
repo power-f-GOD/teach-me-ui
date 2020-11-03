@@ -141,6 +141,15 @@
 }
 
 @media screen and (max-width: 767px) {
+  .container {
+    padding: 0 0.75rem;
+  }
+
+  // Nav styles
+  .MuiToolbar-regular {
+    min-height: 3.5rem;
+  }
+
   // landing page styles
   .landing-splash-box {
     &::before,
@@ -194,13 +203,32 @@
   }
 
   //Home style(s)
+
   .Home {
+    margin-top: 2.5rem;
+
+    &.container {
+      padding: 0;
+    }
+
     .middle-pane-col {
       padding: {
         left: 0 !important;
         right: 0 !important;
       }
     }
+  }
+
+  .Compose {
+    border-radius: 0;
+    position: sticky;
+    top: 3.5rem;
+    z-index: 5;
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.15);
+  }
+
+  .recommendations {
+    padding: 1rem 0.75rem;
   }
 
   //Profile style(s)

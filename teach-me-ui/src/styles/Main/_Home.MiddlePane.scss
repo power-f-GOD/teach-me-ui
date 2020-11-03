@@ -1,41 +1,52 @@
-.post-list-page {
-  background: #fff;
+.Compose {
+  background-color: white;
   cursor: pointer;
+  padding: 0.5rem 0.75rem;
+  border-radius: 2rem;
+  margin-bottom: 1rem;
+}
+
+.compose-question {
+  cursor: pointer;
+  background: #eee;
+  border-radius: 2em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  padding: 0.75rem;
 }
 
 .recommendations {
-  overflow-x: scroll;
+  overflow-x: auto;
   scroll-snap-type: x mandatory;
   display: grid;
-  height: 100%;
-  margin-bottom: 5px;
+  margin-top: -1rem;
+  padding: 1rem 0;
+
+  .container,
+  .col {
+    padding: 0;
+  }
 
   @media (hover: none) and (pointer: coarse) {
     & {
       margin-bottom: 0;
     }
   }
-  .recommendation {
-    scroll-snap-align: start;
-    scroll-snap-stop: normal;
-  }
-  .add-button {
-    background: $theme-primary;
-    color: white;
-    path {
-      fill: white;
-    }
-  }
+
   &::-webkit-scrollbar {
     width: 5px;
     height: 10px;
   }
+
   @media (hover: none) and (pointer: coarse) {
     &::-webkit-scrollbar {
       width: 5px;
       height: 0px;
     }
   }
+
   &::-webkit-scrollbar-track {
     background: #ccc;
   }
@@ -43,6 +54,91 @@
   &::-webkit-scrollbar-thumb {
     background: #999;
     border-radius: 5px;
+  }
+}
+
+.recommendation {
+  background-color: white;
+  border-radius: 1.5rem;
+  height: 17.5rem;
+  width: 13rem;
+  overflow: hidden;
+  box-shadow: 0 0.75rem 1.75rem rgba(0, 0, 0, 0.3);
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+
+  transition: 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  &,
+  * {
+    text-decoration: unset !important;
+    color: inherit;
+  }
+
+  &:hover,
+  &:focus {
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.4);
+    transform: translateY(-0.5rem);
+  }
+
+  .profile-photo {
+    height: 13rem;
+    position: relative;
+    background: {
+      size: cover;
+      position: center;
+      color: #eee;
+    }
+  }
+
+  .display-name-wrapper {
+    display: flex;
+    position: absolute;
+    bottom: 0.75rem;
+    left: 0.75rem;
+    padding-right: 0.75rem;
+    flex-direction: column;
+    color: white;
+    text-shadow: 0 0 0.125rem rgba(0, 0, 0, 0.75);
+  }
+
+  .display-name {
+    font-size: 1.25rem;
+  }
+
+  .info {
+    display: block;
+    padding: 0.05rem 0.75rem;
+    overflow: hidden;
+    min-height: 1.5rem;
+    width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .institution {
+    font-weight: bold;
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .department {
+    color: $theme-tertiary-v6;
+    font-size: 0.8rem;
+    margin-left: 1.5rem;
+  }
+
+  svg {
+    color: $theme-tertiary-v7;
+    margin-bottom: -0.25rem;
+  }
+}
+
+.add-button {
+  background: $theme-primary;
+  color: white;
+  path {
+    fill: white;
   }
 }
 
@@ -59,18 +155,11 @@
   cursor: pointer;
 }
 
-.compose-question {
-  cursor: pointer;
-  background: #eee;
-  border-radius: 2em;
-}
-.bio-post {
-  flex-grow: 20;
-}
 .post-details {
   cursor: pointer;
   padding: 0 3px;
 }
+
 .quoted-post {
   border-radius: 0.5rem;
   border: 0.5px solid #ccc;
@@ -82,13 +171,14 @@
   background: white;
   padding: 1rem 0 0 0;
 }
+
 .small-text {
   color: #666;
   margin: 0 0.5rem !important;
 }
+
 .react-to-post {
   cursor: pointer;
-  border-radius: 100px;
   transition: all 0.3s;
   user-select: none;
 
