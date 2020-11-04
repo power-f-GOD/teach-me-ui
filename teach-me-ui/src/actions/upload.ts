@@ -63,9 +63,11 @@ export const sendFilesToServer = (files: Array<File>, action: Function, para: an
       }));
       dispatch(getUploads);
       if (para.profilePhoto) {
+        window.history.back();
         displayModal(false);
         dispatch(action({profile_photo: ids[0]}, true)(dispatch));
       } else if (para.coverPhoto) {
+        window.history.back();
         displayModal(false);
         dispatch(action({cover_photo: ids[0]}, true)(dispatch));
       } else {

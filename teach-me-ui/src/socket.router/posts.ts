@@ -32,6 +32,7 @@ export default function post(data: any) {
               message: 'Repost was made successfully'
             })
           );
+          window.history.back();
           dispatch(displayModal(false));
         } else {
           dispatch(makeRepostRejected({ error: true, message: data.message }));

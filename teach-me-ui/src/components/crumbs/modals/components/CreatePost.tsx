@@ -54,6 +54,7 @@ const CreatePost = (props: any) => {
 
   if (makePostProp.status === 'fulfilled') {
     dispatch(makePost({status: 'settled'}));
+    window.history.back();
     displayModal(false);
   }
 
