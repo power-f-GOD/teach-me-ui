@@ -73,7 +73,6 @@ export default function chat(message: APIMessageResponse & UserData) {
             const delivered = delivered_to!?.includes(userId);
             const seen = seen_by!?.includes(userId);
 
-            //remove 0 here later
             if (delivered_to && !delivered) {
               socket.send(
                 JSON.stringify({
@@ -84,7 +83,6 @@ export default function chat(message: APIMessageResponse & UserData) {
               willEmitDelivered = true;
             }
 
-            //remove 0 here later
             if (
               userData.online_status === 'ONLINE' &&
               isOpen &&
@@ -107,14 +105,6 @@ export default function chat(message: APIMessageResponse & UserData) {
                 });
               }
             }
-
-            // dispatch(
-            //   conversationsMessages({
-            //     pipe,
-            //     statusText: 'update from socket',
-            //     data: { [conversation_id]: [message] }
-            //   })
-            // );
           } else {
             if (convoId === conversation_id && convoId) {
               updateConversation(convoId, {

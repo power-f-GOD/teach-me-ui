@@ -305,7 +305,7 @@ export const conversations = (_payload: SearchState): ReduxAction => {
 };
 
 export const conversation = (
-  conversationId: string,
+  convoId: string,
   data?: Partial<APIConversationResponse>,
   shouldUpdateAll?: boolean
 ): ReduxAction => {
@@ -315,31 +315,27 @@ export const conversation = (
   };
   const dataFromConvos =
     conversations.data?.find(
-      (conversation: APIConversationResponse) =>
-        conversationId === conversation?._id
+      (conversation: APIConversationResponse) => convoId === conversation?._id
     ) ?? {};
   const dataFromConvo = conversation;
-  let payload: APIConversationResponse;
+  let payload = {} as APIConversationResponse;
 
-  if (!data) {
-    payload = { ...dataFromConvos };
-  } else {
-    if (shouldUpdateAll) {
-      payload = { ...dataFromConvos, ...data };
+  if (convoId) {
+    if (!data) {
+      payload = { ...dataFromConvos };
     } else {
-      if (conversationId === dataFromConvo._id) {
-        payload = { ...dataFromConvos, ...dataFromConvo, ...data };
-      } else {
+      if (shouldUpdateAll) {
         payload = { ...dataFromConvos, ...data };
+      } else {
+        if (convoId === dataFromConvo._id) {
+          payload = { ...dataFromConvos, ...dataFromConvo, ...data };
+        } else {
+          payload = { ...dataFromConvos, ...data };
+        }
       }
     }
-  }
 
-  payload.avatar = payload.avatar ? payload.avatar : 'avatar-1.png';
-
-  //make payload an empty object in order for hack to work in corresponding reducer
-  if (!payload._id) {
-    delete payload.avatar;
+    payload.profile_photo = payload.profile_photo || '';
   }
 
   return {
@@ -530,6 +526,10 @@ export const conversationsMessages = (
     ) ?? {}) as LoopFind<APIMessageResponse>;
 
     if (initialMessage || pipe === CHAT_NEW_MESSAGE) {
+      if (newConvoMessage.timestamp_id) {
+        delete newConvoMessage.timestamp_id;
+      }
+
       switch (pipe) {
         case CHAT_NEW_MESSAGE: {
           //see code after switch block for the update
@@ -556,6 +556,7 @@ export const conversationsMessages = (
             !initialMessage.seen_by!?.includes(seerId) &&
             seerId
           ) {
+            console.log('inextensible:', initialMessage, seerId);
             initialMessage.seen_by?.push(seerId);
             prevConvoMessages[index] = initialMessage;
           }

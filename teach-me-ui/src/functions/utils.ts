@@ -39,7 +39,7 @@ export const { dispatch, getState }: any = store;
 
 export function loopThru<T>(
   _data: T[],
-  callback: (datum: T) => any,
+  callback: <T2 = any>(datum: T) => T2 | any,
   options?: {
     type?: 'find' | 'findIndex' | 'native';
     includeIndex?: boolean;
@@ -58,6 +58,7 @@ export function loopThru<T>(
 
   for (; reverse ? i >= 0 : i <= lim; reverse ? i-- : i++) {
     const datum = data[i];
+    let _break = '';
 
     switch (type) {
       case 'find':
@@ -71,11 +72,15 @@ export function loopThru<T>(
         }
         break;
       default:
-        callback(datum);
+        _break = callback(datum);
 
         if (returnReverse) {
           dataReversed.push(datum);
         }
+    }
+
+    if (_break === 'break') {
+      break;
     }
   }
 
@@ -395,7 +400,7 @@ export const logError = (action: Function) => (error: any) => {
       message: navigator.onLine
         ? `${message[0].toUpperCase()}${message.slice(1)}.`
         : 'You are offline.',
-      severity: navigator.onLine && !/network/.test(message) ? 'error' : 'info'
+      severity: navigator.onLine && !/network/i.test(message) ? 'error' : 'info'
     })
   );
   console.error('An error occured: ', error);

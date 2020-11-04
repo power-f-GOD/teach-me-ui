@@ -15,7 +15,7 @@ $msg-radius: 1.5rem;
   $bg-incoming: #fff;
   $bg-outgoing: rgb($sec-r + $diff, $sec-g + $diff, $sec-b + $diff);
 
-  &:last-of-type.fade-in {
+  &:last-of-type.fade-in-slide-down {
     animation: unset;
   }
 
@@ -290,7 +290,7 @@ $msg-radius: 1.5rem;
     white-space: pre-wrap;
     word-break: break-word;
     width: auto;
-    max-width: 80%;
+    max-width: calc(min(32rem, 90%));
 
     &::before {
       position: absolute;
@@ -400,7 +400,7 @@ $msg-radius: 1.5rem;
   }
 
   &::before {
-    background-color: rgba(0, 0, 0, 0.35);
+    background-color: rgba(0, 0, 0, 0.3);
     border: {
       right: none;
       left: none;
@@ -482,7 +482,8 @@ button.new-messages-count {
   border-top-right-radius: inherit;
   border-top-left-radius: inherit;
   margin-bottom: 0.5rem;
-  max-height: 5.55rem;
+  max-height: 5.4rem;
+  white-space: pre-wrap;
   overflow: hidden;
   font-size: 0.85rem;
   padding: 0.2rem 0.4rem 0.2rem;
@@ -524,8 +525,8 @@ button.new-messages-count {
     height: $size;
     width: $size;
     position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
+    top: 0.25rem;
+    right: 0.25rem;
     color: rgba(0, 0, 0, 0.55);
   }
 
