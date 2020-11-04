@@ -15,12 +15,12 @@ export const Compose: React.FunctionComponent = (props: any) => {
   return (
     <Box className='Compose d-flex flex-column'>
       <Box display='flex'>
-        <Box pr={1}>
+        <Box pr={1} className='d-flex align-items-center'>
           <Avatar
             component='span'
             className='chat-avatar compose-avatar'
             alt={firstname}
-            src={profile_photo}
+            src={profile_photo || ''}
           />
         </Box>
         <Box

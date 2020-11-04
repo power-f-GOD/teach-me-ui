@@ -25,7 +25,7 @@ if (userDeviceIsMobile) {
 if (isMac) {
   document.body.classList.add('is-mac');
 } else {
-  document.body.classList.add('is-mac');
+  document.body.classList.add('not-mac');
 }
 
 ReactDOM.render(

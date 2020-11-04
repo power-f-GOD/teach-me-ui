@@ -161,6 +161,7 @@ $app-max-width: 74rem;
   $l: 0,
   $r: 0,
   $b: 0,
+  $o: 1,
   $zi: -1,
   $bs: none
 ) {
@@ -176,5 +177,6 @@ $app-max-width: 74rem;
   background: $bg;
   border-radius: $br;
   box-shadow: $bs;
+  opacity: $o;
   transition: $tr;
 }

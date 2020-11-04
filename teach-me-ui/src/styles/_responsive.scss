@@ -221,14 +221,20 @@
 
   .Compose {
     border-radius: 0;
-    position: sticky;
     top: 3.5rem;
-    z-index: 5;
-    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.15);
+    margin: 0 0 0.75rem 0;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .Post {
+    border-radius: 0;
+    // margin-bottom: 0.75rem;
   }
 
   .recommendations {
-    padding: 1rem 0.75rem;
+    padding: 0 0rem;
+    margin: 1.5rem 0.75rem;
+    max-width: calc(100% - 1.5rem);
   }
 
   //Profile style(s)
