@@ -110,6 +110,7 @@ const EditProfile = (props: any) => {
   }
 
   if (getUserDetailsProp.status === 'fulfilled') {
+    window.history.back();
     displayModal(false);
     dispatch(getUserDetails({status: 'settled', data: []}));
     dispatch(matchingDepartments({ status: 'settled', data: []}));

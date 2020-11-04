@@ -108,8 +108,46 @@ const Post: React.FunctionComponent<
   if (props.sec_type === 'REPLY') {
     extra = `${props.sender_name} replied`;
   }
-  const navigate = (id: string) => (e: any) => {
-    history.push(`/p/${id}`);
+  const navigate = (id: string, type?: string) => (e: any) => {
+    console.log(e.target)
+    if (!(props.head)) {
+      switch (type) {
+        case 'repost':
+          if (e.target.classList[0] !== 'post-sender') history.push(`/p/${id}`);
+          break;
+        case 'reply':
+          if (
+              e.target.classList[0] !== 'post-sender' && 
+              e.target.classList[4] !== 'react-to-post' &&
+              e.target.nodeName !== 'TEXTAREA' && 
+              e.target.nodeName !== 'IMG' &&
+              e.target.nodeName !== 'path' &&
+              e.target.nodeName !== 'svg' && 
+              e.target.parentNode.nodeName !== 'FORM' && 
+              e.target.parentNode.nodeName !== 'BUTTON' &&
+              e.target.parentNode.classList[4] !== 'react-to-post'
+            ) history.push(`/p/${id}`);
+          break;
+        case 'post':
+          if (e.target.classList[0] !== 'post-sender' && e.target.nodeName !== 'IMG') history.push(`/p/${id}`);
+          break;
+        case 'post-reaction':
+          if (
+            e.target.classList[4] !== 'react-to-post' &&
+            e.target.nodeName !== 'TEXTAREA' && 
+            e.target.nodeName !== 'IMG' &&
+            e.target.nodeName !== 'path' &&
+            e.target.nodeName !== 'svg' && 
+            e.target.parentNode.nodeName !== 'FORM' && 
+            e.target.parentNode.nodeName !== 'BUTTON' &&
+            e.target.parentNode.classList[4] !== 'react-to-post'
+          ) history.push(`/p/${id}`);
+        break;
+        default:
+          break;
+      }
+    }
+    
   };
 
   const showModal = (e: any) => {
@@ -199,205 +237,206 @@ const Post: React.FunctionComponent<
         pt={1}
         pl={1}
         pb={props.sec_type === 'REPLY' ? 1 : 0}>
-        {((props._extra && props.sec_type !== 'REPLY') ||
-          (props.sec_type === 'REPOST' && !props.text)) &&
-          !props.head && <small className='small-text'>{extra}</small>}
-        {props.sec_type === 'REPLY' && !props.head && (
-          <small className='small-text'>{extra}</small>
-        )}
-        <Row
-          className={`container-fluid mx-auto ${
-            props.sec_type === 'REPLY' ? 'pt-0' : ''
-          } align-items-center p-2`}>
-          <Avatar
-            component='span'
-            className='post-avatar'
-            alt={
-              props.sec_type === 'REPLY'
-                ? props.parent?.sender_name
-                : props.text
-                ? props.sender_name
-                : props.parent?.sender_name
-            }
-            src={props.profile_photo ? props.profile_photo : `/images/${props.userAvatar}`}
-          />
-          <Col className='d-flex flex-column bio-post'>
-            {props.sender_name ? (
-              <>
-                <Link to={`@${
+          <div onClick={navigate(
+            (props.sec_type === 'REPLY'
+              ? props.parent?.id
+              : props.text
+              ? props.id
+              : props.parent?.id) as string, 'post'
+          )}>
+            {((props._extra && props.sec_type !== 'REPLY') ||
+              (props.sec_type === 'REPOST' && !props.text)) &&
+              !props.head && <small className='small-text'>{extra}</small>}
+            {props.sec_type === 'REPLY' && !props.head && (
+              <small className='small-text'>{extra}</small>
+            )}
+            <Row
+              className={`container-fluid mx-auto ${
+                props.sec_type === 'REPLY' ? 'pt-0' : ''
+              } align-items-center p-2`}>
+              <Avatar
+                component='span'
+                className='post-avatar'
+                alt={
                   props.sec_type === 'REPLY'
-                  ? props.parent?.sender_username
-                  : props.text
-                  ? props.sender_username
-                  : props.parent?.sender_username
-                }`} 
-                  className='post-sender'>
-                  {props.sec_type === 'REPLY'
                     ? props.parent?.sender_name
                     : props.text
                     ? props.sender_name
-                    : props.parent?.sender_name}
-                </Link>
-                <Box component='div' color='#777'>
-                  @
-                  {props.sec_type === 'REPLY'
-                    ? props.parent?.sender_username
-                    : props.text
-                    ? props.sender_username
-                    : props.parent?.sender_username}
+                    : props.parent?.sender_name
+                }
+                src={props.profile_photo ? props.profile_photo : `/images/${props.userAvatar}`}
+              />
+              <Col className='d-flex flex-column bio-post'>
+                {props.sender_name ? (
+                  <>
+                    <Link to={`@${
+                      props.sec_type === 'REPLY'
+                      ? props.parent?.sender_username
+                      : props.text
+                      ? props.sender_username
+                      : props.parent?.sender_username
+                    }`} 
+                      className='post-sender'>
+                      {props.sec_type === 'REPLY'
+                        ? props.parent?.sender_name
+                        : props.text
+                        ? props.sender_name
+                        : props.parent?.sender_name}
+                    </Link>
+                    <Box component='div' color='#777'>
+                      @
+                      {props.sec_type === 'REPLY'
+                        ? props.parent?.sender_username
+                        : props.text
+                        ? props.sender_username
+                        : props.parent?.sender_username}
+                    </Box>
+                  </>
+                ) : (
+                  <>
+                    <Skeleton width={150} />
+                    <Skeleton width={100} />
+                  </>
+                )}
+              </Col>
+              <Col className='more-post-btn'>
+                {/* <Box className='more d-none' component='span' borderRadius='100px'>
+                  <svg
+                    width='20'
+                    height='6'
+                    viewBox='0 0 20 6'
+                    fill='none'
+                    xmlns='http://www.w3.org/2000/svg'>
+                    <path
+                      className='pathignore'
+                      fillRule='evenodd'
+                      clipRule='evenodd'
+                      d='M3 5C1.89543 5 1 4.10457 1 3C1 1.89543 1.89543 1 3 1C4.10457 1 5 1.89543 5 3C5 4.10457 4.10457 5 3 5ZM10 5C8.89543 5 8 4.10457 8 3C8 1.89543 8.89543 1 10 1C11.1046 1 12 1.89543 12 3C12 4.10457 11.1046 5 10 5ZM17 5C15.8954 5 15 4.10457 15 3C15 1.89543 15.8954 1 17 1C18.1046 1 19 1.89543 19 3C19 4.10457 18.1046 5 17 5Z'
+                      stroke='#666666'
+                      strokeWidth='1.5'
+                    />
+                  </svg>
+                </Box> */}
+              </Col>
+            </Row>
+            {props.sender_name ? (
+              <Row className='container-fluid  mx-auto'>
+                <Box
+                  component='div'
+                  pt={1}
+                  py={props.head ? 2 : undefined}
+                  px={0}
+                  ml={5}
+                  width='100%'
+                  fontSize={props.head ? '1.5rem' : undefined}
+                  className='break-word'>
+                  {processPostFn(
+                    (props.sec_type === 'REPLY'
+                      ? props.parent?.text
+                      : props.text
+                      ? props.text
+                      : props.parent?.text) as string
+                  )}
                 </Box>
-              </>
+                {(props.media as any[]).length > 0 && (
+                  <Box
+                    pt={1}
+                    px={0}
+                    ml={5}
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr',
+                      gridTemplateRows: `repeat(${
+                        (props.media as any[]).length === 1
+                          ? 2
+                          : Math.ceil((props.media as any[]).length / 2)
+                      }, 9rem)`,
+                      gridAutoFlow: 'row',
+                      columnGap: '0.2rem',
+                      rowGap: '0.2rem'
+                    }}>
+                    {(props.media as any[]).map((m, i, self) => {
+                      const style: any = {};
+                      switch (i) {
+                        case 0:
+                          if (self.length === 1) {
+                            style.gridColumn = '1 / 3';
+                            style.gridRow = '1 / 3';
+                          }
+                          if (self.length === 3 || self.length === 5) {
+                            style.gridColumn = '1';
+                            style.gridRow = '1 / 3';
+                          }
+                          break;
+                      }
+                      const mData = JSON.parse(m);
+                      const url =
+                        mData.type === 'raw' ? '/images/file-icon.svg' : mData.url;
+                      return (
+                        <div key={i} style={style}>
+                          <LazyImg
+                            id={i.toString()}
+                            onClick={
+                              mData.type === 'raw'
+                                ? () => {
+                                    Axios({
+                                      url: mData.url,
+                                      method: 'GET',
+                                      responseType: 'blob'
+                                    }).then((res) => {
+                                      const dataURL = URL.createObjectURL(
+                                        new Blob([res.data])
+                                      );
+                                      const a = document.createElement('a');
+                                      a.href = dataURL;
+                                      a.download = 'file';
+                                      a.click();
+                                    });
+                                  }
+                                : showModal
+                            }
+                            src={url}
+                            alt='post'
+                            style={{
+                              borderRadius: '0.2rem',
+                              objectFit: 'cover',
+                              objectPosition: 'center',
+                              verticalAlign: 'middle',
+                              width: '100%',
+                              height: '100%'
+                            }}
+                          />
+                        </div>
+                      );
+                    })}
+                  </Box>
+                )}
+                <Box
+                  component='small'
+                  textAlign='right'
+                  width='100%'
+                  color='#888'
+                  pt={1}
+                  mr={3}>
+                  {formatDate(
+                    (props.sec_type === 'REPLY'
+                      ? props.parent?.posted_at
+                      : props.text
+                      ? props.posted_at
+                      : props.parent?.posted_at) as number
+                  )}
+                </Box>
+              </Row>
             ) : (
-              <>
-                <Skeleton width={150} />
-                <Skeleton width={100} />
-              </>
-            )}
-          </Col>
-          <Col className='more-post-btn'>
-            <Box className='more d-none' component='span' borderRadius='100px'>
-              <svg
-                width='20'
-                height='6'
-                viewBox='0 0 20 6'
-                fill='none'
-                xmlns='http://www.w3.org/2000/svg'>
-                <path
-                  className='pathignore'
-                  fillRule='evenodd'
-                  clipRule='evenodd'
-                  d='M3 5C1.89543 5 1 4.10457 1 3C1 1.89543 1.89543 1 3 1C4.10457 1 5 1.89543 5 3C5 4.10457 4.10457 5 3 5ZM10 5C8.89543 5 8 4.10457 8 3C8 1.89543 8.89543 1 10 1C11.1046 1 12 1.89543 12 3C12 4.10457 11.1046 5 10 5ZM17 5C15.8954 5 15 4.10457 15 3C15 1.89543 15.8954 1 17 1C18.1046 1 19 1.89543 19 3C19 4.10457 18.1046 5 17 5Z'
-                  stroke='#666666'
-                  strokeWidth='1.5'
-                />
-              </svg>
-            </Box>
-          </Col>
-        </Row>
-        {props.sender_name ? (
-          <Row className='container-fluid  mx-auto'>
-            <Box
-              component='div'
-              pt={1}
-              py={props.head ? 2 : undefined}
-              px={0}
-              ml={5}
-              width='100%'
-              onClick={navigate(
-                (props.sec_type === 'REPLY'
-                  ? props.parent?.id
-                  : props.text
-                  ? props.id
-                  : props.parent?.id) as string
-              )}
-              fontSize={props.head ? '1.5rem' : undefined}
-              className='break-word'>
-              {processPostFn(
-                (props.sec_type === 'REPLY'
-                  ? props.parent?.text
-                  : props.text
-                  ? props.text
-                  : props.parent?.text) as string
-              )}
-            </Box>
-            {(props.media as any[]).length > 0 && (
-              <Box
-                pt={1}
-                px={0}
-                ml={5}
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gridTemplateRows: `repeat(${
-                    (props.media as any[]).length === 1
-                      ? 2
-                      : Math.ceil((props.media as any[]).length / 2)
-                  }, 9rem)`,
-                  gridAutoFlow: 'row',
-                  columnGap: '0.2rem',
-                  rowGap: '0.2rem'
-                }}>
-                {(props.media as any[]).map((m, i, self) => {
-                  const style: any = {};
-                  switch (i) {
-                    case 0:
-                      if (self.length === 1) {
-                        style.gridColumn = '1 / 3';
-                        style.gridRow = '1 / 3';
-                      }
-                      if (self.length === 3 || self.length === 5) {
-                        style.gridColumn = '1';
-                        style.gridRow = '1 / 3';
-                      }
-                      break;
-                  }
-                  const mData = JSON.parse(m);
-                  const url =
-                    mData.type === 'raw' ? '/images/file-icon.svg' : mData.url;
-                  return (
-                    <div key={i} style={style}>
-                      <LazyImg
-                        id={i.toString()}
-                        onClick={
-                          mData.type === 'raw' || true
-                            ? () => {
-                                Axios({
-                                  url: mData.url,
-                                  method: 'GET',
-                                  responseType: 'blob'
-                                }).then((res) => {
-                                  const dataURL = URL.createObjectURL(
-                                    new Blob([res.data])
-                                  );
-                                  const a = document.createElement('a');
-                                  a.href = dataURL;
-                                  a.download = 'file';
-                                  a.click();
-                                });
-                              }
-                            : showModal
-                        }
-                        src={url}
-                        alt='post'
-                        style={{
-                          borderRadius: '0.2rem',
-                          objectFit: 'cover',
-                          objectPosition: 'center',
-                          verticalAlign: 'middle',
-                          width: '100%',
-                          height: '100%'
-                        }}
-                      />
-                    </div>
-                  );
-                })}
+              <Box p={2} pl={3}>
+                <Skeleton count={3} />
               </Box>
             )}
-            <Box
-              component='small'
-              textAlign='right'
-              width='100%'
-              color='#888'
-              pt={1}
-              mr={3}>
-              {formatDate(
-                (props.sec_type === 'REPLY'
-                  ? props.parent?.posted_at
-                  : props.text
-                  ? props.posted_at
-                  : props.parent?.posted_at) as number
-              )}
-            </Box>
-          </Row>
-        ) : (
-          <Box p={2} pl={3}>
-            <Skeleton count={3} />
-          </Box>
-        )}
+          </div>
         {props.sec_type === 'REPOST' && props.text && (
           <Box
             className='quoted-post'
-            onClick={navigate(props.parent?.id as string)}>
+            onClick={navigate(props.parent?.id as string, 'repost')}>
             <Row className='container-fluid px-2 mx-auto p-0 align-items-center'>
               <Avatar
                 component='span'
@@ -430,7 +469,17 @@ const Post: React.FunctionComponent<
           </Box>
         )}
         {props.sender_name && (
-          <Box py={1} mt={1} borderBottom='.5px solid #ddd'>
+          <Box 
+            onClick={navigate(
+              (props.sec_type === 'REPLY'
+                ? props.parent?.id
+                : props.text
+                ? props.id
+                : props.parent?.id) as string, 'post-reaction'
+            )}
+            py={1} 
+            mt={1} 
+            borderBottom='.5px solid #ddd'>
             <Row className='ml-3'>
               <Col
                 xs={3}
@@ -575,7 +624,9 @@ const Post: React.FunctionComponent<
           </Box>
         )}
         {props.sec_type === 'REPLY' && (
-          <Box className='inner-comment pl-5'>
+          <Box 
+            className='inner-comment pl-5'
+            onClick={navigate(props.id as string, 'reply')}>
             <Row className='container-fluid px-2 mx-auto p-0 align-items-center'>
               <Avatar
                 component='span'
@@ -599,7 +650,6 @@ const Post: React.FunctionComponent<
                 px={0}
                 ml={5}
                 width='100%'
-                onClick={navigate(props.id as string)}
                 className='break-word'>
                 {processPostFn(props.text as string)}
               </Box>
