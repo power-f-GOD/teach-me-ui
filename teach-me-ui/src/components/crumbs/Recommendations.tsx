@@ -18,6 +18,9 @@ import { getRecommendations } from '../../actions';
 
 const Recommendations = (props: any) => {
   const { recommendations, getRecommendationsStatus } = props;
+  const _recommendations = [...recommendations].concat(
+    recommendations.length < 3 ? [null, null] : []
+  );
 
   useEffect(() => {
     dispatch(getRecommendations());
@@ -26,20 +29,24 @@ const Recommendations = (props: any) => {
   return (
     <>
       {getRecommendationsStatus.status !== 'pending' &&
-        recommendations.length > 0 && (
+        _recommendations.length > 0 && (
           <Box
             className='recommendations'
             style={{
-              gridTemplateColumns: `repeat(${recommendations.length}, 13rem)`,
+              gridTemplateColumns: `repeat(${_recommendations.length}, 13rem)`,
               columnGap: userDeviceIsMobile ? '.25rem' : '.5rem'
             }}>
-            {recommendations.map((recommendation: any) => (
-              <Recommendation
-                {...recommendation}
-                key={recommendation.id}
-                displayName={`${recommendation.firstname} ${recommendation.lastname}`}
-              />
-            ))}
+            {_recommendations.map((recommendation: any) =>
+              recommendation ? (
+                <Recommendation
+                  {...recommendation}
+                  key={recommendation.id}
+                  displayName={`${recommendation.firstname} ${recommendation.lastname}`}
+                />
+              ) : (
+                <Box className='recommendation null'></Box>
+              )
+            )}
           </Box>
         )}
     </>
@@ -58,7 +65,7 @@ const Recommendation = (props: any) => {
 
   return (
     <Link to={`/@${username}`} className='recommendation'>
-      <Row as='section' className='m-0 d-block'>
+      <Row as='section' className='m-0 d-block h-100'>
         <Col
           className='profile-photo'
           role='img'

@@ -16,101 +16,119 @@ import Col from 'react-bootstrap/Col';
 
 import Box from '@material-ui/core/Box';
 
-import { UserData } from '../../constants/interfaces';
+import {
+  SearchStateV2,
+  UserData,
+  APIConversationResponse
+} from '../../constants/interfaces';
+import { getState } from '../../functions';
 
-const LeftPane = (props: any) => {
+interface LeftPaneProps {
+  userData: UserData;
+  convosLength: number;
+}
+
+const LeftPane = (props: LeftPaneProps) => {
   const { userData } = props;
   const {
-    avatar,
     displayName,
     username,
     institution,
-    department
+    department,
+    profile_photo,
+    cover_photo
   }: UserData = userData;
+  const conversations = getState().conversations as SearchStateV2<
+    APIConversationResponse[]
+  >; //using getState instead of props to prevent redundant re-renders
+  const numOfColleagues = conversations.data?.reduce(
+    (a, b) => (b.friendship ? a + 1 : a),
+    0
+  );
 
   return (
-    <Container as='section' className='left-pane p-2'>
-      <Container className='rows-wrapper custom-scroll-bar small-bar rounded-bar tertiary-bar debugger'>
-        <Row as='section' className='m-0 flex-column mb-4 d-block'>
-          <Col className='p-0 d-flex safari-fix-d-block text-center justify-content-center'>
-            <Avatar
-              component='span'
-              className='chat-avatar'
-              alt={displayName}
-              src={userData.profile_photo ? userData.profile_photo : `images/${avatar}`}
-            />
-          </Col>
-          <Col className='flex-column p-0 safari-fix-d-block'>
+    <Container as='section' className='left-pane'>
+      <Container className='rows-wrapper custom-scroll-bar small-bar rounded-bar tertiary-bar'>
+        <Row as='section' className='d-block'>
+          <Col
+            className='cover-photo'
+            style={{ backgroundImage: `url(${cover_photo})` }}></Col>
+          <Avatar
+            component='span'
+            className={`avatar ${profile_photo ? 'has-photo' : ''}`}
+            alt={displayName}
+            src={profile_photo ? profile_photo : ''}
+          />
+          <Col className='bio-wrapper d-inline-block'>
             <Col
               as='span'
-              className='display-name p-0 d-flex justify-content-center my-1'>
+              className={`display-name font-bold ${
+                cover_photo ? 'light' : ''
+              }`}>
               {displayName}
             </Col>
-            <Col
-              as='span'
-              className='username p-0 d-flex justify-content-center mb-4'>
+            <Col as='span' className='username'>
               @{username}
             </Col>
-            <Col
-              as='span'
-              className='status p-0 px-3 d-flex safari-fix-d-block align-content-around'>
-              <CreateIcon className='mr-2' />
+            <Col as='span' className='status'>
+              <CreateIcon className='mr-1' fontSize='inherit' />
               {userData.bio || 'Hey there, I am on Kanyimuta'}
             </Col>
           </Col>
         </Row>
-        <Row as='section' className='m-0 flex-column mb-4 d-block'>
-          <Col className='info p-0 d-flex my-1'>
-            <PeopleOutlineIcon className='mr-2' fontSize='large' />
+
+        <Row as='section' className='d-block'>
+          <Col className='info d-flex my-1'>
+            <PeopleOutlineIcon className='mr-2' />
             <Col
               as='span'
-              className='p-0 d-flex justify-content-between align-items-center'>
+              className='d-flex justify-content-between align-items-center'>
               <Box component='span' marginRight='auto'>
                 Colleagues
               </Box>
-              <Box component='span' className='number'>
-                0
+              <Box
+                component='span'
+                className={`number ${numOfColleagues ? 'font-bold' : ''}`}>
+                {numOfColleagues}
               </Box>
             </Col>
           </Col>
-          {false && (
-            <>
-              <Col className='info p-0 d-flex my-1'>
-                <GroupIcon className='mr-2' fontSize='large' />
-                <Col
-                  as='span'
-                  className='p-0 d-flex justify-content-between align-items-center'>
-                  <Box component='span' marginRight='auto'>
-                    Groups
-                  </Box>
-                  <Box component='span' className='number'>
-                    0
-                  </Box>
-                </Col>
-              </Col>
-              <Col className='info p-0 d-flex my-1'>
-                <ForumIcon className='mr-2' fontSize='large' />
-                <Col
-                  as='span'
-                  className='p-0 d-flex justify-content-between align-items-center'>
-                  <Box component='span' marginRight='auto'>
-                    Classrooms
-                  </Box>
-                  <Box component='span' className='number'>
-                    0
-                  </Box>
-                </Col>
-              </Col>
-            </>
-          )}
+
+          <Col className='info d-flex my-1'>
+            <GroupIcon className='mr-2' />
+            <Col
+              as='span'
+              className='d-flex justify-content-between align-items-center'>
+              <Box component='span' marginRight='auto'>
+                Groups
+              </Box>
+              <Box component='span' className='number'>
+                N/A
+              </Box>
+            </Col>
+          </Col>
+          <Col className='info d-flex my-1'>
+            <ForumIcon className='mr-2' />
+            <Col
+              as='span'
+              className='d-flex justify-content-between align-items-center'>
+              <Box component='span' marginRight='auto'>
+                Classrooms
+              </Box>
+              <Box component='span' className='number'>
+                N/A
+              </Box>
+            </Col>
+          </Col>
         </Row>
-        <Row as='section' className='academic m-0 flex-column d-block'>
-          <Col as='span' className='info p-0 d-flex my-1  align-items-center'>
-            <SchoolIcon className='mr-2' fontSize='large' />
+
+        <Row as='section' className='academic d-block'>
+          <Col as='span' className='info d-flex my-1  align-items-center'>
+            <SchoolIcon className='mr-2' />
             {institution}
           </Col>
-          <Col as='span' className='info p-0 d-flex my-1  align-items-center'>
-            <MenuBookIcon className='mr-2' fontSize='large' />
+          <Col as='span' className='info d-flex my-1  align-items-center'>
+            <MenuBookIcon className='mr-2' />
             {department}
           </Col>
         </Row>
@@ -119,6 +137,7 @@ const LeftPane = (props: any) => {
   );
 };
 
-export default connect((state: any) => ({ userData: state.userData }))(
-  LeftPane
-);
+export default connect((state: any) => ({
+  userData: state.userData,
+  convosLength: state.conversations.data.length
+}))(LeftPane);

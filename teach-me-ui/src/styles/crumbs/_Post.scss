@@ -1,7 +1,8 @@
 .Post {
   // @include debugger();
   background-color: white;
-  margin-bottom: 0.75rem;
+  border-radius: 1rem;
+  margin-bottom: 1rem;
   box-shadow: 0 0.5rem 0.75rem rgba(0, 0, 0, 0.15);
 
   .container,
@@ -42,6 +43,13 @@
       max-height: 2.25rem;
       border-radius: 2rem;
       font-size: 0.95rem;
+
+      &:hover,
+      &:focus {
+        path {
+          stroke: transparent;
+        }
+      }
     }
 
     &:first-child,
@@ -56,10 +64,21 @@
       margin-left: -0.5rem;
     }
 
+    &:last-child {
+      path {
+        stroke: transparent;
+      }
+    }
+
     svg {
       font-size: 1.35rem;
       margin-right: 0.25rem;
-      color: $theme-tertiary-v6;
+      color: $theme-tertiary-v4;
+    }
+
+    path {
+      stroke: white;
+      transition: 0.25s;
     }
   }
 }

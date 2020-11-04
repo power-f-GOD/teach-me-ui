@@ -400,7 +400,10 @@ export const logError = (action: Function) => (error: any) => {
       message: navigator.onLine
         ? `${message[0].toUpperCase()}${message.slice(1)}.`
         : 'You are offline.',
-      severity: navigator.onLine && !/network|connection/i.test(message) ? 'error' : 'info'
+      severity:
+        navigator.onLine && !/network|connection/i.test(message)
+          ? 'error'
+          : 'info'
     })
   );
   console.error('An error occured: ', error);

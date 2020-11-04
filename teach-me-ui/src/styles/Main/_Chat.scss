@@ -212,7 +212,7 @@ header.chat-header {
   width: $size;
   border-radius: 50%;
   color: $chat-text-color;
-  background-color: $theme-primary-v4;
+  // background-color: $theme-primary-v4;
   transition: 0.3s;
 
   + .MuiBadge-dot {
@@ -226,7 +226,7 @@ header.chat-header {
   }
 
   [class*='Icon'] {
-    color: #eee;
+    color: #fff;
   }
 }
 
