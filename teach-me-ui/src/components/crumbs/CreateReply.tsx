@@ -11,8 +11,7 @@ import { connect } from 'react-redux';
 import { 
   getState, 
   replyToPostFn, 
-  getHashtagsFromText, 
-  getMentionsFromText
+  getCharacterSequenceFromText,
   // preventEnterNewLine
 } from '../../functions';
 
@@ -50,8 +49,8 @@ const CreateReply: React.FC<any> = (props) => {
       ...state,
       reply: {
         text: reply,
-        mentions: getMentionsFromText(reply),
-        hashtags: getHashtagsFromText(reply),
+        mentions: getCharacterSequenceFromText(reply, '@'),
+        hashtags: getCharacterSequenceFromText(reply, '#'),
         media: []
       }
     })

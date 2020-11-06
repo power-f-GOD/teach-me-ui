@@ -46,8 +46,7 @@ import {
 import {
   getState,
   callNetworkStatusCheckerFor,
-  getMentionsFromText,
-  getHashtagsFromText,
+  getCharacterSequenceFromText,
   logError
 } from '../functions';
 
@@ -406,8 +405,8 @@ export const submitPost = ({post, media}: {post: Post; media: Array<string>}) =>
     },
     data: {
       text: post.text,
-      mentions: getMentionsFromText(post.text),
-      hashtags: getHashtagsFromText(post.text),
+      mentions: getCharacterSequenceFromText(post.text, '@'),
+      hashtags: getCharacterSequenceFromText(post.text, '#'),
       media
     }
   })
@@ -418,7 +417,7 @@ export const submitPost = ({post, media}: {post: Post; media: Array<string>}) =>
           status: 'fulfilled'
         })
       );
-      getMentionsFromText(post.text) && pingUser(getMentionsFromText(post.text));
+      getCharacterSequenceFromText(post.text, '@') && pingUser(getCharacterSequenceFromText(post.text, '@'));
     })
     .catch(logError(makePost));
   return {

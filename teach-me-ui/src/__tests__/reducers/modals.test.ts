@@ -5,7 +5,8 @@ import {
   ModalState,
   modalState,
   SHOW_MODAL,
-  HIDE_MODAL
+  HIDE_MODAL, 
+  CREATE_POST
 } from '../../constants';
 import { modal } from '../../reducers/modals';
 
@@ -22,7 +23,7 @@ it("modals reducers should be called with 'state' and 'action' params and return
     payload: {
       ...modalState,
       open: true,
-      type: 'CREATE_POST',
+      type: CREATE_POST,
       meta: { title: 'Create Post' }
     }
   };

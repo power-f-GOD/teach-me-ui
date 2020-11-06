@@ -599,55 +599,18 @@ export const convertColleagueArrayToMentionFormat = (colleagueArray: any) => {
   return mentionArray;
 };
 
-export const getMentionsFromText = (text: string): string[] => {
-  let mentions: string[] = [];
-  const checkTextForMention = (text1: string) => {
-    let startOfMention = text1.indexOf('@');
-    if (startOfMention !== -1) {
-      let newText = text1.substring(startOfMention + 1);
-      let endOfMention = newText.search(/[^A-Za-z0-9_]/);
-      if (endOfMention === -1) {
-        let mention = newText;
-        if (mention) {
-          mentions.push(mention);
-        }
-      } else {
-        let mention = newText.substring(0, endOfMention);
-        if (mention) {
-          mentions.push(mention);
-        }
-        checkTextForMention(newText);
-      }
+export const getCharacterSequenceFromText = (text: string, char: string) => {
+  let finArray = []
+  let array = text.split(' ').filter((text) => (text.startsWith(char) && text.length > 1  && !(text.substring(1).match(/[^A-Za-z0-9_.,?!]/))))
+  for (let item of array) {
+    if (char === '@') {
+      finArray.push(item.substring(1, item.substring(1).search(/[^A-Za-z0-9_]/) === -1 ? undefined : item.substring(1).search(/[^A-Za-z0-9_]/) + 1))
+    } else {
+      finArray.push(item.substring(0, item.substring(1).search(/[^A-Za-z0-9_]/) === -1 ? undefined : item.substring(1).search(/[^A-Za-z0-9_]/) + 1))
     }
-  };
-  checkTextForMention(text);
-  return mentions;
-};
-
-export const getHashtagsFromText = (text: string): string[] => {
-  let hashtags: string[] = [];
-  const checkTextForHashtag = (text1: string) => {
-    let startOfHashtag = text1.indexOf('#');
-    if (startOfHashtag !== -1) {
-      let newText = text1.substring(startOfHashtag + 1);
-      let endOfHashtag = newText.search(/[^A-Za-z0-9_]/);
-      if (endOfHashtag === -1) {
-        let hashtag = newText;
-        if (hashtag.length > 1) {
-          hashtags.push(`#${hashtag}`);
-        }
-      } else {
-        let hashtag = newText.substring(0, endOfHashtag);
-        if (hashtag.length > 1) {
-          hashtags.push(`#${hashtag}`);
-        }
-        checkTextForHashtag(newText);
-      }
-    }
-  };
-  checkTextForHashtag(text);
-  return hashtags;
-};
+  }
+  return finArray;
+}
 
 export const formatDate = (dateTime: Date | number) => {
   if (!dateTime) {

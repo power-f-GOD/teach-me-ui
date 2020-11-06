@@ -9,8 +9,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import {
-  getMentionsFromText,
-  getHashtagsFromText,
+  getCharacterSequenceFromText,
   formatDate,
   dispatch,
   displayModal
@@ -48,8 +47,8 @@ const CreatePost: React.FC<any> = (props) => {
       ...state,
       post: {
         text: post,
-        mentions: getMentionsFromText(post),
-        hashtags: getHashtagsFromText(post)
+        mentions: getCharacterSequenceFromText(post, '@'),
+        hashtags: getCharacterSequenceFromText(post, '#')
       }
     });
   };

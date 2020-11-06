@@ -27,7 +27,10 @@ import {
   countNewNotifications, displayModal
 } from '../../functions';
 
-import { UserData } from '../../constants';
+import { 
+  NOTIFICATIONS, 
+  UserData 
+} from '../../constants';
 import { dispatch } from '../../appStore';
 import { getNotificationsRequest } from '../../actions';
 
@@ -119,7 +122,7 @@ function MainNav(props: any) {
         to='#' 
         className='nav-link' 
         onClick={(e: any) => {
-          displayModal(true, false, 'NOTIFICATIONS', { title: 'Notifications' });
+          displayModal(true, false, NOTIFICATIONS, { title: 'Notifications' });
         }}
         isActive={(match: any, location: any) => false}>
         <Badge color='secondary' badgeContent={numberOfNewNotifications}>
@@ -174,7 +177,7 @@ function MainNavMenu(props: any) {
         to='#' 
         className='nav-link' 
         onClick={(e: any) => {
-          displayModal(true, false, 'NOTIFICATIONS', { title: 'Notifications' });
+          displayModal(true, false, NOTIFICATIONS, { title: 'Notifications' });
         }}
         isActive={(match: any, location: any) => false}>
         <Badge color='secondary' badgeContent={numberOfNewNotifications}>

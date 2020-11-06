@@ -79,9 +79,10 @@ const UploadsPreview = (props: any) => {
       ? ( 
         <Row className='d-flex mx-auto mt-1'>
           <Box
+            className='bold'
             component='p'
             >
-              Uploading...
+              Uploading... <CircularProgress color='primary' size={13}/>
           </Box>
         </Row> 
       ) : ''}
@@ -123,7 +124,7 @@ const UploadsPreview = (props: any) => {
                     }}
                   >
                     <img 
-                      src={file.url} 
+                      src={file.thumbnail} 
                       className='img' 
                       alt={file.public_id} 
                       id={file._id}

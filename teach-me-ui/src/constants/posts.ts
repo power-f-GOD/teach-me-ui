@@ -1,6 +1,5 @@
 import { FetchPostsState, MakeRepostState, MakePostState } from './interfaces';
 
-export const CREATE_POST = 'CREATE_POST';
 export const REACT_TO_POST = 'REACT_TO_POST';
 export const FETCH_POST_STARTED = 'FETCH_POST_STARTED';
 export const FETCH_POST_RESOLVED = 'FETCH_POST_RESOLVED';

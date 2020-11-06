@@ -6,9 +6,10 @@ import Avatar from '@material-ui/core/Avatar';
 import { displayModal } from '../../functions';
 import { connect } from 'react-redux';
 import { userDeviceIsMobile } from '../..';
+import { CREATE_POST } from '../../constants/modals';
 
 const openCreatePostModal = (e: any) => {
-  displayModal(true, false, 'CREATE_POST', { title: 'Create Post' });
+  displayModal(true, false, CREATE_POST, { title: 'Create Post' });
 };
 
 export const Compose: React.FunctionComponent = (props: any) => {
