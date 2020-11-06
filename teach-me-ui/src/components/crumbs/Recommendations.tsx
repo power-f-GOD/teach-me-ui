@@ -19,7 +19,7 @@ import { getRecommendations } from '../../actions';
 const Recommendations = (props: any) => {
   const { recommendations, getRecommendationsStatus } = props;
   const _recommendations = [...recommendations].concat(
-    recommendations.length < 3 ? [null, null] : []
+    recommendations.length && recommendations.length < 3 ? [null, null] : []
   );
 
   useEffect(() => {
@@ -36,7 +36,7 @@ const Recommendations = (props: any) => {
               gridTemplateColumns: `repeat(${_recommendations.length}, 13rem)`,
               columnGap: userDeviceIsMobile ? '.25rem' : '.5rem'
             }}>
-            {_recommendations.map((recommendation: any) =>
+            {_recommendations.map((recommendation: any, i) =>
               recommendation ? (
                 <Recommendation
                   {...recommendation}
@@ -44,7 +44,7 @@ const Recommendations = (props: any) => {
                   displayName={`${recommendation.firstname} ${recommendation.lastname}`}
                 />
               ) : (
-                <Box className='recommendation null'></Box>
+                <Box className='recommendation null' key={i}></Box>
               )
             )}
           </Box>

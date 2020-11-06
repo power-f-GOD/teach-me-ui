@@ -13,13 +13,13 @@ import ReactButton from '../../components/crumbs/ReactButton';
 test('loads and displays placeholder text', async () => {
   render(
     <>
-      <ReactButton id='1' type='UPVOTE' reactions={15002} reacted='UPVOTE' />
-      <ReactButton id='2' type='UPVOTE' reactions={1500200} reacted='NEUTRAL' />
+      <ReactButton id='1' type='UPVOTE' num_of_reactions={15002} reaction='UPVOTE' />
+      <ReactButton id='2' type='UPVOTE' num_of_reactions={1500200} reaction='NEUTRAL' />
       <ReactButton
         id='3'
         type='DOWNVOTE'
-        reactions={150020}
-        reacted='DOWNVOTE'
+        num_of_reactions={150020}
+        reaction='DOWNVOTE'
       />
     </>
   );

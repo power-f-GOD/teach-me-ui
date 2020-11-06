@@ -1,9 +1,11 @@
-.Post {
+.Post,
+.Reply {
   // @include debugger();
   background-color: white;
+  position: relative;
   border-radius: 1rem;
   margin-bottom: 1rem;
-  box-shadow: 0 0.5rem 0.75rem rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0.7rem 1rem rgba(0, 0, 0, 0.15);
 
   .container,
   .row,
@@ -79,6 +81,74 @@
     path {
       stroke: white;
       transition: 0.25s;
+    }
+  }
+}
+
+.Reply {
+  max-width: calc(100% - 2.5rem);
+  margin: -0.75rem 0 1rem 2.5rem;
+}
+
+.Comment {
+  height: 0;
+  opacity: 0;
+  transition: 0.2s, opacity 0.4s;
+  overflow: hidden;
+
+  &.open {
+    opacity: 1;
+  }
+
+  .comment-container {
+    padding: 0.35rem 0.75rem;
+    align-items: center;
+    border-top: 0.0625rem solid #eee;
+
+    .MuiInputBase-root {
+      padding: 0.495rem 0.25rem;
+    }
+  }
+
+  .comment-field {
+    flex-grow: 1;
+    height: auto;
+    max-width: calc(100% - 7.75rem);
+
+    > div.MuiInputBase-root {
+      background: #fff;
+      border: 0.0625rem solid #eee;
+      border-radius: 1.25rem;
+      padding: {
+        left: 0.5rem;
+        right: 0.5rem;
+      }
+      transition: 0.3s;
+
+      &.Mui-focused {
+        background-color: #eee;
+        border-color: transparent;
+      }
+    }
+  }
+
+  .comment-avatar {
+    $size: 2.25rem;
+
+    margin-right: 0.5rem;
+    width: $size;
+    align-self: flex-end;
+    height: $size;
+  }
+
+  .comment-button {
+    align-self: flex-end;
+    margin-left: 0.5rem;
+    border-radius: 2rem;
+
+    &:disabled {
+      background-color: #eee !important;
+      color: #aaa !important;
     }
   }
 }

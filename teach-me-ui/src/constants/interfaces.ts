@@ -33,6 +33,8 @@ export interface PostPropsState {
   sender_name: string;
   sender_username: string;
   sec_type?: 'REPOST' | 'REPLY';
+  type: 'post' | 'reply';
+  is_parent: boolean;
   text: string;
   id: string;
   upvotes: number;
@@ -130,9 +132,9 @@ export interface TopicPropsState {
 
 export interface ReactButtonPropsState {
   id: string;
-  reactions: number;
+  num_of_reactions: number;
   type: 'UPVOTE' | 'DOWNVOTE';
-  reacted: Reaction;
+  reaction: Reaction;
 }
 
 export interface ReactPostState {
