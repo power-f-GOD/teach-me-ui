@@ -203,7 +203,6 @@
   }
 
   //Home style(s)
-
   .Home {
     margin-top: 2.5rem;
 
@@ -228,7 +227,12 @@
 
   .Post {
     border-radius: 0;
-    // margin-bottom: 0.75rem;
+  }
+
+  .Reply {
+    border-radius: 1rem 0 0 1rem;
+    margin-left: 1.5rem;
+    max-width: calc(100% - 1.5rem);
   }
 
   .recommendations {
@@ -450,12 +454,6 @@
   (-moz-min-device-pixel-ratio: 3) {
   #chat-date-sticky {
     top: calc(-1rem + 4px);
-  }
-}
-
-@media only screen and (max-width: 410px) {
-  .comment-container {
-    padding: 0 !important;
   }
 }
 

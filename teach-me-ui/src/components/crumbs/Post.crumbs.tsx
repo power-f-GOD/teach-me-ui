@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -17,144 +17,75 @@ import { PostPropsState } from '../../constants/interfaces';
 import CreateReply from './CreateReply';
 
 import { Button } from '@material-ui/core';
-import { processPostFn } from './Post';
+import { processPostFn, openCreateRepostModal } from './Post';
 
 export interface PostCrumbs extends Partial<PostPropsState> {
-  setShowComment: Function;
-  showComment: boolean;
-  navigate: Function;
-  openCreateRepostModal: Function;
-  setShowComment2: Function;
-  showComment2: boolean;
+  navigate?: Function;
+  openCreateRepostModal?: Function;
+  repostMeta?: any;
 }
 
-export const PostFooter = (props: Partial<PostCrumbs>) => {
+export const PostFooter = (props: PostCrumbs) => {
   const {
-    sec_type,
     id,
-    text,
-    parent,
     upvotes: _upvotes,
     downvotes: _downvotes,
     reaction,
     reposts,
     replies,
-    openCreateRepostModal,
-    setShowComment,
-    showComment,
-    setShowComment2,
-    showComment2
+    repostMeta,
+    openCreateRepostModal
   } = props;
+  const [openComment, setOpenComment] = useState(false);
+  // console.table(openCreateRepostModal, repostMeta);
+  const handleCommentClick = useCallback(() => {
+    setOpenComment(!openComment);
+  }, [openComment]);
 
   return (
-    <Row className='post-footer'>
-      <Col className='reaction-wrapper d-flex align-items-center  '>
-        <ReactButton
-          id={
-            (sec_type === 'REPLY'
-              ? parent?.id
-              : text
-              ? id
-              : (parent?.id as string)) as string
-          }
-          reacted={
-            (sec_type === 'REPLY'
-              ? (parent?.reaction as 'NEUTRAL')
-              : text
-              ? (reaction as 'NEUTRAL')
-              : (parent?.reaction as 'NEUTRAL')) as 'NEUTRAL'
-          }
-          reactions={((): number => {
-            const upvotes: number = (sec_type === 'REPLY'
-              ? (parent?.upvotes as number)
-              : text
-              ? (_upvotes as number)
-              : (parent?.upvotes as number)) as number;
-
-            return upvotes as number;
-          })()}
-          type='UPVOTE'
-        />
-      </Col>
-      <Col className='reaction-wrapper d-flex align-items-center justify-content-center'>
-        <ReactButton
-          id={
-            (sec_type === 'REPLY'
-              ? parent?.id
-              : text
-              ? id
-              : (parent?.id as string)) as string
-          }
-          reacted={
-            (sec_type === 'REPLY'
-              ? (parent?.reaction as 'NEUTRAL')
-              : text
-              ? (reaction as 'NEUTRAL')
-              : (parent?.reaction as 'NEUTRAL')) as 'NEUTRAL'
-          }
-          reactions={((): number => {
-            const downvotes: number = (sec_type === 'REPLY'
-              ? (parent?.downvotes as number)
-              : text
-              ? (_downvotes as number)
-              : (parent?.downvotes as number)) as number;
-
-            return downvotes as number;
-          })()}
-          type='DOWNVOTE'
-        />
-      </Col>
-      <Col className='reaction-wrapper d-flex align-items-center justify-content-center'>
-        <Button
-          onClick={
-            openCreateRepostModal
-              ? openCreateRepostModal(
-                  sec_type === 'REPLY'
-                    ? (parent as any)
-                    : text
-                    ? (props as any)
-                    : (parent as any)
-                )
-              : null
-          }
-          className='d-flex align-items-center react-to-post justify-content-center'>
-          <RepostSharpIcon />
-          <Box>
-            {bigNumberFormat(
-              (sec_type === 'REPLY'
-                ? (parent?.reposts as number)
-                : text
-                ? (reposts as number)
-                : (parent?.reposts as number)) as number
-            )}
-          </Box>
-        </Button>
-      </Col>
-      <Col className='reaction-wrapper d-flex align-items-center justify-content-end ml-auto'>
-        <Button
-          onClick={() =>
-            (setShowComment || setShowComment2 || (() => {}))(
-              showComment !== undefined ? !showComment : !showComment2
-            )
-          }
-          className='d-flex align-items-center react-to-post justify-content-center'>
-          <CommentRoundedIcon />
-          <Box>
-            {bigNumberFormat(
-              (sec_type === 'REPLY'
-                ? (parent?.replies as number)
-                : text
-                ? (replies as number)
-                : (parent?.replies as number)) as number
-            )}
-          </Box>
-        </Button>
-      </Col>
-    </Row>
+    <>
+      <Row className='post-footer'>
+        <Col className='reaction-wrapper d-flex align-items-center  '>
+          <ReactButton
+            id={id!}
+            reaction={reaction!}
+            num_of_reactions={_upvotes!}
+            type='UPVOTE'
+          />
+        </Col>
+        <Col className='reaction-wrapper d-flex align-items-center justify-content-center'>
+          <ReactButton
+            id={id!}
+            reaction={reaction!}
+            num_of_reactions={_downvotes!}
+            type='DOWNVOTE'
+          />
+        </Col>
+        <Col className='reaction-wrapper d-flex align-items-center justify-content-center'>
+          <Button
+            onClick={
+              openCreateRepostModal ? openCreateRepostModal(repostMeta) : null
+            }
+            className='d-flex align-items-center react-to-post justify-content-center'>
+            <RepostSharpIcon />
+            <Box>{bigNumberFormat(reposts!)}</Box>
+          </Button>
+        </Col>
+        <Col className='reaction-wrapper d-flex align-items-center justify-content-end ml-auto'>
+          <Button
+            onClick={handleCommentClick}
+            className='d-flex align-items-center react-to-post justify-content-center'>
+            <CommentRoundedIcon />
+            <Box>{bigNumberFormat(replies!)}</Box>
+          </Button>
+        </Col>
+      </Row>
+      <CreateReply post_id={id!} className={openComment ? 'open' : ''} />
+    </>
   );
 };
 
-export const PostReply = (props: Partial<PostCrumbs>) => {
+export const Reply = (props: PostCrumbs) => {
   const {
     // sec_type,
     sender_name,
@@ -170,13 +101,11 @@ export const PostReply = (props: Partial<PostCrumbs>) => {
     reposts,
     replies,
     navigate,
-    setShowComment2,
-    showComment2,
-    openCreateRepostModal
+    repostMeta
   } = props;
 
   return (
-    <Box className='inner-comment pl-5'>
+    <Box className='Reply'>
       <Row className='container-fluid px-2 mx-auto p-0 align-items-center'>
         <Avatar
           component='span'
@@ -216,71 +145,133 @@ export const PostReply = (props: Partial<PostCrumbs>) => {
       </Row>
       {sender_name && (
         <Box py={1} mt={1}>
-          {/* <PostFooter
-            // id={}
-            // reaction={reaction}
-            // upvotes={_upvotes}
-            // downvotes={_downvotes}
-            {...props}
+          <PostFooter
+            id={id}
+            upvotes={_upvotes}
+            downvotes={_downvotes}
+            reaction={reaction}
+            reposts={reposts}
+            replies={replies}
             openCreateRepostModal={openCreateRepostModal}
-            setShowComment2={setShowComment2}
-          /> */}
-          <Row className='m-0 px-3'>
-            <Col
-              xs={3}
-              className='ml-auto d-flex align-items-center justify-content-center'>
-              <ReactButton
-                id={id as string}
-                reacted={reaction as 'NEUTRAL'}
-                reactions={_upvotes as number}
-                type='UPVOTE'
-              />
-            </Col>
-            <Col
-              xs={3}
-              className='d-flex align-items-center justify-content-center'>
-              <ReactButton
-                id={id as string}
-                reacted={reaction as 'NEUTRAL'}
-                reactions={_downvotes as number}
-                type='DOWNVOTE'
-              />
-            </Col>
-            <Col className='d-flex align-items-center justify-content-center'>
-              <Box
-                padding='5px 15px'
-                onClick={
-                  openCreateRepostModal ? openCreateRepostModal(props) : null
-                }
-                className='d-flex align-items-center react-to-post justify-content-center'
-                fontSize='13px'>
-                <RepostSharpIcon />
-                <Box padding='0 5px' fontSize='13px'>
-                  {bigNumberFormat(reposts)}
-                </Box>
-              </Box>
-            </Col>
-            <Col className='d-flex align-items-center justify-content-center'>
-              <Box
-                padding='5px 15px'
-                onClick={
-                  setShowComment2
-                    ? () => setShowComment2(!showComment2)
-                    : undefined
-                }
-                className='d-flex align-items-center react-to-post justify-content-center'
-                fontSize='13px'>
-                CM
-                <Box padding='0 5px' fontSize='13px'>
-                  {bigNumberFormat(replies)}
-                </Box>
-              </Box>
-            </Col>
-          </Row>
-
-          {showComment2 && <CreateReply post_id={id} />}
+            repostMeta={repostMeta}
+          />
         </Box>
       )}
     </Box>
   );
 };
+
+// export const PostFooter = (props: PostCrumbs) => {
+//   const {
+//     sec_type,
+//     id,
+//     text,
+//     upvotes: _upvotes,
+//     downvotes: _downvotes,
+//     reaction,
+//     reposts,
+//     replies,
+//     repostMeta,
+//     openCreateRepostModal
+//   } = props;
+
+//   return (
+//     <>
+//       <Row className='post-footer'>
+//         <Col className='reaction-wrapper d-flex align-items-center  '>
+//           <ReactButton
+//             id={
+//               (sec_type === 'REPLY'
+//                 ? parent?.id
+//                 : text
+//                 ? id
+//                 : (parent?.id as string)) as string
+//             }
+//             reacted={
+//               (sec_type === 'REPLY'
+//                 ? (parent?.reaction as 'NEUTRAL')
+//                 : text
+//                 ? (reaction as 'NEUTRAL')
+//                 : (parent?.reaction as 'NEUTRAL')) as 'NEUTRAL'
+//             }
+//             reactions={((): number => {
+//               const upvotes: number = (sec_type === 'REPLY'
+//                 ? (parent?.upvotes as number)
+//                 : text
+//                 ? (_upvotes as number)
+//                 : (parent?.upvotes as number)) as number;
+
+//               return upvotes as number;
+//             })()}
+//             type='UPVOTE'
+//           />
+//         </Col>
+//         <Col className='reaction-wrapper d-flex align-items-center justify-content-center'>
+//           <ReactButton
+//             id={
+//               (sec_type === 'REPLY'
+//                 ? parent?.id
+//                 : text
+//                 ? id
+//                 : (parent?.id as string)) as string
+//             }
+//             reacted={
+//               (sec_type === 'REPLY'
+//                 ? (parent?.reaction as 'NEUTRAL')
+//                 : text
+//                 ? (reaction as 'NEUTRAL')
+//                 : (parent?.reaction as 'NEUTRAL')) as 'NEUTRAL'
+//             }
+//             reactions={((): number => {
+//               const downvotes: number = (sec_type === 'REPLY'
+//                 ? (parent?.downvotes as number)
+//                 : text
+//                 ? (_downvotes as number)
+//                 : (parent?.downvotes as number)) as number;
+
+//               return downvotes as number;
+//             })()}
+//             type='DOWNVOTE'
+//           />
+//         </Col>
+//         <Col className='reaction-wrapper d-flex align-items-center justify-content-center'>
+//           <Button
+//             onClick={
+//               openCreateRepostModal ? openCreateRepostModal(repostMeta) : null
+//             }
+//             className='d-flex align-items-center react-to-post justify-content-center'>
+//             <RepostSharpIcon />
+//             <Box>
+//               {bigNumberFormat(
+//                 (sec_type === 'REPLY'
+//                   ? (parent?.reposts as number)
+//                   : text
+//                   ? (reposts as number)
+//                   : (parent?.reposts as number)) as number
+//               )}
+//             </Box>
+//           </Button>
+//         </Col>
+//         <Col className='reaction-wrapper d-flex align-items-center justify-content-end ml-auto'>
+//           <Button className='d-flex align-items-center react-to-post justify-content-center'>
+//             <CommentRoundedIcon />
+//             <Box>
+//               {bigNumberFormat(
+//                 (sec_type === 'REPLY'
+//                   ? (parent?.replies as number)
+//                   : text
+//                   ? (replies as number)
+//                   : (parent?.replies as number)) as number
+//               )}
+//             </Box>
+//           </Button>
+//         </Col>
+//       </Row>
+//       <CreateReply
+//         post_id={`${
+//           (sec_type === 'REPLY' ? parent?.id : text ? id : parent?.id) as string
+//         }`}
+//       />
+//     </>
+//   );
+// };

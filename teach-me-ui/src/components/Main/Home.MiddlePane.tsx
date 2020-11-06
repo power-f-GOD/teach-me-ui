@@ -14,6 +14,7 @@ import { PostPropsState, UserData, SocketProps } from '../../constants';
 import { fetchPostsFn, getState } from '../../functions';
 
 import { connect } from 'react-redux';
+import { Reply } from '../crumbs/Post.crumbs';
 
 const MiddlePane: React.FunctionComponent = (props: any) => {
   const {
@@ -76,9 +77,22 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
       {(selfView || !inProfile) && <Compose />}
       {!inProfile && <Recommendations />}
       {props.fetchPostStatus.status === 'resolved' &&
-        props.posts.map((post: PostPropsState, i: number) => (
-          <Post {...post} key={i} />
-        ))}
+        props.posts.map((post: PostPropsState, i: number) => {
+          switch (post.sec_type) {
+            case 'REPLY':
+              return (
+                <React.Fragment key={i}>
+                  <Post {...post.parent} />
+                  <Reply
+                    {...post}
+                    repostMeta={{ ...post, parent: undefined }}
+                  />
+                </React.Fragment>
+              );
+            default:
+              return <Post {...post} key={i} />;
+          }
+        })}
       {props.fetchPostStatus.status === 'pending' &&
         Array.from({ length: 4 }).map((_, i) => <Post key={i} />)}
       {props.isFetching && (

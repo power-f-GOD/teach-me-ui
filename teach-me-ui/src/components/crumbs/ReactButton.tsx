@@ -15,9 +15,9 @@ const reactToPost = (id: string, type: 'UPVOTE' | 'NEUTRAL' | 'DOWNVOTE') => (
 };
 
 const ReactButton: React.FunctionComponent<ReactButtonPropsState> = (props) => {
-  const { type, id, reacted, reactions } = props;
-  const upVoteColor = reacted === 'UPVOTE' ? 'green' : '#555';
-  const downVoteColor = reacted === 'DOWNVOTE' ? 'red' : '#555';
+  const { type, id, reaction, num_of_reactions } = props;
+  const upVoteColor = reaction === 'UPVOTE' ? 'green' : '#555';
+  const downVoteColor = reaction === 'DOWNVOTE' ? 'red' : '#555';
 
   return (
     <Button
@@ -32,7 +32,7 @@ const ReactButton: React.FunctionComponent<ReactButtonPropsState> = (props) => {
             ? downVoteColor
             : '#555'
         }>
-        {bigNumberFormat(reactions)}
+        {bigNumberFormat(num_of_reactions)}
       </Box>
     </Button>
   );

@@ -21,14 +21,12 @@ import { Link, useHistory } from 'react-router-dom';
 import { dispatch, formatDate } from '../../functions/utils';
 import { PostPropsState } from '../../constants/interfaces';
 
-import CreateReply from './CreateReply';
-
 import { displayModal } from '../../functions';
 import { triggerSearchKanyimuta } from '../../actions/search';
 
 import { LazyLoadImage as LazyImg } from 'react-lazy-load-image-component';
 
-import { PostFooter, PostReply } from './Post.crumbs';
+import { PostFooter } from './Post.crumbs';
 
 const stopProp = (e: any) => {
   e.stopPropagation();
@@ -77,7 +75,7 @@ export const processPostFn = (post: string) => {
     });
 };
 
-const openCreateRepostModal = (meta: any) => (e: any) => {
+export const openCreateRepostModal = (meta: any) => (e: any) => {
   displayModal(true, false, 'CREATE_REPOST', {
     title: 'Create Repost',
     post: meta
@@ -88,6 +86,7 @@ const Post: React.FunctionComponent<
   Partial<PostPropsState> & Partial<{ head: boolean }>
 > = (props) => {
   const {
+    type,
     media,
     sec_type,
     sender_name,
@@ -99,16 +98,14 @@ const Post: React.FunctionComponent<
     profile_photo,
     // userAvatar,
     sender_username,
-    posted_at
-    // upvotes: _upvotes,
-    // downvotes: _downvotes,
-    // reaction,
-    // reposts,
-    // replies
+    posted_at,
+    upvotes: _upvotes,
+    downvotes: _downvotes,
+    reaction,
+    reposts,
+    replies
   } = props;
   const history = useHistory();
-  const [showComment, setShowComment] = useState(false);
-  const [showComment2, setShowComment2] = useState(false);
   const [mediaPreview, setMediaPreview] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState(0);
 
@@ -221,7 +218,7 @@ const Post: React.FunctionComponent<
       </Modal>
 
       {/* Post */}
-      <Box id={id} className='Post'>
+      <Box id={id} className={type === 'reply' ? 'Reply' : 'Post'}>
         {((_extra && sec_type !== 'REPLY') ||
           (sec_type === 'REPOST' && !text)) &&
           !head && <small className='small-text'>{extra}</small>}
@@ -436,58 +433,22 @@ const Post: React.FunctionComponent<
         {sender_name && (
           <Box>
             <PostFooter
-              {...props}
-              // sec_type={sec_type}
-              // id={id}
-              // text={text}
+              // {...props}
+              sec_type={sec_type}
+              id={id}
+              text={text}
               // parent={parent}
-              // upvotes={_upvotes}
-              // downvotes={_downvotes}
-              // reaction={reaction}
-              // reposts={reposts}
-              // replies={replies}
+              upvotes={_upvotes}
+              downvotes={_downvotes}
+              reaction={reaction}
+              reposts={reposts}
+              replies={replies}
+              repostMeta={parent || props}
               openCreateRepostModal={openCreateRepostModal}
-              setShowComment={setShowComment}
-              showComment={showComment}
             />
-            {showComment && (
-              <CreateReply
-                post_id={`${
-                  (sec_type === 'REPLY'
-                    ? parent?.id
-                    : text
-                    ? id
-                    : parent?.id) as string
-                }`}
-              />
-            )}
           </Box>
         )}
       </Box>
-
-      {/* Post reply */}
-      {sec_type === 'REPLY' && (
-        <PostReply
-          {...props}
-          // sec_type={sec_type}
-          // sender_name={sender_name}
-          // id={id}
-          // text={text}
-          // profile_photo={profile_photo}
-          // userAvatar={userAvatar}
-          // sender_username={sender_name}
-          // posted_at={posted_at}
-          // upvotes={_upvotes}
-          // downvotes={_downvotes}
-          // reaction={reaction}
-          // reposts={reposts}
-          // replies={replies}
-          navigate={navigate}
-          setShowComment2={setShowComment2}
-          showComment2={showComment2}
-          openCreateRepostModal={openCreateRepostModal}
-        />
-      )}
     </>
   );
 };

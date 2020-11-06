@@ -50,44 +50,44 @@ body {
       &::-webkit-scrollbar-thumb {
         background: $theme-secondary-v6;
       }
-    }
 
-    .small-bar,
-    &.small-bar {
-      &::-webkit-scrollbar {
-        width: 0.5em;
-      }
-    }
-
-    .primary-bar,
-    &.primary-bar {
-      &::-webkit-scrollbar-thumb {
-        background: $theme-primary-v6;
-      }
-    }
-
-    .secondary-bar,
-    &.secondary-bar {
-      &::-webkit-scrollbar-thumb {
-        background: $theme-secondary-v6;
-      }
-    }
-
-    .tertiary-bar,
-    &.tertiary-bar {
-      &::-webkit-scrollbar-thumb {
-        background: $theme-tertiary-v5;
-      }
-    }
-
-    .rounded-bar,
-    &.rounded-bar {
-      &::-webkit-scrollbar-track {
-        border-radius: 1rem;
+      .small-bar,
+      &.small-bar {
+        &::-webkit-scrollbar {
+          width: 0.5em;
+        }
       }
 
-      &::-webkit-scrollbar-thumb {
-        border-radius: 1rem;
+      .primary-bar,
+      &.primary-bar {
+        &::-webkit-scrollbar-thumb {
+          background: $theme-primary-v6;
+        }
+      }
+
+      .secondary-bar,
+      &.secondary-bar {
+        &::-webkit-scrollbar-thumb {
+          background: $theme-secondary-v6;
+        }
+      }
+
+      .tertiary-bar,
+      &.tertiary-bar {
+        &::-webkit-scrollbar-thumb {
+          background: $theme-tertiary-v5;
+        }
+      }
+
+      .rounded-bar,
+      &.rounded-bar {
+        &::-webkit-scrollbar-track {
+          border-radius: 1rem;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          border-radius: 1rem;
+        }
       }
     }
   }
@@ -200,7 +200,7 @@ a {
     border-radius: 1.75em;
     color: white;
     border: 2px solid white;
-    transition: 0.3s;
+    transition: 0.25s;
 
     &:hover,
     &:focus {
@@ -280,7 +280,7 @@ a {
     &:disabled,
     &.Mui-disabled {
       background-color: #ddd !important;
-      color: #555 !important;
+      color: #888 !important;
 
       &::before,
       &::after {
