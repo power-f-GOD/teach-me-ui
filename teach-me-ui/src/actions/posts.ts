@@ -377,7 +377,7 @@ export const makePost = (payload: any): ReduxAction => {
   };
 };
 
-export const submitPost = (post: Post, media: Array<string>) => (
+export const submitPost = ({post, media}: {post: Post; media: Array<string>}) => (
   dispatch: Function
 ) => {
   dispatch(

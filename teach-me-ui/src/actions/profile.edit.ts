@@ -60,7 +60,7 @@ export const updateProfileRequest = (data: any) => (
     lastname,
     date_of_birth,
     bio
-  })(dispatch));
+  }, false)(dispatch));
 
   if (level !== userData.level) {
     dispatch(updateAcademicDataRequest(
@@ -398,7 +398,7 @@ export const updateUsernameRequest = (username: string) => (
   };
 }; 
 
-export const updateUserDataRequest = (data: Object, updateState: boolean = false) => (
+export const updateUserDataRequest = (data: Object, updateState: boolean = true) => (
   dispatch: Function
 ): ReduxAction => {
   let token = getState().userData.token
