@@ -10,8 +10,7 @@ import {
   validateEmailFn,
   validateResetPasswordFn,
   countNewNotifications,
-  getMentionsFromText,
-  getHashtagsFromText
+  getCharacterSequenceFromText
 } from '../../functions';
 import { ReduxAction, UserData } from '../../constants';
 
@@ -105,8 +104,8 @@ it('checks if function to count new notifications acts accordingly', () => {
 });
 
 it('checks if functions for getting mentions and hashtags acts accordingly', () => {
-  expect(getMentionsFromText('@backend, @prince')).toStrictEqual(['backend', 'prince']);
-  expect(getHashtagsFromText('#bnbnb #hhhhh, #bnnm6*')).toStrictEqual(['#bnbnb', '#hhhhh', '#bnnm6']);
-  expect(getHashtagsFromText('')).toStrictEqual([]);
-  expect(getMentionsFromText('')).toStrictEqual([]);
+  expect(getCharacterSequenceFromText('@backend, @prince', '@')).toStrictEqual(['backend', 'prince']);
+  expect(getCharacterSequenceFromText('#bnbnb #hhhhh, #bnnm6*', '#')).toStrictEqual(['#bnbnb', '#hhhhh']);
+  expect(getCharacterSequenceFromText('', '#')).toStrictEqual([]);
+  expect(getCharacterSequenceFromText('', '@')).toStrictEqual([]);
 });
