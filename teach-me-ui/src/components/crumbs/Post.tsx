@@ -156,7 +156,7 @@ const Post: React.FunctionComponent<
 
     extra +=
       sender_username === child.sender_username
-        ? ' his own post'
+        ? ' thier own post'
         : sender_name + "'s post";
   }
 
@@ -264,9 +264,6 @@ const Post: React.FunctionComponent<
 
             {(media as any[]).length > 0 && (
               <Box
-                pt={1}
-                px={0}
-                ml={5}
                 style={{
                   display: 'grid',
                   gridTemplateColumns: '1fr 1fr',
@@ -322,7 +319,6 @@ const Post: React.FunctionComponent<
                         src={url}
                         alt='post'
                         style={{
-                          borderRadius: '0.2rem',
                           objectFit: 'cover',
                           objectPosition: 'center',
                           verticalAlign: 'middle',

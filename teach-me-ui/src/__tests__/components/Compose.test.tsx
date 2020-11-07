@@ -13,5 +13,7 @@ import { Compose } from '../../components/crumbs/Compose';
 
 test('loads and displays placeholder text', async () => {
   render(<Compose userData={{ firstname: 'Benjamin', avatar: 'undefined' }} />);
-  expect(screen.getByText(/What's/)).toHaveTextContent("What's on");
+  expect(
+    screen.getByText(/^[a-zA-Z]+, have any educative thought\?$/)
+  ).toHaveTextContent(/^[a-zA-Z]+,/);
 });
