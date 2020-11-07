@@ -1,19 +1,15 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 
-import { useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-import Avatar from '@material-ui/core/Avatar';
 import SchoolIcon from '@material-ui/icons/School';
-import MenuBookIcon from '@material-ui/icons/MenuBook';
-import AddIcon from '@material-ui/icons/Person';
 
 import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
 
-import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+
 import { UserData } from '../../constants';
 
 import { userDeviceIsMobile } from '../../index';
@@ -22,27 +18,39 @@ import { getRecommendations } from '../../actions';
 
 const Recommendations = (props: any) => {
   const { recommendations, getRecommendationsStatus } = props;
+  const _recommendations = [...recommendations].concat(
+    recommendations.length && recommendations.length < 3 ? [null, null] : []
+  );
+
   useEffect(() => {
     dispatch(getRecommendations());
   }, []);
+
   return (
     <>
       {getRecommendationsStatus.status !== 'pending' &&
-        recommendations.length > 0 && (
-          <Box
-            className='recommendations pb-1 pb-md-2'
-            style={{
-              gridTemplateColumns: `repeat(${recommendations.length}, 13rem)`,
-              columnGap: userDeviceIsMobile ? '.25rem' : '.5rem'
-            }}>
-            {recommendations.map((recommendation: any) => (
-              <Recommendation
-                {...recommendation}
-                key={recommendation.id}
-                displayName={`${recommendation.firstname} ${recommendation.lastname}`}
-              />
-            ))}
-          </Box>
+        _recommendations.length > 0 && (
+          <>
+            <Box component='h3' className='font-bold theme-tertiary-darker recommendations-heading'>Colleauges you may know</Box>
+            <Box
+              className='recommendations'
+              style={{
+                gridTemplateColumns: `repeat(${_recommendations.length}, 12rem)`,
+                columnGap: userDeviceIsMobile ? '.5rem' : '.75rem'
+              }}>
+              {_recommendations.map((recommendation: any, i) =>
+                recommendation ? (
+                  <Recommendation
+                    {...recommendation}
+                    key={recommendation.id}
+                    displayName={`${recommendation.firstname} ${recommendation.lastname}`}
+                  />
+                ) : (
+                  <Box className='recommendation null' key={i}></Box>
+                )
+              )}
+            </Box>
+          </>
         )}
     </>
   );
@@ -54,74 +62,46 @@ const Recommendation = (props: any) => {
     displayName,
     username,
     institution,
-    department
+    department,
+    profile_photo
   }: UserData = props;
-  const history = useHistory();
-  const navigate = (e: any) => {
-    history.push(`/@${username}`);
-  };
+
   return (
-    <Box className='recommendation'>
-      <Container
-        as='section'
-        className='left-pane p-2'
-        style={{ height: '100%', cursor: 'pointer' }}>
-        <Container className='rows-wrapper custom-scroll-bar small-bar rounded-bar tertiary-bar debugger'>
-          <Row as='section' className='m-0 flex-column mb-2 d-block'>
-            <Col className='p-0 d-flex safari-fix-d-block text-center justify-content-center'>
-              <Avatar
-                component='div'
-                className='recommendation-avatar text-center'
-                alt={displayName}
-                src={props.profile_photo ? props.profile_photo : `/images/${avatar}`}
-              />
+    <Link
+      to={`/@${username}`}
+      className={`recommendation ${!profile_photo ? 'no-photo' : ''}`}>
+      <Row as='section' className='m-0 d-block h-100'>
+        <Col
+          className='profile-photo'
+          role='img'
+          style={{
+            backgroundImage: `url(${
+              profile_photo
+                ? profile_photo.replace(/\/c_crop.*w_200/, '/c_scale,w_250')
+                : `/images/${avatar}`
+            })`
+          }}
+          aria-label={`${displayName}'s profile photo`}>
+          <Col className='display-name-wrapper'>
+            <Col as='span' className='display-name font-bold'>
+              {displayName}
             </Col>
-            <Col className='flex-column p-0 safari-fix-d-block'>
-              <Col
-                as='span'
-                className='display-name p-0 d-flex justify-content-center my-1'>
-                {displayName}
-              </Col>
-              <Col
-                as='span'
-                className='username p-0 d-flex justify-content-center mb-2'>
-                @{username}
-              </Col>
+            <Col as='span' className='username text-ellipsis'>
+              @{username}
             </Col>
-          </Row>
-          <Row as='section' className='academic m-0 flex-column d-block'>
-            <Col
-              as='span'
-              className='info p-0 d-flex my-1 justify-content-center align-items-center'>
-              <SchoolIcon className='mr-2' fontSize='small' />
-              {institution}
-            </Col>
-            <Col
-              as='span'
-              className='info p-0 d-flex my-1 justify-content-center align-items-center'>
-              <MenuBookIcon className='mr-2' fontSize='small' />
-              {department}
-            </Col>
-            <Col
-              as='span'
-              className='info p-0 d-flex mt-2 justify-content-center align-items-center'>
-              <Button
-                variant='contained'
-                onClick={navigate}
-                size='small'
-                className='add-button'>
-                <>
-                  <AddIcon fontSize='small' />
-                  <Box fontSize='.7rem' ml={1}>
-                    View Profile
-                  </Box>
-                </>
-              </Button>
-            </Col>
-          </Row>
-        </Container>
-      </Container>
-    </Box>
+          </Col>
+        </Col>
+      </Row>
+      <Row as='section' className='academic m-0 flex-column'>
+        <Col as='span' className='info institution text-ellipsis'>
+          <SchoolIcon className='mr-1' fontSize='small' />
+          {institution}
+        </Col>
+        <Col as='span' className='info department text-ellipsis'>
+          {department}
+        </Col>
+      </Row>
+    </Link>
   );
 };
 
