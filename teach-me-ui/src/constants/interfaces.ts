@@ -34,9 +34,7 @@ export interface PostPropsState {
   sender_username: string;
   sec_type?: 'REPOST' | 'REPLY';
   type: 'post' | 'reply';
-  is_parent: boolean;
-  is_child: boolean;
-  child: PostProps;
+  child?: PostProps;
   text: string;
   id: string;
   upvotes: number;
