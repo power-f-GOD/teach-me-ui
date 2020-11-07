@@ -35,6 +35,8 @@ export interface PostPropsState {
   sec_type?: 'REPOST' | 'REPLY';
   type: 'post' | 'reply';
   is_parent: boolean;
+  is_child: boolean;
+  child: PostProps;
   text: string;
   id: string;
   upvotes: number;
@@ -44,7 +46,7 @@ export interface PostPropsState {
   posted_at: number;
   profile_photo?: string;
   _extra?: PostExtraProps;
-  parent?: PostParentProps;
+  parent?: PostProps;
 }
 
 interface PostExtraProps {
@@ -54,7 +56,7 @@ interface PostExtraProps {
   colleague_username: string;
 }
 
-interface PostParentProps {
+interface PostProps {
   sec_type?: 'REPOST' | 'REPLY';
   text: string;
   id: string;
@@ -445,7 +447,7 @@ export interface ReplyResult extends ReplyProps {
   sec_type: 'REPLY';
   id: string;
   text: string;
-  parent: PostParentProps;
+  parent: PostProps;
   action_count: number;
 }
 

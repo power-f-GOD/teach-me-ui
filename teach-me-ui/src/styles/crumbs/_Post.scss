@@ -14,8 +14,22 @@
     padding: 0;
   }
 
+  small {
+    display: inline-block;
+    color: $theme-tertiary-v6;
+
+    &.extra {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: bold;
+      overflow: hidden;
+      margin: 0 0 -0.65rem 3.75rem;
+      padding: 0.35rem 0.75rem 0;
+    }
+  }
+
   .post-header {
-    padding: 0.75rem;
+    padding: 0.75rem 0.75rem 0;
   }
 
   .post-avatar {
@@ -27,7 +41,9 @@
 
   .post-body {
     .text {
-      padding: 0 0.75rem 0.75rem;
+      padding: 0.75rem;
+      width: 100%;
+      cursor: pointer;
       font-weight: 500;
     }
   }
@@ -86,8 +102,9 @@
 }
 
 .Reply {
-  max-width: calc(100% - 2.5rem);
+  width: calc(100% - 2.5rem);
   margin: -0.75rem 0 1rem 2.5rem;
+  border-left: 0.4rem solid $theme-tertiary-v9;
 }
 
 .Comment {
@@ -100,6 +117,10 @@
     opacity: 1;
   }
 
+  &.anchor-is-parent {
+    height: auto;
+  }
+
   .comment-container {
     padding: 0.35rem 0.75rem;
     align-items: center;
@@ -108,6 +129,15 @@
     .MuiInputBase-root {
       padding: 0.495rem 0.25rem;
     }
+  }
+
+  .comment-avatar {
+    $size: 2.25rem;
+
+    margin-right: 0.5rem;
+    width: $size;
+    align-self: flex-end;
+    height: $size;
   }
 
   .comment-field {
@@ -130,15 +160,6 @@
         border-color: transparent;
       }
     }
-  }
-
-  .comment-avatar {
-    $size: 2.25rem;
-
-    margin-right: 0.5rem;
-    width: $size;
-    align-self: flex-end;
-    height: $size;
   }
 
   .comment-button {
