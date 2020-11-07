@@ -30,24 +30,27 @@ const Recommendations = (props: any) => {
     <>
       {getRecommendationsStatus.status !== 'pending' &&
         _recommendations.length > 0 && (
-          <Box
-            className='recommendations'
-            style={{
-              gridTemplateColumns: `repeat(${_recommendations.length}, 13rem)`,
-              columnGap: userDeviceIsMobile ? '.25rem' : '.5rem'
-            }}>
-            {_recommendations.map((recommendation: any, i) =>
-              recommendation ? (
-                <Recommendation
-                  {...recommendation}
-                  key={recommendation.id}
-                  displayName={`${recommendation.firstname} ${recommendation.lastname}`}
-                />
-              ) : (
-                <Box className='recommendation null' key={i}></Box>
-              )
-            )}
-          </Box>
+          <>
+            <Box component='h3' className='font-bold theme-tertiary-darker recommendations-heading'>Colleauges you may know</Box>
+            <Box
+              className='recommendations'
+              style={{
+                gridTemplateColumns: `repeat(${_recommendations.length}, 12rem)`,
+                columnGap: userDeviceIsMobile ? '.5rem' : '.75rem'
+              }}>
+              {_recommendations.map((recommendation: any, i) =>
+                recommendation ? (
+                  <Recommendation
+                    {...recommendation}
+                    key={recommendation.id}
+                    displayName={`${recommendation.firstname} ${recommendation.lastname}`}
+                  />
+                ) : (
+                  <Box className='recommendation null' key={i}></Box>
+                )
+              )}
+            </Box>
+          </>
         )}
     </>
   );
@@ -64,7 +67,9 @@ const Recommendation = (props: any) => {
   }: UserData = props;
 
   return (
-    <Link to={`/@${username}`} className='recommendation'>
+    <Link
+      to={`/@${username}`}
+      className={`recommendation ${!profile_photo ? 'no-photo' : ''}`}>
       <Row as='section' className='m-0 d-block h-100'>
         <Col
           className='profile-photo'
@@ -81,18 +86,18 @@ const Recommendation = (props: any) => {
             <Col as='span' className='display-name font-bold'>
               {displayName}
             </Col>
-            <Col as='span' className='username'>
+            <Col as='span' className='username text-ellipsis'>
               @{username}
             </Col>
           </Col>
         </Col>
       </Row>
       <Row as='section' className='academic m-0 flex-column'>
-        <Col as='span' className='info institution'>
+        <Col as='span' className='info institution text-ellipsis'>
           <SchoolIcon className='mr-1' fontSize='small' />
           {institution}
         </Col>
-        <Col as='span' className='info department'>
+        <Col as='span' className='info department text-ellipsis'>
           {department}
         </Col>
       </Row>
