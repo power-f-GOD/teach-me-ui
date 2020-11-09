@@ -520,7 +520,7 @@ export const conversationsMessages = (
     }
   } else {
     const { value: initialMessage, index } = (loopThru(
-      prevConvoMessages,
+      [...prevConvoMessages],
       (message) => message._id === newConvoMessage._id,
       { type: 'find', includeIndex: true, rightToLeft: true, makeCopy: true }
     ) ?? {}) as LoopFind<APIMessageResponse>;

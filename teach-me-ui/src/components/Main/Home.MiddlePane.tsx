@@ -20,7 +20,10 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
     auth: { isAuthenticated },
     profileData: {
       data: [profile]
-    }
+    },
+    posts,
+    fetchPostStatus,
+    userData
   } = props;
   const config: IntersectionObserverInit = {
     root: null,
@@ -47,7 +50,7 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
     // eslint-disable-next-line
     []
   );
-  const username = props.userData.username || '';
+  const username = userData.username || '';
 
   let profileUsername = profile.username || '';
   // here is where the check is made to render the views accordingly
@@ -61,24 +64,52 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
     fetchPostsFn(type, userId);
     // eslint-disable-next-line
   }, [props.type]);
-  const posts = document.querySelectorAll('.post-list-page');
+  const postElements = document.querySelectorAll('.Post');
   useEffect(() => {
     if (props.type === 'FEED') {
-      posts.forEach((post) => {
+      postElements.forEach((post) => {
         observer.observe(post);
       });
     }
     // eslint-disable-next-line
-  }, [posts.length, props.type]);
+  }, [postElements.length, props.type]);
 
   return (
     <Container className='middle-pane px-0' fluid>
       {(selfView || !inProfile) && <Compose />}
-      {!inProfile && <Recommendations />}
-      {props.fetchPostStatus.status === 'resolved' &&
-        props.posts.map((post: PostPropsState, i: number) => (
-          <Post {...post} key={i} />
-        ))}
+      {!inProfile && posts.length < 3 && <Recommendations />}
+      {fetchPostStatus.status === 'resolved' &&
+        posts.map((post: PostPropsState, i: number) => {
+          const childProps = { ...post, parent: undefined };
+          const renderRecommendations = !inProfile && i === 3 && (
+            <Recommendations />
+          );
+
+          switch (post.sec_type) {
+            case 'REPLY':
+              return (
+                <React.Fragment key={i}>
+                  {renderRecommendations}
+                  <Post
+                    {...post.parent}
+                    child={{ ...childProps }}
+                    type='post'
+                  />
+                  <Post {...childProps} type='reply' />
+                  {!inProfile && posts.length >= 3 && i === 3 && (
+                    <Recommendations />
+                  )}
+                </React.Fragment>
+              );
+            default:
+              return (
+                <React.Fragment key={i}>
+                  <Post {...post} />
+                  {renderRecommendations}
+                </React.Fragment>
+              );
+          }
+        })}
       {props.fetchPostStatus.status === 'pending' &&
         Array.from({ length: 4 }).map((_, i) => <Post key={i} />)}
       {props.isFetching && (

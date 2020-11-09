@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 
 import Container from 'react-bootstrap/Container';
+import Col from 'react-bootstrap/Col';
 
 import Box from '@material-ui/core/Box';
 
@@ -19,27 +20,29 @@ const RightPane: React.FunctionComponent = (props: any) => {
 
   return (
     <Container fluid className='right-pane'>
-      <h4>Trending Hashtags</h4>
-      {getTrendsStatus.status !== 'pending' && (
-        <ul>
-          {trends.map((topic: any, i: number) => (
-            <Topic
-              topic={topic.hashtag}
-              key={i}
-              numberOfDiscussions={topic.count}
-            />
-          ))}
-        </ul>
-      )}
-      {trends.length === 0 && (
-        <Box
-          display='flex'
-          justifyContent='center'
-          color='#888'
-          paddingY='2rem'>
-          No trends!
-        </Box>
-      )}
+      <Col className='trending-container'>
+        <h4>Trending</h4>
+        {getTrendsStatus.status !== 'pending' && (
+          <ul>
+            {trends.map((topic: any, i: number) => (
+              <Topic
+                topic={topic.hashtag}
+                key={i}
+                numberOfDiscussions={topic.count}
+              />
+            ))}
+          </ul>
+        )}
+        {trends.length === 0 && (
+          <Box
+            display='flex'
+            justifyContent='center'
+            color='#888'
+            paddingY='2rem'>
+            No trends!
+          </Box>
+        )}
+      </Col>
     </Container>
   );
 };

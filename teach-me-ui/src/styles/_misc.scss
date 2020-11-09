@@ -50,44 +50,44 @@ body {
       &::-webkit-scrollbar-thumb {
         background: $theme-secondary-v6;
       }
-    }
 
-    .small-bar,
-    &.small-bar {
-      &::-webkit-scrollbar {
-        width: 0.5em;
-      }
-    }
-
-    .primary-bar,
-    &.primary-bar {
-      &::-webkit-scrollbar-thumb {
-        background: $theme-primary-v6;
-      }
-    }
-
-    .secondary-bar,
-    &.secondary-bar {
-      &::-webkit-scrollbar-thumb {
-        background: $theme-secondary-v6;
-      }
-    }
-
-    .tertiary-bar,
-    &.tertiary-bar {
-      &::-webkit-scrollbar-thumb {
-        background: $theme-tertiary-v5;
-      }
-    }
-
-    .rounded-bar,
-    &.rounded-bar {
-      &::-webkit-scrollbar-track {
-        border-radius: 1rem;
+      .small-bar,
+      &.small-bar {
+        &::-webkit-scrollbar {
+          width: 0.5em;
+        }
       }
 
-      &::-webkit-scrollbar-thumb {
-        border-radius: 1rem;
+      .primary-bar,
+      &.primary-bar {
+        &::-webkit-scrollbar-thumb {
+          background: $theme-primary-v6;
+        }
+      }
+
+      .secondary-bar,
+      &.secondary-bar {
+        &::-webkit-scrollbar-thumb {
+          background: $theme-secondary-v6;
+        }
+      }
+
+      .tertiary-bar,
+      &.tertiary-bar {
+        &::-webkit-scrollbar-thumb {
+          background: $theme-tertiary-v5;
+        }
+      }
+
+      .rounded-bar,
+      &.rounded-bar {
+        &::-webkit-scrollbar-track {
+          border-radius: 1rem;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          border-radius: 1rem;
+        }
       }
     }
   }
@@ -200,7 +200,7 @@ a {
     border-radius: 1.75em;
     color: white;
     border: 2px solid white;
-    transition: 0.3s;
+    transition: 0.25s;
 
     &:hover,
     &:focus {
@@ -213,7 +213,7 @@ a {
   &[class*='primary'],
   &[class*='Secondary'],
   &[class*='btn-secondary'] {
-    min-height: 2.5rem;
+    min-height: 2.25rem;
     border-radius: 0.25rem;
     background-color: $theme-primary;
 
@@ -280,7 +280,7 @@ a {
     &:disabled,
     &.Mui-disabled {
       background-color: #ddd !important;
-      color: #555 !important;
+      color: #888 !important;
 
       &::before,
       &::after {
@@ -452,6 +452,10 @@ div {
   max-width: 100%;
 }
 
+.MuiToolbar-regular {
+  height: 3.5rem !important;
+}
+
 .logo {
   // min-width: 10rem;
   width: auto !important;
@@ -530,6 +534,14 @@ div {
 
 .uppercase {
   text-transform: uppercase !important;
+}
+
+.text-ellipsis {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .w-0 {
@@ -625,9 +637,10 @@ div {
   pointer-events: none;
 }
 
-#background-grey{
+#background-grey {
   transition: 0s;
-  &::before, &::after {
-    background: #aaa!important;
+  &::before,
+  &::after {
+    background: #aaa !important;
   }
 }

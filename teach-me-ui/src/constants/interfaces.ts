@@ -33,6 +33,8 @@ export interface PostPropsState {
   sender_name: string;
   sender_username: string;
   sec_type?: 'REPOST' | 'REPLY';
+  type: 'post' | 'reply';
+  child?: PostProps;
   text: string;
   id: string;
   upvotes: number;
@@ -42,7 +44,7 @@ export interface PostPropsState {
   posted_at: number;
   profile_photo?: string;
   _extra?: PostExtraProps;
-  parent?: PostParentProps;
+  parent?: PostProps;
 }
 
 interface PostExtraProps {
@@ -52,7 +54,7 @@ interface PostExtraProps {
   colleague_username: string;
 }
 
-interface PostParentProps {
+interface PostProps {
   sec_type?: 'REPOST' | 'REPLY';
   text: string;
   id: string;
@@ -130,9 +132,9 @@ export interface TopicPropsState {
 
 export interface ReactButtonPropsState {
   id: string;
-  reactions: number;
+  num_of_reactions: number;
   type: 'UPVOTE' | 'DOWNVOTE';
-  reacted: Reaction;
+  reaction: Reaction;
 }
 
 export interface ReactPostState {
@@ -443,7 +445,7 @@ export interface ReplyResult extends ReplyProps {
   sec_type: 'REPLY';
   id: string;
   text: string;
-  parent: PostParentProps;
+  parent: PostProps;
   action_count: number;
 }
 

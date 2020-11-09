@@ -11,6 +11,8 @@ import Post from '../../components/crumbs/Post';
 import { Route, BrowserRouter as Router } from 'react-router-dom';
 
 import { PostPropsState } from '../../constants';
+import { Provider } from 'react-redux';
+import store from '../../appStore';
 
 const post: PostPropsState = {
   sender_id: '1',
@@ -18,6 +20,7 @@ const post: PostPropsState = {
   media: [],
   posted_at: 123456,
   reposts: 1,
+  type: 'post',
   sender_name: 'Benjamin Chibuzor-Orie',
   downvotes: 2450,
   upvotes: 7134561,
@@ -30,16 +33,17 @@ const post: PostPropsState = {
 };
 
 test('loads and displays placeholder text', async () => {
-  const PostSample = () => (
-    <>
-      <Post {...post} />
-    </>
-  );
   render(
-    <Router>
-      <Route path='/' component={PostSample} />
-    </Router>
+    <Provider store={store}>
+      <Router>
+        <Route
+          path='/'
+          render={(props: any) => <Post {...props} {...post} />}
+        />
+      </Router>
+    </Provider>
   );
-  expect(screen.getByText(/7.13M/)).toBeInTheDocument();
-  expect(screen.getByText(/45K/)).toBeInTheDocument();
+  expect(
+    screen.getAllByText(/^(\d{1,3}(\.?\dK)?|\d{1,3}(\.\d)?M)$/)
+  ).toBeTruthy();
 });

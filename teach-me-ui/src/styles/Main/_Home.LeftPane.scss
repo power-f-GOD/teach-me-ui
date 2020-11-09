@@ -1,73 +1,108 @@
 .left-pane {
-  background-color: #fff;
+  // @include debugger();
+  padding-right: 1rem !important;
 
-  .rows-wrapper {
-    height: 100%;
-    overflow: auto;
-    padding: 0.75rem;
+  .container,
+  .col,
+  .row,
+  & {
+    padding: 0;
+    margin: 0;
   }
-  .safari-fix-d-block {
-    display: block !important;
-  }
-  .chat-avatar,
-  .recommendation-avatar {
-    $size: 5rem;
 
-    height: $size;
-    margin: 1rem 0;
+  section {
+    background-color: white;
+    border-radius: 0.85rem;
+    position: relative;
+    overflow: hidden;
+    padding: 0.75rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .cover-photo {
+    height: 9.5rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: {
+      size: cover;
+      position: center;
+      color: #eee;
+    }
+  }
+
+  .avatar {
+    $size: 4.5rem;
+
+    top: -3.25rem;
     width: $size;
-    font-size: 2.5rem;
-    display: inline-block;
-    background: $theme-primary-v5;
-    color: #eee;
-    border: 0.125rem solid #eee;
-  }
-  .small-text {
-    font-size: 0.7rem;
-  }
-  .recommendation-avatar {
-    $size: 3rem;
-    font-size: 1rem;
-    background: #ccc;
-    color: black;
+    height: $size;
+    border: 0.35rem solid white;
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    background-color: #bbb;
+
+    &.has-photo {
+      top: -2.75rem;
+    }
+
+    svg {
+      color: white;
+    }
+  }
+
+  span {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .bio-wrapper {
+    width: calc(100% - 5.25rem);
+    margin-left: 0.65rem;
+    margin-top: 7rem;
   }
 
   .display-name {
-    margin: 0.5rem 0;
-    font-weight: bold;
+    font-size: 1.25rem;
+    margin-bottom: 0.65rem;
+
+    &.light {
+      color: white;
+      text-shadow: 0 0 0.125rem rgba(0, 0, 0, 0.85);
+    }
   }
 
   .username {
     color: #777;
   }
 
-  .MuiSvgIcon-root {
-    color: $theme-primary-v4;
+  .status {
+    color: $theme-tertiary-v6;
+    font-size: 0.9rem;
+    margin: 1.5rem 0 0 -4.75rem;
+    min-width: calc(100% + 4.5rem);
+
+    svg {
+      margin-bottom: -0.15rem;
+    }
   }
+
+  // .rows-wrapper {
+  //   height: 100%;
+  //   overflow: auto;
+  // }
 
   .info {
-    font-size: 0.9rem;
-  }
+    font-size: 0.85rem;
 
-  .status {
-    color: #777;
-    text-align: center;
-    font-size: 0.9rem;
-
-    .MuiSvgIcon-root {
-      color: inherit;
-      margin-left: auto;
+    svg {
+      color: #777;
+      font-size: 1.25rem;
     }
   }
 
   .academic {
-    color: #666;
-
-    .MuiSvgIcon-root {
-      color: $theme-primary-v6;
-    }
+    color: #777;
   }
 }

@@ -99,8 +99,8 @@ it("logError should be called with an 'action' as param and return undefined.", 
 
 it('checks if function to count new notifications acts accordingly', () => {
   expect(countNewNotifications([])).toBe(0);
-  expect(countNewNotifications([{},{},{last_seen: 78}])).toBe(2);
-  expect(countNewNotifications([{last_seen: 67}])).toBe(0);
+  expect(countNewNotifications([{},{},{seen: 78}])).toBe(2);
+  expect(countNewNotifications([{seen: 67}])).toBe(0);
 });
 
 it('checks if functions for getting mentions and hashtags acts accordingly', () => {
