@@ -48,23 +48,28 @@ const UploadsPreview = (props: any) => {
       sendFilesToServer(
         [e.target.files[0]], 
         updateUserDataRequest,
-        {profilePhoto: true}
+        [],
+        'profile_photo',
+        false,
       );
     } else {
       sendFilesToServer(
         [e.target.files[0]], 
         updateUserDataRequest,
-        {coverPhoto: true}
+        [],
+        'cover_photo',
+        false,
       );
     }
   }
 
   const selectUpload = (id: string) => {
     if (props.title === 'Select Profile Photo') {
-      dispatch(updateUserDataRequest({profile_photo: id}, true)(dispatch));
+      dispatch(updateUserDataRequest({profile_photo: id})(dispatch));
     } else {
-      dispatch(updateUserDataRequest({cover_photo: id}, true)(dispatch));
+      dispatch(updateUserDataRequest({cover_photo: id})(dispatch));
     }
+    window.history.back();
     displayModal(false);
   }
 

@@ -9,7 +9,6 @@ import React, {
 import { connect } from 'react-redux';
 
 import {
-  getState,
   replyToPostFn,
   getHashtagsFromText,
   getMentionsFromText,
@@ -17,7 +16,7 @@ import {
   // preventEnterNewLine
 } from '../../functions';
 
-import { UserData, Reply } from '../../constants/interfaces';
+import { Reply } from '../../constants/interfaces';
 
 import Row from 'react-bootstrap/Row';
 
@@ -28,9 +27,9 @@ import Avatar from '@material-ui/core/Avatar';
 import { pingUser } from '../../actions';
 
 const CreateReply: React.FC<any> = (props) => {
-  const { className } = props;
-  const userData = getState().userData as UserData;
-  const isOpen = className === 'open';
+  const { className, displayName, profile_photo } = props;
+  const isOpen = /open/.test(className);
+  const openTriggeredByButton = /triggered.*button/.test(className);
 
   const inputRef = useRef<HTMLInputElement | any>(null);
   const commentFormRef = useRef<HTMLInputElement | any>(null);
@@ -100,11 +99,13 @@ const CreateReply: React.FC<any> = (props) => {
         }
       };
 
-      if (isOpen) {
+      if (isOpen && openTriggeredByButton) {
         delay(300).then(() => input.focus());
+      } else {
+        input.blur();
       }
     }
-  }, [isOpen]);
+  }, [isOpen, openTriggeredByButton]);
 
   return (
     <form
@@ -115,12 +116,8 @@ const CreateReply: React.FC<any> = (props) => {
         <Avatar
           className='comment-avatar'
           component='span'
-          alt={userData.displayName}
-          src={
-            userData.profile_photo
-              ? userData.profile_photo
-              : `images/${userData.avatar}`
-          }
+          alt={displayName}
+          src={profile_photo ?? ''}
         />
         <TextField
           onChange={onChange}

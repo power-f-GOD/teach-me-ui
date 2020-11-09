@@ -54,6 +54,7 @@ const CreatePost = (props: any) => {
 
   if (makePostProp.status === 'fulfilled') {
     dispatch(makePost({status: 'settled'}));
+    window.history.back();
     displayModal(false);
   }
 
@@ -225,9 +226,9 @@ const CreatePost = (props: any) => {
   const onPostSubmit = () => {
     if (state.post.text) {
       if (state.selectedFiles[0] || state.selectedUploads[0]) {
-        sendFilesToServer(state.selectedFiles, submitPost, state.post, state.selectedUploads);
+        sendFilesToServer(state.selectedFiles, submitPost, state.selectedUploads, 'media', true, {post: state.post});
       } else {
-        dispatch(submitPost(state.post, [])(dispatch));
+        dispatch(submitPost({post: state.post, media: []})(dispatch));
       }
     }
   }

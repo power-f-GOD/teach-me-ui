@@ -21,6 +21,14 @@
   padding: 0.75rem;
 }
 
+.recommendations-heading {
+  background-color: white;
+  padding: 0.75rem 0.75rem;
+  font-size: 1.2rem;
+  border-radius: 0.75rem;
+  margin: 1.75rem 0 -0.75rem;
+}
+
 .recommendations {
   overflow-x: auto;
   scroll-snap-type: x mandatory;
@@ -46,7 +54,7 @@
   border-radius: 1.5rem;
   height: 17rem;
   position: relative;
-  width: 12.5rem;
+  width: 12rem;
   overflow: hidden;
   scroll-snap-align: start;
   scroll-snap-stop: normal;
@@ -56,6 +64,12 @@
   * {
     text-decoration: unset !important;
     color: inherit;
+  }
+
+  &.no-photo {
+    .profile-photo {
+      transform: translateY(-4.15rem) !important;
+    }
   }
 
   &.null {
@@ -107,6 +121,10 @@
     font-size: 1.25rem;
   }
 
+  .username {
+    min-height: 1.5rem;
+  }
+
   .info {
     display: block;
     padding: 0.05rem 0.75rem;
@@ -123,16 +141,18 @@
   }
 
   .institution {
-    font-weight: bold;
     margin-top: 0.75rem;
     font-size: 0.9rem;
+    color: $theme-tertiary-v5;
+    width: calc(100% - 0.75rem);
   }
 
   .department {
-    color: $theme-tertiary-v6;
     font-size: 0.8rem;
-    margin: -0.25rem 0 0 1.5rem;
-    width: calc(100% - 1.5rem);
+    font-weight: bold;
+    margin-top: -0.25rem;
+    padding-left: 2.25rem;
+    width: calc(100% - 0.75rem);
   }
 
   svg {
@@ -177,7 +197,7 @@
 body.desktop.not-mac {
   .recommendations {
     border-radius: 1.5rem 1.5rem 0 0;
-    
+
     &::-webkit-scrollbar {
       width: 5px;
       height: 10px;

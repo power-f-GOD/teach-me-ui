@@ -226,13 +226,21 @@
   }
 
   .Post {
-    border-radius: 0;
+    border-radius: 1rem 0 0 1rem;
+    width: calc(100% - 0.75rem);
+    margin-left: 0.75rem;
   }
 
   .Reply {
     border-radius: 1rem 0 0 1rem;
-    margin-left: 1.5rem;
-    max-width: calc(100% - 1.5rem);
+    margin: -0.75rem 0 1rem 2.25rem;
+    width: calc(100% - 2.25rem);
+  }
+
+  .recommendations-heading {
+    width: calc(100% - 0.75rem);
+    border-radius: 0.75rem 0 0 0.75rem;
+    margin: 1.75rem 0.75rem -0.75rem;
   }
 
   .recommendations {

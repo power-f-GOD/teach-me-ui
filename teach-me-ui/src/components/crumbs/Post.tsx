@@ -93,7 +93,6 @@ const Post: React.FunctionComponent<
     _extra,
     id,
     text,
-    head,
     parent,
     profile_photo,
     // userAvatar,
@@ -103,8 +102,10 @@ const Post: React.FunctionComponent<
     downvotes: _downvotes,
     reaction,
     reposts,
-    replies
+    replies,
+    child
   } = props;
+
   const history = useHistory();
   const [mediaPreview, setMediaPreview] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState(0);
@@ -138,8 +139,8 @@ const Post: React.FunctionComponent<
     );
   };
 
-  if (sec_type === 'REPOST') {
-    extra = `${sender_name} reposted`;
+  if (child?.sec_type === 'REPOST') {
+    extra = `${child.sender_name} reposted`;
   }
 
   if (_extra) {
@@ -147,14 +148,16 @@ const Post: React.FunctionComponent<
       case 'UPVOTE':
         extra = `${_extra?.colleague_name} upvoted`;
         break;
-      case 'DOWNVOTE':
-        extra = `${_extra?.colleague_name} downvoted`;
-        break;
     }
   }
 
-  if (sec_type === 'REPLY') {
-    extra = `${sender_name} replied`;
+  if (child?.sec_type === 'REPLY') {
+    extra = `${child.sender_name} replied`;
+
+    extra +=
+      sender_username === child.sender_username
+        ? ' thier own post'
+        : sender_name + "'s post";
   }
 
   return (
@@ -219,62 +222,28 @@ const Post: React.FunctionComponent<
 
       {/* Post */}
       <Box id={id} className={type === 'reply' ? 'Reply' : 'Post'}>
-        {((_extra && sec_type !== 'REPLY') ||
-          (sec_type === 'REPOST' && !text)) &&
-          !head && <small className='small-text'>{extra}</small>}
-        {sec_type === 'REPLY' && !head && (
-          <small className='small-text'>{extra}</small>
-        )}
+        {extra && <small className='extra'>{extra}</small>}
 
         {/* Post header */}
         <Row className='post-header'>
           <Avatar
             className='post-avatar align-self-center mr-1'
-            alt={
-              sec_type === 'REPLY'
-                ? parent?.sender_name
-                : text
-                ? sender_name
-                : parent?.sender_name
-            }
+            alt={sender_name}
             src={profile_photo ? profile_photo : ''}
           />
           <Col className='d-flex flex-column justify-content-center pl-2'>
             {sender_name ? (
               <>
                 <Box className='d-flex'>
-                  <Link
-                    to={`@${
-                      sec_type === 'REPLY'
-                        ? parent?.sender_username
-                        : text
-                        ? sender_username
-                        : parent?.sender_username
-                    }`}
-                    className='font-bold'>
-                    {sec_type === 'REPLY'
-                      ? parent?.sender_name
-                      : text
-                      ? sender_name
-                      : parent?.sender_name}
+                  <Link to={`@${sender_username}`} className='font-bold'>
+                    {sender_name}
                   </Link>
                   <Box className='theme-tertiary-lighter ml-1'>
-                    | @
-                    {sec_type === 'REPLY'
-                      ? parent?.sender_username
-                      : text
-                      ? sender_username
-                      : parent?.sender_username}
+                    | @{sender_username}
                   </Box>
                 </Box>
                 <Box component='small' className='theme-tertiary'>
-                  {formatDate(
-                    (sec_type === 'REPLY'
-                      ? parent?.posted_at
-                      : text
-                      ? posted_at
-                      : parent?.posted_at) as number
-                  )}
+                  {formatDate(+posted_at!)}
                 </Box>
               </>
             ) : (
@@ -289,30 +258,12 @@ const Post: React.FunctionComponent<
         {/* Post body */}
         {sender_name ? (
           <Row className='post-body'>
-            <Box
-              component='div'
-              onClick={navigate(
-                (sec_type === 'REPLY'
-                  ? parent?.id
-                  : text
-                  ? id
-                  : parent?.id) as string
-              )}
-              className='text'>
-              {processPostFn(
-                (sec_type === 'REPLY'
-                  ? parent?.text
-                  : text
-                  ? text
-                  : parent?.text) as string
-              )}
+            <Box component='div' onClick={navigate(id!)} className='text'>
+              {processPostFn(text!)}
             </Box>
 
             {(media as any[]).length > 0 && (
               <Box
-                pt={1}
-                px={0}
-                ml={5}
                 style={{
                   display: 'grid',
                   gridTemplateColumns: '1fr 1fr',
@@ -368,7 +319,6 @@ const Post: React.FunctionComponent<
                         src={url}
                         alt='post'
                         style={{
-                          borderRadius: '0.2rem',
                           objectFit: 'cover',
                           objectPosition: 'center',
                           verticalAlign: 'middle',
@@ -433,17 +383,15 @@ const Post: React.FunctionComponent<
         {sender_name && (
           <Box>
             <PostFooter
-              // {...props}
-              sec_type={sec_type}
               id={id}
               text={text}
-              // parent={parent}
               upvotes={_upvotes}
               downvotes={_downvotes}
               reaction={reaction}
               reposts={reposts}
               replies={replies}
               repostMeta={parent || props}
+              anchorIsParent={!!child}
               openCreateRepostModal={openCreateRepostModal}
             />
           </Box>

@@ -155,7 +155,7 @@ const Profile = (props: any) => {
   basicInfo = [
     { name: 'Firstname', value: selfView ? userData.firstname : firstname },
     { name: 'Lastname', value: selfView ? userData.lastname : lastname },
-    { name: 'Username', value: selfView ? userData.username : username },
+    { name: 'Username', value: selfView ? userData.username : userId },
     // { name: 'Bio', value: selfView ? userData.bio ? userData.bio : 'Hey there, I use Kanyimuta' : bio },
     // { name: 'Date of birth', value: selfView ? userData.dob : dob },
     // { name: 'Email', value: selfView ? userData.email : email }

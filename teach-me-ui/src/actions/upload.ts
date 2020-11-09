@@ -23,7 +23,7 @@ export const uploads = (payload: any)=> {
   } 
 }
 
-export const sendFilesToServer = (files: Array<File>, action: Function, para: any, selectedUploads: Array<any> = []) => {
+export const sendFilesToServer = (files: Array<File>, callbackAction: Function, reusedUploads: Array<any>, idParameter: string, array: boolean = true, actionParameters: any = {}) => {
   dispatch(sendFiles({
     status: 'pending'
   }));
@@ -53,7 +53,7 @@ export const sendFilesToServer = (files: Array<File>, action: Function, para: an
         }
       }).catch(logError(sendFiles));
     } else {
-      for (let localUpload of selectedUploads) {
+      for (let localUpload of reusedUploads) {
         ids.push(localUpload.id);
       }
       dispatch(sendFiles({
@@ -62,15 +62,12 @@ export const sendFilesToServer = (files: Array<File>, action: Function, para: an
         err: false
       }));
       dispatch(getUploads);
-      if (para.profilePhoto) {
-        displayModal(false);
-        dispatch(action({profile_photo: ids[0]}, true)(dispatch));
-      } else if (para.coverPhoto) {
-        displayModal(false);
-        dispatch(action({cover_photo: ids[0]}, true)(dispatch));
-      } else {
-        dispatch(action(para, ids)(dispatch));
-      }
+      idParameter.includes('photo') && window.history.back();
+      idParameter.includes('photo') && displayModal(false);
+      let fileId = array ? ids : ids[0];
+      let parameters : any = {...actionParameters};
+      parameters[`${idParameter}`] = fileId;
+      dispatch(callbackAction({...parameters})(dispatch));
       dispatch(sendFiles({
         status: 'settled',
         data: []

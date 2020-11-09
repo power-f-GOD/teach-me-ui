@@ -5,13 +5,17 @@ import Avatar from '@material-ui/core/Avatar';
 
 import { displayModal } from '../../functions';
 import { connect } from 'react-redux';
+import { UserData } from '../../constants';
 
 const openCreatePostModal = (e: any) => {
   displayModal(true, false, 'CREATE_POST', { title: 'Create Post' });
 };
 
-export const Compose = (props: any) => {
+export const Compose: React.FunctionComponent<{
+  userData: Partial<UserData>;
+}> = (props) => {
   const { firstname, profile_photo } = props.userData;
+
   return (
     <Box className='Compose d-flex flex-column'>
       <Box display='flex'>

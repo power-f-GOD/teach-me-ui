@@ -536,6 +536,14 @@ div {
   text-transform: uppercase !important;
 }
 
+.text-ellipsis {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
 .w-0 {
   width: 0;
 }

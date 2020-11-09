@@ -14,14 +14,16 @@ import { PostPropsState, UserData, SocketProps } from '../../constants';
 import { fetchPostsFn, getState } from '../../functions';
 
 import { connect } from 'react-redux';
-import { Reply } from '../crumbs/Post.crumbs';
 
 const MiddlePane: React.FunctionComponent = (props: any) => {
   const {
     auth: { isAuthenticated },
     profileData: {
       data: [profile]
-    }
+    },
+    posts,
+    fetchPostStatus,
+    userData
   } = props;
   const config: IntersectionObserverInit = {
     root: null,
@@ -48,7 +50,7 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
     // eslint-disable-next-line
     []
   );
-  const username = props.userData.username || '';
+  const username = userData.username || '';
 
   let profileUsername = profile.username || '';
   // here is where the check is made to render the views accordingly
@@ -62,35 +64,50 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
     fetchPostsFn(type, userId);
     // eslint-disable-next-line
   }, [props.type]);
-  const posts = document.querySelectorAll('.Post');
+  const postElements = document.querySelectorAll('.Post');
   useEffect(() => {
     if (props.type === 'FEED') {
-      posts.forEach((post) => {
+      postElements.forEach((post) => {
         observer.observe(post);
       });
     }
     // eslint-disable-next-line
-  }, [posts.length, props.type]);
+  }, [postElements.length, props.type]);
 
   return (
     <Container className='middle-pane px-0' fluid>
       {(selfView || !inProfile) && <Compose />}
-      {!inProfile && <Recommendations />}
-      {props.fetchPostStatus.status === 'resolved' &&
-        props.posts.map((post: PostPropsState, i: number) => {
+      {!inProfile && posts.length < 3 && <Recommendations />}
+      {fetchPostStatus.status === 'resolved' &&
+        posts.map((post: PostPropsState, i: number) => {
+          const childProps = { ...post, parent: undefined };
+          const renderRecommendations = !inProfile && i === 3 && (
+            <Recommendations />
+          );
+
           switch (post.sec_type) {
             case 'REPLY':
               return (
                 <React.Fragment key={i}>
-                  <Post {...post.parent} />
-                  <Reply
-                    {...post}
-                    repostMeta={{ ...post, parent: undefined }}
+                  {renderRecommendations}
+                  <Post
+                    {...post.parent}
+                    child={{ ...childProps }}
+                    type='post'
                   />
+                  <Post {...childProps} type='reply' />
+                  {!inProfile && posts.length >= 3 && i === 3 && (
+                    <Recommendations />
+                  )}
                 </React.Fragment>
               );
             default:
-              return <Post {...post} key={i} />;
+              return (
+                <React.Fragment key={i}>
+                  <Post {...post} />
+                  {renderRecommendations}
+                </React.Fragment>
+              );
           }
         })}
       {props.fetchPostStatus.status === 'pending' &&

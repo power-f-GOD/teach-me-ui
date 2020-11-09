@@ -56,7 +56,6 @@ const Notifications = (props: any) => {
       ) : (
         <Container className='d-flex flex-column justify-content-center notification-container1'>
           <Box className='notification-container mx-auto'>
-
             {result[0]
               ? result.map((notification: any, key: number) => {
                   notification.seen && makeReadTrue();
@@ -65,7 +64,6 @@ const Notifications = (props: any) => {
                   const notificationDate = formatDate(date);
                   const notificationMessage = `<div class="${read ? 'read-notifications' : 'unread-notifications'}">${formatNotification(entities,notification.message)}
                     <p class="no-space ${read ? 'read-notifications-date' : 'unread-notifications-date'}">${notificationDate}</p></div>`;
-                
                   return (
                     <Link to={`${action}`} key={key} style={{textDecoration: 'none'}} onClick={(e: any) => {removeModal()}}> 
                       <ListItem key={key} className={`notification-result ${ read ? 'notification-background-read' : 'notification-background-unread'}`}>
