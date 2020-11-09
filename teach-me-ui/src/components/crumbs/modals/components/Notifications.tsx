@@ -59,7 +59,7 @@ const Notifications = (props: any) => {
 
             {result[0]
               ? result.map((notification: any, key: number) => {
-                  notification.last_seen && makeReadTrue();
+                  notification.seen && makeReadTrue();
                   const action = notification.action || '';
                   const date = new Date(notification.date);
                   const notificationDate = formatDate(date);

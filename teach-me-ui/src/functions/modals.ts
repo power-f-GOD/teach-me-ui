@@ -8,8 +8,7 @@ export const displayModal = (
   type?: string,
   meta?: { [key: string]: any },
 ) => {
-  const notificationId = getState().getNotifications.data.notifications[0] ? getState().getNotifications.data.notifications[0]._id : '';
-  if (notification && getState().getNotifications.data.notifications[0]) setLastseen(notificationId);
+  if (notification && getState().getNotifications.data.notifications[0] && !getState().getNotifications.data.notifications[0].seen) setLastseen();
   if (visibility) {
     return dispatch(showModal({ type, meta }));
   }
