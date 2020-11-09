@@ -10,7 +10,7 @@ const openCreatePostModal = (e: any) => {
   displayModal(true, false, 'CREATE_POST', { title: 'Create Post' });
 };
 
-export const Compose: React.FunctionComponent = (props: any) => {
+export const Compose = (props: any) => {
   const { firstname, profile_photo } = props.userData;
   return (
     <Box className='Compose d-flex flex-column'>
