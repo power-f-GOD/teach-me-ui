@@ -177,10 +177,12 @@ export const fetchPosts: Function = (
     }
   })
     .then((res) => {
+      console.log(res.data.data.posts);
+      
       if (res.data.error) {
         throw new Error(res.data.message);
       }
-      return res.data.posts;
+      return res.data.data.posts;
     })
     .then((state) => {
       if (state.length === 0 && type === 'FEED') {
@@ -215,7 +217,7 @@ export const recycleFeeds = (cb = (s: boolean) => {}) => (
   // const lastPost = getState().posts[1] as PostPropsState;
   const token = userData.token as string;
   Axios({
-    url: `/feed/recycle`,
+    url: `/feed?recycle=true`,
     baseURL,
     method: 'GET',
     headers: {

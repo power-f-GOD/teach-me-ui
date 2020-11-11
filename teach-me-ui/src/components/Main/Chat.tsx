@@ -467,7 +467,7 @@ const ChatBox = (props: ChatBoxProps) => {
             memoizedComponent={ChatLeftPane}
             conversations={conversations}
             userId={userData.id}
-            userFirstname={userData.firstname}
+            userFirstname={userData.first_name}
             handleSetActivePaneIndex={handleSetActivePaneIndex}
           />
         </Col>

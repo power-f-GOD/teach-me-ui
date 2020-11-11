@@ -97,15 +97,14 @@ export const setLastseen = () => {
   let token = getState().userData.token;
 
   axios({
-    url: `notification/seen`,
+    url: `notificationS/seen`,
     baseURL,
-    method: 'GET',
+    method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
       Content_Type: 'application/json'
     }
   }).then((data) => {
-    console.log(data)
     dispatch(getNotificationsRequest(Date.now())(dispatch));
   }).catch((e: any) => {
     let message = /network/i.test(e.message)

@@ -94,8 +94,8 @@ const Profile = (props: any) => {
   const data: UserData = profileData.data[0];
   const { auth } = props;
   const { isAuthenticated } = auth;
-  firstname = data.firstname || '';
-  lastname = data.lastname || '';
+  firstname = data.first_name || '';
+  lastname = data.last_name || '';
   displayName = data.displayName || '';
   email = data.email || '';
   email = email + '';
@@ -158,8 +158,8 @@ const Profile = (props: any) => {
   
 
   basicInfo = [
-    { name: 'Firstname', value: selfView ? userData.firstname : firstname },
-    { name: 'Lastname', value: selfView ? userData.lastname : lastname },
+    { name: 'Firstname', value: selfView ? userData.first_name : firstname },
+    { name: 'Lastname', value: selfView ? userData.last_name : lastname },
     { name: 'Username', value: selfView ? userData.username : userId },
     // { name: 'Bio', value: selfView ? userData.bio ? userData.bio : 'Hey there, I use Kanyimuta' : bio },
     // { name: 'Date of birth', value: selfView ? userData.dob : dob },

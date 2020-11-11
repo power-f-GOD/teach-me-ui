@@ -63,6 +63,7 @@ export const getProfileData = (userId: string) => (
     .then(({ data }: any) => {
       const _data = { ...data };
       const { error } = data;
+      console.log(_data)
 
       delete _data.error;
 

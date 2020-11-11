@@ -53,8 +53,8 @@ export const mentionState: MentionState = {
 export const userDataState: UserData = {
   avatar: 'avatar-1.png',
   displayName: '',
-  firstname: '',
-  lastname: '',
+  first_name: '',
+  last_name: '',
   username: '',
   email: '',
   date_of_birth: '',
