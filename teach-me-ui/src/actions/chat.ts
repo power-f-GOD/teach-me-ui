@@ -946,7 +946,7 @@ export const getConversationInfo = (
   })
     .then(({ data }: any) => {
       const _data = { ...data } as UserData & { error: boolean };
-      const { error, firstname, lastname, online_status } = _data;
+      const { error, first_name, last_name, online_status } = _data;
 
       delete _data.error;
       delete _data.date_of_birth;
@@ -954,7 +954,7 @@ export const getConversationInfo = (
 
       const conversationData: ConversationInfo['data'] = {
         ..._data,
-        displayName: `${firstname} ${lastname}`,
+        displayName: `${first_name} ${last_name}`,
         avatar: 'avatar-1.png'
       };
 

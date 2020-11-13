@@ -28,7 +28,12 @@ import Button from '@material-ui/core/Button';
 import Img from '../crumbs/Img';
 import ColleagueView from '../crumbs/ColleagueView';
 import ProfileFeeds from '../crumbs/ProfileFeeds';
-import { UserData, DeepProfileProps } from '../../constants/interfaces';
+import { 
+  UserData, 
+  DeepProfileProps,
+  EDIT_PROFILE,
+  SELECT_PHOTO
+} from '../../constants';
 import { dispatch, cleanUp, displayModal } from '../../functions';
 import { getProfileData } from '../../actions';
 import { getConversations } from '../../actions/chat';
@@ -89,8 +94,8 @@ const Profile = (props: any) => {
   const data: UserData = profileData.data[0];
   const { auth } = props;
   const { isAuthenticated } = auth;
-  firstname = data.firstname || '';
-  lastname = data.lastname || '';
+  firstname = data.first_name || '';
+  lastname = data.last_name || '';
   displayName = data.displayName || '';
   email = data.email || '';
   email = email + '';
@@ -153,8 +158,8 @@ const Profile = (props: any) => {
   
 
   basicInfo = [
-    { name: 'Firstname', value: selfView ? userData.firstname : firstname },
-    { name: 'Lastname', value: selfView ? userData.lastname : lastname },
+    { name: 'Firstname', value: selfView ? userData.first_name : firstname },
+    { name: 'Lastname', value: selfView ? userData.last_name : lastname },
     { name: 'Username', value: selfView ? userData.username : userId },
     // { name: 'Bio', value: selfView ? userData.bio ? userData.bio : 'Hey there, I use Kanyimuta' : bio },
     // { name: 'Date of birth', value: selfView ? userData.dob : dob },
@@ -167,7 +172,7 @@ const Profile = (props: any) => {
   ];
 
   const openEditProfileModal = () => {
-    displayModal(true, false, 'EDIT_PROFILE', { title: 'Edit Profile' });
+    displayModal(true, false, EDIT_PROFILE, { title: 'Edit Profile' });
     window.location.hash = 'modal';
   };
 
@@ -207,11 +212,11 @@ const Profile = (props: any) => {
   }
 
   const openProfilePhotoEditModal = () => {
-    displayModal(true, false, 'SELECT_PHOTO', { title: 'Select Profile Photo' });
+    displayModal(true, false, SELECT_PHOTO, { title: 'Select Profile Photo' });
   }
 
   const openCoverPhotoEditModal = (e: any) => {
-    displayModal(true, false, 'SELECT_PHOTO', { title: 'Select Cover Photo' });
+    displayModal(true, false, SELECT_PHOTO, { title: 'Select Cover Photo' });
   }
 
   return (

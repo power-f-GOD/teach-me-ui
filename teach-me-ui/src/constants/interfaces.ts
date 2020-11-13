@@ -286,11 +286,11 @@ export interface UserData {
   displayName: string;
   token?: string | null;
   department: string;
-  firstname: string;
+  first_name: string;
   institution: string;
   last_login?: number;
   last_seen?: number;
-  lastname: string;
+  last_name: string;
   level: string;
   email?: string;
   date_of_birth?: string;

@@ -27,6 +27,7 @@ import { triggerSearchKanyimuta } from '../../actions/search';
 import { LazyLoadImage as LazyImg } from 'react-lazy-load-image-component';
 
 import { PostFooter } from './Post.crumbs';
+import { CREATE_REPOST } from '../../constants/modals';
 
 const stopProp = (e: any) => {
   e.stopPropagation();
@@ -76,7 +77,7 @@ export const processPostFn = (post: string) => {
 };
 
 export const openCreateRepostModal = (meta: any) => (e: any) => {
-  displayModal(true, false, 'CREATE_REPOST', {
+  displayModal(true, false, CREATE_REPOST, {
     title: 'Create Repost',
     post: meta
   });

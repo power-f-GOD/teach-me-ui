@@ -121,8 +121,8 @@ const EditProfile = (props: any) => {
   const [hideInstitutionsList, setHideInstitutionsList] = useState(Boolean);
   const [hideDepartmentsList, setHideDepartmentsList] = useState(Boolean);
   const [hideLevelsList, setHideLevelsList] = useState(Boolean);
-  const [firstnameValue, setFirstnameValue] = useState(`${userData.firstname}`)
-  const [lastnameValue, setLastnameValue] = useState(`${userData.lastname}`)
+  const [firstnameValue, setFirstnameValue] = useState(`${userData.first_name}`)
+  const [lastnameValue, setLastnameValue] = useState(`${userData.last_name}`)
   const [usernameValue, setusernameValue] = useState(`${userData.username}`)
   const [emailValue, setEmailValue] = useState(`${userData.email}`)
   const [dateOfBirthValue, setDateOfBirthValue] = useState(/*`${userData.date_of_birth}`*/new Date())

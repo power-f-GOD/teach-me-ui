@@ -263,20 +263,14 @@ export const requestSignin = (data: SigninFormData) => (
   callNetworkStatusCheckerFor({ name: 'signin', func: signin });
 
   let { id, password } = data;
-  let _id;
-
-  if (/@/.test(id)) {
-    _id = { email: id };
-  } else {
-    _id = { username: id };
-  }
+  let identity = id;
 
   axios({
     method: 'POST',
     url: '/auth/login',
     baseURL,
     data: {
-      ..._id,
+      identity,
       password
     },
     headers: {
@@ -285,17 +279,18 @@ export const requestSignin = (data: SigninFormData) => (
   })
     .then((response) => {
       const { data: _data } = response;
-      const message = _data.message;
-      const error = _data.error;
+      const { data, error } = _data
+      const message = data.message;
 
       if (!error) {
-        const displayName = `${_data.firstname} ${_data.lastname}`;
+        const displayName = `${data.first_name} ${data.last_name}`;
 
         delete _data.error;
 
-        const userData: UserData = { ..._data };
+        const userData: UserData = { ...data };
 
         populateStateWithUserData({
+          
           ...userData,
           displayName
         }).then(() => {

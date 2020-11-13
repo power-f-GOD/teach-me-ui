@@ -44,11 +44,12 @@ export const sendFilesToServer = (files: Array<File>, callbackAction: Function, 
           'Content_Type': 'multipart/form-data'
         },
         data: formData
-      }).then(({ data }: any) => {
-        if (data.error) {
+      }).then((response: any) => {
+        const { error, data } = response.data;
+        if (error) {
           logError(sendFiles)(data.error);
         } else {
-          ids.push(data._id);
+          ids.push(data.id);
           recursiveUploadReturnsArrayOfId(files1)
         }
       }).catch(logError(sendFiles));
@@ -90,8 +91,9 @@ export const getUploads = () => {
     headers: {
       Authorization: `Bearer ${token}`
     }
-  }).then(({ data }) => {
-    if (data.error) {
+  }).then((response: any) => {
+    const { error, data } = response.data;
+    if (error) {
       dispatch(uploads({
         status: 'fulfilled',
         err: true

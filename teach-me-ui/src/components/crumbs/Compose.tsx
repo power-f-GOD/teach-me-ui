@@ -5,16 +5,19 @@ import Avatar from '@material-ui/core/Avatar';
 
 import { displayModal } from '../../functions';
 import { connect } from 'react-redux';
-import { UserData } from '../../constants';
+import { 
+  CREATE_POST, 
+  UserData 
+} from '../../constants';
 
 const openCreatePostModal = (e: any) => {
-  displayModal(true, false, 'CREATE_POST', { title: 'Create Post' });
+  displayModal(true, false, CREATE_POST, { title: 'Create Post' });
 };
 
 export const Compose: React.FunctionComponent<{
   userData: Partial<UserData>;
 }> = (props) => {
-  const { firstname, profile_photo } = props.userData;
+  const { first_name, profile_photo } = props.userData;
 
   return (
     <Box className='Compose d-flex flex-column'>
@@ -23,7 +26,7 @@ export const Compose: React.FunctionComponent<{
           <Avatar
             component='span'
             className='chat-avatar compose-avatar'
-            alt={firstname}
+            alt={first_name}
             src={profile_photo || ''}
           />
         </Box>
@@ -31,7 +34,7 @@ export const Compose: React.FunctionComponent<{
           className='compose-question theme-tertiary-lighter'
           onClick={openCreatePostModal}
           role='compose'>
-          {firstname}, have any educative thought?
+          {first_name}, have any educative thought?
         </Box>
       </Box>
     </Box>

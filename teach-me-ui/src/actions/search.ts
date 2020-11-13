@@ -43,12 +43,11 @@ export const triggerSearchKanyimuta = (keyword: string) => (
         }
       })
         .then(({ data }: any) => {
-          const { error, people } = data as {
-            error: boolean;
+          const { people } = data.data as {
             people: any[];
           };
 
-          if (!error && !!people[0]) {
+          if (!data.error && !!people[0]) {
             dispatch(
               searchKanyimuta({
                 status: 'fulfilled',

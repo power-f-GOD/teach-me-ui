@@ -44,13 +44,13 @@ export const getNotificationsRequest = (date: number) => (
       Content_Type: 'application/json'
     }
   })
-    .then(({ data }: any) => {
-      const { error, notifications, entities } = data as {
-        error: boolean;
-        notifications: any[];
-        entities?: any;
-      };
+    .then((response : any) => {
+      const { error, data } = response.data;
       if (!error) {
+        const { notifications, entities } = data.notifications as {
+          notifications: Array<string>;
+          entities: any
+        };
         dispatch(
           getNotifications({
             status: 'fulfilled',
@@ -93,18 +93,18 @@ export const pingUser = (
   );
 };
 
-export const setLastseen = (id: string) => {
+export const setLastseen = () => {
   let token = getState().userData.token;
 
   axios({
-    url: `notifications/${id}/seen`,
+    url: `notificationS/seen`,
     baseURL,
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
       Content_Type: 'application/json'
     }
-  }).then(() => {
+  }).then((data) => {
     dispatch(getNotificationsRequest(Date.now())(dispatch));
   }).catch((e: any) => {
     let message = /network/i.test(e.message)

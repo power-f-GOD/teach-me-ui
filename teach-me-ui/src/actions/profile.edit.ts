@@ -152,8 +152,9 @@ export const getUserDetailsRequest = () => (
       'Content_Type': 'application/json'
     }
   })
-  .then(({ data }: any) => {
-    if (!data.error) {
+  .then((res: any) => {
+    const { error, data } = res.data;
+    if (!error) {
       const displayName = `${data.firstname} ${data.lastname}`;
       const institution = `${data.institution.name}, ${data.institution.country}`
       populateStateWithUserData({
@@ -222,8 +223,9 @@ export const updateAcademicDataRequest = (level: number, department: string) => 
       department
     }
   })
-  .then(({ data }: any) => {
-    if (!data.error) {
+  .then((res: any) => {
+    const { error, data } = res.data;
+    if (!error) {
       dispatch(
         updateAcademicData({
           status: 'fulfilled',
@@ -272,8 +274,9 @@ export const updateEmailRequest = (email: string) => (
       email
     }
   })
-  .then(({ data }: any) => {
-    if (!data.error) {
+  .then((res: any) => {
+    const { error, data } = res.data;
+    if (!error) {
       dispatch(
         updateEmail({
           status: 'fulfilled',
@@ -323,8 +326,9 @@ export const updatePasswordRequest = (current_password: string, new_password: st
       new_password
     }
   })
-  .then(({ data }: any) => {
-    if (!data.error) {
+  .then((res: any) => {
+    const { error, data } = res.data;
+    if (!error) {
       dispatch(
         updatePassword({
           status: 'fulfilled',
@@ -373,8 +377,9 @@ export const updateUsernameRequest = (username: string) => (
       username
     }
   })
-  .then(({ data }: any) => {
-    if (!data.error) {
+  .then((res: any) => {
+    const { error, data } = res.data;
+    if (!error) {
       dispatch(
         updateUsername({
           status: 'fulfilled',
@@ -420,8 +425,9 @@ export const updateUserDataRequest = (data: Object, updateState: boolean = true)
     },
     data
   })
-  .then(({ data }: any) => {
-    if (!data.error) {
+  .then((res: any) => {
+    const { error, data } = res.data;
+    if (!error) {
       dispatch(
         updateUserData({
           status: 'fulfilled',

@@ -46,8 +46,7 @@ import {
 import {
   getState,
   callNetworkStatusCheckerFor,
-  getMentionsFromText,
-  getHashtagsFromText,
+  getCharacterSequenceFromText,
   logError
 } from '../functions';
 
@@ -181,7 +180,7 @@ export const fetchPosts: Function = (
       if (res.data.error) {
         throw new Error(res.data.message);
       }
-      return res.data.posts;
+      return res.data.data.posts;
     })
     .then((state) => {
       if (state.length === 0 && type === 'FEED') {
@@ -216,7 +215,7 @@ export const recycleFeeds = (cb = (s: boolean) => {}) => (
   // const lastPost = getState().posts[1] as PostPropsState;
   const token = userData.token as string;
   Axios({
-    url: `/feed/recycle`,
+    url: `/feed?recycle=true`,
     baseURL,
     method: 'GET',
     headers: {
@@ -227,7 +226,7 @@ export const recycleFeeds = (cb = (s: boolean) => {}) => (
       if (res.data.error) {
         throw new Error(res.data.message);
       }
-      return res.data.posts;
+      return res.data.data.posts;
     })
     .then((state) => {
       dispatch(fetchedMorePosts(state as Array<PostPropsState>));
@@ -261,7 +260,7 @@ export const fetchReplies = (postId?: string) => (dispatch: Function) => {
       if (res.data.error) {
         throw new Error(res.data.message);
       }
-      return res.data.replies;
+      return res.data.data.replies;
     })
     .then((state) => {
       dispatch(fetchedPosts(state as Array<PostPropsState>));
@@ -293,7 +292,7 @@ export const fetchPost: Function = (postId?: string) => (
       if (res.data.error) {
         throw new Error(res.data.message);
       }
-      return res.data;
+      return res.data.data;
     })
     .then((state) => {
       dispatch(fetchedPost(state as PostPropsState));
@@ -406,19 +405,19 @@ export const submitPost = ({post, media}: {post: Post; media: Array<string>}) =>
     },
     data: {
       text: post.text,
-      mentions: getMentionsFromText(post.text),
-      hashtags: getHashtagsFromText(post.text),
+      mentions: getCharacterSequenceFromText(post.text, '@'),
+      hashtags: getCharacterSequenceFromText(post.text, '#'),
       media
     }
   })
     .then(({ data }) => {
-      addPost(data);
+      addPost(data.data);
       dispatch(
         makePost({
           status: 'fulfilled'
         })
       );
-      getMentionsFromText(post.text) && pingUser(getMentionsFromText(post.text));
+      getCharacterSequenceFromText(post.text, '@') && pingUser(getCharacterSequenceFromText(post.text, '@'));
     })
     .catch(logError(makePost));
   return {
@@ -474,7 +473,7 @@ export const getTrends = () => (dispatch: Function) => {
       if (res.data.error) {
         throw new Error(res.data.message);
       }
-      return res.data;
+      return res.data.data;
     })
     .then((state) => {
       dispatch(fetchedTrends(state.hashtags));
@@ -540,7 +539,7 @@ export const getRecommendations = () => (dispatch: Function) => {
       if (res.data.error) {
         throw new Error(res.data.message);
       }
-      return res.data;
+      return res.data.data;
     })
     .then((state) => {
       dispatch(fetchedRecommendations(state.recommendations));

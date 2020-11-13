@@ -138,7 +138,7 @@ const Search = (props: any) => {
                     const keyword = searchInputRef.current?.value ?? '';
                     let username = `@${result.username}`;
                     const link = `/${username}`;
-                    let displayName = `${result.firstname} ${result.lastname}`.replace(
+                    let displayName = `${result.first_name} ${result.last_name}`.replace(
                       new RegExp(`(${keyword.trim()})`, 'i'),
                       `<span class='theme-secondary-lighter'>$1</span>`
                     );

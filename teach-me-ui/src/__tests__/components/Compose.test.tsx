@@ -12,7 +12,7 @@ import '@testing-library/jest-dom/extend-expect';
 import { Compose } from '../../components/crumbs/Compose';
 
 test('loads and displays placeholder text', async () => {
-  render(<Compose userData={{ firstname: 'Benjamin', avatar: 'undefined' }} />);
+  render(<Compose userData={{ first_name: 'Benjamin', avatar: 'undefined' }} />);
   expect(
     screen.getByText(/^[a-zA-Z]+, have any educative thought\?$/)
   ).toHaveTextContent(/^[a-zA-Z]+,/);

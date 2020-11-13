@@ -144,7 +144,7 @@ export const addColleague = (userId: string, username: string) => (
       if (res.data.error) {
         throw new Error(res.data.message);
       }
-      return res.data;
+      return res.data.data;
     })
     .then((state) => {
       dispatch(fetchDeepProfile(userId));
@@ -210,7 +210,7 @@ export const fetchDeepProfile = (id: string) => (dispatch: Function) => {
       if (res.data.error) {
         throw new Error(res.data.message);
       }
-      return res.data;
+      return res.data.data;
     })
     .then((state) => {
       dispatch(fetchedDeepProfileData(state));
@@ -268,7 +268,7 @@ export const removeColleague = (id: string, userId: string) => (dispatch: Functi
       if (res.data.error) {
         throw new Error(res.data.message);
       }
-      return res.data;
+      return res.data.data;
     })
     .then((state) => {
       dispatch(fetchDeepProfile(userId));
@@ -328,7 +328,7 @@ export const acceptColleague = (id: string, username: string, userId: string) =>
       if (res.data.error) {
         throw new Error(res.data.message);
       }
-      return res.data;
+      return res.data.data;
     })
     .then((state) => {
       dispatch(fetchDeepProfile(userId));
@@ -387,7 +387,7 @@ export const declineColleague = (id: string, userId: string) => (dispatch: Funct
       if (res.data.error) {
         throw new Error(res.data.message);
       }
-      return res.data;
+      return res.data.data;
     })
     .then((state) => {
       dispatch(fetchDeepProfile(userId));
@@ -445,7 +445,7 @@ export const unColleague = (id: string) => (dispatch: Function) => {
       if (res.data.error) {
         throw new Error(res.data.message);
       }
-      return res.data;
+      return res.data.data;
     })
     .then((state) => {
       dispatch(fetchDeepProfile(id));
@@ -511,7 +511,7 @@ export const fetchColleagues = () => (dispatch: Function) => {
       if (res.data.error) {
         throw new Error(res.data.message);
       }
-      return res.data;
+      return res.data.data;
     })
     .then((state) => {
       dispatch(fetchedColleagues(state.colleagues));
@@ -576,7 +576,7 @@ export const fetchColleagueRequests = () => (dispatch: Function) => {
       if (res.data.error) {
         throw new Error(res.data.message);
       }
-      return res.data;
+      return res.data.data;
     })
     .then((state) => {
       dispatch(fetchedColleagueRequests(state));
