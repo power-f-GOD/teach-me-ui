@@ -177,8 +177,6 @@ export const fetchPosts: Function = (
     }
   })
     .then((res) => {
-      console.log(res.data.data.posts);
-      
       if (res.data.error) {
         throw new Error(res.data.message);
       }
@@ -228,7 +226,7 @@ export const recycleFeeds = (cb = (s: boolean) => {}) => (
       if (res.data.error) {
         throw new Error(res.data.message);
       }
-      return res.data.posts;
+      return res.data.data.posts;
     })
     .then((state) => {
       dispatch(fetchedMorePosts(state as Array<PostPropsState>));
@@ -262,7 +260,7 @@ export const fetchReplies = (postId?: string) => (dispatch: Function) => {
       if (res.data.error) {
         throw new Error(res.data.message);
       }
-      return res.data.replies;
+      return res.data.data.replies;
     })
     .then((state) => {
       dispatch(fetchedPosts(state as Array<PostPropsState>));
@@ -294,7 +292,7 @@ export const fetchPost: Function = (postId?: string) => (
       if (res.data.error) {
         throw new Error(res.data.message);
       }
-      return res.data;
+      return res.data.data;
     })
     .then((state) => {
       dispatch(fetchedPost(state as PostPropsState));
@@ -413,7 +411,7 @@ export const submitPost = ({post, media}: {post: Post; media: Array<string>}) =>
     }
   })
     .then(({ data }) => {
-      addPost(data);
+      addPost(data.data);
       dispatch(
         makePost({
           status: 'fulfilled'
@@ -475,7 +473,7 @@ export const getTrends = () => (dispatch: Function) => {
       if (res.data.error) {
         throw new Error(res.data.message);
       }
-      return res.data;
+      return res.data.data;
     })
     .then((state) => {
       dispatch(fetchedTrends(state.hashtags));
@@ -541,7 +539,7 @@ export const getRecommendations = () => (dispatch: Function) => {
       if (res.data.error) {
         throw new Error(res.data.message);
       }
-      return res.data;
+      return res.data.data;
     })
     .then((state) => {
       dispatch(fetchedRecommendations(state.recommendations));

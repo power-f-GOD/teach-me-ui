@@ -404,7 +404,7 @@ const CreatePost = (props: any) => {
                       src={file.thumbnail ? file.thumbnail : file.url} 
                       className='img' 
                       alt={file.public_id} 
-                      id={file._id}
+                      id={file.id}
                       title={`${file.title ? file.title : ''}`}
                     />
                   ) : (
