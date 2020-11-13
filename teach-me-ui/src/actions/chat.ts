@@ -44,10 +44,12 @@ import { dispatch } from '../appStore';
 import { displaySnackbar } from './misc';
 
 interface ConversationsResponse {
-  error: boolean;
-  conversations: Array<
-    APIConversationResponse | Partial<APIConversationResponse>
-  >;
+  data: {
+    error: boolean;
+    conversations: Array<
+      APIConversationResponse | Partial<APIConversationResponse>
+    >;
+  };
 }
 
 export const getConversations = (
@@ -70,7 +72,7 @@ export const getConversations = (
     }
   })
     .then((response: AxiosResponse<ConversationsResponse>) => {
-      const { error, conversations: _conversations } = response.data;
+      const { error, conversations: _conversations } = response.data.data;
 
       if (!error) {
         dispatch(
@@ -345,8 +347,10 @@ export const conversation = (
 };
 
 interface ConversationsMessagesResponse {
-  error: boolean;
-  conversations: { [convoId: string]: APIMessageResponse[] };
+  data: {
+    error: boolean;
+    conversations: { [convoId: string]: APIMessageResponse[] };
+  };
 }
 
 export const getConversationsMessages = (statusText?: string) => (
@@ -389,9 +393,9 @@ export const getConversationsMessages = (statusText?: string) => (
     }
   })
     .then(({ data }: AxiosResponse<ConversationsMessagesResponse>) => {
-      const _convosMessages = data.conversations;
+      const _convosMessages = data.data.conversations;
 
-      if (!data.error) {
+      if (!data.data.error) {
         const updatedConvosMessages = _convosMessages;
 
         for (const key in updatedConvosMessages) {
@@ -598,8 +602,10 @@ export const conversationsMessages = (
 };
 
 interface MessagesResponse {
-  error: boolean;
-  messages: Array<APIMessageResponse | Partial<APIMessageResponse>>;
+  data: {
+    error: boolean;
+    messages: Array<APIMessageResponse | Partial<APIMessageResponse>>;
+  };
 }
 
 export const getConversationMessages = (
@@ -644,11 +650,11 @@ export const getConversationMessages = (
     });
 
     try {
-      const data = { error: false, messages: [] } as MessagesResponse;
+      const data = { data: { error: false, messages: [] } } as MessagesResponse;
 
       if (hasCachedData && (isGettingNew || isUpdating)) {
-        data.messages = cachedConvoMessages;
-        data.error = false;
+        data.data.messages = cachedConvoMessages;
+        data.data.error = false;
 
         if (!isUpdating) {
           //ensure to await a few milliseconds so previous states are set before proceeding to avoid bugs
@@ -670,12 +676,12 @@ export const getConversationMessages = (
           }
         });
 
-        data.messages = response.data.messages ?? [];
-        data.error = response.data.error;
+        data.data.messages = response.data.data.messages ?? [];
+        data.data.error = response.data.data.error;
       }
 
-      const error = data.error;
-      let messages = [...data.messages] as APIMessageResponse[];
+      const error = data.data.error;
+      let messages = [...data.data.messages] as APIMessageResponse[];
       const { isOpen, queryString } = chatState;
       const isMinimized = /chat=m2/.test(queryString || '');
       const statusText = _statusText
@@ -945,7 +951,7 @@ export const getConversationInfo = (
     }
   })
     .then(({ data }: any) => {
-      const _data = { ...data } as UserData & { error: boolean };
+      const _data = { ...data.data } as UserData & { error: boolean };
       const { error, first_name, last_name, online_status } = _data;
 
       delete _data.error;
