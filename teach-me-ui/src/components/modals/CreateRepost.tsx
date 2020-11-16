@@ -55,7 +55,9 @@ const CreatePost: React.FC<any> = (props) => {
 
   window.onhashchange = closeModal;
 
-  window.location.hash = 'modal';
+  setTimeout(() => {
+    window.location.hash = 'modal';
+  }, 0);
 
   const onPostSubmit = (e: MouseEvent<HTMLButtonElement>) => {
     dispatch(

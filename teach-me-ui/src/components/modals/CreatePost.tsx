@@ -89,7 +89,9 @@ const CreatePost = (props: any) => {
 
   window.onhashchange = closeModal;
 
-  window.location.hash = 'modal';
+  setTimeout(() => {
+    window.location.hash = 'modal';
+  }, 0);
 
   const onUpdate = (value: string) => {
     setState({

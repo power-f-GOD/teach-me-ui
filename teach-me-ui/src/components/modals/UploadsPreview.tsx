@@ -36,7 +36,9 @@ const UploadsPreview = (props: any) => {
 
   window.onhashchange = closeModal;
 
-  window.location.hash = 'modal';
+  setTimeout(() => {
+    window.location.hash = 'modal';
+  }, 0);
 
   const {
     sendFiles,
