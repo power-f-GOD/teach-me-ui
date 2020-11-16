@@ -2,7 +2,7 @@ import { ChangeEvent } from 'react';
 
 import * as actions from '../actions/validate';
 import { getState, dispatch } from './utils';
-import { refs as editProfileRefs } from '../components/crumbs/modals/components/Profile.edit';
+import { refs as editProfileRefs } from '../components/modals/Profile.edit';
 import { 
   updateProfileRequest,
   updateAcademicData,

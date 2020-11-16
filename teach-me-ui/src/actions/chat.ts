@@ -945,7 +945,7 @@ export const getConversationInfo = (
     }
   })
     .then(({ data }: any) => {
-      const _data = { ...data } as UserData & { error: boolean };
+      const _data = { ...data } as UserData & { error?: boolean };
       const { error, first_name, last_name, online_status } = _data;
 
       delete _data.error;

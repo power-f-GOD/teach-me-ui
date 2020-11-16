@@ -457,7 +457,6 @@ export interface ReplyState {
 
 export interface PostEditorState {
   post: Post;
-  mentionsKeyword: string;
   [key: string]: any;
 }
 
@@ -475,4 +474,8 @@ export interface EditProfileState {
 
 export interface MakePostState {
   status: 'settled' | 'pending' | 'fulfilled';
+}
+
+export interface CustomFile extends File {
+  url?: string;
 }

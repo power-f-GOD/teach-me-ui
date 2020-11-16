@@ -11,12 +11,12 @@ import Row from 'react-bootstrap/Row';
 import { 
   dispatch, 
   displayModal 
-} from '../../../../functions';
+} from '../../functions';
 import { 
   getUploads, 
   sendFilesToServer, 
   updateUserDataRequest 
-} from '../../../../actions';
+} from '../../actions';
 import { CircularProgress } from '@material-ui/core';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
 
