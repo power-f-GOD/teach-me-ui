@@ -35,6 +35,7 @@ import {
 } from '../../functions';
 import { Container } from '@material-ui/core';
 
+
 const RenderImage = (props: {file: CustomFile}) => {
   const { file } = props;
   const img = useRef<any | undefined>();
@@ -53,6 +54,7 @@ const RenderImage = (props: {file: CustomFile}) => {
       title={file.name}/> 
   )
 }
+
 
 const CreatePost = (props: any) => {
   const { userData, sendFile, uploadsProp, makePostProp } = props;

@@ -94,7 +94,7 @@
 .scroll-image {
   overflow-y: auto;
   max-height: 250px;
-  width: 100%
+  width: 100%;
 }
 
 .check-button {
@@ -165,10 +165,6 @@
   font-weight: bold; 
 }
 
-.no-uploads {
-  margin: auto; 
-}
-
 #grid-box1 {
   display: flex;
   flex-wrap: wrap;
@@ -185,8 +181,10 @@
 }
 
 .no-uploads {
+  margin: auto;
   margin-top: -0.3em !important;
-  margin-bottom: 0.5em;
+  margin-bottom: 0em;
+  margin-left: 25%;
 }
 
 .div-wrapper1 {
