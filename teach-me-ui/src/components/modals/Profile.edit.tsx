@@ -30,13 +30,13 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 // import Worker from 'worker-loader!./worker.ts';
 
-import createMemo from '../../../../Memo';
+import createMemo from '../../Memo';
 import {
   handleEditProfileInputChange,
   handleEditProfileRequest,
   resetEditProfileState
-} from '../../../../functions/profile.edit';
-import { dispatch, displayModal } from '../../../../functions';
+} from '../../functions/profile.edit';
+import { dispatch, displayModal } from '../../functions';
 import {
   matchingDepartments,
   matchingInstitutions,
@@ -46,7 +46,7 @@ import {
   getMatchingLevels, 
   getUserDetailsRequest,
   getUserDetails
-} from '../../../../actions';
+} from '../../actions';
 
 
 export const refs: any = {

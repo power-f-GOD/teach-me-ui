@@ -16,8 +16,8 @@
   font-weight: bolder;
   height: 20px;
   width: 20px;
-  top: -4px;
-  right: -1px;
+  top: -0.5em;
+  right: -0.5em;
   z-index: 2;
   color: white;
   border: none;
@@ -44,8 +44,12 @@
 #grid-box {
   max-height: 15rem;
   overflow-y: auto;
-  padding-top: 0.5rem;
-  display: flex;
+  padding: {
+    top: 0.5rem;
+    left: 0;
+    right: 0;
+  }
+  display: flex !important;
   flex-wrap: wrap;
 }
 
@@ -128,19 +132,19 @@
 }
 
 .non-image-files {
-  height: 90px;
-  width: 90px;
+  width: 7em;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: gray;
   border: 1px solid green;
   border-radius: 5px;
+  max-height: 8.5em;
 }
 
 .non-image-uploads {
-  height: 8.5rem;
-  width: 8.5rem;
+  height: 96%;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -172,4 +176,29 @@
 
 .bold {
   font-weight: 1000;
+}
+
+.relative {
+  position: relative !important;
+  width: 31% !important;
+  margin: 1%;
+}
+
+.no-uploads {
+  margin-top: -0.3em !important;
+  margin-bottom: 0.5em;
+}
+
+.div-wrapper1 {
+  transition: 0.3s;
+  padding-right: 0px !important;
+  padding-left: 0px !important;
+  // width: 4em;
+  // height: 4em;
+
+  .img { 
+    width: 100%; 
+    border-width: 5px; 
+    border-radius: 5px;
+  }
 }

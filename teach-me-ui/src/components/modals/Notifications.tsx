@@ -15,8 +15,8 @@ import ListItem from '@material-ui/core/ListItem';
 import { 
   formatDate, 
   formatNotification 
-} from '../../../../functions/utils';
-import { displayModal } from '../../../../functions';
+} from '../../functions/utils';
+import { displayModal } from '../../functions';
 
 const Notifications = (props: any) => {
   const { getNotifications } = props;

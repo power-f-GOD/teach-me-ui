@@ -16,40 +16,59 @@ import AttachmentIcon from '@material-ui/icons/Attachment';
 import Row from 'react-bootstrap/Row';
 import Dropdown from 'react-bootstrap/Dropdown';
 
-import { PostEditorState } from '../../../../constants';
+import { CustomFile, PostEditorState } from '../../constants';
 
 import { 
   sendFilesToServer,
   getUploads,
   makePost,
   submitPost,
-  uploads
-} from '../../../../actions';
+} from '../../actions';
 
-import Editor from '../../Editor';
+import Editor from '../crumbs/Editor';
 
 import { 
   displayModal, 
   dispatch,
   isImage,
   getFileExtension
-} from '../../../../functions';
+} from '../../functions';
 import { Container } from '@material-ui/core';
+
+const RenderImage = (props: {file: CustomFile}) => {
+  const { file } = props;
+  const img = useRef<any | undefined>();
+
+  let reader = new FileReader();
+  reader.onload = (e) => {
+    img.current.setAttribute('src', e.target!.result as string);
+  }
+  reader.readAsDataURL(file);
+
+  return (
+    <img
+      ref={img} 
+      className='img'
+      alt={file.name}
+      title={file.name}/> 
+  )
+}
 
 const CreatePost = (props: any) => {
   const { userData, sendFile, uploadsProp, makePostProp } = props;
   const { profile_photo, displayName } = userData;
+
   const label = useRef<HTMLLabelElement | any>();
   const label1 = useRef<HTMLLabelElement | any>();
 
   const [state, setState] = useState<PostEditorState>({
-    mentionsKeyword: '',
     post: {
       text: ''
     },
     selectedFiles: [],
     selectedUploads: [],
-    tempSelectedUploads: []
+    tempSelectedUploads: [],
+    showUploads: false
   });
 
   if (makePostProp.status === 'fulfilled') {
@@ -59,9 +78,6 @@ const CreatePost = (props: any) => {
   }
 
   const removeModal = () => {
-    dispatch(uploads({
-      showUploads: false
-    }))
     displayModal(false, true);
   }
 
@@ -83,16 +99,16 @@ const CreatePost = (props: any) => {
     })
   };
 
-  const prev = useRef<HTMLDivElement | any>('');
-
   const removeUpload = (e: any) => {
     label.current.style.display = 'none';
     label1.current.style.display = 'none';
-    prev.current.removeChild(e.target!.parentNode)
     let selectedUploads = [];
+    let removed = false;
     for (let file of state.selectedUploads) {
-      if (e.target.previousElementSibling.getAttribute('src') === file.url) continue;
-      
+      if (e.target.previousElementSibling.getAttribute('id') === file.id && !removed) {
+        removed = true;
+        continue;
+      }
       selectedUploads.push(file);
     }
     setState({
@@ -104,7 +120,6 @@ const CreatePost = (props: any) => {
   const removeFile = (e: any) => {
     label.current.style.display = 'none';
     label1.current.style.display = 'none';
-    prev.current.removeChild(e.target!.parentNode)
     let selectedFiles = [];
     let removed = false
     for (let file of state.selectedFiles) {
@@ -121,86 +136,12 @@ const CreatePost = (props: any) => {
     })
   };
 
-  const preview = (files: any, online: boolean = false) => {
-    if (online) {
-      for (let file of files) {
-        let div = document.createElement('div');
-        let button = document.createElement('button');
-        let cancelText = document.createTextNode('x');
-        button.appendChild(cancelText);
-        div.classList.add('col-4', 'div-wrapper');
-        button.setAttribute('type', 'button');
-        button.classList.add('remove-img-btn', 'rounded-circle');
-        button.onclick = removeUpload;
-        (prev.current as HTMLDivElement).appendChild(div);
-        if (file.image) {
-          let img = document.createElement('img');
-          img.classList.add('img');
-          img.setAttribute('title', `${file.title !== 'Untitled' ? file.title : 'from uploads'}`);
-          img.setAttribute('src', `${file.url}`)
-          div.appendChild(img);
-          div.appendChild(button);
-          (prev.current as HTMLDivElement).appendChild(div);
-        } else {
-          let p = document.createElement('p');
-          let text = document.createTextNode(file.title);
-          div.classList.remove('div-wrapper');
-          div.classList.add('non-image-files');
-          div.setAttribute('title', `${file.title}`)
-          p.appendChild(text);
-          div.appendChild(p);
-          div.appendChild(button);
-          (prev.current as HTMLDivElement).appendChild(div);
-        }
-      }
-    } else {
-      for (let file of files) {
-        let div = document.createElement('div');
-        let button = document.createElement('button');
-        let cancelText = document.createTextNode('x');
-        button.appendChild(cancelText);
-        div.classList.add('col-4', 'div-wrapper');
-        button.setAttribute('type', 'button');
-        button.classList.add('remove-img-btn', 'rounded-circle');
-        button.onclick = removeFile;
-        (prev.current as HTMLDivElement).appendChild(div);
-        if (isImage(file)) {
-          let img = document.createElement('img');
-          let reader = new FileReader();
-          reader.onload = (e) => {
-            img.setAttribute('src', e.target!.result as string);
-          }
-          reader.readAsDataURL(file);
-
-          img.classList.add('img');
-          img.setAttribute('title', `${file.name}`);
-          div.appendChild(img);
-          div.appendChild(button);
-          (prev.current as HTMLDivElement).appendChild(div);
-        } else {
-          let p = document.createElement('p');
-          let text = document.createTextNode(`.${getFileExtension(file.name)}`)
-          div.classList.remove('div-wrapper');
-          div.classList.add('non-image-files');
-          div.setAttribute('title', `${file.name}`)
-          p.appendChild(text);
-          div.appendChild(p);
-          div.appendChild(button);
-
-          (prev.current as HTMLDivElement).appendChild(div);
-        }
-      }
-    }
-  }
-
-  
-
   const fileSelectedHandler = (e: ChangeEvent<any>) => {
     label.current.style.display = 'none';
     label1.current.style.display = 'none';
     let selectedFiles = state.selectedFiles;
     let numberOfSelectedFiles = (selectedFiles.length + state.selectedUploads.length);
-    let files: Array<File> = [];
+    let files: Array<CustomFile> = [];
     for (let file of e.target.files) {
       if (file.size > 50000000) {
         files = [];
@@ -212,26 +153,15 @@ const CreatePost = (props: any) => {
           break;
         };
         files.push(file);
+        numberOfSelectedFiles++;
       }
     }
     Array.prototype.push.apply(selectedFiles, files);
-    preview(files);
     setState({
       ...state,
       selectedFiles
     });
   };
-  
- 
-  const onPostSubmit = () => {
-    if (state.post.text) {
-      if (state.selectedFiles[0] || state.selectedUploads[0]) {
-        sendFilesToServer(state.selectedFiles, submitPost, state.selectedUploads, 'media', true, {post: state.post});
-      } else {
-        dispatch(submitPost({post: state.post, media: []})(dispatch));
-      }
-    }
-  }
 
   const toggleSelectPreUpload = (e: any) => {
     label1.current.style.display = 'none';
@@ -256,7 +186,6 @@ const CreatePost = (props: any) => {
           }
         ]
       })
-
     } else {
       button.classList.remove('check-button-selected');
       button.classList.add('check-button');
@@ -270,7 +199,6 @@ const CreatePost = (props: any) => {
         tempSelectedUploads: selectedUploads
       })
     }
-      
   }
 
   const handleSelectUpload = (e: any) => {
@@ -278,16 +206,14 @@ const CreatePost = (props: any) => {
       label.current.style.display = 'none';
       label1.current.style.display = 'none';
       const tempUploads = state.tempSelectedUploads;
-      prev.current.style.display = 'flex';
-      preview(tempUploads, true);
-      dispatch(uploads({showUploads: false}));
       setState({
         ...state,
         selectedUploads: [
           ...state.selectedUploads, 
           ...tempUploads
         ],
-        tempSelectedUploads : []
+        tempSelectedUploads : [],
+        showUploads: false
       })
     }
   }
@@ -295,31 +221,39 @@ const CreatePost = (props: any) => {
   const cancelSelectUpload = (e: any) => {
     label.current.style.display = 'none';
     label1.current.style.display = 'none';
-    prev.current.style.display = 'flex';
-    dispatch(uploads({showUploads: false}));
     setState({
       ...state,
-      tempSelectedUploads : []
+      tempSelectedUploads : [],
+      showUploads: false
     });
   }
 
   const displayUploads = (e: any) => {
-    document.dispatchEvent(new MouseEvent('click'));
+    document.dispatchEvent( new MouseEvent('click'));
     if (uploadsProp.status !== 'pending' && !uploadsProp.data[0]) {
       dispatch(getUploads);
     }
-    dispatch(uploads({showUploads: true}));
-    prev.current.style.display = 'none';
+    setState({
+      ...state,
+      showUploads: true
+    });
   }
 
   const hideUploadedFiles = (e: any) => {
-    dispatch(uploads({showUploads: false}));
+    setState({
+      ...state,
+      showUploads: false
+    });
   }
 
-  let greyOut;
-
-  if (makePostProp.status === 'pending' || sendFile.status === 'pending' || !(state.post.text)) {
-    greyOut = true;
+  const onPostSubmit = () => {
+    if (state.post.text) {
+      if (state.selectedFiles[0] || state.selectedUploads[0]) {
+        sendFilesToServer(state.selectedFiles, submitPost, state.selectedUploads, 'media', true, {post: state.post});
+      } else {
+        dispatch(submitPost({post: state.post, media: []})(dispatch));
+      }
+    }
   }
 
   return (
@@ -340,24 +274,26 @@ const CreatePost = (props: any) => {
       </Row>
       <form>
       <Editor onUpdate={onUpdate} />
-      <Dropdown drop='up' className={`${uploadsProp.showUploads && uploadsProp.data[0] ? 'display-none' : 'display-block'}`}>
-        <Dropdown.Toggle title='attach file(s)' id='dropdown'>
-            <AttachmentIcon className='cursor-pointer'/>
-        </Dropdown.Toggle>
-        <Dropdown.Menu className='drop-menu'>
-          <label 
-            htmlFor='my-input' 
-            onClick={hideUploadedFiles} 
-            className='menu-options'
-          >
-            local Disk
-          </label>
-          <div id='divider'></div>
-          <div className='menu-options' onClick={displayUploads}>
-            uploaded files
-          </div>
-        </Dropdown.Menu>
-      </Dropdown>
+      {!(state.showUploads && uploadsProp.data[0]) && (
+        <Dropdown drop='up'>
+          <Dropdown.Toggle title='attach file(s)' id='dropdown'>
+              <AttachmentIcon className='cursor-pointer'/>
+          </Dropdown.Toggle>
+          <Dropdown.Menu className='drop-menu'>
+            <label 
+              htmlFor='my-input' 
+              onClick={hideUploadedFiles} 
+              className='menu-options'
+            >
+              local Disk
+            </label>
+            <div id='divider'></div>
+            <div className='menu-options' onClick={displayUploads}>
+              uploaded files
+            </div>
+          </Dropdown.Menu>
+        </Dropdown>
+      )}
         <input
           multiple={true}
           id='my-input'
@@ -365,35 +301,79 @@ const CreatePost = (props: any) => {
           className='display-none'
           type={'file'}
         />
-        <Row className='d-flex mx-auto mt-1'>
-          <Container component='div' ref={prev} id='grid-box'>
-            
-          </Container>
-        </Row>
-        <Row as='h4'
-        className={`${uploadsProp.showUploads && uploadsProp.data[0] ? 'display-block' : 'display-none'} select-header`}
-        >Select files</Row>
+        {!state.showUploads && (
+          <Row className='d-flex mx-auto mt-1'>
+            <Container component='div' id='grid-box'>
+              {state.selectedFiles.map((file: CustomFile, i: number) => (
+                <div 
+                  title={file.name}
+                  key={i} 
+                  className={`relative ${isImage(file) ? 'div-wrapper1' : 'non-image-files'}`}>
+                  {isImage(file) ? (
+                    <RenderImage file={file}/>
+                  ) : (
+                    <p title={file.name}>{getFileExtension(file.name)}</p>
+                  )}
+                  <button 
+                    type='button' 
+                    className='remove-img-btn rounded-circle'
+                    onClick={removeFile}>
+                      x
+                  </button>
+                </div>
+              ))}
+ 
+              {state.selectedUploads.map((file: any, i: number) => (
+                <div 
+                  key={i} 
+                  className={`relative ${file.image ? 'div-wrapper1' : 'non-image-files'}`}
+                  title={`${file.title !== 'Untitled' ? file.title : 'from uploads'}`}>
+                  {file.image ? (
+                    <img 
+                      id={file.id}
+                      className='img'
+                      alt={file.name} 
+                      src={`${file.url}`}/>
+                  ) : (
+                    <p id={file.id}>{file.title}</p>
+                  )}
+                  <button
+                    onClick={removeUpload} 
+                    type='button'
+                    className='remove-img-btn rounded-circle'>
+                      x
+                  </button>
+                </div>
+              ))}
+            </Container>
+          </Row>
+        )}
+        {(state.showUploads && uploadsProp.data[0]) && (
+          <Row as='h4'
+            className='select-header'>
+              Select files
+          </Row>
+        )}
         <Container
           component='p'
           ref={label}
           className='upload-label'>
-          files should be maximum of 50mb
+          *files should be maximum of 50mb
         </Container>
         <Container
           component='p'
           ref={label1}
           className='upload-label'
           >
-          You can post with a maximum of five files
+          *You can post with a maximum of five files
         </Container>
         <Row className='d-flex mx-auto mt-1'>
           <Box
             component='div'
             id='grid-box-uploads' 
             className='scroll-image'
-            
           >
-            {uploadsProp.showUploads ?
+            {state.showUploads ?
               uploadsProp.status === 'pending' 
               ? <CircularProgress className='upload-progress margin-auto'/> 
               : uploadsProp.data[0] 
@@ -420,47 +400,55 @@ const CreatePost = (props: any) => {
                   </button>
                 </Container>
               ))
-              : <Row 
-                  as='p' 
-                  className={`no-uploads ${uploadsProp.status !== 'settled' ? 'display-block' : 'display-none'}`}
-                >You have no uploads</Row>
+              : <Container
+                  className='no-uploads'
+                  component='p' 
+                >You have no uploads</Container>
               : ''
             }
           </Box>
         </Row>
+        {state.showUploads && uploadsProp.data[0] && (
+          <Row className='d-flex mx-auto mt-1'>
+            <Container component='div' className='width-100'
+            >
+            <Button 
+              onClick={handleSelectUpload}
+              variant='contained'
+              color='primary'>
+                select
+            </Button>
+            <Button 
+              id='float-button'
+              onClick={cancelSelectUpload}
+              variant='contained'
+              color='secondary'>
+                cancel
+            </Button>
+            </Container>
+          </Row>
+        )}
         <Row className='d-flex mx-auto mt-1'>
-          <Container component='div' className={`${uploadsProp.showUploads && uploadsProp.data[0] ? 'display-block' : 'display-none'} width-100`}
-          >
-          <Button 
-            onClick={handleSelectUpload}
-            variant='contained'
-            color='primary'>
-              select
-          </Button>
-          <Button 
-            id='float-button'
-            onClick={cancelSelectUpload}
-            variant='contained'
-            color='secondary'>
-              cancel
-          </Button>
-          </Container>
-        </Row>
-        <Row className='d-flex mx-auto mt-1'>
-          <Button
-            id={`${ greyOut ? 'background-grey' : ''}`}
-            className={`${uploadsProp.showUploads && uploadsProp.data[0] ? 'display-none' : ''} post-button major-button Primary contained p-0 flex-grow-1`}
-            onClick={onPostSubmit}
-            color={state.post ? 'primary' : 'default'}
-          >
-            {makePostProp.status === 'pending' ? (
-              <CircularProgress size={28} color='inherit' />
-            ) : sendFile.status === 'pending' ? (
-              'uploading files...'
-            ) : (
-              'Post'
-            )} 
-          </Button>
+          {!(state.showUploads && uploadsProp.data[0]) && (
+            <Button
+              id={`${ (
+                makePostProp.status === 'pending' 
+                || sendFile.status === 'pending' 
+                || !(state.post.text)
+              ) ? 'background-grey' : ''}`}
+              className='post-button major-button Primary contained p-0 flex-grow-1'
+              onClick={onPostSubmit}
+              color={state.post ? 'primary' : 'default'}
+            >
+              {makePostProp.status === 'pending' ? (
+                <CircularProgress size={28} color='inherit' />
+              ) : sendFile.status === 'pending' ? (
+                'uploading files...'
+              ) : (
+                'Post'
+              )} 
+            </Button>
+          )}
         </Row>
       </form>
     </Box>

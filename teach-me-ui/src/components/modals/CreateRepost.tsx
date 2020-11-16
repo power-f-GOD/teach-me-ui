@@ -13,30 +13,22 @@ import {
   formatDate,
   dispatch,
   displayModal
-} from '../../../../functions';
+} from '../../functions';
 
 import { connect } from 'react-redux';
 
-import { makeRepost } from '../../../../actions';
-
-import { useStyles } from '../../../../constants';
+import { makeRepost } from '../../actions';
 
 
 const CreatePost: React.FC<any> = (props) => {
   const { userData } = props;
-  const avatarSizes = useStyles();
   const [state, setState] = useState<any>({
-    mentionsKeyword: '',
     post: {
       text: '',
       mentions: [],
       hashtags: [],
       media: []
     },
-    top: 0,
-    left: 0,
-    showSuggestor: false,
-    mentions: []
   });
 
   const editor = useRef<HTMLTextAreaElement | any>();
@@ -91,42 +83,18 @@ const CreatePost: React.FC<any> = (props) => {
       </Row>
       <form>
         <div id='suggestion-container'>
-            <textarea
-              autoFocus
-              rows={5}
-              id='post-input'
-              onChange={(e: any) => {
-                onChange(e);
-              }}
-              placeholder={`What's on your mind, ${userData.displayName.split(' ')[0]}`}
-              ref={editor}></textarea>
-          <div
-            id='suggestor-dropdown'
-            style={{
-              display: state.showSuggestor ? 'block' : 'none',
-              top: state.top || 0,
-              left: state.left || 0
-            }}>
-            {state.mentions?.map((mention: any, key: number) => (
-              <div
-                key={key}
-                style={{
-                  padding: '10px 20px'
-                }}>
-                <Avatar
-                  className={avatarSizes.small}
-                  component='span'
-                  src={`${mention.avatar}`}
-                />
-                {mention.name}
-              </div>
-            ))}
-          </div>
+          <textarea
+            autoFocus
+            rows={5}
+            id='post-input'
+            onChange={(e: any) => {
+              onChange(e);
+            }}
+            placeholder={`What's on your mind, ${userData.displayName.split(' ')[0]}`}
+            ref={editor}>
+          </textarea>
         </div>
-        <Box
-          className='quoted-post mx-auto'
-          //   onClick={navigate(props.parent?.id as string)}
-        >
+        <Box className='quoted-post mx-auto'>
           <Row className='container-fluid px-2 mx-auto p-0 align-items-center'>
             <Avatar
               component='span'

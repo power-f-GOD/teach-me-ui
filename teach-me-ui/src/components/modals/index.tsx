@@ -12,20 +12,20 @@ import { connect } from 'react-redux';
 import { 
   dispatch,
   displayModal,
-} from '../../../functions';
-import CreatePost from './components/CreatePost';
-import CreateRepost from './components/CreateRepost';
-import EditProfile from './components/Profile.edit';
-import UploadsPreview from './components/UploadsPreview';
-import Notifications from './components/Notifications';
-import { uploads } from '../../../actions';
+} from '../../functions';
+import CreatePost from './CreatePost';
+import CreateRepost from './CreateRepost';
+import EditProfile from './Profile.edit';
+import UploadsPreview from './UploadsPreview';
+import Notifications from './Notifications';
+import { uploads } from '../../actions';
 import { 
   CREATE_POST,
   CREATE_REPOST,
   NOTIFICATIONS,
   SELECT_PHOTO,
   EDIT_PROFILE
-} from '../../../constants/modals';
+} from '../../constants/modals';
 
 const removeModal = (event: any) => {
   window.history.back();
