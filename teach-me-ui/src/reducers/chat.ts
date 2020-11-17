@@ -2,13 +2,9 @@
 
 import {
   SET_CHAT_STATE,
-  // REQUEST_START_CONVERSATION,
-  // START_CONVERSATION,
   chatStateProps,
-  SET_PEOPLE_ENROLLED_IN_INSTITUTION,
   SET_CONVERSATIONS,
   SET_CONVERSATION_MESSAGES,
-  SET_CONVERSATION_INFO,
   SET_CONVERSATION,
   SET_CONVERSATIONS_MESSAGES
 } from '../constants/chat';
@@ -17,25 +13,10 @@ import {
   ReduxAction,
   SearchState,
   ConversationsMessages,
-  ConversationInfo,
   APIConversationResponse,
-  UserData
+  ReduxActionV2
 } from '../constants/interfaces';
-import { statusPropsState, searchState } from '../constants';
-
-export const usersEnrolledInInstitution = (
-  state: SearchState = { ...searchState },
-  action: ReduxAction
-) => {
-  if (action.type === SET_PEOPLE_ENROLLED_IN_INSTITUTION) {
-    return {
-      ...state,
-      ...action.payload
-    };
-  }
-
-  return state;
-};
+import { searchState } from '../constants';
 
 export const conversations = (
   state: SearchState = { ...searchState },
@@ -65,33 +46,19 @@ export const conversationsMessages = (
   return state;
 };
 
-export const conversationInfo = (
-  state: ConversationInfo = {
-    ...statusPropsState,
-    online_status: 'OFFLINE',
-    data: {}
-  },
-  action: ReduxAction
-): ConversationInfo => {
-  if (action.type === SET_CONVERSATION_INFO) {
-    return {
-      ...state,
-      ...action.payload
-    };
-  }
-
-  return state;
-};
-
 export const conversation = (
-  state: Partial<APIConversationResponse & Omit<UserData, 'token'>> = {},
-  action: ReduxAction
-): Partial<APIConversationResponse & Omit<UserData, 'token'>> => {
+  state = {} as Partial<APIConversationResponse>,
+  action: ReduxActionV2<Partial<APIConversationResponse>>
+): Partial<APIConversationResponse> => {
   if (action.type === SET_CONVERSATION) {
     return {
-      ...(Object.keys(action.payload).length ? state : {}),
-      friendship: action.payload.friendship,
-      ...action.payload
+      ...(Object.keys(action.payload!).length ? state : {}),
+      friendship: action.payload?.friendship,
+      ...action.payload,
+      colleague: {
+        ...(state.colleague ?? {}),
+        ...(action.payload?.colleague! ?? {})
+      }
     };
   }
 

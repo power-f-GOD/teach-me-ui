@@ -18,6 +18,12 @@ export interface ReduxAction {
   payload?: any;
 }
 
+export interface ReduxActionV2<T> {
+  type: string;
+  newState?: T;
+  payload?: T;
+}
+
 // Auth [Signin/Signup] interfaces ...
 
 export interface InputErrState {
@@ -349,50 +355,72 @@ export interface ConversationInfo
   user_typing?: string;
   online_status?: OnlineStatus;
   conversationId?: string;
-  new_message?: Partial<APIMessageResponse>;
 }
 
-export interface APIMessageResponse {
-  deleted: boolean;
-  seen_by: string[];
-  delivered_to: string[];
-  created_at: number;
-  _id: string;
-  conversation_id: string;
-  message: string;
-  date: number;
-  sender_id: string;
-  timestamp_id?: string;
-  __v: number;
-  pipe: SocketPipe;
-  parent?: APIMessageResponse;
-  user_id?: string;
-  is_recent?: boolean;
+export interface ChatSocketMessageResponse
+  extends Partial<Omit<APIMessageResponse, 'seen_by' | 'delivered_to'>> {
+  status: OnlineStatus;
+  user_id: string;
+  seen_by: string;
+  delivered_to: string;
+}
+
+export interface ChatSocketConversationResponse
+  extends Partial<APIConversationResponse> {
+  status: OnlineStatus;
+  user_id: string;
+  seen_by: string;
+  delivered_to: string;
 }
 
 export type OnlineStatus = 'ONLINE' | 'AWAY' | 'OFFLINE';
 
-export interface APIConversationResponse {
-  avatar?: string;
-  participants: string[];
-  created_at: number;
-  last_activity: number;
-  _id: string;
-  creator: 'SYSTEM' | string;
-  type: 'ONE_TO_ONE' | string;
+export interface APIMessageResponse {
   __v: number;
-  last_message: APIMessageResponse;
-  friendship: string;
-  online_status: OnlineStatus;
-  last_seen: number;
-  last_read: number;
+  conversation_id: string;
+  created_at: number;
+  date: number;
+  deleted: boolean;
+  delivered_to: string[];
+  id: string;
+  is_recent?: boolean;
+  message: string;
+  parent?: APIMessageResponse;
+  pipe?: SocketPipe;
+  seen_by: string[];
+  sender_id: string;
+  timestamp_id?: string;
+}
+
+export interface APIConversationResponse {
+  colleague: Partial<{
+    cover_photo: string;
+    department: string;
+    first_name: string;
+    id: string;
+    institution: string;
+    last_name: string;
+    last_seen: number;
+    level: string;
+    profile_photo: string;
+    username: string;
+    online_status: OnlineStatus;
+  }>;
   conversation_name: string;
-  associated_username: string;
-  associated_user_id: string;
+  created_at: number;
+  creator: 'SYSTEM' | string;
+  friendship: string;
+  id: string;
+  last_activity: number;
+  last_message: APIMessageResponse;
+  last_read: number;
+  new_message?: Partial<APIMessageResponse>;
+  participants: string[];
+  pipe: SocketPipe;
+  type: 'ONE_TO_ONE' | string;
   unread_count: number;
   user_typing: string;
-  profile_photo: string;
-  cover_photo: string;
+  user_id: string;
 }
 
 export interface NotificationState extends StatusPropsState {

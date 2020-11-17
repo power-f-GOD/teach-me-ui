@@ -14,10 +14,13 @@ export default function activateSocketRouters() {
       console.error('E014: bad response from socket');
       return;
     }
+
     const message = JSON.parse(e.data);
+
     if (message.error) {
       console.error('E014: ' + message.message);
     }
+
     const pipe = message.pipe as SocketPipe;
 
     switch (true) {
