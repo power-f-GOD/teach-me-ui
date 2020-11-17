@@ -15,8 +15,8 @@ $msg-radius: 1.5rem;
   $bg-incoming: #fff;
   $bg-outgoing: rgb($sec-r + $diff, $sec-g + $diff, $sec-b + $diff);
 
-  &:last-of-type.fade-in-slide-down {
-    animation: unset;
+  &:last-of-type.fade-in-opacity {
+    animation: fadeInOpacity 0s;
   }
 
   &.deleted {

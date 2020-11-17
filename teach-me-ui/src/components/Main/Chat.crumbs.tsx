@@ -32,7 +32,7 @@ import {
   dispatch
 } from '../../functions/utils';
 import { chatDateStickyRef, msgBoxRef } from './Chat.MiddlePane';
-import { conversationInfo } from '../../actions/chat';
+import { conversation } from '../../actions/chat';
 
 export interface SelectedMessageValue extends Omit<APIMessageResponse, 'type'> {
   type: 'incoming' | 'outgoing';
@@ -78,6 +78,7 @@ export const Message = (props: {
     seen_by,
     parent
   } = message;
+  const convoId = message.conversation_id;
   const [selected, setSelected] = useState<boolean | null>(null);
   const messageElRef = React.useRef<HTMLDivElement>(null) as any;
 
@@ -128,12 +129,19 @@ export const Message = (props: {
 
       //this is for to remove the last-message slide-in animation after the animation has ended; Would have used an animationend listener but the fade-in animation after this block makes the slide-in animation of non-effect
       if (messageEl.classList.contains('last-message')) {
-        delay(850).then(() => dispatch(conversationInfo({ new_message: {} })));
+        addEventListenerOnce(
+          messageEl,
+          () => {
+            // delay(850).then(() => {
+            dispatch(conversation(convoId, { new_message: {} }));
+            // });
+          },
+          'animationend'
+        );
       }
-
-      
     }
   }, [
+    convoId,
     messageElRef,
     handleSelectMessage,
     handleMessageTouchStart,
@@ -142,7 +150,7 @@ export const Message = (props: {
 
   useEffect(() => {
     if (selected !== null) {
-      handleMessageSelection(selected ? String(message._id) : null, {
+      handleMessageSelection(selected ? String(message.id) : null, {
         ...message,
         type,
         sender_username
@@ -175,12 +183,12 @@ export const Message = (props: {
   return (
     <Container
       fluid
-      id={`message-${message._id}`}
-      className={`${type === 'incoming' ? 'incoming' : 'outgoing'} ${
+      id={`message-${message.id}`}
+      className={`${type} ${
         selected ? 'selected' : ''
-      } msg-container ${className} ${
+      } msg-container ${className} fade-in-opacity ${
         deleted ? 'deleted' : ''
-      } fade-in-slide-down p-0 mx-0`}
+      } p-0 mx-0`}
       onKeyUp={handleSelectMessageForEnterPress}
       onClick={canSelectByClick ? handleSelectMessage : undefined}
       tabIndex={0}
@@ -200,15 +208,12 @@ export const Message = (props: {
             />
           )}
           {deleted ? (
-            type === 'outgoing' ? (
-              <>
-                <BlockIcon fontSize='inherit' /> You deleted this message
-              </>
-            ) : (
-              <>
-                <BlockIcon fontSize='inherit' /> You can't see this message
-              </>
-            )
+            <>
+              <BlockIcon fontSize='inherit' />
+              {type === 'outgoing'
+                ? 'You deleted this message'
+                : "You can't see this message"}
+            </>
           ) : (
             text
           )}
@@ -220,7 +225,7 @@ export const Message = (props: {
                 isRecent={!!message.pipe}
                 userId={userId}
                 message={message}
-                shouldUpdate={
+                forceUpdate={
                   '' + deleted + delivered_to?.length + seen_by?.length
                 }
                 participants={participants}
@@ -247,7 +252,7 @@ export const ChatHead = (props: {
     sender_username: senderUsername,
     message: text,
     type: messageType,
-    _id: messageId
+    id: messageId
   } = head ?? headCopy ?? {};
   const isReply = type === 'reply';
   const senderIsSelf = messageType === 'outgoing';
@@ -383,7 +388,7 @@ export const ChatStatus = (props: {
   type: string;
   isRecent: boolean;
   userId: string;
-  shouldUpdate: any;
+  forceUpdate: any;
   message: Partial<APIMessageResponse & APIConversationResponse>;
   participants: string[];
 }) => {
@@ -472,7 +477,7 @@ export const ChatDate = ({
   return (
     <div
       id={String(timestamp)}
-      className='chat-date-wrapper text-center fade-in-opacity mt-5 mb-4'
+      className='chat-date-wrapper fade-in-opacity text-center mt-5 mb-4'
       ref={chatDateWrapperRef}>
       <Box component='span' className='chat-date d-inline-block'>
         {dateStamp}

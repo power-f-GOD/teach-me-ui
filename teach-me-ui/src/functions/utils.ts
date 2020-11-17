@@ -10,10 +10,10 @@ import {
   ONLINE_STATUS,
   AuthState,
   ConversationMessages,
-  SearchState,
   APIConversationResponse,
   LoopFind,
-  ConversationInfo
+  SearchStateV2,
+  OnlineStatus
 } from '../constants';
 
 import store from '../appStore';
@@ -28,9 +28,7 @@ import { userDeviceIsMobile } from '../';
 import activateSocketRouters from '../socket.router';
 import {
   getConversations,
-  getConversationInfo,
   conversations,
-  conversationInfo,
   getConversationsMessages,
   conversationsMessages
 } from '../actions/chat';
@@ -149,19 +147,14 @@ export const emitUserOnlineStatus = (
   const {
     userData,
     auth,
-    conversation: _conversation,
     conversations: _conversations,
-    conversationsMessages: _conversationsMessages,
-    conversationInfo: _conversationInfo
+    conversationsMessages: _conversationsMessages
   } = getState() as {
     userData: UserData & APIConversationResponse;
     auth: AuthState;
-    conversation: APIConversationResponse;
-    conversations: SearchState;
+    conversations: SearchStateV2<APIConversationResponse[]>;
     conversationsMessages: ConversationMessages;
-    conversationInfo: ConversationInfo;
   };
-  const { associated_user_id: convoAssocUserId } = _conversation;
   let timeToEmitOnlineStatus: any = undefined;
 
   if (auth.isAuthenticated && !connectionIsDead) {
@@ -176,10 +169,6 @@ export const emitUserOnlineStatus = (
 
     if (_conversationsMessages.err) {
       dispatch(getConversationsMessages('updating message list...')(dispatch));
-    }
-
-    if (convoAssocUserId && _conversationInfo.err) {
-      dispatch(getConversationInfo(convoAssocUserId as string)(dispatch));
     }
 
     return function recurse() {
@@ -212,11 +201,15 @@ export const emitUserOnlineStatus = (
 
   return () => {
     if (auth.isAuthenticated && connectionIsDead) {
-      const updateConversations = _conversations.data?.map(
-        (conversation): APIConversationResponse => {
-          return { ...conversation, online_status: 'OFFLINE' };
-        }
-      ) as SearchState['data'];
+      const updateConversations = _conversations.data?.map((conversation) => {
+        return {
+          ...conversation,
+          colleague: {
+            ...conversation.colleague,
+            online_status: 'OFFLINE' as OnlineStatus
+          }
+        };
+      });
 
       dispatch(closeWebSocket());
       dispatch(
@@ -224,14 +217,6 @@ export const emitUserOnlineStatus = (
           err: true,
           data: [...updateConversations],
           status: 'settled'
-        })
-      );
-      dispatch(
-        conversationInfo({
-          online_status: 'OFFLINE',
-          err: true,
-          status: 'settled',
-          data: { ...getState().conversationInfo.data, last_seen: undefined }
         })
       );
       dispatch(conversationsMessages({ status: 'settled', err: true }));
@@ -603,17 +588,38 @@ export const convertColleagueArrayToMentionFormat = (colleagueArray: any) => {
 };
 
 export const getCharacterSequenceFromText = (text: string, char: string) => {
-  let finArray = []
-  let array = text.split(' ').filter((text) => (text.startsWith(char) && text.length > 1  && !(text.substring(1).match(/[^A-Za-z0-9_.,?!]/))))
+  let finArray = [];
+  let array = text
+    .split(' ')
+    .filter(
+      (text) =>
+        text.startsWith(char) &&
+        text.length > 1 &&
+        !text.substring(1).match(/[^A-Za-z0-9_.,?!]/)
+    );
   for (let item of array) {
     if (char === '@') {
-      finArray.push(item.substring(1, item.substring(1).search(/[^A-Za-z0-9_]/) === -1 ? undefined : item.substring(1).search(/[^A-Za-z0-9_]/) + 1))
+      finArray.push(
+        item.substring(
+          1,
+          item.substring(1).search(/[^A-Za-z0-9_]/) === -1
+            ? undefined
+            : item.substring(1).search(/[^A-Za-z0-9_]/) + 1
+        )
+      );
     } else {
-      finArray.push(item.substring(0, item.substring(1).search(/[^A-Za-z0-9_]/) === -1 ? undefined : item.substring(1).search(/[^A-Za-z0-9_]/) + 1))
+      finArray.push(
+        item.substring(
+          0,
+          item.substring(1).search(/[^A-Za-z0-9_]/) === -1
+            ? undefined
+            : item.substring(1).search(/[^A-Za-z0-9_]/) + 1
+        )
+      );
     }
   }
   return finArray;
-}
+};
 
 export const formatDate = (dateTime: Date | number) => {
   if (!dateTime) {
