@@ -22,13 +22,10 @@ import {
   chatState,
   conversationMessages,
   getConversationMessages,
-  conversation,
-  getConversationInfo,
-  conversationInfo
+  conversation
 } from '../../actions/chat';
 import {
   ChatState,
-  ConversationInfo,
   UserData,
   SearchState,
   APIConversationResponse
@@ -50,7 +47,6 @@ interface ChatBoxProps {
   conversations: SearchState;
   chatState: ChatState;
   conversationMessages: SearchState;
-  conversationInfo: ConversationInfo;
   userData: UserData;
   webSocket: WebSocket;
   [key: string]: any;
@@ -68,7 +64,7 @@ window.addEventListener('popstate', () => {
     return;
   }
 
-  const { chat, id: userId, cid } = queryString.parse(window.location.search);
+  const { chat, cid } = queryString.parse(window.location.search);
 
   if (window.innerWidth < 992 && chat) {
     dispatch(
@@ -79,7 +75,6 @@ window.addEventListener('popstate', () => {
       })
     );
     dispatch(conversation(''));
-    dispatch(conversationInfo({ data: {} }));
     dispatch(conversationMessages({ data: [] }));
     window.history.replaceState({}, '', window.location.pathname);
 
@@ -92,30 +87,20 @@ window.addEventListener('popstate', () => {
   }
 
   if (!isNaN(cid) || cid === '0') {
-    dispatch(conversationInfo({ status: 'settled', data: {} }));
     dispatch(conversation(''));
     dispatch(conversationMessages({ status: 'settled', data: [] }));
   } else {
-    dispatch(conversationInfo({ user_typing: '' }));
-
     if (window.navigator.onLine) {
-      dispatch(getConversationInfo(userId)(dispatch));
+      // dispatch(getConversationInfo(userId)(dispatch));
       dispatch(
         getConversationMessages(cid, 'pending', 'loading new')(dispatch)
       );
     } else {
       dispatch(
-        conversationInfo({
-          status: 'settled',
-          err: true,
-          online_status: 'OFFLINE'
-        })
-      );
-      dispatch(
         conversationMessages({ status: 'pending', err: true, data: [] })
       );
     }
-    dispatch(conversation(cid));
+    dispatch(conversation(cid, { user_typing: '' }));
   }
 
   delay(100).then(() => {
@@ -135,37 +120,35 @@ const ChatBox = (props: ChatBoxProps) => {
     conversations,
     chatState: _chatState,
     conversationMessages: _conversationMessages,
-    conversationInfo: _conversationInfo,
+    // conversationInfo: _conversationInfo,
     userData,
     webSocket: socket
   } = props;
   const { isOpen, isMinimized, queryString: qString }: ChatState = _chatState;
   const {
-    _id: convoId,
-    associated_username: convoAssocUsername,
+    colleague,
+    id: convoId,
     participants: convoParticipants,
     friendship: convoFriendship,
     type: convoType,
     conversation_name: convoDisplayName,
     unread_count: convoUnreadCount,
     last_read: convoLastReadDate,
-    online_status: convoOnlineStatus,
-    last_seen: convoLastSeen,
-    profile_photo: convoProfilePhoto
+    new_message: convoNewMessage,
+    user_typing: convoUserTyping
   } = _conversation;
+  const {
+    last_seen: convoLastSeen,
+    username: convoUsername,
+    online_status: convoOnlineStatus,
+    profile_photo: convoProfilePhoto
+  } = colleague || {};
   const {
     data: convoMessages,
     err: convoMessagesErr,
     status: convoMessagesStatus,
     statusText: convoMessagesStatusText
   } = _conversationMessages;
-  const {
-    err: convoInfoErr,
-    status: convoInfoStatus,
-    data: convoInfoData,
-    new_message: convoInfoNewMessage,
-    user_typing: convoUserTyping
-  } = _conversationInfo;
   const {
     err: convosErr,
     status: convosStatus,
@@ -186,7 +169,7 @@ const ChatBox = (props: ChatBoxProps) => {
     isOpen || chat ? 'visible' : 'hidden'
   );
   const [activePaneIndex, setActivePaneIndex] = useState<number>(0);
-  const [onlineStatus, setOnlineStatus] = useState<string>('');
+  const [onlineStatusString, setOnlineStatusString] = useState<string>('');
 
   const handleSetActivePaneIndex = useCallback(
     (index: number) => () => {
@@ -259,7 +242,7 @@ const ChatBox = (props: ChatBoxProps) => {
       convoMessagesErr,
       convoMessagesStatusText,
       convoParticipants,
-      convoInfoNewMessage,
+      convoNewMessage,
       convoUnreadCount,
       convoLastReadDate
     };
@@ -267,7 +250,7 @@ const ChatBox = (props: ChatBoxProps) => {
     convoMessagesErr,
     convoMessagesStatusText,
     convoParticipants,
-    convoInfoNewMessage,
+    convoNewMessage,
     convoUnreadCount,
     convoLastReadDate
   ]);
@@ -276,17 +259,10 @@ const ChatBox = (props: ChatBoxProps) => {
     return {
       chatState: _chatState,
       convoType,
-      convoInfoStatus,
       convoUserTyping,
       handleSetActivePaneIndex
     };
-  }, [
-    _chatState,
-    convoType,
-    convoInfoStatus,
-    convoUserTyping,
-    handleSetActivePaneIndex
-  ]);
+  }, [_chatState, convoType, convoUserTyping, handleSetActivePaneIndex]);
 
   const colleagueNameAndStatusContextValue = useMemo(() => {
     return {
@@ -294,22 +270,20 @@ const ChatBox = (props: ChatBoxProps) => {
       convoDisplayName,
       convoProfilePhoto,
       convoType,
-      convoInfoStatus,
       convoUserTyping,
       convoLastSeen,
       convosErr,
-      setOnlineStatus
+      setOnlineStatus: setOnlineStatusString
     };
   }, [
     convoId,
     convoDisplayName,
     convoProfilePhoto,
     convoType,
-    convoInfoStatus,
     convoUserTyping,
     convoLastSeen,
     convosErr,
-    setOnlineStatus
+    setOnlineStatusString
   ]);
 
   useEffect(() => {
@@ -442,8 +416,6 @@ const ChatBox = (props: ChatBoxProps) => {
     id,
     cid,
     windowWidth,
-    convoInfoStatus,
-    convoInfoErr,
     convoMessagesErr,
     convosErr,
     convoMessagesStatus
@@ -490,7 +462,7 @@ const ChatBox = (props: ChatBoxProps) => {
                   convoDisplayName={convoDisplayName}
                   convoId={convoId}
                   convoFriendship={convoFriendship}
-                  convoAssocUsername={convoAssocUsername}
+                  convoAssocUsername={convoUsername}
                   convoOnlineStatus={convoOnlineStatus}
                   convoMessages={convoMessages}
                   convoMessagesStatus={convoMessagesStatus}
@@ -503,7 +475,7 @@ const ChatBox = (props: ChatBoxProps) => {
           </MiddlePaneHeaderContext.Provider>
         </Col>
 
-        {convoAssocUsername && (
+        {convoUsername && (
           <Col
             as='section'
             lg={3}
@@ -514,12 +486,12 @@ const ChatBox = (props: ChatBoxProps) => {
             <Memoize
               memoizedComponent={ChatRightPane}
               convoType={convoType}
-              convoInfoErr={convoInfoErr}
-              convoInfoData={convoInfoData}
+              convosErr={convosErr}
+              convoInfo={colleague}
               convoDisplayName={convoDisplayName}
               convoProfilePhoto={convoProfilePhoto}
-              convoAssocUsername={convoAssocUsername}
-              onlineStatus={onlineStatus}
+              convoUsername={convoUsername}
+              onlineStatusString={onlineStatusString}
               handleSetActivePaneIndex={handleSetActivePaneIndex}
             />
           </Col>

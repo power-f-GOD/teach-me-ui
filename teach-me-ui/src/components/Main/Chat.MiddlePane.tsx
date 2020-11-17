@@ -40,17 +40,15 @@ import {
   ChatState,
   APIMessageResponse,
   UserData,
-  ConversationInfo,
-  SearchState,
   Partial,
-  OnlineStatus
+  OnlineStatus,
+  SearchStateV2
 } from '../../constants/interfaces';
 import createMemo from '../../Memo';
 import { userDeviceIsMobile } from '../../';
 import {
   chatState,
   conversationMessages,
-  conversationInfo,
   getConversationMessages,
   conversations,
   conversation,
@@ -102,18 +100,15 @@ interface ChatMiddlePaneProps {
   convoType: string;
   convoDisplayName: string;
   convoProfilePhoto: string;
-  convoAssocUsername: string;
+  convoUsername: string;
   convoUnreadCount: number;
   convoMessages: Partial<APIMessageResponse>[];
   convoMessagesErr: boolean;
-  convoMessagesStatus: SearchState['status'];
+  convoMessagesStatus: SearchStateV2<APIMessageResponse>['status'];
   convoMessagesStatusText: string;
-  convoInfoErr: boolean;
   convosErr: boolean;
-  convoInfoData: ConversationInfo['data'];
-  convoInfoStatus: ConversationInfo['status'];
   convoOnlineStatus: OnlineStatus;
-  convoInfoNewMessage: Partial<APIMessageResponse>;
+  convoNewMessage: Partial<APIMessageResponse>;
   convoLastSeen: number;
   convoLastReadDate: number;
   activePaneIndex: number;
@@ -158,7 +153,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
     convoDisplayName,
     convoId,
     convoFriendship,
-    convoAssocUsername,
+    convoUsername,
     convoOnlineStatus,
     convoMessages: data,
     convoMessagesStatus,
@@ -175,7 +170,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
   const [messageHead, setMessageHead] = useState<SelectedMessageValue | null>(
     null
   );
-
+  
   const handleProfileLinkClick = useCallback(() => {
     dispatch(
       chatState({
@@ -220,7 +215,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
       const userId = userData.id;
 
       if (_isOpen && isSameCid && !_isMinimized) {
-        dispatch(conversations({ data: [{ unread_count: 0, _id: convoId }] }));
+        dispatch(conversations({ data: [{ unread_count: 0, id: convoId }] }));
       }
 
       loopThru(
@@ -246,7 +241,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
                 if (!isDelivered) {
                   socket!.send(
                     JSON.stringify({
-                      message_id: message._id,
+                      message_id: message.id,
                       pipe: CHAT_MESSAGE_DELIVERED
                     })
                   );
@@ -255,7 +250,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
                     conversationMessages({
                       statusText: 'from socket',
                       pipe: CHAT_MESSAGE_DELIVERED,
-                      data: [{ delivered_to: [userId], _id: message._id }]
+                      data: [{ delivered_to: [userId], id: message.id }]
                     })
                   );
                 }
@@ -263,7 +258,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
                 if (!_isMinimized) {
                   socket!.send(
                     JSON.stringify({
-                      message_id: message._id,
+                      message_id: message.id,
                       pipe: CHAT_READ_RECEIPT
                     })
                   );
@@ -271,7 +266,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
                     conversationMessages({
                       statusText: 'from socket',
                       pipe: CHAT_READ_RECEIPT,
-                      data: [{ seen_by: [userId], _id: message._id }]
+                      data: [{ seen_by: [userId], id: message.id }]
                     })
                   );
                 }
@@ -323,7 +318,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
         convoMessages={convoMessages}
         convoMessagesStatus={convoMessagesStatus}
         convoFriendship={convoFriendship}
-        convoAssocUsername={convoAssocUsername}
+        convoUsername={convoUsername}
         convoId={convoId}
         convoDisplayName={convoDisplayName}
         username={userData?.username as string}
@@ -363,7 +358,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
                 <Link
                   className='font-bold theme-secondary-lighter'
                   onClick={handleProfileLinkClick}
-                  to={`/@${convoAssocUsername}${window.location.search.replace(
+                  to={`/@${convoUsername}${window.location.search.replace(
                     'o1',
                     'm2'
                   )}`}>
@@ -479,7 +474,6 @@ function MiddlePaneHeader(props: {
     }
 
     dispatch(conversation(''));
-    dispatch(conversationInfo({ data: {} }));
     dispatch(conversationMessages({ data: [] }));
     clearTimeout(clickTimeout.current);
     clickTimeout.current = window.setTimeout(() => {
@@ -510,7 +504,7 @@ function MiddlePaneHeader(props: {
     delay(isMinimized ? 1100 : 350).then(() => {
       handleSetActivePaneIndex!(0)();
       promisedDispatch(
-        conversations({ data: [{ _id: convoId, unread_count: 0 }] })
+        conversations({ data: [{ id: convoId, unread_count: 0 }] })
       ).then(() => {
         dispatch(conversation(convoId));
       });
@@ -698,8 +692,6 @@ function MiddlePandeHeaderConversationNameAndStatus(props: {
   const displayAwayDate = useCallback(() => {
     renderAwayDateTimeout = setTimeout(() => {
       _canDisplayAwayDate = Date.now() - lastSeenForAway > 300000;
-      //did the next line to trigger a state change for the feature to really work
-      dispatch(conversationInfo({ user_typing: '' }));
 
       if (!_canDisplayAwayDate) {
         clearTimeout(renderAwayDateTimeout);
@@ -1095,9 +1087,9 @@ function ScrollView(props: {
   userId: string;
   username: string;
   convoMessages: APIMessageResponse[];
-  convoMessagesStatus: SearchState['status'];
+  convoMessagesStatus: SearchStateV2<APIMessageResponse>['status'];
   convoFriendship: string;
-  convoAssocUsername: string;
+  convoUsername: string;
   convoId: string;
   convoDisplayName: string;
   clearSelections: boolean;
@@ -1112,7 +1104,7 @@ function ScrollView(props: {
     convoMessages,
     convoMessagesStatus,
     convoFriendship,
-    convoAssocUsername,
+    convoUsername,
     convoId,
     convoDisplayName,
     clearSelections,
@@ -1125,7 +1117,7 @@ function ScrollView(props: {
     convoMessagesErr,
     convoMessagesStatusText,
     convoParticipants,
-    convoInfoNewMessage,
+    convoNewMessage,
     convoUnreadCount,
     convoLastReadDate
   } = useContext(ScrollViewContext);
@@ -1172,11 +1164,11 @@ function ScrollView(props: {
       setSelectedMessages((prev: { [id: string]: SelectedMessageValue }) => {
         const newState: { [key: string]: SelectedMessageValue } = {
           ...prev,
-          ...{ [value._id]: value }
+          ...{ [value.id]: value }
         };
 
         if (!id) {
-          delete newState[value._id];
+          delete newState[value.id];
         }
 
         return newState;
@@ -1341,7 +1333,7 @@ function ScrollView(props: {
           delivered_to,
           deleted,
           seen_by,
-          _id,
+          id: _id,
           timestamp_id,
           parent: head
         } = message;
@@ -1393,10 +1385,8 @@ function ScrollView(props: {
           isFirstOfStack ? 'first' : ''
         } ${isOnlyOfStack ? 'only' : ''} ${isLastOfStack ? 'last' : ''} ${
           isMiddleOfStack ? 'middle' : ''
-        } ${
-          convoInfoNewMessage?._id === _id || timestamp_id ? 'last-message' : ''
-        }`;
-
+        } ${convoNewMessage?.id === _id || timestamp_id ? 'last-message' : ''}`;
+// console.log(convoNewMessage, _id)
         if (willRenderNewMessageBar) {
           newMessageCount = 0;
           newMessageCount = convoMessages
@@ -1424,11 +1414,9 @@ function ScrollView(props: {
               memoizedComponent={Message}
               message={message as APIMessageResponse}
               type={type}
-              sender_username={
-                type === 'incoming' ? convoAssocUsername : username
-              }
+              sender_username={type === 'incoming' ? convoUsername : username}
               headSenderUsername={
-                head?.sender_id === userId ? username : convoAssocUsername
+                head?.sender_id === userId ? username : convoUsername
               }
               clearSelections={
                 _id! in selectedMessages && clearSelections ? true : false
@@ -1455,7 +1443,7 @@ function ScrollView(props: {
           <Link
             className='font-bold'
             onClick={handleProfileLinkClick}
-            to={`/@${convoAssocUsername}${window.location.search.replace(
+            to={`/@${convoUsername}${window.location.search.replace(
               'o1',
               'm2'
             )}`}>
@@ -1490,7 +1478,7 @@ function MessageBox(props: {
       pipe: 'CHAT_NEW_MESSAGE',
       date: Date.now(),
       conversation_id: convoId,
-      _id: 'ddd'
+      id: 'ddd'
     } as APIMessageResponse;
 
     msgBox.focus();
@@ -1521,7 +1509,7 @@ function MessageBox(props: {
         msgBox.value = '';
         setMsgBoxRowsMax(1);
         delete messageDrafts[convoId];
-        socket.send(JSON.stringify({ ...msg, parent: messageHead?._id }));
+        socket.send(JSON.stringify({ ...msg, parent: messageHead?.id }));
         dispatch(conversation(convoId, { unread_count: 0 }));
         delay(50).then(() => {
           scrollView!.scrollTop = scrollView!.scrollHeight;

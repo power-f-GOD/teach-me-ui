@@ -11,17 +11,17 @@ import IconButton from '@material-ui/core/IconButton';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 
 import { ONE_TO_ONE } from '../../constants/chat';
-import { UserData, ConversationInfo } from '../../constants/interfaces';
+import { APIConversationResponse } from '../../constants/interfaces';
 import { InfoCard } from '../crumbs/Cards';
 
 interface ChatRightPaneProps {
   convoType: string;
   convoDisplayName: string;
   convoProfilePhoto: string;
-  convoAssocUsername: string;
-  convoInfoData?: ConversationInfo['data'];
-  convoInfoErr: boolean;
-  onlineStatus: string;
+  convoUsername: string;
+  convoInfo?: APIConversationResponse['colleague'];
+  convosErr: boolean;
+  onlineStatusString: string;
   handleSetActivePaneIndex(index: number): any;
 }
 
@@ -29,17 +29,17 @@ const ChatRightPane = (props: ChatRightPaneProps) => {
   const {
     convoType,
     convoDisplayName,
-    convoAssocUsername,
-    convoInfoErr,
-    convoInfoData,
+    convoUsername,
+    convosErr,
+    convoInfo,
     convoProfilePhoto,
-    onlineStatus,
+    onlineStatusString,
     handleSetActivePaneIndex
   } = props;
-  const { institution, department, level } = convoInfoData ?? ({} as UserData);
-  const badgeStatus = /last seen/i.test(onlineStatus)
+  const { institution, department, level } = convoInfo ?? {};
+  const badgeStatus = /last seen/i.test(onlineStatusString)
     ? 'offline'
-    : /away/i.test(onlineStatus)
+    : /away/i.test(onlineStatusString)
     ? 'away'
     : 'online';
 
@@ -78,27 +78,25 @@ const ChatRightPane = (props: ChatRightPaneProps) => {
                 {convoDisplayName}
               </Col>
               <Col className='username p-0 d-flex justify-content-center mb-4'>
-                @{convoAssocUsername}
+                @{convoUsername}
               </Col>
               <Col
                 className={`online-status ${
-                  convoInfoErr || /^\.\.\.$/.test(onlineStatus)
+                  convosErr || /^\.\.\.$/.test(onlineStatusString)
                     ? 'hide'
                     : 'show'
-                } ${!convoInfoErr ? badgeStatus : 'offline'} ${
-                  /typing/.test(onlineStatus)
+                } ${!convosErr ? badgeStatus : 'offline'} ${
+                  /typing/.test(onlineStatusString)
                     ? 'font-bold theme-secondary-lighter'
                     : ''
                 } px-1 mb-4`}>
-                {onlineStatus}
+                {onlineStatusString}
               </Col>
             </Col>
           </Row>
 
           <Box
-            className={`info-card-wrapper text-center ${
-              convoInfoErr ? 'hide' : 'show'
-            }`}>
+            className={`info-card-wrapper text-center`}>
             <InfoCard
               title='Academic Info'
               icon={SchoolIcon}

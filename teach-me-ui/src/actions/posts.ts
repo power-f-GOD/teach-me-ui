@@ -161,13 +161,16 @@ export const fetchPosts: Function = (
   type: 'FEED' | 'WALL',
   userId?: string,
   update = false,
-  cb = (s: boolean) => {}
+  callback = (s: boolean) => {}
 ) => (dispatch: Function) => {
-  cb(true);
+  callback(true);
+
   if (!update) dispatch(fetchPostsStarted());
+
   const isWall = type === 'WALL' && !!userId;
   const userData = getState().userData as UserData;
   const token = userData.token as string;
+
   Axios({
     url: isWall ? `/profile/${userId}/posts` : '/feed',
     baseURL,
@@ -187,9 +190,10 @@ export const fetchPosts: Function = (
         if (!update) {
           dispatch(fetchedPosts(state as Array<PostPropsState>));
         }
-        dispatch(recycleFeeds(cb));
+        dispatch(recycleFeeds(callback));
         return;
       }
+
       if (update) {
         dispatch(fetchedMorePosts(state as Array<PostPropsState>));
       } else {
@@ -201,7 +205,8 @@ export const fetchPosts: Function = (
           })
         );
       }
-      cb(false);
+
+      callback(false);
     })
     .catch((err) => {
       dispatch(fetchPostsRejected({ error: true, message: err.message }));
