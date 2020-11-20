@@ -462,7 +462,7 @@ const ChatBox = (props: ChatBoxProps) => {
                   convoDisplayName={convoDisplayName}
                   convoId={convoId}
                   convoFriendship={convoFriendship}
-                  convoAssocUsername={convoUsername}
+                  convoUsername={convoUsername}
                   convoOnlineStatus={convoOnlineStatus}
                   convoMessages={convoMessages}
                   convoMessagesStatus={convoMessagesStatus}
@@ -475,7 +475,7 @@ const ChatBox = (props: ChatBoxProps) => {
           </MiddlePaneHeaderContext.Provider>
         </Col>
 
-        {convoUsername && (
+        {convoId && (
           <Col
             as='section'
             lg={3}
@@ -499,7 +499,7 @@ const ChatBox = (props: ChatBoxProps) => {
       </Row>
 
       <IconButton
-        className={`chat-button ${unopened_count ? 'ripple' : ''} ${
+        className={`chat-open-button ${unopened_count ? 'ripple' : ''} ${
           isOpen ? 'hide' : ''
         }`}
         onClick={handleOpenChatClick}

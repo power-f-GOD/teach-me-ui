@@ -456,6 +456,16 @@ div {
   height: 3.5rem !important;
 }
 
+.MuiOutlinedInput-multiline {
+  border: none;
+  padding: 0.5em;
+  background-color: #f4f4f4;
+
+  * {
+    border: none !important;
+  }
+}
+
 .logo {
   // min-width: 10rem;
   width: auto !important;

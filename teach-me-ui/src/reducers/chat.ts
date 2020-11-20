@@ -54,11 +54,7 @@ export const conversation = (
     return {
       ...(Object.keys(action.payload!).length ? state : {}),
       friendship: action.payload?.friendship,
-      ...action.payload,
-      colleague: {
-        ...(state.colleague ?? {}),
-        ...(action.payload?.colleague! ?? {})
-      }
+      ...action.payload
     };
   }
 

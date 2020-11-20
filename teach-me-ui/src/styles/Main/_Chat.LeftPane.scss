@@ -76,11 +76,11 @@ $tab-item-bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
   }
 }
 
-.tab-panels-wrapper {
+.chat-tab-panels-wrapper {
   min-height: calc(100vh - #{$chat-header-min-height});
 }
 
-.tab-panel {
+.chat-tab-panel {
   position: absolute;
   top: 0;
   left: 0;
@@ -116,7 +116,7 @@ $tab-item-bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
   }
 }
 
-.tab-link {
+.chat-tab-link {
   // @include debugger();
   flex-grow: 1;
   padding: 0;
@@ -150,7 +150,38 @@ $tab-item-bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
   background-color: $theme-secondary-v6;
 }
 
-.tab-panel-item {
+.chat-timestamp,
+.chat-tab-panel-item {
+  [class*='Icon'] {
+    font-size: 1.05rem;
+    margin-bottom: -0.2rem;
+    margin-left: 0.1rem;
+    color: rgba(0, 0, 0, 0.35);
+    transition: 0.3s;
+
+    &.read {
+      color: rgba(25, 160, 205, 1);
+
+      &.animate {
+        animation: scale 0.75s;
+      }
+    }
+
+    @keyframes scale {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.35);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+  }
+}
+
+.chat-tab-panel-item {
   margin-bottom: $convo-spacer;
   display: flex;
   cursor: pointer;
@@ -176,39 +207,19 @@ $tab-item-bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
     }
   }
 
-  .conversation-name-wrapper {
+  .chat-conversation-name-wrapper {
     animation: reorderConvo 0.35s;
   }
 
   &.recent {
-    .conversation-name-wrapper {
+    .chat-conversation-name-wrapper {
       animation: reorderRecentConvo 0.35s;
-    }
-  }
-
-  @keyframes reorderConvo {
-    from {
-      transform: translateY(-100%);
-    }
-    to {
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes reorderRecentConvo {
-    from {
-      opacity: 0;
-      transform: translateY(100%);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0%);
     }
   }
 
   &:hover,
   &:focus {
-    .conversation-name-wrapper {
+    .chat-conversation-name-wrapper {
       background-color: $theme-secondary-v5;
       color: white;
       border-color: transparent;
@@ -233,7 +244,7 @@ $tab-item-bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
   }
 
   &.active {
-    .conversation-name-wrapper {
+    .chat-conversation-name-wrapper {
       background-color: $theme-primary-v5;
       color: white;
       border-color: transparent;
@@ -257,7 +268,7 @@ $tab-item-bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
     opacity: 0.35;
   }
 
-  .conversation-name-wrapper {
+  .chat-conversation-name-wrapper {
     padding: 0.75rem 0.5rem;
     border-radius: $convo-spacer;
     background: $tab-item-bg;
@@ -299,47 +310,7 @@ $tab-item-bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
     }
   }
 
-  .message-badge-wrapper {
-    $size: 1.25rem;
-
-    .MuiBadge-root {
-      transition: 0.35s;
-      transform: scale(0);
-      height: $size;
-      width: $size;
-      opacity: 0;
-      top: 0.25rem;
-      transition-duration: 0.1s;
-
-      &.show-badge {
-        transition-duration: 0.3s;
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    .MuiBadge-badge {
-      transform: unset;
-      transform-origin: unset !important;
-
-      font-size: 0.8rem;
-      height: $size;
-      width: auto;
-      font-weight: 600;
-      background-color: $theme-secondary-v6;
-      color: white;
-    }
-  }
-
-  .new-conversation-tag {
-    background-color: $theme-tertiary-v1;
-    color: white;
-    font-size: 0.8rem;
-    padding: 0.1rem 0.75rem;
-    border-radius: 0.25rem;
-  }
-
-  .last-message {
+  .chat-last-message {
     > * {
       white-space: nowrap;
       overflow: hidden;
@@ -354,5 +325,65 @@ $tab-item-bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
         color: $theme-primary-v9;
       }
     }
+  }
+}
+
+.chat-message-badge-wrapper {
+  $size: 1.25rem;
+
+  .MuiBadge-root {
+    transition: 0.35s;
+    transform: scale(0);
+    height: $size;
+    width: $size;
+    opacity: 0;
+    top: 0.25rem;
+    transition-duration: 0.1s;
+
+    &.show-badge {
+      transition-duration: 0.3s;
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .MuiBadge-badge {
+    transform: unset;
+    transform-origin: unset !important;
+
+    font-size: 0.8rem;
+    height: $size;
+    width: auto;
+    font-weight: 600;
+    background-color: $theme-secondary-v6;
+    color: white;
+  }
+}
+
+.chat-new-conversation-tag {
+  background-color: $theme-tertiary-v1;
+  color: white;
+  font-size: 0.8rem;
+  padding: 0.1rem 0.75rem;
+  border-radius: 0.25rem;
+}
+
+@keyframes reorderConvo {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes reorderRecentConvo {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0%);
   }
 }

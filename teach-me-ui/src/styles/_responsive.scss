@@ -95,14 +95,14 @@
         transform: translateY(0);
       }
 
-      .conversation-name-wrapper {
+      .chat-conversation-name-wrapper {
         .conversation-name-container {
           max-width: calc(100% - 3.25rem);
           cursor: pointer;
         }
       }
 
-      .control-wrapper > button {
+      .chat-header-control-wrapper > button {
         &.minimize-button,
         &.close-button {
           display: none;
@@ -134,7 +134,7 @@
       }
     }
 
-    .controls {
+    .chat-header-controls {
       max-width: 3.25rem;
     }
   }
@@ -451,7 +451,7 @@
     top: calc(-1rem + 5px);
   }
 
-  .new-messages-bar {
+  .chat-new-message-bar {
     top: -0.95rem;
   }
 }
