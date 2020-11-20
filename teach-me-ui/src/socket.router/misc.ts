@@ -16,17 +16,24 @@ export default function misc(message: any) {
 
   switch (pipe) {
     case ONLINE_STATUS:
-      if (user_id === id && _conversation._id) {
-        dispatch(
-          conversation(_conversation._id, {
-            online_status,
-            last_seen: last_seen ? last_seen : _conversation.last_seen
-          })
-        );
+      const convoData = {
+        ...message,
+        colleague: {
+          online_status,
+          last_seen
+        }
+      } as APIConversationResponse;
+
+      if (!last_seen) {
+        delete convoData.colleague.last_seen;
+      }
+
+      if (user_id === id && _conversation.id) {
+        dispatch(conversation(_conversation.id, { ...convoData }));
       }
 
       if (userData.id !== user_id) {
-        dispatch(conversations({ data: [{ ...message }] }));
+        dispatch(conversations({ data: [{ ...convoData }] }));
       }
 
       break;

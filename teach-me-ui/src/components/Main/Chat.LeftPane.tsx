@@ -19,14 +19,12 @@ import ChatIcon from '@material-ui/icons/Chat';
 
 import {
   chatState,
-  getConversationInfo,
   conversationMessages,
   conversationsMessages
 } from '../../actions/chat';
 import { dispatch, addEventListenerOnce, delay } from '../../functions/utils';
 import {
   ChatState,
-  ConversationInfo,
   APIConversationResponse,
   SearchState,
   APIMessageResponse,
@@ -36,7 +34,6 @@ import { Skeleton, DISPLAY_INFO } from '../crumbs/Loader';
 import {
   getConversationMessages,
   conversation,
-  conversationInfo,
   conversations
 } from '../../actions/chat';
 import { ChatTimestamp, ChatStatus } from './Chat.crumbs';
@@ -53,7 +50,7 @@ interface TabPanelProps {
 
 interface ChatLeftPaneProps {
   conversations: SearchState;
-  rooms?: ConversationInfo[];
+  rooms?: any[];
   userId: string;
   userFirstname: string;
   handleSetActivePaneIndex(index: number): Function;
@@ -250,7 +247,7 @@ function PaneItems(props: {
           last_message,
           unread_count,
           user_typing,
-          online_status
+          colleague
         } = conversation;
 
         return (
@@ -259,13 +256,13 @@ function PaneItems(props: {
             conversation={conversation}
             forceUpdate={
               '' +
-              last_message?._id +
+              last_message?.id +
               last_message?.delivered_to +
               last_message?.seen_by +
               last_message?.deleted +
               unread_count +
               user_typing +
-              online_status
+              colleague?.online_status
             }
             index={i}
             userId={userId}
@@ -292,18 +289,17 @@ function PaneItem({
 }) {
   const {
     conversation_name: displayName,
-    associated_user_id: _userId,
-    _id: convoId,
+    id: convoId,
     last_message,
     friendship,
     participants,
-    online_status,
     user_typing,
     unread_count,
     created_at,
     last_activity,
-    profile_photo
+    colleague
   } = _conversation ?? {};
+  const { id: _userId, online_status, profile_photo } = colleague || {};
   const isRecent: boolean = { ...(last_message as any) }.is_recent;
 
   const [recent, setRecent] = React.useState<number>(0);
@@ -361,7 +357,7 @@ function PaneItem({
           conversation: APIConversationResponse;
           conversationMessages: ConversationMessages;
         };
-        const { _id: prevChatConvoId } = _conversation;
+        const { id: prevChatConvoId } = _conversation;
         const prevChatConvoMessages = _conversationMessages.data;
 
         if (window.innerWidth < 992) {
@@ -403,27 +399,23 @@ function PaneItem({
           );
         }
 
-        dispatch(conversationInfo({ user_typing: '' }));
+        dispatch(conversation(convoId, { user_typing: '' }));
         dispatch(
           getConversationMessages(convoId, 'pending', 'loading new')(dispatch)
         );
 
         if (window.navigator.onLine) {
-          dispatch(getConversationInfo(userId)(dispatch));
+          // dispatch(getConversationInfo(userId)(dispatch));
 
           //delay so that state conversation unread_count is not updated immediately when the conversation opens
           delay(1250).then(() => {
             dispatch(
-              conversations({ data: [{ unread_count: 0, _id: convoId }] })
+              conversations({ data: [{ unread_count: 0, id: convoId }] })
             );
           });
         } else {
           dispatch(
-            conversationInfo({
-              status: 'settled',
-              err: true,
-              online_status: 'OFFLINE'
-            })
+            conversation(convoId, { colleague: { online_status: 'OFFLINE' } })
           );
           dispatch(conversationMessages({ status: 'pending', err: true }));
         }
@@ -513,7 +505,7 @@ function PaneItem({
                             : 'incoming'
                         }
                         isRecent={!!last_message.pipe}
-                        shouldUpdate={
+                        forceUpdate={
                           last_message?.delivered_to!?.length +
                           last_message?.seen_by!?.length
                         }
