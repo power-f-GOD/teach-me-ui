@@ -43,7 +43,7 @@ export const fetchPostsFn = (
   dispatch(fetchPosts(type, userId, update, cb));
 };
 
-export const fetchMentionsFn = (value: string) => {
+export const fetchMentionsFn = async (value: string) => {
   const token = (getState().userData as UserData).token;
   return Axios({
     url: `/colleagues/find?keyword=${value}`,
@@ -55,7 +55,7 @@ export const fetchMentionsFn = (value: string) => {
       if (response.data.error) {
         throw new Error(response.data.message);
       }
-      return response.data.colleagues;
+      return response.data.data.colleagues;
     })
     .catch((e) => {
       dispatch(

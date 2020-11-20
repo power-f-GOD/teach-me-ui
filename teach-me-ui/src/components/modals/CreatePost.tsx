@@ -94,6 +94,10 @@ const CreatePost = (props: any) => {
   }, 0);
 
   const onUpdate = (value: string) => {
+    if (label.current && label1.current) {
+      label.current.style.display = 'none';
+      label1.current.style.display = 'none';
+    }
     setState({
       ...state,
       post: {
@@ -234,6 +238,8 @@ const CreatePost = (props: any) => {
 
   const displayUploads = (e: any) => {
     document.dispatchEvent( new MouseEvent('click'));
+    label.current.style.display = 'none';
+    label1.current.style.display = 'none';
     if (uploadsProp.status !== 'pending' && !uploadsProp.data[0]) {
       dispatch(getUploads);
     }
@@ -407,7 +413,14 @@ const CreatePost = (props: any) => {
               : <Container
                   className='no-uploads'
                   component='p' 
-                >You have no uploads</Container>
+                >You have no uploads 
+              <button 
+                className='cursor-pointer'
+                id='float-button-no-uploads'
+                onClick={cancelSelectUpload}
+                color='secondary'>
+                  cancel
+              </button></Container>
               : ''
             }
           </Box>

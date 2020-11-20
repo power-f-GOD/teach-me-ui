@@ -93,7 +93,7 @@ const EditorBase: React.FC<any> = (props) => {
   const onSearchChange = ({ value }: any) => {
     setSuggestions([]);
     fetchMentionsFn(value).then((suggestions) => {
-      setSuggestions(
+      suggestions && setSuggestions(
         suggestions.map(({ firstname, lastname, username, profile_photo }: any) => ({
           displayname: `${firstname} ${lastname}`,
           name: username,
