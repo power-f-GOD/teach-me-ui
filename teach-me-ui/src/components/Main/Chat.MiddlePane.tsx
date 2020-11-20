@@ -170,7 +170,7 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
   const [messageHead, setMessageHead] = useState<SelectedMessageValue | null>(
     null
   );
-  
+
   const handleProfileLinkClick = useCallback(() => {
     dispatch(
       chatState({
@@ -191,6 +191,12 @@ const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
       loadMessagesTimeout = null;
       scrollViewPrevScrollPos = 0;
       messageDrafts = {};
+      scrollView = null;
+      msgBox = null;
+      messageActionsWrapper = null;
+      moreOptionsContainer = null;
+      messagesStatusSignal = null;
+      headerNameControlWrapper = null;
     };
   }, []);
 
@@ -541,7 +547,7 @@ function MiddlePaneHeader(props: {
   return (
     <>
       <Row
-        className={`header-name-control-wrapper ${
+        className={`chat-header-name_control-wrapper ${
           convoId ? '' : 'chat-bg'
         } px-2 mx-0`}
         ref={headerNameControlWrapperRef}>
@@ -552,8 +558,8 @@ function MiddlePaneHeader(props: {
           handleUserInfoOptionClick={handleUserInfoOptionClick}
         />
 
-        <Col as='span' className='controls p-0'>
-          <Box component='span' className='control-wrapper ml-1'>
+        <Col as='span' className='chat-header-controls p-0'>
+          <Box component='span' className='chat-header-control-wrapper ml-1'>
             <IconButton
               className='minimize-button'
               onClick={handleMinimizeChatClick}
@@ -562,7 +568,7 @@ function MiddlePaneHeader(props: {
             </IconButton>
           </Box>
 
-          <Box component='span' className='control-wrapper ml-1'>
+          <Box component='span' className='chat-header-control-wrapper ml-1'>
             <IconButton
               className='close-button'
               onClick={handleCloseChatClick}
@@ -577,7 +583,7 @@ function MiddlePaneHeader(props: {
             }>
             <Box
               component='span'
-              className='control-wrapper more-options-wrapper ml-1'>
+              className='chat-header-control-wrapper more-options-wrapper ml-1'>
               <IconButton
                 className='more-button'
                 onClick={toggleMoreOptionsPopover}
@@ -588,7 +594,7 @@ function MiddlePaneHeader(props: {
               <Container
                 as='span'
                 ref={moreOptionsContainerRef}
-                className={`more-options-container ${
+                className={`chat-more-options-container ${
                   moreOptionsContainerIsVisible ? 'show' : 'hide'
                 } ${
                   isMinimized ? 'transform-upwards' : ''
@@ -722,13 +728,19 @@ function MiddlePandeHeaderConversationNameAndStatus(props: {
       clearTimeout(renderAwayDateTimeout);
       setCanDisplayAwayDate(false);
     }
+
+    return () => {
+      renderAwayDateTimeout = null;
+      _canDisplayAwayDate = false;
+      lastSeenForAway = Date.now();
+    };
   }, [convoId, convoOnlineStatus, convoLastSeen, displayAwayDate]);
 
   return (
-    <Col as='span' className='conversation-name-wrapper'>
+    <Col as='span' className='chat-conversation-name-wrapper'>
       <Box
         component='span'
-        className='control-wrapper conversations-menu-button-wrapper'>
+        className='chat-header-control-wrapper conversations-menu-button-wrapper'>
         <IconButton
           edge='start'
           className='conversations-menu-button ml-0 mr-1'
@@ -772,9 +784,7 @@ function MiddlePandeHeaderConversationNameAndStatus(props: {
             <Col
               as='span'
               className={`status ${convoLastSeen && !convosErr ? 'show' : ''} ${
-                /typing/.test(onlineStatus)
-                  ? 'font-bold theme-secondary-lighter'
-                  : ''
+                /typing/.test(onlineStatus) ? 'font-bold' : ''
               } p-0`}>
               {onlineStatus}
             </Col>
@@ -899,7 +909,7 @@ function MiddlePaneHeaderActions(props: {
       }
     }
 
-    container.className = 'message-selection-data-container';
+    container.className = 'chat-message-selection-data-container';
     container.textContent = messages;
     document.body.appendChild(container);
     range.selectNodeContents(container);
@@ -1016,13 +1026,13 @@ function MiddlePaneHeaderActions(props: {
     <>
       <Container
         fluid
-        className='message-actions-wrapper'
+        className='chat-message-actions-wrapper'
         ref={messageActionsWrapperRef}>
         <Row
-          className={`message-actions-container ${
+          className={`chat-message-actions-container ${
             numOfSelectedMessages ? 'open' : ''
           } m-0`}>
-          <Box className='action-wrapper text-left'>
+          <Box className='chat-action-wrapper text-left'>
             <IconButton
               className='clear-selection-button ml-2'
               onClick={handleClearSelections}
@@ -1037,7 +1047,7 @@ function MiddlePaneHeaderActions(props: {
           </Box>
           <Box className='d-flex'>
             <Box
-              className={`action-wrapper ${
+              className={`chat-action-wrapper ${
                 canShowReplyButton ? 'scale-up' : 'scale-down'
               }-forwards text-right`}>
               <IconButton
@@ -1049,7 +1059,7 @@ function MiddlePaneHeaderActions(props: {
                 <ReplyRoundedIcon />
               </IconButton>
             </Box>
-            <Box className='action-wrapper text-right'>
+            <Box className='chat-action-wrapper text-right'>
               <IconButton
                 className='copy-button mr-1'
                 onClick={handleCopyMessage}
@@ -1057,7 +1067,7 @@ function MiddlePaneHeaderActions(props: {
                 <FilterNoneRoundedIcon />
               </IconButton>
             </Box>
-            <Box className='action-wrapper text-right'>
+            <Box className='chat-action-wrapper text-right'>
               <IconButton
                 className='delete-button mr-2'
                 onClick={handleDeleteMessage}
@@ -1136,7 +1146,7 @@ function ScrollView(props: {
         if (
           scrollView!?.scrollTop <= 200 &&
           !/end/.test(convoMessagesStatusText as string) &&
-          scrollView?.querySelector('.msg-container')
+          scrollView?.querySelector('.chat-msg-container')
         ) {
           dispatch(
             getConversationMessages(
@@ -1182,6 +1192,10 @@ function ScrollView(props: {
       setHasReachedTopOfConvo(false);
       newMessageCount = 0;
     }
+
+    return () => {
+      newMessageCount = 0;
+    };
   }, [convoId]);
 
   useEffect(() => {
@@ -1385,8 +1399,8 @@ function ScrollView(props: {
           isFirstOfStack ? 'first' : ''
         } ${isOnlyOfStack ? 'only' : ''} ${isLastOfStack ? 'last' : ''} ${
           isMiddleOfStack ? 'middle' : ''
-        } ${convoNewMessage?.id === _id || timestamp_id ? 'last-message' : ''}`;
-// console.log(convoNewMessage, _id)
+        } ${convoNewMessage?.id === _id || timestamp_id ? '' : ''}`;
+
         if (willRenderNewMessageBar) {
           newMessageCount = 0;
           newMessageCount = convoMessages
@@ -1606,6 +1620,10 @@ function MessageBox(props: {
     if (convoId) {
       setMessageHead(null);
     }
+
+    return () => {
+      messageHeadCopy = null;
+    };
   }, [convoId, setMessageHead]);
 
   return (
@@ -1621,7 +1639,7 @@ function MessageBox(props: {
         />
       </Container>
       <Container className='d-flex p-0'>
-        <Col as='span' className='emoji-wrapper p-0'>
+        <Col as='span' className='chat-emoji-wrapper p-0'>
           <IconButton
             className='emoji-button d-none'
             // onClick={toggleDrawer(true)}
@@ -1629,11 +1647,11 @@ function MessageBox(props: {
             <EmojiIcon fontSize='inherit' />
           </IconButton>
         </Col>
-        <Col className='msg-box-wrapper p-0'>
+        <Col className='chat-msg-textfield-wrapper p-0'>
           <TextField
             variant='outlined'
-            id='msg-box'
-            className='msg-box custom-scroll-bar grey-scrollbar'
+            id='chat-msg-textfield'
+            className='chat-msg-textfield custom-scroll-bar grey-scrollbar'
             placeholder='Type a message...'
             multiline
             rows={1}
@@ -1649,7 +1667,7 @@ function MessageBox(props: {
             }}
           />
         </Col>
-        <Col as='span' className='send-wrapper p-0'>
+        <Col as='span' className='chat-send-wrapper p-0'>
           <IconButton
             className='send-button'
             onClick={handleSendMsgClick}

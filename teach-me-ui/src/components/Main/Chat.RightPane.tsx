@@ -51,7 +51,7 @@ const ChatRightPane = (props: ChatRightPaneProps) => {
         <Box component='span' className='font-bold pl-1'>
           {convoType === ONE_TO_ONE ? 'User info' : 'Participants'}
         </Box>
-        <Box component='span' className='control-wrapper ml-1'>
+        <Box component='span' className='chat-header-control-wrapper ml-1'>
           <IconButton
             className='back-button'
             onClick={handleSetActivePaneIndex(1)}
@@ -63,7 +63,7 @@ const ChatRightPane = (props: ChatRightPaneProps) => {
       {convoType === ONE_TO_ONE ? (
         <Container
           as='section'
-          className='user-info-container custom-scroll-bar small-bar grey-scrollbar p-3 debugger'>
+          className='chat-user-info-container custom-scroll-bar small-bar grey-scrollbar p-3 debugger'>
           <Row as='section' className='m-0 flex-column mb-5'>
             <Col className='p-0 text-center'>
               <Avatar
@@ -86,17 +86,14 @@ const ChatRightPane = (props: ChatRightPaneProps) => {
                     ? 'hide'
                     : 'show'
                 } ${!convosErr ? badgeStatus : 'offline'} ${
-                  /typing/.test(onlineStatusString)
-                    ? 'font-bold theme-secondary-lighter'
-                    : ''
+                  /typing/.test(onlineStatusString) ? 'font-bold' : ''
                 } px-1 mb-4`}>
                 {onlineStatusString}
               </Col>
             </Col>
           </Row>
 
-          <Box
-            className={`info-card-wrapper text-center`}>
+          <Box className={`info-card-wrapper text-center`}>
             <InfoCard
               title='Academic Info'
               icon={SchoolIcon}

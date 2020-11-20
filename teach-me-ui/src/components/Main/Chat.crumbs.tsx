@@ -29,7 +29,8 @@ import {
   delay,
   interval,
   createObserver,
-  dispatch
+  dispatch,
+  getState
 } from '../../functions/utils';
 import { chatDateStickyRef, msgBoxRef } from './Chat.MiddlePane';
 import { conversation } from '../../actions/chat';
@@ -127,20 +128,28 @@ export const Message = (props: {
         });
       });
 
-      //this is for to remove the last-message slide-in animation after the animation has ended; Would have used an animationend listener but the fade-in animation after this block makes the slide-in animation of non-effect
-      if (messageEl.classList.contains('last-message')) {
+      //this is for to add the chat-last-message slide-in animation and reset the conversation new_message prop after the animation has ended;
+      if (!messageEl.classList.contains('chat-last-message')) {
+        if (
+          message.timestamp_id ||
+          getState().conversation.new_message?.id === message.id
+        ) {
+          messageEl.classList.add('chat-last-message');
+        }
+
         addEventListenerOnce(
           messageEl,
-          () => {
-            // delay(850).then(() => {
-            dispatch(conversation(convoId, { new_message: {} }));
-            // });
-          },
+          () =>
+            delay(1000).then(() => {
+              dispatch(conversation(convoId, { new_message: {} }));
+            }),
           'animationend'
         );
       }
     }
   }, [
+    message.timestamp_id,
+    message.id,
     convoId,
     messageElRef,
     handleSelectMessage,
@@ -176,6 +185,7 @@ export const Message = (props: {
     () => () => {
       setSelected(false);
       handleMessageSelection(null, { ...message, type, sender_username });
+      messageTouchTimeout = null;
     },
     [type, message, sender_username, handleMessageSelection]
   );
@@ -186,7 +196,7 @@ export const Message = (props: {
       id={`message-${message.id}`}
       className={`${type} ${
         selected ? 'selected' : ''
-      } msg-container ${className} fade-in-opacity ${
+      } chat-msg-container ${className} fade-in-opacity ${
         deleted ? 'deleted' : ''
       } p-0 mx-0`}
       onKeyUp={handleSelectMessageForEnterPress}
@@ -505,7 +515,7 @@ export const NewMessageBar = (props: {
     if (!scrollView) return;
 
     const Button = (scrollView.querySelector(
-      '.new-messages-bar.relative .new-messages-count'
+      '.chat-new-message-bar.relative .chat-new-messages-count'
     ) as any)!;
 
     const observer = createObserver(scrollView, (entries) => {
@@ -560,10 +570,10 @@ export const NewMessageBar = (props: {
     if (scrollView) {
       delay(type === 'relative' ? 10 : 125).then(() => {
         stickyNewMessageBar = scrollView?.querySelector(
-          '.new-messages-bar.sticky'
+          '.chat-new-message-bar.sticky'
         ) as HTMLElement;
         relativeNewMessageBar = scrollView?.querySelector(
-          '.new-messages-bar.relative'
+          '.chat-new-message-bar.relative'
         );
 
         if (relativeNewMessageBar) {
@@ -596,11 +606,11 @@ export const NewMessageBar = (props: {
 
   return (
     <Container
-      className={`new-messages-bar fade-in ${type} ${className ?? ''} ${
+      className={`chat-new-message-bar fade-in ${type} ${className ?? ''} ${
         type === 'sticky' ? 'd-none' : ''
       } p-0`}>
       <Button
-        className='new-messages-count btn-primary contained uppercase d-inline-flex align-items-center'
+        className='chat-new-messages-count btn-primary contained uppercase d-inline-flex align-items-center'
         variant='contained'
         disabled={relativeIsVisible}
         onClick={handleStickyClick}>

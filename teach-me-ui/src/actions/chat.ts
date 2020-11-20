@@ -120,7 +120,13 @@ export const conversations = (
   const { pipe, colleague, unread_count, user_typing, id, user_id, last_read } =
     (payload.data ?? [])[0] ?? {};
   const { online_status, last_seen } = colleague ?? {};
-  const { conversations, conversationMessages, userData } = getState() as {
+  const {
+    conversation: _conversation,
+    conversations,
+    conversationMessages,
+    userData
+  } = getState() as {
+    conversation: APIConversationResponse;
     conversations: SearchStateV2<APIConversationResponse[]>;
     conversationMessages: ConversationMessages;
     userData: UserData;
@@ -192,12 +198,17 @@ export const conversations = (
             if (userData.id !== message.sender_id) {
               actualConvo.unread_count!++;
             }
-            console.log('last...:', last_message, message);
-            actualConvo.new_message = { ...message };
-            actualConvo.last_message = { ...message };
-            actualConvo.last_message.is_recent = true;
+
+            actualConvo.new_message = { ...last_message };
+            actualConvo.last_message = { ...last_message };
+            actualConvo.last_message.is_recent = true; // used for reordering LeftPane convos
             initialConversations.splice(indexOfInitial, 1);
             initialConversations.unshift(actualConvo);
+
+            //update current conversation
+            if (_conversation.id === convoId) {
+              dispatch(conversation(convoId!, { ...actualConvo }));
+            }
           } else {
             if (
               actualConvo.last_message?.id === message.id &&
@@ -699,6 +710,7 @@ export const getConversationMessages = (
               if (message.seen_by!?.includes(userId)) return;
 
               if (type === 'incoming') {
+                console.log('object inextensible check:', message);
                 if (!message.delivered_to!?.includes(userId)) {
                   socket.send(
                     JSON.stringify({
@@ -815,6 +827,7 @@ export const conversationMessages = (payload: ConversationMessages) => {
       }
     }
   } else {
+    // console.log('payload:', payload);
     const messageId = payload.data![0].id;
     let { value: initialMessage, index: indexOfInitial } = (loopThru(
       previousMessages,

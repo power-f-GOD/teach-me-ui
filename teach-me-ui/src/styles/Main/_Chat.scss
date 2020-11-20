@@ -26,68 +26,23 @@ $chat-header-min-height: 3.75rem;
     text-decoration: none;
   }
 
-  .chat-timestamp,
-  .tab-panel-item {
-    [class*='Icon'] {
-      font-size: 1.05rem;
-      margin-bottom: -0.2rem;
-      margin-left: 0.1rem;
-      color: rgba(0, 0, 0, 0.35);
-      transition: 0.3s;
+  header {
+    position: relative;
+    font-weight: bold;
+    z-index: 4;
+    flex: none;
+    background: inherit;
+    background-color: white;
+    box-shadow: 0.5rem 0 1.75rem rgba(0, 0, 0, 0.15);
+    min-height: $chat-header-min-height;
+    max-height: $chat-header-min-height;
+    // @include debugger();
 
-      &.read {
-        color: rgba(25, 160, 205, 1);
-
-        &.animate {
-          animation: scale 0.75s;
-        }
-      }
-
-      @keyframes scale {
-        0% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.35);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-    }
+    
   }
 }
 
-body,
-.ChatBox {
-  &,
-  .tab-panel-item {
-    .online {
-      .MuiBadge-dot {
-        background-color: limegreen !important;
-      }
-    }
-
-    .away {
-      .MuiBadge-dot {
-        background-color: orange !important;
-      }
-    }
-
-    .offline {
-      .MuiBadge-dot {
-        background-color: #999 !important;
-      }
-    }
-
-    .MuiBadge-dot {
-      transition: 0.3s;
-      background-color: $error;
-    }
-  }
-}
-
-.chat-button {
+.chat-open-button {
   $size: 3.25rem;
 
   background-color: $theme-secondary-v5;
@@ -189,20 +144,30 @@ body,
   }
 }
 
-.ChatBox header {
-  box-shadow: 0 0 1.75rem rgba(0, 0, 0, 0.2);
-}
+.chat-header,
+.chat-tab-panel-item {
+  .online {
+    .MuiBadge-dot {
+      background-color: limegreen !important;
+    }
+  }
 
-header.chat-header {
-  position: relative;
-  font-weight: bold;
-  z-index: 4;
-  flex: none;
-  background: inherit;
-  background-color: white;
-  min-height: $chat-header-min-height;
-  max-height: $chat-header-min-height;
-  // @include debugger();
+  .away {
+    .MuiBadge-dot {
+      background-color: orange !important;
+    }
+  }
+
+  .offline {
+    .MuiBadge-dot {
+      background-color: #999 !important;
+    }
+  }
+
+  .MuiBadge-dot {
+    transition: 0.3s;
+    background-color: $error;
+  }
 }
 
 .chat-avatar {
@@ -230,20 +195,20 @@ header.chat-header {
   }
 }
 
-.conversation-name-wrapper,
-.controls,
-.control-wrapper {
+.chat-conversation-name-wrapper,
+.chat-header-controls,
+.chat-header-control-wrapper {
   display: inline-flex;
   align-items: center;
   padding: 0;
 }
 
-.controls {
+.chat-header-controls {
   justify-content: flex-end;
   max-width: 6.5rem;
 }
 
-.header-name-control-wrapper {
+.chat-header-name_control-wrapper {
   max-width: 100%;
   // @include debugger();
 }
@@ -252,7 +217,7 @@ body.desktop {
   .ChatBox {
     .custom-scroll-bar,
     textarea,
-    #msg-box {
+    #chat-msg-box {
       &::-webkit-scrollbar {
         width: 0.55em;
       }
