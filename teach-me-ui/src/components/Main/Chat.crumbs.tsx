@@ -139,10 +139,9 @@ export const Message = (props: {
 
         addEventListenerOnce(
           messageEl,
-          () =>
-            delay(1000).then(() => {
-              dispatch(conversation(convoId, { new_message: {} }));
-            }),
+          () => {
+            dispatch(conversation(convoId, { new_message: {} }));
+          },
           'animationend'
         );
       }

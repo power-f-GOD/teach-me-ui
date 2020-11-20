@@ -326,6 +326,10 @@ export const conversation = (
     }
 
     if (payload.colleague) {
+      payload.colleague = {
+        ...dataFromConvo.colleague,
+        ...(data?.colleague ?? {})
+      };
       payload.colleague.profile_photo = payload.colleague.profile_photo || '';
     }
   }
@@ -680,7 +684,7 @@ export const getConversationMessages = (
           : 'reached end'
         : undefined;
       let hasReachedLastRead = false;
-
+      // console.log(messages, data.data);
       if (!error) {
         if (socket && socket.readyState === 1) {
           messages = loopThru(

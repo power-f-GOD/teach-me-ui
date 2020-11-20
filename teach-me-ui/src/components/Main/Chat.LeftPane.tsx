@@ -401,7 +401,6 @@ function PaneItem({
           );
         }
 
-        dispatch(conversation(convoId, { user_typing: '' }));
         dispatch(
           getConversationMessages(convoId, 'pending', 'loading new')(dispatch)
         );
@@ -416,14 +415,11 @@ function PaneItem({
             );
           });
         } else {
-          dispatch(
-            conversation(convoId, { colleague: { online_status: 'OFFLINE' } })
-          );
           dispatch(conversationMessages({ status: 'pending', err: true }));
         }
 
         dispatch(chatState(chatInfo));
-        dispatch(conversation(convoId, {}));
+        dispatch(conversation(convoId));
       };
     },
     [handleSetActivePaneIndex]
