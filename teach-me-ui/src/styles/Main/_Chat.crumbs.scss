@@ -2,7 +2,7 @@ $incoming-outgoing-spacing: 1.25rem;
 $msgs-spacing: 0.1875rem;
 $msg-radius: 1.5rem;
 
-.msg-container {
+.chat-msg-container {
   position: relative;
   user-select: none;
   cursor: pointer;
@@ -92,7 +92,7 @@ $msg-radius: 1.5rem;
     }
   }
 
-  &.last-message {
+  &.chat-last-message {
     &.incoming {
       .msg-wrapper {
         animation: incomingMessageSlideIn 1s;
@@ -173,7 +173,7 @@ $msg-radius: 1.5rem;
       }
     }
 
-    + .incoming.msg-container {
+    + .incoming.chat-msg-container {
       margin-top: $msgs-spacing;
 
       .msg-wrapper {
@@ -192,7 +192,7 @@ $msg-radius: 1.5rem;
     }
   }
 
-  &.incoming + .outgoing.msg-container {
+  &.incoming + .outgoing.chat-msg-container {
     margin-top: $incoming-outgoing-spacing !important;
   }
 
@@ -255,7 +255,7 @@ $msg-radius: 1.5rem;
       }
     }
 
-    + .outgoing.msg-container {
+    + .outgoing.chat-msg-container {
       margin-top: $msgs-spacing;
 
       .msg-wrapper {
@@ -274,7 +274,7 @@ $msg-radius: 1.5rem;
     }
   }
 
-  &.outgoing + .incoming.msg-container {
+  &.outgoing + .incoming.chat-msg-container {
     margin-top: $incoming-outgoing-spacing !important;
   }
 
@@ -290,6 +290,7 @@ $msg-radius: 1.5rem;
     white-space: pre-wrap;
     word-break: break-word;
     width: auto;
+    max-width: 90%;
     max-width: calc(min(32rem, 90%));
 
     &::before {
@@ -338,7 +339,7 @@ $msg-radius: 1.5rem;
 }
 
 .chat-date-wrapper,
-.new-messages-bar {
+.chat-new-message-bar {
   transition: opacity 0.3s;
   position: relative;
   min-height: 2.5rem;
@@ -380,7 +381,7 @@ $msg-radius: 1.5rem;
   }
 }
 
-.new-messages-bar {
+.chat-new-message-bar {
   // @include debugger();
   text-align: center;
   height: 0;
@@ -426,7 +427,7 @@ $msg-radius: 1.5rem;
 }
 
 .chat-date,
-button.new-messages-count {
+button.chat-new-messages-count {
   background: rgba(255, 255, 255, 0.6);
   padding: 0.25rem 0.95rem;
   border-radius: 2rem;
@@ -441,7 +442,7 @@ button.new-messages-count {
   transition: transform 0.4s ease 1.35s;
 }
 
-button.new-messages-count {
+button.chat-new-messages-count {
   background-color: $theme-primary-v6 !important;
   color: white;
   font-size: 0.9rem;
@@ -482,11 +483,11 @@ button.new-messages-count {
   border-top-right-radius: inherit;
   border-top-left-radius: inherit;
   margin-bottom: 0.5rem;
-  max-height: 5.4rem;
+  max-height: 5.5rem;
   white-space: pre-wrap;
   overflow: hidden;
   font-size: 0.85rem;
-  padding: 0.2rem 0.4rem 0.2rem;
+  padding: 0.2rem 0.4rem 0.2rem !important;
   background: rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: 1;
@@ -536,8 +537,4 @@ button.new-messages-count {
     line-height: 0;
     margin-right: auto;
   }
-}
-
-.chat-head-sender {
-  font-weight: 500;
 }

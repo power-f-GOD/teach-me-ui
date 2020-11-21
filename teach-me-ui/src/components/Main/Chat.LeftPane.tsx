@@ -64,7 +64,7 @@ const allyProps = (index: any) => {
   return {
     id: index,
     'aria-controls': index,
-    className: 'tab-link'
+    className: 'chat-tab-link'
   };
 };
 
@@ -103,7 +103,7 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
           />
         </Tabs>
       </AppBar>
-      <Box className='tab-panels-wrapper d-flex' position='relative'>
+      <Box className='chat-tab-panels-wrapper d-flex' position='relative'>
         <Memoize
           memoizedComponent={TabPanel}
           value={value}
@@ -211,7 +211,9 @@ function TabPanel(props: TabPanelProps) {
           OTransform: `translateX(${translateVal}%)`
         }}
         ref={tabPanelRef}
-        className={`tab-panel ${value !== index ? 'hide-scroll-fader' : ''} ${
+        className={`chat-tab-panel ${
+          value !== index ? 'hide-scroll-fader' : ''
+        } ${
           other.status === 'pending'
             ? 'hidden'
             : value === index
@@ -399,7 +401,6 @@ function PaneItem({
           );
         }
 
-        dispatch(conversation(convoId, { user_typing: '' }));
         dispatch(
           getConversationMessages(convoId, 'pending', 'loading new')(dispatch)
         );
@@ -414,14 +415,11 @@ function PaneItem({
             );
           });
         } else {
-          dispatch(
-            conversation(convoId, { colleague: { online_status: 'OFFLINE' } })
-          );
           dispatch(conversationMessages({ status: 'pending', err: true }));
         }
 
         dispatch(chatState(chatInfo));
-        dispatch(conversation(convoId, {}));
+        dispatch(conversation(convoId));
       };
     },
     [handleSetActivePaneIndex]
@@ -430,7 +428,7 @@ function PaneItem({
   return (
     <NavLink
       to={navLinkTo}
-      className={`tab-panel-item ${!friendship ? 'uncolleagued' : ''} ${
+      className={`chat-tab-panel-item ${!friendship ? 'uncolleagued' : ''} ${
         recent === index ? 'recent' : ''
       }`}
       key={convoId}
@@ -439,7 +437,7 @@ function PaneItem({
         { ..._chatState },
         { convoId: String(convoId), userId: String(_userId) }
       )}>
-      <Col className='conversation-name-wrapper'>
+      <Col className='chat-conversation-name-wrapper'>
         <Badge
           anchorOrigin={{
             vertical: 'bottom',
@@ -474,17 +472,17 @@ function PaneItem({
           </Box>
           {friendship && (
             <Box
-              className='message-badge-wrapper d-flex justify-content-between'
+              className='chat-message-badge-wrapper d-flex justify-content-between'
               maxWidth='100%'
               width='100%'>
               <Box
-                className={`last-message mt-1 ${
+                className={`chat-last-message mt-1 ${
                   last_message?.deleted ? 'font-italic' : ''
                 }`}
                 maxWidth={unread_count ? 'calc(100% - 2.25rem)' : '100%'}
                 title={last_message?.message ?? ''}>
                 {!last_message ? (
-                  <Box className='new-conversation-tag'>NEW</Box>
+                  <Box className='chat-new-conversation-tag'>NEW</Box>
                 ) : (
                   <>
                     <Box

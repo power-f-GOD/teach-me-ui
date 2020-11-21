@@ -65,8 +65,8 @@ export default function chat(message: Partial<ChatSocketMessageResponse>) {
       case CHAT_NEW_MESSAGE:
         let willEmitDelivered = false;
         let willEmitSeen = false;
-        // console.log('message:', message);
-        if (socket.readyState === 1) {
+
+        if (socket.readyState === socket.OPEN) {
           if (type === 'incoming') {
             const delivered = delivered_to!?.includes(userId);
             const seen = seen_by!?.includes(userId);
@@ -127,7 +127,7 @@ export default function chat(message: Partial<ChatSocketMessageResponse>) {
             seen_by: willEmitSeen ? [userId] : []
           }
         ];
-        console.log('......', convoMessagesData.data[0], message);
+
         if (convoId && conversation_id === convoId) {
           dispatch(
             conversationMessages({

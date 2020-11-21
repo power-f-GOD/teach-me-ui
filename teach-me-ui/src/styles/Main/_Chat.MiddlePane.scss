@@ -13,7 +13,7 @@
     color: $theme-secondary-v6;
   }
 
-  .header-name-control-wrapper {
+  .chat-header-name_control-wrapper {
     flex-grow: 1;
     background: white;
 
@@ -22,7 +22,7 @@
     }
   }
 
-  .conversation-name-wrapper {
+  .chat-conversation-name-wrapper {
     max-width: 100%;
   }
 
@@ -55,6 +55,10 @@
     &.show {
       opacity: 1;
     }
+
+    &.font-bold {
+      color: limegreen;
+    }
   }
 
   .the-beginning {
@@ -68,7 +72,7 @@
   }
 }
 
-.control-wrapper {
+.chat-header-control-wrapper {
   button {
     padding: 0.5rem;
     font-size: 1.35rem !important;
@@ -87,7 +91,7 @@
   }
 }
 
-.more-options-container {
+.chat-more-options-container {
   $transVal: 0.3s ease 0.25s;
   $transition: opacity $transVal, transform $transVal, box-shadow $transVal,
     background-color 0.3s;
@@ -156,7 +160,7 @@
   }
 }
 
-.message-actions-wrapper {
+.chat-message-actions-wrapper {
   position: absolute;
   height: 100%;
   width: 100%;
@@ -164,13 +168,13 @@
   z-index: 5;
 }
 
-.action-wrapper {
+.chat-action-wrapper {
   &[class*='scale-down'] {
     pointer-events: none;
   }
 }
 
-.message-actions-container {
+.chat-message-actions-container {
   // @include debugger();
   justify-content: space-between;
   align-items: center;
@@ -216,7 +220,7 @@
     align-self: center;
   }
 
-  .new-messages-bar {
+  .chat-new-message-bar {
     max-width: calc(min(110%, 42rem)) !important;
   }
 
@@ -231,7 +235,7 @@
       width: calc(100% + #{$pad-x / 2});
     }
 
-    .new-messages-bar {
+    .chat-new-message-bar {
       width: calc(100% + 1rem);
       margin-left: 0.5rem;
     }
@@ -325,10 +329,10 @@
 body.desktop {
   .chat-scroll-view {
     &.add-scroll-padding {
-      .msg-container {
-        &.last-message.outgoing {
+      .chat-msg-container {
+        &.chat-last-message.outgoing {
           .msg-wrapper {
-            animation: outgoingMessageSlideInWithScroll 0.75s;
+            animation: outgoingMessageSlideInWithScroll 1s;
           }
         }
 
@@ -336,17 +340,6 @@ body.desktop {
           width: calc(100% + 4.5rem);
         }
       }
-    }
-  }
-
-  @keyframes outgoingMessageSlideInWithScroll {
-    from {
-      opacity: 0;
-      transform: translateX(2rem);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
     }
   }
 }
@@ -357,7 +350,7 @@ body.mobile {
     padding-bottom: 0.5rem;
   }
 
-  .new-messages-bar {
+  .chat-new-message-bar {
     &::before {
       border-radius: 0;
     }
@@ -425,16 +418,16 @@ body.mobile {
   }
 }
 
-.msg-box-wrapper,
-.emoji-wrapper,
-.send-wrapper {
+.chat-msg-textfield-wrapper,
+.chat-emoji-wrapper,
+.chat-send-wrapper {
   display: inline-flex;
   align-items: center;
   padding: 0;
 }
 
-.emoji-wrapper,
-.send-wrapper {
+.chat-emoji-wrapper,
+.chat-send-wrapper {
   z-index: 1;
   align-self: flex-end;
   justify-content: center !important;
@@ -446,21 +439,11 @@ body.mobile {
   }
 }
 
-.msg-box-wrapper {
+.chat-msg-textfield-wrapper {
   min-width: calc(100% - 6.5rem);
 }
 
-.MuiOutlinedInput-multiline {
-  border: none;
-  padding: 0.5em;
-  background-color: #f4f4f4;
-
-  * {
-    border: none !important;
-  }
-}
-
-.msg-box {
+.chat-msg-textfield {
   > div.MuiInputBase-root {
     background: #fff;
     border-radius: 1.25rem;
@@ -472,7 +455,7 @@ body.mobile {
   }
 }
 
-.message-selection-data-container {
+.chat-message-selection-data-container {
   position: absolute;
   opacity: 0;
   bottom: 0;
