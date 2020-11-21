@@ -10,3 +10,4 @@ export * from './profile';
 export * from './profile.edit';
 export * from './notifications';
 export * from './colleague';
+export * from './question';

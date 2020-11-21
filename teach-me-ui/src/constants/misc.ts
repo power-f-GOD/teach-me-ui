@@ -5,7 +5,8 @@ import {
   NotificationState,
   MentionState,
   ReplyState,
-  UploadState
+  UploadState,
+  QuestionState
 } from './interfaces';
 
 
@@ -75,3 +76,8 @@ export const uploadState: UploadState ={
   err: false,
   data: []
 }
+
+export const questionState: QuestionState = {
+  status: 'settled',
+  err: false,
+};

@@ -6,46 +6,71 @@ import React, {
 
 import { connect } from 'react-redux';
 
-import Avatar from '@material-ui/core/Avatar';
+// import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
-
 import AttachmentIcon from '@material-ui/icons/Attachment';
+import { ClickAwayListener, Container } from '@material-ui/core';
 
 import Row from 'react-bootstrap/Row';
-import Dropdown from 'react-bootstrap/Dropdown';
 
-import { PostEditorState } from '../../constants';
+import { QuestionEditor } from '../../constants';
 
 import { 
-  sendFilesToServer,
+  // sendFilesToServer,
   getUploads,
-  makePost,
-  submitPost,
+  // sendQuestionToServer,
+  askQuestion
 } from '../../actions';
-
-import Editor from '../crumbs/Editor';
-import RenderImage from '../crumbs/RenderImage';
 
 import { 
   displayModal, 
   dispatch,
   isImage,
-  getFileExtension
+  getFileExtension,
 } from '../../functions';
-import { Container } from '@material-ui/core';
+import TagEditor from '../crumbs/Tags';
 
-const CreatePost = (props: any) => {
-  const { userData, sendFile, uploadsProp, makePostProp } = props;
-  const { profile_photo, displayName } = userData;
+
+const RenderImage = (props: {file: File}) => {
+  const { file } = props;
+  const img = useRef<any | undefined>();
+
+  let reader = new FileReader();
+  reader.onload = (e) => {
+    img.current.setAttribute('src', e.target!.result as string);
+  }
+  reader.readAsDataURL(file);
+
+  return (
+    <img
+      ref={img} 
+      className='img'
+      alt={file.name}
+      title={file.name}/> 
+  )
+}
+
+
+const CreateQuestion = (props: any) => {
+  const { 
+    // userData, 
+  sendFile,
+  uploadsProp,
+  askQuestionProp
+} = props;
+  // const { profile_photo, displayName } = userData;
 
   const label = useRef<HTMLLabelElement | any>();
   const label1 = useRef<HTMLLabelElement | any>();
+  const [showDropdown, setShowDropdown] = useState<boolean>(false);
 
-  const [state, setState] = useState<PostEditorState>({
-    post: {
-      text: ''
+  const [state, setState] = useState<QuestionEditor>({
+    question: {
+      title: '',
+      body: '',
+      tags: []
     },
     selectedFiles: [],
     selectedUploads: [],
@@ -53,8 +78,18 @@ const CreatePost = (props: any) => {
     showUploads: false
   });
 
-  if (makePostProp.status === 'fulfilled') {
-    dispatch(makePost({status: 'settled'}));
+  const setTags = (tags: Array<string>) => {
+    setState({
+      ...state,
+      question: {
+        ...state.question,
+        tags
+      }
+    })
+  }
+
+  if (askQuestionProp.status === 'fulfilled') {
+    dispatch(askQuestion({status: 'settled'}));
     window.history.back();
     displayModal(false);
   }
@@ -73,16 +108,16 @@ const CreatePost = (props: any) => {
     window.location.hash = 'modal';
   }, 0);
 
-  const onUpdate = (value: string) => {
+  const onChange = (header: string) => ({ target }: any) => {
     if (label.current && label1.current) {
       label.current.style.display = 'none';
       label1.current.style.display = 'none';
     }
     setState({
       ...state,
-      post: {
-        ...state.post,
-        text: value
+      question: {
+        ...state.question,
+        [header]: target.value
       }
     })
   };
@@ -219,7 +254,7 @@ const CreatePost = (props: any) => {
   }
 
   const displayUploads = (e: any) => {
-    document.body.click();
+    document.dispatchEvent( new MouseEvent('click'));
     label.current.style.display = 'none';
     label1.current.style.display = 'none';
     if (uploadsProp.status !== 'pending' && !uploadsProp.data[0]) {
@@ -238,53 +273,87 @@ const CreatePost = (props: any) => {
     });
   }
 
-  const onPostSubmit = () => {
-    if (state.post.text) {
-      if (state.selectedFiles[0] || state.selectedUploads[0]) {
-        sendFilesToServer(state.selectedFiles, submitPost, state.selectedUploads, 'media', true, {post: state.post});
-      } else {
-        dispatch(submitPost({post: state.post, media: []})(dispatch));
-      }
-    }
+  const toggleDropdown = (e: any) => {
+    e.stopPropagation();
+    setShowDropdown(!showDropdown);
   }
 
+  // const onPostSubmit = () => {
+  //   if (state.post.text) {
+  //     if (state.selectedFiles[0] || state.selectedUploads[0]) {
+  //       sendFilesToServer(state.selectedFiles, submitPost, state.selectedUploads, 'media', true, {post: state.post});
+  //     } else {
+  //       dispatch(submitPost({post: state.post, media: []})(dispatch));
+  //     }
+  //   }
+  // }
+
   return (
-    <Box p={1} pt={0} className='post'>
-      <Row className='container-fluid p-0 mx-auto'>
-        <Box pr={1}>
-          <Avatar
-            component='span'
-            className='chat-avatar compose-avatar'
-            alt={displayName}
-            src={profile_photo ? profile_photo : `images/${userData.avatar}`}
-          />
-        </Box>
-        <div className='d-flex flex-column justify-content-center flex-grow-1'>
-          <span>{userData.displayName}</span>
-          <small>{userData.username}</small>
-        </div>
-      </Row>
+    <Box p={1} pt={0} className='create-question'>
       <form>
-      <Editor onUpdate={onUpdate} />
+      <Row className='d-flex mx-auto mt-0'>
+        <label className='question-label' htmlFor='question-title'>Title</label>
+      </Row>
+      <Row className='d-flex mx-auto mt-0'>
+        <input 
+          required
+          maxLength={150}
+          className='question-input input' 
+          id='question-title'
+          placeholder=' title of question e.g How do I create a neural network'
+          onChange={onChange('title')} 
+          type='text' />
+      </Row>
+      <Row className='d-flex mx-auto mt-3'>
+        <label className='question-label' htmlFor='question-body'>Body</label>
+      </Row>
+      <Row className='d-flex mx-auto mt-0'>
+        <small>Give details on the question </small>
+      </Row>
+      <Row className='d-flex mx-auto mt-0'>
+        <textarea 
+          required
+          maxLength={1000}
+          className='question-input' 
+          id='question-body' 
+          onChange={onChange('body')} 
+          rows={9} />
+      </Row>
+      <Row className='d-flex mx-auto mt-3'>
+        <label className='question-label' htmlFor='question-tags'>Tags</label>
+      </Row>
+      <Row className='d-flex mx-auto mt-0'>
+        <small>Add tags to decribe what your question is about </small>
+        <small className='hint'>*use space to add a tag</small>
+      </Row>
+      <Row className='d-flex mx-auto mt-0'>
+        <TagEditor tags={state.question.tags} setTags={setTags} setShowDropdown={setShowDropdown}/>
+      </Row>
       {!(state.showUploads && uploadsProp.data[0]) && (
-        <Dropdown drop='up'>
-          <Dropdown.Toggle title='attach file(s)' id='dropdown'>
-              <AttachmentIcon className='cursor-pointer'/>
-          </Dropdown.Toggle>
-          <Dropdown.Menu className='drop-menu'>
-            <label 
-              htmlFor='my-input' 
-              onClick={hideUploadedFiles} 
-              className='menu-options'
-            >
-              local Disk
-            </label>
-            <div id='divider'></div>
-            <div className='menu-options' onClick={displayUploads}>
-              uploaded files
-            </div>
-          </Dropdown.Menu>
-        </Dropdown>
+        <>
+          <Row className='d-flex mx-auto mt-3'>
+            <small>You can also add files to help understand your question</small>
+          </Row>
+          <Row className='mx-auto mt-1' style={{position: 'relative'}}>
+            <ClickAwayListener onClickAway={(e: any) => {setShowDropdown(false)}}>
+              <Button onClick={toggleDropdown} variant='contained' color='primary' className='file-button' > 
+                <AttachmentIcon className='cursor-pointer question-attach mr-2'/>{' '}Attach file(s)
+              </Button>
+            </ClickAwayListener>
+            <Container onClick={(e: any) => {setShowDropdown(false)}} className={`${showDropdown ? 'd-block' : 'd-none'} dropdown-contents drop-menu`}>
+              <label 
+                htmlFor='my-input' 
+                onClick={hideUploadedFiles} 
+                className='menu-options'>
+                  local Disk
+              </label>
+              <div id='divider'></div>
+              <div className='menu-options' onClick={displayUploads}>
+                uploaded files
+              </div>
+            </Container>
+          </Row>
+        </>
       )}
         <input
           multiple={true}
@@ -357,7 +426,7 @@ const CreatePost = (props: any) => {
           ref={label1}
           className='upload-label'
           >
-          *You can post with a maximum of five files
+          *we think five files are enough to explain your question
         </Container>
         <Row className='d-flex mx-auto mt-1'>
           <Box
@@ -370,7 +439,7 @@ const CreatePost = (props: any) => {
               ? <CircularProgress className='upload-progress margin-auto'/> 
               : uploadsProp.data[0] 
               ? uploadsProp.data.map((file: any, i: number) => (
-                <Container onClick={toggleSelectPreUpload} component='div' key={i} className='col-4 div-wrapper'>
+                <Container component='div' key={i} onClick={toggleSelectPreUpload} className='col-4 div-wrapper'>
                   {file.type === 'image' ? (
                     <img 
                       src={file.thumbnail ? file.thumbnail : file.url} 
@@ -380,12 +449,12 @@ const CreatePost = (props: any) => {
                       title={`${file.title ? file.title : ''}`}
                     />
                   ) : (
-                  <div 
-                    id={file._id}
-                    title={file.title} 
-                    className='div-wrapper non-image-uploads'>
-                      <p>{file.title}</p>
-                  </div>
+                    <div 
+                      id={file._id}
+                      title={file.title} 
+                      className='div-wrapper non-image-uploads'>
+                        <p>{file.title}</p>
+                    </div>
                   )}
                   <button type='button' className='check-button'>
                     ✓
@@ -431,20 +500,20 @@ const CreatePost = (props: any) => {
           {!(state.showUploads && uploadsProp.data[0]) && (
             <Button
               id={`${ (
-                makePostProp.status === 'pending' 
+                askQuestionProp.status === 'pending' 
                 || sendFile.status === 'pending' 
-                || !(state.post.text)
+                || !(state.question.title && state.question.body && state.question.tags)
               ) ? 'background-grey' : ''}`}
               className='post-button major-button Primary contained p-0 flex-grow-1'
-              onClick={onPostSubmit}
-              color={state.post ? 'primary' : 'default'}
+              // onClick={onPostSubmit}
+              color={(state.question.title && state.question.body && state.question.tags) ? 'primary' : 'default'}
             >
-              {makePostProp.status === 'pending' ? (
+              {askQuestionProp.status === 'pending' ? (
                 <CircularProgress size={28} color='inherit' />
               ) : sendFile.status === 'pending' ? (
                 'uploading files...'
               ) : (
-                'Post'
+                'Ask'
               )} 
             </Button>
           )}
@@ -455,15 +524,15 @@ const CreatePost = (props: any) => {
 };
 
 const mapStateToProps = ({ 
-  userData, 
+  // userData, 
   sendFiles, 
-  uploads, 
-  makePost 
+  uploads,
+  askQuestion
 }: any) => ({ 
-  userData, 
+  // userData, 
   sendFile: sendFiles, 
   uploadsProp: uploads,
-  makePostProp: makePost
+  askQuestionProp: askQuestion
 });
 
-export default connect(mapStateToProps)(CreatePost);
+export default connect(mapStateToProps)(CreateQuestion);

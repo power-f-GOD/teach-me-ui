@@ -15,6 +15,7 @@ import ModalFrame from '../modals';
 import Chat from './Chat';
 import Search from './Search';
 import PostPage from './PostPage';
+import Questions from './Questions';
 import _404 from '../Index/_404';
 
 import createMemo from '../../Memo';
@@ -96,6 +97,7 @@ const Main = (props: any) => {
           <Route path='/@:userId' component={Profile} />
           <Route path='/profile/:id' component={ProfileRedirect} />
           <Route path={['/search/:query', '/search']} component={Search} />
+          <Route path='/questions' component={Questions} />
           <Route component={_404} />
         </Switch>
         <Memoize memoizedComponent={Chat} location={props.location} />

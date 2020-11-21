@@ -9,6 +9,7 @@ import * as modals from './modals';
 import * as posts from './posts';
 import * as search from './search';
 import * as profile from './profile';
+import * as question from './question';
 import * as colleague from './colleague';
 import * as notifications from './notifications';
 import * as editProfile from './profile.edit';
@@ -30,6 +31,7 @@ export default function reducers(state: any, action: ReduxAction) {
     ...posts,
     ...search,
     ...profile,
+    ...question,
     ...colleague,
     ...editProfile,
     ...notifications

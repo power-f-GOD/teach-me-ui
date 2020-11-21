@@ -1,0 +1,53 @@
+.post {
+  ::-webkit-scrollbar {
+    width: 0.5rem;
+    border-radius: 7px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    border-radius: 7px;
+    width: 15px;
+    margin-bottom: 0rem;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: rgb(194, 194, 197);
+    border-radius: 0.5rem;
+    width: 0.5rem;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(170, 168, 168);
+  }
+
+  .suggestion-container {
+    position: relative;
+  }
+
+  #suggestor-dropdown {
+    position: absolute;
+    width: 200px;
+    border-radius: 6px;
+    background: white;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 1px 4px;
+  }
+
+  #post-input {
+    width: 100%;
+    border: none;
+    margin-top: 0.5em;
+  }
+
+  #post-input:focus {
+    outline: none;
+    border: none;
+  }
+
+  .notranslate.public-DraftEditor-content > div {
+    overflow-y: auto;
+    height: 140px;
+  }
+}
