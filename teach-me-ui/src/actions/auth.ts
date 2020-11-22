@@ -281,7 +281,7 @@ export const requestSignin = (data: SigninFormData) => (
       const { data: _data } = response;
       const { data, error } = _data;
       const message = data.message;
-      console.log(response)
+
       if (!error) {
         const displayName = `${data.first_name} ${data.last_name}`;
 
