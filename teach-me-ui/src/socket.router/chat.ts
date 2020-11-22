@@ -61,6 +61,8 @@ export default function chat(message: Partial<ChatSocketMessageResponse>) {
       pipe
     };
 
+    // console.log(pipe, message);
+
     switch (pipe) {
       case CHAT_NEW_MESSAGE:
         let willEmitDelivered = false;

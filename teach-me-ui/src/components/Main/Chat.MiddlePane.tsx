@@ -435,9 +435,10 @@ function MiddlePaneHeader(props: {
 
   const numOfSelectedMessages = Object.keys(selectedMessages).length;
 
-  const [moreOptionsContainerIsVisible, setMoreOptionsIsVisible] = useState<
-    boolean
-  >(false);
+  const [
+    moreOptionsContainerIsVisible,
+    setMoreOptionsIsVisible
+  ] = useState<boolean>(false);
 
   const handleMinimizeChatClick = useCallback(
     (shouldActuallyMinimize?: any) => {
@@ -940,7 +941,7 @@ function MiddlePaneHeaderActions(props: {
 
       for (const id in selectedMessages) {
         try {
-          if (socket && socket.readyState === 1) {
+          if (socket && socket.readyState === socket.OPEN) {
             socket.send(JSON.stringify({ message_id: id, pipe }));
             handleClearSelections();
           } else {

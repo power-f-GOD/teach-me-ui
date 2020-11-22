@@ -180,12 +180,14 @@ export const fetchPosts: Function = (
     }
   })
     .then((res) => {
+      console.log('POSTS:........', res)
       if (res.data.error) {
         throw new Error(res.data.message);
       }
       return res.data.data.posts;
     })
     .then((state) => {
+      
       if (state.length === 0 && type === 'FEED') {
         if (!update) {
           dispatch(fetchedPosts(state as Array<PostPropsState>));
@@ -287,6 +289,7 @@ export const fetchPost: Function = (postId?: string) => (
     userData && userData.token
       ? { Authorization: `Bearer ${userData.token}` }
       : {};
+
   Axios({
     url: `/post/${postId}`,
     baseURL,
@@ -381,9 +384,13 @@ export const makePost = (payload: any): ReduxAction => {
   };
 };
 
-export const submitPost = ({post, media}: {post: Post; media: Array<string>}) => (
-  dispatch: Function
-) => {
+export const submitPost = ({
+  post,
+  media
+}: {
+  post: Post;
+  media: Array<string>;
+}) => (dispatch: Function) => {
   dispatch(
     makePost({
       status: 'pending'
@@ -422,7 +429,8 @@ export const submitPost = ({post, media}: {post: Post; media: Array<string>}) =>
           status: 'fulfilled'
         })
       );
-      getCharacterSequenceFromText(post.text, '@') && pingUser(getCharacterSequenceFromText(post.text, '@'));
+      getCharacterSequenceFromText(post.text, '@') &&
+        pingUser(getCharacterSequenceFromText(post.text, '@'));
     })
     .catch(logError(makePost));
   return {

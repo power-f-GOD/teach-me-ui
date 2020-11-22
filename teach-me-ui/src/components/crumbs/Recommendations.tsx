@@ -16,7 +16,10 @@ import { userDeviceIsMobile } from '../../index';
 import { dispatch } from '../../functions';
 import { getRecommendations } from '../../actions';
 
-const Recommendations = (props: any) => {
+const Recommendations = (props: {
+  recommendations: UserData[] | null[];
+  getRecommendationsStatus: any;
+}) => {
   const { recommendations, getRecommendationsStatus } = props;
   const _recommendations = [...recommendations].concat(
     recommendations.length && recommendations.length < 3 ? [null, null] : []
@@ -31,19 +34,23 @@ const Recommendations = (props: any) => {
       {getRecommendationsStatus.status !== 'pending' &&
         _recommendations.length > 0 && (
           <>
-            <Box component='h3' className='font-bold theme-tertiary-darker recommendations-heading'>Colleauges you may know</Box>
+            <Box
+              component='h3'
+              className='font-bold theme-tertiary-darker recommendations-heading'>
+              Colleauges you may know
+            </Box>
             <Box
               className='recommendations'
               style={{
                 gridTemplateColumns: `repeat(${_recommendations.length}, 12rem)`,
                 columnGap: userDeviceIsMobile ? '.5rem' : '.75rem'
               }}>
-              {_recommendations.map((recommendation: any, i) =>
+              {_recommendations.map((recommendation, i) =>
                 recommendation ? (
                   <Recommendation
                     {...recommendation}
                     key={recommendation.id}
-                    displayName={`${recommendation.firstname} ${recommendation.lastname}`}
+                    displayName={`${recommendation.first_name} ${recommendation.last_name}`}
                   />
                 ) : (
                   <Box className='recommendation null' key={i}></Box>
@@ -56,7 +63,7 @@ const Recommendations = (props: any) => {
   );
 };
 
-const Recommendation = (props: any) => {
+const Recommendation = (props: UserData) => {
   const {
     avatar,
     displayName,
@@ -64,7 +71,7 @@ const Recommendation = (props: any) => {
     institution,
     department,
     profile_photo
-  }: UserData = props;
+  } = props;
 
   return (
     <Link
