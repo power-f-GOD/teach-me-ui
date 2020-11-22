@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import Container from 'react-bootstrap/Container';
 
@@ -23,14 +23,15 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
     },
     posts,
     fetchPostStatus,
-    userData
+    userData,
+    isFetching
   } = props;
   const config: IntersectionObserverInit = {
     root: null,
     rootMargin: '0px',
     threshold: [0.5, 1]
   };
-  const observer = React.useMemo(
+  const observer = useMemo(
     () =>
       new IntersectionObserver((entries, self) => {
         const socket = getState().webSocket as WebSocket;
@@ -56,15 +57,17 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
   // here is where the check is made to render the views accordingly
   const isSelf =
     !!username && !!profileUsername && profileUsername === username;
+  const postElements = document.querySelectorAll('.Post');
   let selfView = isAuthenticated ? isSelf : false;
   let inProfile = /@\w+/.test(window.location.pathname);
+
   useEffect(() => {
     const type = props.type || 'FEED';
     const userId = (profile as UserData).id || undefined;
     fetchPostsFn(type, userId);
     // eslint-disable-next-line
   }, [props.type]);
-  const postElements = document.querySelectorAll('.Post');
+
   useEffect(() => {
     if (props.type === 'FEED') {
       postElements.forEach((post) => {
@@ -76,7 +79,7 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
 
   return (
     <Container className='middle-pane px-0' fluid>
-      {(selfView || !inProfile) && <Compose />}
+      {(selfView || !inProfile) && <Compose userData={userData} />}
       {!inProfile && posts.length < 3 && <Recommendations />}
       {fetchPostStatus.status === 'resolved' &&
         posts.map((post: PostPropsState, i: number) => {
@@ -110,9 +113,9 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
               );
           }
         })}
-      {props.fetchPostStatus.status === 'pending' &&
+      {fetchPostStatus.status === 'pending' &&
         Array.from({ length: 4 }).map((_, i) => <Post key={i} />)}
-      {props.isFetching && (
+      {isFetching && (
         <Box textAlign='center' py='2'>
           <CircularProgress />
         </Box>

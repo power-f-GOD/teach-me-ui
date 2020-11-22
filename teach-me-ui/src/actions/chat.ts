@@ -140,12 +140,17 @@ export const conversations = (
   if (pipe && initialConversations.length) {
     switch (pipe) {
       case ONLINE_STATUS: {
-        const { value: actualConvo, index: indexOfInitial } = (loopThru<
-          APIConversationResponse
-        >(initialConversations, ({ colleague }) => user_id === colleague.id, {
-          type: 'find',
-          includeIndex: true
-        }) || {}) as LoopFind<APIConversationResponse>;
+        const {
+          value: actualConvo,
+          index: indexOfInitial
+        } = (loopThru<APIConversationResponse>(
+          initialConversations,
+          ({ colleague }) => user_id === colleague.id,
+          {
+            type: 'find',
+            includeIndex: true
+          }
+        ) || {}) as LoopFind<APIConversationResponse>;
 
         if (actualConvo) {
           if (online_status === 'AWAY') {
@@ -166,12 +171,17 @@ export const conversations = (
       case CHAT_MESSAGE_DELETED:
       case CHAT_MESSAGE_DELETED_FOR:
       case CHAT_MESSAGE_DELIVERED: {
-        const { value: actualConvo, index: indexOfInitial } = (loopThru<
-          APIConversationResponse
-        >(initialConversations, ({ id }) => message?.conversation_id === id, {
-          type: 'find',
-          includeIndex: true
-        }) ?? {}) as LoopFind<APIConversationResponse>;
+        const {
+          value: actualConvo,
+          index: indexOfInitial
+        } = (loopThru<APIConversationResponse>(
+          initialConversations,
+          ({ id }) => message?.conversation_id === id,
+          {
+            type: 'find',
+            includeIndex: true
+          }
+        ) ?? {}) as LoopFind<APIConversationResponse>;
 
         if (actualConvo) {
           const last_message = (produce(
@@ -245,12 +255,17 @@ export const conversations = (
     }
   } else if (_payload.data?.length) {
     if (pipe) {
-      let { value: actualConvo, index: indexOfInitial } = (loopThru<
-        APIConversationResponse
-      >(initialConversations, ({ colleague }) => user_id === colleague.id, {
-        type: 'find',
-        includeIndex: true
-      }) ?? {}) as LoopFind<APIConversationResponse>;
+      let {
+        value: actualConvo,
+        index: indexOfInitial
+      } = (loopThru<APIConversationResponse>(
+        initialConversations,
+        ({ colleague }) => user_id === colleague.id,
+        {
+          type: 'find',
+          includeIndex: true
+        }
+      ) ?? {}) as LoopFind<APIConversationResponse>;
 
       if (actualConvo && payload.data?.length === 1) {
         actualConvo = { ...actualConvo, ...message };
@@ -262,14 +277,21 @@ export const conversations = (
     } else if (!initialConversations.length || _payload.data.length > 1) {
       payload.data = [..._payload.data];
     } else if (!payload?.status) {
-      const { value: actualConvo, index: indexOfInitial } = (loopThru<
-        APIConversationResponse
-      >(initialConversations, ({ id }) => convoId === id, {
-        type: 'find',
-        includeIndex: true
-      }) ?? {}) as LoopFind<APIConversationResponse>;
+      let {
+        value: actualConvo,
+        index: indexOfInitial
+      } = (loopThru<APIConversationResponse>(
+        initialConversations,
+        ({ id }) => convoId === id,
+        {
+          type: 'find',
+          includeIndex: true
+        }
+      ) ?? {}) as LoopFind<APIConversationResponse>;
 
       if (actualConvo) {
+        actualConvo = { ...actualConvo, ...(payload.data ?? [{}])[0] };
+
         if (last_read) {
           actualConvo.last_read = last_read;
         }
@@ -714,7 +736,7 @@ export const getConversationMessages = (
               if (message.seen_by!?.includes(userId)) return;
 
               if (type === 'incoming') {
-                console.log('object inextensible check:', message);
+                console.log('object inextensible check:', message, userId);
                 if (!message.delivered_to!?.includes(userId)) {
                   socket.send(
                     JSON.stringify({
@@ -740,7 +762,7 @@ export const getConversationMessages = (
                 }
               }
             },
-            { returnReverse: !(hasCachedData && isGettingNew) }
+            { returnReverse: !(hasCachedData && isGettingNew), makeCopy: true }
           ) as APIMessageResponse[];
         }
 

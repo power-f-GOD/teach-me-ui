@@ -89,7 +89,7 @@ window.addEventListener('popstate', () => {
   if (!isNaN(cid) || cid === '0') {
     dispatch(conversation(''));
     dispatch(conversationMessages({ status: 'settled', data: [] }));
-  } else {
+  } else if (chat) {
     if (window.navigator.onLine) {
       // dispatch(getConversationInfo(userId)(dispatch));
       dispatch(

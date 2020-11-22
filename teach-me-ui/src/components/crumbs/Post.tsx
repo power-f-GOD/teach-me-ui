@@ -90,14 +90,11 @@ const Post: React.FunctionComponent<
     type,
     media,
     sec_type,
-    sender_name,
     _extra,
     id,
+    sender,
     text,
     parent,
-    profile_photo,
-    // userAvatar,
-    sender_username,
     posted_at,
     upvotes: _upvotes,
     downvotes: _downvotes,
@@ -106,6 +103,15 @@ const Post: React.FunctionComponent<
     replies,
     child
   } = props;
+  const { username: sender_username, first_name, last_name, profile_photo } =
+    sender || {};
+  const sender_name = first_name ? `${first_name} ${last_name}` : '';
+  const child_sender_name = child
+    ? `${child?.sender.first_name} ${child?.sender.last_name}`
+    : '';
+  const parent_sender_name = parent
+    ? `${parent?.sender.first_name} ${parent?.sender.last_name}`
+    : '';
 
   const history = useHistory();
   const [mediaPreview, setMediaPreview] = useState(false);
@@ -141,7 +147,7 @@ const Post: React.FunctionComponent<
   };
 
   if (child?.sec_type === 'REPOST') {
-    extra = `${child.sender_name} reposted`;
+    extra = `${child_sender_name} reposted`;
   }
 
   if (_extra) {
@@ -153,10 +159,10 @@ const Post: React.FunctionComponent<
   }
 
   if (child?.sec_type === 'REPLY') {
-    extra = `${child.sender_name} replied`;
+    extra = `${child_sender_name} replied`;
 
     extra +=
-      sender_username === child.sender_username
+      sender_username === child?.sender.username
         ? ' thier own post'
         : sender_name + "'s post";
   }
@@ -334,7 +340,7 @@ const Post: React.FunctionComponent<
             )}
           </Row>
         ) : (
-          <Box p={2} pl={3}>
+          <Box p={2}>
             <Skeleton count={3} />
           </Box>
         )}
@@ -346,21 +352,21 @@ const Post: React.FunctionComponent<
               <Avatar
                 component='span'
                 className='post-avatar'
-                alt={parent?.sender_name}
+                alt={parent_sender_name}
                 src={
-                  parent?.profile_photo
-                    ? parent?.profile_photo
-                    : `/images/${parent?.userAvatar}`
+                  parent?.sender.profile_photo
+                    ? parent?.sender.profile_photo
+                    : ''
                 }
               />
               <Col className='d-flex flex-grow-1 flex-column'>
                 <Link
-                  to={`@${parent?.sender_username}`}
+                  to={`@${parent?.sender.username}`}
                   className='post-sender'>
-                  {parent?.sender_name}
+                  {parent_sender_name}
                 </Link>
                 <Box component='div' color='#777'>
-                  @{parent?.sender_username}
+                  @{parent?.sender.username}
                 </Box>
               </Col>
             </Row>
