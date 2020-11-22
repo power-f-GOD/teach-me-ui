@@ -14,21 +14,24 @@ import { PostPropsState } from '../../constants';
 import { Provider } from 'react-redux';
 import store from '../../appStore';
 
-const post: PostPropsState = {
-  sender_id: '1',
-  id: '1',
+const post: Partial<Omit<PostPropsState, 'sender'>> & {
+  sender: Partial<PostPropsState['sender']>;
+} = {
+  sender: {
+    id: '1',
+    first_name: 'Benjamin',
+    last_name: 'Chibuzor-Orie',
+    username: 'iambenkay'
+  },
   media: [],
   posted_at: 123456,
   reposts: 1,
   type: 'post',
-  sender_name: 'Benjamin Chibuzor-Orie',
   downvotes: 2450,
   upvotes: 7134561,
   replies: 45271,
-  sender_username: 'iambenkay',
   text:
     'Where do people go when they die? Same place they were before they were born!',
-  userAvatar: 'avatar-2.png',
   reaction: 'DOWNVOTE'
 };
 

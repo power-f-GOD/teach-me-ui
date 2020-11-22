@@ -180,7 +180,6 @@ export const fetchPosts: Function = (
     }
   })
     .then((res) => {
-      console.log('POSTS:........', res)
       if (res.data.error) {
         throw new Error(res.data.message);
       }
