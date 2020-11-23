@@ -53,6 +53,8 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
   );
   const username = userData.username || '';
 
+  // console.log(posts)
+
   let profileUsername = profile.username || '';
   // here is where the check is made to render the views accordingly
   const isSelf =

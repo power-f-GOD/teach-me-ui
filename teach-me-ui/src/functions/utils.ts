@@ -321,7 +321,7 @@ export function callNetworkStatusCheckerFor(action: NetworkAction) {
         displaySnackbar({
           open: true,
           message: errFeedback.statusText,
-          severity: 'error'
+          severity: 'info'
         })
       );
     }
@@ -335,7 +335,7 @@ export function callNetworkStatusCheckerFor(action: NetworkAction) {
           displaySnackbar({
             open: true,
             message: abortionFeedback.statusText,
-            severity: 'error'
+            severity: 'info'
           })
         );
       }
