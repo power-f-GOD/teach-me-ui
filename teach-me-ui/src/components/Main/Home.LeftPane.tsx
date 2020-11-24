@@ -17,7 +17,7 @@ import Col from 'react-bootstrap/Col';
 import Box from '@material-ui/core/Box';
 
 import {
-  SearchStateV2,
+  FetchState,
   UserData,
   APIConversationResponse
 } from '../../constants/interfaces';
@@ -38,11 +38,11 @@ const LeftPane = (props: LeftPaneProps) => {
     profile_photo,
     cover_photo
   }: UserData = userData;
-  const conversations = getState().conversations as SearchStateV2<
+  const conversations = getState().conversations as FetchState<
     APIConversationResponse[]
   >; //using getState instead of props to prevent redundant re-renders
   const numOfColleagues = conversations.data?.reduce(
-    (a, b) => (b.friendship ? a + 1 : a),
+    (n, convo) => (convo.friendship ? n + 1 : n),
     0
   );
 

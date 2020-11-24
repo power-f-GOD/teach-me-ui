@@ -42,7 +42,7 @@ import {
   UserData,
   Partial,
   OnlineStatus,
-  SearchStateV2
+  FetchState
 } from '../../constants/interfaces';
 import createMemo from '../../Memo';
 import { userDeviceIsMobile } from '../../';
@@ -104,7 +104,7 @@ interface ChatMiddlePaneProps {
   convoUnreadCount: number;
   convoMessages: Partial<APIMessageResponse>[];
   convoMessagesErr: boolean;
-  convoMessagesStatus: SearchStateV2<APIMessageResponse>['status'];
+  convoMessagesStatus: FetchState<APIMessageResponse>['status'];
   convoMessagesStatusText: string;
   convosErr: boolean;
   convoOnlineStatus: OnlineStatus;
@@ -451,7 +451,6 @@ function MiddlePaneHeader(props: {
       queryString = shouldActuallyMinimize
         ? queryString
         : queryString.replace('=o1', '=m2');
-
       dispatch(
         chatState({
           isMinimized: shouldActuallyMinimize ? !isMinimized : false,
@@ -459,6 +458,10 @@ function MiddlePaneHeader(props: {
         })
       );
       window.history.replaceState({}, '', queryString);
+
+      if (isMinimized) {
+        document.body.style.overflow = 'auto';
+      }
     },
     [_chatState]
   );
@@ -492,6 +495,7 @@ function MiddlePaneHeader(props: {
         })
       );
       window.history.replaceState({}, '', window.location.pathname);
+      document.body.style.overflow = 'auto';
     }, 500);
   }, [isOpen, convoId]);
 
@@ -1098,7 +1102,7 @@ function ScrollView(props: {
   userId: string;
   username: string;
   convoMessages: APIMessageResponse[];
-  convoMessagesStatus: SearchStateV2<APIMessageResponse>['status'];
+  convoMessagesStatus: FetchState<APIMessageResponse>['status'];
   convoFriendship: string;
   convoUsername: string;
   convoId: string;

@@ -12,6 +12,7 @@ body,
   line-height: 1.4em;
 }
 body {
+  
   position: relative;
   overflow-x: hidden !important;
 }
@@ -40,15 +41,16 @@ body {
     textarea,
     .MuiDialogContent-root {
       &::-webkit-scrollbar {
-        width: 0.75em;
+        width: 0.6em;
       }
 
       &::-webkit-scrollbar-track {
-        background: $theme-tertiary-v9;
+        background: $theme-tertiary-v7;
       }
 
       &::-webkit-scrollbar-thumb {
         background: $theme-secondary-v6;
+        border-radius: 0 0 1rem 1rem;
       }
 
       .small-bar,
@@ -356,7 +358,7 @@ a {
 }
 
 .react-loading-skeleton {
-  border-radius: 0 !important;
+  border-radius: 1rem !important;
 }
 
 .MuiOutlinedInput-root {

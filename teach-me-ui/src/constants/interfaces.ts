@@ -241,8 +241,9 @@ export interface SearchState extends StatusPropsState {
   data?: any[];
 }
 
-export interface SearchStateV2<T> extends StatusPropsState {
+export interface FetchState<T, T2 = any> extends StatusPropsState {
   data?: T;
+  extra?: T2;
 }
 
 export interface SignupPropsState {
@@ -358,13 +359,13 @@ export interface ConversationsMessages extends StatusPropsState {
 }
 
 export interface ConversationMessages
-  extends SearchStateV2<Partial<APIMessageResponse>[]> {
+  extends FetchState<Partial<APIMessageResponse>[]> {
   convoId?: string;
   pipe?: SocketPipe;
 }
 
 export interface ConversationInfo
-  extends SearchStateV2<
+  extends FetchState<
     Partial<Omit<UserData, 'token'> & APIConversationResponse>
   > {
   user_typing?: string;

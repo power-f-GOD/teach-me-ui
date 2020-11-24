@@ -194,6 +194,7 @@ const ChatBox = (props: ChatBoxProps) => {
 
     setActivePaneIndex(0);
     setVisibilityState('visible');
+    document.body.style.overflow = 'hidden';
 
     //delay till chatBox display property is set for animation to work
     delay(100).then(() => {
@@ -352,14 +353,12 @@ const ChatBox = (props: ChatBoxProps) => {
   useEffect(() => {
     delay(400).then(() => {
       if ((chat && chat === 'o1') || (isOpen && !isMinimized)) {
-        document.body.style.overflow = 'hidden';
         document.querySelectorAll('.Main > *').forEach((component: any) => {
           if (!/ChatBox/.test(component.className)) {
             component.inert = true;
           }
         });
       } else {
-        document.body.style.overflow = 'auto';
         document.querySelectorAll('.Main > *').forEach((component: any) => {
           if (!/ChatBox/.test(component.className)) {
             component.inert = false;

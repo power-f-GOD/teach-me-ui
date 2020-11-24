@@ -4,7 +4,7 @@ import {
   APIMessageResponse,
   UserData,
   APIConversationResponse,
-  SearchStateV2,
+  FetchState,
   ChatSocketMessageResponse
 } from '../constants/interfaces';
 import { getState, dispatch } from '../functions/utils';
@@ -36,7 +36,7 @@ export default function chat(message: Partial<ChatSocketMessageResponse>) {
     webSocket: WebSocket;
     userData: UserData;
     conversation: APIConversationResponse;
-    conversationMessages: SearchStateV2<APIMessageResponse[]>;
+    conversationMessages: FetchState<APIMessageResponse[]>;
   };
   const { id: convoId, unread_count } = _conversation ?? {};
   const { cid, chat } = queryString.parse(window.location.search) ?? {};

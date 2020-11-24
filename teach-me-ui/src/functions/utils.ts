@@ -1,4 +1,5 @@
 import moment from 'moment';
+import axios, { AxiosResponse } from 'axios';
 
 import {
   ReduxAction,
@@ -12,8 +13,9 @@ import {
   ConversationMessages,
   APIConversationResponse,
   LoopFind,
-  SearchStateV2,
-  OnlineStatus
+  FetchState,
+  OnlineStatus,
+  apiBaseURL
 } from '../constants';
 
 import store from '../appStore';
@@ -34,6 +36,66 @@ import {
 } from '../actions/chat';
 
 export const { dispatch, getState }: any = store;
+
+/**
+ *
+ * @param url url of destination e.g. /profile/5df9e8t0wekc/posts ... Base URL should not be included
+ * @param requiresAuth if token/authentication will be required for the get action
+ */
+export const getData = async <T>(url: string, requiresAuth: boolean) => {
+  let token = '';
+
+  if (requiresAuth) {
+    token = getState().userData.token;
+  }
+
+  const response: AxiosResponse<{
+    data: { error: boolean; message?: string } & T;
+  }> = await axios({
+    url: `${apiBaseURL}${url}`,
+    method: 'GET',
+    headers: {
+      Authorization: requiresAuth ? `Bearer ${token}` : null,
+      'Content-Type': 'application/json'
+    }
+  });
+
+  // console.log(response);
+
+  return Promise.resolve(response.data.data);
+};
+
+/**
+ *
+ * @param url url of destination e.g. /profile/5df9e8t0wekc/posts ... Base URL should not be included
+ * @param data data to be posted to destination
+ * @param requiresAuth that is if token/authentication will be required for the get action
+ */
+export const postData = async <T>(
+  url: string,
+  data?: any,
+  requiresAuth?: boolean
+) => {
+  let token = '';
+
+  if (requiresAuth) {
+    token = getState().userData.token;
+  }
+
+  const response: AxiosResponse<{
+    data: { error: boolean; message?: string } & T;
+  }> = await axios({
+    url: `${apiBaseURL}${url}`,
+    method: 'POST',
+    headers: {
+      Authorization: requiresAuth ? `Bearer ${token}` : null,
+      'Content-Type': 'application/json'
+    },
+    data
+  });
+  // console.log(response.data)
+  return Promise.resolve({ ...response.data.data });
+};
 
 export function loopThru<T>(
   _data: T[],
@@ -92,7 +154,7 @@ export function loopThru<T>(
 }
 
 export const createObserver = (
-  root: HTMLElement,
+  root: HTMLElement | null,
   callback: IntersectionObserverCallback,
   options?: IntersectionObserverInit
 ) => {
@@ -152,7 +214,7 @@ export const emitUserOnlineStatus = (
   } = getState() as {
     userData: UserData & APIConversationResponse;
     auth: AuthState;
-    conversations: SearchStateV2<APIConversationResponse[]>;
+    conversations: FetchState<APIConversationResponse[]>;
     conversationsMessages: ConversationMessages;
   };
   let timeToEmitOnlineStatus: any = undefined;
