@@ -12,6 +12,7 @@ body,
   line-height: 1.4em;
 }
 body {
+  
   position: relative;
   overflow-x: hidden !important;
 }
@@ -40,15 +41,16 @@ body {
     textarea,
     .MuiDialogContent-root {
       &::-webkit-scrollbar {
-        width: 0.75em;
+        width: 0.6em;
       }
 
       &::-webkit-scrollbar-track {
-        background: $theme-tertiary-v9;
+        background: $theme-tertiary-v7;
       }
 
       &::-webkit-scrollbar-thumb {
         background: $theme-secondary-v6;
+        border-radius: 0 0 1rem 1rem;
       }
 
       .small-bar,
@@ -307,6 +309,58 @@ a {
   }
 }
 
+.logo {
+  // min-width: 10rem;
+  width: auto !important;
+  display: inline-block;
+  padding: 0.5rem !important;
+  border-radius: 0 0.45rem 0 0.45rem;
+  color: #f8f8f8;
+  line-height: 100% !important;
+  letter-spacing: -0.5px;
+  text-transform: capitalize !important;
+  user-select: none;
+  margin: {
+    right: 0.25rem;
+    top: 0;
+    bottom: 0;
+  }
+  font: {
+    family: Audiowide, Trebuchet MS, sans !important;
+    size: 1.5rem;
+    weight: 500;
+  }
+  transition: 0.3s;
+
+  &.light-blue {
+    background: $theme-primary;
+  }
+
+  &.grey {
+    background: $theme-tertiary-v3;
+  }
+
+  &.gradient {
+    background: {
+      image: linear-gradient(to right, $theme-secondary, $theme-primary);
+      position: 90% center;
+      size: 200%;
+    }
+  }
+}
+
+.with-text-gradient {
+  background: {
+    image: linear-gradient(to right, $theme-secondary, $theme-primary-v4);
+  }
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.react-loading-skeleton {
+  border-radius: 1rem !important;
+}
+
 .MuiOutlinedInput-root {
   &:hover,
   &:focus {
@@ -464,54 +518,6 @@ div {
   * {
     border: none !important;
   }
-}
-
-.logo {
-  // min-width: 10rem;
-  width: auto !important;
-  display: inline-block;
-  padding: 0.5rem !important;
-  border-radius: 0 0.45rem 0 0.45rem;
-  color: #f8f8f8;
-  line-height: 100% !important;
-  letter-spacing: -0.5px;
-  text-transform: capitalize !important;
-  user-select: none;
-  margin: {
-    right: 0.25rem;
-    top: 0;
-    bottom: 0;
-  }
-  font: {
-    family: Audiowide, Trebuchet MS, sans !important;
-    size: 1.5rem;
-    weight: 500;
-  }
-  transition: 0.3s;
-
-  &.light-blue {
-    background: $theme-primary;
-  }
-
-  &.grey {
-    background: $theme-tertiary-v3;
-  }
-
-  &.gradient {
-    background: {
-      image: linear-gradient(to right, $theme-secondary, $theme-primary);
-      position: 90% center;
-      size: 200%;
-    }
-  }
-}
-
-.with-text-gradient {
-  background: {
-    image: linear-gradient(to right, $theme-secondary, $theme-primary-v4);
-  }
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
 .text-right {

@@ -1,4 +1,10 @@
-import { FetchPostsState, MakeRepostState, MakePostState } from './interfaces';
+import {
+  FetchPostsState,
+  MakeRepostState,
+  MakePostState,
+  PostPropsState,
+  FetchState
+} from './interfaces';
 
 export const REACT_TO_POST = 'REACT_TO_POST';
 export const FETCH_POST_STARTED = 'FETCH_POST_STARTED';
@@ -27,6 +33,16 @@ export const GET_RECOMMENDATIONS_STARTED = 'GET_RECOMMENDATIONS_STARTED';
 export const GET_RECOMMENDATIONS_REJECTED = 'GET_RECOMMENDATIONS_REJECTED';
 export const GET_RECOMMENDATIONS_RESOLVED = 'GET_RECOMMENDATIONS_RESOLVED';
 export const FETCHED_RECOMMENDATIONS = 'FETCHED_RECOMMENDATIONS';
+
+export const GET_POSTS = 'GET_POSTS';
+export const SET_POSTS = 'SET_POSTS';
+
+export const postsState: FetchState<PostPropsState[]> = {
+  status: 'settled',
+  err: false,
+  statusText: '',
+  data: []
+};
 
 export const fetchPostsState: FetchPostsState = {
   status: 'pending'

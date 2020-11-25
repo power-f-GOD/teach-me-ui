@@ -279,7 +279,7 @@ export const requestSignin = (data: SigninFormData) => (
   })
     .then((response) => {
       const { data: _data } = response;
-      const { data, error } = _data
+      const { data, error } = _data;
       const message = data.message;
 
       if (!error) {
@@ -290,7 +290,6 @@ export const requestSignin = (data: SigninFormData) => (
         const userData: UserData = { ...data };
 
         populateStateWithUserData({
-          
           ...userData,
           displayName
         }).then(() => {

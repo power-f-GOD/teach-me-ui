@@ -33,7 +33,7 @@ import {
   getState
 } from '../../functions/utils';
 import { chatDateStickyRef, msgBoxRef } from './Chat.MiddlePane';
-import { conversation } from '../../actions/chat';
+import { conversation, conversations } from '../../actions/chat';
 
 export interface SelectedMessageValue extends Omit<APIMessageResponse, 'type'> {
   type: 'incoming' | 'outgoing';
@@ -141,6 +141,11 @@ export const Message = (props: {
           messageEl,
           () => {
             dispatch(conversation(convoId, { new_message: {} }));
+            dispatch(
+              conversations({
+                data: [{ id: convoId, new_message: {} }]
+              })
+            );
           },
           'animationend'
         );

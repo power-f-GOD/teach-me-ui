@@ -8,14 +8,14 @@ import React, {
 
 import { connect } from 'react-redux';
 
-import { 
+import {
   delay,
-  replyToPostFn, 
-  getCharacterSequenceFromText,
+  replyToPostFn,
+  getCharacterSequenceFromText
   // preventEnterNewLine
 } from '../../functions';
 
-import { Reply } from '../../constants/interfaces';
+import { Reply, UserData } from '../../constants/interfaces';
 
 import Row from 'react-bootstrap/Row';
 
@@ -25,8 +25,16 @@ import Avatar from '@material-ui/core/Avatar';
 
 import { pingUser } from '../../actions';
 
-const CreateReply: React.FC<any> = (props) => {
-  const { className, displayName, profile_photo } = props;
+interface CreateReplyProps {
+  post_id: string;
+  className: string;
+  replyToPost?: Function;
+  userData?: UserData;
+}
+
+const CreateReply: React.FC<CreateReplyProps> = (props) => {
+  const { post_id, className, userData } = props;
+  const { displayName, profile_photo } = userData || {};
   const isOpen = /open/.test(className);
   const openTriggeredByButton = /triggered.*button/.test(className);
 
@@ -59,7 +67,7 @@ const CreateReply: React.FC<any> = (props) => {
   const submitReply = (e: FormEvent) => {
     e.preventDefault();
     state.reply.text &&
-      replyToPostFn(props.post_id, state.reply).then(() => {
+      replyToPostFn(post_id!, state.reply).then(() => {
         state.reply.mentions.length && pingUser(state.reply.mentions);
       });
     inputRef!.current!.value = '';
@@ -146,6 +154,8 @@ const CreateReply: React.FC<any> = (props) => {
   );
 };
 
-const mapStateToProps = ({ replyToPost }: any) => ({ replyToPost });
+const mapStateToProps = ({ userData }: any) => ({
+  userData
+});
 
 export default connect(mapStateToProps)(CreateReply);

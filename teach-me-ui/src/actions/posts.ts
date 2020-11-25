@@ -40,17 +40,22 @@ import {
   GET_RECOMMENDATIONS_RESOLVED,
   FETCHED_RECOMMENDATIONS,
   RequestState,
-  FETCHED_TRENDS
+  FETCHED_TRENDS,
+  FetchState,
+  SET_POSTS,
+  ReduxActionV2,
+  GET_POSTS
 } from '../constants';
 
 import {
   getState,
   callNetworkStatusCheckerFor,
   getCharacterSequenceFromText,
-  logError
+  logError,
+  getData
 } from '../functions';
 
-import Axios from 'axios';
+import axios from 'axios';
 import { pingUser } from './notifications';
 
 export const replyToPost = (payload: ReplyState) => {
@@ -140,6 +145,7 @@ export const makeRepostStarted = (
     payload: { ...payload, status: 'pending' }
   };
 };
+
 export const makeRepostResolved = (
   payload?: Partial<FetchPostsState>
 ): ReduxAction => {
@@ -148,6 +154,7 @@ export const makeRepostResolved = (
     payload: { ...payload, status: 'resolved' }
   };
 };
+
 export const makeRepostRejected = (
   payload?: Partial<MakeRepostState>
 ): ReduxAction => {
@@ -157,95 +164,92 @@ export const makeRepostRejected = (
   };
 };
 
-export const fetchPosts: Function = (
+export const getPosts = (
   type: 'FEED' | 'WALL',
   userId?: string,
   update = false,
-  callback = (s: boolean) => {}
-) => (dispatch: Function) => {
-  callback(true);
-
-  if (!update) dispatch(fetchPostsStarted());
-
+  statusText?: string,
+  url?: string
+) => (dispatch: Function): ReduxActionV2<any> => {
   const isWall = type === 'WALL' && !!userId;
-  const userData = getState().userData as UserData;
-  const token = userData.token as string;
+  const payload = {
+    status: 'pending',
+    statusText,
+    err: false
+  } as FetchState<PostPropsState[]>;
+  const isRecycling = /recycl/i.test(statusText || '');
 
-  Axios({
-    url: isWall ? `/profile/${userId}/posts` : '/feed',
-    baseURL,
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  })
-    .then((res) => {
-      if (res.data.error) {
-        throw new Error(res.data.message);
-      }
-      return res.data.data.posts;
-    })
-    .then((state) => {
-      if (state.length === 0 && type === 'FEED') {
-        if (!update) {
-          dispatch(fetchedPosts(state as Array<PostPropsState>));
-        }
-        dispatch(recycleFeeds(callback));
-        return;
+  if (update) delete payload.status;
+
+  dispatch(posts(payload));
+  callNetworkStatusCheckerFor({
+    name: 'posts',
+    func: posts
+  });
+
+  getData<{ posts: PostPropsState[] }>(
+    isWall ? `/profile/${userId}/posts` : url || '/feed',
+    true
+  )
+    .then(({ error, message, posts: _posts }) => {
+      let offset = _posts.slice(-1)[0]?.posted_at;
+
+      if (!offset) {
+        offset = getState()._posts.extra;
       }
 
-      if (update) {
-        dispatch(fetchedMorePosts(state as Array<PostPropsState>));
+      // console.log(_posts, offset);
+
+      if (error) {
+        dispatch(posts({ status: 'settled', statusText: message, err: true }));
       } else {
-        dispatch(fetchedPosts(state as Array<PostPropsState>));
+        if (!_posts.length && type === 'FEED') {
+          // recursively get (recycled) Posts if no post is returned
+          if (!isRecycling) {
+            dispatch(
+              getPosts(
+                type,
+                userId,
+                update,
+                'fetching recycled posts',
+                `/feed?recycle=true&offset=${offset}`
+              )
+            );
+          }
+
+          return;
+        }
+
         dispatch(
-          fetchPostsResolved({
-            error: false,
-            message: 'Fetch posts successful'
+          posts({
+            status: 'fulfilled',
+            statusText: '',
+            err: false,
+            data: [..._posts],
+            extra: offset //'extra', here, is 'offset' for purpose of recycling
           })
         );
       }
-
-      callback(false);
     })
-    .catch((err) => {
-      dispatch(fetchPostsRejected({ error: true, message: err.message }));
-    });
+    .catch(logError(posts));
+
+  return {
+    type: GET_POSTS
+  };
 };
 
-export const recycleFeeds = (cb = (s: boolean) => {}) => (
-  dispatch: Function
-) => {
-  const userData = getState().userData as UserData;
-  // const lastPost = getState().posts[1] as PostPropsState;
-  const token = userData.token as string;
-  Axios({
-    url: `/feed?recycle=true`,
-    baseURL,
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${token}`
+export const posts = (_payload: FetchState<PostPropsState[], number>) => {
+  const { _posts: posts } = getState() as {
+    _posts: FetchState<PostPropsState[]>;
+  };
+
+  return {
+    type: SET_POSTS,
+    payload: {
+      ..._payload,
+      data: [...posts.data, ...(_payload.data ?? [])]
     }
-  })
-    .then((res) => {
-      if (res.data.error) {
-        throw new Error(res.data.message);
-      }
-      return res.data.data.posts;
-    })
-    .then((state) => {
-      dispatch(fetchedMorePosts(state as Array<PostPropsState>));
-      dispatch(
-        fetchPostsResolved({
-          error: false,
-          message: 'Fetch posts successful'
-        })
-      );
-      cb(false);
-    })
-    .catch((err) => {
-      dispatch(fetchPostsRejected({ error: true, message: err.message }));
-    });
+  };
 };
 
 export const fetchReplies = (postId?: string) => (dispatch: Function) => {
@@ -255,7 +259,7 @@ export const fetchReplies = (postId?: string) => (dispatch: Function) => {
     userData && userData.token
       ? { Authorization: `Bearer ${userData.token}` }
       : {};
-  Axios({
+  axios({
     url: `/post/${postId}/replies?limit=10&skip=0`,
     baseURL,
     method: 'GET',
@@ -287,7 +291,8 @@ export const fetchPost: Function = (postId?: string) => (
     userData && userData.token
       ? { Authorization: `Bearer ${userData.token}` }
       : {};
-  Axios({
+
+  axios({
     url: `/post/${postId}`,
     baseURL,
     method: 'GET',
@@ -316,6 +321,7 @@ export const fetchedPosts = (payload: Array<PostPropsState>): ReduxAction => {
     payload
   };
 };
+
 export const fetchedMorePosts = (
   payload: Array<PostPropsState>
 ): ReduxAction => {
@@ -338,6 +344,7 @@ const fetchPostsStarted = (payload?: Partial<FetchPostsState>): ReduxAction => {
     payload: { ...payload, status: 'pending' }
   };
 };
+
 const fetchPostsResolved = (
   payload?: Partial<FetchPostsState>
 ): ReduxAction => {
@@ -346,6 +353,7 @@ const fetchPostsResolved = (
     payload: { ...payload, status: 'resolved' }
   };
 };
+
 const fetchPostsRejected = (
   payload?: Partial<FetchPostsState>
 ): ReduxAction => {
@@ -361,12 +369,14 @@ const fetchPostStarted = (payload?: Partial<FetchPostsState>): ReduxAction => {
     payload: { ...payload, status: 'pending' }
   };
 };
+
 const fetchPostResolved = (payload?: Partial<FetchPostsState>): ReduxAction => {
   return {
     type: FETCH_A_POST_RESOLVED,
     payload: { ...payload, status: 'resolved' }
   };
 };
+
 const fetchPostRejected = (payload?: Partial<FetchPostsState>): ReduxAction => {
   return {
     type: FETCH_A_POST_REJECTED,
@@ -381,9 +391,13 @@ export const makePost = (payload: any): ReduxAction => {
   };
 };
 
-export const submitPost = ({post, media}: {post: Post; media: Array<string>}) => (
-  dispatch: Function
-) => {
+export const submitPost = ({
+  post,
+  media
+}: {
+  post: Post;
+  media: Array<string>;
+}) => (dispatch: Function) => {
   dispatch(
     makePost({
       status: 'pending'
@@ -400,7 +414,7 @@ export const submitPost = ({post, media}: {post: Post; media: Array<string>}) =>
     func: makePost
   });
 
-  Axios({
+  axios({
     url: `post/make`,
     baseURL,
     method: 'POST',
@@ -422,7 +436,8 @@ export const submitPost = ({post, media}: {post: Post; media: Array<string>}) =>
           status: 'fulfilled'
         })
       );
-      getCharacterSequenceFromText(post.text, '@') && pingUser(getCharacterSequenceFromText(post.text, '@'));
+      getCharacterSequenceFromText(post.text, '@') &&
+        pingUser(getCharacterSequenceFromText(post.text, '@'));
     })
     .catch(logError(makePost));
   return {
@@ -466,7 +481,7 @@ export const getTrends = () => (dispatch: Function) => {
   dispatch(getTrendsStarted());
   const userData = getState().userData as UserData;
   const token = userData.token as string;
-  Axios({
+  axios({
     url: `/hashtag/trending`,
     baseURL,
     method: 'GET',
@@ -532,7 +547,7 @@ export const getRecommendations = () => (dispatch: Function) => {
   dispatch(getRecommendationsStarted());
   const userData = getState().userData as UserData;
   const token = userData.token as string;
-  Axios({
+  axios({
     url: `/people/recommendations`,
     baseURL,
     method: 'GET',

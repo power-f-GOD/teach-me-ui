@@ -1,4 +1,3 @@
-import axios, { AxiosResponse } from 'axios';
 import produce from 'immer';
 
 import {
@@ -10,7 +9,7 @@ import {
   UserData,
   ConversationsMessages,
   LoopFind,
-  SearchStateV2
+  FetchState
 } from '../constants/interfaces';
 import {
   SET_CHAT_STATE,
@@ -28,47 +27,34 @@ import {
   SET_CONVERSATIONS_MESSAGES,
   GET_CONVERSATIONS_MESSAGES
 } from '../constants/chat';
-import { apiBaseURL as baseURL, ONLINE_STATUS } from '../constants/misc';
+import { ONLINE_STATUS } from '../constants/misc';
 import {
   logError,
   getState,
   callNetworkStatusCheckerFor,
   delay,
-  loopThru
+  loopThru,
+  getData
 } from '../functions';
 import { dispatch } from '../appStore';
 import { displaySnackbar } from './misc';
 
-interface ConversationsResponse {
-  data: {
-    error: boolean;
-    conversations: APIConversationResponse[];
-  };
-}
-
 export const getConversations = (
   status?: 'pending' | 'settled' | 'fulfilled'
 ) => (dispatch: Function) => {
-  const { token } = getState().userData as UserData;
-
   dispatch(conversations({ status: status ? status : 'pending', err: false }));
   callNetworkStatusCheckerFor({
     name: 'conversations',
     func: conversations
   });
 
-  axios({
-    url: `${baseURL}/conversations?limit=20&offset=`,
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    }
-  })
-    .then((response: AxiosResponse<ConversationsResponse>) => {
-      const { error, conversations: _conversations } = response.data.data;
-
-      if (!error) {
+  getData<{
+    conversations: APIConversationResponse[];
+  }>('/conversations?limit=20&offset=', true)
+    .then(({ error, conversations: _conversations }) => {
+      if (error) {
+        dispatch(conversations({ status: 'fulfilled', err: true, data: [] }));
+      } else {
         dispatch(
           conversations({
             status: 'fulfilled',
@@ -97,8 +83,6 @@ export const getConversations = (
             }
           }
         }
-      } else {
-        dispatch(conversations({ status: 'fulfilled', err: true, data: [] }));
       }
 
       //hide Snackbar in case it's currently displayed (due to an error event)
@@ -112,7 +96,7 @@ export const getConversations = (
 };
 
 export const conversations = (
-  _payload: SearchStateV2<Partial<APIConversationResponse>[]>
+  _payload: FetchState<Partial<APIConversationResponse>[]>
 ): ReduxAction => {
   const payload = { ..._payload };
   const message = (((payload.data ?? [])[0] ??
@@ -127,7 +111,7 @@ export const conversations = (
     userData
   } = getState() as {
     conversation: APIConversationResponse;
-    conversations: SearchStateV2<APIConversationResponse[]>;
+    conversations: FetchState<APIConversationResponse[]>;
     conversationMessages: ConversationMessages;
     userData: UserData;
   };
@@ -140,12 +124,17 @@ export const conversations = (
   if (pipe && initialConversations.length) {
     switch (pipe) {
       case ONLINE_STATUS: {
-        const { value: actualConvo, index: indexOfInitial } = (loopThru<
-          APIConversationResponse
-        >(initialConversations, ({ colleague }) => user_id === colleague.id, {
-          type: 'find',
-          includeIndex: true
-        }) || {}) as LoopFind<APIConversationResponse>;
+        const {
+          value: actualConvo,
+          index: indexOfInitial
+        } = (loopThru<APIConversationResponse>(
+          initialConversations,
+          ({ colleague }) => user_id === colleague.id,
+          {
+            type: 'find',
+            includeIndex: true
+          }
+        ) || {}) as LoopFind<APIConversationResponse>;
 
         if (actualConvo) {
           if (online_status === 'AWAY') {
@@ -166,12 +155,17 @@ export const conversations = (
       case CHAT_MESSAGE_DELETED:
       case CHAT_MESSAGE_DELETED_FOR:
       case CHAT_MESSAGE_DELIVERED: {
-        const { value: actualConvo, index: indexOfInitial } = (loopThru<
-          APIConversationResponse
-        >(initialConversations, ({ id }) => message?.conversation_id === id, {
-          type: 'find',
-          includeIndex: true
-        }) ?? {}) as LoopFind<APIConversationResponse>;
+        const {
+          value: actualConvo,
+          index: indexOfInitial
+        } = (loopThru<APIConversationResponse>(
+          initialConversations,
+          ({ id }) => message?.conversation_id === id,
+          {
+            type: 'find',
+            includeIndex: true
+          }
+        ) ?? {}) as LoopFind<APIConversationResponse>;
 
         if (actualConvo) {
           const last_message = (produce(
@@ -245,12 +239,17 @@ export const conversations = (
     }
   } else if (_payload.data?.length) {
     if (pipe) {
-      let { value: actualConvo, index: indexOfInitial } = (loopThru<
-        APIConversationResponse
-      >(initialConversations, ({ colleague }) => user_id === colleague.id, {
-        type: 'find',
-        includeIndex: true
-      }) ?? {}) as LoopFind<APIConversationResponse>;
+      let {
+        value: actualConvo,
+        index: indexOfInitial
+      } = (loopThru<APIConversationResponse>(
+        initialConversations,
+        ({ colleague }) => user_id === colleague.id,
+        {
+          type: 'find',
+          includeIndex: true
+        }
+      ) ?? {}) as LoopFind<APIConversationResponse>;
 
       if (actualConvo && payload.data?.length === 1) {
         actualConvo = { ...actualConvo, ...message };
@@ -262,14 +261,21 @@ export const conversations = (
     } else if (!initialConversations.length || _payload.data.length > 1) {
       payload.data = [..._payload.data];
     } else if (!payload?.status) {
-      const { value: actualConvo, index: indexOfInitial } = (loopThru<
-        APIConversationResponse
-      >(initialConversations, ({ id }) => convoId === id, {
-        type: 'find',
-        includeIndex: true
-      }) ?? {}) as LoopFind<APIConversationResponse>;
+      let {
+        value: actualConvo,
+        index: indexOfInitial
+      } = (loopThru<APIConversationResponse>(
+        initialConversations,
+        ({ id }) => convoId === id,
+        {
+          type: 'find',
+          includeIndex: true
+        }
+      ) ?? {}) as LoopFind<APIConversationResponse>;
 
       if (actualConvo) {
+        actualConvo = { ...actualConvo, ...(payload.data ?? [{}])[0] };
+
         if (last_read) {
           actualConvo.last_read = last_read;
         }
@@ -303,7 +309,7 @@ export const conversation = (
   shouldUpdateAll?: boolean
 ): ReduxAction => {
   const { conversations, conversation } = getState() as {
-    conversations: SearchStateV2<APIConversationResponse[]>;
+    conversations: FetchState<APIConversationResponse[]>;
     conversation: APIConversationResponse;
   };
   const dataFromConvos =
@@ -351,7 +357,7 @@ export const getConversationsMessages = (statusText?: string) => (
   dispatch: Function
 ) => {
   const {
-    userData,
+    userData: { id: userId },
     webSocket: socket,
     conversation: _conversation,
     chatState
@@ -361,7 +367,6 @@ export const getConversationsMessages = (statusText?: string) => (
     conversation: APIConversationResponse;
     chatState: ChatState;
   };
-  const { token, id: userId } = userData as UserData;
   const convoId = _conversation.id;
   const { isOpen, queryString } = chatState;
   const isMinimized = /chat=m2/.test(queryString || '');
@@ -378,18 +383,22 @@ export const getConversationsMessages = (statusText?: string) => (
     func: conversationsMessages
   });
 
-  axios({
-    url: `${baseURL}/messages/!delivered`,
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    }
-  })
-    .then(({ data }: AxiosResponse<ConversationsMessagesResponse>) => {
-      const _convosMessages = data.data.conversations;
+  getData<{ conversations: { [convoId: string]: APIMessageResponse[] } }>(
+    '/messages/!delivered',
+    true
+  )
+    .then(({ error, conversations }) => {
+      const _convosMessages = conversations;
 
-      if (!data.data.error) {
+      if (error) {
+        dispatch(
+          conversationsMessages({
+            status: 'settled',
+            err: true,
+            data: {}
+          })
+        );
+      } else {
         const updatedConvosMessages = _convosMessages;
 
         for (const key in updatedConvosMessages) {
@@ -435,14 +444,6 @@ export const getConversationsMessages = (statusText?: string) => (
             status: 'fulfilled',
             err: false,
             data: { ...updatedConvosMessages }
-          })
-        );
-      } else {
-        dispatch(
-          conversationsMessages({
-            status: 'settled',
-            err: true,
-            data: {}
           })
         );
       }
@@ -596,10 +597,8 @@ export const conversationsMessages = (
 };
 
 interface MessagesResponse {
-  data: {
-    error: boolean;
-    messages: Array<APIMessageResponse | Partial<APIMessageResponse>>;
-  };
+  error: boolean;
+  messages: Array<APIMessageResponse | Partial<APIMessageResponse>>;
 }
 
 export const getConversationMessages = (
@@ -608,7 +607,8 @@ export const getConversationMessages = (
   _statusText?: string,
   offset?: number
 ) => (dispatch: Function) => {
-  const getterWrapperFunction = async () => {
+  //put/call function inside a closure to prevent the redux-async functions ish
+  (async () => {
     const {
       userData,
       conversationsMessages: _conversationsMessages,
@@ -619,11 +619,11 @@ export const getConversationMessages = (
       userData: UserData;
       conversationsMessages: ConversationsMessages;
       conversation: APIConversationResponse;
-      conversations: SearchStateV2<APIConversationResponse[]>;
+      conversations: FetchState<APIConversationResponse[]>;
       webSocket: WebSocket;
       chatState: ChatState;
     };
-    const { token, id: userId } = userData;
+    const { id: userId } = userData;
     const cachedConvoMessages = _conversationsMessages.data![convoId] ?? [];
     const isGettingNew = /new/.test(_statusText ?? '');
     const isUpdating = /updat(ing|e)/.test(_statusText ?? '');
@@ -644,38 +644,34 @@ export const getConversationMessages = (
     });
 
     try {
-      const data = { data: { error: false, messages: [] } } as MessagesResponse;
+      const data = { error: false, messages: [] } as MessagesResponse;
 
       if (hasCachedData && (isGettingNew || isUpdating)) {
-        data.data.messages = cachedConvoMessages;
-        data.data.error = false;
+        data.messages = cachedConvoMessages;
+        data.error = false;
 
         if (!isUpdating) {
           //ensure to await a few milliseconds so previous states are set before proceeding to avoid bugs
           await delay(100);
         }
       } else {
-        const response: AxiosResponse<MessagesResponse> = await axios({
-          url: `${baseURL}/conversations/${convoId}/messages?limit=${limit}${`&offset=${
+        const _data = await getData<{ messages: Array<APIMessageResponse> }>(
+          `/conversations/${convoId}/messages?limit=${limit}${`&offset=${
             offset
               ? offset
               : hasCachedData
               ? cachedConvoMessages[0].date
               : Date.now()
           }`}`,
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
+          true
+        );
 
-        data.data.messages = response.data.data.messages ?? [];
-        data.data.error = response.data.data.error;
+        data.messages = _data.messages ?? [];
+        data.error = _data.error;
       }
 
-      const error = data.data.error;
-      let messages = [...data.data.messages] as APIMessageResponse[];
+      const error = data.error;
+      let messages = [...data.messages] as APIMessageResponse[];
       const { isOpen, queryString } = chatState;
       const isMinimized = /chat=m2/.test(queryString || '');
       const statusText = _statusText
@@ -684,8 +680,29 @@ export const getConversationMessages = (
           : 'reached end'
         : undefined;
       let hasReachedLastRead = false;
-      // console.log(messages, data.data);
-      if (!error) {
+
+      if (error) {
+        dispatch(
+          conversationMessages({
+            convoId,
+            status: 'settled',
+            statusText,
+            err: true,
+            data: []
+          })
+        );
+
+        if (isGettingNew) {
+          dispatch(
+            conversationsMessages({
+              convoId,
+              status: 'settled',
+              err: true,
+              statusText
+            })
+          );
+        }
+      } else {
         if (socket && socket.readyState === 1) {
           messages = loopThru(
             messages,
@@ -714,7 +731,7 @@ export const getConversationMessages = (
               if (message.seen_by!?.includes(userId)) return;
 
               if (type === 'incoming') {
-                console.log('object inextensible check:', message);
+                console.log('object inextensible check:', message, userId);
                 if (!message.delivered_to!?.includes(userId)) {
                   socket.send(
                     JSON.stringify({
@@ -740,7 +757,7 @@ export const getConversationMessages = (
                 }
               }
             },
-            { returnReverse: !(hasCachedData && isGettingNew) }
+            { returnReverse: !(hasCachedData && isGettingNew), makeCopy: true }
           ) as APIMessageResponse[];
         }
 
@@ -767,27 +784,6 @@ export const getConversationMessages = (
             })
           );
         }
-      } else {
-        dispatch(
-          conversationMessages({
-            convoId,
-            status: 'settled',
-            statusText,
-            err: true,
-            data: []
-          })
-        );
-
-        if (isGettingNew) {
-          dispatch(
-            conversationsMessages({
-              convoId,
-              status: 'settled',
-              err: true,
-              statusText
-            })
-          );
-        }
       }
 
       //hide Snackbar in case it's currently displayed (due to an error event)
@@ -795,8 +791,7 @@ export const getConversationMessages = (
     } catch (e) {
       logError(conversationMessages)(e);
     }
-  };
-  getterWrapperFunction();
+  })();
 
   return {
     type: GET_CONVERSATION_MESSAGES

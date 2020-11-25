@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import Container from 'react-bootstrap/Container';
 
@@ -6,31 +6,51 @@ import Post from '../crumbs/Post';
 import Compose from '../crumbs/Compose';
 import Recommendations from '../crumbs/Recommendations';
 
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Box from '@material-ui/core/Box';
+import {
+  PostPropsState,
+  UserData,
+  SocketProps,
+  AuthState,
+  FetchState
+} from '../../constants';
 
-import { PostPropsState, UserData, SocketProps } from '../../constants';
-
-import { fetchPostsFn, getState } from '../../functions';
+import { getState, dispatch } from '../../functions';
 
 import { connect } from 'react-redux';
+import { getPosts } from '../../actions';
+import Loader from '../crumbs/Loader';
 
-const MiddlePane: React.FunctionComponent = (props: any) => {
+interface MiddlePaneProps {
+  auth: AuthState;
+  profileData: FetchState<UserData[]>;
+  posts: FetchState<PostPropsState[]>;
+  userData: UserData;
+  type: 'FEED' | 'WALL';
+}
+
+const MiddlePane: React.FunctionComponent<MiddlePaneProps> = (props) => {
   const {
     auth: { isAuthenticated },
     profileData: {
       data: [profile]
     },
-    posts,
-    fetchPostStatus,
+    posts: {
+      status: postStatus,
+      data: postsData,
+      statusText: postsStatusText,
+      err: postsErred
+    },
     userData
   } = props;
+  const isFetching = /(updat|fetch|recycl)(e|ing)?/i.test(
+    postsStatusText || ''
+  );
   const config: IntersectionObserverInit = {
     root: null,
     rootMargin: '0px',
     threshold: [0.5, 1]
   };
-  const observer = React.useMemo(
+  const observer = useMemo(
     () =>
       new IntersectionObserver((entries, self) => {
         const socket = getState().webSocket as WebSocket;
@@ -52,19 +72,26 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
   );
   const username = userData.username || '';
 
+  // console.log(posts)
+
   let profileUsername = profile.username || '';
-  // here is where the check is made to render the views accordingly
+  // here is where the current user profile check is made to render the views accordingly
   const isSelf =
     !!username && !!profileUsername && profileUsername === username;
+  const postElements = document.querySelectorAll('.Post');
   let selfView = isAuthenticated ? isSelf : false;
   let inProfile = /@\w+/.test(window.location.pathname);
+
   useEffect(() => {
     const type = props.type || 'FEED';
     const userId = (profile as UserData).id || undefined;
-    fetchPostsFn(type, userId);
+
+    if (!postsData?.length) {
+      dispatch(getPosts(type, userId, !!postsData?.length));
+    }
     // eslint-disable-next-line
   }, [props.type]);
-  const postElements = document.querySelectorAll('.Post');
+
   useEffect(() => {
     if (props.type === 'FEED') {
       postElements.forEach((post) => {
@@ -76,29 +103,30 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
 
   return (
     <Container className='middle-pane px-0' fluid>
-      {(selfView || !inProfile) && <Compose />}
-      {!inProfile && posts.length < 3 && <Recommendations />}
-      {fetchPostStatus.status === 'resolved' &&
-        posts.map((post: PostPropsState, i: number) => {
+      {(selfView || !inProfile) && <Compose userData={userData} />}
+      {!inProfile && !postsData?.length && postStatus === 'fulfilled' && (
+        <Recommendations />
+      )}
+      {postStatus !== 'pending' &&
+        postsData?.map((post, i: number) => {
           const childProps = { ...post, parent: undefined };
-          const renderRecommendations = !inProfile && i === 3 && (
-            <Recommendations />
-          );
+          const renderRecommendations = !inProfile &&
+            (i === 3 || (i > 0 && i % 20 === 0)) && <Recommendations />;
 
           switch (post.sec_type) {
             case 'REPLY':
               return (
                 <React.Fragment key={i}>
-                  {renderRecommendations}
                   <Post
                     {...post.parent}
                     child={{ ...childProps }}
                     type='post'
                   />
                   <Post {...childProps} type='reply' />
-                  {!inProfile && posts.length >= 3 && i === 3 && (
+                  {/* {!inProfile && postsData.length >= 3 && i === 3 && (
                     <Recommendations />
-                  )}
+                  )} */}
+                  {renderRecommendations}
                 </React.Fragment>
               );
             default:
@@ -110,27 +138,21 @@ const MiddlePane: React.FunctionComponent = (props: any) => {
               );
           }
         })}
-      {props.fetchPostStatus.status === 'pending' &&
-        Array.from({ length: 4 }).map((_, i) => <Post key={i} />)}
-      {props.isFetching && (
-        <Box textAlign='center' py='2'>
-          <CircularProgress />
-        </Box>
-      )}
+      {postStatus === 'pending' &&
+        Array.from({
+          length: Math.floor(window.innerHeight / 150)
+        }).map((_, i) => <Post key={i} />)}
+      <Loader type='ellipsis' show={isFetching && !postsErred} color='#444' />
     </Container>
   );
 };
 
-const mapStateToProps = (
-  { posts, fetchPostStatus, profileData, auth, userData }: any,
-  ownProps: any
-) => ({
+const mapStateToProps = (state: any, ownProps: any) => ({
   ...ownProps,
-  auth,
-  posts,
-  fetchPostStatus,
-  profileData,
-  userData
+  auth: state.auth,
+  posts: state._posts,
+  profileData: state.profileData,
+  userData: state.userData
 });
 
 export default connect(mapStateToProps)(MiddlePane);

@@ -32,23 +32,30 @@ export interface InputErrState {
 }
 
 export interface PostPropsState {
-  userAvatar: string;
+  downvotes: number;
+  id: string;
   media: any[];
+  posted_at: number;
   reaction: Reaction;
-  sender_id: string;
-  sender_name: string;
-  sender_username: string;
+  replies: number;
+  reposts: number;
+  sender: {
+    cover_photo: string;
+    department: string;
+    first_name: string;
+    id: string;
+    last_name: string;
+    last_seen: number;
+    level: string;
+    online_status: OnlineStatus;
+    profile_photo: string;
+    username: string;
+  };
+  text: string;
+  upvotes: number;
   sec_type?: 'REPOST' | 'REPLY';
   type: 'post' | 'reply';
   child?: PostProps;
-  text: string;
-  id: string;
-  upvotes: number;
-  downvotes: number;
-  replies: number;
-  reposts: number;
-  posted_at: number;
-  profile_photo?: string;
   _extra?: PostExtraProps;
   parent?: PostProps;
 }
@@ -61,20 +68,28 @@ interface PostExtraProps {
 }
 
 interface PostProps {
-  sec_type?: 'REPOST' | 'REPLY';
-  text: string;
-  id: string;
-  sender_id: string;
-  sender_name: string;
-  sender_username: string;
-  userAvatar?: string;
-  upvotes: number;
   downvotes: number;
+  id: string;
+  media: any[];
+  posted_at: number;
+  reaction: Reaction;
   replies: number;
-  reaction?: Reaction;
   reposts: number;
-  posted_at?: number;
-  profile_photo?: string;
+  sender: {
+    cover_photo: string;
+    department: string;
+    first_name: string;
+    id: string;
+    last_name: string;
+    last_seen: number;
+    level: string;
+    online_status: OnlineStatus;
+    profile_photo: string;
+    username: string;
+  };
+  text: string;
+  upvotes: number;
+  sec_type?: 'REPOST' | 'REPLY';
 }
 
 export interface SocketProps extends SocketStruct {
@@ -226,8 +241,9 @@ export interface SearchState extends StatusPropsState {
   data?: any[];
 }
 
-export interface SearchStateV2<T> extends StatusPropsState {
+export interface FetchState<T, T2 = any> extends StatusPropsState {
   data?: T;
+  extra?: T2;
 }
 
 export interface SignupPropsState {
@@ -343,13 +359,13 @@ export interface ConversationsMessages extends StatusPropsState {
 }
 
 export interface ConversationMessages
-  extends SearchStateV2<Partial<APIMessageResponse>[]> {
+  extends FetchState<Partial<APIMessageResponse>[]> {
   convoId?: string;
   pipe?: SocketPipe;
 }
 
 export interface ConversationInfo
-  extends SearchStateV2<
+  extends FetchState<
     Partial<Omit<UserData, 'token'> & APIConversationResponse>
   > {
   user_typing?: string;

@@ -4,11 +4,7 @@ import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 
 import { displayModal } from '../../functions';
-import { connect } from 'react-redux';
-import { 
-  CREATE_POST, 
-  UserData 
-} from '../../constants';
+import { CREATE_POST, UserData } from '../../constants';
 
 const openCreatePostModal = (e: any) => {
   displayModal(true, false, CREATE_POST, { title: 'Create Post' });
@@ -16,8 +12,8 @@ const openCreatePostModal = (e: any) => {
 
 export const Compose: React.FunctionComponent<{
   userData: Partial<UserData>;
-}> = (props) => {
-  const { first_name, profile_photo } = props.userData;
+}> = ({ userData }) => {
+  const { first_name, profile_photo } = userData;
 
   return (
     <Box className='Compose d-flex flex-column'>
@@ -41,4 +37,4 @@ export const Compose: React.FunctionComponent<{
   );
 };
 
-export default connect(({ userData }: any) => ({ userData }))(Compose);
+export default Compose;
