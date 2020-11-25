@@ -85,10 +85,10 @@
 		border: none;
 		font-weight: bold;
 		color: #39739d;
-		padding: 0rem;
-		padding-top: 0.06rem !important;
-		padding-right: 0.03rem !important;
-		margin-top: 0.2rem !important;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0rem !important;
 		border-radius: 3px;
 		height: 1rem;
 		margin-right: 0.05rem;
@@ -112,11 +112,14 @@
 	.tag {
 		background-color: #e1ecf4;
 		color: #39739d;
-		border-radius: 4.5px;
+		border-radius: 4px;
 		height: 1.5rem;
+		align-items: center;
+		justify-content: center;
 		display: inline-flex;
 		padding: {
-			top: 0.095rem !important;
+			top: 0rem;
+			bottom: 0rem;
 			right: 0.2rem;
 			left: 0.2rem;
 		};
@@ -128,7 +131,6 @@
 		};
 
 		small {
-			margin-bottom: 1.2rem !important;
 			display: inline-block;
 		}
 	}

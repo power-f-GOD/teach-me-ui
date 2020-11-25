@@ -254,7 +254,7 @@ const CreateQuestion = (props: any) => {
   }
 
   const displayUploads = (e: any) => {
-    document.dispatchEvent( new MouseEvent('click'));
+    document.body.click();
     label.current.style.display = 'none';
     label1.current.style.display = 'none';
     if (uploadsProp.status !== 'pending' && !uploadsProp.data[0]) {
@@ -324,6 +324,8 @@ const CreateQuestion = (props: any) => {
       </Row>
       <Row className='d-flex mx-auto mt-0'>
         <small>Add tags to decribe what your question is about </small>
+      </Row>
+      <Row className='d-flex mx-auto mt-0'>
         <small className='hint'>*use space to add a tag</small>
       </Row>
       <Row className='d-flex mx-auto mt-0'>
