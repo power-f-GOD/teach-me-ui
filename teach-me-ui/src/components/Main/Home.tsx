@@ -39,7 +39,7 @@ const Home = ({ posts }: { posts: FetchState<PostPropsState> }) => {
 
           clearTimeout(fetchMorePostsTimeout);
 
-          if (entry.isIntersecting && !isFetching) {
+          if (entry.isIntersecting && !isFetching && navigator.onLine) {
             fetchMorePostsTimeout = setTimeout(() => {
               dispatch(
                 getPosts('FEED', undefined, true, 'is fetching more posts')
@@ -57,7 +57,7 @@ const Home = ({ posts }: { posts: FetchState<PostPropsState> }) => {
       observer.unobserve(observedElement as Element);
       // window.scrollTo(0, 0);
     };
-  }, [posts.statusText]);
+  }, [posts.statusText, posts.err]);
 
   return (
     <>

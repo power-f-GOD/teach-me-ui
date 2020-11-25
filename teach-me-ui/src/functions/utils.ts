@@ -15,7 +15,8 @@ import {
   LoopFind,
   FetchState,
   OnlineStatus,
-  apiBaseURL
+  apiBaseURL,
+  PostPropsState
 } from '../constants';
 
 import store from '../appStore';
@@ -24,7 +25,9 @@ import {
   setUserData,
   profileData as _profileData,
   initWebSocket,
-  closeWebSocket
+  closeWebSocket,
+  posts,
+  getPosts
 } from '../actions';
 import { userDeviceIsMobile } from '../';
 import activateSocketRouters from '../socket.router';
@@ -210,12 +213,14 @@ export const emitUserOnlineStatus = (
     userData,
     auth,
     conversations: _conversations,
-    conversationsMessages: _conversationsMessages
+    conversationsMessages: _conversationsMessages,
+    _posts
   } = getState() as {
     userData: UserData & APIConversationResponse;
     auth: AuthState;
     conversations: FetchState<APIConversationResponse[]>;
     conversationsMessages: ConversationMessages;
+    _posts: FetchState<PostPropsState[]>;
   };
   let timeToEmitOnlineStatus: any = undefined;
 
@@ -231,6 +236,14 @@ export const emitUserOnlineStatus = (
 
     if (_conversationsMessages.err) {
       dispatch(getConversationsMessages('updating message list...')(dispatch));
+    }
+
+    if (_posts.err) {
+      if (!_posts.data?.length) {
+        dispatch(getPosts('FEED', undefined, !!_posts.data?.length));
+      } else if (navigator.onLine) {
+        dispatch(posts({ status: 'fulfilled', err: false }));
+      }
     }
 
     return function recurse() {
@@ -287,6 +300,7 @@ export const emitUserOnlineStatus = (
           online_status: 'OFFLINE'
         })
       );
+      dispatch(posts({ status: 'settled', err: true, statusText: '' }));
     }
   };
 };

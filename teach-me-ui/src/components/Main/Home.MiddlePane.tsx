@@ -34,7 +34,12 @@ const MiddlePane: React.FunctionComponent<MiddlePaneProps> = (props) => {
     profileData: {
       data: [profile]
     },
-    posts: { status: postStatus, data: postsData, statusText: postsStatusText },
+    posts: {
+      status: postStatus,
+      data: postsData,
+      statusText: postsStatusText,
+      err: postsErred
+    },
     userData
   } = props;
   const isFetching = /(updat|fetch|recycl)(e|ing)?/i.test(
@@ -137,7 +142,7 @@ const MiddlePane: React.FunctionComponent<MiddlePaneProps> = (props) => {
         Array.from({
           length: Math.floor(window.innerHeight / 150)
         }).map((_, i) => <Post key={i} />)}
-      <Loader type='ellipsis' show={isFetching} color='#444' />
+      <Loader type='ellipsis' show={isFetching && !postsErred} color='#444' />
     </Container>
   );
 };
