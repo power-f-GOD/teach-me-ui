@@ -33,20 +33,7 @@ export const reactToPostFn = (
   );
 };
 
-<<<<<<< HEAD
-export const fetchPostsFn = (
-  type: 'FEED' | 'WALL',
-  userId?: string,
-  update = false,
-  cb = (s: boolean) => {}
-) => {
-  dispatch(fetchPosts(type, userId, update, cb));
-};
-
-export const fetchMentionsFn = async (value: string) => {
-=======
 export const fetchMentionsFn = (value: string) => {
->>>>>>> 38c875d3a2e7a70cf1855af61018472c93c4e9a7
   const token = (getState().userData as UserData).token;
   return Axios({
     url: `/colleagues/find?keyword=${value}`,
