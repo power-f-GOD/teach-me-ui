@@ -361,7 +361,7 @@ const CreateQuestion = (props: any) => {
           multiple={true}
           id='my-input'
           onChange={fileSelectedHandler}
-          className='display-none'
+          className='d-none'
           type={'file'}
         />
         {!state.showUploads && (
