@@ -164,7 +164,7 @@ const Post: React.FunctionComponent<
     extra +=
       sender_username === child?.sender.username
         ? ' thier own post'
-        : sender_name + "'s post";
+        : ` ${sender_name}'s post`;
   }
 
   return (
@@ -228,7 +228,9 @@ const Post: React.FunctionComponent<
       </Modal>
 
       {/* Post */}
-      <Box id={id} className={type === 'reply' ? 'Reply' : 'Post'}>
+      <Box
+        id={id}
+        className={`${type === 'reply' ? 'Reply' : 'Post'} fade-in-opacity`}>
         {extra && <small className='extra'>{extra}</small>}
 
         {/* Post header */}

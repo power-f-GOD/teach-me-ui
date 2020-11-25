@@ -18,7 +18,7 @@ import { Button } from '@material-ui/core';
 export interface PostCrumbs extends Partial<PostPropsState> {
   navigate?: Function;
   openCreateRepostModal?: Function;
-  repostMeta?: any;
+  repostMeta?: PostPropsState | any;
   anchorIsParent?: boolean;
 }
 

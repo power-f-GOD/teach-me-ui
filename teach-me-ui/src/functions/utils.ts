@@ -1,4 +1,5 @@
 import moment from 'moment';
+import axios, { AxiosResponse } from 'axios';
 
 import {
   ReduxAction,
@@ -12,8 +13,10 @@ import {
   ConversationMessages,
   APIConversationResponse,
   LoopFind,
-  SearchStateV2,
-  OnlineStatus
+  FetchState,
+  OnlineStatus,
+  apiBaseURL,
+  PostPropsState
 } from '../constants';
 
 import store from '../appStore';
@@ -22,7 +25,9 @@ import {
   setUserData,
   profileData as _profileData,
   initWebSocket,
-  closeWebSocket
+  closeWebSocket,
+  posts,
+  getPosts
 } from '../actions';
 import { userDeviceIsMobile } from '../';
 import activateSocketRouters from '../socket.router';
@@ -34,6 +39,66 @@ import {
 } from '../actions/chat';
 
 export const { dispatch, getState }: any = store;
+
+/**
+ *
+ * @param url url of destination e.g. /profile/5df9e8t0wekc/posts ... Base URL should not be included
+ * @param requiresAuth if token/authentication will be required for the get action
+ */
+export const getData = async <T>(url: string, requiresAuth: boolean) => {
+  let token = '';
+
+  if (requiresAuth) {
+    token = getState().userData.token;
+  }
+
+  const response: AxiosResponse<{
+    data: { error: boolean; message?: string } & T;
+  }> = await axios({
+    url: `${apiBaseURL}${url}`,
+    method: 'GET',
+    headers: {
+      Authorization: requiresAuth ? `Bearer ${token}` : null,
+      'Content-Type': 'application/json'
+    }
+  });
+
+  // console.log(response);
+
+  return Promise.resolve(response.data.data);
+};
+
+/**
+ *
+ * @param url url of destination e.g. /profile/5df9e8t0wekc/posts ... Base URL should not be included
+ * @param data data to be posted to destination
+ * @param requiresAuth that is if token/authentication will be required for the get action
+ */
+export const postData = async <T>(
+  url: string,
+  data?: any,
+  requiresAuth?: boolean
+) => {
+  let token = '';
+
+  if (requiresAuth) {
+    token = getState().userData.token;
+  }
+
+  const response: AxiosResponse<{
+    data: { error: boolean; message?: string } & T;
+  }> = await axios({
+    url: `${apiBaseURL}${url}`,
+    method: 'POST',
+    headers: {
+      Authorization: requiresAuth ? `Bearer ${token}` : null,
+      'Content-Type': 'application/json'
+    },
+    data
+  });
+  // console.log(response.data)
+  return Promise.resolve({ ...response.data.data });
+};
 
 export function loopThru<T>(
   _data: T[],
@@ -92,7 +157,7 @@ export function loopThru<T>(
 }
 
 export const createObserver = (
-  root: HTMLElement,
+  root: HTMLElement | null,
   callback: IntersectionObserverCallback,
   options?: IntersectionObserverInit
 ) => {
@@ -148,12 +213,14 @@ export const emitUserOnlineStatus = (
     userData,
     auth,
     conversations: _conversations,
-    conversationsMessages: _conversationsMessages
+    conversationsMessages: _conversationsMessages,
+    _posts
   } = getState() as {
     userData: UserData & APIConversationResponse;
     auth: AuthState;
-    conversations: SearchStateV2<APIConversationResponse[]>;
+    conversations: FetchState<APIConversationResponse[]>;
     conversationsMessages: ConversationMessages;
+    _posts: FetchState<PostPropsState[]>;
   };
   let timeToEmitOnlineStatus: any = undefined;
 
@@ -169,6 +236,14 @@ export const emitUserOnlineStatus = (
 
     if (_conversationsMessages.err) {
       dispatch(getConversationsMessages('updating message list...')(dispatch));
+    }
+
+    if (_posts.err) {
+      if (!_posts.data?.length) {
+        dispatch(getPosts('FEED', undefined, !!_posts.data?.length));
+      } else if (navigator.onLine) {
+        dispatch(posts({ status: 'fulfilled', err: false }));
+      }
     }
 
     return function recurse() {
@@ -225,6 +300,7 @@ export const emitUserOnlineStatus = (
           online_status: 'OFFLINE'
         })
       );
+      dispatch(posts({ status: 'settled', err: true, statusText: '' }));
     }
   };
 };
@@ -321,7 +397,7 @@ export function callNetworkStatusCheckerFor(action: NetworkAction) {
         displaySnackbar({
           open: true,
           message: errFeedback.statusText,
-          severity: 'error'
+          severity: 'info'
         })
       );
     }
@@ -335,7 +411,7 @@ export function callNetworkStatusCheckerFor(action: NetworkAction) {
           displaySnackbar({
             open: true,
             message: abortionFeedback.statusText,
-            severity: 'error'
+            severity: 'info'
           })
         );
       }

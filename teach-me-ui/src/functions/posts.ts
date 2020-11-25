@@ -1,7 +1,6 @@
 import {
   sendReactionToServer,
   sendReplyToServer,
-  fetchPosts,
   displaySnackbar
 } from '../actions';
 
@@ -32,15 +31,6 @@ export const reactToPostFn = (
       pipe: 'POST_REACTION'
     })
   );
-};
-
-export const fetchPostsFn = (
-  type: 'FEED' | 'WALL',
-  userId?: string,
-  update = false,
-  cb = (s: boolean) => {}
-) => {
-  dispatch(fetchPosts(type, userId, update, cb));
 };
 
 export const fetchMentionsFn = (value: string) => {

@@ -40,7 +40,11 @@ import {
   GET_RECOMMENDATIONS_REJECTED,
   GET_RECOMMENDATIONS_STARTED,
   GET_RECOMMENDATIONS_RESOLVED,
-  FETCHED_RECOMMENDATIONS
+  FETCHED_RECOMMENDATIONS,
+  FetchState,
+  ReduxActionV2,
+  SET_POSTS,
+  postsState
 } from '../constants';
 
 import { resultantReaction } from '../functions';
@@ -60,6 +64,17 @@ export const posts = (
   else if (action.type === UPDATE_REPOST)
     return updateReposts(state, action.payload);
   else return state;
+};
+
+export const _posts = (
+  state: FetchState<PostPropsState[]> = { ...postsState },
+  action: ReduxActionV2<FetchState<PostPropsState>>
+) => {
+  if (action.type === SET_POSTS) {
+    return { ...state, ...action.payload };
+  }
+
+  return state;
 };
 
 export const singlePost = (

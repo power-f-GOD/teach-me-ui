@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
-
-// import Box from '@material-ui/core/Box';
+import React, { useEffect } from 'react';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -11,41 +9,60 @@ import MiddlePane from './Home.MiddlePane';
 import LeftPane from './Home.LeftPane';
 
 import { connect } from 'react-redux';
-import { fetchPostsFn } from '../../functions';
+import { getPosts } from '../../actions/posts';
+import { dispatch, createObserver } from '../../functions/utils';
+import { PostPropsState, FetchState } from '../../constants/interfaces';
 
-const elementRef = React.createRef<any>();
+const observedElementRef = React.createRef<any>();
 
-const isBottom = (el: HTMLElement) =>
-  el.getBoundingClientRect().bottom <= window.innerHeight;
+//used/observed to load/fetch more posts when it is intersecting via the IntersectionObserver
+let observedElement: HTMLElement | null = null;
 
-const morePosts = (cb = (s: boolean) => {}) => {
-  fetchPostsFn('FEED', undefined, true, cb);
-};
+let observer: IntersectionObserver;
+let fetchMorePostsTimeout: any = null;
 
-const Home = (props: any) => {
-  const [isFetching, setIsFetching] = useState<boolean>(false);
-  const fetchStatusSet = (s: boolean) => {
-    setIsFetching(s);
-  };
-  const trackScrolling = () => {
-    if (isBottom(elementRef.current as HTMLElement) && !isFetching) {
-      morePosts(fetchStatusSet);
+const Home = ({ posts }: { posts: FetchState<PostPropsState> }) => {
+  useEffect(() => {
+    document.body.style.overflow =
+      posts.status === 'pending' ? 'hidden' : 'auto';
+  }, [posts.status]);
+
+  useEffect(() => {
+    const isFetching = /fetching/.test(posts.statusText || '');
+    observedElement = observedElementRef.current;
+
+    if (observedElement) {
+      observer = createObserver(
+        null,
+        (entries) => {
+          const entry = entries[0];
+
+          clearTimeout(fetchMorePostsTimeout);
+
+          if (entry.isIntersecting && !isFetching && navigator.onLine) {
+            fetchMorePostsTimeout = setTimeout(() => {
+              dispatch(
+                getPosts('FEED', undefined, true, 'is fetching more posts')
+              );
+            }, 200);
+          }
+        },
+        { threshold: [0.5] }
+      );
+
+      observer.observe(observedElement);
     }
-  };
-  React.useEffect(() => () => window.scrollTo(0, 0), []);
-  React.useEffect(() => {
-    document.addEventListener('scroll', trackScrolling);
+
     return () => {
-      document.removeEventListener('scroll', trackScrolling);
+      observer.unobserve(observedElement as Element);
+      // window.scrollTo(0, 0);
     };
-    // eslint-disable-next-line
-  }, []);
+  }, [posts.statusText, posts.err]);
+
   return (
     <>
       <Container className='Home fade-in'>
-        <Row
-          ref={elementRef}
-          className='mx-auto justify-content-around align-items-start py-3'>
+        <Row className='mx-auto justify-content-around align-items-start pt-3'>
           <Col
             lg={3}
             md={4}
@@ -53,7 +70,10 @@ const Home = (props: any) => {
             <LeftPane />
           </Col>
           <Col lg={6} md={8} className='middle-pane-col px-3'>
-            <MiddlePane type={'FEED'} isFetching={isFetching} />
+            <MiddlePane type={'FEED'} />
+            <Container
+              className='observered-element py-2'
+              ref={observedElementRef}></Container>
           </Col>
           <Col lg={3} className='d-none hang-in d-lg-block right-pane-col'>
             <RightPane />
@@ -64,4 +84,4 @@ const Home = (props: any) => {
   );
 };
 
-export default connect(({ posts }: any) => ({ posts }))(Home);
+export default connect((state: any) => ({ posts: state._posts }))(Home);
