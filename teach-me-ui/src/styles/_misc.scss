@@ -660,3 +660,38 @@ div {
     background: #aaa !important;
   }
 }
+
+.main-modal {
+  .modal-contents {
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  ::-webkit-scrollbar {
+    width: 0.5rem;
+    border-radius: 7px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    border-radius: 7px;
+    width: 15px;
+    margin-bottom: 3.5rem ;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: rgb(194, 194, 197);
+    border-radius: 0.5rem;
+    width: 0.5rem;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(170, 168, 168);
+  }
+
+  textArea {
+    resize: none;
+  }
+}

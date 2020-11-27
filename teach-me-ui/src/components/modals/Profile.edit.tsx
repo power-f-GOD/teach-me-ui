@@ -398,6 +398,10 @@ const EditProfile = (props: any) => {
 
   useEffect(() => () => window.scrollTo(0, 0), []);
 
+  setTimeout(() => {
+    window.location.hash = 'modal';
+  }, 0);
+
   return (
     <Box 
     width='45rem'

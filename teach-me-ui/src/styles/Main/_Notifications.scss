@@ -3,13 +3,13 @@
   transition: all 0s !important;
   ::-webkit-scrollbar {
     width: 0.5rem;
-    border-radius: 7px;
+    border-radius: 0.5rem;
   }
 
   /* Track */
   ::-webkit-scrollbar-track {
-    border-radius: 7px;
-    width: 15px;
+    border-radius: 0.5rem;
+    width: 1rem;
   }
 
   /* Handle */
@@ -91,7 +91,7 @@
       overflow-x: hidden;
       background: white;
       max-width: 100%;
-      border-radius: 0px;
+      border-radius: 0rem;
       box-shadow: none;
       margin: 0em !important;
       padding: 0em !important;

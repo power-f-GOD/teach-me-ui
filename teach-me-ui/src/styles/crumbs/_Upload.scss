@@ -1,21 +1,22 @@
 .div-wrapper {
   transition: 0.3s;
-  padding-right: 3px !important;
-  padding-left: 3px !important;
+  padding-right: 0.18rem !important;
+  padding-left: 0.18rem !important;
 
   .img { 
     width: 100%; 
-    border-width: 5px; 
-    border-radius: 5px;
+    border-width: 0.312rem; 
+    border-radius: 0.312rem;
   }
 }
 
 .remove-img-btn {
+  padding: 0rem;
   position: absolute;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: bolder;
-  height: 20px;
-  width: 20px;
+  height: 1.25rem;
+  width: 1.25rem;
   top: -0.5em;
   right: -0.5em;
   z-index: 2;
@@ -36,7 +37,7 @@
   color: red;
   font-size: small;
   display: none;
-  margin: 0px;
+  margin: 0rem;
   margin-left: auto;
   margin-right: auto;
 }
@@ -61,7 +62,7 @@
 .drop-menu {
   background-color:#ddd;
   color: black;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
 }
 
@@ -76,14 +77,14 @@
 }
 
 #divider {
-  height: 1px;
+  height: 0.0625rem;
   background-color: white;
 }
 
 .menu-options {
   cursor: pointer;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding-left: 0.312rem;
+  padding-right: 0.312rem;
   display: block;
   
   &:hover {
@@ -93,21 +94,21 @@
 
 .scroll-image {
   overflow-y: auto;
-  max-height: 250px;
-  width: 100%
+  max-height: 15.625rem;
+  width: 100%;
 }
 
 .check-button {
   position: absolute;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: bolder;
-  height: 20px;
-  width: 20px;
-  top: 0px;
-  right: 3px;
+  height: 1.25rem;
+  width: 1.25rem;
+  top: 0rem;
+  right: 0.1875rem;
   z-index: 2;
   color: white;
-  border: 1px solid white;
+  border: 0.0625rem solid white;
   background-color: grey;
   transition: 0.25s;
   cursor: pointer;
@@ -116,12 +117,12 @@
 
 .check-button-selected {
   position: absolute;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: bolder;
-  height: 20px;
-  width: 20px;
-  top: 0px;
-  right: 3px;
+  height: 1.25rem;
+  width: 1.25rem;
+  top: 0rem;
+  right: 0.1875rem;
   z-index: 2;
   color: white;
   border: none;
@@ -137,8 +138,8 @@
   justify-content: center;
   align-items: center;
   background-color: gray;
-  border: 1px solid green;
-  border-radius: 5px;
+  border: 0.0625rem solid green;
+  border-radius: 0.3125rem;
   max-height: 8.5em;
 }
 
@@ -149,8 +150,8 @@
   justify-content: center;
   align-items: center;
   background-color: gray;
-  border: 1px solid green;
-  border-radius: 5px;
+  border: 0.0625rem solid green;
+  border-radius: 0.3125rem;
   margin-bottom: 0.3rem;
 }
 
@@ -161,12 +162,8 @@
 .select-header {
   width: 7em;
   margin: auto; 
-  line-height: 35px;
+  line-height: 2.1875rem;
   font-weight: bold; 
-}
-
-.no-uploads {
-  margin: auto; 
 }
 
 #grid-box1 {
@@ -185,20 +182,22 @@
 }
 
 .no-uploads {
+  margin: auto;
   margin-top: -0.3em !important;
-  margin-bottom: 0.5em;
+  margin-bottom: 0em;
+  margin-left: 25%;
 }
 
 .div-wrapper1 {
   transition: 0.3s;
-  padding-right: 0px !important;
-  padding-left: 0px !important;
+  padding-right: 0rem !important;
+  padding-left: 0rem !important;
   // width: 4em;
   // height: 4em;
 
   .img { 
     width: 100%; 
-    border-width: 5px; 
-    border-radius: 5px;
+    border-width: 0.3125rem; 
+    border-radius: 0.3125rem;
   }
 }

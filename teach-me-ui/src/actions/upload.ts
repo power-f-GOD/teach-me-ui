@@ -7,7 +7,6 @@ import {
   SEND_FILES,
   UPLOADS,
   GET_UPLOADS,
-  CustomFile,
 } from '../constants'
 
 export const sendFiles = (payload: any) => {
@@ -24,13 +23,13 @@ export const uploads = (payload: any)=> {
   } 
 }
 
-export const sendFilesToServer = (files: Array<CustomFile>, callbackAction: Function, reusedUploads: Array<any>, idParameter: string, array: boolean = true, actionParameters: any = {}) => {
+export const sendFilesToServer = (files: Array<File>, callbackAction: Function, reusedUploads: Array<any>, idParameter: string, array: boolean = true, actionParameters: any = {}) => {
   dispatch(sendFiles({
     status: 'pending'
   }));
   let token = getState().userData.token;
   let ids: string[] = [];
-  const recursiveUploadReturnsArrayOfId = (files1: Array<CustomFile>) => {
+  const recursiveUploadReturnsArrayOfId = (files1: Array<File>) => {
     const nextFile = files1.shift()
     if(nextFile){
       const formData = new FormData()

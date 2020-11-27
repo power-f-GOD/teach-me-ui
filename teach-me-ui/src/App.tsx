@@ -43,6 +43,8 @@ const App = (props: any) => {
                     '/@:userId/colleagues',
                     '/search',
                     '/p/:id',
+                    '/questions',
+                    '/question/:id',
                     '/*'
                   ]
                 : ['/home', '/search']

@@ -47,7 +47,7 @@ export const getNotificationsRequest = (date: number) => (
     .then((response : any) => {
       const { error, data } = response.data;
       if (!error) {
-        const { notifications, entities } = data.notifications as {
+        const { notifications, entities } = data as {
           notifications: Array<string>;
           entities: any
         };

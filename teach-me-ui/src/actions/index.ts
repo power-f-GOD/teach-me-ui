@@ -5,6 +5,7 @@ export * from './modals';
 export * from './posts';
 export * from './colleague';
 export * from './notifications';
+export * from './question';
 export * from './profile';
 export * from './upload';
 export * from './profile.edit';

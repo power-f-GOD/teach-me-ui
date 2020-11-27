@@ -45,7 +45,7 @@ export const fetchMentionsFn = (value: string) => {
       if (response.data.error) {
         throw new Error(response.data.message);
       }
-      return response.data.colleagues;
+      return response.data.data.colleagues;
     })
     .catch((e) => {
       dispatch(

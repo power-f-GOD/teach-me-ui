@@ -18,6 +18,7 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 import InfoRoundedIcon from '@material-ui/icons/InfoRounded';
 import HelpRoundedIcon from '@material-ui/icons/HelpRounded';
+import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 import Badge from '@material-ui/core/Badge';
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 
@@ -130,6 +131,12 @@ function MainNav(props: any) {
         </Badge>
       </NavLink>
 
+      <NavLink 
+        to='questions' 
+        className='nav-link' >
+        <QuestionAnswerIcon />
+      </NavLink>
+
       <Box component='span' marginX='1em' />
 
       <Button
@@ -185,6 +192,15 @@ function MainNavMenu(props: any) {
         </Badge>
         <Box component='span' className='nav-label ml-3'>
           Notifications
+        </Box>
+      </NavLink>
+
+      <NavLink 
+        to='questions' 
+        className='nav-link' >
+        <QuestionAnswerIcon />
+        <Box component='span' className='nav-label ml-3'>
+          Q&A
         </Box>
       </NavLink>
 
