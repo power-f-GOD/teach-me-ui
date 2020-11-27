@@ -21,7 +21,13 @@
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
     background: rgb(170, 168, 168) !important;
-  }
+	}
+	
+	#question-body {
+		height: 12rem;
+		overflow-y: auto;
+		padding: 0.2rem;
+	}
 
 	.question-input {
 		width: 100% !important;
