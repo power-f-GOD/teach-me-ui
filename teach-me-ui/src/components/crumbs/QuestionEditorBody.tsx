@@ -3,7 +3,7 @@ import React, {
   useRef
 }from 'react';
 
-import Row from 'react-bootstrap/esm/Row';
+import Row from 'react-bootstrap/Row';
 
 import FormatBoldIcon from '@material-ui/icons/FormatBold';
 import FormatItalicIcon from '@material-ui/icons/FormatItalic';
