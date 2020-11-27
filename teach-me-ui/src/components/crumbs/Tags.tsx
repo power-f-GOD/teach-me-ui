@@ -7,11 +7,13 @@ import React, {
 import Row from 'react-bootstrap/Row';
 
 import { ClickAwayListener } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 
 const calculateWidth = (str: string) => {
 	let pre = document.createElement('pre');
 	let div = document.createElement('div');
 	let text = document.createTextNode(str);
+
 	pre.appendChild(text);
 	div.appendChild(pre);
 	div.style.height = 'auto';
@@ -23,6 +25,7 @@ const calculateWidth = (str: string) => {
 	div.style.visibility = 'hidden';
 	const width = div.clientWidth;
 	document.body.removeChild(div);
+
 	return width;
 }
 
@@ -48,8 +51,9 @@ const TagEditor = ({ tags, setTags }: any) => {
 	}, [firstTag]);
 
 	const onChange = ({ currentTarget: target }: any) => {
-		setErrorVisibility(false);
 		let value: string = target.value.substring(0,33);
+
+		setErrorVisibility(false);
 		if (tags[0]) {
 			setInputWidth(calculateWidth(value) + 9);
 		} else {
@@ -70,6 +74,7 @@ const TagEditor = ({ tags, setTags }: any) => {
 				val !== ' ' && val !== ''
 			))];
 			let poped = tempTag.pop() as string;
+
 			setTags([...new Set([...tags, ...tempTag])]);
 			input.current.value = poped;
 			setTimeout(() => {setInputWidth(calculateWidth(poped) + 9)}, 0);
@@ -91,13 +96,11 @@ const TagEditor = ({ tags, setTags }: any) => {
 
 	const handleKeydown = (e: any) => {
 		let key = e.keyCode || e.charCode;
-		console.log(tags, key);
 		
 		if ( (key === 8 || key === 46) && e.target.value === '' && tags[0]) {
 			let tempTags = [...tags];
-			console.log(tempTags);
-			
 			let removedTag = tempTags.pop();
+			
 			setTags([...tempTags]);
 			input.current.value = `${removedTag} `
 		} 
@@ -115,9 +118,7 @@ const TagEditor = ({ tags, setTags }: any) => {
 						<span className='tag' key={index} >
 							<small>{tag}</small>
 							<button onClick={removeTag} className='remove-tag' title='remove tag'>
-							<svg width="14" height="14" viewBox="0 0 14 14" color='#39739d'>
-								<path d="M12 3.41L10.59 2 7 5.59 3.41 2 2 3.41 5.59 7 2 10.59 3.41 12 7 8.41 10.59 12 12 10.59 8.41 7z"></path>
-							</svg>
+								<CloseIcon fontSize='inherit' />
 							</button>
 						</span>
 					)}

@@ -11,6 +11,7 @@ import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import AttachmentIcon from '@material-ui/icons/Attachment';
+import CloseIcon from '@material-ui/icons/Close';
 import { ClickAwayListener, Container } from '@material-ui/core';
 
 import Row from 'react-bootstrap/Row';
@@ -23,7 +24,6 @@ import {
   // sendQuestionToServer,
   askQuestion
 } from '../../actions';
-
 import { 
   displayModal, 
   dispatch,
@@ -31,7 +31,7 @@ import {
   getFileExtension,
 } from '../../functions';
 import TagEditor from '../crumbs/Tags';
-
+import QuestionEditorBody from '../crumbs/QuestionEditorBody';
 
 const RenderImage = (props: {file: File}) => {
   const { file } = props;
@@ -310,15 +310,7 @@ const CreateQuestion = (props: any) => {
       <Row className='d-flex mx-auto mt-0'>
         <small>Give details on the question </small>
       </Row>
-      <Row className='d-flex mx-auto mt-0'>
-        <textarea 
-          required
-          maxLength={1000}
-          className='question-input' 
-          id='question-body' 
-          onChange={onChange('body')} 
-          rows={9} />
-      </Row>
+      <QuestionEditorBody body={state.question.body} onChange={onChange('body')}/>
       <Row className='d-flex mx-auto mt-3'>
         <label className='question-label' htmlFor='question-tags'>Tags</label>
       </Row>
@@ -381,7 +373,7 @@ const CreateQuestion = (props: any) => {
                     type='button' 
                     className='remove-img-btn rounded-circle'
                     onClick={removeFile}>
-                      x
+                      <CloseIcon fontSize='small'/>
                   </button>
                 </div>
               ))}

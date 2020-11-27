@@ -12,6 +12,7 @@ import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import AttachmentIcon from '@material-ui/icons/Attachment';
+import CloseIcon from '@material-ui/icons/Close';
 
 import Row from 'react-bootstrap/Row';
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -310,7 +311,7 @@ const CreatePost = (props: any) => {
                     type='button' 
                     className='remove-img-btn rounded-circle'
                     onClick={removeFile}>
-                      x
+                      <CloseIcon fontSize='small' />
                   </button>
                 </div>
               ))}
