@@ -41,7 +41,7 @@ test('loads and displays placeholder text', async () => {
       <Router>
         <Route
           path='/'
-          render={(props: any) => <Post {...props} {...post} />}
+          render={(props: any) => <Post {...props} parent={post} />}
         />
       </Router>
     </Provider>
