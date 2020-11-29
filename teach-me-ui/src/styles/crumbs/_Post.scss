@@ -9,7 +9,7 @@
   background-color: white;
   position: relative;
   font-size: 1rem;
-  border-radius: 1em;
+  border-radius: 0.85rem;
   margin-bottom: 0.85rem;
 
   &.remove-skeleton-animation {
@@ -35,15 +35,15 @@
       font-weight: bold;
       overflow: hidden;
       margin-bottom: -0.25em;
-      margin-left: 0.75em;
-      width: calc(100% - 1.5em);
+      margin-left: 1em;
+      width: calc(100% - 2em);
       border-bottom: 0.0625em solid #eee;
       padding: 0.35em 0.75em 0.35rem 5em;
     }
   }
 
   .post-header {
-    padding: 0.75em 0.75em 0;
+    padding: 0.75em 1em 0;
   }
 
   .post-avatar {
@@ -55,7 +55,7 @@
 
   .post-body {
     .text {
-      padding: 0.75em 0.5em;
+      padding: 0.75em 0.75em;
       width: 100%;
       cursor: pointer;
       font-weight: 500;
@@ -72,8 +72,8 @@
 
   .post-footer {
     padding: 0.25em 0;
-    width: calc(100% - 1.5rem);
-    margin-left: 0.75em;
+    width: calc(100% - 2rem);
+    margin-left: 1em;
     border-top: 0.125em solid #eee;
     border-bottom: 0.125rem solid #eee;
   }
@@ -131,8 +131,7 @@
   opacity: 0;
   transition: 0.3s, opacity 0.4s;
   overflow: hidden;
-  margin-left: 0.75rem;
-  width: calc(100% - 1.5rem);
+  padding: 0 1rem;
 
   &.open {
     opacity: 1;
@@ -212,8 +211,8 @@
 }
 
 .Reply {
-  font-size: 0.9rem;
-  padding: 0.5rem 0.75rem 0 0.75rem;
+  font-size: 0.9em;
+  padding: 0.5em 1em 0 1em;
   border-radius: unset !important;
   margin-bottom: 0;
 
@@ -223,23 +222,23 @@
     }
 
     .comment-container {
-      border-top: 0.0625rem solid #eee;
+      border-top: 0.0625em solid #eee;
       border-bottom: none;
     }
   }
 
   .post-header {
-    padding: 0;
+    padding: 0 !important;
 
     small {
-      margin-top: -0.15rem;
+      margin-top: -0.15em;
     }
   }
 
   .post-body {
-    border-radius: 0.5rem;
-    margin: 0.25rem 0 0.25rem 2.85rem;
-    width: calc(100% - 2.85rem);
+    border-radius: 0.5em;
+    margin: 0.25em 0 0.25em 3.25em;
+    width: calc(100% - 3.25em);
     background-color: #eee;
 
     .text {
@@ -252,23 +251,22 @@
     $size: 1.95em;
 
     margin-right: 0 !important;
-    margin-top: -0.15rem;
+    margin-top: -0.15em;
     height: $size;
     width: $size;
   }
 
   .post-footer {
-    width: calc(100% - 2.85rem);
-    margin-left: 2.85rem;
-    margin-top: -0.25rem;
+    width: calc(100% - 3.25em) !important;
+    margin-left: 3.25em !important;
+    margin-top: -0.25em;
     border-top: none;
     padding: 0.25rem 0;
-    border-bottom: 0.0625rem solid #eee;
+    border-bottom: 0.0625em solid #eee;
   }
 
   .Comment {
-    width: calc(100% - 2.85rem);
-    margin-left: 2.85rem;
+    padding: 0 0 0 2.85em;
 
     .comment-field {
       max-width: calc(100% - 8.5em);
@@ -277,7 +275,7 @@
     .comment-container {
       padding: 0.35em 0;
       align-items: center;
-      border-bottom: 0.0625rem solid #eee;
+      border-bottom: 0.0625em solid #eee;
 
       .MuiInputBase-root {
         padding: 0.495em 0.5em;

@@ -227,6 +227,27 @@
 
   .Post {
     border-radius: 0;
+
+    .post-header {
+      padding-left: 0.75em;
+      padding-right: 0.75em;
+    }
+
+    .post-body {
+      .text {
+        padding: 0.75em 0.5em;
+      }
+    }
+
+    .post-footer {
+      margin-left: 0.75rem;
+      width: calc(100% - 1.5rem);
+    }
+  }
+
+  .Reply {
+    border-radius: 0;
+    padding: 0.5rem 0.75rem 0;
   }
 
   .recommendations-heading {
