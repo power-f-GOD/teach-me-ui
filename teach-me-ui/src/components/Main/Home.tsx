@@ -19,7 +19,6 @@ const observedElementRef = React.createRef<any>();
 let observedElement: HTMLElement | null = null;
 
 let observer: IntersectionObserver;
-let fetchMorePostsTimeout: any = null;
 
 const Home = ({ posts }: { posts: FetchState<PostPropsState> }) => {
   useEffect(() => {
@@ -37,14 +36,10 @@ const Home = ({ posts }: { posts: FetchState<PostPropsState> }) => {
         (entries) => {
           const entry = entries[0];
 
-          clearTimeout(fetchMorePostsTimeout);
-
           if (entry.isIntersecting && !isFetching && navigator.onLine) {
-            fetchMorePostsTimeout = setTimeout(() => {
-              dispatch(
-                getPosts('FEED', undefined, true, 'is fetching more posts')
-              );
-            }, 200);
+            dispatch(
+              getPosts('FEED', undefined, true, 'is fetching more posts')
+            );
           }
         },
         { threshold: [0.5] }
@@ -72,7 +67,7 @@ const Home = ({ posts }: { posts: FetchState<PostPropsState> }) => {
           <Col lg={6} md={8} className='middle-pane-col px-3'>
             <MiddlePane type={'FEED'} />
             <Container
-              className='observered-element py-2'
+              className='feeds-scroll-observer py-2'
               ref={observedElementRef}></Container>
           </Col>
           <Col lg={3} className='d-none hang-in d-lg-block right-pane-col'>

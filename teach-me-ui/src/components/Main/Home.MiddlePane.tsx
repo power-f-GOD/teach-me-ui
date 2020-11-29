@@ -18,7 +18,6 @@ import { getState, dispatch } from '../../functions';
 
 import { connect } from 'react-redux';
 import { getPosts } from '../../actions';
-import Loader from '../crumbs/Loader';
 
 interface MiddlePaneProps {
   auth: AuthState;
@@ -45,11 +44,22 @@ const MiddlePane: React.FunctionComponent<MiddlePaneProps> = (props) => {
   const isFetching = /(updat|fetch|recycl)(e|ing)?/i.test(
     postsStatusText || ''
   );
+  const username = userData.username || '';
+  let profileUsername = profile.username || '';
+  // here is where the current user profile check is made to render the views accordingly
+  const isSelf =
+    !!username && !!profileUsername && profileUsername === username;
+  const postElements = document.querySelectorAll('.Post');
+  let selfView = isAuthenticated ? isSelf : false;
+  let inProfile = /@\w+/.test(window.location.pathname);
+  const postsDataLength = postsData?.length;
+
   const config: IntersectionObserverInit = {
     root: null,
     rootMargin: '0px',
     threshold: [0.5, 1]
   };
+
   const observer = useMemo(
     () =>
       new IntersectionObserver((entries, self) => {
@@ -70,17 +80,6 @@ const MiddlePane: React.FunctionComponent<MiddlePaneProps> = (props) => {
     // eslint-disable-next-line
     []
   );
-  const username = userData.username || '';
-
-  // console.log(posts)
-
-  let profileUsername = profile.username || '';
-  // here is where the current user profile check is made to render the views accordingly
-  const isSelf =
-    !!username && !!profileUsername && profileUsername === username;
-  const postElements = document.querySelectorAll('.Post');
-  let selfView = isAuthenticated ? isSelf : false;
-  let inProfile = /@\w+/.test(window.location.pathname);
 
   useEffect(() => {
     const type = props.type || 'FEED';
@@ -101,6 +100,12 @@ const MiddlePane: React.FunctionComponent<MiddlePaneProps> = (props) => {
     // eslint-disable-next-line
   }, [postElements.length, props.type]);
 
+  useEffect(() => {
+    if (postStatus !== 'pending') {
+      document.body.style.overflow = postsDataLength ? 'auto' : 'hidden';
+    }
+  }, [postStatus, postsDataLength]);
+
   return (
     <Container className='middle-pane px-0' fluid>
       {(selfView || !inProfile) && <Compose userData={userData} />}
@@ -117,12 +122,7 @@ const MiddlePane: React.FunctionComponent<MiddlePaneProps> = (props) => {
             case 'REPLY':
               return (
                 <React.Fragment key={i}>
-                  <Post
-                    {...post.parent}
-                    child={{ ...childProps }}
-                    type='post'
-                  />
-                  <Post {...childProps} type='reply' />
+                  <Post parent={post.parent!} child={childProps} />
                   {/* {!inProfile && postsData.length >= 3 && i === 3 && (
                     <Recommendations />
                   )} */}
@@ -132,7 +132,7 @@ const MiddlePane: React.FunctionComponent<MiddlePaneProps> = (props) => {
             default:
               return (
                 <React.Fragment key={i}>
-                  <Post {...post} />
+                  <Post parent={post} />
                   {renderRecommendations}
                 </React.Fragment>
               );
@@ -140,9 +140,12 @@ const MiddlePane: React.FunctionComponent<MiddlePaneProps> = (props) => {
         })}
       {postStatus === 'pending' &&
         Array.from({
-          length: Math.floor(window.innerHeight / 150)
-        }).map((_, i) => <Post key={i} />)}
-      <Loader type='ellipsis' show={isFetching && !postsErred} color='#444' />
+          length: Math.floor(window.innerHeight / 450)
+        }).map((_, i) => <Post key={i} index={i} />)}
+      {(isFetching || postsErred) &&
+        Array.from({ length: 2 }).map((_, i) => (
+          <Post key={i} index={i} postsErred={postsErred} />
+        ))}
     </Container>
   );
 };

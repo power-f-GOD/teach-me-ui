@@ -54,7 +54,7 @@ export interface PostPropsState {
   text: string;
   upvotes: number;
   sec_type?: 'REPOST' | 'REPLY';
-  type: 'post' | 'reply';
+  type?: 'post' | 'reply';
   child?: PostProps;
   _extra?: PostExtraProps;
   parent?: PostProps;
@@ -244,6 +244,12 @@ export interface SearchState extends StatusPropsState {
 export interface FetchState<T, T2 = any> extends StatusPropsState {
   data?: T;
   extra?: T2;
+}
+
+export interface APIResponseModel<T> {
+  error: boolean;
+  message?: string;
+  data: T;
 }
 
 export interface SignupPropsState {
@@ -524,11 +530,11 @@ export interface QuestionEditor {
   question: {
     title: string;
     body: string;
-    tags: Array<string>
+    tags: Array<string>;
   };
   selectedUploads: Array<any>;
   selectedFiles: Array<File>;
-  tempSelectedUploads: Array<any>; 
+  tempSelectedUploads: Array<any>;
   showUploads: boolean;
 }
 

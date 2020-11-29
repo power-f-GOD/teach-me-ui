@@ -187,12 +187,12 @@ export const getPosts = (
     func: posts
   });
 
-  getData<{ posts: PostPropsState[] }>(
+  getData<PostPropsState[]>(
     isWall ? `/profile/${userId}/posts` : url || '/feed',
     true
   )
-    .then(({ error, message, posts: _posts }) => {
-      let offset = _posts.slice(-1)[0]?.posted_at;
+    .then(({ error, message, data: _posts }) => {
+      let offset = _posts[0]?.posted_at;
 
       if (!offset) {
         offset = getState()._posts.extra;

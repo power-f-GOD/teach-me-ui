@@ -16,7 +16,8 @@ import {
   FetchState,
   OnlineStatus,
   apiBaseURL,
-  PostPropsState
+  PostPropsState,
+  APIResponseModel
 } from '../constants';
 
 import store from '../appStore';
@@ -52,9 +53,7 @@ export const getData = async <T>(url: string, requiresAuth: boolean) => {
     token = getState().userData.token;
   }
 
-  const response: AxiosResponse<{
-    data: { error: boolean; message?: string } & T;
-  }> = await axios({
+  const response: AxiosResponse<APIResponseModel<T>> = await axios({
     url: `${apiBaseURL}${url}`,
     method: 'GET',
     headers: {
@@ -64,17 +63,16 @@ export const getData = async <T>(url: string, requiresAuth: boolean) => {
   });
 
   // console.log(response);
-
-  return Promise.resolve(response.data.data);
+  return Promise.resolve({ ...response.data });
 };
 
 /**
  *
- * @param url url of destination e.g. /profile/5df9e8t0wekc/posts ... Base URL should not be included
+ * @param url (relative) url of destination e.g. /profile/5df9e8t0wekc/posts ... Base URL should not be included
  * @param data data to be posted to destination
  * @param requiresAuth that is if token/authentication will be required for the get action
  */
-export const postData = async <T>(
+export const sendData = async <T>(
   url: string,
   data?: any,
   requiresAuth?: boolean
@@ -85,9 +83,7 @@ export const postData = async <T>(
     token = getState().userData.token;
   }
 
-  const response: AxiosResponse<{
-    data: { error: boolean; message?: string } & T;
-  }> = await axios({
+  const response: AxiosResponse<APIResponseModel<T>> = await axios({
     url: `${apiBaseURL}${url}`,
     method: 'POST',
     headers: {
@@ -96,8 +92,9 @@ export const postData = async <T>(
     },
     data
   });
+
   // console.log(response.data)
-  return Promise.resolve({ ...response.data.data });
+  return Promise.resolve({ ...response.data });
 };
 
 export function loopThru<T>(

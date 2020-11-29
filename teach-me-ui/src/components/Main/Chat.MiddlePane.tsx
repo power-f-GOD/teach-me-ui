@@ -458,10 +458,7 @@ function MiddlePaneHeader(props: {
         })
       );
       window.history.replaceState({}, '', queryString);
-
-      if (isMinimized) {
-        document.body.style.overflow = 'auto';
-      }
+      document.body.style.overflow = isMinimized ? 'auto' : 'hidden';
     },
     [_chatState]
   );
