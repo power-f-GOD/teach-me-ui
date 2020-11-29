@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import Axios from 'axios';
 
+import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
@@ -26,14 +27,14 @@ import { triggerSearchKanyimuta } from '../../actions/search';
 
 import { LazyLoadImage as LazyImg } from 'react-lazy-load-image-component';
 
-import { PostFooter } from './Post.crumbs';
+import { PostFooter, Reply } from './Post.crumbs';
 import { CREATE_REPOST } from '../../constants/modals';
 
 const stopProp = (e: any) => {
   e.stopPropagation();
 };
 
-export const processPostFn = (post: string) => {
+export const processPost = (post: string) => {
   if (!post) return;
 
   const mid = post.replace(/([\t\r\n\f]+)/gi, ' $1 ');
@@ -83,34 +84,38 @@ export const openCreateRepostModal = (meta: any) => (e: any) => {
   });
 };
 
-const Post: React.FunctionComponent<
-  Partial<PostPropsState> & Partial<{ head: boolean }>
-> = (props) => {
+const Post: React.FC<{
+  parent?: Partial<PostPropsState>;
+  child?: Partial<PostPropsState>;
+  index?: number;
+  postsErred?: boolean;
+}> = (props) => {
+  const { parent, child, index, postsErred } = props;
   const {
-    type,
+    // type,
     media,
     sec_type,
     _extra,
     id,
     sender,
     text,
-    parent,
+    // parent,
     posted_at,
     upvotes: _upvotes,
     downvotes: _downvotes,
     reaction,
     reposts,
-    replies,
-    child
-  } = props;
+    replies
+    // child
+  } = parent || {};
   const { username: sender_username, first_name, last_name, profile_photo } =
     sender || {};
   const sender_name = first_name ? `${first_name} ${last_name}` : '';
   const child_sender_name = child
-    ? `${child?.sender.first_name} ${child?.sender.last_name}`
+    ? `${child?.sender!.first_name} ${child?.sender?.last_name}`
     : '';
   const parent_sender_name = parent
-    ? `${parent?.sender.first_name} ${parent?.sender.last_name}`
+    ? `${parent?.sender!.first_name} ${parent?.sender?.last_name}`
     : '';
 
   const history = useHistory();
@@ -162,7 +167,7 @@ const Post: React.FunctionComponent<
     extra = `${child_sender_name} replied`;
 
     extra +=
-      sender_username === child?.sender.username
+      sender_username === child?.sender!.username
         ? ' thier own post'
         : ` ${sender_name}'s post`;
   }
@@ -230,7 +235,7 @@ const Post: React.FunctionComponent<
       {/* Post */}
       <Box
         id={id}
-        className={`${type === 'reply' ? 'Reply' : 'Post'} fade-in-opacity`}>
+        className={`Post ${postsErred ? 'remove-skeleton-animation' : ''}`}>
         {extra && <small className='extra'>{extra}</small>}
 
         {/* Post header */}
@@ -257,8 +262,15 @@ const Post: React.FunctionComponent<
               </>
             ) : (
               <>
-                <Skeleton width={150} />
-                <Skeleton width={100} />
+                <Box className='d-flex'>
+                  <Skeleton width={150} />
+                  <Box className='theme-tertiary-lighter ml-2'>
+                    <Skeleton width={100} />
+                  </Box>
+                </Box>
+                <Box component='small' className='theme-tertiary'>
+                  <Skeleton width={100} />
+                </Box>
               </>
             )}
           </Col>
@@ -267,8 +279,49 @@ const Post: React.FunctionComponent<
         {/* Post body */}
         {sender_name ? (
           <Row className='post-body'>
+            {/* Post repost */}
+
             <Box component='div' onClick={navigate(id!)} className='text'>
-              {processPostFn(text!)}
+              {sec_type === 'REPOST' && text && (
+                <Box
+                  className='Quoted-Post'
+                  onClick={navigate(parent?.id as string)}>
+                  <Row className='mx-0 align-items-center'>
+                    <Avatar
+                      component='span'
+                      className='post-avatar'
+                      alt={parent_sender_name}
+                      src={
+                        parent?.sender?.profile_photo
+                          ? parent?.sender.profile_photo
+                          : ''
+                      }
+                    />
+                    <Col className='d-flex flex-column justify-content-center pl-2'>
+                      <Box className='d-flex'>
+                        <Link
+                          to={`@${parent?.sender?.username}`}
+                          className='post-sender font-bold'>
+                          {parent_sender_name}
+                        </Link>
+                        <Box className='theme-tertiary-lighter ml-1'>
+                          | @{parent?.sender?.username}
+                        </Box>
+                      </Box>
+                      <Box component='small' className='theme-tertiary'>
+                        {formatDate(+parent?.posted_at!)}
+                      </Box>
+                    </Col>
+                  </Row>
+
+                  <Row className='container-fluid  mx-auto'>
+                    <Box component='div' pt={1} px={0} className='break-word'>
+                      {processPost(parent?.text as string)}
+                    </Box>
+                  </Row>
+                </Box>
+              )}
+              {processPost(text!)}
             </Box>
 
             {(media as any[]).length > 0 && (
@@ -343,48 +396,23 @@ const Post: React.FunctionComponent<
           </Row>
         ) : (
           <Box p={2}>
-            <Skeleton count={3} />
-          </Box>
-        )}
-
-        {/* Post repost */}
-        {sec_type === 'REPOST' && text && (
-          <Box className='quoted-post' onClick={navigate(parent?.id as string)}>
-            <Row className='container-fluid px-2 mx-auto p-0 align-items-center'>
-              <Avatar
-                component='span'
-                className='post-avatar'
-                alt={parent_sender_name}
-                src={
-                  parent?.sender.profile_photo
-                    ? parent?.sender.profile_photo
-                    : ''
-                }
-              />
-              <Col className='d-flex flex-grow-1 flex-column'>
-                <Link
-                  to={`@${parent?.sender.username}`}
-                  className='post-sender'>
-                  {parent_sender_name}
-                </Link>
-                <Box component='div' color='#777'>
-                  @{parent?.sender.username}
-                </Box>
-              </Col>
-            </Row>
-            <Row className='container-fluid  mx-auto'>
-              <Box component='div' pt={1} px={0} className='break-word'>
-                {processPostFn(parent?.text as string)}
-              </Box>
-              <Box
-                component='small'
-                textAlign='right'
-                width='100%'
-                color='#888'
-                pt={1}>
-                {formatDate(parent?.posted_at as number)}
-              </Box>
-            </Row>
+            {(index ?? 0) % 2 === 0 ? (
+              <Skeleton height='12rem' className='media' />
+            ) : (
+              <>
+                <Skeleton height='1rem' width='50%' className='mb-2' />
+                <Skeleton height='1rem' width='85%' className='mb-2' />
+                <Skeleton height='1rem' width='60%' className='mb-2' />
+              </>
+            )}
+            <Container className='d-flex'>
+              <Skeleton width='4rem' height='1.5rem' className='mr-2 mt-3' />
+              <Skeleton width='4rem' height='1.5rem' className='mr-2 mt-3' />
+              <Skeleton width='4rem' height='1.5rem' className='mr-2 mt-3' />
+              <Container className='ml-auto w-auto'>
+                <Skeleton width='4rem' className='mt-3' height='1.5rem' />
+              </Container>
+            </Container>
           </Box>
         )}
 
@@ -400,11 +428,13 @@ const Post: React.FunctionComponent<
               reposts={reposts}
               replies={replies}
               repostMeta={parent || props}
-              anchorIsParent={!!child}
+              anchorIsParent={false}
               openCreateRepostModal={openCreateRepostModal}
             />
           </Box>
         )}
+
+        {child && <Reply {...child} />}
       </Box>
     </>
   );

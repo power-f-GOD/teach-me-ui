@@ -30,7 +30,8 @@ import {
   callNetworkStatusCheckerFor,
   populateStateWithUserData,
   logError,
-  delay
+  delay,
+  sendData
 } from '../functions';
 import { displaySnackbar, closeWebSocket } from './misc';
 
@@ -59,6 +60,7 @@ export const doForgotPassword = (email: string) => (
       })
     );
   });
+
   return {
     type: FORGOT_PASSWORD_REQUEST
   };
@@ -114,6 +116,7 @@ export const forgotPasswordPending = () => {
     payload: { status: 'pending' }
   };
 };
+
 export const forgotPasswordCompleted = () => {
   return {
     type: FORGOT_PASSWORD_COMPLETED,
@@ -124,8 +127,6 @@ export const forgotPasswordCompleted = () => {
 export const requestSignup = (data: SignupFormData) => (
   dispatch: Function
 ): ReduxAction => {
-  dispatch(signup({ status: 'pending', statusText: ' ' }));
-
   let {
     firstname,
     lastname,
@@ -147,41 +148,27 @@ export const requestSignup = (data: SignupFormData) => (
   username = username.toLowerCase();
   email = email.toLowerCase();
 
+  dispatch(signup({ status: 'pending', statusText: ' ' }));
   //check if user is online as lost network connection is not a failure state for Firebase db in order to give response to user
   callNetworkStatusCheckerFor({ name: 'signup', func: signup });
 
-  axios({
-    url: '/auth/register',
-    baseURL,
-    method: 'POST',
-    data: {
-      firstname,
-      lastname,
-      username,
-      email,
-      date_of_birth,
-      password,
-      institution_id: institution,
-      department,
-      level
-    },
-    headers: {
-      'Content-Type': 'application/json'
-    }
+  sendData<UserData>('/auth/register', {
+    firstname,
+    lastname,
+    username,
+    email,
+    date_of_birth,
+    password,
+    institution_id: institution,
+    department,
+    level
   })
-    .then((response) => {
-      const { data: _data } = response;
-      const { error, message } = _data;
-
+    .then(({ error, message, data }) => {
       if (!error) {
         const displayName = `${firstname} ${lastname}`;
 
-        delete _data.error;
-
-        const userData: UserData = { ..._data };
-
         populateStateWithUserData({
-          ...userData,
+          ...data,
           displayName
         }).then(() => {
           dispatch(signup({ status: 'fulfilled' }));
@@ -198,7 +185,7 @@ export const requestSignup = (data: SignupFormData) => (
           //set token for user session and subsequent authentication
           if (navigator.cookieEnabled) {
             localStorage.kanyimuta = JSON.stringify({
-              ...userData,
+              ...data,
               displayName,
               dob
             });
@@ -206,7 +193,7 @@ export const requestSignup = (data: SignupFormData) => (
         });
       } else {
         switch (true) {
-          case /username.+(taken|used?)/i.test(message):
+          case /username.+(taken|used?)/i.test(message!):
             dispatch(
               validateUsername({
                 value: username,
@@ -215,7 +202,7 @@ export const requestSignup = (data: SignupFormData) => (
               })
             );
             break;
-          case /email.+(taken|used?)/i.test(message):
+          case /email.+(taken|used?)/i.test(message!):
             dispatch(
               validateEmail({
                 value: email,
@@ -265,32 +252,16 @@ export const requestSignin = (data: SigninFormData) => (
   let { id, password } = data;
   let identity = id;
 
-  axios({
-    method: 'POST',
-    url: '/auth/login',
-    baseURL,
-    data: {
-      identity,
-      password
-    },
-    headers: {
-      'Content-Type': 'application/json'
-    }
+  sendData<UserData>('/auth/login', {
+    identity,
+    password
   })
-    .then((response) => {
-      const { data: _data } = response;
-      const { data, error } = _data;
-      const message = data.message;
-
+    .then(({ error, message, data }) => {
       if (!error) {
         const displayName = `${data.first_name} ${data.last_name}`;
 
-        delete _data.error;
-
-        const userData: UserData = { ...data };
-
         populateStateWithUserData({
-          ...userData,
+          ...data,
           displayName
         }).then(() => {
           dispatch(signin({ status: 'fulfilled' }));
@@ -307,14 +278,14 @@ export const requestSignin = (data: SigninFormData) => (
           //set token for user session and subsequent authentication
           if (navigator.cookieEnabled) {
             localStorage.kanyimuta = JSON.stringify({
-              ...userData,
+              ...data,
               displayName
             });
           }
         });
       } else {
         switch (true) {
-          case /details?|account/i.test(message):
+          case /details?|account/i.test(message!):
             dispatch(
               validateSigninId({
                 value: id,
@@ -325,7 +296,7 @@ export const requestSignin = (data: SigninFormData) => (
               })
             );
             break;
-          case /password.+(invalid)?/i.test(message):
+          case /password.+(invalid)?/i.test(message!):
             dispatch(
               validateSigninPassword({
                 value: password,
@@ -398,8 +369,8 @@ export function auth(payload: AuthState): ReduxAction {
 }
 
 export const requestSignout = () => (dispatch: Function): ReduxAction => {
-  dispatch(closeWebSocket());
   dispatch(signout({ status: 'pending' }));
+  dispatch(closeWebSocket());
 
   if (navigator.cookieEnabled) {
     const username = JSON.parse(localStorage.kanyimuta ?? '{}').username;
