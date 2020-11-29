@@ -192,20 +192,20 @@ export const getPosts = (
     true
   )
     .then(({ error, message, data: _posts }) => {
-      let offset = _posts[0]?.posted_at;
+      let offset = _posts.slice(-1)[0]?.posted_at;
 
       if (!offset) {
         offset = getState()._posts.extra;
       }
 
-      // console.log(_posts, offset);
-
       if (error) {
         dispatch(posts({ status: 'settled', statusText: message, err: true }));
       } else {
+        // console.log(_posts, offset);
         if (!_posts.length && type === 'FEED') {
           // recursively get (recycled) Posts if no post is returned
           if (!isRecycling) {
+            
             dispatch(
               getPosts(
                 type,
