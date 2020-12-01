@@ -24,12 +24,12 @@ const post: Partial<Omit<PostPropsState, 'sender'>> & {
     username: 'iambenkay'
   },
   media: [],
-  posted_at: 123456,
-  reposts: 1,
+  date: 123456,
+  repost_count: 1,
   type: 'post',
-  downvotes: 2450,
-  upvotes: 7134561,
-  replies: 45271,
+  downvote_count: 2450,
+  upvote_count: 7134561,
+  reply_count: 45271,
   text:
     'Where do people go when they die? Same place they were before they were born!',
   reaction: 'DOWNVOTE'
@@ -41,7 +41,7 @@ test('loads and displays placeholder text', async () => {
       <Router>
         <Route
           path='/'
-          render={(props: any) => <Post {...props} parent={post} />}
+          render={(props: any) => <Post {...props} {...post} />}
         />
       </Router>
     </Provider>

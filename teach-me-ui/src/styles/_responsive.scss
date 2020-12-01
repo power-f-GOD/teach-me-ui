@@ -245,6 +245,15 @@
     }
   }
 
+  .QuotedPost {
+    margin: 0.75rem 0.75rem 0 0.75rem;
+    width: calc(100% - 1.5rem);
+  }
+
+  .Comment {
+    padding: 0 0.75em;
+  }
+
   .Reply {
     border-radius: 0;
     padding: 0.5rem 0.75rem 0;

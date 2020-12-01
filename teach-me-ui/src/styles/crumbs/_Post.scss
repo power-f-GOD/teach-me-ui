@@ -18,6 +18,25 @@
     }
   }
 
+  &.has-replies {
+    .post-footer {
+      border-bottom: 0.125rem solid #eee;
+    }
+
+    .Comment {
+      .comment-container {
+        border-top: none;
+        border-bottom: 0.125rem solid #eee;
+      }
+    }
+  }
+
+  &.has-media {
+    .post-footer {
+      border-top: none;
+    }
+  }
+
   .container,
   .row,
   .col {
@@ -75,7 +94,7 @@
     width: calc(100% - 2rem);
     margin-left: 1em;
     border-top: 0.125em solid #eee;
-    border-bottom: 0.125rem solid #eee;
+    // border-bottom: 0.125rem solid #eee;
   }
 
   .reaction-wrapper {
@@ -144,7 +163,8 @@
   .comment-container {
     padding: 0.35em 0;
     align-items: center;
-    border-bottom: 0.125rem solid #eee;
+    border-top: 0.125em solid #eee;
+    
 
     .MuiInputBase-root {
       padding: 0.495em 0.25em;
@@ -194,11 +214,13 @@
   }
 }
 
-.Quoted-Post {
+.QuotedPost {
   border-radius: 0.75rem;
   border: 0.125rem solid #ddd;
   padding: 0.5rem;
-  margin-bottom: 0.75rem;
+  margin: 0.75rem 1rem 0 1rem;
+  width: calc(100% - 2rem);
+  cursor: pointer;
   font-size: 0.9rem;
   background: rgba(0, 0, 0, 0.035);
 
@@ -222,8 +244,8 @@
     }
 
     .comment-container {
-      border-top: 0.0625em solid #eee;
-      border-bottom: none;
+      border-top: 0.0625em solid #eee !important;
+      border-bottom: none !important;
     }
   }
 
@@ -235,13 +257,21 @@
     }
   }
 
+  .display-name-wrapper {
+    padding: 0.25em 0.5em;
+    background-color: #f0f0f0;
+    margin-left: 0.55em;
+    border-radius: 0.75em 0.75em 0 0;
+  }
+
   .post-body {
-    border-radius: 0.5em;
-    margin: 0.25em 0 0.25em 3.25em;
+    border-radius: 0 0 0.75em 0.75em;
+    margin: 0 0 0.25em 3.25em;
     width: calc(100% - 3.25em);
-    background-color: #eee;
+    background-color: #f0f0f0;
 
     .text {
+      padding: 0 0.5em 0.5em !important;
       cursor: unset;
       border: none;
     }

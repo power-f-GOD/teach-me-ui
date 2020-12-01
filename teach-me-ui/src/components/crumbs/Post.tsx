@@ -27,7 +27,7 @@ import { triggerSearchKanyimuta } from '../../actions/search';
 
 import { LazyLoadImage as LazyImg } from 'react-lazy-load-image-component';
 
-import { PostFooter, Reply } from './Post.crumbs';
+import { PostFooter, Reply, QuotedPost } from './Post.crumbs';
 import { CREATE_REPOST } from '../../constants/modals';
 
 const stopProp = (e: any) => {
@@ -84,39 +84,42 @@ export const openCreateRepostModal = (meta: any) => (e: any) => {
   });
 };
 
-const Post: React.FC<{
-  parent?: Partial<PostPropsState>;
-  child?: Partial<PostPropsState>;
-  index?: number;
-  postsErred?: boolean;
-}> = (props) => {
-  const { parent, child, index, postsErred } = props;
+const Post: React.FC<
+  Partial<PostPropsState> & {
+    index?: number;
+    postsErred?: boolean;
+  }
+> = (props) => {
+  const { index, postsErred, ...others } = props;
   const {
     // type,
     media,
-    sec_type,
-    _extra,
+    // sec_type,
     id,
     sender,
     text,
-    // parent,
-    posted_at,
-    upvotes: _upvotes,
-    downvotes: _downvotes,
+    date: posted_at,
+    // upvotes: _upvotes,
+    // downvotes: _downvotes,
     reaction,
     reposts,
-    replies
-    // child
-  } = parent || {};
+    replies,
+    reply_count,
+    repost_count,
+    upvote_count,
+    downvote_count
+  } = others || {};
   const { username: sender_username, first_name, last_name, profile_photo } =
     sender || {};
   const sender_name = first_name ? `${first_name} ${last_name}` : '';
-  const child_sender_name = child
-    ? `${child?.sender!.first_name} ${child?.sender?.last_name}`
-    : '';
-  const parent_sender_name = parent
-    ? `${parent?.sender!.first_name} ${parent?.sender?.last_name}`
-    : '';
+  // const child_sender_name = child
+  //   ? `${child?.sender!.first_name} ${child?.sender?.last_name}`
+  //   : '';
+  // const parent_sender_name = parent
+  //   ? `${parent?.sender!.first_name} ${parent?.sender?.last_name}`
+  //   : '';
+
+  // let _extra = '';
 
   const history = useHistory();
   const [mediaPreview, setMediaPreview] = useState(false);
@@ -151,27 +154,28 @@ const Post: React.FC<{
     );
   };
 
-  if (child?.sec_type === 'REPOST') {
-    extra = `${child_sender_name} reposted`;
-  }
+  // if (child?.sec_type === 'REPOST') {
+  //   extra = `${child_sender_name} reposted`;
+  // }
 
-  if (_extra) {
-    switch (_extra.type) {
-      case 'UPVOTE':
-        extra = `${_extra?.colleague_name} upvoted`;
-        break;
-    }
-  }
+  // if (_extra) {
+  //   switch (_extra.type) {
+  //     case 'UPVOTE':
+  //       extra = `${_extra?.colleague_name} upvoted`;
+  //       break;
+  //   }
+  // }
 
-  if (child?.sec_type === 'REPLY') {
-    extra = `${child_sender_name} replied`;
+  // if (child?.sec_type === 'REPLY') {
+  //   extra = `${child_sender_name} replied`;
 
-    extra +=
-      sender_username === child?.sender!.username
-        ? ' thier own post'
-        : ` ${sender_name}'s post`;
-  }
+  //   extra +=
+  //     sender_username === child?.sender!.username
+  //       ? ' thier own post'
+  //       : ` ${sender_name}'s post`;
+  // }
 
+  // console.log(parent?.id, id);
   return (
     <>
       <Modal
@@ -235,7 +239,9 @@ const Post: React.FC<{
       {/* Post */}
       <Box
         id={id}
-        className={`Post ${postsErred ? 'remove-skeleton-animation' : ''}`}>
+        className={`Post ${postsErred ? 'remove-skeleton-animation' : ''} ${
+          replies?.length ? 'has-replies' : ''
+        } ${media?.length ? 'has-media' : ''}`}>
         {extra && <small className='extra'>{extra}</small>}
 
         {/* Post header */}
@@ -281,50 +287,21 @@ const Post: React.FC<{
           <Row className='post-body'>
             {/* Post repost */}
 
-            <Box component='div' onClick={navigate(id!)} className='text'>
-              {sec_type === 'REPOST' && text && (
-                <Box
-                  className='Quoted-Post'
-                  onClick={navigate(parent?.id as string)}>
-                  <Row className='mx-0 align-items-center'>
-                    <Avatar
-                      component='span'
-                      className='post-avatar'
-                      alt={parent_sender_name}
-                      src={
-                        parent?.sender?.profile_photo
-                          ? parent?.sender.profile_photo
-                          : ''
-                      }
-                    />
-                    <Col className='d-flex flex-column justify-content-center pl-2'>
-                      <Box className='d-flex'>
-                        <Link
-                          to={`@${parent?.sender?.username}`}
-                          className='post-sender font-bold'>
-                          {parent_sender_name}
-                        </Link>
-                        <Box className='theme-tertiary-lighter ml-1'>
-                          | @{parent?.sender?.username}
-                        </Box>
-                      </Box>
-                      <Box component='small' className='theme-tertiary'>
-                        {formatDate(+parent?.posted_at!)}
-                      </Box>
-                    </Col>
-                  </Row>
+            {/* {sec_type === 'REPOST' &&
+              text && */}
+            {reposts?.map((repost) => (
+              <QuotedPost {...repost} navigate={navigate} key={repost.id} />
+            ))}
 
-                  <Row className='container-fluid  mx-auto'>
-                    <Box component='div' pt={1} px={0} className='break-word'>
-                      {processPost(parent?.text as string)}
-                    </Box>
-                  </Row>
-                </Box>
-              )}
+            <Box
+              component='div'
+              onClick={navigate(id!)}
+              className='text'
+              data-id={id}>
               {processPost(text!)}
             </Box>
 
-            {(media as any[]).length > 0 && (
+            {media?.length! > 0 && (
               <Box
                 style={{
                   display: 'grid',
@@ -338,7 +315,7 @@ const Post: React.FC<{
                   columnGap: '0.2rem',
                   rowGap: '0.2rem'
                 }}>
-                {(media as any[]).map((m, i, self) => {
+                {media?.map((m, i, self) => {
                   const style: any = {};
                   switch (i) {
                     case 0:
@@ -422,19 +399,21 @@ const Post: React.FC<{
             <PostFooter
               id={id}
               text={text}
-              upvotes={_upvotes}
-              downvotes={_downvotes}
+              upvote_count={upvote_count}
+              downvote_count={downvote_count}
               reaction={reaction}
-              reposts={reposts}
-              replies={replies}
-              repostMeta={parent || props}
+              repost_count={repost_count}
+              reply_count={reply_count}
+              repostMeta={others}
               anchorIsParent={false}
               openCreateRepostModal={openCreateRepostModal}
             />
           </Box>
         )}
 
-        {child && <Reply {...child} />}
+        {replies?.map((reply) => (
+          <Reply {...reply} key={reply.id} />
+        ))}
       </Box>
     </>
   );

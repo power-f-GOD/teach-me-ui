@@ -107,27 +107,27 @@ export const sendReactionToServer = (payload: SocketProps) => (
   dispatch(
     reactToPost({ id: payload.post_id, type: payload.reaction as Reaction })
   );
-  const posts: Array<PostPropsState> = getState().posts;
-  const singlePost: PostPropsState = getState().singlePost;
+  // const posts: Array<PostPropsState> = getState().posts;
+  // const singlePost: PostPropsState = getState().singlePost;
 
-  let post = posts.find((post: PostPropsState) =>
-    (post.id as string) === payload.post_id
-      ? post
-      : (post.parent?.id as string) === payload.post_id
-      ? post.parent
-      : undefined
-  );
-  if (post === undefined) {
-    post =
-      (singlePost.id as string) === payload.post_id
-        ? singlePost
-        : (singlePost.parent?.id as string) === payload.post_id
-        ? (singlePost.parent as PostPropsState)
-        : undefined;
-  }
-  if (post === undefined) return;
-  const socket: WebSocket = getState().webSocket as WebSocket;
-  socket.send(JSON.stringify({ ...payload, reaction: post?.reaction }));
+  // let post = posts.find((post: PostPropsState) =>
+  //   (post.id as string) === payload.post_id
+  //     ? post
+  //     : (post.parent?.id as string) === payload.post_id
+  //     ? post.parent
+  //     : undefined
+  // );
+  // if (post === undefined) {
+  //   post =
+  //     (singlePost.id as string) === payload.post_id
+  //       ? singlePost
+  //       : (singlePost.parent?.id as string) === payload.post_id
+  //       ? (singlePost.parent as PostPropsState)
+  //       : undefined;
+  // }
+  // if (post === undefined) return;
+  // const socket: WebSocket = getState().webSocket as WebSocket;
+  // socket.send(JSON.stringify({ ...payload, reaction: post?.reaction }));
 };
 
 export const makeRepost = (payload: SocketProps) => (dispatch: Function) => {
@@ -192,8 +192,8 @@ export const getPosts = (
     true
   )
     .then(({ error, message, data: _posts }) => {
-      let offset = _posts.slice(-1)[0]?.posted_at;
-
+      let offset = _posts.slice(-1)[0]?.date;
+      console.log(isRecycling, _posts, url);
       if (!offset) {
         offset = getState()._posts.extra;
       }
@@ -205,14 +205,13 @@ export const getPosts = (
         if (!_posts.length && type === 'FEED') {
           // recursively get (recycled) Posts if no post is returned
           if (!isRecycling) {
-            
             dispatch(
               getPosts(
                 type,
                 userId,
                 update,
                 'fetching recycled posts',
-                `/feed?recycle=true&offset=${offset}`
+                `/feed?recycle=true&offset=${offset ?? ''}`
               )
             );
           }
