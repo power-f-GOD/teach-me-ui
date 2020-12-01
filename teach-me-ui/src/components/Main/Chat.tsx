@@ -66,7 +66,9 @@ window.addEventListener('popstate', () => {
 
   const { chat, cid } = queryString.parse(window.location.search);
 
-  document.body.style.overflow = !chat || chat === 'm2' ? 'auto' : 'hidden';
+  if (!window.location.hash) {
+    document.body.style.overflow = !chat || chat === 'm2' ? 'auto' : 'hidden';
+  }
 
   if (window.innerWidth < 992 && chat) {
     dispatch(

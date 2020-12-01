@@ -102,7 +102,10 @@ const MiddlePane: React.FunctionComponent<MiddlePaneProps> = (props) => {
 
   useEffect(() => {
     if (postStatus !== 'pending') {
-      document.body.style.overflow = postsDataLength ? 'auto' : 'hidden';
+      document.body.style.overflow =
+        postsDataLength && !/chat/.test(window.location.search)
+          ? 'auto'
+          : 'hidden';
     }
   }, [postStatus, postsDataLength]);
 
@@ -114,29 +117,21 @@ const MiddlePane: React.FunctionComponent<MiddlePaneProps> = (props) => {
       )}
       {postStatus !== 'pending' &&
         postsData?.map((post, i: number) => {
-          const childProps = { ...post, parent: undefined };
           const renderRecommendations = !inProfile &&
             (i === 3 || (i > 0 && i % 20 === 0)) && <Recommendations />;
+          const nReposts = post.reposts.length;
+          const { reposts, ...other } = post;
 
-          switch (post.sec_type) {
-            case 'REPLY':
-              return (
-                <React.Fragment key={i}>
-                  <Post parent={post.parent!} child={childProps} />
-                  {/* {!inProfile && postsData.length >= 3 && i === 3 && (
-                    <Recommendations />
-                  )} */}
-                  {renderRecommendations}
-                </React.Fragment>
-              );
-            default:
-              return (
-                <React.Fragment key={i}>
-                  <Post parent={post} />
-                  {renderRecommendations}
-                </React.Fragment>
-              );
-          }
+          return (
+            <React.Fragment key={i}>
+              {nReposts === 1 ? (
+                <Post {...post.reposts[0]} reposts={[{ ...other }]} />
+              ) : (
+                <Post {...post} />
+              )}
+              {renderRecommendations}
+            </React.Fragment>
+          );
         })}
       {postStatus === 'pending' &&
         Array.from({

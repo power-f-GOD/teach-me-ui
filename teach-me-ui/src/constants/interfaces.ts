@@ -32,13 +32,18 @@ export interface InputErrState {
 }
 
 export interface PostPropsState {
+  downvote_count: number;
+  reactions: UserData[];
+  reply_count: number;
+  repost_count: number;
+  upvote_count: number;
   downvotes: number;
   id: string;
   media: any[];
-  posted_at: number;
+  date: number;
   reaction: Reaction;
-  replies: number;
-  reposts: number;
+  replies: Partial<PostPropsState>[];
+  reposts: Partial<PostPropsState>[];
   sender: {
     cover_photo: string;
     department: string;
@@ -53,11 +58,11 @@ export interface PostPropsState {
   };
   text: string;
   upvotes: number;
-  sec_type?: 'REPOST' | 'REPLY';
+  sec_type?: 'REPOST';
   type?: 'post' | 'reply';
-  child?: PostProps;
-  _extra?: PostExtraProps;
-  parent?: PostProps;
+  // child?: PostProps;
+  // _extra?: PostExtraProps;
+  // parent?: PostProps;
 }
 
 interface PostExtraProps {
@@ -324,6 +329,7 @@ export interface UserData {
   date_of_birth?: string;
   online_status?: OnlineStatus;
   username: string;
+  reaction?: 'UPVOTE' | 'DOWNVOTE';
 }
 
 export interface ColleagueData {

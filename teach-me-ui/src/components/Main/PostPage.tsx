@@ -19,17 +19,26 @@ import { fetchReplies, fetchPost } from '../../actions';
 import { Redirect } from 'react-router-dom';
 
 import { dispatch } from '../../functions';
+import { PostPropsState, FetchState } from '../../constants';
 
-const PostPage = (props: any) => {
+const PostPage = (props: {
+  match: any;
+  posts: FetchState<PostPropsState[]>;
+  fetchSinglePostStatus: any;
+  post: any;
+}) => {
+  const { match, fetchSinglePostStatus } = props;
+  // const { status: postsStatus } = posts;
+
   React.useEffect(() => {
     window.scrollTo(0, 0);
-    dispatch(fetchPost(props.match.params.id));
-  }, [props.match.params.id]);
+    dispatch(fetchPost(match.params.id));
+  }, [match.params.id]);
 
-  if (props.fetchSinglePostStatus === 'pending') {
+  if (fetchSinglePostStatus === 'pending') {
     return <Loader />;
   }
-  if (props.fetchSinglePostStatus === 'rejected') {
+  if (fetchSinglePostStatus === 'rejected') {
     return <Redirect to='/' />;
   }
   return (
@@ -67,8 +76,7 @@ const RepliesBase = (props: any) => {
 
 const mapStateToProps = (state: any, ownProps: any) => ({
   ...ownProps,
-  posts: state.posts,
-  fetchPostStatus: state.fetchPostStatus
+  posts: state._posts
 });
 
 const Replies = connect(mapStateToProps)(RepliesBase);
