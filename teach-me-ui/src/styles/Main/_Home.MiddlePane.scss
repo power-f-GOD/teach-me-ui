@@ -187,6 +187,15 @@
   }
 }
 
+.feeds-scroll-observer {
+  position: absolute;
+  bottom: 0;
+  height: 85vh;
+  min-height: 40rem;
+  left: 0;
+  pointer-events: none;
+}
+
 body.desktop.not-mac {
   .recommendations {
     border-radius: 1.5rem 1.5rem 0 0;

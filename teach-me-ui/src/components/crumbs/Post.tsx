@@ -88,9 +88,10 @@ const Post: React.FC<
   Partial<PostPropsState> & {
     index?: number;
     postsErred?: boolean;
+    quote?: PostPropsState;
   }
 > = (props) => {
-  const { index, postsErred, ...others } = props;
+  const { index, postsErred, quote, ...others } = props;
   const {
     // type,
     media,
@@ -125,7 +126,7 @@ const Post: React.FC<
   const [mediaPreview, setMediaPreview] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState(0);
 
-  let extra: string | null = null;
+  let extra: string | null = '';
 
   const navigate = (id: string) => (e: any) => {
     history.push(`/p/${id}`);
@@ -154,9 +155,20 @@ const Post: React.FC<
     );
   };
 
-  // if (child?.sec_type === 'REPOST') {
-  //   extra = `${child_sender_name} reposted`;
-  // }
+  if (reposts?.length && reposts?.length > 1) {
+    let senderName1 = `${reposts[0]?.sender?.first_name} ${reposts[0]?.sender?.last_name}`;
+    let senderName2 = `${reposts[1]?.sender?.first_name} ${reposts[1]?.sender?.last_name}`;
+
+    switch (reposts.length) {
+      case 2:
+        extra = `<b>${senderName1}</b> and <b>${senderName2}</b> reposted ${sender_name}'s post`;
+        break;
+      default:
+        extra = `<b>${senderName1}</b> and <b>${reposts?.length} others</b> reposted ${sender_name}'s post`;
+    }
+  } else if (quote) {
+    extra = `<b>${sender_name}</b> reposted <b>${quote.sender?.first_name} ${quote.sender?.last_name}'s</b> post`;
+  }
 
   // if (_extra) {
   //   switch (_extra.type) {
@@ -241,8 +253,12 @@ const Post: React.FC<
         id={id}
         className={`Post ${postsErred ? 'remove-skeleton-animation' : ''} ${
           replies?.length ? 'has-replies' : ''
-        } ${media?.length ? 'has-media' : ''}`}>
-        {extra && <small className='extra'>{extra}</small>}
+        } ${media?.length ? 'has-media' : ''} ${quote ? 'has-quote' : ''}`}>
+        {extra && (
+          <small
+            className='extra'
+            dangerouslySetInnerHTML={{ __html: extra }}></small>
+        )}
 
         {/* Post header */}
         <Row className='post-header'>
@@ -287,22 +303,28 @@ const Post: React.FC<
           <Row className='post-body'>
             {/* Post repost */}
 
-            {/* {sec_type === 'REPOST' &&
-              text && */}
-            {reposts?.map((repost) => (
-              <QuotedPost {...repost} navigate={navigate} key={repost.id} />
-            ))}
+            {quote && (
+              <QuotedPost {...quote} navigate={navigate} key={quote.id} />
+            )}
 
             <Box
               component='div'
               onClick={navigate(id!)}
-              className='text'
+              className={`text ${!text?.trim() ? 'py-2' : ''}`}
               data-id={id}>
               {processPost(text!)}
             </Box>
 
+            {/* {sec_type === 'REPOST' &&
+              text && */}
+            {!quote &&
+              reposts?.map((repost) => (
+                <QuotedPost {...repost} navigate={navigate} key={repost.id} />
+              ))}
+
             {media?.length! > 0 && (
               <Box
+                className='media-container'
                 style={{
                   display: 'grid',
                   gridTemplateColumns: '1fr 1fr',
@@ -374,7 +396,7 @@ const Post: React.FC<
         ) : (
           <Box p={2}>
             {(index ?? 0) % 2 === 0 ? (
-              <Skeleton height='12rem' className='media' />
+              <Skeleton height='14rem' className='media' />
             ) : (
               <>
                 <Skeleton height='1rem' width='50%' className='mb-2' />

@@ -120,12 +120,11 @@ const MiddlePane: React.FunctionComponent<MiddlePaneProps> = (props) => {
           const renderRecommendations = !inProfile &&
             (i === 3 || (i > 0 && i % 20 === 0)) && <Recommendations />;
           const nReposts = post.reposts.length;
-          const { reposts, ...other } = post;
 
           return (
             <React.Fragment key={i}>
               {nReposts === 1 ? (
-                <Post {...post.reposts[0]} reposts={[{ ...other }]} />
+                <Post {...post.reposts[0]} quote={{ ...post }} />
               ) : (
                 <Post {...post} />
               )}

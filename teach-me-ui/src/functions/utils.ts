@@ -1,5 +1,5 @@
 import moment from 'moment';
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosResponse, AxiosRequestConfig } from 'axios';
 
 import {
   ReduxAction,
@@ -17,7 +17,8 @@ import {
   OnlineStatus,
   apiBaseURL,
   PostPropsState,
-  APIResponseModel
+  APIResponseModel,
+  HTTP
 } from '../constants';
 
 import store from '../appStore';
@@ -41,60 +42,48 @@ import {
 
 export const { dispatch, getState }: any = store;
 
-/**
- *
- * @param url url of destination e.g. /profile/5df9e8t0wekc/posts ... Base URL should not be included
- * @param requiresAuth if token/authentication will be required for the get action
- */
-export const getData = async <T>(url: string, requiresAuth: boolean) => {
-  let token = '';
-
-  if (requiresAuth) {
-    token = getState().userData.token;
-  }
-
-  const response: AxiosResponse<APIResponseModel<T>> = await axios({
+export const http: Readonly<Omit<HTTP, 'token'>> & { token: string } = {
+  token: getState().userData.token,
+  returnRequestConfig: (
+    method: 'GET' | 'POST',
+    url: string,
+    requiresAuth?: boolean,
+    data?: any
+  ): AxiosRequestConfig => ({
     url: `${apiBaseURL}${url}`,
-    method: 'GET',
+    method,
     headers: {
-      Authorization: requiresAuth ? `Bearer ${token}` : null,
-      'Content-Type': 'application/json'
-    }
-  });
-
-  // console.log(response);
-  return Promise.resolve({ ...response.data });
-};
-
-/**
- *
- * @param url (relative) url of destination e.g. /profile/5df9e8t0wekc/posts ... Base URL should not be included
- * @param data data to be posted to destination
- * @param requiresAuth that is if token/authentication will be required for the get action
- */
-export const sendData = async <T>(
-  url: string,
-  data?: any,
-  requiresAuth?: boolean
-) => {
-  let token = '';
-
-  if (requiresAuth) {
-    token = getState().userData.token;
-  }
-
-  const response: AxiosResponse<APIResponseModel<T>> = await axios({
-    url: `${apiBaseURL}${url}`,
-    method: 'POST',
-    headers: {
-      Authorization: requiresAuth ? `Bearer ${token}` : null,
+      Authorization: requiresAuth ? `Bearer ${http.token}` : null,
       'Content-Type': 'application/json'
     },
     data
-  });
+    // validateStatus: (status) => (!/^(2|3|4)/.test(`${status}`) ? false : true)
+  }),
+  /**
+   *
+   * @param url url of destination e.g. /profile/5df9e8t0wekc/posts ... Base URL should not be included
+   * @param requiresAuth if token/authentication will be required for the get action
+   */
+  get: async <T>(url: string, requiresAuth?: boolean) => {
+    const response: AxiosResponse<APIResponseModel<T>> = await axios(
+      http.returnRequestConfig('GET', url, requiresAuth)
+    );
 
-  // console.log(response.data)
-  return Promise.resolve({ ...response.data });
+    return Promise.resolve({ ...response.data });
+  },
+  /**
+   *
+   * @param url (relative) url of destination e.g. /profile/5df9e8t0wekc/posts ... Base URL should not be included
+   * @param data data to be posted to destination
+   * @param requiresAuth that is if token/authentication will be required for the get action
+   */
+  post: async <T>(url: string, data?: any, requiresAuth?: boolean) => {
+    const response: AxiosResponse<APIResponseModel<T>> = await axios(
+      http.returnRequestConfig('POST', url, requiresAuth, data)
+    );
+
+    return Promise.resolve({ ...response.data });
+  }
 };
 
 export function loopThru<T>(
@@ -357,7 +346,7 @@ export function promisedDispatch(action: ReduxAction): Promise<ReduxAction> {
 
 let timeoutToGiveFeedback: any;
 let timeoutToAbortNetworkAction: any;
-export function callNetworkStatusCheckerFor(action: NetworkAction) {
+export function checkNetworkStatusWhilstPend(action: NetworkAction) {
   //clear timeout in case it's already been initialized by multiple submit actions
   clearTimeout(timeoutToGiveFeedback);
   clearTimeout(timeoutToAbortNetworkAction);
@@ -441,7 +430,7 @@ export async function populateStateWithUserData(
   );
 }
 
-export const logError = (action: Function) => (error: any) => {
+export const logError = (action: Function) => (error: Error) => {
   let message = /network|connect|internet/i.test(error.message)
     ? 'A network error occurred. Check your internet connection'
     : error.message;
@@ -464,7 +453,10 @@ export const logError = (action: Function) => (error: any) => {
           : 'info'
     })
   );
-  console.error('An error occured: ', error);
+
+  if (process.env.NODE_ENV === 'development') {
+    console.error('An error occured: ');
+  }
 };
 
 export const addEventListenerOnce = (

@@ -32,10 +32,10 @@ import { ONLINE_STATUS } from '../constants/misc';
 import {
   logError,
   getState,
-  callNetworkStatusCheckerFor,
+  checkNetworkStatusWhilstPend,
   delay,
   loopThru,
-  getData
+  http
 } from '../functions';
 import { dispatch } from '../appStore';
 import { displaySnackbar } from './misc';
@@ -44,12 +44,13 @@ export const getConversations = (
   status?: 'pending' | 'settled' | 'fulfilled'
 ) => (dispatch: Function) => {
   dispatch(conversations({ status: status ? status : 'pending', err: false }));
-  callNetworkStatusCheckerFor({
+  checkNetworkStatusWhilstPend({
     name: 'conversations',
     func: conversations
   });
 
-  getData<APIConversationResponse[]>('/conversations?limit=20&offset=', true)
+  http
+    .get<APIConversationResponse[]>('/conversations?limit=20&offset=', true)
     .then(({ error, data: _conversations }) => {
       if (error) {
         return dispatch(
@@ -372,15 +373,16 @@ export const getConversationsMessages = (statusText?: string) => (
       statusText: statusText ? statusText : 'getting !delivereds on app load.'
     })
   );
-  callNetworkStatusCheckerFor({
+  checkNetworkStatusWhilstPend({
     name: 'conversationsMessages',
     func: conversationsMessages
   });
 
-  getData<{ [convoId: string]: APIMessageResponse[] }>(
-    '/messages/!delivered',
-    true
-  )
+  http
+    .get<{ [convoId: string]: APIMessageResponse[] }>(
+      '/messages/!delivered',
+      true
+    )
     .then(({ error, data: mappedConvosMessages }) => {
       if (error) {
         return dispatch(
@@ -626,7 +628,7 @@ export const getConversationMessages = (
           : "Don't remove this prop to avoid the scroll to bottom bug."
       })
     );
-    callNetworkStatusCheckerFor({
+    checkNetworkStatusWhilstPend({
       name: 'conversationMessages',
       func: conversationMessages
     });
@@ -645,7 +647,7 @@ export const getConversationMessages = (
           await delay(100);
         }
       } else {
-        const { error, data: messages } = await getData<APIMessageResponse[]>(
+        const { error, data: messages } = await http.get<APIMessageResponse[]>(
           `/conversations/${convoId}/messages?limit=${limit}${`&offset=${
             offset
               ? offset

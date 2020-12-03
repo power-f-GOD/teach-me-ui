@@ -10,7 +10,7 @@ import {
 
 import {
   logError,
-  callNetworkStatusCheckerFor,
+  checkNetworkStatusWhilstPend,
   getState,
   dispatch
 } from '../functions';
@@ -29,7 +29,7 @@ export const getNotificationsRequest = (date: number) => (
 ): ReduxAction => {
   let token = getState().userData.token;
 
-  callNetworkStatusCheckerFor({
+  checkNetworkStatusWhilstPend({
     name: 'getNotifications',
     func: getNotifications
   });

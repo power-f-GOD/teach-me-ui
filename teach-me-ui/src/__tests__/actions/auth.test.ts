@@ -111,8 +111,8 @@ it("creates doForgotPassword action and should be called with 'email' and return
 
 it("creates signup request action and should be called with 'signup data' and return action.", () => {
   const mockSignupData: SignupFormData = {
-    firstname: 'John',
-    lastname: 'Doe',
+    first_name: 'John',
+    last_name: 'Doe',
     username: 'johndoe',
     email: 'johndoe@gmail.com',
     dob: '12/12/1995',

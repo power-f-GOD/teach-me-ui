@@ -245,13 +245,21 @@
     }
   }
 
-  .QuotedPost {
-    margin: 0.75rem 0.75rem 0 0.75rem;
-    width: calc(100% - 1.5rem);
-  }
+  .Post {
+    small {
+      &.extra {
+        margin-left: 0.75em;
+      }
+    }
 
-  .Comment {
-    padding: 0 0.75em;
+    .QuotedPost {
+      margin: 0.75rem 0.75rem 0 0.75rem !important;
+      width: calc(100% - 1rem);
+    }
+
+    .Comment {
+      padding: 0 0.75em;
+    }
   }
 
   .Reply {

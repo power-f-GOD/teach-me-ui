@@ -109,8 +109,8 @@ export function handleSignupRequest() {
   }
 
   let formData: SignupFormData = {
-    firstname: firstname.value as string,
-    lastname: lastname.value as string,
+    first_name: firstname.value as string,
+    last_name: lastname.value as string,
     username: username.value as string,
     email: email.value as string,
     dob: dob.value as string,

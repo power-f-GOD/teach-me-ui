@@ -22,7 +22,7 @@ import {
 
 import { 
   logError, 
-  callNetworkStatusCheckerFor, 
+  checkNetworkStatusWhilstPend, 
   getState, populateStateWithUserData 
 } from '../functions';
 
@@ -136,7 +136,7 @@ export const getUserDetailsRequest = () => (
 
   let token = getState().userData.token
 
-  callNetworkStatusCheckerFor({
+  checkNetworkStatusWhilstPend({
     name: 'getUserDetails',
     func: getUserDetails
   });
@@ -203,7 +203,7 @@ export const updateAcademicDataRequest = (level: number, department: string) => 
 
   let token = getState().userData.token
 
-  callNetworkStatusCheckerFor({
+  checkNetworkStatusWhilstPend({
     name: 'updateAcademicData',
     func: updateAcademicData
   });
@@ -255,7 +255,7 @@ export const updateEmailRequest = (email: string) => (
 
   let token = getState().userData.token
 
-  callNetworkStatusCheckerFor({
+  checkNetworkStatusWhilstPend({
     name: 'updateEmail',
     func: updateEmail
   });
@@ -306,7 +306,7 @@ export const updatePasswordRequest = (current_password: string, new_password: st
 
   let token = getState().userData.token
 
-  callNetworkStatusCheckerFor({
+  checkNetworkStatusWhilstPend({
     name: 'updatePassword',
     func: updatePassword
   });
@@ -358,7 +358,7 @@ export const updateUsernameRequest = (username: string) => (
 
   let token = getState().userData.token
 
-  callNetworkStatusCheckerFor({
+  checkNetworkStatusWhilstPend({
     name: 'updateUsername',
     func: updateUsername
   });
@@ -408,7 +408,7 @@ export const updateUserDataRequest = (data: Object, updateState: boolean = true)
 ): ReduxAction => {
   let token = getState().userData.token
 
-  callNetworkStatusCheckerFor({
+  checkNetworkStatusWhilstPend({
     name: 'updateUserData',
     func: updateUserData
   });

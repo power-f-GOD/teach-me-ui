@@ -49,10 +49,10 @@ import {
 
 import {
   getState,
-  callNetworkStatusCheckerFor,
+  checkNetworkStatusWhilstPend,
   getCharacterSequenceFromText,
   logError,
-  getData
+  http
 } from '../functions';
 
 import axios from 'axios';
@@ -68,7 +68,7 @@ export const replyToPost = (payload: ReplyState) => {
 export const sendReplyToServer = (payload: SocketProps) => (
   dispatch: Function
 ) => {
-  callNetworkStatusCheckerFor({
+  checkNetworkStatusWhilstPend({
     name: 'replyToPost',
     func: replyToPost
   });
@@ -178,40 +178,43 @@ export const getPosts = (
     err: false
   } as FetchState<PostPropsState[]>;
   const isRecycling = /recycl/i.test(statusText || '');
+  const isFetching = /fetching/i.test(statusText || '');
+  let offset = getState()._posts.extra;
 
   if (update) delete payload.status;
 
   dispatch(posts(payload));
-  callNetworkStatusCheckerFor({
+  checkNetworkStatusWhilstPend({
     name: 'posts',
     func: posts
   });
 
-  getData<PostPropsState[]>(
-    isWall ? `/profile/${userId}/posts` : url || '/feed',
-    true
-  )
+  http
+    .get<PostPropsState[]>(
+      isWall
+        ? `/profile/${userId}/posts`
+        : url
+        ? `${url.replace(/(offset=)(.*)/, `$1${offset}`)}`
+        : '/feed',
+      true
+    )
     .then(({ error, message, data: _posts }) => {
-      let offset = _posts.slice(-1)[0]?.date;
-      console.log(isRecycling, _posts, url);
-      if (!offset) {
-        offset = getState()._posts.extra;
-      }
+      // console.log(_posts, offset, url);
+      offset = _posts.slice(-1)[0]?.date ?? Date.now();
 
       if (error) {
         dispatch(posts({ status: 'settled', statusText: message, err: true }));
       } else {
-        // console.log(_posts, offset);
         if (!_posts.length && type === 'FEED') {
           // recursively get (recycled) Posts if no post is returned
-          if (!isRecycling) {
+          if (!isRecycling && isFetching) {
             dispatch(
               getPosts(
                 type,
                 userId,
                 update,
                 'fetching recycled posts',
-                `/feed?recycle=true&offset=${offset ?? ''}`
+                `/feed?recycle=true&offset=`
               )
             );
           }
@@ -246,7 +249,8 @@ export const posts = (_payload: FetchState<PostPropsState[], number>) => {
     type: SET_POSTS,
     payload: {
       ..._payload,
-      data: [...posts.data, ...(_payload.data ?? [])]
+      data: [...posts.data, ...(_payload.data ?? [])],
+      extra: _payload.extra ?? posts.extra
     }
   };
 };
@@ -408,7 +412,7 @@ export const submitPost = ({
     dispatch(createPost(payload));
   };
 
-  callNetworkStatusCheckerFor({
+  checkNetworkStatusWhilstPend({
     name: 'makePost',
     func: makePost
   });
