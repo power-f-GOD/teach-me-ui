@@ -1,6 +1,24 @@
+import { AxiosRequestConfig } from 'axios';
+
 export type Partial<T> = {
   [P in keyof T]?: T[P];
 };
+
+export interface HTTP {
+  token: string;
+  returnRequestConfig(
+    method: 'GET' | 'POST',
+    url: string,
+    requiresAuth?: boolean,
+    data?: any
+  ): AxiosRequestConfig;
+  get<T>(url: string, requiresAuth?: boolean): Promise<APIResponseModel<T>>;
+  post<T>(
+    url: string,
+    data?: any,
+    requiresAuth?: boolean
+  ): Promise<APIResponseModel<T>>;
+}
 
 export type LoopFind<valueType> = {
   value: valueType;
@@ -274,8 +292,8 @@ export interface SignupPropsState {
 }
 
 export interface SignupFormData {
-  firstname: string;
-  lastname: string;
+  first_name: string;
+  last_name: string;
   username: string;
   email: string;
   dob: string;

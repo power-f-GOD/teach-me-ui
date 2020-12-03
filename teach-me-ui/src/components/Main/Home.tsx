@@ -38,11 +38,19 @@ const Home = ({ posts }: { posts: FetchState<PostPropsState> }) => {
 
           if (entry.isIntersecting && !isFetching && navigator.onLine) {
             dispatch(
-              getPosts('FEED', undefined, true, 'is fetching more posts')
+              getPosts(
+                'FEED',
+                undefined,
+                true,
+                'is fetching more posts',
+                posts.extra
+                  ? `/feed?recycle=true&offset=${posts.extra ?? ''}`
+                  : undefined
+              )
             );
           }
         },
-        { threshold: [0.5] }
+        { threshold: [0.01] }
       );
 
       observer.observe(observedElement);
@@ -52,7 +60,7 @@ const Home = ({ posts }: { posts: FetchState<PostPropsState> }) => {
       observer.unobserve(observedElement as Element);
       // window.scrollTo(0, 0);
     };
-  }, [posts.statusText, posts.err]);
+  }, [posts.statusText, posts.err, posts.extra]);
 
   return (
     <>
