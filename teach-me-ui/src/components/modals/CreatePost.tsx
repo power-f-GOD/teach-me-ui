@@ -410,7 +410,7 @@ const CreatePost = (props: any) => {
         </Row>
         {state.showUploads && uploadsProp.data[0] && (
           <Row className='d-flex mx-auto mt-1'>
-            <Container component='div' className='width-100'
+            <Container component='div' className='width-100 p-0'
             >
             <Button 
               onClick={handleSelectUpload}

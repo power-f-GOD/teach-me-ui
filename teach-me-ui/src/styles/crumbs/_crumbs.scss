@@ -176,3 +176,10 @@
     opacity: 1;
   }
 }
+
+.global-divider {
+  background-image: none;
+  background-color: #eee;
+  height: 0.0625rem !important;
+  border-radius: 1rem;
+}

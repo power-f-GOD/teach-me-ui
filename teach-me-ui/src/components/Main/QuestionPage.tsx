@@ -11,11 +11,11 @@ const Questions = (props: any) => {
   return (
     <>
       <Container className='Home fade-in'>
-        <Row className='flex-row m-2 justify-content-between'>
-          <Col lg={9} md={12} className='middle-pane-col pr-2'>
+        <Row className='mx-auto justify-content-around align-items-start pt-1'>
+          <Col lg={9} md={12} className='middle-pane-col px-3'>
             <MiddlePane />
           </Col>
-          <Col lg={3} className='d-none d-lg-block right-pane-col mt-1'>
+          <Col lg={3} className='d-none hang-in d-lg-block right-pane-col'>
             <RightPane />
           </Col>
         </Row>

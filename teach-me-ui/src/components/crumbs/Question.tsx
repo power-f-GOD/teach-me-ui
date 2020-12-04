@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { useHistory } from 'react-router-dom';
+
 import Row from 'react-bootstrap/Row';
 
 import Container from '@material-ui/core/Container';
@@ -12,6 +14,11 @@ const getText = (text: string) => {
 
 const Question = (props: any) => {
   const { question } = props;
+  const history = useHistory();
+
+  const navigate = (e: any) => {
+    history.push('/question/1')
+  }
 
   return (
     <Row className='d-flex mx-auto mt-2'>
@@ -21,7 +28,7 @@ const Question = (props: any) => {
             <Container component='p' className='p-0 m-0 rating-container'>
               {question.votes}
             </Container>
-            <Container component='small' className='px-0 rating-container labels'>
+            <Container component='small' className='mb-2 px-0 rating-container labels'>
               votes
             </Container>
           </Container>
@@ -33,20 +40,23 @@ const Question = (props: any) => {
               answers
             </Container>
           </Container>
-          <Container component='small' className='px-0 rating-container'>
+          <Container component='small' className='mt-1 px-0 rating-container'>
             {question.views}{' '}views
           </Container>
         </Container>
-        <Container component='div' className='main-question px-1 ml-2'>
+        <Container component='div' className='main-question px-1'>
           <Container component='h2' className='p-0 m-0'>
-            <a className='question-title-link' href='/question/1'>{ question.body.title }</a>
+            <a className='question-title-link text-decoration-none' href='/question/1'>{ question.body.title }</a>
           </Container>
+          <hr className='mt-2 mb-0 global-divider'/>
           <div
-            className='mt-2'
+            onClick={navigate}
+            className='pt-3 pb-3 cursor-pointer questions-body'
             dangerouslySetInnerHTML={{
-              __html: `${getText(question.body.body).substring(0, 200)}...`
+              __html: `${getText(question.body.body).substring(0, 125)}...`
             }}>
           </div>
+          <hr className='mb-1 mt-0 global-divider'/>
           <Container component='div' className='px-0 mt-2 d-flex'>
             <Container component='div' className='px-0 tag-container'>
               {question.body.tags.map((tag: string, i: number) => (

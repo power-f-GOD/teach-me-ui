@@ -40,9 +40,9 @@ const MiddlePane = (props: any) => {
 
   return (
     <>
-      <Container className='question-page mt-1'>
+      <Container className='question-page mt-0'>
         <Row className='d-flex mx-auto mt-0'>
-          <Container component='h1' className='p-0'>
+          <Container component='h1' className='p-0 title'>
             How do I Create A Neural Network?
           </Container>
         </Row>
@@ -68,7 +68,7 @@ const MiddlePane = (props: any) => {
             </Container>
           </Container>
         </Row>
-        <hr id='divider' className='my-1'/>
+        <hr className='my-1 global-divider'/>
         <div
           className='mt-3'
           dangerouslySetInnerHTML={{
@@ -93,12 +93,17 @@ const MiddlePane = (props: any) => {
           </small>
           <Container component='div' className='pb-2 px-0 mt-2 d-flex user-details'>
             <Avatar/>
-            <Container component='div' className='p-0'>
-              <Container component='a' href='/@prince' className='pl-2 text-decoration-none'>
-                Anyaoha Prince
+            <Container component='div' className='m-0 p-0'>
+              <Container component='div' className='d-flex p-0'>
+                <Container component='a' href='/@prince' className='pl-2 display-name'>
+                  Anyaoha Prince
+                </Container>
+                <Container component='p' className='pl-0 username'>
+                  @prince
+                </Container>
               </Container>
-              <Container component='small' className='pl-2'>
-                @prince
+              <Container component='small' className='pl-2 bio'>
+                Software Enginner at Kanyimuta
               </Container>
             </Container>
           </Container>

@@ -38,17 +38,19 @@ const Answer = ({ answer }: any) => {
             </div>
             <Container className='p-0 m-0'>
               <Container component='div' className='pb-2 px-0 mt-2 user-details'>
-                <Container component='small' className='p-0 date'>
-                    {answer.date}
-                  </Container>
-                <Container className='d-flex p-0'>
+                <Container component='div' className='pb-2 px-0 mt-2 d-flex user-details'>
                   <Avatar/>
-                  <Container component='div' className='p-0'>
-                    <Container component='a' href='/@prince' className='pl-2 text-decoration-none'>
-                      Anyaoha Prince
+                  <Container component='div' className='m-0 p-0'>
+                    <Container component='div' className='d-flex p-0'>
+                      <Container component='a' href='/@prince' className='pl-2 display-name'>
+                        Anyaoha Prince
+                      </Container>
+                      <Container component='p' className='pl-0 username'>
+                        @prince
+                      </Container>
                     </Container>
-                    <Container component='small' className='pl-2'>
-                      @prince
+                    <Container component='small' className='pl-2 bio'>
+                      {answer.date}
                     </Container>
                   </Container>
                 </Container>

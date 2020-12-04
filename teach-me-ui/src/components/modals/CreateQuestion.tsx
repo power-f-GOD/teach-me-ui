@@ -373,7 +373,7 @@ const CreateQuestion = (props: any) => {
         />
         {!state.showUploads && (
           <Row className='d-flex mx-auto mt-1'>
-            <Container component='div' id='grid-box'>
+            <Container component='div' id='upload-grid-box'>
               {state.selectedFiles.map((file: File, i: number) => (
                 <div 
                   title={file.name}
@@ -487,7 +487,7 @@ const CreateQuestion = (props: any) => {
         </Row>
         {state.showUploads && uploadsProp.data[0] && (
           <Row className='d-flex mx-auto mt-1'>
-            <Container component='div' className='width-100'
+            <Container component='div' className='width-100 p-0'
             >
             <Button 
               onClick={handleSelectUpload}
