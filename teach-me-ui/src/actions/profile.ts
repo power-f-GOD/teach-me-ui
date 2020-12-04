@@ -36,7 +36,7 @@ import {
   FETCHED_COLLEAGUE_REQUESTS,
   FETCHED_DEEP_PROFILE_DATA
 } from '../constants';
-import { callNetworkStatusCheckerFor, getState, logError } from '../functions';
+import { checkNetworkStatusWhilstPend, getState, logError } from '../functions';
 import { pingUser } from './notifications';
 
 export const profileData = (payload: SearchState): ReduxAction => {
@@ -49,7 +49,7 @@ export const profileData = (payload: SearchState): ReduxAction => {
 export const getProfileData = (userId: string) => (
   dispatch: Function
 ): ReduxAction => {
-  callNetworkStatusCheckerFor({
+  checkNetworkStatusWhilstPend({
     name: 'profileData',
     func: profileData
   });

@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 import {
   FIRSTNAME_VALIDATE,
   LASTNAME_VALIDATE,
@@ -22,10 +20,14 @@ import {
   GET_MATCHING_DEPARTMENTS,
   GET_MATCHING_LEVELS,
   BIO_VALIDATE,
-  InstitutionInputState,
-  apiBaseURL as baseURL
+  InstitutionInputState
 } from '../constants';
-import { logError, getState, callNetworkStatusCheckerFor } from '../functions';
+import {
+  logError,
+  getState,
+  checkNetworkStatusWhilstPend,
+  http
+} from '../functions';
 
 export const validateFirstname = (payload: BasicInputState): ReduxAction => {
   return {
@@ -125,7 +127,7 @@ export const getMatchingInstitutions = (keyword: string) => (
   dispatch: Function
 ): ReduxAction => {
   clearTimeout(institutionSearchTimeout);
-  callNetworkStatusCheckerFor({
+  checkNetworkStatusWhilstPend({
     name: 'matchingInstitutions',
     func: matchingInstitutions
   });
@@ -134,20 +136,9 @@ export const getMatchingInstitutions = (keyword: string) => (
     dispatch(matchingInstitutions({ status: 'pending' }));
 
     institutionSearchTimeout = window.setTimeout(() => {
-      axios({
-        url: `/institution/search?keyword=${keyword.trim()}&limit=15`,
-        baseURL,
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-        .then(({ data }: any) => {
-          const { error, institutions } = data as {
-            error: boolean;
-            institutions: any[];
-          };
-
+      http
+        .get<any[]>(`/institution/search?keyword=${keyword.trim()}&limit=15`)
+        .then(({ error, data: institutions }) => {
           if (!error && !!institutions[0]) {
             dispatch(
               matchingInstitutions({
@@ -173,7 +164,7 @@ export const getMatchingInstitutions = (keyword: string) => (
           }
         })
         .catch(logError(matchingInstitutions));
-    }, 100);
+    }, 250);
   }
 
   return {
@@ -192,9 +183,10 @@ export const matchingInstitutions = (payload: SearchState) => {
 //use this to delay search in case user types very fast to ensure the right results display
 let departmentSearchTimeout: any = null;
 
-export const getMatchingDepartments = (keyword: string, isEditProfile: boolean = false) => (
-  dispatch: Function
-): ReduxAction => {
+export const getMatchingDepartments = (
+  keyword: string,
+  isEditProfile: boolean = false
+) => (dispatch: Function): ReduxAction => {
   const institution: InstitutionInputState = getState().institution;
   const {
     keyword: institutionName,
@@ -202,7 +194,7 @@ export const getMatchingDepartments = (keyword: string, isEditProfile: boolean =
   } = institution.value as any;
 
   clearTimeout(departmentSearchTimeout);
-  callNetworkStatusCheckerFor({
+  checkNetworkStatusWhilstPend({
     name: 'matchingDepartments',
     func: matchingDepartments
   });
@@ -213,20 +205,12 @@ export const getMatchingDepartments = (keyword: string, isEditProfile: boolean =
         if (institutionUid) {
           dispatch(matchingDepartments({ status: 'pending' }));
 
-          axios({
-            url: `/department/search?keyword=${keyword.trim()}&institution=${institutionName}&limit=15`,
-            baseURL,
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          })
-            .then((response: any) => {
-              const { error, departments } = response.data as {
-                error: boolean;
-                departments: string[];
-              };
-
+          http
+            .get<string[]>(
+              `/department/search?keyword=${keyword.trim()}&institution=${institutionName}&limit=15`
+            )
+            .then(({ error, data: departments }) => {
+              console.log(departments);
               if (!error && !!departments[0]) {
                 dispatch(
                   matchingDepartments({
@@ -255,44 +239,34 @@ export const getMatchingDepartments = (keyword: string, isEditProfile: boolean =
           );
         }
       } else {
-        
         dispatch(matchingDepartments({ status: 'pending' }));
 
-        axios({
-          url: `/department/search?keyword=${keyword.trim()}&institution=${institutionName}&limit=15`,
-          baseURL,
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-        .then((response: any) => {
-          const { error, departments } = response.data as {
-            error: boolean;
-            departments: string[];
-          };
-
-          if (!error && !!departments[0]) {
-            dispatch(
-              matchingDepartments({
-                status: 'fulfilled',
-                err: false,
-                data: departments
-              })
-            );
-          } else {
-            dispatch(
-              matchingDepartments({
-                status: 'fulfilled',
-                err: true,
-                data: []
-              })
-            );
-          }
-        })
-        .catch(logError(matchingDepartments));
+        http
+          .get<string[]>(
+            `/department/search?keyword=${keyword.trim()}&department=${institutionName}&limit=15`
+          )
+          .then(({ error, data: departments }) => {
+            if (!error && !!departments[0]) {
+              dispatch(
+                matchingDepartments({
+                  status: 'fulfilled',
+                  err: false,
+                  data: departments
+                })
+              );
+            } else {
+              dispatch(
+                matchingDepartments({
+                  status: 'fulfilled',
+                  err: true,
+                  data: []
+                })
+              );
+            }
+          })
+          .catch(logError(matchingDepartments));
       }
-    }, 100);
+    }, 250);
   }
 
   return {
@@ -311,9 +285,10 @@ export const matchingDepartments = (payload: SearchState) => {
 //use this to delay search in case user types very fast to ensure the right results display
 let levelSearchTimeout: any = null;
 
-export const getMatchingLevels = (keyword: string, isEditProfile: boolean = false) => (
-  dispatch: Function
-): ReduxAction => {
+export const getMatchingLevels = (
+  keyword: string,
+  isEditProfile: boolean = false
+) => (dispatch: Function): ReduxAction => {
   const { institution, department } = getState();
   const [_institution, institutionUid, _department] = [
     institution.value?.keyword,
@@ -322,29 +297,19 @@ export const getMatchingLevels = (keyword: string, isEditProfile: boolean = fals
   ];
 
   clearTimeout(levelSearchTimeout);
-  callNetworkStatusCheckerFor({ name: 'matchingLevels', func: matchingLevels });
+  checkNetworkStatusWhilstPend({ name: 'matchingLevels', func: matchingLevels });
 
   if (keyword) {
     levelSearchTimeout = window.setTimeout(() => {
       if (!isEditProfile) {
-
         if (_department && institutionUid) {
           dispatch(matchingLevels({ status: 'pending' }));
 
-          axios({
-            url: `/level/search?keyword=${keyword.trim()}&department=${_department}&institution=${_institution}&limit=15`,
-            baseURL,
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          })
-            .then((response: any) => {
-              const { error, levels } = response.data as {
-                error: boolean;
-                levels: string[];
-              };
-
+          http
+            .get<string[]>(
+              `/level/search?keyword=${keyword.trim()}&level=${_department}&institution=${_institution}&limit=15`
+            )
+            .then(({ error, data: levels }) => {
               if (!error && !!levels[0]) {
                 dispatch(
                   matchingLevels({
@@ -383,21 +348,12 @@ export const getMatchingLevels = (keyword: string, isEditProfile: boolean = fals
       } else {
         if (_department) {
           dispatch(matchingLevels({ status: 'pending' }));
-  
-          axios({
-            url: `/level/search?keyword=${keyword.trim()}&department=${_department}&institution=${_institution}&limit=15`,
-            baseURL,
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          })
-            .then((response: any) => {
-              const { error, levels } = response.data as {
-                error: boolean;
-                levels: string[];
-              };
-  
+
+          http
+            .get<string[]>(
+              `/level/search?keyword=${keyword.trim()}&department=${_department}&institution=${_institution}&limit=15`
+            )
+            .then(({ error, data: levels }) => {
               if (!error && !!levels[0]) {
                 dispatch(
                   matchingLevels({
@@ -421,8 +377,7 @@ export const getMatchingLevels = (keyword: string, isEditProfile: boolean = fals
           dispatch(
             validateLevel({
               err: true,
-              helperText:
-                'You need to select a department.'
+              helperText: 'You need to select a department.'
             })
           );
           dispatch(
@@ -434,7 +389,7 @@ export const getMatchingLevels = (keyword: string, isEditProfile: boolean = fals
           );
         }
       }
-    }, 100);
+    }, 250);
   }
 
   return {

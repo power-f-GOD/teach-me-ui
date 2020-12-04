@@ -3,7 +3,7 @@ import axios from 'axios';
 import { apiBaseURL as baseURL } from '../constants/misc';
 import { SearchState, ReduxAction, UserData } from '../constants/interfaces';
 import {
-  callNetworkStatusCheckerFor,
+  checkNetworkStatusWhilstPend,
   logError,
   delay,
   getState
@@ -26,7 +26,7 @@ export const triggerSearchKanyimuta = (keyword: string) => (
   const userData = getState().userData as UserData;
   const token = userData.token as string;
 
-  callNetworkStatusCheckerFor({
+  checkNetworkStatusWhilstPend({
     name: 'searchKanyimuta',
     func: searchKanyimuta
   });

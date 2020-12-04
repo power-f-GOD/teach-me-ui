@@ -1,12 +1,47 @@
+.Post {
+  box-shadow: 0 0.125rem 0.125rem 0 #ccc;
+  overflow: hidden;
+}
+
 .Post,
 .Reply {
   // @include debugger();
   background-color: white;
   position: relative;
+  font-size: 1rem;
   border-radius: 0.85rem;
   margin-bottom: 0.85rem;
-  box-shadow: 0 0rem 0.5rem inset rgba(0, 0, 0, 0.15),
-    0 0.05rem 0.1rem rgba(0, 0, 0, 0.15);
+
+  &.remove-skeleton-animation {
+    [class*='skeletonStyles'] {
+      animation: unset !important;
+    }
+  }
+
+  &.has-replies {
+    .post-footer {
+      border-bottom: 0.125rem solid #eee;
+    }
+
+    .Comment {
+      .comment-container {
+        border-top: none;
+        border-bottom: 0.125rem solid #eee;
+      }
+    }
+  }
+
+  &.has-media {
+    .post-footer {
+      border-top: none;
+    }
+  }
+
+  &.has-quote {
+    .QuotedPost {
+      margin: 0.75rem 1rem 0 1rem;
+    }
+  }
 
   .container,
   .row,
@@ -21,20 +56,27 @@
 
     &.extra {
       display: block;
-      font-size: 0.8rem;
-      font-weight: bold;
+      color: $theme-tertiary-v5;
+      font-size: 0.8em;
       overflow: hidden;
-      margin: 0 0 -0.65rem 3.75rem;
-      padding: 0.35rem 0.75rem 0;
+      margin-bottom: -0.25em;
+      margin-left: 1em;
+      width: calc(100% - 2em);
+      border-bottom: 0.0625em solid #eee;
+      padding: 0.35em 0.75em 0.35rem 5em;
+    }
+
+    b {
+      font-weight: bold;
     }
   }
 
   .post-header {
-    padding: 0.75rem 0.75rem 0;
+    padding: 0.75em 1em 0;
   }
 
   .post-avatar {
-    $size: 3rem;
+    $size: 2.5em;
 
     height: $size;
     width: $size;
@@ -42,26 +84,43 @@
 
   .post-body {
     .text {
-      padding: 0.75rem;
+      padding: 0.75em 0.75em;
       width: 100%;
       cursor: pointer;
       font-weight: 500;
+      border: 0.25em dashed transparent;
+      border-top: none;
+      border-bottom: none;
+
+      &:hover,
+      &:focus {
+        border-color: #ccc;
+      }
     }
   }
 
+  .media-container {
+    width: 100%;
+    border-top: 0.125rem solid #eee;
+    border-bottom: 0.125rem solid #eee;
+  }
+
   .post-footer {
-    padding: 0.25rem 0.75rem;
-    border-top: 0.0625rem solid #eee;
+    padding: 0.25em 0;
+    width: calc(100% - 2rem);
+    margin-left: 1em;
+    border-top: 0.125em solid #eee;
+    // border-bottom: 0.125rem solid #eee;
   }
 
   .reaction-wrapper {
-    max-width: 5rem;
+    max-width: 5em;
     padding: 0;
 
     button {
-      max-height: 2.25rem;
-      border-radius: 2rem;
-      font-size: 0.95rem;
+      max-height: 2.25em;
+      border-radius: 2em;
+      font-size: 0.95em;
 
       &:hover,
       &:focus {
@@ -74,13 +133,13 @@
     &:first-child,
     &:nth-child(2) {
       svg {
-        font-size: 1.85rem;
-        margin: 0 0 0 -0.25rem;
+        font-size: 1.85em;
+        margin: 0 0 0 -0.25em;
       }
     }
 
     &:nth-child(2) {
-      margin-left: -0.5rem;
+      margin-left: -0.5em;
     }
 
     &:last-child {
@@ -90,8 +149,8 @@
     }
 
     svg {
-      font-size: 1.35rem;
-      margin-right: 0.25rem;
+      font-size: 1.35em;
+      margin-right: 0.25em;
       color: $theme-tertiary-v4;
     }
 
@@ -102,17 +161,12 @@
   }
 }
 
-.Reply {
-  width: calc(100% - 2.5rem);
-  margin: -0.75rem 0 1rem 2.5rem;
-  border-left: 0.4rem solid $theme-tertiary-v9;
-}
-
 .Comment {
   height: 0;
   opacity: 0;
   transition: 0.3s, opacity 0.4s;
   overflow: hidden;
+  padding: 0 1rem;
 
   &.open {
     opacity: 1;
@@ -123,19 +177,19 @@
   }
 
   .comment-container {
-    padding: 0.35rem 0.75rem;
+    padding: 0.35em 0;
     align-items: center;
-    border-top: 0.0625rem solid #eee;
+    border-top: 0.125em solid #eee;
 
     .MuiInputBase-root {
-      padding: 0.495rem 0.25rem;
+      padding: 0.495em 0.25em;
     }
   }
 
   .comment-avatar {
-    $size: 2.25rem;
+    $size: 1.85em;
 
-    margin-right: 0.5rem;
+    margin-right: 0.35em;
     width: $size;
     align-self: flex-end;
     height: $size;
@@ -144,15 +198,15 @@
   .comment-field {
     flex-grow: 1;
     height: auto;
-    max-width: calc(100% - 7.75rem);
+    max-width: calc(100% - 7.75em);
 
     > div.MuiInputBase-root {
       background: #fff;
-      border: 0.0625rem solid #eee;
-      border-radius: 1.25rem;
+      border: 0.0625em solid #eee;
+      border-radius: 1.25em;
       padding: {
-        left: 0.5rem;
-        right: 0.5rem;
+        left: 0.5em;
+        right: 0.5em;
       }
       transition: 0.3s;
 
@@ -165,12 +219,112 @@
 
   .comment-button {
     align-self: flex-end;
-    margin-left: 0.5rem;
-    border-radius: 2rem;
+    margin-left: 0.5em;
+    border-radius: 2em;
 
     &:disabled {
       background-color: #eee !important;
       color: #aaa !important;
+    }
+  }
+}
+
+.QuotedPost {
+  border-radius: 0.75rem;
+  border: 0.125rem solid #ddd;
+  padding: 0.5rem;
+  margin: 0 1rem 0.75rem 1rem;
+  width: calc(100% - 2rem);
+  cursor: pointer;
+  font-size: 0.9rem;
+  background: rgba(0, 0, 0, 0.035);
+
+  .post-avatar {
+    $size: 2.15em;
+
+    height: $size;
+    width: $size;
+  }
+}
+
+.Reply {
+  font-size: 0.9em;
+  padding: 0.5em 1em 0 1em;
+  border-radius: unset !important;
+  margin-bottom: 0;
+
+  &:last-child {
+    .post-footer {
+      border-bottom: none;
+    }
+
+    .comment-container {
+      border-top: 0.0625em solid #eee !important;
+      border-bottom: none !important;
+    }
+  }
+
+  .post-header {
+    padding: 0 !important;
+
+    small {
+      margin-top: -0.15em;
+    }
+  }
+
+  .display-name-wrapper {
+    padding: 0.25em 0.5em;
+    background-color: #f0f0f0;
+    margin-left: 0.55em;
+    border-radius: 0.75em 0.75em 0 0;
+  }
+
+  .post-body {
+    border-radius: 0 0 0.75em 0.75em;
+    margin: 0 0 0.25em 3.25em;
+    width: calc(100% - 3.25em);
+    background-color: #f0f0f0;
+
+    .text {
+      padding: 0 0.5em 0.5em !important;
+      cursor: unset;
+      border: none;
+    }
+  }
+
+  .post-avatar {
+    $size: 1.95em;
+
+    margin-right: 0 !important;
+    margin-top: -0.15em;
+    height: $size;
+    width: $size;
+  }
+
+  .post-footer {
+    width: calc(100% - 3.25em) !important;
+    margin-left: 3.25em !important;
+    margin-top: -0.25em;
+    border-top: none;
+    padding: 0.25rem 0;
+    border-bottom: 0.0625em solid #eee;
+  }
+
+  .Comment {
+    padding: 0 0 0 2.85em;
+
+    .comment-field {
+      max-width: calc(100% - 8.5em);
+    }
+
+    .comment-container {
+      padding: 0.35em 0;
+      align-items: center;
+      border-bottom: 0.0625em solid #eee;
+
+      .MuiInputBase-root {
+        padding: 0.495em 0.5em;
+      }
     }
   }
 }

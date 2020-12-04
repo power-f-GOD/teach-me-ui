@@ -49,10 +49,10 @@ import {
 
 import {
   getState,
-  callNetworkStatusCheckerFor,
+  checkNetworkStatusWhilstPend,
   getCharacterSequenceFromText,
   logError,
-  getData
+  http
 } from '../functions';
 
 import axios from 'axios';
@@ -68,7 +68,7 @@ export const replyToPost = (payload: ReplyState) => {
 export const sendReplyToServer = (payload: SocketProps) => (
   dispatch: Function
 ) => {
-  callNetworkStatusCheckerFor({
+  checkNetworkStatusWhilstPend({
     name: 'replyToPost',
     func: replyToPost
   });
@@ -107,27 +107,27 @@ export const sendReactionToServer = (payload: SocketProps) => (
   dispatch(
     reactToPost({ id: payload.post_id, type: payload.reaction as Reaction })
   );
-  const posts: Array<PostPropsState> = getState().posts;
-  const singlePost: PostPropsState = getState().singlePost;
+  // const posts: Array<PostPropsState> = getState().posts;
+  // const singlePost: PostPropsState = getState().singlePost;
 
-  let post = posts.find((post: PostPropsState) =>
-    (post.id as string) === payload.post_id
-      ? post
-      : (post.parent?.id as string) === payload.post_id
-      ? post.parent
-      : undefined
-  );
-  if (post === undefined) {
-    post =
-      (singlePost.id as string) === payload.post_id
-        ? singlePost
-        : (singlePost.parent?.id as string) === payload.post_id
-        ? (singlePost.parent as PostPropsState)
-        : undefined;
-  }
-  if (post === undefined) return;
-  const socket: WebSocket = getState().webSocket as WebSocket;
-  socket.send(JSON.stringify({ ...payload, reaction: post?.reaction }));
+  // let post = posts.find((post: PostPropsState) =>
+  //   (post.id as string) === payload.post_id
+  //     ? post
+  //     : (post.parent?.id as string) === payload.post_id
+  //     ? post.parent
+  //     : undefined
+  // );
+  // if (post === undefined) {
+  //   post =
+  //     (singlePost.id as string) === payload.post_id
+  //       ? singlePost
+  //       : (singlePost.parent?.id as string) === payload.post_id
+  //       ? (singlePost.parent as PostPropsState)
+  //       : undefined;
+  // }
+  // if (post === undefined) return;
+  // const socket: WebSocket = getState().webSocket as WebSocket;
+  // socket.send(JSON.stringify({ ...payload, reaction: post?.reaction }));
 };
 
 export const makeRepost = (payload: SocketProps) => (dispatch: Function) => {
@@ -178,41 +178,43 @@ export const getPosts = (
     err: false
   } as FetchState<PostPropsState[]>;
   const isRecycling = /recycl/i.test(statusText || '');
+  const isFetching = /fetching/i.test(statusText || '');
+  let offset = getState()._posts.extra;
 
   if (update) delete payload.status;
 
   dispatch(posts(payload));
-  callNetworkStatusCheckerFor({
+  checkNetworkStatusWhilstPend({
     name: 'posts',
     func: posts
   });
 
-  getData<{ posts: PostPropsState[] }>(
-    isWall ? `/profile/${userId}/posts` : url || '/feed',
-    true
-  )
-    .then(({ error, message, posts: _posts }) => {
-      let offset = _posts.slice(-1)[0]?.posted_at;
-
-      if (!offset) {
-        offset = getState()._posts.extra;
-      }
-
-      // console.log(_posts, offset);
+  http
+    .get<PostPropsState[]>(
+      isWall
+        ? `/profile/${userId}/posts`
+        : url
+        ? `${url.replace(/(offset=)(.*)/, `$1${offset}`)}`
+        : '/feed',
+      true
+    )
+    .then(({ error, message, data: _posts }) => {
+      // console.log(_posts, offset, url);
+      offset = _posts.slice(-1)[0]?.date ?? Date.now();
 
       if (error) {
         dispatch(posts({ status: 'settled', statusText: message, err: true }));
       } else {
         if (!_posts.length && type === 'FEED') {
           // recursively get (recycled) Posts if no post is returned
-          if (!isRecycling) {
+          if (!isRecycling && isFetching) {
             dispatch(
               getPosts(
                 type,
                 userId,
                 update,
                 'fetching recycled posts',
-                `/feed?recycle=true&offset=${offset}`
+                `/feed?recycle=true&offset=`
               )
             );
           }
@@ -247,7 +249,8 @@ export const posts = (_payload: FetchState<PostPropsState[], number>) => {
     type: SET_POSTS,
     payload: {
       ..._payload,
-      data: [...posts.data, ...(_payload.data ?? [])]
+      data: [...posts.data, ...(_payload.data ?? [])],
+      extra: _payload.extra ?? posts.extra
     }
   };
 };
@@ -409,7 +412,7 @@ export const submitPost = ({
     dispatch(createPost(payload));
   };
 
-  callNetworkStatusCheckerFor({
+  checkNetworkStatusWhilstPend({
     name: 'makePost',
     func: makePost
   });

@@ -227,23 +227,24 @@ const reactToPost = (
             resultantReaction(post.reaction, reaction.type)
           )
         }
-      : (post.parent?.id as string) === reaction.id
-      ? {
-          ...post,
-          parent: {
-            ...post.parent,
-            reaction: resultantReaction(post.parent?.reaction, reaction.type),
-            upvotes: upvotes(
-              post.parent,
-              resultantReaction(post.parent?.reaction, reaction.type)
-            ),
-            downvotes: downvotes(
-              post.parent,
-              resultantReaction(post.parent?.reaction, reaction.type)
-            )
-          }
-        }
-      : post;
+      : // (post.parent?.id as string) === reaction.id
+        // ? {
+        //     ...post,
+        //     parent: {
+        //       ...post.parent,
+        //       reaction: resultantReaction(post.parent?.reaction, reaction.type),
+        //       upvotes: upvotes(
+        //         post.parent,
+        //         resultantReaction(post.parent?.reaction, reaction.type)
+        //       ),
+        //       downvotes: downvotes(
+        //         post.parent,
+        //         resultantReaction(post.parent?.reaction, reaction.type)
+        //       )
+        //     }
+        //   }
+        // :
+        post;
   });
 };
 
@@ -258,16 +259,17 @@ const updatePost = (
           upvotes: result.upvotes,
           downvotes: result.downvotes
         }
-      : (post.parent?.id as string) === result.id
-      ? {
-          ...post,
-          parent: {
-            ...post.parent,
-            upvotes: result.upvotes,
-            downvotes: result.downvotes
-          }
-        }
-      : post;
+      : // (post.parent?.id as string) === result.id
+        // ? {
+        //     ...post,
+        //     parent: {
+        //       ...post.parent,
+        //       upvotes: result.upvotes,
+        //       downvotes: result.downvotes
+        //     }
+        //   }
+        // :
+        post;
   });
 };
 
@@ -281,15 +283,16 @@ const updateReposts = (
           ...post,
           reposts: result.count
         }
-      : (post.parent?.id as string) === result.id
-      ? {
-          ...post,
-          parent: {
-            ...post.parent,
-            reposts: result.count
-          }
-        }
-      : post;
+      : // (post.parent?.id as string) === result.id
+        // ? {
+        //     ...post,
+        //     parent: {
+        //       ...post.parent,
+        //       reposts: result.count
+        //     }
+        //   }
+        // :
+        post;
   });
 };
 

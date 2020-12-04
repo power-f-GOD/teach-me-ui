@@ -66,6 +66,10 @@ window.addEventListener('popstate', () => {
 
   const { chat, cid } = queryString.parse(window.location.search);
 
+  if (!window.location.hash) {
+    document.body.style.overflow = !chat || chat === 'm2' ? 'auto' : 'hidden';
+  }
+
   if (window.innerWidth < 992 && chat) {
     dispatch(
       chatState({
@@ -154,7 +158,7 @@ const ChatBox = (props: ChatBoxProps) => {
     status: convosStatus,
     data: convosData
   } = conversations;
-  const { chat, id, cid } = queryString.parse(window.location.search);
+  const { chat, id, cid } = queryString.parse(_chatState.queryString);
   const unopened_count = conversations.data?.reduce(
     (a, conversation: APIConversationResponse) =>
       a + (conversation.unread_count ? 1 : 0),
@@ -194,7 +198,6 @@ const ChatBox = (props: ChatBoxProps) => {
 
     setActivePaneIndex(0);
     setVisibilityState('visible');
-    document.body.style.overflow = 'hidden';
 
     //delay till chatBox display property is set for animation to work
     delay(100).then(() => {
@@ -353,12 +356,14 @@ const ChatBox = (props: ChatBoxProps) => {
   useEffect(() => {
     delay(400).then(() => {
       if ((chat && chat === 'o1') || (isOpen && !isMinimized)) {
+        document.body.style.overflow = 'hidden';
         document.querySelectorAll('.Main > *').forEach((component: any) => {
           if (!/ChatBox/.test(component.className)) {
             component.inert = true;
           }
         });
       } else {
+        // don't set body overflow style to 'hidden' here so as not to override Home.MiddlePane's overflow setting when Feeds are pending/loading (esp. on page load)
         document.querySelectorAll('.Main > *').forEach((component: any) => {
           if (!/ChatBox/.test(component.className)) {
             component.inert = false;

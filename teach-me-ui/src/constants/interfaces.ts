@@ -1,6 +1,24 @@
+import { AxiosRequestConfig } from 'axios';
+
 export type Partial<T> = {
   [P in keyof T]?: T[P];
 };
+
+export interface HTTP {
+  token: string;
+  returnRequestConfig(
+    method: 'GET' | 'POST',
+    url: string,
+    requiresAuth?: boolean,
+    data?: any
+  ): AxiosRequestConfig;
+  get<T>(url: string, requiresAuth?: boolean): Promise<APIResponseModel<T>>;
+  post<T>(
+    url: string,
+    data?: any,
+    requiresAuth?: boolean
+  ): Promise<APIResponseModel<T>>;
+}
 
 export type LoopFind<valueType> = {
   value: valueType;
@@ -32,13 +50,18 @@ export interface InputErrState {
 }
 
 export interface PostPropsState {
+  downvote_count: number;
+  reactions: UserData[];
+  reply_count: number;
+  repost_count: number;
+  upvote_count: number;
   downvotes: number;
   id: string;
   media: any[];
-  posted_at: number;
+  date: number;
   reaction: Reaction;
-  replies: number;
-  reposts: number;
+  replies: Partial<PostPropsState>[];
+  reposts: Partial<PostPropsState>[];
   sender: {
     cover_photo: string;
     department: string;
@@ -53,11 +76,11 @@ export interface PostPropsState {
   };
   text: string;
   upvotes: number;
-  sec_type?: 'REPOST' | 'REPLY';
-  type: 'post' | 'reply';
-  child?: PostProps;
-  _extra?: PostExtraProps;
-  parent?: PostProps;
+  sec_type?: 'REPOST';
+  type?: 'post' | 'reply';
+  // child?: PostProps;
+  // _extra?: PostExtraProps;
+  // parent?: PostProps;
 }
 
 interface PostExtraProps {
@@ -246,6 +269,12 @@ export interface FetchState<T, T2 = any> extends StatusPropsState {
   extra?: T2;
 }
 
+export interface APIResponseModel<T> {
+  error: boolean;
+  message?: string;
+  data: T;
+}
+
 export interface SignupPropsState {
   firstname: BasicInputState;
   lastname: BasicInputState;
@@ -263,8 +292,8 @@ export interface SignupPropsState {
 }
 
 export interface SignupFormData {
-  firstname: string;
-  lastname: string;
+  first_name: string;
+  last_name: string;
   username: string;
   email: string;
   dob: string;
@@ -318,6 +347,7 @@ export interface UserData {
   date_of_birth?: string;
   online_status?: OnlineStatus;
   username: string;
+  reaction?: 'UPVOTE' | 'DOWNVOTE';
 }
 
 export interface ColleagueData {
@@ -524,11 +554,11 @@ export interface QuestionEditor {
   question: {
     title: string;
     body: string;
-    tags: Array<string>
+    tags: Array<string>;
   };
   selectedUploads: Array<any>;
   selectedFiles: Array<File>;
-  tempSelectedUploads: Array<any>; 
+  tempSelectedUploads: Array<any>;
   showUploads: boolean;
 }
 

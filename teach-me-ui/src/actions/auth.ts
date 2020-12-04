@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 import {
   ReduxAction,
   SIGNUP_REQUEST,
@@ -17,7 +15,6 @@ import {
   VERIFY_AUTH,
   SIGNOUT_REQUEST,
   SIGNOUT_USER,
-  apiBaseURL as baseURL,
   UserData
 } from '../constants';
 import {
@@ -27,10 +24,11 @@ import {
   validateSigninPassword
 } from './validate';
 import {
-  callNetworkStatusCheckerFor,
+  checkNetworkStatusWhilstPend,
   populateStateWithUserData,
   logError,
-  delay
+  delay,
+  http
 } from '../functions';
 import { displaySnackbar, closeWebSocket } from './misc';
 
@@ -38,27 +36,23 @@ export const doForgotPassword = (email: string) => (
   dispatch: Function
 ): ReduxAction => {
   dispatch(forgotPasswordPending());
-  axios({
-    url: '/auth/pass/reset/request',
-    baseURL,
-    method: 'POST',
-    data: {
+
+  http
+    .post('/auth/pass/reset/request', {
       email
-    },
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  }).finally(() => {
-    dispatch(forgotPasswordCompleted());
-    dispatch(
-      displaySnackbar({
-        open: true,
-        message: 'Password reset link has been sent!',
-        severity: 'success',
-        autoHide: true
-      })
-    );
-  });
+    })
+    .finally(() => {
+      dispatch(forgotPasswordCompleted());
+      dispatch(
+        displaySnackbar({
+          open: true,
+          message: 'Password reset link has been sent!',
+          severity: 'success',
+          autoHide: true
+        })
+      );
+    });
+
   return {
     type: FORGOT_PASSWORD_REQUEST
   };
@@ -70,39 +64,34 @@ export const doResetPassword = (
   callback: Function
 ) => (dispatch: Function): ReduxAction => {
   dispatch(forgotPasswordPending());
-  axios({
-    url: '/auth/pass/reset',
-    baseURL,
-    method: 'POST',
-    data: {
+
+  http
+    .post<any>('/auth/pass/reset', {
       reset_token: token,
       password
-    },
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  }).then(({ data: _data }) => {
-    dispatch(forgotPasswordCompleted());
-    let message: string = '';
-    if (/(token .+ decoded|reset .+ expired)/.test(_data.message)) {
-      message = 'Password reset link has expired.';
-    } else if (/changed/.test(_data.message)) {
-      message = 'Password has been changed successfully';
-    } else {
-      message = _data.message;
-    }
-    dispatch(
-      displaySnackbar({
-        open: true,
-        message,
-        severity: _data.error ? 'error' : 'success',
-        autoHide: true
-      })
-    );
-    if (!_data.error) {
-      callback();
-    }
-  });
+    })
+    .then(({ error, message }) => {
+      dispatch(forgotPasswordCompleted());
+      let _message: string = '';
+      if (/(token .+ decoded|reset .+ expired)/.test(message!)) {
+        _message = 'Password reset link has expired.';
+      } else if (/changed/.test(message!)) {
+        _message = 'Password has been changed successfully';
+      } else {
+        _message = message!;
+      }
+      dispatch(
+        displaySnackbar({
+          open: true,
+          message: _message,
+          severity: error ? 'error' : 'success',
+          autoHide: true
+        })
+      );
+      if (!error) {
+        callback();
+      }
+    });
   return {
     type: FORGOT_PASSWORD_REQUEST
   };
@@ -114,6 +103,7 @@ export const forgotPasswordPending = () => {
     payload: { status: 'pending' }
   };
 };
+
 export const forgotPasswordCompleted = () => {
   return {
     type: FORGOT_PASSWORD_COMPLETED,
@@ -124,11 +114,9 @@ export const forgotPasswordCompleted = () => {
 export const requestSignup = (data: SignupFormData) => (
   dispatch: Function
 ): ReduxAction => {
-  dispatch(signup({ status: 'pending', statusText: ' ' }));
-
   let {
-    firstname,
-    lastname,
+    first_name: firstname,
+    last_name: lastname,
     username,
     email,
     dob,
@@ -147,14 +135,12 @@ export const requestSignup = (data: SignupFormData) => (
   username = username.toLowerCase();
   email = email.toLowerCase();
 
+  dispatch(signup({ status: 'pending', statusText: ' ' }));
   //check if user is online as lost network connection is not a failure state for Firebase db in order to give response to user
-  callNetworkStatusCheckerFor({ name: 'signup', func: signup });
+  checkNetworkStatusWhilstPend({ name: 'signup', func: signup });
 
-  axios({
-    url: '/auth/register',
-    baseURL,
-    method: 'POST',
-    data: {
+  http
+    .post<UserData>('/auth/register', {
       firstname,
       lastname,
       username,
@@ -164,26 +150,16 @@ export const requestSignup = (data: SignupFormData) => (
       institution_id: institution,
       department,
       level
-    },
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-    .then((response) => {
-      const { data: _data } = response;
-      const { error, message } = _data;
-
+    })
+    .then(({ error, message, data }) => {
       if (!error) {
         const displayName = `${firstname} ${lastname}`;
 
-        delete _data.error;
-
-        const userData: UserData = { ..._data };
-
         populateStateWithUserData({
-          ...userData,
+          ...data,
           displayName
         }).then(() => {
+          http.token = data.token!;
           dispatch(signup({ status: 'fulfilled' }));
           dispatch(auth({ status: 'settled', isAuthenticated: true }));
           dispatch(
@@ -198,7 +174,7 @@ export const requestSignup = (data: SignupFormData) => (
           //set token for user session and subsequent authentication
           if (navigator.cookieEnabled) {
             localStorage.kanyimuta = JSON.stringify({
-              ...userData,
+              ...data,
               displayName,
               dob
             });
@@ -206,7 +182,7 @@ export const requestSignup = (data: SignupFormData) => (
         });
       } else {
         switch (true) {
-          case /username.+(taken|used?)/i.test(message):
+          case /username.+(taken|used?)/i.test(message!):
             dispatch(
               validateUsername({
                 value: username,
@@ -215,7 +191,7 @@ export const requestSignup = (data: SignupFormData) => (
               })
             );
             break;
-          case /email.+(taken|used?)/i.test(message):
+          case /email.+(taken|used?)/i.test(message!):
             dispatch(
               validateEmail({
                 value: email,
@@ -260,39 +236,25 @@ export const requestSignin = (data: SigninFormData) => (
   dispatch: Function
 ): ReduxAction => {
   dispatch(signin({ status: 'pending' }));
-  callNetworkStatusCheckerFor({ name: 'signin', func: signin });
+  checkNetworkStatusWhilstPend({ name: 'signin', func: signin });
 
   let { id, password } = data;
   let identity = id;
 
-  axios({
-    method: 'POST',
-    url: '/auth/login',
-    baseURL,
-    data: {
+  http
+    .post<UserData>('/auth/login', {
       identity,
       password
-    },
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-    .then((response) => {
-      const { data: _data } = response;
-      const { data, error } = _data;
-      const message = data.message;
-
+    })
+    .then(({ error, message, data: userData }) => {
       if (!error) {
-        const displayName = `${data.first_name} ${data.last_name}`;
-
-        delete _data.error;
-
-        const userData: UserData = { ...data };
+        const displayName = `${userData.first_name} ${userData.last_name}`;
 
         populateStateWithUserData({
           ...userData,
           displayName
         }).then(() => {
+          http.token = userData.token!;
           dispatch(signin({ status: 'fulfilled' }));
           dispatch(auth({ status: 'settled', isAuthenticated: true }));
           dispatch(
@@ -314,7 +276,7 @@ export const requestSignin = (data: SigninFormData) => (
         });
       } else {
         switch (true) {
-          case /details?|account/i.test(message):
+          case /details?|account/i.test(message!):
             dispatch(
               validateSigninId({
                 value: id,
@@ -325,7 +287,7 @@ export const requestSignin = (data: SigninFormData) => (
               })
             );
             break;
-          case /password.+(invalid)?/i.test(message):
+          case /password.+(invalid)?/i.test(message!):
             dispatch(
               validateSigninPassword({
                 value: password,
@@ -377,6 +339,7 @@ export const verifyAuth = () => (dispatch: Function): ReduxAction => {
     populateStateWithUserData({
       ...userData
     }).then(() => {
+      http.token = userData.token!;
       dispatch(auth({ status: 'fulfilled', isAuthenticated: true }));
       dispatch(signin({ status: 'fulfilled', err: false }));
     });
@@ -398,8 +361,8 @@ export function auth(payload: AuthState): ReduxAction {
 }
 
 export const requestSignout = () => (dispatch: Function): ReduxAction => {
-  dispatch(closeWebSocket());
   dispatch(signout({ status: 'pending' }));
+  dispatch(closeWebSocket());
 
   if (navigator.cookieEnabled) {
     const username = JSON.parse(localStorage.kanyimuta ?? '{}').username;

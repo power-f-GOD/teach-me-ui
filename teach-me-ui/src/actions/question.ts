@@ -9,7 +9,7 @@ import {
 	UserData
 } from '../constants';
 import { 
-	callNetworkStatusCheckerFor, 
+	checkNetworkStatusWhilstPend, 
 	getState,
 	logError
 } from '../functions';
@@ -27,7 +27,7 @@ export const sendQuestionToServer = (para: object) => (
   const userData = getState().userData as UserData;
   const token = userData.token as string;
 
-  callNetworkStatusCheckerFor({
+  checkNetworkStatusWhilstPend({
     name: 'askQuestion',
     func: askQuestion
   });

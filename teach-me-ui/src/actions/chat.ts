@@ -9,7 +9,8 @@ import {
   UserData,
   ConversationsMessages,
   LoopFind,
-  FetchState
+  FetchState,
+  APIResponseModel
 } from '../constants/interfaces';
 import {
   SET_CHAT_STATE,
@@ -31,10 +32,10 @@ import { ONLINE_STATUS } from '../constants/misc';
 import {
   logError,
   getState,
-  callNetworkStatusCheckerFor,
+  checkNetworkStatusWhilstPend,
   delay,
   loopThru,
-  getData
+  http
 } from '../functions';
 import { dispatch } from '../appStore';
 import { displaySnackbar } from './misc';
@@ -43,43 +44,44 @@ export const getConversations = (
   status?: 'pending' | 'settled' | 'fulfilled'
 ) => (dispatch: Function) => {
   dispatch(conversations({ status: status ? status : 'pending', err: false }));
-  callNetworkStatusCheckerFor({
+  checkNetworkStatusWhilstPend({
     name: 'conversations',
     func: conversations
   });
 
-  getData<{
-    conversations: APIConversationResponse[];
-  }>('/conversations?limit=20&offset=', true)
-    .then(({ error, conversations: _conversations }) => {
+  http
+    .get<APIConversationResponse[]>('/conversations?limit=20&offset=', true)
+    .then(({ error, data: _conversations }) => {
       if (error) {
-        dispatch(conversations({ status: 'fulfilled', err: true, data: [] }));
-      } else {
-        dispatch(
-          conversations({
-            status: 'fulfilled',
-            err: false,
-            data: [..._conversations]
-          })
+        return dispatch(
+          conversations({ status: 'fulfilled', err: true, data: [] })
         );
+      }
 
-        // add last message for every conversation in state in order for to display a message before load of other messages when a conversation is just opened
-        if (_conversations.length) {
-          for (const convo of _conversations) {
-            const {
-              conversationsMessages: _conversationMessages
-            } = getState() as { conversationsMessages: ConversationsMessages };
-            const convoMessages = _conversationMessages.data![convo.id!];
+      dispatch(
+        conversations({
+          status: 'fulfilled',
+          err: false,
+          data: [..._conversations]
+        })
+      );
 
-            if (convo.last_message) {
-              if (!convoMessages?.length && convo.id) {
-                dispatch(
-                  conversationsMessages({
-                    statusText: 'replace messages',
-                    data: { [convo.id]: [convo.last_message as any] }
-                  })
-                );
-              }
+      // add last message for every conversation in state in order for to display a message (in ScrollView) before load of other messages when a conversation is just opened
+      if (_conversations.length) {
+        for (const convo of _conversations) {
+          const {
+            conversationsMessages: _conversationMessages
+          } = getState() as { conversationsMessages: ConversationsMessages };
+          const convoMessages = _conversationMessages.data![convo.id!];
+
+          if (convo.last_message) {
+            if (!convoMessages?.length && convo.id) {
+              dispatch(
+                conversationsMessages({
+                  statusText: 'replace messages',
+                  data: { [convo.id]: [convo.last_message as any] }
+                })
+              );
             }
           }
         }
@@ -346,13 +348,6 @@ export const conversation = (
   };
 };
 
-interface ConversationsMessagesResponse {
-  data: {
-    error: boolean;
-    conversations: { [convoId: string]: APIMessageResponse[] };
-  };
-}
-
 export const getConversationsMessages = (statusText?: string) => (
   dispatch: Function
 ) => {
@@ -378,75 +373,75 @@ export const getConversationsMessages = (statusText?: string) => (
       statusText: statusText ? statusText : 'getting !delivereds on app load.'
     })
   );
-  callNetworkStatusCheckerFor({
+  checkNetworkStatusWhilstPend({
     name: 'conversationsMessages',
     func: conversationsMessages
   });
 
-  getData<{ conversations: { [convoId: string]: APIMessageResponse[] } }>(
-    '/messages/!delivered',
-    true
-  )
-    .then(({ error, conversations }) => {
-      const _convosMessages = conversations;
-
+  http
+    .get<{ [convoId: string]: APIMessageResponse[] }>(
+      '/messages/!delivered',
+      true
+    )
+    .then(({ error, data: mappedConvosMessages }) => {
       if (error) {
-        dispatch(
+        return dispatch(
           conversationsMessages({
             status: 'settled',
             err: true,
             data: {}
           })
         );
-      } else {
-        const updatedConvosMessages = _convosMessages;
+      }
 
-        for (const key in updatedConvosMessages) {
-          const convoMessages = loopThru(
-            _convosMessages[key],
-            (message) => {
-              if (!message.delivered_to.includes(userId)) {
-                if (socket) {
+      const _convosMessages = mappedConvosMessages;
+      const updatedConvosMessages = { ..._convosMessages };
+
+      for (const key in updatedConvosMessages) {
+        const convoMessages = loopThru(
+          _convosMessages[key],
+          (message) => {
+            if (!message.delivered_to.includes(userId)) {
+              if (socket) {
+                socket.send(
+                  JSON.stringify({
+                    message_id: message.id,
+                    pipe: CHAT_MESSAGE_DELIVERED
+                  })
+                );
+                message.delivered_to.push(userId);
+              }
+            }
+
+            if (!message.seen_by!.includes(userId)) {
+              if (convoId === message.conversation_id) {
+                if (socket && isOpen && !isMinimized) {
                   socket.send(
                     JSON.stringify({
                       message_id: message.id,
-                      pipe: CHAT_MESSAGE_DELIVERED
+                      pipe: CHAT_READ_RECEIPT
                     })
                   );
-                  message.delivered_to.push(userId);
+                  message.seen_by.push(userId);
                 }
               }
+            }
 
-              if (!message.seen_by!.includes(userId)) {
-                if (convoId === message.conversation_id) {
-                  if (socket && isOpen && !isMinimized) {
-                    socket.send(
-                      JSON.stringify({
-                        message_id: message.id,
-                        pipe: CHAT_READ_RECEIPT
-                      })
-                    );
-                    message.seen_by.push(userId);
-                  }
-                }
-              }
-
-              return message;
-            },
-            { returnReverse: true }
-          );
-
-          (updatedConvosMessages as any)[key] = convoMessages;
-        }
-
-        dispatch(
-          conversationsMessages({
-            status: 'fulfilled',
-            err: false,
-            data: { ...updatedConvosMessages }
-          })
+            return message;
+          },
+          { returnReverse: true }
         );
+
+        (updatedConvosMessages as any)[key] = convoMessages;
       }
+
+      dispatch(
+        conversationsMessages({
+          status: 'fulfilled',
+          err: false,
+          data: { ...updatedConvosMessages }
+        })
+      );
     })
     .catch(logError(conversationsMessages));
 
@@ -596,18 +591,13 @@ export const conversationsMessages = (
   };
 };
 
-interface MessagesResponse {
-  error: boolean;
-  messages: Array<APIMessageResponse | Partial<APIMessageResponse>>;
-}
-
 export const getConversationMessages = (
   convoId: string,
   status?: 'settled' | 'pending' | 'fulfilled',
   _statusText?: string,
   offset?: number
 ) => (dispatch: Function) => {
-  //put/call function inside a closure to prevent the redux-async functions ish
+  //put/call async function inside a closure to prevent the redux-async functions ish
   (async () => {
     const {
       userData,
@@ -638,24 +628,26 @@ export const getConversationMessages = (
           : "Don't remove this prop to avoid the scroll to bottom bug."
       })
     );
-    callNetworkStatusCheckerFor({
+    checkNetworkStatusWhilstPend({
       name: 'conversationMessages',
       func: conversationMessages
     });
 
     try {
-      const data = { error: false, messages: [] } as MessagesResponse;
+      const response = { error: false, data: [] } as APIResponseModel<
+        Partial<APIMessageResponse>[]
+      >;
 
       if (hasCachedData && (isGettingNew || isUpdating)) {
-        data.messages = cachedConvoMessages;
-        data.error = false;
+        response.data = cachedConvoMessages;
+        response.error = false;
 
         if (!isUpdating) {
           //ensure to await a few milliseconds so previous states are set before proceeding to avoid bugs
           await delay(100);
         }
       } else {
-        const _data = await getData<{ messages: Array<APIMessageResponse> }>(
+        const { error, data: messages } = await http.get<APIMessageResponse[]>(
           `/conversations/${convoId}/messages?limit=${limit}${`&offset=${
             offset
               ? offset
@@ -666,12 +658,12 @@ export const getConversationMessages = (
           true
         );
 
-        data.messages = _data.messages ?? [];
-        data.error = _data.error;
+        response.data = messages ?? [];
+        response.error = error;
       }
 
-      const error = data.error;
-      let messages = [...data.messages] as APIMessageResponse[];
+      const error = response.error;
+      let messages = [...response.data] as APIMessageResponse[];
       const { isOpen, queryString } = chatState;
       const isMinimized = /chat=m2/.test(queryString || '');
       const statusText = _statusText
@@ -703,7 +695,7 @@ export const getConversationMessages = (
           );
         }
       } else {
-        if (socket && socket.readyState === 1) {
+        if (socket && socket.readyState === socket.OPEN) {
           messages = loopThru(
             messages,
             (message) => {
@@ -731,7 +723,6 @@ export const getConversationMessages = (
               if (message.seen_by!?.includes(userId)) return;
 
               if (type === 'incoming') {
-                console.log('object inextensible check:', message, userId);
                 if (!message.delivered_to!?.includes(userId)) {
                   socket.send(
                     JSON.stringify({

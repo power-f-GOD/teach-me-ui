@@ -12,7 +12,6 @@ body,
   line-height: 1.4em;
 }
 body {
-  
   position: relative;
   overflow-x: hidden !important;
 }
@@ -45,7 +44,7 @@ body {
       }
 
       &::-webkit-scrollbar-track {
-        background: $theme-tertiary-v7;
+        background: $theme-tertiary-v8;
       }
 
       &::-webkit-scrollbar-thumb {
@@ -105,7 +104,7 @@ body {
   > div {
     width: 100%;
     // min-height: 100vh;
-    background: #ccc;
+    background: #ddd;
   }
 }
 
@@ -312,7 +311,7 @@ a {
 .logo {
   // min-width: 10rem;
   width: auto !important;
-  display: inline-block;
+  display: none; // inline-block;
   padding: 0.5rem !important;
   border-radius: 0 0.45rem 0 0.45rem;
   color: #f8f8f8;
@@ -359,6 +358,12 @@ a {
 
 .react-loading-skeleton {
   border-radius: 1rem !important;
+
+  &.media {
+    border-radius: 0 !important;
+    margin-left: -1rem;
+    width: calc(100% + 2rem);
+  }
 }
 
 .MuiOutlinedInput-root {
