@@ -118,7 +118,7 @@ const TagEditor = ({ tags, setTags }: any) => {
 						<span className='tag' key={index} >
 							<small>{tag}</small>
 							<button onClick={removeTag} className='remove-tag' title='remove tag'>
-								<CloseIcon fontSize='inherit' />
+								<CloseIcon fontSize='inherit'/>
 							</button>
 						</span>
 					)}

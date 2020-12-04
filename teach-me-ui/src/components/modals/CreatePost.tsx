@@ -272,16 +272,16 @@ const CreatePost = (props: any) => {
           <Dropdown.Toggle title='attach file(s)' id='dropdown'>
               <AttachmentIcon className='cursor-pointer'/>
           </Dropdown.Toggle>
-          <Dropdown.Menu className='drop-menu'>
+          <Dropdown.Menu className='upload-drop-menu'>
             <label 
               htmlFor='my-input' 
               onClick={hideUploadedFiles} 
-              className='menu-options'
+              className='upload-menu-options'
             >
               local Disk
             </label>
-            <div id='divider'></div>
-            <div className='menu-options' onClick={displayUploads}>
+            <hr id='upload-divider'/>
+            <div className='upload-menu-options' onClick={displayUploads}>
               uploaded files
             </div>
           </Dropdown.Menu>
@@ -296,12 +296,12 @@ const CreatePost = (props: any) => {
         />
         {!state.showUploads && (
           <Row className='d-flex mx-auto mt-1'>
-            <Container component='div' id='grid-box'>
+            <Container component='div' id='upload-grid-box'>
               {state.selectedFiles.map((file: File, i: number) => (
                 <div 
                   title={file.name}
                   key={i} 
-                  className={`relative ${isImage(file) ? 'div-wrapper1' : 'non-image-files'}`}>
+                  className={`upload-relative ${isImage(file) ? 'upload-div-wrapper1' : 'upload-non-image-files'}`}>
                   {isImage(file) ? (
                     <RenderImage file={file}/>
                   ) : (
@@ -309,7 +309,7 @@ const CreatePost = (props: any) => {
                   )}
                   <button 
                     type='button' 
-                    className='remove-img-btn rounded-circle'
+                    className='upload-remove-img-btn rounded-circle'
                     onClick={removeFile}>
                       <CloseIcon fontSize='small' />
                   </button>
@@ -319,7 +319,7 @@ const CreatePost = (props: any) => {
               {state.selectedUploads.map((file: any, i: number) => (
                 <div 
                   key={i} 
-                  className={`relative ${file.image ? 'div-wrapper1' : 'non-image-files'}`}
+                  className={`upload-relative ${file.image ? 'upload-div-wrapper1' : 'upload-non-image-files'}`}
                   title={`${file.title !== 'Untitled' ? file.title : 'from uploads'}`}>
                   {file.image ? (
                     <img 
@@ -333,7 +333,7 @@ const CreatePost = (props: any) => {
                   <button
                     onClick={removeUpload} 
                     type='button'
-                    className='remove-img-btn rounded-circle'>
+                    className='upload-remove-img-btn rounded-circle'>
                       x
                   </button>
                 </div>
@@ -343,7 +343,7 @@ const CreatePost = (props: any) => {
         )}
         {(state.showUploads && uploadsProp.data[0]) && (
           <Row as='h4'
-            className='select-header'>
+            className='upload-select-header'>
               Select files
           </Row>
         )}
@@ -371,7 +371,7 @@ const CreatePost = (props: any) => {
               ? <CircularProgress className='upload-progress margin-auto'/> 
               : uploadsProp.data[0] 
               ? uploadsProp.data.map((file: any, i: number) => (
-                <Container onClick={toggleSelectPreUpload} component='div' key={i} className='col-4 div-wrapper'>
+                <Container onClick={toggleSelectPreUpload} component='div' key={i} className='col-4 upload-div-wrapper'>
                   {file.type === 'image' ? (
                     <img 
                       src={file.thumbnail ? file.thumbnail : file.url} 
@@ -384,7 +384,7 @@ const CreatePost = (props: any) => {
                   <div 
                     id={file._id}
                     title={file.title} 
-                    className='div-wrapper non-image-uploads'>
+                    className='upload-div-wrapper non-image-uploads'>
                       <p>{file.title}</p>
                   </div>
                   )}
@@ -410,7 +410,7 @@ const CreatePost = (props: any) => {
         </Row>
         {state.showUploads && uploadsProp.data[0] && (
           <Row className='d-flex mx-auto mt-1'>
-            <Container component='div' className='width-100'
+            <Container component='div' className='width-100 p-0'
             >
             <Button 
               onClick={handleSelectUpload}
@@ -419,7 +419,7 @@ const CreatePost = (props: any) => {
                 select
             </Button>
             <Button 
-              id='float-button'
+              id='upload-float-button'
               onClick={cancelSelectUpload}
               variant='contained'
               color='secondary'>

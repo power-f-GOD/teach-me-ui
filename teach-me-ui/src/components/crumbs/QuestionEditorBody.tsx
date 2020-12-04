@@ -1,5 +1,4 @@
 import React, {
-  // useState,
   useRef
 }from 'react';
 
@@ -17,7 +16,7 @@ import FormatAlignCenterIcon from '@material-ui/icons/FormatAlignCenter';
 import Button from '@material-ui/core/Button';
 
 
-const QuestionEditorBody = ({ body, onChange }: any) => {
+const QuestionEditorBody = ({ onChange }: any) => {
   const image = useRef<any>();
   const editor = useRef<any>();
   const url = useRef<any>();
@@ -25,6 +24,10 @@ const QuestionEditorBody = ({ body, onChange }: any) => {
   const right = useRef<any>();
   const center = useRef<any>();
   const linkInput = useRef<any>();
+
+  const handleInputChange = (e: any) => {
+    onChange({ currentTarget: { value: e.currentTarget.innerHTML } });
+  }
 
   const handleImageClick = (e: any) => {
     image.current.click();
@@ -62,6 +65,8 @@ const QuestionEditorBody = ({ body, onChange }: any) => {
         const img = document.createElement("img");
         img.src = dataURI as string;
         (editor.current as HTMLDivElement).appendChild(img);
+        (editor.current as HTMLDivElement).appendChild(document.createElement('br'));
+        (editor.current as HTMLDivElement).appendChild(document.createElement('br'));
       },
       false
     );
@@ -82,30 +87,29 @@ const QuestionEditorBody = ({ body, onChange }: any) => {
 
   const handleAlignLeftClick = (e: any) => {
     document.execCommand('justifyLeft',false,'');
-    center.current.classList.remove('format-tools');
-    right.current.classList.remove('format-tools');
+    center.current.classList.remove('question-format-tools');
+    right.current.classList.remove('question-format-tools');
   }
 
   const handleAlignCenterClick = (e: any) => {
     document.execCommand('justifyCenter',false,'');
-    left.current.classList.remove('format-tools');
-    right.current.classList.remove('format-tools');
-
+    left.current.classList.remove('question-format-tools');
+    right.current.classList.remove('question-format-tools');
   }
 
   const handleAlignRightClick = (e: any) => {
     document.execCommand('justifyRight',false,'');
-    center.current.classList.remove('format-tools');
-    left.current.classList.remove('format-tools');
+    center.current.classList.remove('question-format-tools');
+    left.current.classList.remove('question-format-tools');
   }
 
   const toggleSelect = (e: any) => {
     const classList = e.currentTarget.classList;
 
-    if (classList[0] === 'format-tools' || classList[1] === 'format-tools' || classList[2] === 'format-tools') {
-      classList.remove('format-tools');
+    if (classList[0] === 'question-format-tools' || classList[1] === 'question-format-tools' || classList[2] === 'question-format-tools') {
+      classList.remove('question-format-tools');
     } else {
-      classList.add('format-tools');
+      classList.add('question-format-tools');
     }
   }
 
@@ -142,7 +146,7 @@ const QuestionEditorBody = ({ body, onChange }: any) => {
           </div>
           <InsertLinkIcon onClick={handleMakeLink} color='inherit' className='mr-2 cursor-pointer'/>
           <ImageIcon color='inherit' className='mr-3 cursor-pointer' onClick={handleImageClick}/>
-          <input ref={image} type="file" accept="image/*" id="file" className='d-none' onChange={getImage}></input>
+          <input ref={image} type='file' accept='image/*' id='file' className='d-none' onChange={getImage}></input>
           <div ref={left} className='mr-3 cursor-pointer' onClick={toggleSelect}>
             <FormatAlignLeftIcon onClick={handleAlignLeftClick} color='inherit' />
           </div>
@@ -153,7 +157,7 @@ const QuestionEditorBody = ({ body, onChange }: any) => {
             <FormatAlignRightIcon onClick={handleAlignRightClick} color='inherit' />
           </div>
         </div>
-        <div className='body-editor'>
+        <div className='question-body-editor'>
           <div ref={linkInput} className='link-url d-none'>
             <b className='ml-1'>Enter the url:</b> 
             <input ref={url} className='ml-1' type='text' /> 
@@ -165,6 +169,7 @@ const QuestionEditorBody = ({ body, onChange }: any) => {
             </Button>
           </div>
           <div
+            onInput={handleInputChange}
             ref={editor}
             contentEditable
             className='question-input' 

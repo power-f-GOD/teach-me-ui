@@ -2,6 +2,13 @@
   // background: #fff;
   padding-left: 1rem !important;
 
+  #divider {
+    height: 0.0625rem !important;
+    background-color: #ddd !important;
+    background-image: none;
+    margin-bottom: 1rem;
+  }
+
   .container,
   .col,
   & {
@@ -37,7 +44,7 @@
       &:nth-child(2) {
         margin-left: 1rem;
         font-size: 0.9rem;
-        color: #888;
+        color: #aaa;
       }
     }
   }

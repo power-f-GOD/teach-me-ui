@@ -102,7 +102,7 @@ export const getUploads = () => {
       dispatch(uploads({
         status: 'fulfilled',
         err: false,
-        data: data.uploads
+        data: data
       }))
     }
   }).catch(logError(uploads));

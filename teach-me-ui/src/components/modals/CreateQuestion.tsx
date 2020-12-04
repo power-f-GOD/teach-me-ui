@@ -108,7 +108,7 @@ const CreateQuestion = (props: any) => {
     window.location.hash = 'modal';
   }, 0);
 
-  const onChange = (header: string) => ({ target }: any) => {
+  const onChange = (header: string) => ({ currentTarget }: any) => {
     if (label.current && label1.current) {
       label.current.style.display = 'none';
       label1.current.style.display = 'none';
@@ -117,7 +117,7 @@ const CreateQuestion = (props: any) => {
       ...state,
       question: {
         ...state.question,
-        [header]: target.value
+        [header]: currentTarget.value
       }
     })
   };
@@ -291,42 +291,57 @@ const CreateQuestion = (props: any) => {
   return (
     <Box p={1} pt={0} className='create-question'>
       <form>
-      <Row className='d-flex mx-auto mt-0'>
-        <label className='question-label' htmlFor='question-title'>Title</label>
-      </Row>
-      <Row className='d-flex mx-auto mt-0'>
-        <input 
-          required
-          maxLength={150}
-          className='question-input input' 
-          id='question-title'
-          placeholder=' title of question e.g How do I create a neural network'
-          onChange={onChange('title')} 
-          type='text' />
-      </Row>
-      <Row className='d-flex mx-auto mt-3'>
-        <label className='question-label' htmlFor='question-body'>Body</label>
-      </Row>
-      <Row className='d-flex mx-auto mt-0'>
-        <small>Give details on the question </small>
-      </Row>
+      {!props.answer && (
+        <>
+          <Row className='d-flex mx-auto mt-0'>
+            <label className='question-label' htmlFor='question-title'>Title</label>
+          </Row>
+          <Row className='d-flex mx-auto mt-0'>
+            <input 
+              required
+              maxLength={150}
+              className='question-input input' 
+              id='question-title'
+              placeholder=' title of question e.g How do I create a neural network'
+              onChange={onChange('title')} 
+              type='text' />
+          </Row>
+          <Row className='d-flex mx-auto mt-3'>
+            <label className='question-label' htmlFor='question-body'>Body</label>
+          </Row>
+        </>
+      )}
+      {!props.answer ? (
+        <Row className='d-flex mx-auto mt-0'>
+          <small>Give details on the question </small>
+        </Row>
+      ) : (
+        <Row className='d-flex mx-auto mt-0'>
+          <small>Give a detailed answer </small>
+        </Row>
+      )}
+          
       <QuestionEditorBody body={state.question.body} onChange={onChange('body')}/>
-      <Row className='d-flex mx-auto mt-3'>
-        <label className='question-label' htmlFor='question-tags'>Tags</label>
-      </Row>
-      <Row className='d-flex mx-auto mt-0'>
-        <small>Add tags to decribe what your question is about </small>
-      </Row>
-      <Row className='d-flex mx-auto mt-0'>
-        <small className='hint'>*use space to add a tag</small>
-      </Row>
-      <Row className='d-flex mx-auto mt-0'>
-        <TagEditor tags={state.question.tags} setTags={setTags} setShowDropdown={setShowDropdown}/>
-      </Row>
+      {!props.answer && (
+        <> 
+          <Row className='d-flex mx-auto mt-3'>
+            <label className='question-label' htmlFor='question-tags'>Tags</label>
+          </Row>
+          <Row className='d-flex mx-auto mt-0'>
+            <small>Add tags to decribe what your question is about </small>
+          </Row>
+          <Row className='d-flex mx-auto mt-0'>
+            <small className='hint'>*use space to add a tag</small>
+          </Row>
+          <Row className='d-flex mx-auto mt-0'>
+            <TagEditor tags={state.question.tags} setTags={setTags} setShowDropdown={setShowDropdown}/>
+          </Row>
+        </>
+      )}
       {!(state.showUploads && uploadsProp.data[0]) && (
         <>
           <Row className='d-flex mx-auto mt-3'>
-            <small>You can also add files to help understand your question</small>
+        <small>You can also add files to help understand your {props.question ? 'question' : 'answer'}</small>
           </Row>
           <Row className='mx-auto mt-1' style={{position: 'relative'}}>
             <ClickAwayListener onClickAway={(e: any) => {setShowDropdown(false)}}>
@@ -334,15 +349,15 @@ const CreateQuestion = (props: any) => {
                 <AttachmentIcon className='cursor-pointer question-attach mr-2'/>{' '}Attach file(s)
               </Button>
             </ClickAwayListener>
-            <Container onClick={(e: any) => {setShowDropdown(false)}} className={`${showDropdown ? 'd-block' : 'd-none'} dropdown-contents drop-menu`}>
+            <Container onClick={(e: any) => {setShowDropdown(false)}} className={`${showDropdown ? 'd-block' : 'd-none'} dropdown-contents upload-drop-menu`}>
               <label 
                 htmlFor='my-input' 
                 onClick={hideUploadedFiles} 
-                className='menu-options'>
+                className='upload-menu-options'>
                   local Disk
               </label>
-              <div id='divider'></div>
-              <div className='menu-options' onClick={displayUploads}>
+              <hr id='upload-divider'/>
+              <div className='upload-menu-options' onClick={displayUploads}>
                 uploaded files
               </div>
             </Container>
@@ -358,12 +373,12 @@ const CreateQuestion = (props: any) => {
         />
         {!state.showUploads && (
           <Row className='d-flex mx-auto mt-1'>
-            <Container component='div' id='grid-box'>
+            <Container component='div' id='upload-grid-box'>
               {state.selectedFiles.map((file: File, i: number) => (
                 <div 
                   title={file.name}
                   key={i} 
-                  className={`relative ${isImage(file) ? 'div-wrapper1' : 'non-image-files'}`}>
+                  className={`upload-relative ${isImage(file) ? 'upload-div-wrapper1' : 'upload-non-image-files'}`}>
                   {isImage(file) ? (
                     <RenderImage file={file}/>
                   ) : (
@@ -371,7 +386,7 @@ const CreateQuestion = (props: any) => {
                   )}
                   <button 
                     type='button' 
-                    className='remove-img-btn rounded-circle'
+                    className='upload-remove-img-btn rounded-circle'
                     onClick={removeFile}>
                       <CloseIcon fontSize='small'/>
                   </button>
@@ -381,7 +396,7 @@ const CreateQuestion = (props: any) => {
               {state.selectedUploads.map((file: any, i: number) => (
                 <div 
                   key={i} 
-                  className={`relative ${file.image ? 'div-wrapper1' : 'non-image-files'}`}
+                  className={`upload-relative ${file.image ? 'upload-div-wrapper1' : 'upload-non-image-files'}`}
                   title={`${file.title !== 'Untitled' ? file.title : 'from uploads'}`}>
                   {file.image ? (
                     <img 
@@ -395,7 +410,7 @@ const CreateQuestion = (props: any) => {
                   <button
                     onClick={removeUpload} 
                     type='button'
-                    className='remove-img-btn rounded-circle'>
+                    className='upload-remove-img-btn rounded-circle'>
                       x
                   </button>
                 </div>
@@ -405,7 +420,7 @@ const CreateQuestion = (props: any) => {
         )}
         {(state.showUploads && uploadsProp.data[0]) && (
           <Row as='h4'
-            className='select-header'>
+            className='upload-select-header'>
               Select files
           </Row>
         )}
@@ -433,7 +448,7 @@ const CreateQuestion = (props: any) => {
               ? <CircularProgress className='upload-progress margin-auto'/> 
               : uploadsProp.data[0] 
               ? uploadsProp.data.map((file: any, i: number) => (
-                <Container component='div' key={i} onClick={toggleSelectPreUpload} className='col-4 div-wrapper'>
+                <Container component='div' key={i} onClick={toggleSelectPreUpload} className='col-4 upload-div-wrapper'>
                   {file.type === 'image' ? (
                     <img 
                       src={file.thumbnail ? file.thumbnail : file.url} 
@@ -446,7 +461,7 @@ const CreateQuestion = (props: any) => {
                     <div 
                       id={file._id}
                       title={file.title} 
-                      className='div-wrapper non-image-uploads'>
+                      className='upload-div-wrapper non-image-uploads'>
                         <p>{file.title}</p>
                     </div>
                   )}
@@ -472,7 +487,7 @@ const CreateQuestion = (props: any) => {
         </Row>
         {state.showUploads && uploadsProp.data[0] && (
           <Row className='d-flex mx-auto mt-1'>
-            <Container component='div' className='width-100'
+            <Container component='div' className='width-100 p-0'
             >
             <Button 
               onClick={handleSelectUpload}
@@ -481,7 +496,7 @@ const CreateQuestion = (props: any) => {
                 select
             </Button>
             <Button 
-              id='float-button'
+              id='upload-float-button'
               onClick={cancelSelectUpload}
               variant='contained'
               color='secondary'>
@@ -496,18 +511,18 @@ const CreateQuestion = (props: any) => {
               id={`${ (
                 askQuestionProp.status === 'pending' 
                 || sendFile.status === 'pending' 
-                || !(state.question.title && state.question.body && state.question.tags)
+                || (!props.answer ? !(state.question.title && state.question.body && state.question.tags[0]) : (!state.question.body))
               ) ? 'background-grey' : ''}`}
               className='post-button major-button Primary contained p-0 flex-grow-1'
               // onClick={onPostSubmit}
-              color={(state.question.title && state.question.body && state.question.tags) ? 'primary' : 'default'}
+              color={(!props.answer ? (state.question.title && state.question.body && state.question.tags[0]) : (state.question.body)) ? 'primary' : 'default'}
             >
               {askQuestionProp.status === 'pending' ? (
                 <CircularProgress size={28} color='inherit' />
               ) : sendFile.status === 'pending' ? (
                 'uploading files...'
               ) : (
-                'Ask'
+                props.answer ? 'Answer' : 'Ask'
               )} 
             </Button>
           )}
