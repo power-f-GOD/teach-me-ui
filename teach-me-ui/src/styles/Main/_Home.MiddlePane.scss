@@ -176,17 +176,6 @@
   margin: 0 0.5rem !important;
 }
 
-.react-to-post {
-  cursor: pointer;
-  transition: all 0.3s;
-  user-select: none;
-
-  &:hover,
-  &:focus {
-    background: #eee;
-  }
-}
-
 .feeds-scroll-observer {
   position: absolute;
   bottom: 0;

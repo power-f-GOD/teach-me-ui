@@ -54,11 +54,14 @@ export interface PostPropsState {
   reactions: UserData[];
   reply_count: number;
   repost_count: number;
+  reposted: boolean;
   upvote_count: number;
   downvotes: number;
   id: string;
   media: any[];
   date: number;
+  pipe: SocketPipe;
+  parent_id: string;
   reaction: Reaction;
   replies: Partial<PostPropsState>[];
   reposts: Partial<PostPropsState>[];
@@ -76,7 +79,7 @@ export interface PostPropsState {
   };
   text: string;
   upvotes: number;
-  sec_type?: 'REPOST';
+  sec_type?: 'REPOST' | 'REPLY';
   type?: 'post' | 'reply';
   // child?: PostProps;
   // _extra?: PostExtraProps;
@@ -172,13 +175,6 @@ export interface MakeRepostState extends FetchPostsState {}
 export interface TopicPropsState {
   topic: string;
   numberOfDiscussions: number;
-}
-
-export interface ReactButtonPropsState {
-  id: string;
-  num_of_reactions: number;
-  type: 'UPVOTE' | 'DOWNVOTE';
-  reaction: Reaction;
 }
 
 export interface ReactPostState {

@@ -25,7 +25,7 @@ export default function activateSocketRouters() {
 
     switch (true) {
       case pipe.startsWith('POST_'):
-        post(message);
+        if (!message.error) post(message);
         break;
       case pipe.startsWith('PING_'):
         notifications(message);

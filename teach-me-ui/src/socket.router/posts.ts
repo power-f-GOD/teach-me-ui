@@ -1,23 +1,24 @@
 import { dispatch } from '../functions';
 
 import {
-  updatePost,
   replyToPost,
   makeRepostResolved,
   makeRepostRejected,
   updateRepostData,
-  createPost
+  createPost,
+  posts
 } from '../actions';
 
 import { displayModal } from '../functions';
 
-import { PostReactionResult, SocketPipe, RepostResult } from '../constants';
+import { SocketPipe, RepostResult } from '../constants';
 
 export default function post(data: any) {
+  // console.log(data);
   try {
     switch (data.pipe as SocketPipe) {
       case 'POST_REACTION':
-        dispatch(updatePost(data as PostReactionResult));
+        dispatch(posts({ data: [{ ...data }] }));
         break;
       case 'POST_REPOST':
         if (!data.error) {

@@ -37,6 +37,8 @@ export const FETCHED_RECOMMENDATIONS = 'FETCHED_RECOMMENDATIONS';
 export const GET_POSTS = 'GET_POSTS';
 export const SET_POSTS = 'SET_POSTS';
 
+export const POST_REACTION = 'POST_REACTION';
+
 export const postsState: FetchState<PostPropsState[]> = {
   status: 'settled',
   err: false,
