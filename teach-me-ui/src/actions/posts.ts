@@ -44,7 +44,9 @@ import {
   FetchState,
   SET_POSTS,
   ReduxActionV2,
-  GET_POSTS
+  GET_POSTS,
+  LoopFind,
+  POST_REACTION
 } from '../constants';
 
 import {
@@ -52,7 +54,8 @@ import {
   checkNetworkStatusWhilstPend,
   getCharacterSequenceFromText,
   logError,
-  http
+  http,
+  loopThru
 } from '../functions';
 
 import axios from 'axios';
@@ -244,14 +247,52 @@ export const posts = (_payload: FetchState<PostPropsState[], number>) => {
   const { _posts: posts } = getState() as {
     _posts: FetchState<PostPropsState[]>;
   };
+  const { data } = _payload;
+  const pipe = (data ?? [])[0]?.pipe;
+  let payload = { ...posts } as FetchState<PostPropsState[]>;
+  const updateFromPipe = !!pipe;
 
-  return {
-    type: SET_POSTS,
-    payload: {
+  if (!updateFromPipe) {
+    payload = {
       ..._payload,
       data: [...posts.data, ...(_payload.data ?? [])],
       extra: _payload.extra ?? posts.extra
+    };
+  } else if (updateFromPipe) {
+    const data = _payload.data![0];
+    let { value: initialPost, index: postIndex } = loopThru(
+      posts.data ?? [],
+      (post) => post.id === data.id || post.id === data.parent_id,
+      { type: 'find', includeIndex: true }
+    ) as LoopFind<PostPropsState>;
+
+    switch (pipe) {
+      case POST_REACTION:
+        if (initialPost) {
+          if (data.parent_id && initialPost.sec_type !== 'REPLY') {
+            let {
+              value: initialReply,
+              index: replyIndex
+            } = loopThru(
+              initialPost.replies ?? [],
+              (reply) => reply.id === data.id,
+              { type: 'find', includeIndex: true }
+            ) as LoopFind<PostPropsState>;
+
+            initialPost.replies[replyIndex] = { ...initialReply, ...data };
+          } else {
+            initialPost = { ...initialPost, ...data };
+          }
+
+          payload.data![postIndex] = initialPost;
+        }
+        break;
     }
+  }
+
+  return {
+    type: SET_POSTS,
+    payload
   };
 };
 

@@ -1,5 +1,5 @@
 .Post {
-  box-shadow: 0 0.125rem 0.125rem 0 #ccc;
+  box-shadow: 0 0.125rem 0.125rem 0 #bbb, 0 0 0.125rem 0 #bbb;
   overflow: hidden;
 }
 
@@ -9,8 +9,8 @@
   background-color: white;
   position: relative;
   font-size: 1rem;
-  border-radius: 0.85rem;
-  margin-bottom: 0.85rem;
+  border-radius: 1rem;
+  margin-bottom: 0.75rem;
 
   &.remove-skeleton-animation {
     [class*='skeletonStyles'] {
@@ -101,12 +101,12 @@
 
   .media-container {
     width: 100%;
-    border-top: 0.125rem solid #eee;
-    border-bottom: 0.125rem solid #eee;
+    border-top: 0.0625rem solid #eee;
+    border-bottom: 0.0625rem solid #eee;
   }
 
   .post-footer {
-    padding: 0.25em 0;
+    padding: 0.35em 0;
     width: calc(100% - 2rem);
     margin-left: 1em;
     border-top: 0.125em solid #eee;
@@ -114,16 +114,19 @@
   }
 
   .reaction-wrapper {
-    max-width: 5em;
+    max-width: 4.75em;
     padding: 0;
 
     button {
-      max-height: 2.25em;
+      max-height: 2em;
       border-radius: 2em;
       font-size: 0.95em;
+      background-color: rgba(0, 0, 0, 0.05);
 
       &:hover,
       &:focus {
+        background-color: #eee;
+
         path {
           stroke: transparent;
         }
@@ -139,7 +142,7 @@
     }
 
     &:nth-child(2) {
-      margin-left: -0.5em;
+      margin-left: -0.35em;
     }
 
     &:last-child {
@@ -152,11 +155,6 @@
       font-size: 1.35em;
       margin-right: 0.25em;
       color: $theme-tertiary-v4;
-    }
-
-    path {
-      stroke: white;
-      transition: 0.25s;
     }
   }
 }
@@ -310,6 +308,11 @@
     border-bottom: 0.0625em solid #eee;
   }
 
+  .reaction-wrapper {
+    max-width: 5em;
+    padding: 0;
+  }
+
   .Comment {
     padding: 0 0 0 2.85em;
 
@@ -326,6 +329,55 @@
         padding: 0.495em 0.5em;
       }
     }
+  }
+}
+
+.reaction-button {
+  transition: 0.3s;
+
+  &.reaction-upvote {
+    $color: rgb(0, 150, 0);
+
+    background-color: rgba(0, 150, 0, 0.2) !important;
+    color: $color;
+
+    svg {
+      color: $color;
+    }
+
+    &:hover,
+    &:focus {
+      background-color: rgba(0, 150, 0, 0.25) !important;
+    }
+  }
+
+  &.reaction-downvote {
+    $color: rgb(190, 0, 0);
+
+    background-color: rgba(190, 0, 0, 0.175) !important;
+    color: $color;
+
+    svg {
+      color: $color;
+    }
+
+    &:hover,
+    &:focus {
+      background-color: rgba(190, 0, 0, 0.25) !important;
+    }
+  }
+
+  &.reposted {
+    color: $theme-primary-v7;
+
+    svg {
+      color: $theme-primary-v7;
+    }
+  }
+
+  &:hover,
+  &:focus {
+    background-color: #ddd;
   }
 }
 

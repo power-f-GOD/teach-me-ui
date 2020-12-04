@@ -10,7 +10,7 @@ import RepostSharpIcon from '@material-ui/icons/CachedSharp';
 import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
 import { Button, Avatar } from '@material-ui/core';
 
-import ReactButton from './ReactButton';
+import ReactButton from './ReactionButton';
 import CreateReply from './CreateReply';
 import { processPost } from './Post';
 import { bigNumberFormat, formatDate } from '../../functions/utils';
@@ -147,6 +147,7 @@ export const PostFooter = (props: PostCrumbs) => {
     reply_count,
     reaction,
     repostMeta,
+    reposted,
     openCreateRepostModal,
     anchorIsParent
   } = props;
@@ -166,7 +167,7 @@ export const PostFooter = (props: PostCrumbs) => {
         <Col className='reaction-wrapper d-flex align-items-center  '>
           <ReactButton
             id={id!}
-            reaction={reaction!}
+            reaction={reaction === 'UPVOTE' ? reaction : null}
             num_of_reactions={upvote_count!}
             type='UPVOTE'
           />
@@ -174,7 +175,7 @@ export const PostFooter = (props: PostCrumbs) => {
         <Col className='reaction-wrapper d-flex align-items-center justify-content-center'>
           <ReactButton
             id={id!}
-            reaction={reaction!}
+            reaction={reaction === 'DOWNVOTE' ? reaction : null}
             num_of_reactions={downvote_count!}
             type='DOWNVOTE'
           />
@@ -185,7 +186,9 @@ export const PostFooter = (props: PostCrumbs) => {
               onClick={
                 openCreateRepostModal ? openCreateRepostModal(repostMeta) : null
               }
-              className='d-flex align-items-center react-to-post justify-content-center'>
+              className={`d-flex align-items-center reaction-button justify-content-center ${
+                reposted ? 'reposted' : ''
+              }`}>
               <RepostSharpIcon />
               <Box>{bigNumberFormat(repost_count!)}</Box>
             </Button>
