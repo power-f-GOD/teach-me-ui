@@ -132,7 +132,7 @@ function MainNav(props: any) {
       </NavLink>
 
       <NavLink 
-        to='questions' 
+        to='/questions' 
         className='nav-link' >
         <QuestionAnswerIcon />
       </NavLink>
@@ -196,7 +196,7 @@ function MainNavMenu(props: any) {
       </NavLink>
 
       <NavLink 
-        to='questions' 
+        to='/questions' 
         className='nav-link' >
         <QuestionAnswerIcon />
         <Box component='span' className='nav-label ml-3'>

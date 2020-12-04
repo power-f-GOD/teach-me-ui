@@ -156,6 +156,12 @@
   }
 }
 
+.text-decoration-none {
+  &:hover {
+    text-decoration: none !important;
+  }
+}
+
 @keyframes ellipsisScale {
   0% {
     transform: scale(1);

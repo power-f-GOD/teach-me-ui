@@ -18,7 +18,7 @@ import CreateRepost from './CreateRepost';
 import EditProfile from './Profile.edit';
 import UploadsPreview from './UploadsPreview';
 import Notifications from './Notifications';
-import CreateQuestion from './CreateQuestion';
+import CreateQuestionOrAnswer from './CreateQuestion';
 
 import { uploads } from '../../actions';
 import { 
@@ -27,7 +27,8 @@ import {
   NOTIFICATIONS,
   SELECT_PHOTO,
   EDIT_PROFILE,
-  CREATE_QUESTION
+  CREATE_QUESTION,
+  CREATE_ANSWER
 } from '../../constants/modals';
 
 const removeModal = (event: any) => {
@@ -63,7 +64,10 @@ const ModalFrame = (props: any) => {
       modalBody = <Notifications />;
       break;
     case  CREATE_QUESTION:
-      modalBody = <CreateQuestion />;
+      modalBody = <CreateQuestionOrAnswer />;
+      break;
+    case CREATE_ANSWER:
+      modalBody =  <CreateQuestionOrAnswer answer />;
   }
   return (
     <Modal

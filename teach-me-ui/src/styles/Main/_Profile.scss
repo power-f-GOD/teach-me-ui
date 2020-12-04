@@ -6,6 +6,19 @@
   position: relative;
   min-height: 100vh;
 
+  .photo-upload-button:hover {
+    box-shadow: 0rem 0.375rem 0.125rem -0.25rem rgba(0,0,0,0.2), 0rem 0.125rem 0.125rem 0rem rgba(0,0,0,0.14), 0rem 0.0625rem 0.3125rem 0rem rgba(0,0,0,0.12);
+  }
+  
+  .bio {
+    font-style: italic;
+    font-weight: bold;
+  }
+  
+  .bio2 {
+    display: none;
+  }
+
   .details-card {
     background-color: white;
     border-radius: 0.5rem;
@@ -446,18 +459,5 @@
   font-weight: normal;
   cursor: pointer;
   color: #000;
-}
-
-.photo-upload-button:hover {
-  box-shadow: 0rem 0.375rem 0.125rem -0.25rem rgba(0,0,0,0.2), 0rem 0.125rem 0.125rem 0rem rgba(0,0,0,0.14), 0rem 0.0625rem 0.3125rem 0rem rgba(0,0,0,0.12);
-}
-
-.bio {
-  font-style: italic;
-  font-weight: bold;
-}
-
-.bio2 {
-  display: none;
 }
 

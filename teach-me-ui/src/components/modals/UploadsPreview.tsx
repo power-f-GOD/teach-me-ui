@@ -104,13 +104,13 @@ const UploadsPreview = (props: any) => {
         </label>
       </Row>
       <Row as='h4'
-        className={`${uploads.data[0] ? 'display-block' : 'display-none'} select-header margin-top-1`}
+        className={`${uploads.data[0] ? 'display-block' : 'display-none'} upload-select-header margin-top-1`}
         > Uploads
       </Row>
       <Row className='d-flex mx-auto mt-1'>
         <Box
           component='div'
-          id='grid-box1' 
+          id='upload-grid-box1' 
           className='scroll-image'  
         >
           {uploads.status === 'pending' 
@@ -120,7 +120,7 @@ const UploadsPreview = (props: any) => {
                 file.type === 'image' ? (
                   <Container 
                     key={i} 
-                    className='col-4 div-wrapper cursor-pointer'
+                    className='col-4 upload-div-wrapper cursor-pointer'
                     onClick={(e: any) => {
                       selectUpload(file._id);
                     }}
