@@ -115,8 +115,8 @@ export const requestSignup = (data: SignupFormData) => (
   dispatch: Function
 ): ReduxAction => {
   let {
-    first_name: firstname,
-    last_name: lastname,
+    first_name,
+    last_name,
     username,
     email,
     dob,
@@ -128,21 +128,33 @@ export const requestSignup = (data: SignupFormData) => (
   const [day, month, year] = dob.split('/');
   const date_of_birth = `${year}-${month}-${day}`;
 
-  firstname = `${firstname[0].toUpperCase()}${firstname
+  first_name = `${first_name[0].toUpperCase()}${first_name
     .slice(1)
     .toLowerCase()}`;
-  lastname = `${lastname[0].toUpperCase()}${lastname.slice(1).toLowerCase()}`;
+  last_name = `${last_name[0].toUpperCase()}${last_name
+    .slice(1)
+    .toLowerCase()}`;
   username = username.toLowerCase();
   email = email.toLowerCase();
 
   dispatch(signup({ status: 'pending', statusText: ' ' }));
   //check if user is online as lost network connection is not a failure state for Firebase db in order to give response to user
   checkNetworkStatusWhilstPend({ name: 'signup', func: signup });
-
+  console.log({
+    first_name,
+    last_name,
+    username,
+    email,
+    date_of_birth,
+    password,
+    institution_id: institution,
+    department,
+    level
+  })
   http
     .post<UserData>('/auth/register', {
-      firstname,
-      lastname,
+      first_name,
+      last_name,
       username,
       email,
       date_of_birth,
@@ -153,7 +165,7 @@ export const requestSignup = (data: SignupFormData) => (
     })
     .then(({ error, message, data }) => {
       if (!error) {
-        const displayName = `${firstname} ${lastname}`;
+        const displayName = `${first_name} ${last_name}`;
 
         populateStateWithUserData({
           ...data,

@@ -13,9 +13,9 @@ export interface HTTP {
     data?: any
   ): AxiosRequestConfig;
   get<T>(url: string, requiresAuth?: boolean): Promise<APIResponseModel<T>>;
-  post<T>(
+  post<T, T2 = T | any>(
     url: string,
-    data?: any,
+    data?: T2,
     requiresAuth?: boolean
   ): Promise<APIResponseModel<T>>;
 }
@@ -272,8 +272,8 @@ export interface APIResponseModel<T> {
 }
 
 export interface SignupPropsState {
-  firstname: BasicInputState;
-  lastname: BasicInputState;
+  first_name: BasicInputState;
+  last_name: BasicInputState;
   username: BasicInputState;
   email: BasicInputState;
   dob: BasicInputState;

@@ -25,7 +25,7 @@ import {
   BIO_VALIDATE
 } from '../constants';
 
-export const firstname = (
+export const first_name = (
   state: BasicInputState = basicInputState,
   action: ReduxAction
 ) => {
@@ -74,7 +74,7 @@ export const bio = (
   return state;
 };
 
-export const lastname = (
+export const last_name = (
   state: BasicInputState = basicInputState,
   action: ReduxAction
 ) => {
