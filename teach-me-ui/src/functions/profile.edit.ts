@@ -43,7 +43,7 @@ export function handleEditProfileInputChange({
       let uid = target.dataset?.uid;
 
       return dispatch(
-        actions.validateInstitution({ value: { keyword: value, uid } })
+        actions.validateInstitution({ value: { keyword: value, uid: uid } })
       );
     case 'department':
       return dispatch(actions.validateDepartment({ value }));
