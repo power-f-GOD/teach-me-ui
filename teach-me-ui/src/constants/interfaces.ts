@@ -177,14 +177,6 @@ export interface TopicPropsState {
   numberOfDiscussions: number;
 }
 
-export interface ReactButtonPropsState {
-  id: string;
-  num_of_reactions: number;
-  type: 'UPVOTE' | 'DOWNVOTE';
-  reaction: Reaction | null;
-  socket: WebSocket;
-}
-
 export interface ReactPostState {
   id: string;
   type: Reaction;

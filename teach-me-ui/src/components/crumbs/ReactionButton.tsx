@@ -7,14 +7,23 @@ import DownvoteSharpIcon from '@material-ui/icons/ExpandMoreSharp';
 import Button from '@material-ui/core/Button';
 
 import { bigNumberFormat, emitUserOnlineStatus } from '../../functions';
-import { ReactButtonPropsState } from '../../constants/interfaces';
-import { POST_REACTION } from '../../constants';
+import { POST_REACTION, Reaction } from '../../constants';
 
-const ReactButton: React.FunctionComponent<ReactButtonPropsState> = (props) => {
+interface ReactButtonPropsState {
+  id: string;
+  num_of_reactions: number;
+  type: 'UPVOTE' | 'DOWNVOTE';
+  reaction: Reaction | null;
+  socket?: WebSocket;
+}
+
+export const ReactButton: React.FunctionComponent<ReactButtonPropsState> = (
+  props
+) => {
   const { type, id, reaction, num_of_reactions, socket } = props;
 
   const reactToPost = React.useCallback(() => {
-    if (socket.readyState === socket.OPEN) {
+    if (socket && socket.readyState === socket.OPEN) {
       socket.send(
         JSON.stringify({
           pipe: POST_REACTION,

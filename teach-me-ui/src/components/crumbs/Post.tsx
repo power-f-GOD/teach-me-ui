@@ -100,8 +100,6 @@ const Post: React.FC<
     sender,
     text,
     date: posted_at,
-    // upvotes: _upvotes,
-    // downvotes: _downvotes,
     reaction,
     reposts,
     replies,
@@ -113,14 +111,6 @@ const Post: React.FC<
   const { username: sender_username, first_name, last_name, profile_photo } =
     sender || {};
   const sender_name = first_name ? `${first_name} ${last_name}` : '';
-  // const child_sender_name = child
-  //   ? `${child?.sender!.first_name} ${child?.sender?.last_name}`
-  //   : '';
-  // const parent_sender_name = parent
-  //   ? `${parent?.sender!.first_name} ${parent?.sender?.last_name}`
-  //   : '';
-
-  // let _extra = '';
 
   const history = useHistory();
   const [mediaPreview, setMediaPreview] = useState(false);
@@ -129,7 +119,7 @@ const Post: React.FC<
   let extra: string | null = '';
 
   const navigate = (id: string) => (e: any) => {
-    history.push(`/p/${id}`);
+    if (2 > 3) history.push(`/p/${id}`);
   };
 
   const showModal = (e: any) => {
@@ -361,19 +351,20 @@ const Post: React.FC<
                         onClick={
                           mData.type === 'raw' || true
                             ? () => {
-                                Axios({
-                                  url: mData.url,
-                                  method: 'GET',
-                                  responseType: 'blob'
-                                }).then((res) => {
-                                  const dataURL = URL.createObjectURL(
-                                    new Blob([res.data])
-                                  );
-                                  const a = document.createElement('a');
-                                  a.href = dataURL;
-                                  a.download = 'file';
-                                  a.click();
-                                });
+                                if (2 > 3)
+                                  Axios({
+                                    url: mData.url,
+                                    method: 'GET',
+                                    responseType: 'blob'
+                                  }).then((res) => {
+                                    const dataURL = URL.createObjectURL(
+                                      new Blob([res.data])
+                                    );
+                                    const a = document.createElement('a');
+                                    a.href = dataURL;
+                                    a.download = 'file';
+                                    a.click();
+                                  });
                               }
                             : showModal
                         }
