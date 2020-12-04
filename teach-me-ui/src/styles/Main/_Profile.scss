@@ -22,6 +22,11 @@
   .details-card {
     background-color: white;
     border-radius: 0.5rem;
+
+    path {
+      stroke: white;
+      fill: $theme-primary-v6;
+    }
   }
 
   .colleague-container {
@@ -182,11 +187,6 @@
     }
   }
 
-  path:not(.pathignore) {
-    stroke: white;
-    fill: $theme-primary-v6;
-  }
-
   hr {
     height: 0.0625rem;
     width: calc(100% - 0.8rem);
@@ -322,12 +322,6 @@
         stroke: transparent;
       }
     }
-    // &.accept-request {
-    // }
-    path {
-      fill: #fff;
-      stroke: transparent;
-    }
   }
 
   .profile-avatar {
@@ -360,7 +354,6 @@
   }
 
   .MuiSvgIcon-root {
-    color: $theme-primary-v4;
     font-size: 2.5rem;
   }
 
@@ -451,7 +444,9 @@
 
 .photo-upload-button {
   padding: 0em;
-  box-shadow: 0rem 0.2rem 0.06rem -0.125rem rgba(0,0,0,0.2), 0rem 0.125rem 0.125rem 0rem rgba(0,0,0,0.14), 0rem 0.0625rem 0.3125rem 0rem rgba(0,0,0,0.12);
+  box-shadow: 0rem 0.2rem 0.06rem -0.125rem rgba(0, 0, 0, 0.2),
+    0rem 0.125rem 0.125rem 0rem rgba(0, 0, 0, 0.14),
+    0rem 0.0625rem 0.3125rem 0rem rgba(0, 0, 0, 0.12);
   background-color: #e0e0e0;
   border-radius: 0.25em;
   padding: 0.4em 1em;
@@ -461,3 +456,17 @@
   color: #000;
 }
 
+.photo-upload-button:hover {
+  box-shadow: 0rem 0.375rem 0.125rem -0.25rem rgba(0, 0, 0, 0.2),
+    0rem 0.125rem 0.125rem 0rem rgba(0, 0, 0, 0.14),
+    0rem 0.0625rem 0.3125rem 0rem rgba(0, 0, 0, 0.12);
+}
+
+.bio {
+  font-style: italic;
+  font-weight: bold;
+}
+
+.bio2 {
+  display: none;
+}
