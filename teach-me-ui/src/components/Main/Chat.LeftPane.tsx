@@ -1,7 +1,5 @@
 import React, { useCallback } from 'react';
-import { NavLink } from 'react-router-dom';
-
-import queryString from 'query-string';
+import { NavLink, match as Match} from 'react-router-dom';
 
 import Col from 'react-bootstrap/Col';
 
@@ -53,7 +51,6 @@ interface ChatLeftPaneProps {
   rooms?: any[];
   userId: string;
   userFirstname: string;
-  handleSetActivePaneIndex(index: number): Function;
 }
 
 const Memoize = createMemo();
@@ -69,12 +66,7 @@ const allyProps = (index: any) => {
 };
 
 const ChatLeftPane = (props: ChatLeftPaneProps) => {
-  const {
-    conversations: _conversations,
-    userId,
-    userFirstname,
-    handleSetActivePaneIndex
-  } = props;
+  const { conversations: _conversations, userId, userFirstname } = props;
   const [value, setValue] = React.useState<number>(0);
 
   const handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
@@ -118,7 +110,6 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
               memoizedComponent={PaneItems}
               userId={userId}
               conversations={_conversations}
-              handleSetActivePaneIndex={handleSetActivePaneIndex}
             />
           ) : (
             <Box padding='2rem' textAlign='center'>
@@ -231,16 +222,11 @@ function TabPanel(props: TabPanelProps) {
 function PaneItems(props: {
   conversations: SearchState;
   userId: string;
-  handleSetActivePaneIndex(index: number): Function;
+  (index: number): Function;
 }) {
-  const {
-    conversations: _conversations,
-    userId,
-    handleSetActivePaneIndex
-  } = props;
-  const convos = (_conversations.data ?? []) as Partial<
-    APIConversationResponse
-  >[];
+  const { conversations: _conversations, userId } = props;
+  const convos = (_conversations.data ??
+    []) as Partial<APIConversationResponse>[];
 
   return (
     <>
@@ -268,7 +254,6 @@ function PaneItems(props: {
             }
             index={i}
             userId={userId}
-            handleSetActivePaneIndex={handleSetActivePaneIndex}
             key={i}
           />
         );
@@ -280,13 +265,11 @@ function PaneItems(props: {
 function PaneItem({
   conversation: _conversation,
   userId,
-  handleSetActivePaneIndex,
   index
 }: {
   conversation: Partial<APIConversationResponse>;
   userId: string;
   index: number;
-  handleSetActivePaneIndex(index: number): Function;
   forceUpdate: string;
 }) {
   const {
@@ -325,23 +308,16 @@ function PaneItem({
     ) /
       864e5 ===
     1;
-  const _queryString = `?id=${_userId}&chat=o1&cid=${convoId}`;
+
   const _chatState: ChatState = {
-    isOpen: true,
-    isMinimized: false,
-    queryString: _queryString
+    pathname: `/chat/${convoId}`,
+    queryParam: '?1'
   };
 
-  const navLinkTo = useCallback(
-    ({ pathname }: any) => pathname + _queryString,
-    [_queryString]
-  );
-
   const navLinkActive = useCallback(
-    (_match: any, location: any) => {
-      return Boolean(
-        convoId && queryString.parse(location.search)?.cid === convoId
-      );
+    (match: Match<{ convoId: string }> | null) => {
+      console.log(convoId, match, 'heeeeeeey')
+      return Boolean(convoId && match?.params.convoId === convoId);
     },
     [convoId]
   );
@@ -349,8 +325,9 @@ function PaneItem({
   const handleChatClick = useCallback(
     (chatInfo: ChatState, extra: { convoId: string; userId: string }) => {
       return (e: any) => {
-        const { id, cid } = queryString.parse(window.location.search);
-        const { convoId, userId } = extra;
+        const { pathname } = window.location;
+        const cid = pathname.split('/').slice(-1)[0];
+        const { convoId } = extra;
         const {
           conversation: _conversation,
           conversationMessages: _conversationMessages
@@ -370,23 +347,9 @@ function PaneItem({
           }
         }
 
-        delay(300).then(() => {
-          handleSetActivePaneIndex(1)();
-        });
-
-        if (cid === convoId || userId === id || prevChatConvoId === convoId) {
-          const queryString = window.location.search.replace(
-            'chat=m2',
-            'chat=o1'
-          );
-
-          dispatch(chatState({ queryString }));
+        if (cid === convoId || prevChatConvoId === convoId) {
+          dispatch(chatState({ ...chatInfo }, true));
           e.preventDefault();
-          window.history.replaceState(
-            {},
-            '',
-            window.location.pathname + queryString
-          );
           return;
         }
 
@@ -418,21 +381,21 @@ function PaneItem({
           dispatch(conversationMessages({ status: 'pending', err: true }));
         }
 
-        dispatch(chatState(chatInfo));
+        // dispatch(chatState(chatInfo));
         dispatch(conversation(convoId));
       };
     },
-    [handleSetActivePaneIndex]
+    []
   );
 
   return (
     <NavLink
-      to={navLinkTo}
+      to={`/chat/${convoId}?1`}
       className={`chat-tab-panel-item ${!friendship ? 'uncolleagued' : ''} ${
         recent === index ? 'recent' : ''
       }`}
       key={convoId}
-      isActive={navLinkActive}
+      isActive={navLinkActive as any}
       onClick={handleChatClick(
         { ..._chatState },
         { convoId: String(convoId), userId: String(_userId) }

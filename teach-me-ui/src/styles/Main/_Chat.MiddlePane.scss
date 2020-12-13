@@ -78,6 +78,22 @@
     font-size: 1.35rem !important;
   }
 
+  .chat-close-button {
+    border-radius: 50%;
+    display: inline-flex;
+    height: 3rem;
+    width: 3rem;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    transition: 0.3s;
+
+    &:hover,
+    &:focus {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+  }
+
   &.conversations-menu-button-wrapper {
     display: none;
   }
@@ -110,7 +126,7 @@
   transform: translateX(1.5rem);
   transition: $transition;
 
-  button {
+  button, a {
     transform: rotateY(-30deg) translateX(-3rem);
     transition: $transition;
   }
@@ -119,7 +135,7 @@
     opacity: 1;
     transform: translateX(0);
 
-    button {
+    button, a {
       transform: rotateY(0) translateX(0);
     }
 
@@ -132,7 +148,7 @@
     transform: translateX(1.5rem) translateY(calc(-100% - 4.75rem));
   }
 
-  button {
+  button, a {
     box-shadow: none !important;
     background: none;
     padding-right: 0.8rem;
@@ -152,6 +168,14 @@
     &:focus {
       background-color: #ddd;
     }
+  }
+
+  .chat-close-button {
+    border-radius: unset;
+    width: 100%;
+    height: unset;
+    justify-content: unset;
+    padding: 0.65rem;
   }
 
   [class*='Icon'] {

@@ -8,11 +8,13 @@ import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 import SchoolIcon from '@material-ui/icons/School';
 import IconButton from '@material-ui/core/IconButton';
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import { ONE_TO_ONE } from '../../constants/chat';
 import { APIConversationResponse } from '../../constants/interfaces';
 import { InfoCard } from '../crumbs/Cards';
+import { dispatch } from '../../functions';
+import { chatState } from '../../actions/chat';
 
 interface ChatRightPaneProps {
   convoType: string;
@@ -33,8 +35,7 @@ const ChatRightPane = (props: ChatRightPaneProps) => {
     convosErr,
     convoInfo,
     convoProfilePhoto,
-    onlineStatusString,
-    handleSetActivePaneIndex
+    onlineStatusString
   } = props;
   const { institution, department, level } = convoInfo ?? {};
   const badgeStatus = /last seen/i.test(onlineStatusString)
@@ -43,21 +44,25 @@ const ChatRightPane = (props: ChatRightPaneProps) => {
     ? 'away'
     : 'online';
 
+  const handleBackButtonClick = React.useCallback(() => {
+    dispatch(chatState({ queryParam: '?1' }));
+  }, []);
+
   return (
     <>
       <Col
         as='header'
-        className='chat-header d-flex justify-content-between align-items-center px-2'>
-        <Box component='span' className='font-bold pl-1'>
-          {convoType === ONE_TO_ONE ? 'User info' : 'Participants'}
-        </Box>
+        className='chat-header d-flex justify-content-start align-items-center px-2'>
         <Box component='span' className='chat-header-control-wrapper ml-1'>
           <IconButton
             className='back-button'
-            onClick={handleSetActivePaneIndex(1)}
+            onClick={handleBackButtonClick}
             aria-label='go back'>
-            <ArrowForwardIcon />
+            <ArrowBackIcon />
           </IconButton>
+        </Box>
+        <Box component='span' className='font-bold px-1'>
+          {convoType === ONE_TO_ONE ? 'User info' : 'Participants'}
         </Box>
       </Col>
       {convoType === ONE_TO_ONE ? (
