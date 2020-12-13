@@ -482,7 +482,7 @@ export const ChatDate = ({
         scrollView.removeEventListener('scroll', stickDate);
       }
     };
-  }, [scrollView, stickDate, timestamp, chatDateSticky.style.opacity, pxRatio]);
+  }, [scrollView, stickDate, timestamp, chatDateSticky, pxRatio]);
 
   if (isNaN(timestamp)) {
     return <>{timestamp}</>;

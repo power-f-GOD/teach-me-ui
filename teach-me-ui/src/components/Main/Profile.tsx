@@ -1,8 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  createRef,
-} from 'react';
+import React, { useState, useEffect, createRef } from 'react';
 
 import * as api from '../../actions/profile';
 import { Redirect, Link, Switch, Route } from 'react-router-dom';
@@ -28,8 +24,8 @@ import Button from '@material-ui/core/Button';
 import Img from '../crumbs/Img';
 import ColleagueView from '../crumbs/ColleagueView';
 import ProfileFeeds from '../crumbs/ProfileFeeds';
-import { 
-  UserData, 
+import {
+  UserData,
   DeepProfileProps,
   EDIT_PROFILE,
   SELECT_PHOTO
@@ -124,7 +120,9 @@ const Profile = (props: any) => {
 
   const [acceptWasClicked, setAcceptWasClicked] = useState(false);
   const [declineWasClicked, setDeclineWasClicked] = useState(false);
-  const [colleagueButtonWasClicked, setColleagueButtonWasClicked] = useState(false);
+  const [colleagueButtonWasClicked, setColleagueButtonWasClicked] = useState(
+    false
+  );
   const onColleagueActionClick = async (e: any, decline?: boolean) => {
     setColleagueButtonWasClicked(true);
     const deepData = deepProfileData as DeepProfileProps;
@@ -133,7 +131,9 @@ const Profile = (props: any) => {
         await dispatch(api.addColleague(data.id, data.username));
         break;
       case 'PENDING_REQUEST':
-        await dispatch(api.removeColleague(deepData.request_id as string, data.id));
+        await dispatch(
+          api.removeColleague(deepData.request_id as string, data.id)
+        );
         break;
       case 'AWAITING_REQUEST_ACTION':
         if (decline) {
@@ -145,9 +145,15 @@ const Profile = (props: any) => {
         }
         !decline
           ? await dispatch(
-              api.acceptColleague(deepData.request_id as string, data.username, data.id)
+              api.acceptColleague(
+                deepData.request_id as string,
+                data.username,
+                data.id
+              )
             )
-          : await dispatch(api.declineColleague(deepData.request_id as string, data.id));
+          : await dispatch(
+              api.declineColleague(deepData.request_id as string, data.id)
+            );
         break;
       case 'IS_COLLEAGUE':
         await dispatch(api.unColleague(data.id));
@@ -155,18 +161,20 @@ const Profile = (props: any) => {
     }
     dispatch(getConversations('settled')(dispatch));
   };
-  
 
   basicInfo = [
     { name: 'Firstname', value: selfView ? userData.first_name : firstname },
     { name: 'Lastname', value: selfView ? userData.last_name : lastname },
-    { name: 'Username', value: selfView ? userData.username : userId },
+    { name: 'Username', value: selfView ? userData.username : userId }
     // { name: 'Bio', value: selfView ? userData.bio ? userData.bio : 'Hey there, I use Kanyimuta' : bio },
     // { name: 'Date of birth', value: selfView ? userData.dob : dob },
     // { name: 'Email', value: selfView ? userData.email : email }
   ];
   academicInfo = [
-    { name: 'Institution', value: selfView ? userData.institution : institution },
+    {
+      name: 'Institution',
+      value: selfView ? userData.institution : institution
+    },
     { name: 'Department', value: selfView ? userData.department : department },
     { name: 'Level', value: selfView ? userData.level : level }
   ];
@@ -176,7 +184,7 @@ const Profile = (props: any) => {
   };
 
   const handleEditClick = () => {
-      openEditProfileModal();
+    openEditProfileModal();
   };
 
   useEffect(() => {
@@ -186,7 +194,7 @@ const Profile = (props: any) => {
       };
     }
   }, [selfView]);
-  
+
   useEffect(() => {
     cleanUp(true);
     dispatch(getProfileData(userId.replace('@', ''))(dispatch));
@@ -202,26 +210,27 @@ const Profile = (props: any) => {
     return <Redirect to='/404' />;
   }
 
-  if (
-    !/chat=o1/.test(window.location.search) &&
-    profileData.status !== 'fulfilled'
-  ) {
+  if (profileData.status !== 'fulfilled') {
     //instead of this, you can use a React Skeleton loader; didn't have the time to add, so I deferred.
     return <Loader />;
   }
 
   const openProfilePhotoEditModal = () => {
     displayModal(true, false, SELECT_PHOTO, { title: 'Select Profile Photo' });
-  }
+  };
 
   const openCoverPhotoEditModal = (e: any) => {
     displayModal(true, false, SELECT_PHOTO, { title: 'Select Cover Photo' });
-  }
+  };
 
   return (
     <Box className={`Profile ${selfView ? 'self-view' : ''} fade-in pb-3`}>
       <Box component='div' className='profile-top'>
-        <Img alt={displayName} className='cover-photo' src={selfView ? userData.cover_photo : data.cover_photo} />
+        <Img
+          alt={displayName}
+          className='cover-photo'
+          src={selfView ? userData.cover_photo : data.cover_photo}
+        />
         <Container className='details-container'>
           <div className='avatar-with-icon'>
             <Avatar
@@ -231,8 +240,10 @@ const Profile = (props: any) => {
               src={selfView ? userData.profile_photo : data.profile_photo}
             />
             {selfView && (
-              <div onClick={openProfilePhotoEditModal} className='profile-photo-change-container'>
-                <PhotoCameraIcon className='profile-photo-change'/>
+              <div
+                onClick={openProfilePhotoEditModal}
+                className='profile-photo-change-container'>
+                <PhotoCameraIcon className='profile-photo-change' />
               </div>
             )}
           </div>
@@ -242,10 +253,10 @@ const Profile = (props: any) => {
               {selfView ? userData.displayName : displayName}
             </Col>
             <Col as='span' className='username p-0 mb-1'>
-              {selfView? `@${userData.username}` : userId}
+              {selfView ? `@${userData.username}` : userId}
             </Col>
             <Col as='span' className='bio p-0'>
-            { selfView ? userData.bio : bio }
+              {selfView ? userData.bio : bio}
             </Col>
           </Col>
         </Container>
@@ -277,13 +288,15 @@ const Profile = (props: any) => {
                     size='small'
                     className='colleague-action-button add-colleague primary'
                     color='primary'
-                    disabled={colleagueButtonWasClicked && 
-                              (addColleagueStatus.status === 'pending' || 
-                              fetchDeepProfileStatus.status === 'pending')}
+                    disabled={
+                      colleagueButtonWasClicked &&
+                      (addColleagueStatus.status === 'pending' ||
+                        fetchDeepProfileStatus.status === 'pending')
+                    }
                     onClick={onColleagueActionClick}>
                     {colleagueButtonWasClicked &&
                     (addColleagueStatus.status === 'pending' ||
-                    fetchDeepProfileStatus.status === 'pending') ? (
+                      fetchDeepProfileStatus.status === 'pending') ? (
                       <Box textAlign='center'>
                         <CircularProgress size={28} color='inherit' />
                       </Box>
@@ -302,12 +315,13 @@ const Profile = (props: any) => {
                     color='primary'
                     disabled={
                       colleagueButtonWasClicked &&
-                      (removeColleagueStatus.status === 'pending' || 
-                      fetchDeepProfileStatus.status === 'pending')}
+                      (removeColleagueStatus.status === 'pending' ||
+                        fetchDeepProfileStatus.status === 'pending')
+                    }
                     onClick={onColleagueActionClick}>
                     {colleagueButtonWasClicked &&
-                    (removeColleagueStatus.status === 'pending' || 
-                    fetchDeepProfileStatus.status === 'pending') ? (
+                    (removeColleagueStatus.status === 'pending' ||
+                      fetchDeepProfileStatus.status === 'pending') ? (
                       <Box textAlign='center'>
                         <CircularProgress size={28} color='inherit' />
                       </Box>
@@ -327,16 +341,16 @@ const Profile = (props: any) => {
                       className='colleague-action-button accept-request'
                       color='primary'
                       disabled={
-                        colleagueButtonWasClicked && 
+                        colleagueButtonWasClicked &&
                         acceptWasClicked &&
-                        (acceptColleagueStatus.status === 'pending' || 
-                        fetchDeepProfileStatus.status === 'pending')
+                        (acceptColleagueStatus.status === 'pending' ||
+                          fetchDeepProfileStatus.status === 'pending')
                       }
                       onClick={onColleagueActionClick}>
                       {colleagueButtonWasClicked &&
                       acceptWasClicked &&
-                      (acceptColleagueStatus.status === 'pending' || 
-                      fetchDeepProfileStatus.status === 'pending') ? (
+                      (acceptColleagueStatus.status === 'pending' ||
+                        fetchDeepProfileStatus.status === 'pending') ? (
                         <Box textAlign='center'>
                           <CircularProgress size={28} color='inherit' />
                         </Box>
@@ -358,9 +372,11 @@ const Profile = (props: any) => {
                         (declineColleagueStatus.status === 'pending' ||
                           fetchDeepProfileStatus.status === 'pending')
                       }
-                      onClick={(e: any) => {onColleagueActionClick(e, true)}}>
+                      onClick={(e: any) => {
+                        onColleagueActionClick(e, true);
+                      }}>
                       {colleagueButtonWasClicked &&
-                       declineWasClicked &&
+                      declineWasClicked &&
                       (declineColleagueStatus.status === 'pending' ||
                         fetchDeepProfileStatus.status === 'pending') ? (
                         <Box textAlign='center'>
@@ -368,7 +384,8 @@ const Profile = (props: any) => {
                         </Box>
                       ) : (
                         <>
-                          <RejectIcon fontSize='inherit' /> <span className='colleaguing-text'>Decline</span>
+                          <RejectIcon fontSize='inherit' />{' '}
+                          <span className='colleaguing-text'>Decline</span>
                         </>
                       )}
                     </Button>
@@ -381,15 +398,16 @@ const Profile = (props: any) => {
                     className='colleague-action-button uncolleague'
                     color='primary'
                     disabled={
-                      colleagueButtonWasClicked && 
-                      (unColleagueStatus.status === 'pending' || 
-                      fetchDeepProfileStatus.status === 'pending')}
+                      colleagueButtonWasClicked &&
+                      (unColleagueStatus.status === 'pending' ||
+                        fetchDeepProfileStatus.status === 'pending')
+                    }
                     onClick={onColleagueActionClick}>
-                    {colleagueButtonWasClicked && 
-                    (unColleagueStatus.status === 'pending' || 
-                    fetchDeepProfileStatus.status === 'pending') ? (
+                    {colleagueButtonWasClicked &&
+                    (unColleagueStatus.status === 'pending' ||
+                      fetchDeepProfileStatus.status === 'pending') ? (
                       <Box textAlign='center'>
-                        <CircularProgress size={28} color='inherit'/>
+                        <CircularProgress size={28} color='inherit' />
                       </Box>
                     ) : (
                       <>
@@ -401,17 +419,19 @@ const Profile = (props: any) => {
               </>
             ) : null)}
           {selfView ? (
-                <>
-                  <Button
-                    variant='contained'
-                    size='large'
-                    className='colleague-action-button add-colleague'
-                    color='primary'
-                    onClick={handleEditClick}>
-                    <CreateOutlinedIcon fontSize='inherit' /> Edit Profile
-                  </Button>
-                </>
-              ) : ''}
+            <>
+              <Button
+                variant='contained'
+                size='large'
+                className='colleague-action-button add-colleague'
+                color='primary'
+                onClick={handleEditClick}>
+                <CreateOutlinedIcon fontSize='inherit' /> Edit Profile
+              </Button>
+            </>
+          ) : (
+            ''
+          )}
           {false && (
             <Button
               variant='contained'
@@ -431,7 +451,8 @@ const Profile = (props: any) => {
               className='cover-button'
               color='default'
               onClick={openCoverPhotoEditModal}>
-                <PhotoCameraIcon fontSize='inherit' /> <span className='edit-cover-photo'>Edit Cover Photo</span>
+              <PhotoCameraIcon fontSize='inherit' />{' '}
+              <span className='edit-cover-photo'>Edit Cover Photo</span>
             </Button>
           </div>
         )}
@@ -439,27 +460,26 @@ const Profile = (props: any) => {
       <Container className='px-0'>
         <Row className='mx-0 mt-5 pt-3 align-items-start'>
           <Col sm={12} md={4} className='hang-in my-3 pb-3 my-sm-0'>
-              <Box className='details-card px-3 py-3 mb-3'>
-                <Col as='span' className='bio2 p-0 m-0'>
-                  <Box component='h4' className='p-0 m-0'>
-                    { selfView ? userData.bio : bio }
-                  </Box>
-                </Col>
-                <Col className='py-0 px-2 d-flex justify-content-between align-items-center'>
-                  <Box component='h2' className='mr-auto'>
-                    Basic Info
-                  </Box>
-                  <AccountCircleOutlinedIcon className='' fontSize='large' />
-                </Col>
-                <Box className='basic-info-section-wrapper'>
-                  <Row
-                    className='basic-info-wrapper mx-0'>
-                    {basicInfo.map(({ name, value }: InfoProps) => (
-                      <Info name={name} value={value} key={name} />
-                    ))}
-                  </Row>
+            <Box className='details-card px-3 py-3 mb-3'>
+              <Col as='span' className='bio2 p-0 m-0'>
+                <Box component='h4' className='p-0 m-0'>
+                  {selfView ? userData.bio : bio}
                 </Box>
+              </Col>
+              <Col className='py-0 px-2 d-flex justify-content-between align-items-center'>
+                <Box component='h2' className='mr-auto'>
+                  Basic Info
+                </Box>
+                <AccountCircleOutlinedIcon className='' fontSize='large' />
+              </Col>
+              <Box className='basic-info-section-wrapper'>
+                <Row className='basic-info-wrapper mx-0'>
+                  {basicInfo.map(({ name, value }: InfoProps) => (
+                    <Info name={name} value={value} key={name} />
+                  ))}
+                </Row>
               </Box>
+            </Box>
             <Box className='details-card px-3 py-3'>
               <Col className='py-0 px-2 d-flex justify-content-between align-items-center'>
                 <Box component='h2' className='mr-auto'>
@@ -468,8 +488,7 @@ const Profile = (props: any) => {
                 <SchoolOutlinedIcon className='' fontSize='large' />
               </Col>
               <Box className='academic-info-section-wrapper'>
-                <Row
-                  className='academic-info-wrapper mx-0'>
+                <Row className='academic-info-wrapper mx-0'>
                   {academicInfo.map(({ name, value }: InfoProps) => (
                     <Info name={name} value={value} key={name} />
                   ))}
@@ -499,17 +518,19 @@ const Profile = (props: any) => {
               /*passedThreshold*/ 'apiNotReady' && false ? 'add-background' : ''
             } ${selfView ? 'self-view' : ''}`}>
             {selfView ? (
-                <>
-                  <Button
-                    variant='contained'
-                    size='large'
-                    className='edit-button'
-                    color='primary'
-                    onClick={handleEditClick}>
-                        <CreateOutlinedIcon fontSize='inherit' /> Edit Profile
-                  </Button>
-                </>
-                ) : '' }
+              <>
+                <Button
+                  variant='contained'
+                  size='large'
+                  className='edit-button'
+                  color='primary'
+                  onClick={handleEditClick}>
+                  <CreateOutlinedIcon fontSize='inherit' /> Edit Profile
+                </Button>
+              </>
+            ) : (
+              ''
+            )}
           </Box>
 
           {/* <Col className='p-0 d-flex justify-content-center'>
@@ -553,8 +574,7 @@ const Profile = (props: any) => {
                 <hr />
 
                 <Box className='basic-info-section-wrapper'>
-                  <Row
-                    className='basic-info-wrapper mx-0'>
+                  <Row className='basic-info-wrapper mx-0'>
                     {basicInfo.map(({ name, value }: InfoProps) => (
                       <Info name={name} value={value} key={name} />
                     ))}
@@ -579,8 +599,7 @@ const Profile = (props: any) => {
                 <hr />
 
                 <Box className='academic-info-section-wrapper'>
-                  <Row
-                    className='academic-info-wrapper mx-0'>
+                  <Row className='academic-info-wrapper mx-0'>
                     {academicInfo.map(({ name, value }: InfoProps) => (
                       <Info name={name} value={value} key={name} />
                     ))}

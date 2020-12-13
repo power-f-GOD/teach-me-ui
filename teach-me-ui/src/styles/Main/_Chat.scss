@@ -4,15 +4,19 @@ $chat-text-color: $theme-tertiary-v1;
 $chat-header-min-height: 3.75rem;
 
 .ChatBox {
+  width: 100%;
+  height: 100%;
+  max-height: 100vh;
+  box-shadow: 0 0.25rem 1.5rem rgba(0, 0, 0, 0.2);
+  background: white;
+  left: 0;
+  top: 0;
   position: fixed;
-  bottom: 0;
   right: 0;
-  height: 0;
-  width: 0;
-  line-height: 125%;
   font-weight: 500;
-  color: $chat-text-color;
   z-index: 1200;
+  transition: transform 0.4s cubic-bezier(0, 1, 0.15, 1) 0.5s,
+    opacity 0.4s cubic-bezier(0, 1, 0.15, 1) 0.5s;
 
   * {
     color: inherit;
@@ -37,110 +41,6 @@ $chat-header-min-height: 3.75rem;
     min-height: $chat-header-min-height;
     max-height: $chat-header-min-height;
     // @include debugger();
-
-    
-  }
-}
-
-.chat-open-button {
-  $size: 3.25rem;
-
-  background-color: $theme-secondary-v5;
-  color: white;
-  position: relative;
-  height: $size !important;
-  width: $size !important;
-  right: $size + 1rem;
-  bottom: $size + 1rem;
-  font-size: 1.85rem !important;
-  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.35);
-  transition: 0.3s;
-
-  &:hover,
-  &:focus {
-    background-color: $theme-secondary-v4;
-  }
-
-  &.hide {
-    transform: scale(0);
-  }
-
-  &.ripple {
-    &::before,
-    &::after {
-      @include before-or-after(
-        $h: 100%,
-        $w: 100%,
-        $bg: transparent,
-        $br: inherit
-      );
-      border: 0.125rem solid $theme-secondary-v5;
-      animation: chatButtonRipple 2s infinite;
-    }
-
-    &::after {
-      animation-delay: 0.5s;
-    }
-
-    @keyframes chatButtonRipple {
-      from {
-        opacity: 1;
-        transform: scale(0.85);
-      }
-      to {
-        transform: scale(1.5);
-        opacity: 0;
-      }
-    }
-  }
-
-  [class*='MuiBadge-badge'] {
-    $size: 1.25rem;
-
-    height: $size;
-    width: $size;
-    border-radius: 1rem;
-    font-size: 0.9rem;
-    top: -0.3rem;
-    right: -0.5rem;
-  }
-}
-
-.chat-box-wrapper {
-  $box-height: 100%;
-  $box-width: 100%;
-
-  // overflow: hidden;
-  position: fixed;
-  width: $box-width;
-  height: $box-height;
-  max-height: 100vh;
-  box-shadow: 0 0.25rem 1.5rem rgba(0, 0, 0, 0.2);
-  background: white;
-  left: 0;
-  top: 0;
-  display: none;
-  right: 0;
-  transition: transform 0.4s cubic-bezier(0, 1, 0.15, 1) 0.5s,
-    opacity 0.4s cubic-bezier(0, 1, 0.15, 1) 0.5s;
-
-  &.minimize {
-    transform: translateY(calc(100% - #{$chat-header-min-height}));
-  }
-
-  &.close {
-    transition: transform 0.25s, opacity 1s;
-    transition-delay: 0s;
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-
-  &.visible {
-    display: flex !important;
-  }
-
-  &.hidden {
-    display: none !important;
   }
 }
 

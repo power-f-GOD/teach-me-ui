@@ -363,8 +363,9 @@ export const getConversationsMessages = (statusText?: string) => (
     chatState: ChatState;
   };
   const convoId = _conversation.id;
-  const { isOpen, queryString } = chatState;
-  const isMinimized = /chat=m2/.test(queryString || '');
+  const { isOpen, queryParam } = chatState;
+  const isMinimized =
+    window.innerWidth < 992 && queryParam?.slice(1) === '0' ? true : false;
 
   dispatch(
     conversationsMessages({
@@ -664,8 +665,9 @@ export const getConversationMessages = (
 
       const error = response.error;
       let messages = [...response.data] as APIMessageResponse[];
-      const { isOpen, queryString } = chatState;
-      const isMinimized = /chat=m2/.test(queryString || '');
+      const { isOpen, queryParam } = chatState;
+      const isMinimized =
+        window.innerWidth < 992 && queryParam?.slice(1) === '0' ? true : false;
       const statusText = _statusText
         ? messages.length
           ? _statusText
@@ -913,7 +915,19 @@ export const conversationMessages = (payload: ConversationMessages) => {
   };
 };
 
-export const chatState = (payload: ChatState): ReduxAction => {
+export const chatState = (
+  payload: ChatState,
+  shouldPushState?: boolean
+): ReduxAction => {
+  const { pathname, queryParam } = payload;
+  const { pathname: _pathname, search: _queryParam } = window.location;
+
+  window.history[shouldPushState ? 'pushState' : 'replaceState'](
+    {},
+    document.title,
+    (pathname || _pathname) + (queryParam || _queryParam)
+  );
+
   return {
     type: SET_CHAT_STATE,
     payload

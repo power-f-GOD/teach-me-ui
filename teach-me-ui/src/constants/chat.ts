@@ -37,7 +37,7 @@ export const CHAT_MESSAGE_DELETED = 'CHAT_MESSAGE_DELETED';
 export const CHAT_MESSAGE_DELETED_FOR = 'CHAT_MESSAGE_DELETED_FOR';
 
 export const chatStateProps: ChatState = {
-  queryString: window.location.pathname,
+  pathname: '',
   isOpen: false,
-  isMinimized: false
+  queryParam: ''
 };
