@@ -369,9 +369,9 @@ export interface CreateLevelState extends StatusPropsState {
 // ChatBox interfaces...
 
 export interface ChatState {
-  queryString?: string;
+  pathname?: string;
+  queryParam?: string;
   isOpen?: boolean;
-  isMinimized?: boolean;
 }
 
 export interface RoomInfo {

@@ -1,5 +1,5 @@
 .Post {
-  box-shadow: 0 0.125rem 0.125rem 0 #bbb, 0 0 0.125rem 0 #bbb;
+  box-shadow: 0 0.0625rem 0 #bbb, 0 0 0.125rem 0 #bbb;
   overflow: hidden;
 }
 
@@ -9,8 +9,8 @@
   background-color: white;
   position: relative;
   font-size: 1rem;
-  border-radius: 1rem;
-  margin-bottom: 0.75rem;
+  border-radius: 0.75rem;
+  margin-bottom: 0.5rem;
 
   &.remove-skeleton-animation {
     [class*='skeletonStyles'] {

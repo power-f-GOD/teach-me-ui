@@ -11,7 +11,7 @@ export default function misc(message: any) {
     conversation: APIConversationResponse;
     userData: UserData;
   };
-  const { id } = queryString.parse(chatState.queryString) ?? {};
+  const { id } = queryString.parse(chatState.pathname) ?? {};
   const { pipe, user_id, online_status, last_seen } = message;
 
   switch (pipe) {

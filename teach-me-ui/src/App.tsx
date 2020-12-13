@@ -45,6 +45,7 @@ const App = (props: any) => {
                     '/p/:id',
                     '/questions',
                     '/question/:id',
+                    '/chat/:convoId',
                     '/*'
                   ]
                 : ['/home', '/search']
