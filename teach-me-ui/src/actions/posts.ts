@@ -588,35 +588,22 @@ export const fetchedRecommendations = (
 };
 
 export const getRecommendations = () => (dispatch: Function) => {
-  dispatch(getRecommendationsStarted());
-  const userData = getState().userData as UserData;
-  const token = userData.token as string;
-  axios({
-    url: `/people/recommendations`,
-    baseURL,
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  })
-    .then((res) => {
-      if (res.data.error) {
-        throw new Error(res.data.message);
-      }
-      return res.data.data;
-    })
-    .then((state) => {
-      dispatch(fetchedRecommendations(state.recommendations));
-      dispatch(
-        getRecommendationsResolved({
-          error: false,
-          message: state.message
-        })
-      );
-    })
-    .catch((err) => {
-      dispatch(
-        getRecommendationsRejected({ error: true, message: err.message })
-      );
-    });
+  // dispatch(getRecommendationsStarted());
+
+  // http
+  //   .get<UserData[]>('/people/recommendations', true)
+  //   .then(({ error, message, data: _recommendations }) => {
+  //     dispatch(fetchedRecommendations(_recommendations));
+  //     dispatch(
+  //       getRecommendationsResolved({
+  //         error: false,
+  //         message
+  //       })
+  //     );
+  //   })
+  //   .catch((err) => {
+  //     dispatch(
+  //       getRecommendationsRejected({ error: true, message: err.message })
+  //     );
+  //   });
 };

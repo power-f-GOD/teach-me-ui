@@ -4,7 +4,7 @@
   transition: flex 0.1s, max-width 0.1s;
   background: {
     image: url('/images/chat-bg.jpeg');
-    size: 25rem;
+    size: 27.5rem;
     position: left;
     color: #e6dcd3;
   }
@@ -64,7 +64,7 @@
   .the-beginning {
     height: 0;
     margin: 0;
-    bottom: 1.25rem;
+    bottom: 2.5rem;
     padding: 0 0.75rem;
     width: 100%;
     text-align: center;
@@ -126,7 +126,8 @@
   transform: translateX(1.5rem);
   transition: $transition;
 
-  button, a {
+  button,
+  a {
     transform: rotateY(-30deg) translateX(-3rem);
     transition: $transition;
   }
@@ -135,7 +136,8 @@
     opacity: 1;
     transform: translateX(0);
 
-    button, a {
+    button,
+    a {
       transform: rotateY(0) translateX(0);
     }
 
@@ -148,7 +150,8 @@
     transform: translateX(1.5rem) translateY(calc(-100% - 4.75rem));
   }
 
-  button, a {
+  button,
+  a {
     box-shadow: none !important;
     background: none;
     padding-right: 0.8rem;
@@ -303,7 +306,7 @@
 
   .more-messages-loader {
     transition: opacity 0.3s;
-    padding-bottom: 1.25rem;
+    padding-bottom: 2.5rem;
     width: 100%;
 
     .MuiCircularProgress-root {
