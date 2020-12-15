@@ -9,7 +9,7 @@ import MiddlePane from './Home.MiddlePane';
 import LeftPane from './Home.LeftPane';
 
 import { connect } from 'react-redux';
-import { getPosts } from '../../actions/posts';
+import { getPosts } from '../../actions/home';
 import { dispatch, createObserver } from '../../functions/utils';
 import { PostPropsState, FetchState } from '../../constants/interfaces';
 

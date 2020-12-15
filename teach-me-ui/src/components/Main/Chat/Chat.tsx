@@ -4,35 +4,36 @@ import { connect } from 'react-redux';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import { dispatch } from '../../functions';
+import { dispatch } from '../../../functions';
 import {
   chatState,
   conversationMessages,
   getConversationMessages,
   conversation,
   conversationsMessages
-} from '../../actions/chat';
+} from '../../../actions/chat';
 import {
   ChatState,
   UserData,
   SearchState,
   APIConversationResponse,
   AuthState
-} from '../../constants/interfaces';
-import ChatLeftPane from './Chat.LeftPane';
-import ChatMiddlePane, {
-  MiddlePaneHeaderContext,
-  ScrollViewContext,
-  ColleagueNameAndStatusContext
-} from './Chat.MiddlePane';
-import ChatRightPane from './Chat.RightPane';
-import createMemo from '../../Memo';
-import { getState } from '../../appStore';
+} from '../../../constants/interfaces';
+import ChatLeftPane from './LeftPane';
+import ChatMiddlePane from './MiddlePane';
+import ChatRightPane from './RightPane';
+import createMemo from '../../../Memo';
+import { getState } from '../../../appStore';
 import { Redirect, match } from 'react-router-dom';
+import {
+  MiddlePaneHeaderContext,
+  ColleagueNameAndStatusContext
+} from './MiddlePane.Header';
+import { ScrollViewContext } from './MiddlePane.ScrollView';
 
 export const placeHolderDisplayName = 'Start a Conversation';
 
-interface ChatBoxProps {
+interface ChatProps {
   conversation: APIConversationResponse;
   conversations: SearchState;
   chatState: ChatState;
@@ -42,7 +43,6 @@ interface ChatBoxProps {
   location: Location;
   match: match<{ convoId: string }>;
   auth: AuthState;
-  [key: string]: any;
 }
 
 const chatBoxRef = createRef<any>();
@@ -52,7 +52,7 @@ const rightPaneRef = createRef<any>();
 
 const Memoize = createMemo();
 
-const ChatBox = (props: ChatBoxProps) => {
+const Chat = (props: ChatProps) => {
   const {
     conversation: _conversation,
     conversations,
@@ -367,17 +367,16 @@ const ChatBox = (props: ChatBoxProps) => {
   );
 };
 
-const mapStateToProps = (state: ChatBoxProps) => {
+const mapStateToProps = (state: ChatProps) => {
   return {
     chatState: state.chatState,
     conversation: state.conversation,
     conversations: state.conversations,
     conversationMessages: state.conversationMessages,
-    conversationsMessages: state.conversationsMessages,
-    conversationInfo: state.conversationInfo,
+    // conversationInfo: state.conversationInfo,
     userData: state.userData,
     webSocket: state.webSocket
   };
 };
 
-export default connect(mapStateToProps)(ChatBox);
+export default connect(mapStateToProps)(Chat);

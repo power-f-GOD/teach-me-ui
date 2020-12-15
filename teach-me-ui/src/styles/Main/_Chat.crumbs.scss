@@ -351,7 +351,7 @@ $msg-radius: 1.5rem;
       $w: calc(100% + 1.25rem),
       $l: -0.75rem,
       $br: 0.25rem,
-      $bg: rgba(255, 255, 255, 0.2),
+      $bg: none,
       $zi: unset
     );
   }
@@ -428,16 +428,16 @@ $msg-radius: 1.5rem;
 
 .chat-date,
 button.chat-new-messages-count {
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba($prim-r - 25, $prim-g - 25, $prim-b - 25, 0.8);
+  // background: rgba(50 - 25, 50 - 25, 50 - 25, 0.6);
   padding: 0.25rem 0.95rem;
   border-radius: 2rem;
   position: relative;
   z-index: 1;
   font-size: 0.85rem;
   text-transform: capitalize;
-  color: $theme-tertiary-v1;
-  border: 0.0625rem solid rgba(0, 0, 0, 0.15);
-  // box-shadow: 0 0.05rem 1rem rgba(0, 0, 0, 0.1) !important;
+  color: white;
+  // border: 0.0625rem solid  rgba($prim-r, $prim-g, $prim-b, 0.75);
   user-select: none;
   transition: transform 0.4s ease 1.35s;
 }

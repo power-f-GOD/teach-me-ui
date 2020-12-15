@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { NavLink, match as Match} from 'react-router-dom';
+import { NavLink, match as Match } from 'react-router-dom';
 
 import Col from 'react-bootstrap/Col';
 
@@ -19,25 +19,25 @@ import {
   chatState,
   conversationMessages,
   conversationsMessages
-} from '../../actions/chat';
-import { dispatch, addEventListenerOnce, delay } from '../../functions/utils';
+} from '../../../actions/chat';
+import { dispatch, addEventListenerOnce, delay } from '../../../functions/utils';
 import {
   ChatState,
   APIConversationResponse,
   SearchState,
   APIMessageResponse,
   ConversationMessages
-} from '../../constants/interfaces';
-import { Skeleton, DISPLAY_INFO } from '../crumbs/Loader';
+} from '../../../constants/interfaces';
+import { Skeleton, DISPLAY_INFO } from '../../crumbs/Loader';
 import {
   getConversationMessages,
   conversation,
   conversations
-} from '../../actions/chat';
-import { ChatTimestamp, ChatStatus } from './Chat.crumbs';
-import createMemo from '../../Memo';
-import { scrollViewRef } from './Chat.MiddlePane';
-import { getState } from '../../appStore';
+} from '../../../actions/chat';
+import { ChatTimestamp, ChatStatus } from './crumbs';
+import createMemo from '../../../Memo';
+import { getState } from '../../../appStore';
+import { scrollViewRef } from './MiddlePane.ScrollView';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -316,10 +316,9 @@ function PaneItem({
 
   const navLinkActive = useCallback(
     (match: Match<{ convoId: string }> | null) => {
-      console.log(convoId, match, 'heeeeeeey')
-      return Boolean(convoId && match?.params.convoId === convoId);
+      return Boolean(convoId && match?.url === _chatState.pathname);
     },
-    [convoId]
+    [convoId, _chatState.pathname]
   );
 
   const handleChatClick = useCallback(

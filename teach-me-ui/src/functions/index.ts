@@ -3,5 +3,5 @@ export * from './utils';
 export * from './signin';
 export * from './main';
 export * from './modals';
-export * from './posts';
+export * from './home';
 export * from './forgotpassword';

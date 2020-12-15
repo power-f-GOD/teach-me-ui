@@ -35,10 +35,6 @@ import {
   GET_TRENDS_RESOLVED,
   GET_TRENDS_STARTED,
   GET_TRENDS_REJECTED,
-  GET_RECOMMENDATIONS_STARTED,
-  GET_RECOMMENDATIONS_REJECTED,
-  GET_RECOMMENDATIONS_RESOLVED,
-  FETCHED_RECOMMENDATIONS,
   RequestState,
   FETCHED_TRENDS,
   FetchState,
@@ -553,70 +549,25 @@ export const getTrends = () => (dispatch: Function) => {
     });
 };
 
-export const getRecommendationsStarted = (
-  payload?: Partial<RequestState>
-): ReduxAction => {
-  return {
-    type: GET_RECOMMENDATIONS_STARTED,
-    payload: { ...payload, status: 'pending' }
-  };
-};
-export const getRecommendationsResolved = (
-  payload?: Partial<RequestState>
-): ReduxAction => {
-  return {
-    type: GET_RECOMMENDATIONS_RESOLVED,
-    payload: { ...payload, status: 'resolved' }
-  };
-};
-export const getRecommendationsRejected = (
-  payload?: Partial<RequestState>
-): ReduxAction => {
-  return {
-    type: GET_RECOMMENDATIONS_REJECTED,
-    payload: { ...payload, status: 'rejected' }
-  };
-};
 
-export const fetchedRecommendations = (
-  payload?: Partial<RequestState>
-): ReduxAction => {
-  return {
-    type: FETCHED_RECOMMENDATIONS,
-    payload
-  };
-};
 
 export const getRecommendations = () => (dispatch: Function) => {
-  dispatch(getRecommendationsStarted());
-  const userData = getState().userData as UserData;
-  const token = userData.token as string;
-  axios({
-    url: `/people/recommendations`,
-    baseURL,
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  })
-    .then((res) => {
-      if (res.data.error) {
-        throw new Error(res.data.message);
-      }
-      return res.data.data;
-    })
-    .then((state) => {
-      dispatch(fetchedRecommendations(state.recommendations));
-      dispatch(
-        getRecommendationsResolved({
-          error: false,
-          message: state.message
-        })
-      );
-    })
-    .catch((err) => {
-      dispatch(
-        getRecommendationsRejected({ error: true, message: err.message })
-      );
-    });
+  // dispatch(getRecommendationsStarted());
+
+  // http
+  //   .get<UserData[]>('/people/recommendations', true)
+  //   .then(({ error, message, data: _recommendations }) => {
+  //     dispatch(fetchedRecommendations(_recommendations));
+  //     dispatch(
+  //       getRecommendationsResolved({
+  //         error: false,
+  //         message
+  //       })
+  //     );
+  //   })
+  //   .catch((err) => {
+  //     dispatch(
+  //       getRecommendationsRejected({ error: true, message: err.message })
+  //     );
+  //   });
 };
