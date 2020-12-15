@@ -25,7 +25,7 @@ export default function misc(message: any) {
         delete convoData.colleague.last_seen;
       }
 
-      if (_conversation.colleague.id === user_id && _conversation.id) {
+      if (_conversation.colleague?.id === user_id && _conversation.id) {
         dispatch(conversation(_conversation.id, { ...convoData }));
       }
 
