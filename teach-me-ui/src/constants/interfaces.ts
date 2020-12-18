@@ -49,7 +49,7 @@ export interface InputErrState {
   helperText?: string;
 }
 
-export interface PostPropsState {
+export interface PostStateProps {
   downvote_count: number;
   reactions: UserData[];
   reply_count: number;
@@ -63,8 +63,8 @@ export interface PostPropsState {
   pipe: SocketPipe;
   parent_id: string;
   reaction: Reaction;
-  replies: Partial<PostPropsState>[];
-  reposts: Partial<PostPropsState>[];
+  replies: Partial<PostStateProps>[];
+  reposts: Partial<PostStateProps>[];
   sender: {
     cover_photo: string;
     department: string;
@@ -471,6 +471,11 @@ export interface NotificationState extends StatusPropsState {
     entities?: any;
   };
   [key: string]: any;
+}
+
+export interface HashTag {
+  hashtag: string;
+  count: 2;
 }
 
 export interface NotificationData {

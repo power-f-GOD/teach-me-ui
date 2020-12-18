@@ -29,14 +29,14 @@ import {
   APIMessageResponse,
   Partial,
   OnlineStatus
-} from '../../../constants/interfaces';
+} from '../../../../constants/interfaces';
 import {
   chatState,
   conversationMessages,
   conversations,
   conversation,
   conversationsMessages
-} from '../../../actions/chat';
+} from '../../../../actions/chat';
 import {
   dispatch,
   delay,
@@ -46,17 +46,17 @@ import {
   emitUserOnlineStatus,
   promisedDispatch,
   getState
-} from '../../../functions/utils';
-import { placeHolderDisplayName } from './Chat';
+} from '../../../../functions/utils';
+import { placeHolderDisplayName, Memoize } from '..';
 import {
   CHAT_MESSAGE_DELETED,
   CHAT_MESSAGE_DELETED_FOR
-} from '../../../constants/chat';
-import { ConfirmDialog, SelectedMessageValue, ActionChoice } from './crumbs';
-import { displaySnackbar } from '../../../actions';
+} from '../../../../constants/chat';
+import { ConfirmDialog, SelectedMessageValue, ActionChoice } from '../crumbs';
+import { displaySnackbar } from '../../../../actions';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import { ChatMiddlePaneProps, Memoize } from './MiddlePane';
-import { messageBox } from './MiddlePane.MessageBox';
+import { ChatMiddlePaneProps } from '.';
+import { messageBox } from './Footer';
 
 export const MiddlePaneHeaderContext = createContext(
   {} as Partial<ChatMiddlePaneProps>

@@ -13,7 +13,7 @@ import {
 import { 
    makePost,
    replyToPost
-} from '../../reducers/posts';
+} from '../../reducers/home';
 
 
 afterEach(cleanup);

@@ -1,5 +1,11 @@
 @import '../constants';
 
+.Main {
+  > div {
+    width: 100%;
+  }
+}
+
 .root-grid {
   height: auto;
   min-height: 100vh;

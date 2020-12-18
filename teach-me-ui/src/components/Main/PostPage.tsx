@@ -19,11 +19,11 @@ import { fetchReplies, fetchPost } from '../../actions';
 import { Redirect } from 'react-router-dom';
 
 import { dispatch } from '../../functions';
-import { PostPropsState, FetchState } from '../../constants';
+import { PostStateProps, FetchState } from '../../constants';
 
 const PostPage = (props: {
   match: any;
-  posts: FetchState<PostPropsState[]>;
+  posts: FetchState<PostStateProps[]>;
   fetchSinglePostStatus: any;
   post: any;
 }) => {
@@ -76,7 +76,7 @@ const RepliesBase = (props: any) => {
 
 const mapStateToProps = (state: any, ownProps: any) => ({
   ...ownProps,
-  posts: state._posts
+  posts: state.posts
 });
 
 const Replies = connect(mapStateToProps)(RepliesBase);

@@ -5,13 +5,13 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import RightPane from './Home.RightPane';
-import MiddlePane from './Home.MiddlePane';
+import HomeMiddlePane from './Home.MiddlePane';
 import LeftPane from './Home.LeftPane';
 
 import { connect } from 'react-redux';
 import { getPosts } from '../../actions/home';
 import { dispatch, createObserver } from '../../functions/utils';
-import { PostPropsState, FetchState } from '../../constants/interfaces';
+import { PostStateProps, FetchState } from '../../constants/interfaces';
 
 const observedElementRef = React.createRef<any>();
 
@@ -20,7 +20,7 @@ let observedElement: HTMLElement | null = null;
 
 let observer: IntersectionObserver;
 
-const Home = ({ posts }: { posts: FetchState<PostPropsState> }) => {
+const Home = ({ posts }: { posts: FetchState<PostStateProps> }) => {
   useEffect(() => {
     document.body.style.overflow =
       posts.status === 'pending' ? 'hidden' : 'auto';
@@ -73,7 +73,7 @@ const Home = ({ posts }: { posts: FetchState<PostPropsState> }) => {
             <LeftPane />
           </Col>
           <Col lg={6} md={8} className='middle-pane-col px-3'>
-            <MiddlePane type={'FEED'} />
+            <HomeMiddlePane type={'FEED'} />
             <Container
               className='feeds-scroll-observer py-2'
               ref={observedElementRef}></Container>
@@ -87,4 +87,4 @@ const Home = ({ posts }: { posts: FetchState<PostPropsState> }) => {
   );
 };
 
-export default connect((state: any) => ({ posts: state._posts }))(Home);
+export default connect((state: any) => ({ posts: state.posts }))(Home);

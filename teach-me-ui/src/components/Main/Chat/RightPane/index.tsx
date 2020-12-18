@@ -10,11 +10,11 @@ import SchoolIcon from '@material-ui/icons/School';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
-import { ONE_TO_ONE } from '../../../constants/chat';
-import { APIConversationResponse } from '../../../constants/interfaces';
-import { InfoCard } from '../../crumbs/Cards';
-import { dispatch } from '../../../functions';
-import { chatState } from '../../../actions/chat';
+import { ONE_TO_ONE } from '../../../../constants/chat';
+import { APIConversationResponse } from '../../../../constants/interfaces';
+import { InfoCard } from '../../../crumbs/Cards';
+import { dispatch } from '../../../../functions';
+import { chatState } from '../../../../actions/chat';
 
 interface ChatRightPaneProps {
   convoType: string;

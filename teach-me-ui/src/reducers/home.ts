@@ -1,27 +1,16 @@
 import {
   replyState,
   ReduxAction,
-  CREATE_POST,
   REACT_TO_POST,
   UPDATE_POST,
   UPDATE_REPOST,
-  FETCHED_POSTS,
-  FETCHED_MORE_POSTS,
   FETCHED_POST,
-  FETCH_POST_STARTED,
-  FETCH_POST_REJECTED,
-  FETCH_POST_RESOLVED,
-  FETCH_A_POST_STARTED,
-  FETCH_A_POST_REJECTED,
-  FETCH_A_POST_RESOLVED,
   MAKE_REPOST_STARTED,
   MAKE_REPOST_REJECTED,
   MAKE_REPOST_RESOLVED,
-  PostPropsState,
+  PostStateProps,
   ReactPostState,
-  FetchPostsState,
   MakeRepostState,
-  fetchPostsState,
   makeRepostState,
   PostReactionResult,
   RepostResult,
@@ -31,141 +20,63 @@ import {
   ReplyState,
   makePostState,
   MakePostState,
-  GET_TRENDS_STARTED,
-  GET_TRENDS_REJECTED,
-  GET_TRENDS_RESOLVED,
-  FETCHED_TRENDS,
-  RequestState,
-  requestState,
-  GET_RECOMMENDATIONS_REJECTED,
-  GET_RECOMMENDATIONS_STARTED,
-  GET_RECOMMENDATIONS_RESOLVED,
-  FETCHED_RECOMMENDATIONS,
   FetchState,
   ReduxActionV2,
   SET_POSTS,
-  postsState
+  SET_RECOMMENDATIONS,
+  UserData,
+  fetchState,
+  HashTag,
+  SET_TRENDS
 } from '../constants';
 
 import { resultantReaction } from '../functions';
 
 export const posts = (
-  state: Array<PostPropsState> = [],
-  action: ReduxAction
-): Array<PostPropsState> => {
-  if (action.type === CREATE_POST) return createPost(state, action.payload);
-  else if (action.type === REACT_TO_POST)
-    return reactToPost(state, action.payload);
-  else if (action.type === UPDATE_POST)
-    return updatePost(state, action.payload);
-  else if (action.type === FETCHED_POSTS) return [...action.payload];
-  else if (action.type === FETCHED_MORE_POSTS)
-    return [...state, ...action.payload];
-  else if (action.type === UPDATE_REPOST)
-    return updateReposts(state, action.payload);
-  else return state;
+  state = { ...fetchState } as FetchState<PostStateProps[]>,
+  { type, payload }: ReduxActionV2<FetchState<PostStateProps>>
+) => {
+  if (type === SET_POSTS) {
+    return { ...state, ...payload };
+  }
+
+  return state;
 };
 
-export const _posts = (
-  state: FetchState<PostPropsState[]> = { ...postsState },
-  action: ReduxActionV2<FetchState<PostPropsState>>
+export const recommendations = (
+  state = { ...fetchState } as FetchState<UserData[]>,
+  { type, payload }: ReduxActionV2<FetchState<PostStateProps>>
 ) => {
-  if (action.type === SET_POSTS) {
-    return { ...state, ...action.payload };
+  if (type === SET_RECOMMENDATIONS) {
+    return { ...state, ...payload };
+  }
+
+  return state;
+};
+
+export const trends = (
+  state = { ...fetchState } as FetchState<HashTag[]>,
+  { type, payload }: ReduxActionV2<FetchState<HashTag[]>>
+) => {
+  if (type === SET_TRENDS) {
+    return { ...state, ...payload };
   }
 
   return state;
 };
 
 export const singlePost = (
-  state: Partial<PostPropsState> = {},
+  state: Partial<PostStateProps> = {},
   action: ReduxAction
-): PostPropsState => {
+): PostStateProps => {
   if (action.type === REACT_TO_POST) {
-    return reactToPost([state as PostPropsState], action.payload)[0];
+    return reactToPost([state as PostStateProps], action.payload)[0];
   } else if (action.type === UPDATE_POST) {
-    return updatePost([state as PostPropsState], action.payload)[0];
+    return updatePost([state as PostStateProps], action.payload)[0];
   } else if (action.type === FETCHED_POST) return action.payload;
   else if (action.type === UPDATE_REPOST)
-    return updateReposts([state as PostPropsState], action.payload)[0];
-  else return state as PostPropsState;
-};
-
-export const fetchPostStatus = (
-  state: FetchPostsState = fetchPostsState,
-  action: ReduxAction
-) => {
-  switch (action.type) {
-    case FETCH_POST_REJECTED:
-    case FETCH_POST_RESOLVED:
-    case FETCH_POST_STARTED:
-      return action.payload;
-    default:
-      return state;
-  }
-};
-
-export const getRecommendationsStatus = (
-  state: RequestState = requestState,
-  action: ReduxAction
-) => {
-  switch (action.type) {
-    case GET_RECOMMENDATIONS_REJECTED:
-    case GET_RECOMMENDATIONS_RESOLVED:
-    case GET_RECOMMENDATIONS_STARTED:
-      return action.payload;
-    default:
-      return state;
-  }
-};
-
-export const recommendations = (
-  state: Array<any> = [],
-  action: ReduxAction
-) => {
-  switch (action.type) {
-    case FETCHED_RECOMMENDATIONS:
-      return action.payload;
-    default:
-      return state;
-  }
-};
-
-export const fetchSinglePostStatus = (
-  state: FetchPostsState = fetchPostsState,
-  action: ReduxAction
-) => {
-  switch (action.type) {
-    case FETCH_A_POST_REJECTED:
-    case FETCH_A_POST_RESOLVED:
-    case FETCH_A_POST_STARTED:
-      return action.payload;
-    default:
-      return state;
-  }
-};
-
-export const getTrendsStatus = (
-  state: FetchPostsState = fetchPostsState,
-  action: ReduxAction
-) => {
-  switch (action.type) {
-    case GET_TRENDS_STARTED:
-    case GET_TRENDS_REJECTED:
-    case GET_TRENDS_RESOLVED:
-      return action.payload;
-    default:
-      return state;
-  }
-};
-
-export const trends = (state: Array<any> = [], action: ReduxAction) => {
-  switch (action.type) {
-    case FETCHED_TRENDS:
-      return action.payload;
-    default:
-      return state;
-  }
+    return updateReposts([state as PostStateProps], action.payload)[0];
+  else return state as PostStateProps;
 };
 
 export const makeRepostStatus = (
@@ -182,17 +93,10 @@ export const makeRepostStatus = (
   }
 };
 
-const createPost = (
-  state: Array<PostPropsState>,
-  post: PostPropsState
-): Array<PostPropsState> => {
-  return [post, ...state];
-};
-
 const reactToPost = (
-  state: Array<PostPropsState>,
+  state: Array<PostStateProps>,
   reaction: ReactPostState
-): Array<PostPropsState> => {
+): Array<PostStateProps> => {
   return state.map((post): any => {
     const downvotes = (post: any, resolvedReaction: Reaction) =>
       post.reaction === 'DOWNVOTE' && resolvedReaction === 'NEUTRAL'
@@ -249,9 +153,9 @@ const reactToPost = (
 };
 
 const updatePost = (
-  state: Array<PostPropsState>,
+  state: Array<PostStateProps>,
   result: PostReactionResult
-): Array<PostPropsState> => {
+): Array<PostStateProps> => {
   return state.map((post): any => {
     return (post.id as string) === result.id
       ? {
@@ -274,9 +178,9 @@ const updatePost = (
 };
 
 const updateReposts = (
-  state: Array<PostPropsState>,
+  state: Array<PostStateProps>,
   result: RepostResult
-): Array<PostPropsState> => {
+): Array<PostStateProps> => {
   return state.map((post): any => {
     return (post.id as string) === result.id
       ? {

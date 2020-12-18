@@ -28,8 +28,8 @@ import { Redirect, match } from 'react-router-dom';
 import {
   MiddlePaneHeaderContext,
   ColleagueNameAndStatusContext
-} from './MiddlePane.Header';
-import { ScrollViewContext } from './MiddlePane.ScrollView';
+} from './MiddlePane/Header';
+import { ScrollViewContext } from './MiddlePane/ScrollView';
 
 export const placeHolderDisplayName = 'Start a Conversation';
 
@@ -45,12 +45,14 @@ interface ChatProps {
   auth: AuthState;
 }
 
+export const Memoize = createMemo();
+
 const chatBoxRef = createRef<any>();
 const leftPaneRef = createRef<any>();
 const middlePaneRef = createRef<any>();
 const rightPaneRef = createRef<any>();
 
-const Memoize = createMemo();
+
 
 const Chat = (props: ChatProps) => {
   const {

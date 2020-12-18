@@ -14,18 +14,18 @@ import SendIcon from '@material-ui/icons/Send';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 
-import { APIMessageResponse } from '../../../constants/interfaces';
-import { userDeviceIsMobile } from '../../..';
-import { conversationMessages, conversation } from '../../../actions/chat';
+import { APIMessageResponse } from '../../../../constants/interfaces';
+import { userDeviceIsMobile } from '../../../..';
+import { conversationMessages, conversation } from '../../../../actions/chat';
 import {
   dispatch,
   delay,
   preventEnterNewLine,
   emitUserOnlineStatus
-} from '../../../functions/utils';
-import { CHAT_TYPING } from '../../../constants/chat';
-import { SelectedMessageValue, ChatHead } from './crumbs';
-import { scrollView } from './MiddlePane.ScrollView';
+} from '../../../../functions/utils';
+import { CHAT_TYPING } from '../../../../constants/chat';
+import { SelectedMessageValue, ChatHead } from '../crumbs';
+import { scrollView } from './ScrollView';
 
 export const messageBoxRef: any = createRef<HTMLInputElement | null>();
 export let messageBox: HTMLInputElement | null = null;

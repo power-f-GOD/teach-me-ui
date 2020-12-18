@@ -33,8 +33,8 @@ import {
   getState
 } from '../../../functions/utils';
 import { conversation, conversations } from '../../../actions/chat';
-import { stickyChatDateRef } from './MiddlePane.ScrollView';
-import { messageBoxRef } from './MiddlePane.MessageBox';
+import { stickyChatDateRef } from './MiddlePane/ScrollView';
+import { messageBoxRef } from './MiddlePane/Footer';
 
 export interface SelectedMessageValue extends Omit<APIMessageResponse, 'type'> {
   type: 'incoming' | 'outgoing';
