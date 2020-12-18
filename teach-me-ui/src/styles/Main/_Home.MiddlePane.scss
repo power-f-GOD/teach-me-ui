@@ -25,16 +25,16 @@
   background-color: white;
   padding: 0.75rem 0.75rem;
   font-size: 1.2rem;
-  border-radius: 0.75rem;
-  margin: 1.75rem 0 -0.75rem;
+  border-radius: 0.5rem;
+  margin: 1.5rem 0 -0.75rem;
 }
 
 .recommendations {
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   display: grid;
-  border-radius: 1.5rem;
-  margin: 1.75rem 0;
+  border-radius: 1rem;
+  margin: 1.5rem 0;
   padding: 0;
 
   .container,
@@ -51,7 +51,7 @@
 
 .recommendation {
   background-color: white;
-  border-radius: 1.5rem;
+  border-radius: 1rem;
   height: 17rem;
   position: relative;
   width: 12rem;
@@ -67,8 +67,24 @@
   }
 
   &.no-photo {
+    .display-name-wrapper {
+      color: inherit;
+      text-shadow: unset;
+    }
+
+    &:hover,
+    &:focus {
+      .profile-photo {
+        background-color: #ddd;
+      }
+    }
+
     .profile-photo {
       transform: translateY(-4.15rem) !important;
+
+      &::before {
+        opacity: 0;
+      }
     }
   }
 

@@ -15,22 +15,22 @@ import {
   Partial,
   OnlineStatus,
   FetchState
-} from '../../../constants/interfaces';
-import createMemo from '../../../Memo';
-import { conversationMessages, conversations } from '../../../actions/chat';
+} from '../../../../constants/interfaces';
+import { conversationMessages, conversations } from '../../../../actions/chat';
 import {
   dispatch,
   emitUserOnlineStatus,
   loopThru
-} from '../../../functions/utils';
+} from '../../../../functions/utils';
 import {
   CHAT_READ_RECEIPT,
   CHAT_MESSAGE_DELIVERED
-} from '../../../constants/chat';
-import { SelectedMessageValue } from './crumbs';
-import { MiddlePaneHeader } from './MiddlePane.Header';
-import { ScrollView } from './MiddlePane.ScrollView';
-import MessageBox from './MiddlePane.MessageBox';
+} from '../../../../constants/chat';
+import { SelectedMessageValue } from '../crumbs';
+import { MiddlePaneHeader } from './Header';
+import { ScrollView } from './ScrollView';
+import MessageBox from './Footer';
+import { Memoize } from '..';
 
 export interface ChatMiddlePaneProps {
   userData: UserData;
@@ -64,8 +64,6 @@ export interface ChatMiddlePaneProps {
 
 export const messagesStatusInfoRef: any = createRef<HTMLInputElement | null>();
 export let messagesStatusInfo: HTMLElement | null = null;
-
-export const Memoize = createMemo();
 
 const ChatMiddlePane = (props: Partial<ChatMiddlePaneProps>) => {
   const {

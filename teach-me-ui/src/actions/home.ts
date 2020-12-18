@@ -3,23 +3,14 @@ import {
   REACT_TO_POST,
   UPDATE_REPOST,
   UPDATE_POST,
-  FETCH_POST_REJECTED,
-  FETCH_POST_RESOLVED,
-  FETCH_POST_STARTED,
-  FETCH_A_POST_REJECTED,
-  FETCH_A_POST_RESOLVED,
-  FETCH_A_POST_STARTED,
   MAKE_REPOST_REJECTED,
   MAKE_REPOST_RESOLVED,
   MAKE_REPOST_STARTED,
-  FETCHED_POSTS,
-  FETCHED_MORE_POSTS,
-  FETCHED_POST,
   REPLY_TO_POST,
   MAKE_POST,
   SUBMIT_POST,
   SEND_REPLY_TO_SERVER,
-  PostPropsState,
+  PostStateProps,
   ReactPostState,
   FetchPostsState,
   MakeRepostState,
@@ -32,17 +23,16 @@ import {
   ReplyState,
   CREATE_POST,
   Post,
-  GET_TRENDS_RESOLVED,
-  GET_TRENDS_STARTED,
-  GET_TRENDS_REJECTED,
-  RequestState,
-  FETCHED_TRENDS,
   FetchState,
   SET_POSTS,
   ReduxActionV2,
   GET_POSTS,
   LoopFind,
-  POST_REACTION
+  POST_REACTION,
+  SET_RECOMMENDATIONS,
+  GET_RECOMMENDATIONS,
+  SET_TRENDS,
+  GET_TRENDS
 } from '../constants';
 
 import {
@@ -88,7 +78,7 @@ export const updatePost = (payload: PostReactionResult): ReduxAction => {
   return { type: UPDATE_POST, payload };
 };
 
-export const createPost = (payload: PostPropsState): ReduxAction => {
+export const createPost = (payload: PostStateProps): ReduxAction => {
   return { type: CREATE_POST, payload };
 };
 
@@ -175,10 +165,10 @@ export const getPosts = (
     status: 'pending',
     statusText,
     err: false
-  } as FetchState<PostPropsState[]>;
+  } as FetchState<PostStateProps[]>;
   const isRecycling = /recycl/i.test(statusText || '');
   const isFetching = /fetching/i.test(statusText || '');
-  let offset = getState()._posts.extra;
+  let offset = getState().posts.extra;
 
   if (update) delete payload.status;
 
@@ -189,7 +179,7 @@ export const getPosts = (
   });
 
   http
-    .get<PostPropsState[]>(
+    .get<PostStateProps[]>(
       isWall
         ? `/profile/${userId}/posts`
         : url
@@ -197,14 +187,14 @@ export const getPosts = (
         : '/feed',
       true
     )
-    .then(({ error, message, data: _posts }) => {
+    .then(({ error, message, data }) => {
       // console.log(_posts, offset, url);
-      offset = _posts.slice(-1)[0]?.date ?? Date.now();
+      offset = data.slice(-1)[0]?.date ?? Date.now();
 
       if (error) {
         dispatch(posts({ status: 'settled', statusText: message, err: true }));
       } else {
-        if (!_posts.length && type === 'FEED') {
+        if (!data.length && type === 'FEED') {
           // recursively get (recycled) Posts if no post is returned
           if (!isRecycling && isFetching) {
             dispatch(
@@ -226,7 +216,7 @@ export const getPosts = (
             status: 'fulfilled',
             statusText: '',
             err: false,
-            data: [..._posts],
+            data,
             extra: offset //'extra', here, is 'offset' for purpose of recycling
           })
         );
@@ -239,13 +229,13 @@ export const getPosts = (
   };
 };
 
-export const posts = (_payload: FetchState<PostPropsState[], number>) => {
-  const { _posts: posts } = getState() as {
-    _posts: FetchState<PostPropsState[]>;
+export const posts = (_payload: FetchState<PostStateProps[], number>) => {
+  const { posts } = getState() as {
+    posts: FetchState<PostStateProps[]>;
   };
   const { data } = _payload;
   const pipe = (data ?? [])[0]?.pipe;
-  let payload = { ...posts } as FetchState<PostPropsState[]>;
+  let payload = { ...posts } as FetchState<PostStateProps[]>;
   const updateFromPipe = !!pipe;
 
   if (!updateFromPipe) {
@@ -260,7 +250,7 @@ export const posts = (_payload: FetchState<PostPropsState[], number>) => {
       posts.data ?? [],
       (post) => post.id === data.id || post.id === data.parent_id,
       { type: 'find', includeIndex: true }
-    ) as LoopFind<PostPropsState>;
+    ) as LoopFind<PostStateProps>;
 
     switch (pipe) {
       case POST_REACTION:
@@ -273,7 +263,7 @@ export const posts = (_payload: FetchState<PostPropsState[], number>) => {
               initialPost.replies ?? [],
               (reply) => reply.id === data.id,
               { type: 'find', includeIndex: true }
-            ) as LoopFind<PostPropsState>;
+            ) as LoopFind<PostStateProps>;
 
             initialPost.replies[replyIndex] = { ...initialReply, ...data };
           } else {
@@ -293,7 +283,6 @@ export const posts = (_payload: FetchState<PostPropsState[], number>) => {
 };
 
 export const fetchReplies = (postId?: string) => (dispatch: Function) => {
-  dispatch(fetchPostsStarted());
   const userData = getState().userData as UserData;
   const headers =
     userData && userData.token
@@ -311,21 +300,13 @@ export const fetchReplies = (postId?: string) => (dispatch: Function) => {
       }
       return res.data.data.replies;
     })
-    .then((state) => {
-      dispatch(fetchedPosts(state as Array<PostPropsState>));
-      dispatch(
-        fetchPostsResolved({ error: false, message: 'Fetch posts successful' })
-      );
-    })
-    .catch((err) => {
-      dispatch(fetchPostsRejected({ error: true, message: err.message }));
-    });
+    .then((state) => {})
+    .catch((err) => {});
 };
 
 export const fetchPost: Function = (postId?: string) => (
   dispatch: Function
 ) => {
-  dispatch(fetchPostStarted());
   const userData = getState().userData as UserData;
   const headers =
     userData && userData.token
@@ -344,84 +325,8 @@ export const fetchPost: Function = (postId?: string) => (
       }
       return res.data.data;
     })
-    .then((state) => {
-      dispatch(fetchedPost(state as PostPropsState));
-      dispatch(
-        fetchPostResolved({ error: false, message: 'Fetch posts successful' })
-      );
-    })
-    .catch((err) => {
-      dispatch(fetchPostRejected({ error: true, message: err.message }));
-    });
-};
-
-export const fetchedPosts = (payload: Array<PostPropsState>): ReduxAction => {
-  return {
-    type: FETCHED_POSTS,
-    payload
-  };
-};
-
-export const fetchedMorePosts = (
-  payload: Array<PostPropsState>
-): ReduxAction => {
-  return {
-    type: FETCHED_MORE_POSTS,
-    payload
-  };
-};
-
-export const fetchedPost = (payload: PostPropsState): ReduxAction => {
-  return {
-    type: FETCHED_POST,
-    payload
-  };
-};
-
-const fetchPostsStarted = (payload?: Partial<FetchPostsState>): ReduxAction => {
-  return {
-    type: FETCH_POST_STARTED,
-    payload: { ...payload, status: 'pending' }
-  };
-};
-
-const fetchPostsResolved = (
-  payload?: Partial<FetchPostsState>
-): ReduxAction => {
-  return {
-    type: FETCH_POST_RESOLVED,
-    payload: { ...payload, status: 'resolved' }
-  };
-};
-
-const fetchPostsRejected = (
-  payload?: Partial<FetchPostsState>
-): ReduxAction => {
-  return {
-    type: FETCH_POST_REJECTED,
-    payload: { ...payload, status: 'rejected' }
-  };
-};
-
-const fetchPostStarted = (payload?: Partial<FetchPostsState>): ReduxAction => {
-  return {
-    type: FETCH_A_POST_STARTED,
-    payload: { ...payload, status: 'pending' }
-  };
-};
-
-const fetchPostResolved = (payload?: Partial<FetchPostsState>): ReduxAction => {
-  return {
-    type: FETCH_A_POST_RESOLVED,
-    payload: { ...payload, status: 'resolved' }
-  };
-};
-
-const fetchPostRejected = (payload?: Partial<FetchPostsState>): ReduxAction => {
-  return {
-    type: FETCH_A_POST_REJECTED,
-    payload: { ...payload, status: 'rejected' }
-  };
+    .then((state) => {})
+    .catch((err) => {});
 };
 
 export const makePost = (payload: any): ReduxAction => {
@@ -485,89 +390,76 @@ export const submitPost = ({
   };
 };
 
-export const getTrendsStarted = (
-  payload?: Partial<RequestState>
-): ReduxAction => {
+export const getRecommendations = () => (dispatch: Function) => {
+  checkNetworkStatusWhilstPend({
+    name: 'recommendations',
+    func: recommendations
+  });
+
+  http
+    .get<UserData[]>('/people/recommendations', true)
+    .then(({ error, message, data }) => {
+      if (error) {
+        dispatch(
+          recommendations({ status: 'settled', statusText: message, err: true })
+        );
+      } else {
+        dispatch(
+          recommendations({
+            status: 'fulfilled',
+            statusText: message,
+            err: false,
+            data
+          })
+        );
+      }
+    })
+    .catch(recommendations);
+
   return {
-    type: GET_TRENDS_STARTED,
-    payload: { ...payload, status: 'pending' }
-  };
-};
-export const getTrendsResolved = (
-  payload?: Partial<RequestState>
-): ReduxAction => {
-  return {
-    type: GET_TRENDS_RESOLVED,
-    payload: { ...payload, status: 'resolved' }
-  };
-};
-export const getTrendsRejected = (
-  payload?: Partial<RequestState>
-): ReduxAction => {
-  return {
-    type: GET_TRENDS_REJECTED,
-    payload: { ...payload, status: 'rejected' }
+    type: GET_RECOMMENDATIONS
   };
 };
 
-export const fetchedTrends = (payload?: Partial<RequestState>): ReduxAction => {
+export const recommendations = (payload: FetchState<UserData[]>) => {
   return {
-    type: FETCHED_TRENDS,
+    type: SET_RECOMMENDATIONS,
     payload
   };
 };
 
 export const getTrends = () => (dispatch: Function) => {
-  dispatch(getTrendsStarted());
-  const userData = getState().userData as UserData;
-  const token = userData.token as string;
-  axios({
-    url: `/hashtag/trending`,
-    baseURL,
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  })
-    .then((res) => {
-      if (res.data.error) {
-        throw new Error(res.data.message);
+  checkNetworkStatusWhilstPend({
+    name: 'trends',
+    func: trends
+  });
+
+  http
+    .get<UserData[]>('/hashtag/trending', true)
+    .then(({ error, message, data }) => {
+      if (error) {
+        dispatch(trends({ status: 'settled', statusText: message, err: true }));
+      } else {
+        dispatch(
+          trends({
+            status: 'fulfilled',
+            statusText: message,
+            err: false,
+            data
+          })
+        );
       }
-      return res.data.data;
     })
-    .then((state) => {
-      dispatch(fetchedTrends(state.hashtags));
-      dispatch(
-        getTrendsResolved({
-          error: false,
-          message: state.message
-        })
-      );
-    })
-    .catch((err) => {
-      dispatch(getTrendsRejected({ error: true, message: err.message }));
-    });
+    .catch(trends);
+
+  return {
+    type: GET_TRENDS
+  };
 };
 
-
-
-export const getRecommendations = () => (dispatch: Function) => {
-  // dispatch(getRecommendationsStarted());
-
-  // http
-  //   .get<UserData[]>('/people/recommendations', true)
-  //   .then(({ error, message, data: _recommendations }) => {
-  //     dispatch(fetchedRecommendations(_recommendations));
-  //     dispatch(
-  //       getRecommendationsResolved({
-  //         error: false,
-  //         message
-  //       })
-  //     );
-  //   })
-  //   .catch((err) => {
-  //     dispatch(
-  //       getRecommendationsRejected({ error: true, message: err.message })
-  //     );
-  //   });
+export const trends = (payload: FetchState<UserData[]>) => {
+  return {
+    type: SET_TRENDS,
+    payload
+  };
 };

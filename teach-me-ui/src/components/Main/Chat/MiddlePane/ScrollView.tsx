@@ -18,21 +18,21 @@ import {
   APIMessageResponse,
   Partial,
   FetchState
-} from '../../../constants/interfaces';
-import { userDeviceIsMobile } from '../../..';
-import { getConversationMessages } from '../../../actions/chat';
-import { dispatch, interval } from '../../../functions/utils';
+} from '../../../../constants/interfaces';
+import { userDeviceIsMobile } from '../../../..';
+import { getConversationMessages } from '../../../../actions/chat';
+import { dispatch, interval } from '../../../../functions/utils';
 import {
   Message,
   ChatDate,
   SelectedMessageValue,
   NewMessageBar
-} from './crumbs';
+} from '../crumbs';
 import {
   ChatMiddlePaneProps,
-  Memoize,
   messagesStatusInfo
-} from './MiddlePane';
+} from '.';
+import { Memoize } from '..';
 
 export const ScrollViewContext = createContext(
   {} as Partial<ChatMiddlePaneProps>

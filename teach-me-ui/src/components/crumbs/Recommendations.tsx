@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
 
 import { Link } from 'react-router-dom';
 
@@ -10,55 +9,52 @@ import Box from '@material-ui/core/Box';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import { UserData } from '../../constants';
+import { UserData, FetchState } from '../../constants';
 
 import { userDeviceIsMobile } from '../../index';
-import { dispatch } from '../../functions';
-import { getRecommendations } from '../../actions';
 
-const Recommendations = (props: {
-  recommendations: UserData[] | null[];
-  getRecommendationsStatus: any;
+const Recommendations = ({
+  recommendations: { status, data }
+}: {
+  recommendations: FetchState<UserData[]>;
 }) => {
-  const { recommendations, getRecommendationsStatus } = props;
-  const _recommendations = [...recommendations].concat(
-    recommendations.length && recommendations.length < 3 ? [null, null] : []
-  );
+  let _recommendations = [...data];
 
-  useEffect(() => {
-    dispatch(getRecommendations());
-  }, []);
+  _recommendations = [..._recommendations].concat(
+    _recommendations.length && _recommendations.length < 3
+      ? [null as any, null]
+      : []
+  );
 
   return (
     <>
-      {getRecommendationsStatus.status !== 'pending' &&
-        _recommendations.length > 0 && (
-          <>
-            <Box
-              component='h3'
-              className='font-bold theme-tertiary-darker recommendations-heading'>
-              Colleauges you may know
-            </Box>
-            <Box
-              className='recommendations'
-              style={{
-                gridTemplateColumns: `repeat(${_recommendations.length}, 12rem)`,
-                columnGap: userDeviceIsMobile ? '.5rem' : '.75rem'
-              }}>
-              {_recommendations.map((recommendation, i) =>
-                recommendation ? (
-                  <Recommendation
-                    {...recommendation}
-                    key={recommendation.id}
-                    displayName={`${recommendation.first_name} ${recommendation.last_name}`}
-                  />
-                ) : (
-                  <Box className='recommendation null' key={i}></Box>
-                )
-              )}
-            </Box>
-          </>
-        )}
+      {status !== 'pending' && _recommendations.length > 0 && (
+        <>
+          <Box
+            component='h3'
+            className='font-bold theme-tertiary-darker recommendations-heading'>
+            Colleauges you may know
+          </Box>
+          <Box
+            className='recommendations'
+            style={{
+              gridTemplateColumns: `repeat(${_recommendations.length}, 12rem)`,
+              columnGap: userDeviceIsMobile ? '.5rem' : '.75rem'
+            }}>
+            {_recommendations.map((recommendation, i) =>
+              recommendation ? (
+                <Recommendation
+                  {...recommendation}
+                  key={recommendation.id}
+                  displayName={`${recommendation.first_name} ${recommendation.last_name}`}
+                />
+              ) : (
+                <Box className='recommendation null' key={i}></Box>
+              )
+            )}
+          </Box>
+        </>
+      )}
     </>
   );
 };
@@ -112,7 +108,4 @@ const Recommendation = (props: UserData) => {
   );
 };
 
-export default connect((state: any) => ({
-  getRecommendationsStatus: state.getRecommendationsStatus,
-  recommendations: state.recommendations
-}))(Recommendations);
+export default Recommendations;

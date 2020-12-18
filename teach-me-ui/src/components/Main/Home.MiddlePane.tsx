@@ -7,7 +7,7 @@ import Compose from '../crumbs/Compose';
 import Recommendations from '../crumbs/Recommendations';
 
 import {
-  PostPropsState,
+  PostStateProps,
   UserData,
   SocketProps,
   AuthState,
@@ -17,17 +17,18 @@ import {
 import { getState, dispatch } from '../../functions';
 
 import { connect } from 'react-redux';
-import { getPosts } from '../../actions';
+import { getPosts, getRecommendations } from '../../actions';
 
-interface MiddlePaneProps {
+interface HomeMiddlePaneProps {
   auth: AuthState;
   profileData: FetchState<UserData[]>;
-  posts: FetchState<PostPropsState[]>;
+  posts: FetchState<PostStateProps[]>;
   userData: UserData;
+  recommendations: FetchState<UserData[]>;
   type: 'FEED' | 'WALL';
 }
 
-const MiddlePane: React.FunctionComponent<MiddlePaneProps> = (props) => {
+const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
   const {
     auth: { isAuthenticated },
     profileData: {
@@ -39,6 +40,7 @@ const MiddlePane: React.FunctionComponent<MiddlePaneProps> = (props) => {
       statusText: postsStatusText,
       err: postsErred
     },
+    recommendations,
     userData
   } = props;
   const isFetching = /(updat|fetch|recycl)(e|ing)?/i.test(
@@ -87,7 +89,12 @@ const MiddlePane: React.FunctionComponent<MiddlePaneProps> = (props) => {
 
     if (!postsData?.length) {
       dispatch(getPosts(type, userId, !!postsData?.length));
+
+      if (type === 'FEED') {
+        dispatch(getRecommendations());
+      }
     }
+
     // eslint-disable-next-line
   }, [props.type]);
 
@@ -113,12 +120,14 @@ const MiddlePane: React.FunctionComponent<MiddlePaneProps> = (props) => {
     <Container className='middle-pane px-0' fluid>
       {(selfView || !inProfile) && <Compose userData={userData} />}
       {!inProfile && !postsData?.length && postStatus === 'fulfilled' && (
-        <Recommendations />
+        <Recommendations recommendations={recommendations} />
       )}
       {postStatus !== 'pending' &&
         postsData?.map((post, i: number) => {
           const renderRecommendations = !inProfile &&
-            (i === 3 || (i > 0 && i % 20 === 0)) && <Recommendations />;
+            (i === 2 || (i > 0 && i % 15 === 0)) && (
+              <Recommendations recommendations={recommendations} />
+            );
           const nReposts = post.reposts.length;
 
           return (
@@ -144,12 +153,12 @@ const MiddlePane: React.FunctionComponent<MiddlePaneProps> = (props) => {
   );
 };
 
-const mapStateToProps = (state: any, ownProps: any) => ({
-  ...ownProps,
+const mapStateToProps = (state: HomeMiddlePaneProps) => ({
   auth: state.auth,
-  posts: state._posts,
+  posts: state.posts,
+  recommendations: state.recommendations,
   profileData: state.profileData,
   userData: state.userData
 });
 
-export default connect(mapStateToProps)(MiddlePane);
+export default connect(mapStateToProps)(HomeMiddlePane);

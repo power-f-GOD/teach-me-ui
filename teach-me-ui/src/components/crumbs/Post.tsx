@@ -20,7 +20,7 @@ import Skeleton from 'react-loading-skeleton';
 import { Link, useHistory } from 'react-router-dom';
 
 import { dispatch, formatDate } from '../../functions/utils';
-import { PostPropsState } from '../../constants/interfaces';
+import { PostStateProps } from '../../constants/interfaces';
 
 import { displayModal } from '../../functions';
 import { triggerSearchKanyimuta } from '../../actions/search';
@@ -85,10 +85,10 @@ export const openCreateRepostModal = (meta: any) => (e: any) => {
 };
 
 const Post: React.FC<
-  Partial<PostPropsState> & {
+  Partial<PostStateProps> & {
     index?: number;
     postsErred?: boolean;
-    quote?: PostPropsState;
+    quote?: PostStateProps;
   }
 > = (props) => {
   const { index, postsErred, quote, ...others } = props;

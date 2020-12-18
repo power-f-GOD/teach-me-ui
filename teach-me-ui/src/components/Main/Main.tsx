@@ -15,7 +15,7 @@ import Profile from './Profile';
 import ProfileRedirect from './ProfileRedirect';
 import Loader from '../crumbs/Loader';
 import ModalFrame from '../modals';
-import Chat from './Chat/Chat';
+import Chat from './Chat';
 import Search from './Search';
 import PostPage from './PostPage';
 import Questions from './Questions';

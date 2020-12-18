@@ -10,12 +10,12 @@ import '@testing-library/jest-dom/extend-expect';
 import Post from '../../components/crumbs/Post';
 import { Route, BrowserRouter as Router } from 'react-router-dom';
 
-import { PostPropsState } from '../../constants';
+import { PostStateProps } from '../../constants';
 import { Provider } from 'react-redux';
 import store from '../../appStore';
 
-const post: Partial<Omit<PostPropsState, 'sender'>> & {
-  sender: Partial<PostPropsState['sender']>;
+const post: Partial<Omit<PostStateProps, 'sender'>> & {
+  sender: Partial<PostStateProps['sender']>;
 } = {
   sender: {
     id: '1',
