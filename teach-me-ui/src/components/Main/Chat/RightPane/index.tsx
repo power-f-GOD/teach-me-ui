@@ -12,7 +12,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import { ONE_TO_ONE } from '../../../../constants/chat';
 import { APIConversationResponse } from '../../../../constants/interfaces';
-import { InfoCard } from '../../../crumbs/Cards';
+import { InfoCard } from '../../../shared/Cards';
 import { dispatch } from '../../../../functions';
 import { chatState } from '../../../../actions/chat';
 

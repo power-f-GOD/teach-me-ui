@@ -21,7 +21,7 @@ import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined'
 import SchoolOutlinedIcon from '@material-ui/icons/SchoolOutlined';
 import Button from '@material-ui/core/Button';
 
-import Img from '../crumbs/Img';
+import Img from '../shared/Img';
 import ColleagueView from '../crumbs/ColleagueView';
 import ProfileFeeds from '../crumbs/ProfileFeeds';
 import {
@@ -33,7 +33,7 @@ import {
 import { dispatch, cleanUp, displayModal } from '../../functions';
 import { getProfileData } from '../../actions';
 import { getConversations } from '../../actions/chat';
-import Loader from '../crumbs/Loader';
+import Loader from '../shared/Loader';
 /**
  * Please, Do not delete any commented code; You can either uncomment them to use them or leave them as they are
  */

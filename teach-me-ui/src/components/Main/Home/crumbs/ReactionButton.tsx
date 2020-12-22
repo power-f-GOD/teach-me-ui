@@ -6,8 +6,8 @@ import UpvoteSharpIcon from '@material-ui/icons/ExpandLessSharp';
 import DownvoteSharpIcon from '@material-ui/icons/ExpandMoreSharp';
 import Button from '@material-ui/core/Button';
 
-import { bigNumberFormat, emitUserOnlineStatus } from '../../functions';
-import { POST_REACTION, Reaction } from '../../constants';
+import { bigNumberFormat, emitUserOnlineStatus } from '../../../../functions';
+import { POST_REACTION, Reaction } from '../../../../constants';
 
 interface ReactButtonPropsState {
   id: string;

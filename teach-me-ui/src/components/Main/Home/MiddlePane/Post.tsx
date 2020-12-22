@@ -19,16 +19,16 @@ import Skeleton from 'react-loading-skeleton';
 
 import { Link, useHistory } from 'react-router-dom';
 
-import { dispatch, formatDate } from '../../functions/utils';
-import { PostStateProps } from '../../constants/interfaces';
+import { dispatch, formatDate } from '../../../../functions/utils';
+import { PostStateProps } from '../../../../constants/interfaces';
 
-import { displayModal } from '../../functions';
-import { triggerSearchKanyimuta } from '../../actions/search';
+import { displayModal } from '../../../../functions';
+import { triggerSearchKanyimuta } from '../../../../actions/search';
 
 import { LazyLoadImage as LazyImg } from 'react-lazy-load-image-component';
 
 import { PostFooter, Reply, QuotedPost } from './Post.crumbs';
-import { CREATE_REPOST } from '../../constants/modals';
+import { CREATE_REPOST } from '../../../../constants/modals';
 
 const stopProp = (e: any) => {
   e.stopPropagation();

@@ -5,8 +5,8 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import MiddlePane from './Questions.MiddlePane';
-import RightPane from './Home.RightPane';
-import LeftPane from './Home.LeftPane';
+import HomeRightPane from './Home/RightPane';
+import HomeLeftPane from './Home/LeftPane';
 
 const Questions = (props: any) => {
   return (
@@ -18,13 +18,13 @@ const Questions = (props: any) => {
             lg={3}
             md={4}
             className='d-none hang-in d-md-block left-pane-col'>
-            <LeftPane />
+            <HomeLeftPane />
           </Col>
           <Col lg={6} md={8} className='middle-pane-col px-3'>
             <MiddlePane />
           </Col>
           <Col lg={3} className='d-none hang-in d-lg-block right-pane-col'>
-            <RightPane />
+            <HomeRightPane />
           </Col>
         </Row>
       </Container>

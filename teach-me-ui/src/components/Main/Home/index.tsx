@@ -4,14 +4,14 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import RightPane from './Home.RightPane';
-import HomeMiddlePane from './Home.MiddlePane';
-import LeftPane from './Home.LeftPane';
+import HomeRightPane from './RightPane';
+import HomeMiddlePane from './MiddlePane';
+import HomeLeftPane from './LeftPane';
 
 import { connect } from 'react-redux';
-import { getPosts } from '../../actions/home';
-import { dispatch, createObserver } from '../../functions/utils';
-import { PostStateProps, FetchState } from '../../constants/interfaces';
+import { getPosts } from '../../../actions/home';
+import { dispatch, createObserver } from '../../../functions/utils';
+import { PostStateProps, FetchState } from '../../../constants/interfaces';
 
 const observedElementRef = React.createRef<any>();
 
@@ -70,7 +70,7 @@ const Home = ({ posts }: { posts: FetchState<PostStateProps> }) => {
             lg={3}
             md={4}
             className='d-none hang-in d-md-block left-pane-col'>
-            <LeftPane />
+            <HomeLeftPane />
           </Col>
           <Col lg={6} md={8} className='middle-pane-col px-3'>
             <HomeMiddlePane type={'FEED'} />
@@ -79,7 +79,7 @@ const Home = ({ posts }: { posts: FetchState<PostStateProps> }) => {
               ref={observedElementRef}></Container>
           </Col>
           <Col lg={3} className='d-none hang-in d-lg-block right-pane-col'>
-            <RightPane />
+            <HomeRightPane />
           </Col>
         </Row>
       </Container>
