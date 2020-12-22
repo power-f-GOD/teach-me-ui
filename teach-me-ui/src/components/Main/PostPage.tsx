@@ -8,9 +8,9 @@ import Col from 'react-bootstrap/Col';
 
 import Box from '@material-ui/core/Box';
 
-import RightPane from './Home.RightPane';
-import Post from '../crumbs/Post';
-import Loader from '../crumbs/Loader';
+import HomeRightPane from './Home/RightPane';
+import Post from './Home/MiddlePane/Post';
+import Loader from '../shared/Loader';
 
 import { connect } from 'react-redux';
 
@@ -50,7 +50,7 @@ const PostPage = (props: {
             <Replies id={props.match.params.id} />
           </Col>
           <Col lg={3} className='d-none d-lg-block right-pane-col'>
-            <RightPane />
+            <HomeRightPane />
           </Col>
         </Row>
       </Container>

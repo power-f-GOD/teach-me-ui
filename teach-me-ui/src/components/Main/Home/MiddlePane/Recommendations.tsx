@@ -9,9 +9,9 @@ import Box from '@material-ui/core/Box';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import { UserData, FetchState } from '../../constants';
+import { UserData, FetchState } from '../../../../constants';
 
-import { userDeviceIsMobile } from '../../index';
+import { userDeviceIsMobile } from '../../../../index';
 
 const Recommendations = ({
   recommendations: { status, data }

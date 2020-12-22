@@ -32,7 +32,8 @@ import {
   SET_RECOMMENDATIONS,
   GET_RECOMMENDATIONS,
   SET_TRENDS,
-  GET_TRENDS
+  GET_TRENDS,
+  HashTag
 } from '../constants';
 
 import {
@@ -435,7 +436,7 @@ export const getTrends = () => (dispatch: Function) => {
   });
 
   http
-    .get<UserData[]>('/hashtag/trending', true)
+    .get<HashTag[]>('/hashtag/trending', true)
     .then(({ error, message, data }) => {
       if (error) {
         dispatch(trends({ status: 'settled', statusText: message, err: true }));
@@ -457,7 +458,7 @@ export const getTrends = () => (dispatch: Function) => {
   };
 };
 
-export const trends = (payload: FetchState<UserData[]>) => {
+export const trends = (payload: FetchState<HashTag[]>) => {
   return {
     type: SET_TRENDS,
     payload

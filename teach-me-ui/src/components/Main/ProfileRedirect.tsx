@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { dispatch, cleanUp } from '../../functions';
 import { getProfileData } from '../../actions';
-import Loader from '../crumbs/Loader';
+import Loader from '../shared/Loader';
 /**
  * Please, Do not delete any commented code; You can either uncomment them to use them or leave them as they are
  */

@@ -10,11 +10,11 @@ import RepostSharpIcon from '@material-ui/icons/CachedSharp';
 import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
 import { Button, Avatar } from '@material-ui/core';
 
-import ReactButton from './ReactionButton';
-import CreateReply from './CreateReply';
+import ReactButton from '../crumbs/ReactionButton';
+import CreateReply from '../../../crumbs/CreateReply';
 import { processPost } from './Post';
-import { bigNumberFormat, formatDate } from '../../functions/utils';
-import { PostStateProps } from '../../constants/interfaces';
+import { bigNumberFormat, formatDate } from '../../../../functions/utils';
+import { PostStateProps } from '../../../../constants/interfaces';
 
 export interface PostCrumbs extends Partial<PostStateProps> {
   navigate?: Function;

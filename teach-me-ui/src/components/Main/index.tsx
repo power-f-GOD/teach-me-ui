@@ -13,7 +13,7 @@ import About from '../Index/About';
 import Support from '../Index/Support';
 import Profile from './Profile';
 import ProfileRedirect from './ProfileRedirect';
-import Loader from '../crumbs/Loader';
+import Loader from '../shared/Loader';
 import ModalFrame from '../modals';
 import Chat from './Chat';
 import Search from './Search';

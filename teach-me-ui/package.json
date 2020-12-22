@@ -87,7 +87,7 @@
     "autoprefix:r": "npx postcss src/styles/index.min.css --use autoprefixer --no-map -o src/styles/index.min.css",
     "autoprefix:w": "npx postcss src/styles/index.min.css --use autoprefixer --no-map -w -o src/styles/prefixed.min.css",
     "rebase": "git pull origin staging; git status",
-    "merge:revamp": "git stash && git checkout staging && git stash && git pull origin staging && git stash && git checkout revamp-app-ui && git stash && git rebase staging",
+    "merge:revamp": "git stash && git checkout staging && git stash && git pull origin staging && git stash && git checkout revamp-app-ui && git stash && git merge staging",
     "merge:chat": "git stash && git checkout staging && git stash && git pull origin staging && git stash && git checkout feature/TMFED-complete-chat-feature && git stash && git merge staging"
   },
   "jest": {

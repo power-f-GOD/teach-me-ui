@@ -2,9 +2,9 @@ import React, { useEffect, useMemo } from 'react';
 
 import Container from 'react-bootstrap/Container';
 
-import Post from '../crumbs/Post';
-import Compose from '../crumbs/Compose';
-import Recommendations from '../crumbs/Recommendations';
+import Post from './Post';
+import Compose from '../../../crumbs/Compose';
+import Recommendations from './Recommendations';
 
 import {
   PostStateProps,
@@ -12,12 +12,12 @@ import {
   SocketProps,
   AuthState,
   FetchState
-} from '../../constants';
+} from '../../../../constants';
 
-import { getState, dispatch } from '../../functions';
+import { getState, dispatch } from '../../../../functions';
 
 import { connect } from 'react-redux';
-import { getPosts, getRecommendations } from '../../actions';
+import { getPosts, getRecommendations } from '../../../../actions';
 
 interface HomeMiddlePaneProps {
   auth: AuthState;
@@ -128,7 +128,7 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
             (i === 2 || (i > 0 && i % 15 === 0)) && (
               <Recommendations recommendations={recommendations} />
             );
-          const nReposts = post.reposts.length;
+          const nReposts = post.reposts?.length;
 
           return (
             <React.Fragment key={i}>

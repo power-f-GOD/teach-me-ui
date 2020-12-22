@@ -11,14 +11,14 @@ import {
   CREATE_QUESTION,
   FetchState,
   HashTag
-} from '../../constants';
+} from '../../../../constants';
 
-import { bigNumberFormat, displayModal } from '../../functions';
+import { bigNumberFormat, displayModal } from '../../../../functions';
 import { connect } from 'react-redux';
-import { dispatch } from '../../appStore';
-import { getTrends } from '../../actions';
+import { dispatch } from '../../../../appStore';
+import { getTrends } from '../../../../actions';
 
-const RightPane = ({
+const HomeRightPane = ({
   trends: { status: trendsStatus, data: _trends }
 }: {
   trends: FetchState<HashTag[]>;
@@ -80,4 +80,4 @@ const Topic: React.FunctionComponent<TopicPropsState> = (props) => {
 
 export default connect((state: { trends: FetchState<HashTag[]> }) => ({
   trends: state.trends
-}))(RightPane);
+}))(HomeRightPane);
