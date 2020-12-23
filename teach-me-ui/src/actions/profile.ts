@@ -500,7 +500,7 @@ export const fetchColleagues = () => (dispatch: Function) => {
   const userData = getState().userData as UserData;
   const token = userData.token as string;
   Axios({
-    url: `/colleagues/find`,
+    url: `/colleague/find`,
     baseURL,
     method: 'GET',
     headers: {

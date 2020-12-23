@@ -92,7 +92,7 @@ const UploadsPreview = (props: any) => {
         <input
           id='photo-input'
           onChange={fileSelectedHandler}
-          className='display-none'
+          className='d-none'
           type='file'
           accept='image/*'
         />

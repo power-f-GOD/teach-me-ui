@@ -119,7 +119,8 @@ const MiddlePane: React.FunctionComponent<MiddlePaneProps> = (props) => {
         postsData?.map((post, i: number) => {
           const renderRecommendations = !inProfile &&
             (i === 3 || (i > 0 && i % 20 === 0)) && <Recommendations />;
-          const nReposts = post.reposts.length;
+            
+          const nReposts = post.repost_count;
 
           return (
             <React.Fragment key={i}>

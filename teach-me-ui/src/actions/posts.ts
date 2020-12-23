@@ -137,6 +137,8 @@ export const makeRepost = (payload: SocketProps) => (dispatch: Function) => {
   dispatch(makeRepostStarted());
 
   const socket = getState().webSocket as WebSocket;
+  console.log(payload);
+  
   socket.send(JSON.stringify(payload));
 };
 

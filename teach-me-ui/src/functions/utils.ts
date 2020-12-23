@@ -48,13 +48,14 @@ export const http: Readonly<Omit<HTTP, 'token'>> & { token: string } = {
     method: 'GET' | 'POST',
     url: string,
     requiresAuth?: boolean,
-    data?: any
+    data?: any,
+    contentType?: string
   ): AxiosRequestConfig => ({
     url: `${apiBaseURL}${url}`,
     method,
     headers: {
       Authorization: requiresAuth ? `Bearer ${http.token}` : null,
-      'Content-Type': 'application/json'
+      'Content-Type': contentType || 'application/json'
     },
     data
     // validateStatus: (status) => (!/^(2|3|4)/.test(`${status}`) ? false : true)
@@ -77,9 +78,9 @@ export const http: Readonly<Omit<HTTP, 'token'>> & { token: string } = {
    * @param data data to be posted to destination
    * @param requiresAuth that is if token/authentication will be required for the get action
    */
-  post: async <T>(url: string, data?: any, requiresAuth?: boolean) => {
+  post: async <T>(url: string, data?: any, requiresAuth?: boolean, contentType?: string) => {
     const response: AxiosResponse<APIResponseModel<T>> = await axios(
-      http.returnRequestConfig('POST', url, requiresAuth, data)
+      http.returnRequestConfig('POST', url, requiresAuth, data, contentType)
     );
 
     return Promise.resolve({ ...response.data });

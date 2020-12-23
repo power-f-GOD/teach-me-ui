@@ -1,9 +1,15 @@
-import axios from 'axios';
-
-import { getState, dispatch, logError, displayModal } from '../functions'
+// import axios from 'axios';
 
 import { 
-  apiBaseURL as baseURL, 
+  // getState,
+  dispatch,
+  logError,
+  displayModal,
+  http
+} from '../functions'
+
+import { 
+  // apiBaseURL as baseURL, 
   SEND_FILES,
   UPLOADS,
   GET_UPLOADS,
@@ -27,7 +33,7 @@ export const sendFilesToServer = (files: Array<File>, callbackAction: Function, 
   dispatch(sendFiles({
     status: 'pending'
   }));
-  let token = getState().userData.token;
+  // let token = getState().userData.token;
   let ids: string[] = [];
   const recursiveUploadReturnsArrayOfId = (files1: Array<File>) => {
     const nextFile = files1.shift()
@@ -35,24 +41,28 @@ export const sendFilesToServer = (files: Array<File>, callbackAction: Function, 
       const formData = new FormData()
       formData.append('file', nextFile)
 
-      axios({
-        url: '/upload',
-        baseURL,
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content_Type': 'multipart/form-data'
-        },
-        data: formData
-      }).then((response: any) => {
-        const { error, data } = response.data;
-        if (error) {
-          logError(sendFiles)(data.error);
-        } else {
-          ids.push(data.id);
-          recursiveUploadReturnsArrayOfId(files1)
-        }
-      }).catch(logError(sendFiles));
+      // axios({
+      //   url: '/upload',
+      //   baseURL,
+      //   method: 'POST',
+      //   headers: {
+      //     Authorization: `Bearer ${token}`,
+      //     'Content_Type': 'multipart/form-data'
+      //   },
+      //   data: formData
+      // })
+      http
+        .post('/upload', formData, true, 'multipart/form-data')
+        .then((response: any) => {
+          const { error, data } = response;
+          if (error) {
+            logError(sendFiles)(data.error);
+          } else {
+            ids.push(data.id);
+            recursiveUploadReturnsArrayOfId(files1)
+          }
+        })
+        .catch(logError(sendFiles));
     } else {
       for (let localUpload of reusedUploads) {
         ids.push(localUpload.id);
@@ -79,33 +89,37 @@ export const sendFilesToServer = (files: Array<File>, callbackAction: Function, 
 }
 
 export const getUploads = () => {
-  let token = getState().userData.token;
+  // let token = getState().userData.token;
   dispatch(uploads({
     status: 'pending'
   }));
 
-  axios({
-    url: '/uploads',
-    baseURL,
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  }).then((response: any) => {
-    const { error, data } = response.data;
-    if (error) {
-      dispatch(uploads({
-        status: 'fulfilled',
-        err: true
-      }))
-    } else {
-      dispatch(uploads({
-        status: 'fulfilled',
-        err: false,
-        data: data
-      }))
-    }
-  }).catch(logError(uploads));
+  // axios({
+  //   url: '/uploads',
+  //   baseURL,
+  //   method: 'GET',
+  //   headers: {
+  //     Authorization: `Bearer ${token}`
+  //   }
+  // })
+  http
+    .get('/uploads', true)
+    .then((response: any) => {
+      const { error, data } = response;
+      if (error) {
+        dispatch(uploads({
+          status: 'fulfilled',
+          err: true
+        }))
+      } else {
+        dispatch(uploads({
+          status: 'fulfilled',
+          err: false,
+          data: data
+        }))
+      }
+    })
+    .catch(logError(uploads));
   return {
     type: GET_UPLOADS
   }

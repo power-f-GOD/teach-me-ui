@@ -1,16 +1,17 @@
-import axios from 'axios';
+// import axios from 'axios';
 
 import { 
 	QuestionState,
 	ReduxAction,
 	SEND_QUESTION_TO_SERVER,
 	ASK_QUESTION,
-	apiBaseURL as baseURL,
-	UserData
+	// apiBaseURL as baseURL,
+	// UserData
 } from '../constants';
 import { 
 	checkNetworkStatusWhilstPend, 
-	getState,
+	// getState,
+	http,
 	logError
 } from '../functions';
 
@@ -24,8 +25,8 @@ export const askQuestion = (payload: QuestionState) => {
 export const sendQuestionToServer = (para: object) => (
   dispatch: Function
 ): ReduxAction => {
-  const userData = getState().userData as UserData;
-  const token = userData.token as string;
+  // const userData = getState().userData as UserData;
+  // const token = userData.token as string;
 
   checkNetworkStatusWhilstPend({
     name: 'askQuestion',
@@ -34,14 +35,16 @@ export const sendQuestionToServer = (para: object) => (
   dispatch(askQuestion({ status: 'pending' }));
 
   
-	axios({
-		url: `/question/make`,
-		baseURL,
-		method: 'GET',
-		headers: {
-			Authorization: `Bearer ${token}`
-		}
-	})
+	// axios({
+	// 	url: `/question/make`,
+	// 	baseURL,
+	// 	method: 'GET',
+	// 	headers: {
+	// 		Authorization: `Bearer ${token}`
+	// 	}
+	// })
+	http
+    .get('/question/make', true)
 		.then(({ data }: any) => {
 			const { people } = data.data as {
 				people: any[];

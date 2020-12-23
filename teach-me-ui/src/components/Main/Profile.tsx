@@ -37,7 +37,7 @@ import {
 import { dispatch, cleanUp, displayModal } from '../../functions';
 import { getProfileData } from '../../actions';
 import { getConversations } from '../../actions/chat';
-import Loader from '../crumbs/Loader';
+// import Loader from '../crumbs/Loader';
 /**
  * Please, Do not delete any commented code; You can either uncomment them to use them or leave them as they are
  */
@@ -202,13 +202,13 @@ const Profile = (props: any) => {
     return <Redirect to='/404' />;
   }
 
-  if (
-    !/chat=o1/.test(window.location.search) &&
-    profileData.status !== 'fulfilled'
-  ) {
-    //instead of this, you can use a React Skeleton loader; didn't have the time to add, so I deferred.
-    return <Loader />;
-  }
+  // if (
+  //   !/chat=o1/.test(window.location.search) && false &&
+  //   profileData.status !== 'fulfilled'
+  // ) {
+  //   //instead of this, you can use a React Skeleton loader; didn't have the time to add, so I deferred.
+  //   return <Loader />;
+  // }
 
   const openProfilePhotoEditModal = () => {
     displayModal(true, false, SELECT_PHOTO, { title: 'Select Profile Photo' });

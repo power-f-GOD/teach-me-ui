@@ -36,7 +36,7 @@ export const reactToPostFn = (
 export const fetchMentionsFn = (value: string) => {
   const token = (getState().userData as UserData).token;
   return Axios({
-    url: `/colleagues/find?keyword=${value}`,
+    url: `/colleague/find?keyword=${value}`,
     method: 'GET',
     baseURL,
     headers: { Authorization: `Bearer ${token}` }
