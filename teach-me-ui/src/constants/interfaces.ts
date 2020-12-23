@@ -10,13 +10,15 @@ export interface HTTP {
     method: 'GET' | 'POST',
     url: string,
     requiresAuth?: boolean,
-    data?: any
+    data?: any,
+    contentType?: string
   ): AxiosRequestConfig;
   get<T>(url: string, requiresAuth?: boolean): Promise<APIResponseModel<T>>;
   post<T, T2 = T | any>(
     url: string,
-    data?: T2,
-    requiresAuth?: boolean
+    data?: any,
+    requiresAuth?: boolean,
+    contentType?: string
   ): Promise<APIResponseModel<T>>;
 }
 

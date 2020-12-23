@@ -34,8 +34,8 @@ export const updateProfileRequest = (data: any) => (
 ): ReduxAction => {
 
   let {
-    firstname,
-    lastname,
+    first_name,
+    last_name,
     username,
     email,
     dob,
@@ -46,18 +46,18 @@ export const updateProfileRequest = (data: any) => (
   const [day, month, year] = dob.split('/');
   const date_of_birth = `${year}-${month}-${day}`;
 
-  firstname = `${firstname[0].toUpperCase()}${firstname
+  first_name = `${first_name[0].toUpperCase()}${first_name
     .slice(1)
     .toLowerCase()}`;
-  lastname = `${lastname[0].toUpperCase()}${lastname.slice(1).toLowerCase()}`;
+  last_name = `${last_name[0].toUpperCase()}${last_name.slice(1).toLowerCase()}`;
   username = username.toLowerCase();
   email = email.toLowerCase();
 
   const userData = getState().userData;
 
   dispatch(updateUserDataRequest({
-    firstname,
-    lastname,
+    first_name,
+    last_name,
     date_of_birth,
     bio
   }, false)(dispatch));
@@ -413,6 +413,7 @@ export const updateUserDataRequest = (data: Object, updateState: boolean = true)
     func: updateUserData
   });
   dispatch(updateUserData({ status: 'pending' }));
+  console.log(data);
   
 
   axios({

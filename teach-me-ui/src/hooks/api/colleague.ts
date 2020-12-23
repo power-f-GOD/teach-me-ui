@@ -106,7 +106,7 @@ export const useFetchColleagueRequests = (
 export const useFetchColleagues = (token: string): useApiResponse<any> => {
   const r: useApiResponse<any> = useApi<any>(
     {
-      endpoint: '/colleagues/find',
+      endpoint: '/colleague/find',
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` }
     },

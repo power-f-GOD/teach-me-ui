@@ -1,10 +1,10 @@
-import axios from 'axios';
+// import axios from 'axios';
 
 import {
   GET_NOTIFICATIONS,
   GET_NOTIFICATIONS_REQUEST,
   ReduxAction,
-  apiBaseURL as baseURL,
+  // apiBaseURL as baseURL,
   NotificationState
 } from '../constants';
 
@@ -12,7 +12,8 @@ import {
   logError,
   checkNetworkStatusWhilstPend,
   getState,
-  dispatch
+  dispatch,
+  http
 } from '../functions';
 
 import { displaySnackbar } from '../actions';
@@ -27,7 +28,7 @@ export const getNotifications = (payload: NotificationState) => {
 export const getNotificationsRequest = (date: number) => (
   dispatch: Function
 ): ReduxAction => {
-  let token = getState().userData.token;
+  // let token = getState().userData.token;
 
   checkNetworkStatusWhilstPend({
     name: 'getNotifications',
@@ -35,17 +36,19 @@ export const getNotificationsRequest = (date: number) => (
   });
   dispatch(getNotifications({ status: 'pending'}));
 
-  axios({
-    url: `/notifications?offset=${date}`,
-    baseURL,
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Content_Type: 'application/json'
-    }
-  })
+  // axios({
+  //   url: `/notifications?offset=${date}`,
+  //   baseURL,
+  //   method: 'GET',
+  //   headers: {
+  //     Authorization: `Bearer ${token}`,
+  //     Content_Type: 'application/json'
+  //   }
+  // })
+  http
+    .get(`/notifications?offset=${date}`, true)
     .then((response : any) => {
-      const { error, data } = response.data;
+      const { error, data } = response;
       if (!error) {
         const { notifications, entities } = data as {
           notifications: Array<string>;
@@ -94,31 +97,35 @@ export const pingUser = (
 };
 
 export const setLastseen = () => {
-  let token = getState().userData.token;
+  // let token = getState().userData.token;
 
-  axios({
-    url: `notificationS/seen`,
-    baseURL,
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Content_Type: 'application/json'
-    }
-  }).then((data) => {
-    dispatch(getNotificationsRequest(Date.now())(dispatch));
-  }).catch((e: any) => {
-    let message = /network/i.test(e.message)
-      ? 'A network error occurred. Check your internet connection.'
-      : e.message;
+  // axios({
+  //   url: 'notifications/seen',
+  //   baseURL,
+  //   method: 'POST',
+  //   headers: {
+  //     Authorization: `Bearer ${token}`,
+  //     Content_Type: 'application/json'
+  //   }
+  // })
+  http
+    .post('/notifications/seen', {}, true)
+    .then((data) => {
+      dispatch(getNotificationsRequest(Date.now())(dispatch));
+    })
+    .catch((e: any) => {
+      let message = /network/i.test(e.message)
+        ? 'A network error occurred. Check your internet connection.'
+        : e.message;
 
-    dispatch(
-      displaySnackbar({
-        open: true,
-        message: navigator.onLine
-          ? `${message[0].toUpperCase()}${message.slice(1)}.`
-          : 'You are offline.',
-        severity: 'error'
-      })
-    );
-  });
+      dispatch(
+        displaySnackbar({
+          open: true,
+          message: navigator.onLine
+            ? `${message[0].toUpperCase()}${message.slice(1)}.`
+            : 'You are offline.',
+          severity: 'error'
+        })
+      );
+    });
 };

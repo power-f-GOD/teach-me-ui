@@ -86,8 +86,9 @@ const CreatePost: React.FC<any> = (props) => {
       <form>
         <div id='suggestion-container'>
           <textarea
+            className='create-repost mt-1'
             autoFocus
-            rows={5}
+            rows={10}
             id='post-input'
             onChange={(e: any) => {
               onChange(e);
@@ -106,10 +107,10 @@ const CreatePost: React.FC<any> = (props) => {
             />
             <Col className='d-flex flex-grow-1 flex-column'>
               <Box component='div' fontWeight='bold'>
-                {props.sender_name}
+                {props.sender.first_name} {' '} {props.sender.last_name}
               </Box>
               <Box component='div' color='#777'>
-                @{props.sender_username}
+                @{props.sender.username}
               </Box>
             </Col>
           </Row>
@@ -124,7 +125,7 @@ const CreatePost: React.FC<any> = (props) => {
               width='100%'
               color='#888'
               pt={1}>
-              {formatDate(props.posted_at as number)}
+              {formatDate(props.date as number)}
             </Box>
           </Row>
         </Box>
