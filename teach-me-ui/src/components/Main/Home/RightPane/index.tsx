@@ -8,36 +8,36 @@ import Button from '@material-ui/core/Button';
 
 import {
   TopicPropsState,
-  CREATE_QUESTION
-} from '../../constants';
+  CREATE_QUESTION,
+  FetchState,
+  HashTag
+} from '../../../../constants';
 
-
-import { 
-  bigNumberFormat,
-  displayModal
-} from '../../functions';
+import { bigNumberFormat, displayModal } from '../../../../functions';
 import { connect } from 'react-redux';
-import { dispatch } from '../../appStore';
-import { getTrends } from '../../actions';
+import { dispatch } from '../../../../appStore';
+import { getTrends } from '../../../../actions';
 
-
-const RightPane: React.FunctionComponent = (props: any) => {
-  const { trends, getTrendsStatus } = props;
+const HomeRightPane = ({
+  trends: { status: trendsStatus, data: _trends }
+}: {
+  trends: FetchState<HashTag[]>;
+}) => {
   useEffect(() => {
     dispatch(getTrends());
   }, []);
 
-  const openQuestionModal = (e: any) => {
-    displayModal(true, false, CREATE_QUESTION, {title: 'Ask A Question'});
-  }
+  const openQuestionModal = () => {
+    displayModal(true, false, CREATE_QUESTION, { title: 'Ask A Question' });
+  };
 
   return (
     <Container fluid className='right-pane'>
       <Col className='trending-container'>
         <h4>Trending</h4>
-        {getTrendsStatus.status !== 'pending' && (
+        {trendsStatus !== 'pending' && (
           <ul>
-            {trends.map((topic: any, i: number) => (
+            {_trends?.map((topic: any, i: number) => (
               <Topic
                 topic={topic.hashtag}
                 key={i}
@@ -46,7 +46,7 @@ const RightPane: React.FunctionComponent = (props: any) => {
             ))}
           </ul>
         )}
-        {trends.length === 0 && (
+        {_trends?.length === 0 && (
           <Box
             display='flex'
             justifyContent='center'
@@ -55,8 +55,8 @@ const RightPane: React.FunctionComponent = (props: any) => {
             No trends!
           </Box>
         )}
-        <hr id='divider'/>
-        <Button 
+        <hr id='divider' />
+        <Button
           onClick={openQuestionModal}
           className='question-ask'
           color='primary'
@@ -78,7 +78,6 @@ const Topic: React.FunctionComponent<TopicPropsState> = (props) => {
   );
 };
 
-export default connect((state: any) => ({
-  trends: state.trends,
-  getTrendsStatus: state.getTrendsStatus
-}))(RightPane);
+export default connect((state: { trends: FetchState<HashTag[]> }) => ({
+  trends: state.trends
+}))(HomeRightPane);

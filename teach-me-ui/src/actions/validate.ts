@@ -210,7 +210,6 @@ export const getMatchingDepartments = (
               `/department/search?keyword=${keyword.trim()}&institution=${institutionName}&limit=15`
             )
             .then(({ error, data: departments }) => {
-              console.log(departments);
               if (!error && !!departments[0]) {
                 dispatch(
                   matchingDepartments({
@@ -297,7 +296,10 @@ export const getMatchingLevels = (
   ];
 
   clearTimeout(levelSearchTimeout);
-  checkNetworkStatusWhilstPend({ name: 'matchingLevels', func: matchingLevels });
+  checkNetworkStatusWhilstPend({
+    name: 'matchingLevels',
+    func: matchingLevels
+  });
 
   if (keyword) {
     levelSearchTimeout = window.setTimeout(() => {
@@ -307,7 +309,7 @@ export const getMatchingLevels = (
 
           http
             .get<string[]>(
-              `/level/search?keyword=${keyword.trim()}&level=${_department}&institution=${_institution}&limit=15`
+              `/level/search?keyword=${keyword.trim()}&department=${_department}&institution=${_institution}&limit=15`
             )
             .then(({ error, data: levels }) => {
               if (!error && !!levels[0]) {

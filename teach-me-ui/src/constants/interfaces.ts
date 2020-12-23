@@ -14,7 +14,7 @@ export interface HTTP {
     contentType?: string
   ): AxiosRequestConfig;
   get<T>(url: string, requiresAuth?: boolean): Promise<APIResponseModel<T>>;
-  post<T>(
+  post<T, T2 = T | any>(
     url: string,
     data?: any,
     requiresAuth?: boolean,
@@ -51,7 +51,7 @@ export interface InputErrState {
   helperText?: string;
 }
 
-export interface PostPropsState {
+export interface PostStateProps {
   downvote_count: number;
   reactions: UserData[];
   reply_count: number;
@@ -65,8 +65,8 @@ export interface PostPropsState {
   pipe: SocketPipe;
   parent_id: string;
   reaction: Reaction;
-  replies: Partial<PostPropsState>[];
-  reposts: Partial<PostPropsState>[];
+  replies: Partial<PostStateProps>[];
+  reposts: Partial<PostStateProps>[];
   sender: {
     cover_photo: string;
     department: string;
@@ -274,8 +274,8 @@ export interface APIResponseModel<T> {
 }
 
 export interface SignupPropsState {
-  firstname: BasicInputState;
-  lastname: BasicInputState;
+  first_name: BasicInputState;
+  last_name: BasicInputState;
   username: BasicInputState;
   email: BasicInputState;
   dob: BasicInputState;
@@ -371,9 +371,9 @@ export interface CreateLevelState extends StatusPropsState {
 // ChatBox interfaces...
 
 export interface ChatState {
-  queryString?: string;
+  pathname?: string;
+  queryParam?: string;
   isOpen?: boolean;
-  isMinimized?: boolean;
 }
 
 export interface RoomInfo {
@@ -473,6 +473,11 @@ export interface NotificationState extends StatusPropsState {
     entities?: any;
   };
   [key: string]: any;
+}
+
+export interface HashTag {
+  hashtag: string;
+  count: 2;
 }
 
 export interface NotificationData {

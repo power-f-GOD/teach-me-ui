@@ -27,7 +27,7 @@ import {
 } from '../../actions';
 
 import Editor from '../crumbs/Editor';
-import RenderImage from '../crumbs/RenderImage';
+import RenderImage from '../shared/RenderImage';
 
 import { 
   displayModal, 

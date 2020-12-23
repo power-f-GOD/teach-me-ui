@@ -9,11 +9,10 @@ import {
   QuestionState
 } from './interfaces';
 
-
 export const apiBaseURL = 'https://teach-me-services.herokuapp.com/api/v1';
-// export const apiBaseURL = 'http://883fe0f3aa74.ngrok.io/api/v1';
+// export const apiBaseURL = 'http://aca9e36730ef.ngrok.io/api/v1';
 export const wsBaseURL = 'wss://teach-me-services.herokuapp.com/api/v1';
-// export const wsBaseURL = 'ws://6bba2f1001c5.ngrok.io/api/v1';
+// export const wsBaseURL = 'ws://aca9e36730ef.ngrok.io/api/v1';
 
 export const DISPLAY_SNACK_BAR = 'DISPLAY_SNACK_BAR';
 export const POPULATE_STATE_WITH_USER_DATA = 'POPULATE_STATE_WITH_USER_DATA';
@@ -71,13 +70,13 @@ export const replyState: ReplyState = {
   data: undefined
 };
 
-export const uploadState: UploadState ={
+export const uploadState: UploadState = {
   status: 'settled',
   err: false,
   data: []
-}
+};
 
 export const questionState: QuestionState = {
   status: 'settled',
-  err: false,
+  err: false
 };

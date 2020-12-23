@@ -5,7 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import MiddlePane from './QuestionPage.MiddlePane';
-import RightPane from './Home.RightPane';
+import HomeRightPane from './Home/RightPane';
 
 const Questions = (props: any) => {
   return (
@@ -16,7 +16,7 @@ const Questions = (props: any) => {
             <MiddlePane />
           </Col>
           <Col lg={3} className='d-none hang-in d-lg-block right-pane-col'>
-            <RightPane />
+            <HomeRightPane />
           </Col>
         </Row>
       </Container>

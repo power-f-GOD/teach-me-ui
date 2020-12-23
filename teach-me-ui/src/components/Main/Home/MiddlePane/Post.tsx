@@ -19,16 +19,16 @@ import Skeleton from 'react-loading-skeleton';
 
 import { Link, useHistory } from 'react-router-dom';
 
-import { dispatch, formatDate } from '../../functions/utils';
-import { PostPropsState } from '../../constants/interfaces';
+import { dispatch, formatDate } from '../../../../functions/utils';
+import { PostStateProps } from '../../../../constants/interfaces';
 
-import { displayModal } from '../../functions';
-import { triggerSearchKanyimuta } from '../../actions/search';
+import { displayModal } from '../../../../functions';
+import { triggerSearchKanyimuta } from '../../../../actions/search';
 
 import { LazyLoadImage as LazyImg } from 'react-lazy-load-image-component';
 
 import { PostFooter, Reply, QuotedPost } from './Post.crumbs';
-import { CREATE_REPOST } from '../../constants/modals';
+import { CREATE_REPOST } from '../../../../constants/modals';
 
 const stopProp = (e: any) => {
   e.stopPropagation();
@@ -85,10 +85,10 @@ export const openCreateRepostModal = (meta: any) => (e: any) => {
 };
 
 const Post: React.FC<
-  Partial<PostPropsState> & {
+  Partial<PostStateProps> & {
     index?: number;
     postsErred?: boolean;
-    quote?: PostPropsState;
+    quote?: PostStateProps;
   }
 > = (props) => {
   const { index, postsErred, quote, ...others } = props;
@@ -160,24 +160,6 @@ const Post: React.FC<
     extra = `<b>${sender_name}</b> reposted <b>${quote.sender?.first_name} ${quote.sender?.last_name}'s</b> post`;
   }
 
-  // if (_extra) {
-  //   switch (_extra.type) {
-  //     case 'UPVOTE':
-  //       extra = `${_extra?.colleague_name} upvoted`;
-  //       break;
-  //   }
-  // }
-
-  // if (child?.sec_type === 'REPLY') {
-  //   extra = `${child_sender_name} replied`;
-
-  //   extra +=
-  //     sender_username === child?.sender!.username
-  //       ? ' thier own post'
-  //       : ` ${sender_name}'s post`;
-  // }
-
-  // console.log(parent?.id, id);
   return (
     <>
       <Modal
@@ -385,7 +367,7 @@ const Post: React.FC<
             )}
           </Row>
         ) : (
-          <Box p={2}>
+          <Box p={1}>
             {(index ?? 0) % 2 === 0 ? (
               <Skeleton height='14rem' className='media' />
             ) : (
@@ -396,11 +378,11 @@ const Post: React.FC<
               </>
             )}
             <Container className='d-flex'>
-              <Skeleton width='4rem' height='1.5rem' className='mr-2 mt-3' />
-              <Skeleton width='4rem' height='1.5rem' className='mr-2 mt-3' />
-              <Skeleton width='4rem' height='1.5rem' className='mr-2 mt-3' />
+              <Skeleton width='4rem' height='1.5rem' className='mr-2 mt-2' />
+              <Skeleton width='4rem' height='1.5rem' className='mr-2 mt-2' />
+              <Skeleton width='4rem' height='1.5rem' className='mr-2 mt-2' />
               <Container className='ml-auto w-auto'>
-                <Skeleton width='4rem' className='mt-3' height='1.5rem' />
+                <Skeleton width='4rem' className='mt-2' height='1.5rem' />
               </Container>
             </Container>
           </Box>

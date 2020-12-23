@@ -6,7 +6,7 @@ import * as misc from './misc';
 import * as chat from './chat';
 import * as upload from './upload';
 import * as modals from './modals';
-import * as posts from './posts';
+import * as posts from './home';
 import * as search from './search';
 import * as profile from './profile';
 import * as question from './question';

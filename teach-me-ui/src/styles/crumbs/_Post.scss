@@ -1,5 +1,5 @@
 .Post {
-  box-shadow: 0 0.125rem 0.125rem 0 #bbb, 0 0 0.125rem 0 #bbb;
+  box-shadow: 0 0.0625rem 0 #bbb, 0 0 0.125rem 0 #bbb;
   overflow: hidden;
 }
 
@@ -9,8 +9,8 @@
   background-color: white;
   position: relative;
   font-size: 1rem;
-  border-radius: 1rem;
-  margin-bottom: 0.75rem;
+  border-radius: 0.75rem;
+  margin-bottom: 0.5rem;
 
   &.remove-skeleton-animation {
     [class*='skeletonStyles'] {
@@ -20,13 +20,13 @@
 
   &.has-replies {
     .post-footer {
-      border-bottom: 0.125rem solid #eee;
+      border-bottom: 0.0625rem solid #eee;
     }
 
     .Comment {
       .comment-container {
         border-top: none;
-        border-bottom: 0.125rem solid #eee;
+        border-bottom: 0.0625rem solid #eee;
       }
     }
   }
@@ -39,7 +39,8 @@
 
   &.has-quote {
     .QuotedPost {
-      margin: 0.75rem 1rem 0 1rem;
+      margin: 0.75rem;
+      margin-bottom: 0;
     }
   }
 
@@ -60,7 +61,7 @@
       font-size: 0.8em;
       overflow: hidden;
       margin-bottom: -0.25em;
-      margin-left: 1em;
+      margin-left: 0.75em;
       width: calc(100% - 2em);
       border-bottom: 0.0625em solid #eee;
       padding: 0.35em 0.75em 0.35rem 5em;
@@ -72,7 +73,7 @@
   }
 
   .post-header {
-    padding: 0.75em 1em 0;
+    padding: 0.75em 0.75em 0;
   }
 
   .post-avatar {
@@ -107,10 +108,10 @@
 
   .post-footer {
     padding: 0.35em 0;
-    width: calc(100% - 2rem);
-    margin-left: 1em;
-    border-top: 0.125em solid #eee;
-    // border-bottom: 0.125rem solid #eee;
+    width: calc(100% - 1.5em);
+    margin-left: 0.75em;
+    border-top: 0.0625em solid #eee;
+    // border-bottom: 0.0625rem solid #eee;
   }
 
   .reaction-wrapper {
@@ -164,7 +165,7 @@
   opacity: 0;
   transition: 0.3s, opacity 0.4s;
   overflow: hidden;
-  padding: 0 1rem;
+  padding: 0 0.75rem;
 
   &.open {
     opacity: 1;
@@ -177,7 +178,7 @@
   .comment-container {
     padding: 0.35em 0;
     align-items: center;
-    border-top: 0.125em solid #eee;
+    border-top: 0.0625em solid #eee;
 
     .MuiInputBase-root {
       padding: 0.495em 0.25em;
@@ -231,7 +232,8 @@
   border-radius: 0.75rem;
   border: 0.125rem solid #ddd;
   padding: 0.5rem;
-  margin: 0 1rem 0.75rem 1rem;
+  margin: 0.75rem;
+  margin-top: 0;
   width: calc(100% - 2rem);
   cursor: pointer;
   font-size: 0.9rem;
@@ -247,7 +249,7 @@
 
 .Reply {
   font-size: 0.9em;
-  padding: 0.5em 1em 0 1em;
+  padding: 0.5em 0.75em 0 0.75em;
   border-radius: unset !important;
   margin-bottom: 0;
 

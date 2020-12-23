@@ -4,14 +4,14 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import RightPane from './Home.RightPane';
-import MiddlePane from './Home.MiddlePane';
-import LeftPane from './Home.LeftPane';
+import HomeRightPane from './RightPane';
+import HomeMiddlePane from './MiddlePane';
+import HomeLeftPane from './LeftPane';
 
 import { connect } from 'react-redux';
-import { getPosts } from '../../actions/posts';
-import { dispatch, createObserver } from '../../functions/utils';
-import { PostPropsState, FetchState } from '../../constants/interfaces';
+import { getPosts } from '../../../actions/home';
+import { dispatch, createObserver } from '../../../functions/utils';
+import { PostStateProps, FetchState } from '../../../constants/interfaces';
 
 const observedElementRef = React.createRef<any>();
 
@@ -20,7 +20,7 @@ let observedElement: HTMLElement | null = null;
 
 let observer: IntersectionObserver;
 
-const Home = ({ posts }: { posts: FetchState<PostPropsState> }) => {
+const Home = ({ posts }: { posts: FetchState<PostStateProps> }) => {
   useEffect(() => {
     document.body.style.overflow =
       posts.status === 'pending' ? 'hidden' : 'auto';
@@ -70,16 +70,16 @@ const Home = ({ posts }: { posts: FetchState<PostPropsState> }) => {
             lg={3}
             md={4}
             className='d-none hang-in d-md-block left-pane-col'>
-            <LeftPane />
+            <HomeLeftPane />
           </Col>
           <Col lg={6} md={8} className='middle-pane-col px-3'>
-            <MiddlePane type={'FEED'} />
+            <HomeMiddlePane type={'FEED'} />
             <Container
               className='feeds-scroll-observer py-2'
               ref={observedElementRef}></Container>
           </Col>
           <Col lg={3} className='d-none hang-in d-lg-block right-pane-col'>
-            <RightPane />
+            <HomeRightPane />
           </Col>
         </Row>
       </Container>
@@ -87,4 +87,4 @@ const Home = ({ posts }: { posts: FetchState<PostPropsState> }) => {
   );
 };
 
-export default connect((state: any) => ({ posts: state._posts }))(Home);
+export default connect((state: any) => ({ posts: state.posts }))(Home);

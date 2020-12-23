@@ -134,6 +134,12 @@
       }
     }
 
+    .chat-left-pane,
+    .chat-middle-pane,
+    .chat-right-pane {
+      transition-delay: 0.2s;
+    }
+
     .chat-header-controls {
       max-width: 3.25rem;
     }

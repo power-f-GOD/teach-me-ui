@@ -1,12 +1,9 @@
-import axios from 'axios';
-
-import { apiBaseURL as baseURL } from '../constants/misc';
 import { SearchState, ReduxAction, UserData } from '../constants/interfaces';
 import {
   checkNetworkStatusWhilstPend,
   logError,
   delay,
-  getState
+  http
 } from '../functions/utils';
 import {
   SEARCH_KANYIMUTA,
@@ -23,9 +20,6 @@ export const searchKanyimuta = (payload: SearchState) => {
 export const triggerSearchKanyimuta = (keyword: string) => (
   dispatch: Function
 ): ReduxAction => {
-  const userData = getState().userData as UserData;
-  const token = userData.token as string;
-
   checkNetworkStatusWhilstPend({
     name: 'searchKanyimuta',
     func: searchKanyimuta
@@ -34,20 +28,10 @@ export const triggerSearchKanyimuta = (keyword: string) => (
 
   if (keyword) {
     delay(200).then(() => {
-      axios({
-        url: `/people/find?keyword=${keyword}&limit=20`,
-        baseURL,
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-        .then(({ data }: any) => {
-          const { people } = data.data as {
-            people: any[];
-          };
-
-          if (!data.error && !!people[0]) {
+      http
+        .get<UserData[]>(`/people/find?keyword=${keyword}&limit=20`, true)
+        .then(({ error, data: people }) => {
+          if (!error && !!people[0]) {
             dispatch(
               searchKanyimuta({
                 status: 'fulfilled',

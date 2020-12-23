@@ -1,5 +1,3 @@
-import queryString from 'query-string';
-
 import {
   APIMessageResponse,
   UserData,
@@ -39,9 +37,14 @@ export default function chat(message: Partial<ChatSocketMessageResponse>) {
     conversationMessages: FetchState<APIMessageResponse[]>;
   };
   const { id: convoId, unread_count } = _conversation ?? {};
-  const { cid, chat } = queryString.parse(window.location.search) ?? {};
+  const { pathname, search } = window.location;
+  const [cid, chat, activePaneIndex] = [
+    pathname.split('/').slice(-1)[0],
+    /\/chat/.test(pathname),
+    +search.slice(1)
+  ];
   const userId = userData.id;
-  const [isOpen, isMinimized] = [!!chat, chat === 'm2'];
+  const [isOpen, isMinimized] = [chat, activePaneIndex !== 1];
 
   if (socket) {
     const {
@@ -60,8 +63,6 @@ export default function chat(message: Partial<ChatSocketMessageResponse>) {
       statusText: 'update from socket',
       pipe
     };
-
-    // console.log(pipe, message);
 
     switch (pipe) {
       case CHAT_NEW_MESSAGE:
@@ -169,6 +170,7 @@ export default function chat(message: Partial<ChatSocketMessageResponse>) {
 
         if (user_id && cid === conversation_id) {
           dispatch(conversation(conversation_id!, { user_typing: user_id }));
+
           userTypingTimeout = setTimeout(() => {
             dispatch(conversation(conversation_id!, { user_typing: '' }));
           }, 500);

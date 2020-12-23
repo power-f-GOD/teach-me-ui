@@ -4,7 +4,7 @@ export * from './auth';
 export * from './misc';
 export * from './chat';
 export * from './modals';
-export * from './posts';
+export * from './home';
 export * from './uploads';
 export * from './profile';
 export * from './profile.edit';

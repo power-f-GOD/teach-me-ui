@@ -21,7 +21,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import {
   APIMessageResponse,
   APIConversationResponse
-} from '../../constants/interfaces';
+} from '../../../constants/interfaces';
 import {
   timestampFormatter,
   formatMapDateString,
@@ -31,9 +31,10 @@ import {
   createObserver,
   dispatch,
   getState
-} from '../../functions/utils';
-import { chatDateStickyRef, msgBoxRef } from './Chat.MiddlePane';
-import { conversation, conversations } from '../../actions/chat';
+} from '../../../functions/utils';
+import { conversation, conversations } from '../../../actions/chat';
+import { stickyChatDateRef } from './MiddlePane/ScrollView';
+import { messageBoxRef } from './MiddlePane/Footer';
 
 export interface SelectedMessageValue extends Omit<APIMessageResponse, 'type'> {
   type: 'incoming' | 'outgoing';
@@ -274,8 +275,8 @@ export const ChatHead = (props: {
   const [headElement, setHeadElement] = useState<HTMLElement | null>();
 
   const handleCloseReplyMessage = useCallback(() => {
-    if (msgBoxRef.current) {
-      msgBoxRef.current.focus();
+    if (messageBoxRef.current) {
+      messageBoxRef.current.focus();
     }
 
     if (setMessageHead) {
@@ -444,7 +445,7 @@ export const ChatDate = ({
 }) => {
   const dateStamp = formatMapDateString(timestamp, true);
   const chatDateWrapperRef = useRef<HTMLDivElement>(null);
-  const chatDateSticky = chatDateStickyRef.current;
+  const chatDateSticky = stickyChatDateRef.current;
   const pxRatio = window.devicePixelRatio;
 
   const stickDate = useCallback(() => {
@@ -482,7 +483,7 @@ export const ChatDate = ({
         scrollView.removeEventListener('scroll', stickDate);
       }
     };
-  }, [scrollView, stickDate, timestamp, chatDateSticky.style.opacity, pxRatio]);
+  }, [scrollView, stickDate, timestamp, chatDateSticky, pxRatio]);
 
   if (isNaN(timestamp)) {
     return <>{timestamp}</>;
@@ -491,7 +492,7 @@ export const ChatDate = ({
   return (
     <div
       id={String(timestamp)}
-      className='chat-date-wrapper fade-in-opacity text-center mt-5 mb-4'
+      className='chat-date-wrapper fade-in-opacity text-center mt-4 mb-1'
       ref={chatDateWrapperRef}>
       <Box component='span' className='chat-date d-inline-block'>
         {dateStamp}

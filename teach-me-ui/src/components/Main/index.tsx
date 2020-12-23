@@ -1,8 +1,11 @@
 import React, { useEffect } from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Switch, Route, Redirect, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import Grid from '@material-ui/core/Grid';
+import Row from 'react-bootstrap/Row';
+
+import ChatIcon from '@material-ui/icons/Chat';
+import Badge from '@material-ui/core/Badge';
 
 import Nav from '../crumbs/Nav';
 import Home from './Home';
@@ -10,7 +13,7 @@ import About from '../Index/About';
 import Support from '../Index/Support';
 import Profile from './Profile';
 import ProfileRedirect from './ProfileRedirect';
-import Loader from '../crumbs/Loader';
+import Loader from '../shared/Loader';
 import ModalFrame from '../modals';
 import Chat from './Chat';
 import Search from './Search';
@@ -26,15 +29,19 @@ import {
   emitUserOnlineStatus
 } from '../../functions/utils';
 import { initWebSocket, closeWebSocket } from '../../actions/misc';
-
 import activateSocketRouters from '../../socket.router';
-
 import { getConversations, getConversationsMessages } from '../../actions/chat';
+import { APIConversationResponse } from '../../constants/interfaces';
 
 const Memoize = createMemo();
 
 const Main = (props: any) => {
-  const { signoutStatus, userToken, webSocket: socket } = props;
+  const { signoutStatus, userToken, webSocket: socket, convosData } = props;
+  const unopened_count = convosData?.reduce(
+    (a: number, conversation: APIConversationResponse) =>
+      a + (conversation.unread_count ? 1 : 0),
+    0
+  );
 
   useEffect(() => {
     dispatch(initWebSocket(userToken as string));
@@ -84,7 +91,7 @@ const Main = (props: any) => {
   return (
     <>
       <ModalFrame />
-      <Grid className='Main fade-in'>
+      <Row className='Main fade-in mx-0'>
         <Memoize
           memoizedComponent={Nav}
           for='main'
@@ -98,12 +105,24 @@ const Main = (props: any) => {
           <Route path='/@:userId' component={Profile} />
           <Route path='/profile/:id' component={ProfileRedirect} />
           <Route path={['/search/:query', '/search']} component={Search} />
-          <Route path={['/questions', '/questions/tagged/:tag']} component={Questions} />
+          <Route
+            path={['/questions', '/questions/tagged/:tag']}
+            component={Questions}
+          />
           <Route path='/question/:id' component={QuestionPage} />
+          <Route path='/chat/:convoId' component={Chat} />
           <Route component={_404} />
         </Switch>
-        <Memoize memoizedComponent={Chat} location={props.location} />
-      </Grid>
+        <Link
+          to='/chat/0?0'
+          className={`chat-open-button ${unopened_count ? 'ripple' : ''} ${
+            /chat/.test(props.location.pathname) ? 'hide' : ''
+          }`}>
+          <Badge badgeContent={unopened_count} color='error'>
+            <ChatIcon fontSize='inherit' />
+          </Badge>
+        </Link>
+      </Row>
     </>
   );
 };
@@ -120,7 +139,8 @@ const mapStateToProps = (state: any) => {
   return {
     signoutStatus: state.signout.status,
     userToken: state.userData.token,
-    webSocket: state.webSocket
+    webSocket: state.webSocket,
+    convosData: state.conversations.data
   };
 };
 

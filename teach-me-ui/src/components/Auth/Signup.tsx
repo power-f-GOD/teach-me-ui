@@ -64,8 +64,8 @@ const Memoize = createMemo();
 
 const Signup = (props: SignupPropsState) => {
   const {
-    firstname,
-    lastname,
+    first_name,
+    last_name,
     username,
     email,
     dob,
@@ -239,7 +239,7 @@ const Signup = (props: SignupPropsState) => {
                 target: institutionInput
               } as React.ChangeEvent<HTMLInputElement>;
 
-              institutionInput.dataset.uid = _institution._id;
+              institutionInput.dataset.uid = _institution.id;
               institutionInput.value = _institution.name;
               handleSignupInputChange(e);
               setHideInstitutionsList(true);
@@ -371,9 +371,9 @@ const Signup = (props: SignupPropsState) => {
   }
 
   return (
-    <Box 
-    width='45rem'
-    className='auth-form-wrapper fade-in d-flex flex-column justify-content-center'>
+    <Box
+      width='45rem'
+      className='auth-form-wrapper fade-in d-flex flex-column justify-content-center'>
       <Box
         component='h2'
         marginY='0.5em'
@@ -392,15 +392,15 @@ const Signup = (props: SignupPropsState) => {
             <Box marginY='0.25em'>
               <Memoize
                 memoizedComponent={TextField}
-                error={firstname.err}
+                error={first_name.err}
                 required
                 variant='outlined'
-                id='firstname'
+                id='first_name'
                 label='First name'
                 size='medium'
                 autoComplete='given-name'
                 inputRef={refs.firstnameInput}
-                helperText={firstname.helperText}
+                helperText={first_name.helperText}
                 fullWidth
                 onChange={handleSignupInputChange}
                 inputProps={inputProps}
@@ -412,14 +412,14 @@ const Signup = (props: SignupPropsState) => {
               <Memoize
                 memoizedComponent={TextField}
                 required
-                error={lastname.err}
+                error={last_name.err}
                 variant='outlined'
-                id='lastname'
+                id='last_name'
                 label='Last name'
                 size='medium'
                 autoComplete='family-name'
                 inputRef={refs.lastnameInput}
-                helperText={lastname.helperText}
+                helperText={last_name.helperText}
                 fullWidth
                 onChange={handleSignupInputChange}
                 inputProps={inputProps}
@@ -686,8 +686,8 @@ function DatePicker({ dob }: any) {
 
 const mapStateToProps = (state: any) => {
   return {
-    firstname: state.firstname,
-    lastname: state.lastname,
+    first_name: state.first_name,
+    last_name: state.last_name,
     username: state.username,
     email: state.email,
     dob: state.dob,

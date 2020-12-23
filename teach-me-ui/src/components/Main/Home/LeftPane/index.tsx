@@ -20,15 +20,15 @@ import {
   FetchState,
   UserData,
   APIConversationResponse
-} from '../../constants/interfaces';
-import { getState } from '../../functions';
+} from '../../../../constants/interfaces';
+import { getState } from '../../../../functions';
 
 interface LeftPaneProps {
   userData: UserData;
   convosLength: number;
 }
 
-const LeftPane = (props: LeftPaneProps) => {
+const HomeLeftPane = (props: LeftPaneProps) => {
   const { userData } = props;
   const {
     displayName,
@@ -140,4 +140,4 @@ const LeftPane = (props: LeftPaneProps) => {
 export default connect((state: any) => ({
   userData: state.userData,
   convosLength: state.conversations.data.length
-}))(LeftPane);
+}))(HomeLeftPane);

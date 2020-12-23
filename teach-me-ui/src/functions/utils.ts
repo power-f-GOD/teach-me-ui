@@ -16,7 +16,7 @@ import {
   FetchState,
   OnlineStatus,
   apiBaseURL,
-  PostPropsState,
+  PostStateProps,
   APIResponseModel,
   HTTP
 } from '../constants';
@@ -57,8 +57,8 @@ export const http: Readonly<Omit<HTTP, 'token'>> & { token: string } = {
       Authorization: requiresAuth ? `Bearer ${http.token}` : null,
       'Content-Type': contentType || 'application/json'
     },
-    data
-    // validateStatus: (status) => (!/^(2|3|4)/.test(`${status}`) ? false : true)
+    data,
+    validateStatus: (status) => (!/^(2|3|4)/.test(`${status}`) ? false : true)
   }),
   /**
    *
@@ -201,13 +201,13 @@ export const emitUserOnlineStatus = (
     auth,
     conversations: _conversations,
     conversationsMessages: _conversationsMessages,
-    _posts
+    posts: _posts
   } = getState() as {
     userData: UserData & APIConversationResponse;
     auth: AuthState;
     conversations: FetchState<APIConversationResponse[]>;
     conversationsMessages: ConversationMessages;
-    _posts: FetchState<PostPropsState[]>;
+    posts: FetchState<PostStateProps[]>;
   };
   let timeToEmitOnlineStatus: any = undefined;
 

@@ -10,20 +10,20 @@ import RepostSharpIcon from '@material-ui/icons/CachedSharp';
 import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
 import { Button, Avatar } from '@material-ui/core';
 
-import ReactButton from './ReactionButton';
-import CreateReply from './CreateReply';
+import ReactButton from '../crumbs/ReactionButton';
+import CreateReply from '../../../crumbs/CreateReply';
 import { processPost } from './Post';
-import { bigNumberFormat, formatDate } from '../../functions/utils';
-import { PostPropsState } from '../../constants/interfaces';
+import { bigNumberFormat, formatDate } from '../../../../functions/utils';
+import { PostStateProps } from '../../../../constants/interfaces';
 
-export interface PostCrumbs extends Partial<PostPropsState> {
+export interface PostCrumbs extends Partial<PostStateProps> {
   navigate?: Function;
   openCreateRepostModal?: Function;
-  repostMeta?: PostPropsState | any;
+  repostMeta?: PostStateProps | any;
   anchorIsParent?: boolean;
 }
 
-export const Reply: React.FC<Partial<PostPropsState>> = (props) => {
+export const Reply: React.FC<Partial<PostStateProps>> = (props) => {
   const {
     // type,
     // media,
@@ -209,7 +209,7 @@ export const PostFooter = (props: PostCrumbs) => {
 };
 
 export const QuotedPost = (
-  props: Partial<PostPropsState> & { navigate: Function }
+  props: Partial<PostStateProps> & { navigate: Function }
 ) => {
   const { id, sender, date: posted_at, text, navigate } = props || {};
   const { first_name, last_name, profile_photo, username } = sender || {};

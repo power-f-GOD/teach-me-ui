@@ -59,8 +59,8 @@ export const createLevelState: CreateLevelState = {
 };
 
 export const signupProps: SignupPropsState = {
-  firstname: { ...basicInputState },
-  lastname: { ...basicInputState },
+  first_name: { ...basicInputState },
+  last_name: { ...basicInputState },
   username: { ...basicInputState },
   email: { ...basicInputState },
   dob: { ...basicInputState },
