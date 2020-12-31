@@ -88,6 +88,8 @@ const Profile = (props: any) => {
     unColleagueStatus
   } = props;
   const data: UserData = profileData.data[0];
+  console.log(data);
+  
   const { auth } = props;
   const { isAuthenticated } = auth;
   firstname = data.first_name || '';
@@ -225,6 +227,9 @@ const Profile = (props: any) => {
   const openCoverPhotoEditModal = (e: any) => {
     displayModal(true, false, SELECT_PHOTO, { title: 'Select Cover Photo' });
   };
+
+  console.log(basicInfo, academicInfo);
+  
 
   return (
     <Box className={`Profile ${selfView ? 'self-view' : ''} fade-in pb-3`}>
@@ -454,8 +459,8 @@ const Profile = (props: any) => {
               className='cover-button'
               color='default'
               onClick={openCoverPhotoEditModal}>
-              <PhotoCameraIcon fontSize='inherit' />{' '}
-              <span className='edit-cover-photo'>Edit Cover Photo</span>
+              <PhotoCameraIcon fontSize='inherit' className='profile-photo-change'/>{' '}
+                <span className='edit-cover-photo'>Edit Cover Photo</span>
             </Button>
           </div>
         )}

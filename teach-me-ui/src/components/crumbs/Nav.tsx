@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, NavLink, useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import Container from 'react-bootstrap/Container';
@@ -8,12 +8,15 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
+import Avatar from '@material-ui/core/Avatar';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowForward from '@material-ui/icons/ArrowForwardIosSharp';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/MenuRounded';
 import SearchIcon from '@material-ui/icons/Search';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 import InfoRoundedIcon from '@material-ui/icons/InfoRounded';
@@ -94,7 +97,10 @@ function IndexNav(props: any) {
 
 function MainNav(props: any) {
   const { isAuthenticated, className, getNotifications } = props;
-  const username = (getState().userData as UserData).username;
+  const [showDropdown, setShowDropdown] = useState(false);
+  const history = useHistory();
+  const userData = getState().userData as UserData;
+  const username = userData.username;
   const numberOfNewNotifications = countNewNotifications(getNotifications.data.notifications);
 
   useEffect(() => {
@@ -103,52 +109,94 @@ function MainNav(props: any) {
     }
   }, [isAuthenticated]);
 
+  const handleProfileNavigation = () => {
+    history.push(`/@${username}`);
+  }
+
   return (
-    <Box className={`nav-links-wrapper ${className}`}>
-      <NavLink to='/search' className='nav-link'>
-        <SearchIcon />
-      </NavLink>
+    <>
+      <Box className={`nav-links-wrapper ${className}`}>
+        <NavLink to='/search' className='nav-link'>
+          <SearchIcon />
+        </NavLink>
 
-      <NavGeneralLinks />
+        <NavGeneralLinks />
 
-      <NavLink
-        exact
-        to={`/@${username}`}
-        isActive={(_, location) => /\/@\w+/.test(location.pathname)}
-        className='nav-link'>
-        <AccountCircleRoundedIcon className='nav-icon' />
-      </NavLink>
+        {/* <NavLink
+          exact
+          to={`/@${username}`}
+          isActive={(_, location) => /\/@\w+/.test(location.pathname)}
+          className='nav-link'>
+          <AccountCircleRoundedIcon className='nav-icon' />
+        </NavLink> */}
 
-      <NavLink 
-        to='#' 
-        className='nav-link' 
-        onClick={(e: any) => {
-          displayModal(true, false, NOTIFICATIONS, { title: 'Notifications' });
-        }}
-        isActive={(match: any, location: any) => false}>
-        <Badge color='secondary' badgeContent={numberOfNewNotifications}>
-          <NotificationsIcon />
-        </Badge>
-      </NavLink>
+        <NavLink 
+          to='#' 
+          className='nav-link' 
+          onClick={(e: any) => {
+            displayModal(true, false, NOTIFICATIONS, { title: 'Notifications' });
+          }}
+          isActive={(match: any, location: any) => false}>
+          <Badge color='secondary' badgeContent={numberOfNewNotifications}>
+            <NotificationsIcon />
+          </Badge>
+        </NavLink>
 
-      <NavLink 
-        to='/questions' 
-        className='nav-link' >
-        <QuestionAnswerIcon />
-      </NavLink>
+        <NavLink 
+          to='/questions' 
+          className='nav-link' >
+          <QuestionAnswerIcon />
+        </NavLink>
 
-      <Box component='span' marginX='1em' />
+        <Box component='span' marginX='1em' />
 
-      <Button
-        variant='contained'
-        className='nav-link'
-        size='medium'
-        id='signout-btn'
-        fullWidth
-        onClick={handleSignoutRequest}>
-        Sign Out <ArrowForward fontSize='inherit' />
-      </Button>
-    </Box>
+        {/* <Button
+          variant='contained'
+          className='nav-link'
+          size='medium'
+          id='signout-btn'
+          fullWidth
+          onClick={handleSignoutRequest}>
+          Sign Out <ArrowForward fontSize='inherit' />
+        </Button> */}
+        <Container onClick={(e: any)=> {setShowDropdown(!showDropdown)}} as='div' className='d-flex avatar-container cursor-pointer'>
+          <Avatar
+            component='div'
+            
+            className='profile-photo'
+            alt={userData.displayName}
+            src={userData.profile_photo}
+          > {userData.first_name.substr(0,1).toLocaleUpperCase()}{userData.last_name.substr(0,1).toLocaleUpperCase()} </Avatar>
+          <ArrowDropDownIcon fontSize='small' className='avatar'/>
+        </Container>
+
+      </Box>
+      {showDropdown && (
+        <ClickAwayListener onClickAway={() => {setShowDropdown(false)}}>
+          <Container as='div' className='dropdown p-0'>
+            <Container as='div' className='d-flex profile'>
+              <Avatar
+                component='span'
+                className='profile-avatar-x profile-photo'
+                alt={userData.displayName}
+                src={userData.profile_photo}
+              > {userData.first_name.substr(0,1).toLocaleUpperCase()}{userData.last_name.substr(0,1).toLocaleUpperCase()} </Avatar>
+              <Container as='div' className='user-details p-0'>
+                <Container as='p' className='p-0 m-0 display-name'>
+                  {userData.displayName}
+                </Container>
+                <Container onClick={() => {handleProfileNavigation(); setShowDropdown(false)}} as='div' className='my-profile p-0 m-0 cursor-pointer'>
+                  My Profile
+                </Container>
+              </Container>
+            </Container>
+            <Container as='p' className='cursor-pointer sign-out' onClick={() => {handleSignoutRequest(); setShowDropdown(false)}}>
+              Sign Out
+            </Container>
+          </Container>
+        </ClickAwayListener>
+      )}
+    </>
   );
 }
 

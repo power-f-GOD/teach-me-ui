@@ -20,6 +20,56 @@
   align-items: center;
   padding: 0;
 
+  .dropdown {
+    position: fixed !important;
+    display: block;
+    width: fit-content;
+    background-color: #ddd;
+    border-radius: 0.5rem;
+    box-shadow: 0rem 0.2rem 0.75rem rgba(0,0,0,0.15);
+    right: 1rem;
+    top: 4.5rem;
+
+    .display-name {
+      font-weight: bold;
+    }
+
+    .sign-out,.profile {
+      background-color: white;
+      color: black;
+      padding: 0.5rem;
+    }
+
+    .sign-out {
+      margin: 0rem;
+      margin-top: 0.09375rem !important;
+      border-radius: 0rem 0rem 0.5rem 0.5rem;
+
+      &:hover {
+        background-color: #eee;
+      }
+    }
+
+    .profile {
+      padding-left: 0.3rem !important;
+      border-radius: 0.5rem 0.5rem 0rem 0rem;
+
+      .my-profile {
+        border-radius: 1rem;
+        background-color: #8ba22a;
+        color: white;
+        width: fit-content;
+        padding-right: 0.5rem !important;
+        padding-left: 0.5rem !important;
+        font-weight: bold;
+      }
+    }
+
+    .user-details {
+      margin-left: 0.5rem;
+    }
+  }
+
   a {
     text-decoration: none;
 
@@ -39,6 +89,29 @@
 
 .nav-links-wrapper {
   display: flex;
+
+  .profile-photo {
+    $size : 2rem;
+
+    width: $size;
+    height: $size;
+  }
+
+  .avatar-container {
+    margin-top: -0.35rem !important;
+    position: relative;
+    align-items: center;
+
+    &:hover {
+      color: $theme-secondary-v8 !important
+    }
+
+    .avatar {
+      position: absolute;
+      right: 0.1rem;
+      top: 1.85rem;
+    }
+  }
 }
 
 .nav-icon {

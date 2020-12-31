@@ -61,14 +61,14 @@ export const getProfileData = (userId: string) => (
     method: 'GET'
   })
     .then(({ data }: any) => {
-      const _data = { ...data };
+      const _data = { ...data.data };
       const { error } = data;
 
       delete _data.error;
 
       if (!error) {
         const dob = _data.date_of_birth;
-        const displayName = `${_data.firstname} ${_data.lastname}`;
+        const displayName = `${_data.first_name} ${_data.last_name}`;
 
         delete _data.error;
         delete _data.date_of_birth;
