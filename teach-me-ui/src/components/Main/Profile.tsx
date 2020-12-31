@@ -460,7 +460,7 @@ const Profile = (props: any) => {
               color='default'
               onClick={openCoverPhotoEditModal}>
               <PhotoCameraIcon fontSize='inherit' className='profile-photo-change'/>{' '}
-              <span className='edit-cover-photo'>Edit Cover Photo</span>
+                <span className='edit-cover-photo'>Edit Cover Photo</span>
             </Button>
           </div>
         )}
