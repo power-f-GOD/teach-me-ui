@@ -13,9 +13,9 @@ import {
   replyToPostFn,
   getCharacterSequenceFromText
   // preventEnterNewLine
-} from '../../functions';
+} from '../../../../functions';
 
-import { Reply, UserData } from '../../constants/interfaces';
+import { Reply, UserData } from '../../../../constants/interfaces';
 
 import Row from 'react-bootstrap/Row';
 
@@ -23,7 +23,7 @@ import { TextField } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 
-import { pingUser } from '../../actions';
+import { pingUser } from '../../../../actions';
 
 interface CreateReplyProps {
   post_id: string;

@@ -7,8 +7,21 @@ import {
   DISPLAY_SNACK_BAR,
   SET_USER_DISPLAY_NAME,
   POPULATE_STATE_WITH_USER_DATA,
-  INIT_WEB_SOCKET
+  INIT_WEB_SOCKET,
+  notificationSoundState,
+  TRIGGER_NOTIFICATION_SOUND,
+  NotificationSoundState,
+  ReduxActionV2
 } from '../constants';
+
+export const notificationSound = (
+  state: NotificationSoundState = notificationSoundState,
+  action: ReduxActionV2<NotificationSoundState>
+): NotificationSoundState => {
+  return action.type === TRIGGER_NOTIFICATION_SOUND
+    ? { ...state, ...action.payload }
+    : state;
+};
 
 export const snackbar = (
   state: SnackbarState = snackbarState,

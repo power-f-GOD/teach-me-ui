@@ -10,8 +10,10 @@ export const displayModal = (
 ) => {
   setLastseen()
   if (notification && getState().getNotifications.data.notifications[0] && !getState().getNotifications.data.notifications[0].seen) setLastseen();
+
   if (visibility) {
     return dispatch(showModal({ type, meta }));
   }
+  
   return dispatch(hideModal());
 };

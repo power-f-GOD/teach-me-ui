@@ -430,7 +430,6 @@ $msg-radius: 1.5rem;
 button.chat-new-messages-count {
   background: rgba($prim-r - 25, $prim-g - 25, $prim-b - 25, 0.8);
   // background: rgba(50 - 25, 50 - 25, 50 - 25, 0.6);
-  padding: 0.25rem 0.95rem;
   border-radius: 2rem;
   position: relative;
   z-index: 1;
@@ -440,6 +439,10 @@ button.chat-new-messages-count {
   // border: 0.0625rem solid  rgba($prim-r, $prim-g, $prim-b, 0.75);
   user-select: none;
   transition: transform 0.4s ease 1.35s;
+}
+
+.chat-date {
+  padding: 0.25rem 0.95rem !important;
 }
 
 button.chat-new-messages-count {

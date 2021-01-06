@@ -1,8 +1,4 @@
-import {
-  sendReactionToServer,
-  sendReplyToServer,
-  displaySnackbar
-} from '../actions';
+import { sendReplyToServer, displaySnackbar } from '../actions';
 
 import Axios from 'axios';
 
@@ -16,19 +12,6 @@ export const replyToPostFn = async (id: string, reply: Post) => {
       ...reply,
       pipe: 'POST_REPLY',
       post_id: id
-    })
-  );
-};
-
-export const reactToPostFn = (
-  id: string,
-  type: 'UPVOTE' | 'DOWNVOTE' | 'NEUTRAL'
-) => {
-  dispatch(
-    sendReactionToServer({
-      post_id: id,
-      reaction: type as 'UPVOTE' | 'DOWNVOTE',
-      pipe: 'POST_REACTION'
     })
   );
 };

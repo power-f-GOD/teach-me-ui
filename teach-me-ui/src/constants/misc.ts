@@ -6,19 +6,29 @@ import {
   MentionState,
   ReplyState,
   UploadState,
-  QuestionState
+  QuestionState,
+  NotificationSoundState
 } from './interfaces';
 
 export const apiBaseURL = 'https://teach-me-services.herokuapp.com/api/v1';
-// export const apiBaseURL = 'http://aca9e36730ef.ngrok.io/api/v1';
+// export const apiBaseURL = 'http://6c391cdf1194.ngrok.io/api/v1';
 export const wsBaseURL = 'wss://teach-me-services.herokuapp.com/api/v1';
-// export const wsBaseURL = 'ws://aca9e36730ef.ngrok.io/api/v1';
+// export const wsBaseURL = 'ws://6c391cdf1194.ngrok.io/api/v1';
 
 export const DISPLAY_SNACK_BAR = 'DISPLAY_SNACK_BAR';
 export const POPULATE_STATE_WITH_USER_DATA = 'POPULATE_STATE_WITH_USER_DATA';
 export const INIT_WEB_SOCKET = 'INIT_WEB_SOCKET';
 export const CLOSE_WEB_SOCKET = 'CLOSE_WEB_SOCKET';
 export const ONLINE_STATUS = 'ONLINE_STATUS';
+export const TRIGGER_NOTIFICATION_SOUND = 'TRIGGER_NOTIFICATION_SOUND';
+
+export const notificationSoundState: NotificationSoundState = {
+  play: false,
+  isPlaying: false,
+  isReady: false,
+  toneName: 'piece-of-cake-611',
+  toneType: 'general'
+};
 
 export const snackbarState: SnackbarState = {
   open: false,

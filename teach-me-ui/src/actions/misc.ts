@@ -7,10 +7,42 @@ import {
   POPULATE_STATE_WITH_USER_DATA,
   wsBaseURL,
   INIT_WEB_SOCKET,
-  CLOSE_WEB_SOCKET
+  CLOSE_WEB_SOCKET,
+  TRIGGER_NOTIFICATION_SOUND,
+  NotificationSoundState
 } from '../constants';
 import { getState } from '../functions/utils';
 import { dispatch } from '../appStore';
+
+export const triggerNotificationSound = (_payload: NotificationSoundState) => {
+  const { isReady } = getState().notificationSound as NotificationSoundState;
+  const payload = { ..._payload };
+
+  if (!isReady) {
+    payload.play = false;
+    payload.isPlaying = false;
+  }
+
+  switch (payload.toneType) {
+    case 'incoming-message':
+      payload.toneName = 'slow-spring-board-570';
+      break;
+    case 'outgoing-message':
+      payload.toneName = 'open-ended-563';
+      break;
+    case 'action-success':
+      payload.toneName = 'exquisite-557';
+      break;
+    case 'general':
+      payload.toneName = 'piece-of-cake-611';
+      break;
+  }
+
+  return {
+    type: TRIGGER_NOTIFICATION_SOUND,
+    payload
+  };
+};
 
 export const displaySnackbar = (payload: SnackbarState): ReduxAction => {
   return {

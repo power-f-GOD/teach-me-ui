@@ -240,9 +240,7 @@ export const Message = (props: {
                 isRecent={!!message.pipe}
                 userId={userId}
                 message={message}
-                forceUpdate={
-                  '' + deleted + delivered_to?.length + seen_by?.length
-                }
+                forceUpdate={`${deleted}${delivered_to?.length}${seen_by?.length}`}
                 participants={participants}
               />
             }

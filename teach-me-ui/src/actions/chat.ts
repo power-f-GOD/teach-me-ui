@@ -131,7 +131,7 @@ export const conversations = (
           index: indexOfInitial
         } = (loopThru<APIConversationResponse>(
           initialConversations,
-          ({ colleague }) => user_id === colleague.id,
+          ({ colleague }) => user_id === colleague?.id,
           {
             type: 'find',
             includeIndex: true
@@ -403,7 +403,7 @@ export const getConversationsMessages = (statusText?: string) => (
           _convosMessages[key],
           (message) => {
             if (!message.delivered_to.includes(userId)) {
-              if (socket) {
+              if (socket && socket.readyState === socket.OPEN) {
                 socket.send(
                   JSON.stringify({
                     message_id: message.id,
@@ -722,9 +722,11 @@ export const getConversationMessages = (
                 }
               }
 
-              if (message.seen_by!?.includes(userId)) return;
-
               if (type === 'incoming') {
+                if (message.seen_by!?.includes(userId)) {
+                  return;
+                }
+
                 if (!message.delivered_to!?.includes(userId)) {
                   socket.send(
                     JSON.stringify({
@@ -750,33 +752,33 @@ export const getConversationMessages = (
                 }
               }
             },
-            { returnReverse: !(hasCachedData && isGettingNew), makeCopy: true }
+            { returnReverse: !(hasCachedData && isGettingNew) }
           ) as APIMessageResponse[];
         }
+      }
 
+      dispatch(
+        conversationMessages({
+          convoId,
+          status: 'fulfilled',
+          err: false,
+          statusText,
+          data: messages
+        })
+      );
+
+      if ((isGettingNew || isUpdating) && convoId) {
         dispatch(
-          conversationMessages({
+          conversationsMessages({
             convoId,
             status: 'fulfilled',
             err: false,
-            statusText,
-            data: [...messages]
+            statusText: 'replace messages',
+            data: {
+              [convoId]: messages
+            }
           })
         );
-
-        if ((isGettingNew || isUpdating) && convoId) {
-          dispatch(
-            conversationsMessages({
-              convoId,
-              status: 'fulfilled',
-              err: false,
-              statusText: 'replace messages',
-              data: {
-                [convoId]: [...messages]
-              }
-            })
-          );
-        }
       }
 
       //hide Snackbar in case it's currently displayed (due to an error event)
@@ -878,6 +880,7 @@ export const conversationMessages = (payload: ConversationMessages) => {
             !initialMessage.seen_by!?.includes(seerId) &&
             seerId
           ) {
+            // console.log('initial message:', initialMessage);
             initialMessage.seen_by.push(seerId);
             previousMessages[indexOfInitial] = initialMessage;
           }
