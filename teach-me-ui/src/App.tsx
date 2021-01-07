@@ -14,6 +14,7 @@ import createMemo from './Memo';
 import { dispatch } from './appStore';
 
 import { emitUserOnlineStatus } from './functions/utils';
+import { AuthState, FetchState } from './constants';
 
 const Memo = createMemo();
 
@@ -92,7 +93,13 @@ window.onoffline = () => {
   emitUserOnlineStatus(false, true)();
 };
 
-const mapStateToProps = ({ auth, signout }: any) => {
+const mapStateToProps = ({
+  auth,
+  signout
+}: {
+  auth: AuthState;
+  signout: FetchState<any>;
+}) => {
   return { auth, signout };
 };
 

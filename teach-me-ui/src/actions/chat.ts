@@ -348,9 +348,10 @@ export const conversation = (
   };
 };
 
-export const getConversationsMessages = (statusText?: string) => (
-  dispatch: Function
-) => {
+export const getConversationsMessages = (
+  statusText?: string,
+  shouldStoreResponseInState?: boolean
+) => (dispatch: Function) => {
   const {
     userData: { id: userId },
     webSocket: socket,
@@ -386,13 +387,7 @@ export const getConversationsMessages = (statusText?: string) => (
     )
     .then(({ error, data: mappedConvosMessages }) => {
       if (error) {
-        return dispatch(
-          conversationsMessages({
-            status: 'settled',
-            err: true,
-            data: {}
-          })
-        );
+        return;
       }
 
       const _convosMessages = mappedConvosMessages;
@@ -440,7 +435,7 @@ export const getConversationsMessages = (statusText?: string) => (
         conversationsMessages({
           status: 'fulfilled',
           err: false,
-          data: { ...updatedConvosMessages }
+          data: shouldStoreResponseInState ? { ...updatedConvosMessages } : undefined
         })
       );
     })
@@ -658,7 +653,7 @@ export const getConversationMessages = (
           }`}`,
           true
         );
-
+        console.log('messages returned:', messages);
         response.data = messages ?? [];
         response.error = error;
       }

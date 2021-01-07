@@ -103,8 +103,10 @@ export function initWebSocket(token: string): ReduxAction {
 // export function isAlive
 
 export function closeWebSocket(): ReduxAction {
-  if (getState().webSocket) {
-    getState().webSocket.close();
+  const socket = getState().webSocket as WebSocket;
+
+  if (socket) {
+    socket.close();
   }
 
   return {

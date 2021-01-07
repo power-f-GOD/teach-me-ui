@@ -232,7 +232,9 @@ export const emitUserOnlineStatus = (
     }
 
     if (_conversationsMessages.err) {
-      dispatch(getConversationsMessages('updating message list...')(dispatch));
+      dispatch(
+        getConversationsMessages('updating message list...', true)(dispatch)
+      );
     }
 
     if (_posts.err) {
