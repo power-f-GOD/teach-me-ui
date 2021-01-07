@@ -30,7 +30,7 @@ import {
   delay,
   http
 } from '../functions';
-import { displaySnackbar, closeWebSocket } from './misc';
+import { displaySnackbar } from './misc';
 
 export const doForgotPassword = (email: string) => (
   dispatch: Function
@@ -150,7 +150,7 @@ export const requestSignup = (data: SignupFormData) => (
     institution_id: institution,
     department,
     level
-  })
+  });
   http
     .post<UserData>('/auth/register', {
       first_name,
@@ -374,7 +374,6 @@ export function auth(payload: AuthState): ReduxAction {
 
 export const requestSignout = () => (dispatch: Function): ReduxAction => {
   dispatch(signout({ status: 'pending' }));
-  dispatch(closeWebSocket());
 
   if (navigator.cookieEnabled) {
     const username = JSON.parse(localStorage.kanyimuta ?? '{}').username;

@@ -3,8 +3,8 @@ import React from 'react';
 import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 
-import { displayModal } from '../../functions';
-import { CREATE_POST, UserData } from '../../constants';
+import { displayModal } from '../../../../functions';
+import { CREATE_POST, UserData } from '../../../../constants';
 
 const openCreatePostModal = (e: any) => {
   displayModal(true, false, CREATE_POST, { title: 'Create Post' });

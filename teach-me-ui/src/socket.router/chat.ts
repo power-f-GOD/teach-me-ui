@@ -3,9 +3,10 @@ import {
   UserData,
   APIConversationResponse,
   FetchState,
-  ChatSocketMessageResponse
+  ChatSocketMessageResponse,
+  NotificationSoundState
 } from '../constants/interfaces';
-import { getState, dispatch } from '../functions/utils';
+import { getState, dispatch, promisedDispatch } from '../functions/utils';
 import {
   CHAT_NEW_MESSAGE,
   CHAT_MESSAGE_DELIVERED,
@@ -20,6 +21,11 @@ import {
   conversation,
   conversationsMessages
 } from '../actions/chat';
+import { triggerNotificationSound } from '../actions';
+import {
+  TONE_TYPE__INCOMING_MESSAGE,
+  TONE_TYPE__OUTGOING_MESSAGE
+} from '../constants';
 
 let userTypingTimeout: any = null;
 let conversationTypingTimeouts: any = {};
@@ -29,12 +35,14 @@ export default function chat(message: Partial<ChatSocketMessageResponse>) {
     webSocket: socket,
     userData,
     conversation: _conversation,
-    conversationMessages: _conversationMessages
+    conversationMessages: _conversationMessages,
+    notificationSound
   } = getState() as {
     webSocket: WebSocket;
     userData: UserData;
     conversation: APIConversationResponse;
     conversationMessages: FetchState<APIMessageResponse[]>;
+    notificationSound: NotificationSoundState;
   };
   const { id: convoId, unread_count } = _conversation ?? {};
   const { pathname, search } = window.location;
@@ -66,6 +74,10 @@ export default function chat(message: Partial<ChatSocketMessageResponse>) {
 
     switch (pipe) {
       case CHAT_NEW_MESSAGE:
+        const toneType: NotificationSoundState['toneType'] =
+          type === 'outgoing'
+            ? TONE_TYPE__OUTGOING_MESSAGE
+            : TONE_TYPE__INCOMING_MESSAGE;
         let willEmitDelivered = false;
         let willEmitSeen = false;
 
@@ -99,6 +111,10 @@ export default function chat(message: Partial<ChatSocketMessageResponse>) {
                   pipe: CHAT_READ_RECEIPT
                 })
               );
+
+              // updateConversation(convoId, {
+              //   unread_count: 0
+              // });
             } else {
               if (convoId === conversation_id && convoId) {
                 updateConversation(convoId, {
@@ -108,6 +124,7 @@ export default function chat(message: Partial<ChatSocketMessageResponse>) {
             }
           } else {
             if (convoId === conversation_id && convoId) {
+              // console.log(convoId)
               updateConversation(convoId, {
                 last_read: message.date,
                 unread_count: 0
@@ -138,6 +155,17 @@ export default function chat(message: Partial<ChatSocketMessageResponse>) {
             })
           );
         }
+
+        if (notificationSound.isPlaying) {
+          promisedDispatch(
+            triggerNotificationSound({ play: false, isPlaying: false })
+          ).then(() => {
+            dispatch(triggerNotificationSound({ play: true, toneType }));
+          });
+        } else {
+          dispatch(triggerNotificationSound({ play: true, toneType }));
+        }
+
         break;
       case CHAT_MESSAGE_DELIVERED:
         if (delivered_to) {

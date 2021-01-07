@@ -4,6 +4,24 @@ export type Partial<T> = {
   [P in keyof T]?: T[P];
 };
 
+export interface NotificationSoundState {
+  play?: boolean;
+  isPlaying?: boolean;
+  isReady?: boolean;
+  toneType?:
+    | 'INCOMING_MESSAGE'
+    | 'OUTGOING_MESSAGE'
+    | 'ACTION_SUCCESS'
+    | 'GENERAL';
+  toneName?:
+    | 'exquisite-557'
+    | 'juntos-607'
+    | 'open-ended-563'
+    | 'piece-of-cake-611'
+    | 'quite-impressed-565'
+    | 'slow-spring-board-570';
+}
+
 export interface HTTP {
   token: string;
   returnRequestConfig(
@@ -16,7 +34,7 @@ export interface HTTP {
   get<T>(url: string, requiresAuth?: boolean): Promise<APIResponseModel<T>>;
   post<T, T2 = T | any>(
     url: string,
-    data?: any,
+    data?: T2,
     requiresAuth?: boolean,
     contentType?: string
   ): Promise<APIResponseModel<T>>;

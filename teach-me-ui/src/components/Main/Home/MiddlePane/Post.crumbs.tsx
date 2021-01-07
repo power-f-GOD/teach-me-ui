@@ -11,7 +11,7 @@ import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
 import { Button, Avatar } from '@material-ui/core';
 
 import ReactButton from '../crumbs/ReactionButton';
-import CreateReply from '../../../crumbs/CreateReply';
+import CreateReply from './CreateReply';
 import { processPost } from './Post';
 import { bigNumberFormat, formatDate } from '../../../../functions/utils';
 import { PostStateProps } from '../../../../constants/interfaces';

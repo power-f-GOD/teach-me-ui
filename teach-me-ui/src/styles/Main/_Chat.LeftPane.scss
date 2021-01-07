@@ -163,16 +163,16 @@ $tab-item-bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
       color: rgba(25, 160, 205, 1);
 
       &.animate {
-        animation: scale 0.75s;
+        animation: scale 1s;
       }
     }
 
     @keyframes scale {
       0% {
-        transform: scale(1);
+        transform: scale(1) rotateZ(30deg);
       }
       50% {
-        transform: scale(1.35);
+        transform: scale(1.35) rotateZ(0);
       }
       100% {
         transform: scale(1);

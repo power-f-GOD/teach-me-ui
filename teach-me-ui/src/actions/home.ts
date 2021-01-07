@@ -1,17 +1,17 @@
 import {
   ReduxAction,
-  REACT_TO_POST,
+  // REACT_TO_POST,
   UPDATE_REPOST,
   UPDATE_POST,
   MAKE_REPOST_REJECTED,
   MAKE_REPOST_RESOLVED,
   MAKE_REPOST_STARTED,
   REPLY_TO_POST,
-  MAKE_POST,
+  // MAKE_POST,
   SUBMIT_POST,
   SEND_REPLY_TO_SERVER,
   PostStateProps,
-  ReactPostState,
+  // ReactPostState,
   FetchPostsState,
   MakeRepostState,
   apiBaseURL as baseURL,
@@ -19,7 +19,7 @@ import {
   SocketProps,
   PostReactionResult,
   RepostResult,
-  Reaction,
+  // Reaction,
   ReplyState,
   CREATE_POST,
   Post,
@@ -79,45 +79,8 @@ export const updatePost = (payload: PostReactionResult): ReduxAction => {
   return { type: UPDATE_POST, payload };
 };
 
-export const createPost = (payload: PostStateProps): ReduxAction => {
-  return { type: CREATE_POST, payload };
-};
-
 export const updateRepostData = (payload: RepostResult): ReduxAction => {
   return { type: UPDATE_REPOST, payload };
-};
-
-const reactToPost = (payload: ReactPostState): ReduxAction => {
-  return { type: REACT_TO_POST, payload };
-};
-
-export const sendReactionToServer = (payload: SocketProps) => (
-  dispatch: Function
-) => {
-  dispatch(
-    reactToPost({ id: payload.post_id, type: payload.reaction as Reaction })
-  );
-  // const posts: Array<PostPropsState> = getState().posts;
-  // const singlePost: PostPropsState = getState().singlePost;
-
-  // let post = posts.find((post: PostPropsState) =>
-  //   (post.id as string) === payload.post_id
-  //     ? post
-  //     : (post.parent?.id as string) === payload.post_id
-  //     ? post.parent
-  //     : undefined
-  // );
-  // if (post === undefined) {
-  //   post =
-  //     (singlePost.id as string) === payload.post_id
-  //       ? singlePost
-  //       : (singlePost.parent?.id as string) === payload.post_id
-  //       ? (singlePost.parent as PostPropsState)
-  //       : undefined;
-  // }
-  // if (post === undefined) return;
-  // const socket: WebSocket = getState().webSocket as WebSocket;
-  // socket.send(JSON.stringify({ ...payload, reaction: post?.reaction }));
 };
 
 export const makeRepost = (payload: SocketProps) => (dispatch: Function) => {
@@ -125,7 +88,7 @@ export const makeRepost = (payload: SocketProps) => (dispatch: Function) => {
 
   const socket = getState().webSocket as WebSocket;
   console.log(payload);
-  
+
   socket.send(JSON.stringify(payload));
 };
 
@@ -156,6 +119,113 @@ export const makeRepostRejected = (
   };
 };
 
+export const fetchReplies = (postId?: string) => (dispatch: Function) => {
+  const userData = getState().userData as UserData;
+  const headers =
+    userData && userData.token
+      ? { Authorization: `Bearer ${userData.token}` }
+      : {};
+  axios({
+    url: `/post/${postId}/replies?limit=10&skip=0`,
+    baseURL,
+    method: 'GET',
+    headers
+  })
+    .then((res) => {
+      if (res.data.error) {
+        throw new Error(res.data.message);
+      }
+      return res.data.data.replies;
+    })
+    .then((state) => {})
+    .catch((err) => {});
+};
+
+export const fetchPost: Function = (postId?: string) => (
+  dispatch: Function
+) => {
+  const userData = getState().userData as UserData;
+  const headers =
+    userData && userData.token
+      ? { Authorization: `Bearer ${userData.token}` }
+      : {};
+
+  axios({
+    url: `/post/${postId}`,
+    baseURL,
+    method: 'GET',
+    headers
+  })
+    .then((res) => {
+      if (res.data.error) {
+        throw new Error(res.data.message);
+      }
+      return res.data.data;
+    })
+    .then((state) => {})
+    .catch((err) => {});
+};
+
+export const createPost = (
+  payload: FetchState<PostStateProps>
+): ReduxAction => {
+  return { type: CREATE_POST, payload };
+};
+
+export const requestCreatePost = ({
+  post,
+  media
+}: {
+  post: Post;
+  media: Array<string>;
+}) => (dispatch: Function) => {
+  dispatch(
+    createPost({
+      status: 'pending'
+    })
+  );
+  const token = (getState().userData as UserData).token;
+  const addPost = (payload: any) => {
+    window.scrollTo(0, 0);
+    dispatch(createPost(payload));
+  };
+
+  checkNetworkStatusWhilstPend({
+    name: 'makePost',
+    func: createPost
+  });
+
+  axios({
+    url: `post/make`,
+    baseURL,
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Content_Type: 'application/json'
+    },
+    data: {
+      text: post.text,
+      mentions: getCharacterSequenceFromText(post.text, '@'),
+      hashtags: getCharacterSequenceFromText(post.text, '#'),
+      media
+    }
+  })
+    .then(({ data }) => {
+      addPost(data.data);
+      dispatch(
+        createPost({
+          status: 'fulfilled'
+        })
+      );
+      getCharacterSequenceFromText(post.text, '@') &&
+        pingUser(getCharacterSequenceFromText(post.text, '@'));
+    })
+    .catch(logError(createPost));
+  return {
+    type: SUBMIT_POST
+  };
+};
+
 export const getPosts = (
   type: 'FEED' | 'WALL',
   userId?: string,
@@ -169,7 +239,7 @@ export const getPosts = (
     statusText,
     err: false
   } as FetchState<PostStateProps[]>;
-  const isRecycling = /recycl/i.test(statusText || '');
+  const isRecycling = /recycl(e|ing)/i.test(statusText || '');
   const isFetching = /fetching/i.test(statusText || '');
   let offset = getState().posts.extra;
 
@@ -282,114 +352,6 @@ export const posts = (_payload: FetchState<PostStateProps[], number>) => {
   return {
     type: SET_POSTS,
     payload
-  };
-};
-
-export const fetchReplies = (postId?: string) => (dispatch: Function) => {
-  const userData = getState().userData as UserData;
-  const headers =
-    userData && userData.token
-      ? { Authorization: `Bearer ${userData.token}` }
-      : {};
-  axios({
-    url: `/post/${postId}/replies?limit=10&skip=0`,
-    baseURL,
-    method: 'GET',
-    headers
-  })
-    .then((res) => {
-      if (res.data.error) {
-        throw new Error(res.data.message);
-      }
-      return res.data.data.replies;
-    })
-    .then((state) => {})
-    .catch((err) => {});
-};
-
-export const fetchPost: Function = (postId?: string) => (
-  dispatch: Function
-) => {
-  const userData = getState().userData as UserData;
-  const headers =
-    userData && userData.token
-      ? { Authorization: `Bearer ${userData.token}` }
-      : {};
-
-  axios({
-    url: `/post/${postId}`,
-    baseURL,
-    method: 'GET',
-    headers
-  })
-    .then((res) => {
-      if (res.data.error) {
-        throw new Error(res.data.message);
-      }
-      return res.data.data;
-    })
-    .then((state) => {})
-    .catch((err) => {});
-};
-
-export const makePost = (payload: any): ReduxAction => {
-  return {
-    type: MAKE_POST,
-    payload
-  };
-};
-
-export const submitPost = ({
-  post,
-  media
-}: {
-  post: Post;
-  media: Array<string>;
-}) => (dispatch: Function) => {
-  dispatch(
-    makePost({
-      status: 'pending'
-    })
-  );
-  const token = (getState().userData as UserData).token;
-  const addPost = (payload: any) => {
-    window.scrollTo(0, 0);
-    dispatch(createPost(payload));
-  };
-
-  checkNetworkStatusWhilstPend({
-    name: 'makePost',
-    func: makePost
-  });
-
-  axios({
-    url: `post/make`,
-    baseURL,
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Content_Type: 'application/json'
-    },
-    data: {
-      text: post.text,
-      mentions: getCharacterSequenceFromText(post.text, '@'),
-      hashtags: getCharacterSequenceFromText(post.text, '#'),
-      media
-    }
-  })
-    .then(({ data }) => {
-      addPost(data.data);
-      dispatch(
-        makePost({
-          status: 'fulfilled'
-        })
-      );
-      getCharacterSequenceFromText(post.text, '@') &&
-        pingUser(getCharacterSequenceFromText(post.text, '@'));
-    })
-    .catch(logError(makePost));
-  return {
-    type: SUBMIT_POST
   };
 };
 

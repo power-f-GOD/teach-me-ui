@@ -38,6 +38,7 @@ interface ChatProps {
   conversations: SearchState;
   chatState: ChatState;
   conversationMessages: SearchState;
+  conversationsMessages?: SearchState;
   userData: UserData;
   webSocket: WebSocket;
   location: Location;
@@ -51,8 +52,6 @@ const chatBoxRef = createRef<any>();
 const leftPaneRef = createRef<any>();
 const middlePaneRef = createRef<any>();
 const rightPaneRef = createRef<any>();
-
-
 
 const Chat = (props: ChatProps) => {
   const {
@@ -375,6 +374,7 @@ const mapStateToProps = (state: ChatProps) => {
     conversation: state.conversation,
     conversations: state.conversations,
     conversationMessages: state.conversationMessages,
+    // conversationsMessages: state.conversationsMessages,
     // conversationInfo: state.conversationInfo,
     userData: state.userData,
     webSocket: state.webSocket

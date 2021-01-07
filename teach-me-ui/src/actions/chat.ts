@@ -131,7 +131,7 @@ export const conversations = (
           index: indexOfInitial
         } = (loopThru<APIConversationResponse>(
           initialConversations,
-          ({ colleague }) => user_id === colleague.id,
+          ({ colleague }) => user_id === colleague?.id,
           {
             type: 'find',
             includeIndex: true
@@ -328,6 +328,7 @@ export const conversation = (
     } else {
       if (convoId === dataFromConvo.id) {
         payload = { ...dataFromConvos, ...dataFromConvo, ...data };
+        // console.trace(data);
       } else {
         payload = { ...dataFromConvos, ...data };
       }
@@ -348,9 +349,10 @@ export const conversation = (
   };
 };
 
-export const getConversationsMessages = (statusText?: string) => (
-  dispatch: Function
-) => {
+export const getConversationsMessages = (
+  statusText?: string,
+  shouldStoreResponseInState?: boolean
+) => (dispatch: Function) => {
   const {
     userData: { id: userId },
     webSocket: socket,
@@ -386,13 +388,7 @@ export const getConversationsMessages = (statusText?: string) => (
     )
     .then(({ error, data: mappedConvosMessages }) => {
       if (error) {
-        return dispatch(
-          conversationsMessages({
-            status: 'settled',
-            err: true,
-            data: {}
-          })
-        );
+        return;
       }
 
       const _convosMessages = mappedConvosMessages;
@@ -403,7 +399,7 @@ export const getConversationsMessages = (statusText?: string) => (
           _convosMessages[key],
           (message) => {
             if (!message.delivered_to.includes(userId)) {
-              if (socket) {
+              if (socket && socket.readyState === socket.OPEN) {
                 socket.send(
                   JSON.stringify({
                     message_id: message.id,
@@ -440,7 +436,9 @@ export const getConversationsMessages = (statusText?: string) => (
         conversationsMessages({
           status: 'fulfilled',
           err: false,
-          data: { ...updatedConvosMessages }
+          data: shouldStoreResponseInState
+            ? { ...updatedConvosMessages }
+            : undefined
         })
       );
     })
@@ -722,9 +720,11 @@ export const getConversationMessages = (
                 }
               }
 
-              if (message.seen_by!?.includes(userId)) return;
-
               if (type === 'incoming') {
+                if (message.seen_by!?.includes(userId)) {
+                  return;
+                }
+
                 if (!message.delivered_to!?.includes(userId)) {
                   socket.send(
                     JSON.stringify({
@@ -750,33 +750,33 @@ export const getConversationMessages = (
                 }
               }
             },
-            { returnReverse: !(hasCachedData && isGettingNew), makeCopy: true }
+            { returnReverse: !(hasCachedData && isGettingNew) }
           ) as APIMessageResponse[];
         }
+      }
 
+      dispatch(
+        conversationMessages({
+          convoId,
+          status: 'fulfilled',
+          err: false,
+          statusText,
+          data: messages
+        })
+      );
+
+      if ((isGettingNew || isUpdating) && convoId) {
         dispatch(
-          conversationMessages({
+          conversationsMessages({
             convoId,
             status: 'fulfilled',
             err: false,
-            statusText,
-            data: [...messages]
+            statusText: 'replace messages',
+            data: {
+              [convoId]: messages
+            }
           })
         );
-
-        if ((isGettingNew || isUpdating) && convoId) {
-          dispatch(
-            conversationsMessages({
-              convoId,
-              status: 'fulfilled',
-              err: false,
-              statusText: 'replace messages',
-              data: {
-                [convoId]: [...messages]
-              }
-            })
-          );
-        }
       }
 
       //hide Snackbar in case it's currently displayed (due to an error event)
@@ -821,7 +821,7 @@ export const conversationMessages = (payload: ConversationMessages) => {
   } else {
     // console.log('payload:', payload);
     const messageId = payload.data![0].id;
-    let { value: initialMessage, index: indexOfInitial } = (loopThru(
+    let { value, index: indexOfInitial } = (loopThru(
       previousMessages,
       (message) => message.id === messageId,
       {
@@ -831,6 +831,9 @@ export const conversationMessages = (payload: ConversationMessages) => {
         makeCopy: true
       }
     ) ?? {}) as LoopFind<APIMessageResponse>;
+    const initialMessage = value
+      ? { ...value, seen_by: [...value?.seen_by] }
+      : null;
 
     if (payload.data?.length === 1) {
       switch (payload.pipe) {
@@ -878,6 +881,7 @@ export const conversationMessages = (payload: ConversationMessages) => {
             !initialMessage.seen_by!?.includes(seerId) &&
             seerId
           ) {
+            // console.log('initial message:', initialMessage);
             initialMessage.seen_by.push(seerId);
             previousMessages[indexOfInitial] = initialMessage;
           }

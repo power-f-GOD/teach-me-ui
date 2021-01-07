@@ -3,7 +3,7 @@ import React, { useEffect, useMemo } from 'react';
 import Container from 'react-bootstrap/Container';
 
 import Post from './Post';
-import Compose from '../../../crumbs/Compose';
+import Compose from './Compose';
 import Recommendations from './Recommendations';
 
 import {

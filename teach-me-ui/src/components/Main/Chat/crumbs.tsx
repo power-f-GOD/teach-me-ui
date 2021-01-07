@@ -41,7 +41,11 @@ export interface SelectedMessageValue extends Omit<APIMessageResponse, 'type'> {
   sender_username: string;
 }
 
-export type ActionChoice = 'DELETE_FOR_ME' | 'CANCEL' | 'DELETE_FOR_EVERYONE';
+export const DELETE_FOR_SELF = 'DELETE_FOR_SELF';
+export const CANCEL_DELETE = 'CANCEL';
+export const DELETE_FOR_ALL = 'DELETE_FOR_ALL';
+
+export type ActionChoice = 'DELETE_FOR_SELF' | 'CANCEL' | 'DELETE_FOR_ALL';
 
 let messageTouchTimeout: any = null;
 
@@ -130,23 +134,27 @@ export const Message = (props: {
       });
 
       //this is for to add the chat-last-message slide-in animation and reset the conversation new_message prop after the animation has ended;
-      if (!messageEl.classList.contains('chat-last-message')) {
-        if (
+      if (!/chat-last-message/.test(messageEl.className)) {
+        const isNewMessage =
           message.timestamp_id ||
-          getState().conversation.new_message?.id === message.id
-        ) {
+          getState().conversation.new_message?.id === message.id;
+
+        if (isNewMessage) {
+          // console.log('is last message');
           messageEl.classList.add('chat-last-message');
         }
 
         addEventListenerOnce(
           messageEl,
           () => {
-            dispatch(conversation(convoId, { new_message: {} }));
-            dispatch(
-              conversations({
-                data: [{ id: convoId, new_message: {} }]
-              })
-            );
+            if (isNewMessage) {
+              dispatch(conversation(convoId, { new_message: {} }));
+              dispatch(
+                conversations({
+                  data: [{ id: convoId, new_message: {} }]
+                })
+              );
+            }
           },
           'animationend'
         );
@@ -240,9 +248,7 @@ export const Message = (props: {
                 isRecent={!!message.pipe}
                 userId={userId}
                 message={message}
-                forceUpdate={
-                  '' + deleted + delivered_to?.length + seen_by?.length
-                }
+                forceUpdate={`${deleted}${delivered_to?.length}${seen_by?.length}`}
                 participants={participants}
               />
             }
@@ -611,7 +617,7 @@ export const NewMessageBar = (props: {
 
   return (
     <Container
-      className={`chat-new-message-bar fade-in ${type} ${className ?? ''} ${
+      className={`chat-new-message-bar ${type} ${className ?? ''} ${
         type === 'sticky' ? 'd-none' : ''
       } p-0`}>
       <Button
@@ -655,14 +661,14 @@ export function ConfirmDialog(props: {
       </DialogContent>
       <DialogActions className='text-right d-flex flex-column'>
         <Button
-          onClick={handleClose('DELETE_FOR_ME')}
+          onClick={handleClose(DELETE_FOR_SELF)}
           color='primary'
           variant='text'
           className='ml-auto mb-2 mt-1 mr-2 btn-secondary uppercase'>
           Delete for Self
         </Button>
         <Button
-          onClick={handleClose('CANCEL')}
+          onClick={handleClose(CANCEL_DELETE)}
           color='primary'
           variant='text'
           className='ml-auto mb-2 mr-2 btn-secondary uppercase'
@@ -671,7 +677,7 @@ export function ConfirmDialog(props: {
         </Button>
         {canDeleteForEveryone && (
           <Button
-            onClick={handleClose('DELETE_FOR_EVERYONE')}
+            onClick={handleClose(DELETE_FOR_ALL)}
             className='ml-auto mb-2 mr-2 btn-secondary uppercase'
             variant='text'
             color='primary'>

@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 // add custom jest matchers from jest-dom
 import '@testing-library/jest-dom/extend-expect';
 
-import { Compose } from '../../components/crumbs/Compose';
+import { Compose } from '../../components/Main/Home/MiddlePane/Compose';
 
 test('loads and displays placeholder text', async () => {
   render(<Compose userData={{ first_name: 'Benjamin', avatar: 'undefined' }} />);

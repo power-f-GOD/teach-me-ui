@@ -28,20 +28,96 @@ import {
   getState,
   emitUserOnlineStatus
 } from '../../functions/utils';
-import { initWebSocket, closeWebSocket } from '../../actions/misc';
+import {
+  initWebSocket,
+  closeWebSocket,
+  triggerNotificationSound
+} from '../../actions/misc';
 import activateSocketRouters from '../../socket.router';
 import { getConversations, getConversationsMessages } from '../../actions/chat';
-import { APIConversationResponse } from '../../constants/interfaces';
+import {
+  APIConversationResponse,
+  StatusPropsState,
+  UserData,
+  FetchState,
+  NotificationSoundState
+} from '../../constants/interfaces';
+
+interface MainProps {
+  signoutStatus: StatusPropsState['status'];
+  userToken: string;
+  webSocket: WebSocket;
+  convosData: APIConversationResponse[];
+  notificationSound: NotificationSoundState;
+  location: Location;
+}
 
 const Memoize = createMemo();
 
-const Main = (props: any) => {
-  const { signoutStatus, userToken, webSocket: socket, convosData } = props;
+const notifSoundRef = React.createRef<HTMLAudioElement | null>();
+let notifSoundEl: HTMLAudioElement | null;
+
+const Main = (props: MainProps) => {
+  const {
+    signoutStatus,
+    userToken,
+    webSocket: socket,
+    convosData,
+    notificationSound
+  } = props;
+  const { play, isPlaying, toneName } = notificationSound;
+  const notifSoundSrc = `/tones/${toneName}.ogg`;
   const unopened_count = convosData?.reduce(
     (a: number, conversation: APIConversationResponse) =>
       a + (conversation.unread_count ? 1 : 0),
     0
   );
+
+  // handles notification sound events
+  useEffect(() => {
+    notifSoundEl = notifSoundRef.current as HTMLAudioElement;
+
+    if (notifSoundEl) {
+      notifSoundEl.oncanplaythrough = () => {
+        dispatch(triggerNotificationSound({ isReady: true }));
+      };
+      notifSoundEl.onplaying = () => {
+        dispatch(triggerNotificationSound({ isPlaying: true, play: true }));
+      };
+      notifSoundEl.onended = () => {
+        dispatch(triggerNotificationSound({ isPlaying: false, play: false }));
+      };
+      notifSoundEl.onerror = () => {
+        notifSoundEl!.src = notifSoundEl!.src.replace('ogg', 'mp3');
+      };
+    }
+  }, []);
+
+  useEffect(() => {
+    if (notifSoundEl) {
+      notifSoundEl.src = notifSoundSrc;
+    }
+  }, [notifSoundSrc]);
+
+  // handles triggering/playing of notification sound
+  useEffect(() => {
+    const stopSound = () => {
+      notifSoundEl!.pause();
+      notifSoundEl!.currentTime = 0;
+    };
+
+    if (notifSoundEl) {
+      if (play) {
+        if (isPlaying) {
+          stopSound();
+        }
+
+        notifSoundEl.play();
+      } else {
+        stopSound();
+      }
+    }
+  }, [play, isPlaying]);
 
   useEffect(() => {
     dispatch(initWebSocket(userToken as string));
@@ -85,7 +161,9 @@ const Main = (props: any) => {
 
   if (/signin|signup/.test(props.location.pathname)) {
     //redirect to actual URL user was initially trying to access when wasn't authenticated
-    return <Redirect to={props.location.state?.from || { pathname: '/' }} />;
+    return (
+      <Redirect to={(props.location as any).state?.from || { pathname: '/' }} />
+    );
   }
 
   return (
@@ -123,6 +201,11 @@ const Main = (props: any) => {
           </Badge>
         </Link>
       </Row>
+      <audio className='notification-sound' ref={notifSoundRef as any}>
+        <source src={notifSoundSrc} type='audio/ogg' />
+        <source src={notifSoundSrc.replace('ogg', 'mp3')} type='audio/mpeg' />
+        <p>Your browser doesn't support HTML5 audio.</p>
+      </audio>
     </>
   );
 };
@@ -135,13 +218,20 @@ document.addEventListener('visibilitychange', () => {
   )();
 });
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: {
+  signout: FetchState<any>;
+  userData: UserData;
+  webSocket: WebSocket;
+  conversations: FetchState<APIConversationResponse[]>;
+  notificationSound: NotificationSoundState;
+}) => {
   return {
     signoutStatus: state.signout.status,
     userToken: state.userData.token,
     webSocket: state.webSocket,
-    convosData: state.conversations.data
+    convosData: state.conversations.data,
+    notificationSound: state.notificationSound
   };
 };
 
-export default connect(mapStateToProps)(Main);
+export default connect(mapStateToProps)(Main as any);

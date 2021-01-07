@@ -22,8 +22,8 @@ import { PostEditorState } from '../../constants';
 import { 
   sendFilesToServer,
   getUploads,
-  makePost,
-  submitPost,
+  createPost,
+  requestCreatePost,
 } from '../../actions';
 
 import Editor from '../crumbs/Editor';
@@ -55,7 +55,7 @@ const CreatePost = (props: any) => {
   });
 
   if (makePostProp.status === 'fulfilled') {
-    dispatch(makePost({status: 'settled'}));
+    dispatch(createPost({status: 'settled'}));
     window.history.back();
     displayModal(false);
   }
@@ -242,9 +242,9 @@ const CreatePost = (props: any) => {
   const onPostSubmit = () => {
     if (state.post.text) {
       if (state.selectedFiles[0] || state.selectedUploads[0]) {
-        sendFilesToServer(state.selectedFiles, submitPost, state.selectedUploads, 'media', true, {post: state.post});
+        sendFilesToServer(state.selectedFiles, requestCreatePost, state.selectedUploads, 'media', true, {post: state.post});
       } else {
-        dispatch(submitPost({post: state.post, media: []})(dispatch));
+        dispatch(requestCreatePost({post: state.post, media: []})(dispatch));
       }
     }
   }

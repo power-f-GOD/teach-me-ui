@@ -78,7 +78,12 @@ export const http: Readonly<Omit<HTTP, 'token'>> & { token: string } = {
    * @param data data to be posted to destination
    * @param requiresAuth that is if token/authentication will be required for the get action
    */
-  post: async <T>(url: string, data?: any, requiresAuth?: boolean, contentType?: string) => {
+  post: async <T>(
+    url: string,
+    data?: any,
+    requiresAuth?: boolean,
+    contentType?: string
+  ) => {
     const response: AxiosResponse<APIResponseModel<T>> = await axios(
       http.returnRequestConfig('POST', url, requiresAuth, data, contentType)
     );
@@ -89,14 +94,15 @@ export const http: Readonly<Omit<HTTP, 'token'>> & { token: string } = {
 
 export function loopThru<T>(
   _data: T[],
-  callback: <T2 = any>(datum: T) => T2 | any,
+  loopCheckCallback: <T2 = any>(datum: T, index?: number) => T2 | any,
   options?: {
     type?: 'find' | 'findIndex' | 'native';
     includeIndex?: boolean;
     rightToLeft?: boolean;
     returnReverse?: boolean;
     makeCopy?: boolean;
-  }
+  },
+  doneCallback?: (data?: T[]) => T[] | any
 ): LoopFind<T> | T[] | T | number | null {
   const { type, rightToLeft, includeIndex, returnReverse, makeCopy } =
     options || {};
@@ -105,24 +111,27 @@ export function loopThru<T>(
   const dataReversed = [];
   const reverse = rightToLeft || returnReverse;
   let i = reverse ? lim : 0;
+  let valueToReturn: LoopFind<T> | T[] | T | number | null = -1;
 
-  for (; reverse ? i >= 0 : i <= lim; reverse ? i-- : i++) {
+  outer: for (; reverse ? i >= 0 : i <= lim; reverse ? i-- : i++) {
     const datum = data[i];
     let _break = '';
 
     switch (type) {
       case 'find':
-        if (!!callback(datum)) {
-          return includeIndex ? { value: datum, index: i } : datum;
+        if (!!loopCheckCallback(datum, i)) {
+          valueToReturn = includeIndex ? { value: datum, index: i } : datum;
+          break outer;
         }
         break;
       case 'findIndex':
-        if (!!callback(datum)) {
-          return i;
+        if (!!loopCheckCallback(datum, i)) {
+          valueToReturn = i;
+          break outer;
         }
         break;
       default:
-        _break = callback(datum);
+        _break = loopCheckCallback(datum, i);
 
         if (returnReverse) {
           dataReversed.push(datum);
@@ -134,10 +143,11 @@ export function loopThru<T>(
     }
   }
 
-  return type === 'find'
-    ? null
-    : type === 'findIndex'
-    ? -1
+  if (typeof doneCallback === 'function')
+    doneCallback(returnReverse ? dataReversed : data);
+
+  return /find/.test(type!)
+    ? valueToReturn
     : returnReverse
     ? dataReversed
     : data;
@@ -222,7 +232,9 @@ export const emitUserOnlineStatus = (
     }
 
     if (_conversationsMessages.err) {
-      dispatch(getConversationsMessages('updating message list...')(dispatch));
+      dispatch(
+        getConversationsMessages('updating message list...', true)(dispatch)
+      );
     }
 
     if (_posts.err) {

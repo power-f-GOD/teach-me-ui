@@ -6,19 +6,45 @@ import {
   MentionState,
   ReplyState,
   UploadState,
-  QuestionState
+  QuestionState,
+  NotificationSoundState
 } from './interfaces';
 
 export const apiBaseURL = 'https://teach-me-services.herokuapp.com/api/v1';
-// export const apiBaseURL = 'http://aca9e36730ef.ngrok.io/api/v1';
+// export const apiBaseURL = 'http://6c391cdf1194.ngrok.io/api/v1';
 export const wsBaseURL = 'wss://teach-me-services.herokuapp.com/api/v1';
-// export const wsBaseURL = 'ws://aca9e36730ef.ngrok.io/api/v1';
+// export const wsBaseURL = 'ws://6c391cdf1194.ngrok.io/api/v1';
 
 export const DISPLAY_SNACK_BAR = 'DISPLAY_SNACK_BAR';
+
 export const POPULATE_STATE_WITH_USER_DATA = 'POPULATE_STATE_WITH_USER_DATA';
+
 export const INIT_WEB_SOCKET = 'INIT_WEB_SOCKET';
 export const CLOSE_WEB_SOCKET = 'CLOSE_WEB_SOCKET';
+
 export const ONLINE_STATUS = 'ONLINE_STATUS';
+
+export const TRIGGER_NOTIFICATION_SOUND = 'TRIGGER_NOTIFICATION_SOUND';
+
+export const TONE_TYPE__INCOMING_MESSAGE = 'INCOMING_MESSAGE';
+export const TONE_TYPE__OUTGOING_MESSAGE = 'OUTGOING_MESSAGE';
+export const TONE_TYPE__ACTION_SUCCESS = 'ACTION_SUCCESS';
+export const TONE_TYPE__GENERAL = 'GENERAL';
+
+export const TONE_NAME__EXQUISITE = 'exquisite-557';
+export const TONE_NAME__PIECE_OF_CAKE = 'piece-of-cake-611';
+export const TONE_NAME__QUITE_IMPRESSED = 'quite-impressed-565';
+export const TONE_NAME__SLOW_SPRING_BOARD = 'slow-spring-board-570';
+export const TONE_NAME__OPEN_ENDED = 'open-ended-563';
+export const TONE_NAME__JUNTOS = 'juntos-607';
+
+export const notificationSoundState: NotificationSoundState = {
+  play: false,
+  isPlaying: false,
+  isReady: false,
+  toneName: TONE_NAME__PIECE_OF_CAKE,
+  toneType: TONE_TYPE__GENERAL
+};
 
 export const snackbarState: SnackbarState = {
   open: false,
