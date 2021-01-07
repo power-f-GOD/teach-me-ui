@@ -8,7 +8,11 @@ export interface NotificationSoundState {
   play?: boolean;
   isPlaying?: boolean;
   isReady?: boolean;
-  toneType?: 'incoming-message' | 'outgoing-message' | 'action-success' | 'general';
+  toneType?:
+    | 'INCOMING_MESSAGE'
+    | 'OUTGOING_MESSAGE'
+    | 'ACTION_SUCCESS'
+    | 'GENERAL';
   toneName?:
     | 'exquisite-557'
     | 'juntos-607'

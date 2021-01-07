@@ -9,7 +9,15 @@ import {
   INIT_WEB_SOCKET,
   CLOSE_WEB_SOCKET,
   TRIGGER_NOTIFICATION_SOUND,
-  NotificationSoundState
+  NotificationSoundState,
+  TONE_TYPE__INCOMING_MESSAGE,
+  TONE_TYPE__ACTION_SUCCESS,
+  TONE_NAME__SLOW_SPRING_BOARD,
+  TONE_NAME__OPEN_ENDED,
+  TONE_NAME__EXQUISITE,
+  TONE_NAME__PIECE_OF_CAKE,
+  TONE_TYPE__GENERAL,
+  TONE_TYPE__OUTGOING_MESSAGE
 } from '../constants';
 import { getState } from '../functions/utils';
 import { dispatch } from '../appStore';
@@ -24,17 +32,17 @@ export const triggerNotificationSound = (_payload: NotificationSoundState) => {
   }
 
   switch (payload.toneType) {
-    case 'incoming-message':
-      payload.toneName = 'slow-spring-board-570';
+    case TONE_TYPE__INCOMING_MESSAGE:
+      payload.toneName = TONE_NAME__SLOW_SPRING_BOARD;
       break;
-    case 'outgoing-message':
-      payload.toneName = 'open-ended-563';
+    case TONE_TYPE__OUTGOING_MESSAGE:
+      payload.toneName = TONE_NAME__OPEN_ENDED;
       break;
-    case 'action-success':
-      payload.toneName = 'exquisite-557';
+    case TONE_TYPE__ACTION_SUCCESS:
+      payload.toneName = TONE_NAME__EXQUISITE;
       break;
-    case 'general':
-      payload.toneName = 'piece-of-cake-611';
+    case TONE_TYPE__GENERAL:
+      payload.toneName = TONE_NAME__PIECE_OF_CAKE;
       break;
   }
 

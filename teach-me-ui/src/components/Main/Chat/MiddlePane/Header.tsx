@@ -52,7 +52,13 @@ import {
   CHAT_MESSAGE_DELETED,
   CHAT_MESSAGE_DELETED_FOR
 } from '../../../../constants/chat';
-import { ConfirmDialog, SelectedMessageValue, ActionChoice } from '../crumbs';
+import {
+  ConfirmDialog,
+  SelectedMessageValue,
+  ActionChoice,
+  CANCEL_DELETE,
+  DELETE_FOR_ALL
+} from '../crumbs';
 import { displaySnackbar } from '../../../../actions';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { ChatMiddlePaneProps } from '.';
@@ -533,10 +539,10 @@ function MiddlePaneHeaderActions(props: {
 
   const handleDeleteMessage = useCallback(() => {
     confirmDeleteMessage().then((choice) => {
-      if (choice === 'CANCEL') return;
+      if (choice === CANCEL_DELETE) return;
 
       const pipe =
-        choice === 'DELETE_FOR_EVERYONE'
+        choice === DELETE_FOR_ALL
           ? CHAT_MESSAGE_DELETED
           : CHAT_MESSAGE_DELETED_FOR;
 

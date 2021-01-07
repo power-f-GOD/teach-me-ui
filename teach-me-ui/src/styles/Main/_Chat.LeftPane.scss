@@ -169,10 +169,10 @@ $tab-item-bg: rgb($prim-r - $bg-sub, $prim-g - $bg-sub, $prim-b - $bg-sub);
 
     @keyframes scale {
       0% {
-        transform: scale(1) rotateY(-90deg);
+        transform: scale(1) rotateZ(30deg);
       }
       50% {
-        transform: scale(1.35) rotateY(0);
+        transform: scale(1.35) rotateZ(0);
       }
       100% {
         transform: scale(1);

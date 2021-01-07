@@ -22,6 +22,10 @@ import {
   conversationsMessages
 } from '../actions/chat';
 import { triggerNotificationSound } from '../actions';
+import {
+  TONE_TYPE__INCOMING_MESSAGE,
+  TONE_TYPE__OUTGOING_MESSAGE
+} from '../constants';
 
 let userTypingTimeout: any = null;
 let conversationTypingTimeouts: any = {};
@@ -71,7 +75,9 @@ export default function chat(message: Partial<ChatSocketMessageResponse>) {
     switch (pipe) {
       case CHAT_NEW_MESSAGE:
         const toneType: NotificationSoundState['toneType'] =
-          type === 'outgoing' ? 'outgoing-message' : 'incoming-message';
+          type === 'outgoing'
+            ? TONE_TYPE__OUTGOING_MESSAGE
+            : TONE_TYPE__INCOMING_MESSAGE;
         let willEmitDelivered = false;
         let willEmitSeen = false;
 
@@ -105,6 +111,10 @@ export default function chat(message: Partial<ChatSocketMessageResponse>) {
                   pipe: CHAT_READ_RECEIPT
                 })
               );
+
+              // updateConversation(convoId, {
+              //   unread_count: 0
+              // });
             } else {
               if (convoId === conversation_id && convoId) {
                 updateConversation(convoId, {
@@ -114,6 +124,7 @@ export default function chat(message: Partial<ChatSocketMessageResponse>) {
             }
           } else {
             if (convoId === conversation_id && convoId) {
+              // console.log(convoId)
               updateConversation(convoId, {
                 last_read: message.date,
                 unread_count: 0

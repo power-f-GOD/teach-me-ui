@@ -328,6 +328,7 @@ export const conversation = (
     } else {
       if (convoId === dataFromConvo.id) {
         payload = { ...dataFromConvos, ...dataFromConvo, ...data };
+        // console.trace(data);
       } else {
         payload = { ...dataFromConvos, ...data };
       }
@@ -435,7 +436,9 @@ export const getConversationsMessages = (
         conversationsMessages({
           status: 'fulfilled',
           err: false,
-          data: shouldStoreResponseInState ? { ...updatedConvosMessages } : undefined
+          data: shouldStoreResponseInState
+            ? { ...updatedConvosMessages }
+            : undefined
         })
       );
     })
@@ -653,7 +656,7 @@ export const getConversationMessages = (
           }`}`,
           true
         );
-        console.log('messages returned:', messages);
+
         response.data = messages ?? [];
         response.error = error;
       }
@@ -818,7 +821,7 @@ export const conversationMessages = (payload: ConversationMessages) => {
   } else {
     // console.log('payload:', payload);
     const messageId = payload.data![0].id;
-    let { value: initialMessage, index: indexOfInitial } = (loopThru(
+    let { value, index: indexOfInitial } = (loopThru(
       previousMessages,
       (message) => message.id === messageId,
       {
@@ -828,6 +831,9 @@ export const conversationMessages = (payload: ConversationMessages) => {
         makeCopy: true
       }
     ) ?? {}) as LoopFind<APIMessageResponse>;
+    const initialMessage = value
+      ? { ...value, seen_by: [...value?.seen_by] }
+      : null;
 
     if (payload.data?.length === 1) {
       switch (payload.pipe) {
