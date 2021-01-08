@@ -5,7 +5,6 @@ import * as actions from '../../actions/home';
 import {
   ReplyState,
   REPLY_TO_POST,
-  SEND_REPLY,
   ReduxAction,
   SendReplyProps,
   PostContent,
@@ -16,45 +15,6 @@ import {
 import { dispatch } from '../../appStore';
 
 afterEach(cleanup);
-
-it('sends reply of a post to the sever', () => {
-  const mockReplyProps: SendReplyProps = {
-    text: expect.any(String),
-    mentions: expect.any(Array),
-    hashtags: expect.any(Array),
-    pipe: 'POST_REPLY',
-    post_id: expect.any(String)
-  };
-
-  const mockReplyState: ReplyState = {
-    status: expect.any(String),
-    err: expect.any(Boolean),
-    data: expect.any(Object)
-  };
-  const replyToPostAction: ReduxAction = {
-    type: REPLY_TO_POST,
-    payload: {
-      status: expect.any(String),
-      err: expect.any(Boolean),
-      data: expect.any(Object)
-    }
-  };
-
-  const sendReplyToServerAction: ReduxAction = {
-    type: SEND_REPLY
-  };
-
-  const sendReplyToServerMockFunc = jest.fn((payload: SendReplyProps) => {
-    return (dispatch: Function) => {
-      actions.replyToPost(mockReplyState);
-    };
-  });
-
-  sendReplyToServerMockFunc(mockReplyProps);
-  expect(sendReplyToServerMockFunc).toHaveBeenCalledWith(mockReplyProps);
-  expect(actions.replyToPost(mockReplyState)).toMatchObject(replyToPostAction);
-  // expect(actions.sendReplyToServer(mockReplyProps)(dispatch)).toMatchObject(sendReplyToServerAction);
-});
 
 it('sends post to the sever', () => {
   const mockPostProps: PostContent = {
@@ -78,11 +38,13 @@ it('sends post to the sever', () => {
 
   const mockMedia = expect.any(Array);
 
-  const submitPostMockFunc = jest.fn((payload: PostContent, media: Array<string>) => {
-    return (dispatch: Function) => {
-      actions.createPost(mockPostState);
-    };
-  });
+  const submitPostMockFunc = jest.fn(
+    (payload: PostContent, media: Array<string>) => {
+      return (dispatch: Function) => {
+        actions.createPost(mockPostState);
+      };
+    }
+  );
 
   submitPostMockFunc(mockPostProps, mockMedia);
   expect(submitPostMockFunc).toHaveBeenCalledWith(mockPostProps, mockMedia);
