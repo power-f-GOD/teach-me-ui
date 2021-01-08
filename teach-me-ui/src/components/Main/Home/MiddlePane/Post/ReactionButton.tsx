@@ -2,12 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import Box from '@material-ui/core/Box';
-import UpvoteSharpIcon from '@material-ui/icons/ExpandLessSharp';
-import DownvoteSharpIcon from '@material-ui/icons/ExpandMoreSharp';
 import Button from '@material-ui/core/Button';
 
-import { bigNumberFormat, emitUserOnlineStatus } from '../../../../functions';
-import { POST_REACTION, Reaction } from '../../../../constants';
+import { bigNumberFormat, emitUserOnlineStatus } from '../../../../../functions';
+import { POST_REACTION, Reaction } from '../../../../../constants';
+import { FAIcon } from '../../../../shared/Icons';
 
 interface ReactButtonPropsState {
   id: string;
@@ -21,6 +20,7 @@ export const ReactButton: React.FunctionComponent<ReactButtonPropsState> = (
   props
 ) => {
   const { type, id, reaction, num_of_reactions, socket } = props;
+  const reacted = /upvote|downvote/i.test(reaction || '');
 
   const reactToPost = React.useCallback(() => {
     if (socket && socket.readyState === socket.OPEN) {
@@ -28,7 +28,7 @@ export const ReactButton: React.FunctionComponent<ReactButtonPropsState> = (
         JSON.stringify({
           pipe: POST_REACTION,
           post_id: id,
-          reaction: /upvote|downvote/i.test(reaction || '') ? 'NEUTRAL' : type
+          reaction: reacted ? 'NEUTRAL' : type
         })
       );
     } else {
@@ -40,7 +40,7 @@ export const ReactButton: React.FunctionComponent<ReactButtonPropsState> = (
         autoHide: false
       });
     }
-  }, [socket, id, type, reaction]);
+  }, [socket, id, type, reacted]);
 
   // React.useEffect(() => {
 
@@ -50,7 +50,11 @@ export const ReactButton: React.FunctionComponent<ReactButtonPropsState> = (
     <Button
       className={`d-flex align-items-center reaction-button reaction-${reaction?.toLowerCase()}`}
       onClick={reactToPost}>
-      {type === 'UPVOTE' ? <UpvoteSharpIcon /> : <DownvoteSharpIcon />}
+      <FAIcon
+        className={`fa-thumbs-${type === 'UPVOTE' ? 'up' : 'down'}`}
+        variant={reacted ? 'solid' : 'outlined'}
+        color={!reacted ? '#888' : 'inherit'}
+      />
       <Box>{bigNumberFormat(num_of_reactions)}</Box>
     </Button>
   );

@@ -5,10 +5,10 @@ import * as actions from '../../actions/home';
 import {
   ReplyState,
   REPLY_TO_POST,
-  SEND_REPLY_TO_SERVER,
+  SEND_REPLY,
   ReduxAction,
-  SocketProps,
-  Post,
+  SendReplyProps,
+  PostContent,
   SUBMIT_POST,
   MAKE_POST
 } from '../../constants';
@@ -18,7 +18,7 @@ import { dispatch } from '../../appStore';
 afterEach(cleanup);
 
 it('sends reply of a post to the sever', () => {
-  const mockReplyProps: SocketProps = {
+  const mockReplyProps: SendReplyProps = {
     text: expect.any(String),
     mentions: expect.any(Array),
     hashtags: expect.any(Array),
@@ -41,10 +41,10 @@ it('sends reply of a post to the sever', () => {
   };
 
   const sendReplyToServerAction: ReduxAction = {
-    type: SEND_REPLY_TO_SERVER
+    type: SEND_REPLY
   };
 
-  const sendReplyToServerMockFunc = jest.fn((payload: SocketProps) => {
+  const sendReplyToServerMockFunc = jest.fn((payload: SendReplyProps) => {
     return (dispatch: Function) => {
       actions.replyToPost(mockReplyState);
     };
@@ -57,7 +57,7 @@ it('sends reply of a post to the sever', () => {
 });
 
 it('sends post to the sever', () => {
-  const mockPostProps: Post = {
+  const mockPostProps: PostContent = {
     text: expect.any(String)
   };
 
@@ -78,7 +78,7 @@ it('sends post to the sever', () => {
 
   const mockMedia = expect.any(Array);
 
-  const submitPostMockFunc = jest.fn((payload: Post, media: Array<string>) => {
+  const submitPostMockFunc = jest.fn((payload: PostContent, media: Array<string>) => {
     return (dispatch: Function) => {
       actions.createPost(mockPostState);
     };

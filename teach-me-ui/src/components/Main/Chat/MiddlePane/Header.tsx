@@ -62,7 +62,7 @@ import {
 import { displaySnackbar } from '../../../../actions';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { ChatMiddlePaneProps } from '.';
-import { messageBox } from './Footer';
+import { messageBox } from './MessageBox';
 
 export const MiddlePaneHeaderContext = createContext(
   {} as Partial<ChatMiddlePaneProps>

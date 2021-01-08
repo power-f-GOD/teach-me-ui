@@ -1,17 +1,15 @@
 import { dispatch } from '../functions';
 
 import {
-  replyToPost,
   makeRepostResolved,
   makeRepostRejected,
-  updateRepostData,
   createPost,
   posts
 } from '../actions';
 
 import { displayModal } from '../functions';
 
-import { SocketPipe, RepostResult } from '../constants';
+import { SocketPipe } from '../constants';
 
 export default function post(data: any) {
   // console.log(data);
@@ -22,9 +20,9 @@ export default function post(data: any) {
         break;
       case 'POST_REPOST':
         if (!data.error) {
-          if (data.count !== undefined) {
-            dispatch(updateRepostData(data as RepostResult));
-          }
+          // if (data.count !== undefined) {
+          //   dispatch(updateRepostData(data as RepostResult));
+          // }
           if (data.action_count !== undefined) dispatch(createPost(data));
           document.querySelector('.middle-pane-col')?.scrollTo(0, 0);
           dispatch(
@@ -40,23 +38,24 @@ export default function post(data: any) {
         }
         break;
       case 'POST_REPLY':
-        if (!data.error) {
-          dispatch(
-            replyToPost({
-              status: 'fulfilled',
-              err: false,
-              data
-            })
-          );
-        } else {
-          dispatch(
-            replyToPost({
-              status: 'fulfilled',
-              err: true,
-              data
-            })
-          );
-        }
+       
+        // if (!data.error) {
+        //   dispatch(
+        //     replyToPost({
+        //       status: 'fulfilled',
+        //       err: false,
+        //       data
+        //     })
+        //   );
+        // } else {
+        //   dispatch(
+        //     replyToPost({
+        //       status: 'fulfilled',
+        //       err: true,
+        //       data
+        //     })
+        //   );
+        // }
         break;
       default:
         break;

@@ -12,14 +12,14 @@ import Home from './Home';
 import About from '../Index/About';
 import Support from '../Index/Support';
 import Profile from './Profile';
-import ProfileRedirect from './ProfileRedirect';
+import ProfileRedirect from './Profile/ProfileRedirect';
 import Loader from '../shared/Loader';
 import ModalFrame from '../modals';
 import Chat from './Chat';
 import Search from './Search';
-import PostPage from './PostPage';
-import Questions from './Questions';
-import QuestionPage from './QuestionPage';
+import PostPage from './Home/PostPage';
+import Questions from './Q&A/Questions';
+import QuestionPage from './Q&A/QuestionPage';
 import _404 from '../Index/_404';
 
 import createMemo from '../../Memo';

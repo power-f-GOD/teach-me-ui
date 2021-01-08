@@ -201,7 +201,9 @@ export const conversations = (
             initialConversations.splice(indexOfInitial, 1);
             initialConversations.unshift(actualConvo);
 
+            // console.log('actualConvo:', actualConvo);
             //update current conversation
+            // setTimeout(() =)
             if (_conversation.id === convoId) {
               dispatch(conversation(convoId!, { ...actualConvo }));
             }
@@ -397,7 +399,11 @@ export const getConversationsMessages = (
       for (const key in updatedConvosMessages) {
         const convoMessages = loopThru(
           _convosMessages[key],
-          (message) => {
+          (_message) => {
+            const message = _message.seen_by
+              ? { ..._message, seen_by: [..._message.seen_by] }
+              : ({ ..._message } as APIMessageResponse); // attempt to fix 'object inextensible bug' by copying
+
             if (!message.delivered_to.includes(userId)) {
               if (socket && socket.readyState === socket.OPEN) {
                 socket.send(
@@ -512,11 +518,14 @@ export const conversationsMessages = (
       }
     }
   } else {
-    const { value: initialMessage, index } = (loopThru(
+    const { value, index } = (loopThru(
       [...prevConvoMessages],
       (message) => message.id === newConvoMessage.id,
       { type: 'find', includeIndex: true, rightToLeft: true, makeCopy: true }
     ) ?? {}) as LoopFind<APIMessageResponse>;
+    const initialMessage = value
+      ? { ...value, seen_by: [...value.seen_by] }
+      : (null as APIMessageResponse | null); // attempt to fix 'object inextensible bug' by copying
 
     if (initialMessage || pipe === CHAT_NEW_MESSAGE) {
       if (newConvoMessage.timestamp_id) {
@@ -549,7 +558,7 @@ export const conversationsMessages = (
             !initialMessage.seen_by!?.includes(seerId) &&
             seerId
           ) {
-            console.log('inextensible:', initialMessage, seerId);
+            // console.log('inextensible:', initialMessage, seerId);
             initialMessage.seen_by?.push(seerId);
             prevConvoMessages[index] = initialMessage;
           }
@@ -698,7 +707,11 @@ export const getConversationMessages = (
         if (socket && socket.readyState === socket.OPEN) {
           messages = loopThru(
             messages,
-            (message) => {
+            (_message) => {
+              const message = _message.seen_by
+                ? { ..._message, seen_by: [..._message.seen_by] }
+                : ({ ..._message } as APIMessageResponse); // attempt to fix 'object inextensible bug' by copying
+
               const type =
                 message.sender_id === userId || !message.sender_id
                   ? 'outgoing'
@@ -832,8 +845,8 @@ export const conversationMessages = (payload: ConversationMessages) => {
       }
     ) ?? {}) as LoopFind<APIMessageResponse>;
     const initialMessage = value
-      ? { ...value, seen_by: [...value?.seen_by] }
-      : null;
+      ? { ...value, seen_by: [...value.seen_by] }
+      : (null as APIMessageResponse | null); // attempt to fix 'object inextensible bug' by copying
 
     if (payload.data?.length === 1) {
       switch (payload.pipe) {

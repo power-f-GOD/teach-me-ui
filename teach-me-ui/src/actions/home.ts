@@ -1,28 +1,17 @@
 import {
   ReduxAction,
-  // REACT_TO_POST,
-  UPDATE_REPOST,
-  UPDATE_POST,
   MAKE_REPOST_REJECTED,
   MAKE_REPOST_RESOLVED,
   MAKE_REPOST_STARTED,
-  REPLY_TO_POST,
-  // MAKE_POST,
   SUBMIT_POST,
-  SEND_REPLY_TO_SERVER,
   PostStateProps,
-  // ReactPostState,
   FetchPostsState,
   MakeRepostState,
   apiBaseURL as baseURL,
   UserData,
-  SocketProps,
-  PostReactionResult,
-  RepostResult,
-  // Reaction,
-  ReplyState,
+  SendReplyProps,
   CREATE_POST,
-  Post,
+  PostContent,
   FetchState,
   SET_POSTS,
   ReduxActionV2,
@@ -48,42 +37,7 @@ import {
 import axios from 'axios';
 import { pingUser } from './notifications';
 
-export const replyToPost = (payload: ReplyState) => {
-  return {
-    type: REPLY_TO_POST,
-    payload
-  };
-};
-
-export const sendReplyToServer = (payload: SocketProps) => (
-  dispatch: Function
-) => {
-  checkNetworkStatusWhilstPend({
-    name: 'replyToPost',
-    func: replyToPost
-  });
-
-  dispatch(
-    replyToPost({
-      status: 'pending'
-    })
-  );
-  const socket: WebSocket = getState().webSocket as WebSocket;
-  socket.send(JSON.stringify({ ...payload }));
-  return {
-    type: SEND_REPLY_TO_SERVER
-  };
-};
-
-export const updatePost = (payload: PostReactionResult): ReduxAction => {
-  return { type: UPDATE_POST, payload };
-};
-
-export const updateRepostData = (payload: RepostResult): ReduxAction => {
-  return { type: UPDATE_REPOST, payload };
-};
-
-export const makeRepost = (payload: SocketProps) => (dispatch: Function) => {
+export const makeRepost = (payload: SendReplyProps) => (dispatch: Function) => {
   dispatch(makeRepostStarted());
 
   const socket = getState().webSocket as WebSocket;
@@ -176,7 +130,7 @@ export const requestCreatePost = ({
   post,
   media
 }: {
-  post: Post;
+  post: PostContent;
   media: Array<string>;
 }) => (dispatch: Function) => {
   dispatch(
@@ -317,7 +271,7 @@ export const posts = (_payload: FetchState<PostStateProps[], number>) => {
       data: [...posts.data, ...(_payload.data ?? [])],
       extra: _payload.extra ?? posts.extra
     };
-  } else if (updateFromPipe) {
+  } else {
     const data = _payload.data![0];
     let { value: initialPost, index: postIndex } = loopThru(
       posts.data ?? [],

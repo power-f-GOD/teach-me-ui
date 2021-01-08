@@ -8,18 +8,18 @@ import Col from 'react-bootstrap/Col';
 
 import Box from '@material-ui/core/Box';
 
-import HomeRightPane from './Home/RightPane';
-import Post from './Home/MiddlePane/Post';
-import Loader from '../shared/Loader';
+import HomeRightPane from './RightPane';
+import Post from './MiddlePane/Post';
+import Loader from '../../shared/Loader';
 
 import { connect } from 'react-redux';
 
-import { fetchReplies, fetchPost } from '../../actions';
+import { fetchReplies, fetchPost } from '../../../actions';
 
 import { Redirect } from 'react-router-dom';
 
-import { dispatch } from '../../functions';
-import { PostStateProps, FetchState } from '../../constants';
+import { dispatch } from '../../../functions';
+import { PostStateProps, FetchState } from '../../../constants';
 
 const PostPage = (props: {
   match: any;

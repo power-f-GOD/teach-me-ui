@@ -4,60 +4,10 @@ import { Link } from 'react-router-dom';
 
 import SchoolIcon from '@material-ui/icons/School';
 
-import Box from '@material-ui/core/Box';
-
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import { UserData, FetchState } from '../../../../constants';
-
-import { userDeviceIsMobile } from '../../../../index';
-
-const Recommendations = ({
-  recommendations: { status, data }
-}: {
-  recommendations: FetchState<UserData[]>;
-}) => {
-  let _recommendations = [...data];
-
-  _recommendations = [..._recommendations].concat(
-    _recommendations.length && _recommendations.length < 3
-      ? [null as any, null]
-      : []
-  );
-
-  return (
-    <>
-      {status !== 'pending' && _recommendations.length > 0 && (
-        <>
-          <Box
-            component='h3'
-            className='font-bold theme-tertiary-darker recommendations-heading'>
-            Colleauges you may know
-          </Box>
-          <Box
-            className='recommendations'
-            style={{
-              gridTemplateColumns: `repeat(${_recommendations.length}, 12rem)`,
-              columnGap: userDeviceIsMobile ? '.5rem' : '.75rem'
-            }}>
-            {_recommendations.map((recommendation, i) =>
-              recommendation ? (
-                <Recommendation
-                  {...recommendation}
-                  key={recommendation.id}
-                  displayName={`${recommendation.first_name} ${recommendation.last_name}`}
-                />
-              ) : (
-                <Box className='recommendation null' key={i}></Box>
-              )
-            )}
-          </Box>
-        </>
-      )}
-    </>
-  );
-};
+import { UserData } from '../../../../../constants';
 
 const Recommendation = (props: UserData) => {
   const {
@@ -108,4 +58,4 @@ const Recommendation = (props: UserData) => {
   );
 };
 
-export default Recommendations;
+export default Recommendation;

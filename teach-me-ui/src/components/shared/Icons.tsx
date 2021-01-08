@@ -1,4 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
+
+export const FAIcon = (props: {
+  className: string;
+  color?: string;
+  fontSize?: string;
+  variant?: 'solid' | 'outlined';
+}) => {
+  const { className, color, fontSize, variant } = props;
+
+  return (
+    <i
+      className={`${variant === 'outlined' ? 'far' : 'fas'} ${className} icon`}
+      style={{ color, fontSize }}></i>
+  );
+};
 
 export const RepostIcon = () => {
   return (

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
+import { connect } from 'react-redux';
 
 import Container from 'react-bootstrap/Container';
 
@@ -9,14 +10,13 @@ import Recommendations from './Recommendations';
 import {
   PostStateProps,
   UserData,
-  SocketProps,
+  SendReplyProps,
   AuthState,
   FetchState
 } from '../../../../constants';
 
 import { getState, dispatch } from '../../../../functions';
 
-import { connect } from 'react-redux';
 import { getPosts, getRecommendations } from '../../../../actions';
 
 interface HomeMiddlePaneProps {
@@ -68,7 +68,7 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
         const socket = getState().webSocket as WebSocket;
         entries.forEach((entry) => {
           if (entry.isIntersecting && entry.target.id) {
-            const data: SocketProps = {
+            const data: SendReplyProps = {
               pipe: 'POST_INTERACTION',
               post_id: entry.target.id,
               interaction: 'SEEN'

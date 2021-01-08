@@ -1,20 +1,10 @@
-import { sendReplyToServer, displaySnackbar } from '../actions';
+import { displaySnackbar } from '../actions';
 
 import Axios from 'axios';
 
 import { dispatch, getState } from './utils';
 
-import { Post, apiBaseURL as baseURL, UserData } from '../constants';
-
-export const replyToPostFn = async (id: string, reply: Post) => {
-  await dispatch(
-    sendReplyToServer({
-      ...reply,
-      pipe: 'POST_REPLY',
-      post_id: id
-    })
-  );
-};
+import { apiBaseURL as baseURL, UserData } from '../constants';
 
 export const fetchMentionsFn = (value: string) => {
   const token = (getState().userData as UserData).token;

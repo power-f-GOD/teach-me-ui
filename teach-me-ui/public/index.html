@@ -15,6 +15,15 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,600,700,800,900|Audiowide&display=swap"
     />
+
+    <script>
+      setTimeout(function () {
+        document.head.insertAdjacentHTML(
+          'afterbegin',
+          '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />'
+        );
+      }, 100);
+    </script>
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.

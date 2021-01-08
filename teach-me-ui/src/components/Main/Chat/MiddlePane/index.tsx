@@ -29,7 +29,7 @@ import {
 import { SelectedMessageValue } from '../crumbs';
 import { MiddlePaneHeader } from './Header';
 import { ScrollView } from './ScrollView';
-import MessageBox from './Footer';
+import MessageBox from './MessageBox';
 import { Memoize } from '..';
 
 export interface ChatMiddlePaneProps {

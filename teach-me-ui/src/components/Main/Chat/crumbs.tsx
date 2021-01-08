@@ -34,7 +34,8 @@ import {
 } from '../../../functions/utils';
 import { conversation, conversations } from '../../../actions/chat';
 import { stickyChatDateRef } from './MiddlePane/ScrollView';
-import { messageBoxRef } from './MiddlePane/Footer';
+import { messageBoxRef } from './MiddlePane/MessageBox';
+import { userDeviceIsMobile } from '../../..';
 
 export interface SelectedMessageValue extends Omit<APIMessageResponse, 'type'> {
   type: 'incoming' | 'outgoing';
@@ -134,13 +135,14 @@ export const Message = (props: {
       });
 
       //this is for to add the chat-last-message slide-in animation and reset the conversation new_message prop after the animation has ended;
+
       if (!/chat-last-message/.test(messageEl.className)) {
         const isNewMessage =
-          message.timestamp_id ||
+          !!message.timestamp_id ||
           getState().conversation.new_message?.id === message.id;
 
+        // console.log('is last message:', isNewMessage, getState().conversation.new_message);
         if (isNewMessage) {
-          // console.log('is last message');
           messageEl.classList.add('chat-last-message');
         }
 
@@ -161,6 +163,8 @@ export const Message = (props: {
       }
     }
   }, [
+    userId,
+    message.sender_id,
     message.timestamp_id,
     message.id,
     convoId,
@@ -478,14 +482,14 @@ export const ChatDate = ({
   }, [dateStamp, chatDateSticky, pxRatio, scrollView]);
 
   useEffect(() => {
-    if (scrollView && chatDateWrapperRef.current) {
+    if (scrollView && chatDateWrapperRef.current && !userDeviceIsMobile) {
       scrollView.addEventListener('scroll', stickDate);
       chatDateSticky.style.opacity =
         scrollView!.scrollTop < 78 + pxRatio ? 0 : 1;
     }
 
     return () => {
-      if (scrollView) {
+      if (scrollView && !userDeviceIsMobile) {
         scrollView.removeEventListener('scroll', stickDate);
       }
     };
@@ -494,6 +498,8 @@ export const ChatDate = ({
   if (isNaN(timestamp)) {
     return <>{timestamp}</>;
   }
+
+  
 
   return (
     <div

@@ -3,37 +3,34 @@ import React, {
   useRef,
   useEffect,
   ChangeEvent,
+  useCallback,
   FormEvent
 } from 'react';
-
 import { connect } from 'react-redux';
+
+import Row from 'react-bootstrap/Row';
+import { Button, Avatar } from '@material-ui/core';
+import { TextField } from '@material-ui/core';
+
+import { UserData } from '../../../../../constants/interfaces';
 
 import {
   delay,
-  replyToPostFn,
-  getCharacterSequenceFromText
-  // preventEnterNewLine
-} from '../../../../functions';
-
-import { Reply, UserData } from '../../../../constants/interfaces';
-
-import Row from 'react-bootstrap/Row';
-
-import { TextField } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import Avatar from '@material-ui/core/Avatar';
-
-import { pingUser } from '../../../../actions';
+  getCharacterSequenceFromText,
+  emitUserOnlineStatus
+} from '../../../../../functions';
+import { pingUser } from '../../../../../actions';
 
 interface CreateReplyProps {
   post_id: string;
   className: string;
   replyToPost?: Function;
   userData?: UserData;
+  webSocket?: WebSocket;
 }
 
-const CreateReply: React.FC<CreateReplyProps> = (props) => {
-  const { post_id, className, userData } = props;
+const CreateReply = (props: CreateReplyProps) => {
+  const { post_id, className, userData, webSocket: socket } = props;
   const { displayName, profile_photo } = userData || {};
   const isOpen = /open/.test(className);
   const openTriggeredByButton = /triggered.*button/.test(className);
@@ -42,45 +39,52 @@ const CreateReply: React.FC<CreateReplyProps> = (props) => {
   const commentFormRef = useRef<HTMLInputElement | any>(null);
   const commentContainerRef = useRef<HTMLInputElement | any>(null);
 
-  const [state, setState] = useState<{ reply: Reply }>({
-    reply: {
-      text: '',
-      mentions: [],
-      hashtags: [],
-      media: []
-    }
-  });
+  const [text, setText] = useState<string>('');
+  const [resetHeight, setResetHeight] = useState<boolean>(false);
 
-  const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    const reply = (e.target as HTMLTextAreaElement)?.value;
-    setState({
-      ...state,
-      reply: {
-        text: reply,
-        mentions: getCharacterSequenceFromText(reply, '@'),
-        hashtags: getCharacterSequenceFromText(reply, '#'),
-        media: []
-      }
-    });
-  };
+  const onChange = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
+    const text = (e.target as HTMLTextAreaElement)?.value;
 
-  const submitReply = (e: FormEvent) => {
-    e.preventDefault();
-    state.reply.text &&
-      replyToPostFn(post_id!, state.reply).then(() => {
-        state.reply.mentions.length && pingUser(state.reply.mentions);
-      });
-    inputRef!.current!.value = '';
-    setState({
-      ...state,
-      reply: {
-        mentions: [],
-        hashtags: [],
-        text: '',
-        media: []
+    setText(text.trim());
+  }, []);
+
+  const submitReply = useCallback(
+    (e: FormEvent) => {
+      e.preventDefault();
+
+      if (!text) return;
+
+      const online = navigator.onLine;
+      const mentions = getCharacterSequenceFromText(text, '@');
+      const payload = {
+        text,
+        mentions,
+        hashtags: getCharacterSequenceFromText(text, '#'),
+        pipe: 'POST_REPLY',
+        post_id
+      };
+
+      if (socket && socket.readyState === socket.OPEN && online) {
+        socket?.send(JSON.stringify({ ...payload }));
+        inputRef!.current!.value = '';
+        setText('');
+        setResetHeight(true);
+        delay(50).then(() => setResetHeight(false));
+
+        if (mentions?.length) pingUser(mentions);
+      } else {
+        emitUserOnlineStatus(online, !online, {
+          open: true,
+          message: online
+            ? "Something went wrong. Seems you are/were offline. We'll try to reconnect then you can try again."
+            : null,
+          severity: 'info',
+          autoHide: false
+        });
       }
-    });
-  };
+    },
+    [text, post_id, socket]
+  );
 
   useEffect(() => {
     const commentForm = commentFormRef.current as HTMLElement;
@@ -106,13 +110,13 @@ const CreateReply: React.FC<CreateReplyProps> = (props) => {
         }
       };
 
-      if (isOpen && openTriggeredByButton) {
+      if (isOpen && openTriggeredByButton && !resetHeight) {
         delay(300).then(() => input.focus());
       } else {
         input.blur();
       }
     }
-  }, [isOpen, openTriggeredByButton]);
+  }, [isOpen, openTriggeredByButton, resetHeight]);
 
   return (
     <form
@@ -129,7 +133,7 @@ const CreateReply: React.FC<CreateReplyProps> = (props) => {
         <TextField
           onChange={onChange}
           className='comment-field'
-          placeholder='Write a reply...'
+          placeholder='Say something about this post...'
           multiline
           rows={1}
           rowsMax={6}
@@ -145,7 +149,7 @@ const CreateReply: React.FC<CreateReplyProps> = (props) => {
         <Button
           variant='contained'
           onClick={submitReply}
-          disabled={!state.reply.text.trim() || !isOpen}
+          disabled={!text || !isOpen}
           className='comment-button btn-secondary contained'>
           Reply
         </Button>
@@ -154,8 +158,9 @@ const CreateReply: React.FC<CreateReplyProps> = (props) => {
   );
 };
 
-const mapStateToProps = ({ userData }: any) => ({
-  userData
-});
-
-export default connect(mapStateToProps)(CreateReply);
+export default connect(
+  ({ userData, webSocket }: { userData: UserData; webSocket: WebSocket }) => ({
+    userData,
+    webSocket
+  })
+)(CreateReply);

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, createRef } from 'react';
 
-import * as api from '../../actions/profile';
 import { Redirect, Link, Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -21,18 +20,19 @@ import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined'
 import SchoolOutlinedIcon from '@material-ui/icons/SchoolOutlined';
 import Button from '@material-ui/core/Button';
 
-import Img from '../shared/Img';
-import ColleagueView from '../crumbs/ColleagueView';
-import ProfileFeeds from '../crumbs/ProfileFeeds';
+import Img from '../../shared/Img';
+import ColleagueView from '../../crumbs/ColleagueView';
+import ProfileFeeds from '../../crumbs/ProfileFeeds';
 import {
   UserData,
   DeepProfileProps,
   EDIT_PROFILE,
   SELECT_PHOTO
-} from '../../constants';
-import { dispatch, cleanUp, displayModal } from '../../functions';
-import { getProfileData } from '../../actions';
-import { getConversations } from '../../actions/chat';
+} from '../../../constants';
+import { dispatch, cleanUp, displayModal } from '../../../functions';
+import { getProfileData } from '../../../actions';
+import { getConversations } from '../../../actions/chat';
+import * as api from '../../../actions/profile';
 // import Loader from '../crumbs/Loader';
 /**
  * Please, Do not delete any commented code; You can either uncomment them to use them or leave them as they are
@@ -89,7 +89,7 @@ const Profile = (props: any) => {
   } = props;
   const data: UserData = profileData.data[0];
   console.log(data);
-  
+
   const { auth } = props;
   const { isAuthenticated } = auth;
   firstname = data.first_name || '';
@@ -229,7 +229,6 @@ const Profile = (props: any) => {
   };
 
   console.log(basicInfo, academicInfo);
-  
 
   return (
     <Box className={`Profile ${selfView ? 'self-view' : ''} fade-in pb-3`}>
@@ -459,8 +458,11 @@ const Profile = (props: any) => {
               className='cover-button'
               color='default'
               onClick={openCoverPhotoEditModal}>
-              <PhotoCameraIcon fontSize='inherit' className='profile-photo-change'/>{' '}
-                <span className='edit-cover-photo'>Edit Cover Photo</span>
+              <PhotoCameraIcon
+                fontSize='inherit'
+                className='profile-photo-change'
+              />{' '}
+              <span className='edit-cover-photo'>Edit Cover Photo</span>
             </Button>
           </div>
         )}
