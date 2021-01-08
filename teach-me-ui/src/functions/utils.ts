@@ -675,6 +675,7 @@ export const getCharacterSequenceFromText = (text: string, char: string) => {
         text.length > 1 &&
         !text.substring(1).match(/[^A-Za-z0-9_.,?!]/)
     );
+    
   for (let item of array) {
     if (char === '@') {
       finArray.push(

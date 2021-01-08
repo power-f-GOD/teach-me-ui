@@ -122,6 +122,13 @@ body {
   background-image: linear-gradient(0deg, $theme-primary-v3, $theme-primary-v4);
 }
 
+.fa,
+.far,
+.fas {
+  font-family: 'Font Awesome 5 Free' !important;
+  transition: 0.3s;
+}
+
 img {
   max-width: 100%;
   height: auto;
@@ -681,7 +688,7 @@ div {
   ::-webkit-scrollbar-track {
     border-radius: 0.4375rem;
     width: 0.9375rem;
-    margin-bottom: 3.5rem ;
+    margin-bottom: 3.5rem;
   }
 
   /* Handle */

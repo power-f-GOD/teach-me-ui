@@ -28,10 +28,7 @@ import {
   SelectedMessageValue,
   NewMessageBar
 } from '../crumbs';
-import {
-  ChatMiddlePaneProps,
-  messagesStatusInfo
-} from '.';
+import { ChatMiddlePaneProps, messagesStatusInfo } from '.';
 import { Memoize } from '..';
 
 export const ScrollViewContext = createContext(
@@ -256,16 +253,18 @@ export const ScrollView = (props: {
       as='section'
       className={`chat-scroll-view custom-scroll-bar grey-scrollbar`}
       onScroll={handleScrollViewScroll}>
-      <Box
-        id='chat-date-sticky'
-        className={`chat-date-wrapper text-center ${
-          convoMessages.length ? 'show' : 'hide'
-        }`}>
-        <Container
-          as='span'
-          className='chat-date d-inline-block w-auto'
-          ref={stickyChatDateRef}></Container>
-      </Box>
+      {!userDeviceIsMobile && (
+        <Box
+          id='chat-date-sticky'
+          className={`chat-date-wrapper text-center ${
+            convoMessages.length ? 'show' : 'hide'
+          }`}>
+          <Container
+            as='span'
+            className='chat-date d-inline-block w-auto'
+            ref={stickyChatDateRef}></Container>
+        </Box>
+      )}
 
       <Box
         className={`more-messages-loader theme-tertiary-darker mt-auto ${

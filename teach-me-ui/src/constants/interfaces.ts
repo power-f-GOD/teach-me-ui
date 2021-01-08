@@ -138,7 +138,7 @@ interface PostProps {
   sec_type?: 'REPOST' | 'REPLY';
 }
 
-export interface SocketProps extends SocketStruct {
+export interface SendReplyProps extends SocketStruct {
   post_id: string;
   reaction?: Reaction;
   interaction?: 'SEEN' | 'ENGAGED';
@@ -419,6 +419,14 @@ export interface ConversationInfo
   conversationId?: string;
 }
 
+// export interface PostSocketMessageResponse
+//   extends Partial<Omit<APIMessageResponse, 'seen_by' | 'delivered_to'>> {
+//   status: OnlineStatus;
+//   user_id: string;
+//   seen_by: string;
+//   delivered_to: string;
+// }
+
 export interface ChatSocketMessageResponse
   extends Partial<Omit<APIMessageResponse, 'seen_by' | 'delivered_to'>> {
   status: OnlineStatus;
@@ -516,21 +524,14 @@ export interface MentionData extends ColleagueData {
   [index: string]: any;
 }
 
-export interface Post {
+export interface PostContent {
   text: string;
   media?: Array<string>;
   mentions?: Array<string>;
   hashtags?: Array<string>;
 }
 
-export interface Reply {
-  text: string;
-  media: Array<string>;
-  mentions: Array<string>;
-  hashtags: Array<string>;
-}
-
-export interface ReplyProps extends Post {
+export interface ReplyProps extends PostContent {
   pipe: 'POST_REPLY';
   post_id: string;
 }
@@ -551,7 +552,7 @@ export interface ReplyState {
 }
 
 export interface PostEditorState {
-  post: Post;
+  post: PostContent;
   [key: string]: any;
 }
 

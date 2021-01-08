@@ -16,7 +16,6 @@ export const FETCHED_POST = 'FETCHED_POST';
 export const UPDATE_POST = 'UPDATE_POST';
 export const UPDATE_REPOST = 'UPDATE_REPOST';
 export const REPLY_TO_POST = 'REPLY_TO_POST';
-export const SEND_REPLY_TO_SERVER = 'SEND_REPLY_TO_SERVER';
 export const SUBMIT_POST = 'SUBMIT_POST';
 export const MAKE_POST = 'MAKE_POST';
 export const GET_TRENDS_STARTED = 'GET_TRENDS_STARTED';

@@ -10,13 +10,13 @@ import SearchIcon from '@material-ui/icons/Search';
 import CloseIcon from '@material-ui/icons/Close';
 import Button from '@material-ui/core/Button';
 
-import Question from '../crumbs/Question';
+import Question from '../../crumbs/Question';
 import {
   CREATE_QUESTION
-} from '../../constants';
+} from '../../../constants';
 import { 
   displayModal
-} from '../../functions';
+} from '../../../functions';
 
 const mockQuestions: Array<Object> = [
   {

@@ -5,14 +5,14 @@ import Row from 'react-bootstrap/Row';
 import Container from '@material-ui/core/Container';
 import Avatar from '@material-ui/core/Avatar';
 
-import Answer from '../crumbs/Answer';
+import Answer from '../../crumbs/Answer';
 
 import {
   displayModal
-} from '../../functions';
+} from '../../../functions';
 import {
   CREATE_ANSWER
-} from '../../constants';
+} from '../../../constants';
 
 const MiddlePane = (props: any) => {
   const tags: string[] = ['Machine-Learning', 'Python', 'Tensorflow'];

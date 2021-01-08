@@ -5,7 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import MiddlePane from './QuestionPage.MiddlePane';
-import HomeRightPane from './Home/RightPane';
+import HomeRightPane from '../Home/RightPane';
 
 const Questions = (props: any) => {
   return (

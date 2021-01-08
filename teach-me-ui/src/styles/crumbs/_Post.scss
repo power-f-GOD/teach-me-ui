@@ -10,7 +10,7 @@
   position: relative;
   font-size: 1rem;
   border-radius: 0.75rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
 
   &.remove-skeleton-animation {
     [class*='skeletonStyles'] {
@@ -107,7 +107,7 @@
   }
 
   .post-footer {
-    padding: 0.35em 0;
+    padding: 0.5em 0;
     width: calc(100% - 1.5em);
     margin-left: 0.75em;
     border-top: 0.0625em solid #eee;
@@ -126,36 +126,18 @@
 
       &:hover,
       &:focus {
-        background-color: #eee;
-
-        path {
-          stroke: transparent;
-        }
+        background-color: rgba(0, 0, 0, 0.11);
       }
-    }
 
-    &:first-child,
-    &:nth-child(2) {
-      svg {
-        font-size: 1.85em;
-        margin: 0 0 0 -0.25em;
+      .icon {
+        font-size: 1.15em;
+        margin-right: 0.25rem;
+        color: #888;
       }
     }
 
     &:nth-child(2) {
       margin-left: -0.35em;
-    }
-
-    &:last-child {
-      path {
-        stroke: transparent;
-      }
-    }
-
-    svg {
-      font-size: 1.35em;
-      margin-right: 0.25em;
-      color: $theme-tertiary-v4;
     }
   }
 }
@@ -176,7 +158,7 @@
   }
 
   .comment-container {
-    padding: 0.35em 0;
+    padding: 0.5em 0;
     align-items: center;
     border-top: 0.0625em solid #eee;
 

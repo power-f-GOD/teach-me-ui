@@ -34,7 +34,7 @@ export const getNotificationsRequest = (date: number) => (
     name: 'getNotifications',
     func: getNotifications
   });
-  dispatch(getNotifications({ status: 'pending'}));
+  dispatch(getNotifications({ status: 'pending' }));
 
   // axios({
   //   url: `/notifications?offset=${date}`,
@@ -47,12 +47,12 @@ export const getNotificationsRequest = (date: number) => (
   // })
   http
     .get(`/notifications?offset=${date}`, true)
-    .then((response : any) => {
+    .then((response: any) => {
       const { error, data } = response;
       if (!error) {
         const { notifications, entities } = data as {
           notifications: Array<string>;
-          entities: any
+          entities: any;
         };
         dispatch(
           getNotifications({
@@ -85,6 +85,7 @@ export const pingUser = (
   data?: { type?: 'NEW_CONVERSATION' }
 ) => {
   const socket: WebSocket = getState().webSocket as WebSocket;
+
   socket.send(
     JSON.stringify({
       users: users,
