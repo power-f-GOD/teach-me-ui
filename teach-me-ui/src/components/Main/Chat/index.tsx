@@ -11,7 +11,7 @@ import {
   getConversationMessages,
   conversation,
   conversationsMessages
-} from '../../../actions/chat';
+} from '../../../actions/main/chat';
 import {
   ChatState,
   UserData,

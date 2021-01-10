@@ -43,9 +43,9 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
     recommendations,
     userData
   } = props;
-  const isFetching = /(updat|fetch|recycl)(e|ing)?/i.test(
-    postsStatusText || ''
-  );
+  const isFetching =
+    /(updat|fetch|recycl)(e|ing)?/i.test(postsStatusText || '') ||
+    postStatus === 'pending';
   const username = userData.username || '';
   let profileUsername = profile.username || '';
   // here is where the current user profile check is made to render the views accordingly
@@ -128,12 +128,12 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
             (i === 2 || (i > 0 && i % 15 === 0)) && (
               <Recommendations recommendations={recommendations} />
             );
-          const nReposts = post.reposts?.length;
+          const nReposts = post.colleague_reposts?.length;
 
           return (
             <React.Fragment key={i}>
               {nReposts === 1 ? (
-                <Post {...post.reposts[0]} quote={{ ...post }} />
+                <Post {...post.colleague_reposts[0]} quote={{ ...post }} />
               ) : (
                 <Post {...post} />
               )}

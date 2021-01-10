@@ -31,7 +31,7 @@ import {
 } from '../../../constants';
 import { dispatch, cleanUp, displayModal } from '../../../functions';
 import { getProfileData } from '../../../actions';
-import { getConversations } from '../../../actions/chat';
+import { getConversations } from '../../../actions/main/chat';
 import * as api from '../../../actions/profile';
 // import Loader from '../crumbs/Loader';
 /**

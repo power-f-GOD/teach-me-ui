@@ -1,6 +1,6 @@
 import { cleanup } from '@testing-library/react';
 
-import * as actions from '../../actions/home';
+import * as actions from '../../actions/main/home';
 
 import {
   ReplyState,

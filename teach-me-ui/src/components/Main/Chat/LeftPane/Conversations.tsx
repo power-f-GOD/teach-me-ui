@@ -12,7 +12,7 @@ import {
   chatState,
   conversationMessages,
   conversationsMessages
-} from '../../../../actions/chat';
+} from '../../../../actions/main/chat';
 import { dispatch, delay } from '../../../../functions/utils';
 import {
   ChatState,
@@ -25,7 +25,7 @@ import {
   getConversationMessages,
   conversation,
   conversations
-} from '../../../../actions/chat';
+} from '../../../../actions/main/chat';
 import { ChatTimestamp, ChatStatus } from '../crumbs';
 import { getState } from '../../../../appStore';
 import { scrollViewRef } from '../MiddlePane/ScrollView';

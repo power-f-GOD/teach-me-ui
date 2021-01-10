@@ -34,7 +34,10 @@ import {
   triggerNotificationSound
 } from '../../actions/misc';
 import activateSocketRouters from '../../socket.router';
-import { getConversations, getConversationsMessages } from '../../actions/chat';
+import {
+  getConversations,
+  getConversationsMessages
+} from '../../actions/main/chat';
 import {
   APIConversationResponse,
   StatusPropsState,
@@ -65,7 +68,7 @@ const Main = (props: MainProps) => {
     convosData,
     notificationSound
   } = props;
-  const { play, isPlaying, toneName } = notificationSound;
+  const { play, toneName, hasEnded } = notificationSound;
   const notifSoundSrc = `/tones/${toneName}.ogg`;
   const unopened_count = convosData?.reduce(
     (a: number, conversation: APIConversationResponse) =>
@@ -82,10 +85,22 @@ const Main = (props: MainProps) => {
         dispatch(triggerNotificationSound({ isReady: true }));
       };
       notifSoundEl.onplaying = () => {
-        dispatch(triggerNotificationSound({ isPlaying: true, play: true }));
+        dispatch(
+          triggerNotificationSound({
+            isPlaying: true,
+            play: true,
+            hasEnded: false
+          })
+        );
       };
       notifSoundEl.onended = () => {
-        dispatch(triggerNotificationSound({ isPlaying: false, play: false }));
+        dispatch(
+          triggerNotificationSound({
+            isPlaying: false,
+            play: false,
+            hasEnded: true
+          })
+        );
       };
       notifSoundEl.onerror = () => {
         notifSoundEl!.src = notifSoundEl!.src.replace('ogg', 'mp3');
@@ -108,7 +123,8 @@ const Main = (props: MainProps) => {
 
     if (notifSoundEl) {
       if (play) {
-        if (isPlaying) {
+        if (!hasEnded) {
+          console.log('play:', play, 'hasEnded:', hasEnded);
           stopSound();
         }
 
@@ -117,7 +133,7 @@ const Main = (props: MainProps) => {
         stopSound();
       }
     }
-  }, [play, isPlaying]);
+  }, [play, hasEnded]);
 
   useEffect(() => {
     dispatch(initWebSocket(userToken as string));

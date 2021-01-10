@@ -1,22 +1,47 @@
-import { dispatch } from '../functions';
+import { dispatch, getState, promisedDispatch } from '../functions';
 
 import {
   makeRepostResolved,
   makeRepostRejected,
   createPost,
-  posts
+  posts,
+  triggerNotificationSound
 } from '../actions';
 
 import { displayModal } from '../functions';
 
-import { SocketPipe } from '../constants';
+import {
+  SocketPipe,
+  POST_REACTION,
+  POST_REPLY,
+  NotificationSoundState,
+  TONE_NAME__OPEN_ENDED
+} from '../constants';
 
 export default function post(data: any) {
-  // console.log(data);
+  const { notificationSound } = getState() as {
+    notificationSound: NotificationSoundState;
+  };
+  const toneName: NotificationSoundState['toneName'] = TONE_NAME__OPEN_ENDED;
+
   try {
     switch (data.pipe as SocketPipe) {
-      case 'POST_REACTION':
+      case POST_REACTION:
+      case POST_REPLY:
+        // console.log(data);
         dispatch(posts({ data: [{ ...data }] }));
+
+        if (data.pipe === POST_REPLY) {
+          if (notificationSound.isPlaying) {
+            promisedDispatch(
+              triggerNotificationSound({ play: false, isPlaying: false })
+            ).then(() => {
+              dispatch(triggerNotificationSound({ play: true, toneName }));
+            });
+          } else {
+            dispatch(triggerNotificationSound({ play: true, toneName }));
+          }
+        }
         break;
       case 'POST_REPOST':
         if (!data.error) {
@@ -37,26 +62,23 @@ export default function post(data: any) {
           dispatch(makeRepostRejected({ error: true, message: data.message }));
         }
         break;
-      case 'POST_REPLY':
-       
-        // if (!data.error) {
-        //   dispatch(
-        //     replyToPost({
-        //       status: 'fulfilled',
-        //       err: false,
-        //       data
-        //     })
-        //   );
-        // } else {
-        //   dispatch(
-        //     replyToPost({
-        //       status: 'fulfilled',
-        //       err: true,
-        //       data
-        //     })
-        //   );
-        // }
-        break;
+      // if (!data.error) {
+      //   dispatch(
+      //     replyToPost({
+      //       status: 'fulfilled',
+      //       err: false,
+      //       data
+      //     })
+      //   );
+      // } else {
+      //   dispatch(
+      //     replyToPost({
+      //       status: 'fulfilled',
+      //       err: true,
+      //       data
+      //     })
+      //   );
+      // }
       default:
         break;
     }

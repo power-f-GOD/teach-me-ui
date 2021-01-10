@@ -8,6 +8,7 @@ export interface NotificationSoundState {
   play?: boolean;
   isPlaying?: boolean;
   isReady?: boolean;
+  hasEnded?: boolean;
   toneType?:
     | 'INCOMING_MESSAGE'
     | 'OUTGOING_MESSAGE'
@@ -19,7 +20,10 @@ export interface NotificationSoundState {
     | 'open-ended-563'
     | 'piece-of-cake-611'
     | 'quite-impressed-565'
-    | 'slow-spring-board-570';
+    | 'slow-spring-board-570'
+    | 'all-eyes-on-me-465'
+    | 'suppressed-437'
+    | 'just-like-that-404';
 }
 
 export interface HTTP {
@@ -83,8 +87,8 @@ export interface PostStateProps {
   pipe: SocketPipe;
   parent_id: string;
   reaction: Reaction;
-  replies: Partial<PostStateProps>[];
-  reposts: Partial<PostStateProps>[];
+  colleague_replies: Partial<PostStateProps>[];
+  colleague_reposts: Partial<PostStateProps>[];
   sender: {
     cover_photo: string;
     department: string;
@@ -97,13 +101,11 @@ export interface PostStateProps {
     profile_photo: string;
     username: string;
   };
+  parent: { id: string; reply_count: number };
   text: string;
   upvotes: number;
   sec_type?: 'REPOST' | 'REPLY';
   type?: 'post' | 'reply';
-  // child?: PostProps;
-  // _extra?: PostExtraProps;
-  // parent?: PostProps;
 }
 
 interface PostExtraProps {
@@ -111,31 +113,6 @@ interface PostExtraProps {
   colleague_id: string;
   colleague_name: string;
   colleague_username: string;
-}
-
-interface PostProps {
-  downvotes: number;
-  id: string;
-  media: any[];
-  posted_at: number;
-  reaction: Reaction;
-  replies: number;
-  reposts: number;
-  sender: {
-    cover_photo: string;
-    department: string;
-    first_name: string;
-    id: string;
-    last_name: string;
-    last_seen: number;
-    level: string;
-    online_status: OnlineStatus;
-    profile_photo: string;
-    username: string;
-  };
-  text: string;
-  upvotes: number;
-  sec_type?: 'REPOST' | 'REPLY';
 }
 
 export interface SendReplyProps extends SocketStruct {
@@ -541,7 +518,7 @@ export interface ReplyResult extends ReplyProps {
   sec_type: 'REPLY';
   id: string;
   text: string;
-  parent: PostProps;
+  parent: PostStateProps;
   action_count: number;
 }
 

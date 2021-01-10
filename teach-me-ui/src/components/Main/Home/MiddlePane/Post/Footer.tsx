@@ -31,9 +31,7 @@ const PostFooter = (props: PostCrumbs) => {
     anchorIsParent,
     isLoading
   } = props;
-  const [openCommentClassName, setOpenCommentClassName] = useState(
-    anchorIsParent ? 'open' : ''
-  );
+  const [openCommentClassName, setOpenCommentClassName] = useState('');
   const handleCommentClick = useCallback(() => {
     setOpenCommentClassName(
       (/open/.test(openCommentClassName) ? 'close' : 'open') +
@@ -45,7 +43,7 @@ const PostFooter = (props: PostCrumbs) => {
     return (
       <>
         <Row className='post-footer'>
-          <Col className='reaction-wrapper d-flex align-items-center  '>
+          <Col className='reaction-wrapper d-flex align-items-center'>
             <ReactButton
               id={id!}
               reaction={reaction === 'UPVOTE' ? reaction : null}
@@ -53,7 +51,7 @@ const PostFooter = (props: PostCrumbs) => {
               type='UPVOTE'
             />
           </Col>
-          <Col className='reaction-wrapper d-flex align-items-center justify-content-center'>
+          <Col className='reaction-wrapper d-flex align-items-center'>
             <ReactButton
               id={id!}
               reaction={reaction === 'DOWNVOTE' ? reaction : null}
@@ -62,7 +60,7 @@ const PostFooter = (props: PostCrumbs) => {
             />
           </Col>
           {openCreateRepostModal && repostMeta && (
-            <Col className='reaction-wrapper d-flex align-items-center justify-content-center'>
+            <Col className='reaction-wrapper d-flex align-items-center'>
               <Button
                 onClick={
                   openCreateRepostModal
@@ -77,13 +75,15 @@ const PostFooter = (props: PostCrumbs) => {
               </Button>
             </Col>
           )}
-          <Col className='reaction-wrapper d-flex align-items-center justify-content-end ml-auto'>
-            <Button
-              onClick={handleCommentClick}
-              className='d-flex align-items-center react-to-post justify-content-center'>
-              <FAIcon className='fa-comment-dots' />
-              <Box>{bigNumberFormat(reply_count!)}</Box>
-            </Button>
+          <Col className='reaction-wrapper d-flex align-items-center justify-content-end ml-auto mr-0'>
+            {anchorIsParent && (
+              <Button
+                onClick={handleCommentClick}
+                className='d-flex align-items-center react-to-post justify-content-center'>
+                <FAIcon className='fa-comment-dots' />
+                <Box>{bigNumberFormat(reply_count!)}</Box>
+              </Button>
+            )}
           </Col>
         </Row>
         <CreateReply post_id={id!} className={openCommentClassName} />

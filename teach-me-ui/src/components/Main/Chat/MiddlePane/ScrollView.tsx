@@ -20,7 +20,7 @@ import {
   FetchState
 } from '../../../../constants/interfaces';
 import { userDeviceIsMobile } from '../../../..';
-import { getConversationMessages } from '../../../../actions/chat';
+import { getConversationMessages } from '../../../../actions/main/chat';
 import { dispatch, interval } from '../../../../functions/utils';
 import {
   Message,

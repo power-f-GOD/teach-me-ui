@@ -1,5 +1,5 @@
 .Post {
-  box-shadow: 0 0.0625rem 0 #bbb, 0 0 0.125rem 0 #bbb;
+  box-shadow: 0 0.1rem 0 #bbb, 0 0 0.125rem 0 #bbb;
   overflow: hidden;
 }
 
@@ -115,14 +115,16 @@
   }
 
   .reaction-wrapper {
-    max-width: 4.75em;
+    max-width: 5.25em;
     padding: 0;
+    margin-right: 0.25rem;
 
     button {
       max-height: 2em;
+      width: auto;
       border-radius: 2em;
       font-size: 0.95em;
-      background-color: rgba(0, 0, 0, 0.05);
+      background-color: rgba(0, 0, 0, 0.06);
 
       &:hover,
       &:focus {
@@ -130,14 +132,10 @@
       }
 
       .icon {
-        font-size: 1.15em;
+        font-size: 1.1em;
         margin-right: 0.25rem;
         color: #888;
       }
-    }
-
-    &:nth-child(2) {
-      margin-left: -0.35em;
     }
   }
 }
@@ -147,7 +145,7 @@
   opacity: 0;
   transition: 0.3s, opacity 0.4s;
   overflow: hidden;
-  padding: 0 0.75rem;
+  padding: 0 0.75em;
 
   &.open {
     opacity: 1;
@@ -254,9 +252,11 @@
     }
   }
 
+  $bg: linear-gradient(to right, #f0f0f0, #fefefe);
+
   .display-name-wrapper {
     padding: 0.25em 0.5em;
-    background-color: #f0f0f0;
+    background: $bg;
     margin-left: 0.55em;
     border-radius: 0.75em 0.75em 0 0;
   }
@@ -265,7 +265,7 @@
     border-radius: 0 0 0.75em 0.75em;
     margin: 0 0 0.25em 3.25em;
     width: calc(100% - 3.25em);
-    background-color: #f0f0f0;
+    background: $bg;
 
     .text {
       padding: 0 0.5em 0.5em !important;
@@ -288,30 +288,54 @@
     margin-left: 3.25em !important;
     margin-top: -0.25em;
     border-top: none;
-    padding: 0.25rem 0;
+    padding: 0.35em 0;
+    padding-top: 0.15em;
     border-bottom: 0.0625em solid #eee;
   }
 
   .reaction-wrapper {
     max-width: 5em;
     padding: 0;
+
+    button {
+      background-color: transparent;
+
+      &:hover,
+      &:focus {
+        background-color: #f0f0f0;
+      }
+    }
   }
 
   .Comment {
-    padding: 0 0 0 2.85em;
+    padding: 0 0 0 3.25em !important;
+
+    .comment-avatar {
+      $size: 1.55em;
+
+      height: $size;
+      width: $size;
+    }
 
     .comment-field {
-      max-width: calc(100% - 8.5em);
+      max-width: calc(100% - 7.75em);
     }
 
     .comment-container {
-      padding: 0.35em 0;
+      padding: 0.3em 0;
       align-items: center;
       border-bottom: 0.0625em solid #eee;
 
       .MuiInputBase-root {
-        padding: 0.495em 0.5em;
+        font-size: 1em;
+        padding: 0.4em 0.5em;
       }
+    }
+
+    .comment-button {
+      max-height: 2.15em !important;
+      width: 4.75em !important;
+      min-height: unset !important;
     }
   }
 }

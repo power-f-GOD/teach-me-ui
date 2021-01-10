@@ -112,20 +112,17 @@ const PostReply = (props: Partial<PostStateProps>) => {
         )}
 
         {/* Post footer (reaction buttons) */}
-        {sender_name && (
-          <Box>
-            <PostFooter
-              id={id}
-              text={text}
-              upvote_count={upvote_count}
-              downvote_count={downvote_count}
-              reaction={reaction}
-              repost_count={repost_count}
-              reply_count={reply_count}
-              anchorIsParent={false}
-            />
-          </Box>
-        )}
+        <PostFooter
+          isLoading={!sender_name}
+          id={id}
+          text={text}
+          upvote_count={upvote_count}
+          downvote_count={downvote_count}
+          reaction={reaction}
+          repost_count={repost_count}
+          reply_count={reply_count}
+          anchorIsParent={false}
+        />
       </Box>
     </>
   );

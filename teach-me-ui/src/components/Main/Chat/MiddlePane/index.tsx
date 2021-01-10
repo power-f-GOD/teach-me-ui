@@ -16,7 +16,7 @@ import {
   OnlineStatus,
   FetchState
 } from '../../../../constants/interfaces';
-import { conversationMessages, conversations } from '../../../../actions/chat';
+import { conversationMessages, conversations } from '../../../../actions/main/chat';
 import {
   dispatch,
   emitUserOnlineStatus,
