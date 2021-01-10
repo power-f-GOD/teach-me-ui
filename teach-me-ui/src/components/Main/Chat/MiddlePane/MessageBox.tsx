@@ -16,7 +16,7 @@ import IconButton from '@material-ui/core/IconButton';
 
 import { APIMessageResponse } from '../../../../constants/interfaces';
 import { userDeviceIsMobile } from '../../../..';
-import { conversationMessages, conversation } from '../../../../actions/chat';
+import { conversationMessages, conversation } from '../../../../actions/main/chat';
 import {
   dispatch,
   delay,

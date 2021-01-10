@@ -36,7 +36,7 @@ import {
   conversations,
   conversation,
   conversationsMessages
-} from '../../../../actions/chat';
+} from '../../../../actions/main/chat';
 import {
   dispatch,
   delay,

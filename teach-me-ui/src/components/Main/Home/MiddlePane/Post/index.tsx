@@ -103,8 +103,8 @@ const Post: React.FC<
     text,
     date: posted_at,
     reaction,
-    reposts,
-    replies,
+    colleague_reposts: reposts,
+    colleague_replies: replies,
     reply_count,
     repost_count,
     upvote_count,
@@ -257,11 +257,12 @@ const Post: React.FC<
           reply_count={reply_count}
           repostMeta={others}
           isLoading={!reaction}
-          anchorIsParent={false}
+          anchorIsParent={true}
           openCreateRepostModal={openCreateRepostModal}
         />
 
-        {replies?.map((reply) => (
+        {/* Post replies */}
+        {replies?.slice(-2).map((reply) => (
           <PostReply {...reply} key={reply.id} />
         ))}
       </Box>

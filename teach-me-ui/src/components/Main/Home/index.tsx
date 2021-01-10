@@ -9,7 +9,7 @@ import HomeMiddlePane from './MiddlePane';
 import HomeLeftPane from './LeftPane';
 
 import { connect } from 'react-redux';
-import { getPosts } from '../../../actions/home';
+import { getPosts } from '../../../actions/main/home';
 import { dispatch, createObserver } from '../../../functions/utils';
 import { PostStateProps, FetchState } from '../../../constants/interfaces';
 
@@ -27,8 +27,12 @@ const Home = ({ posts }: { posts: FetchState<PostStateProps> }) => {
   }, [posts.status]);
 
   useEffect(() => {
-    const isFetching = /fetching/.test(posts.statusText || '');
     observedElement = observedElementRef.current;
+  }, []);
+
+  useEffect(() => {
+    const isFetching =
+      /fetching/.test(posts.statusText || '') || posts.status === 'pending';
 
     if (observedElement) {
       observer = createObserver(
@@ -57,10 +61,10 @@ const Home = ({ posts }: { posts: FetchState<PostStateProps> }) => {
     }
 
     return () => {
-      observer.unobserve(observedElement as Element);
+      observer?.unobserve(observedElement as Element);
       // window.scrollTo(0, 0);
     };
-  }, [posts.statusText, posts.err, posts.extra]);
+  }, [posts.statusText, posts.err, posts.status, posts.extra]);
 
   return (
     <>

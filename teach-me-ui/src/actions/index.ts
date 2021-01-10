@@ -2,7 +2,7 @@ export * from './validate';
 export * from './auth';
 export * from './misc';
 export * from './modals';
-export * from './home';
+export * from './main/home';
 export * from './colleague';
 export * from './notifications';
 export * from './question';

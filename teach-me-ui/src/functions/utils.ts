@@ -38,7 +38,7 @@ import {
   conversations,
   getConversationsMessages,
   conversationsMessages
-} from '../actions/chat';
+} from '../actions/main/chat';
 
 export const { dispatch, getState }: any = store;
 

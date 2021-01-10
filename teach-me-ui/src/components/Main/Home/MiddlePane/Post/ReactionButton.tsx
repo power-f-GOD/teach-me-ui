@@ -4,7 +4,10 @@ import { connect } from 'react-redux';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 
-import { bigNumberFormat, emitUserOnlineStatus } from '../../../../../functions';
+import {
+  bigNumberFormat,
+  emitUserOnlineStatus
+} from '../../../../../functions';
 import { POST_REACTION, Reaction } from '../../../../../constants';
 import { FAIcon } from '../../../../shared/Icons';
 

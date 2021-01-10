@@ -14,7 +14,7 @@ import { ONE_TO_ONE } from '../../../../constants/chat';
 import { APIConversationResponse } from '../../../../constants/interfaces';
 import { InfoCard } from '../../../shared/Cards';
 import { dispatch } from '../../../../functions';
-import { chatState } from '../../../../actions/chat';
+import { chatState } from '../../../../actions/main/chat';
 
 interface ChatRightPaneProps {
   convoType: string;

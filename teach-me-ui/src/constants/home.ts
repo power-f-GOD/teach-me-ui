@@ -37,6 +37,7 @@ export const GET_TRENDS = 'GET_TRENDS';
 export const SET_TRENDS = 'SET_TRENDS';
 
 export const POST_REACTION = 'POST_REACTION';
+export const POST_REPLY = 'POST_REPLY';
 
 export const fetchState = {
   status: 'settled',

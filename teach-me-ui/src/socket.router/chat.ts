@@ -20,7 +20,7 @@ import {
   conversations,
   conversation,
   conversationsMessages
-} from '../actions/chat';
+} from '../actions/main/chat';
 import { triggerNotificationSound } from '../actions';
 import {
   TONE_TYPE__INCOMING_MESSAGE,

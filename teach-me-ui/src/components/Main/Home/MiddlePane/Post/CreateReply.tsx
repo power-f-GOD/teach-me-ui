@@ -133,7 +133,7 @@ const CreateReply = (props: CreateReplyProps) => {
         <TextField
           onChange={onChange}
           className='comment-field'
-          placeholder='Say something about this post...'
+          placeholder='Say something...'
           multiline
           rows={1}
           rowsMax={6}
