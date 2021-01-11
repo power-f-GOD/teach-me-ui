@@ -47,7 +47,7 @@ export const ReactionButton: React.FunctionComponent<ReactButtonPropsState> = (
 
   return (
     <Button
-      className={`d-flex align-items-center reaction-button reaction-${reaction?.toLowerCase()}`}
+      className={`ReactionButton d-flex align-items-center reaction-${reaction?.toLowerCase()}`}
       onClick={reactToPost}>
       <FAIcon
         className={`fa-thumbs-${type === 'UPVOTE' ? 'up' : 'down'}`}

@@ -1,4 +1,4 @@
-@import '../constants';
+@import '../../constants';
 
 .Home {
   margin-top: 4rem;
@@ -17,6 +17,7 @@
     padding: 0rem 0;
   }
 }
+
 .carousel-btn {
   cursor: pointer;
   display: flex;
@@ -25,6 +26,7 @@
   outline: none;
   background: #aaaa;
 }
+
 .main-modal {
   background-color: #fff;
   border-radius: 1.25rem;
@@ -47,6 +49,7 @@
       background-color: #eee;
     }
   }
+
   .compose-message {
     resize: none;
     border: none;
@@ -73,12 +76,14 @@
     }
   }
 }
+
 .action-bar {
   border-bottom: 1px solid #ccc;
   margin-bottom: 0.5rem;
   padding: 10px !important;
   justify-content: flex-end;
 }
+
 .modal-wrapper {
   backdrop-filter: blur(1.5px);
   display: flex;
@@ -91,3 +96,7 @@
 .right-pane {
   border-radius: 5px;
 }
+
+@import './LeftPane/index';
+@import './MiddlePane/index';
+@import './RightPane/index';

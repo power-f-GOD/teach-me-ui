@@ -1,0 +1,111 @@
+.Reply {
+  font-size: 0.9em;
+  padding: 0.5em 0.75em 0 0.75em;
+  border-radius: unset !important;
+  margin-bottom: 0;
+
+  &:last-child {
+    .post-footer {
+      border-bottom: none;
+    }
+
+    .comment-container {
+      border-top: 0.0625em solid #eee !important;
+      border-bottom: none !important;
+    }
+  }
+
+  .post-header {
+    padding: 0 !important;
+
+    small {
+      margin-top: -0.15em;
+    }
+  }
+
+  $bg: linear-gradient(to right, #f0f0f0, #fefefe);
+
+  .display-name-wrapper {
+    padding: 0.25em 0.5em;
+    background: $bg;
+    margin-left: 0.55em;
+    border-radius: 0.75em 0.75em 0 0;
+  }
+
+  .post-body {
+    border-radius: 0 0 0.75em 0.75em;
+    margin: 0 0 0.25em 3.25em;
+    width: calc(100% - 3.25em);
+    background: $bg;
+
+    .text {
+      padding: 0 0.5em 0.5em !important;
+      cursor: unset;
+      border: none;
+    }
+  }
+
+  .post-avatar {
+    $size: 1.95em;
+
+    margin-right: 0 !important;
+    margin-top: -0.15em;
+    height: $size;
+    width: $size;
+  }
+
+  .post-footer {
+    width: calc(100% - 3.25em) !important;
+    margin-left: 3.25em !important;
+    margin-top: -0.25em;
+    border-top: none;
+    padding: 0.35em 0;
+    border-bottom: 0.0625em solid #eee;
+  }
+
+  .reaction-wrapper {
+    max-width: 5em;
+    padding: 0;
+
+    button {
+      background-color: transparent;
+
+      &:hover,
+      &:focus {
+        background-color: #f0f0f0;
+      }
+    }
+  }
+
+  .Comment {
+    padding: 0 0 0 3.25em !important;
+
+    .comment-avatar {
+      $size: 1.55em;
+
+      height: $size;
+      width: $size;
+    }
+
+    .comment-field {
+      max-width: calc(100% - 7.75em);
+    }
+
+    .comment-container {
+      padding: 0.3em 0;
+      align-items: center;
+      border-bottom: 0.0625em solid #eee;
+
+      .MuiInputBase-root {
+        font-size: 1em;
+        padding: 0.4em 0.5em;
+      }
+    }
+
+    .comment-button {
+      max-height: 2.15em !important;
+      width: 4.75em !important;
+      min-height: unset !important;
+    }
+  }
+}

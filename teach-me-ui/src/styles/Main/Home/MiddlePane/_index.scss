@@ -1,0 +1,12 @@
+.feeds-scroll-observer {
+  position: absolute;
+  bottom: 0;
+  height: 85vh;
+  min-height: 40rem;
+  left: 0;
+  pointer-events: none;
+}
+
+@import './Post/index';
+@import './Recommendations/index';
+@import './Compose';

@@ -1,34 +1,8 @@
-@import 'misc';
+@import 'global';
 @import 'animation';
-
-@import 'Index/Index';
-@import 'Index/Landing';
-@import 'Index/404';
-
-@import 'Auth/Auth';
-
-@import 'Main/Main';
-@import 'Main/Home';
-@import 'Main/Home.LeftPane';
-@import 'Main/Home.MiddlePane';
-@import 'Main/Home.RightPane';
-@import 'Main/Profile';
-@import 'Main/Search';
-@import 'Main/Chat';
-@import 'Main/Chat.crumbs';
-@import 'Main/Chat.LeftPane';
-@import 'Main/Chat.MiddlePane';
-@import 'Main/Chat.RightPane';
-@import 'Main/Notifications';
-@import 'Main/Questions.MiddlePane';
-
-@import 'crumbs/Nav';
-@import 'crumbs/Footer';
-@import 'crumbs/crumbs';
-@import 'crumbs/Post';
-@import 'crumbs/Upload';
-@import 'crumbs/Modals.CreatePost';
-@import 'crumbs/Modals.CreateQuestion';
-@import 'crumbs/QuestionEditorBody';
-
+@import 'Index/index';
+@import 'Auth/index';
+@import 'Main/index';
+@import 'crumbs/index';
+@import 'modals/index';
 @import 'responsive';

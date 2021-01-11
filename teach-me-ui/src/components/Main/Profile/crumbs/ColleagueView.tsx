@@ -10,14 +10,14 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Collapse from '@material-ui/core/Collapse';
 
-import { useDeclineColleagueRequest, useUnColleague } from '../../hooks/api';
+import { useDeclineColleagueRequest, useUnColleague } from '../../../../hooks/api';
 import {
   UserData,
   ColleagueRequestProps,
   ColleagueProps
-} from '../../constants';
-import { cleanUp, dispatch } from '../../functions';
-import { fetchColleagueRequests, fetchColleagues } from '../../actions';
+} from '../../../../constants';
+import { cleanUp, dispatch } from '../../../../functions';
+import { fetchColleagueRequests, fetchColleagues } from '../../../../actions';
 
 export default () => {
   const [active, setActive] = useState<'1' | '2'>('1');

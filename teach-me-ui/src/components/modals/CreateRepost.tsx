@@ -86,7 +86,7 @@ const CreatePost: React.FC<any> = (props) => {
       <form>
         <div id='suggestion-container'>
           <textarea
-            className='create-repost mt-1'
+            className='create-repost-textarea mt-1'
             autoFocus
             rows={10}
             id='post-input'

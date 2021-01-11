@@ -67,7 +67,7 @@ const PostFooter = (props: PostCrumbs) => {
                     ? openCreateRepostModal(repostMeta)
                     : null
                 }
-                className={`d-flex align-items-center reaction-button justify-content-center ${
+                className={`ReactionButton d-flex align-items-center justify-content-center ${
                   reposted ? 'reposted' : ''
                 }`}>
                 <FAIcon className='fa-retweet' />
