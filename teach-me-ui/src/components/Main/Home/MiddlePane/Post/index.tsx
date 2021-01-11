@@ -10,7 +10,7 @@ import ArrowForward from '@material-ui/icons/ArrowForwardIos';
 
 import { Link } from 'react-router-dom';
 
-import { dispatch } from '../../../../../functions/utils';
+import { dispatch, loopThru } from '../../../../../functions/utils';
 import { PostStateProps } from '../../../../../constants/interfaces';
 
 import { displayModal } from '../../../../../functions';
@@ -91,9 +91,10 @@ const Post: React.FC<
     index?: number;
     postsErred?: boolean;
     quote?: PostStateProps;
+    userId?: string;
   }
 > = (props) => {
-  const { index, postsErred, quote, ...others } = props;
+  const { index, postsErred, quote, userId, ...others } = props;
   const {
     // type,
     media,
@@ -143,13 +144,30 @@ const Post: React.FC<
 
     switch (reposts.length) {
       case 2:
-        extra = `<b>${senderName1}</b> and <b>${senderName2}</b> reposted ${sender_name}'s post`;
+        extra = `<b>${senderName1}</b> and <b>${senderName2}</b> reposted <b>${sender_name}</b>'s post`;
         break;
       default:
-        extra = `<b>${senderName1}</b> and <b>${reposts?.length} others</b> reposted ${sender_name}'s post`;
+        extra = `<b>${senderName1}</b> and <b>${reposts?.length} others</b> reposted <b>${sender_name}</b>'s post`;
     }
   } else if (quote) {
-    extra = `<b>${sender_name}</b> reposted <b>${quote.sender?.first_name} ${quote.sender?.last_name}'s</b> post`;
+    extra = `<b>${sender_name}</b> reposted <b>${quote.sender?.first_name} ${quote.sender?.last_name}</b>'s post`;
+  } else if (replies?.length) {
+    const reply = loopThru(replies, (reply) => reply.sender?.id !== userId, {
+      type: 'find',
+      rightToLeft: true
+    }) as PostStateProps;
+
+    if (reply) {
+      extra = `<b>${reply.sender.first_name} ${
+        reply.sender.last_name
+      }</b> replied ${
+        sender?.id === userId
+          ? 'your'
+          : reply.sender.username === sender_username
+          ? 'their own'
+          : `<b>${sender_name}</b>'s`
+      } post`;
+    }
   }
 
   return (
