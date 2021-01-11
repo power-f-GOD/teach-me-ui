@@ -15,6 +15,7 @@ import { PostStateProps } from '../../../../../constants/interfaces';
 
 import PostFooter from './Footer';
 import { processPost } from '.';
+import TextTruncator from '../../../../shared/TextTruncator';
 
 const PostReply = (props: Partial<PostStateProps>) => {
   const {
@@ -76,11 +77,11 @@ const PostReply = (props: Partial<PostStateProps>) => {
           <Col className='display-name-wrapper d-flex flex-column justify-content-center'>
             {sender_name ? (
               <>
-                <Box className='d-flex'>
+                <Box>
                   <Link to={`@${sender_username}`} className='font-bold'>
                     {sender_name}
                   </Link>
-                  <Box className='theme-tertiary ml-1'>
+                  <Box component='span' className='theme-tertiary ml-1'>
                     | @{sender_username}
                   </Box>
                 </Box>
@@ -101,9 +102,10 @@ const PostReply = (props: Partial<PostStateProps>) => {
         {sender_name ? (
           <Row className='post-body'>
             {/* Post repost */}
-            <Box component='div' className='text'>
+            <Col className='text'>
               {processPost(text!)}
-            </Box>
+              <TextTruncator anchorEllipsis={true} />
+            </Col>
           </Row>
         ) : (
           <Box p={2}>

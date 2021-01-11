@@ -36,6 +36,7 @@ import { conversation, conversations } from '../../../actions/main/chat';
 import { stickyChatDateRef } from './MiddlePane/ScrollView';
 import { messageBoxRef } from './MiddlePane/MessageBox';
 import { userDeviceIsMobile } from '../../..';
+// import TextTruncator from '../../shared/TextTruncator';
 
 export interface SelectedMessageValue extends Omit<APIMessageResponse, 'type'> {
   type: 'incoming' | 'outgoing';
@@ -244,6 +245,7 @@ export const Message = (props: {
           ) : (
             text
           )}
+          {/* <TextTruncator lineClamp={10} className='theme-primary-lighter' /> */}
           <ChatTimestamp
             timestamp={timestamp}
             chatStatus={
@@ -498,8 +500,6 @@ export const ChatDate = ({
   if (isNaN(timestamp)) {
     return <>{timestamp}</>;
   }
-
-  
 
   return (
     <div
