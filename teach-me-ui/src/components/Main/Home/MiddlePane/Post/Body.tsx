@@ -13,6 +13,7 @@ import { LazyLoadImage as LazyImg } from 'react-lazy-load-image-component';
 
 import QuotedPost from './QuotedPost';
 import { processPost } from '.';
+import TextTruncator from '../../../../shared/TextTruncator';
 
 interface PostBodyProps {
   isLoading: boolean;
@@ -68,6 +69,7 @@ const PostBody = (props: PostBodyProps) => {
           className={`text ${!text?.trim() ? 'py-2' : ''}`}
           data-id={id}>
           {processPost(text!)}
+          <TextTruncator lineClamp={8} anchorEllipsis={true} />
         </Box>
 
         {/* {sec_type === 'REPOST' &&
