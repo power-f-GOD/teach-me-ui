@@ -56,9 +56,7 @@ const Home = ({ posts: _posts }: { posts: FetchState<PostStateProps> }) => {
                 'FEED',
                 undefined,
                 true,
-                _posts.statusText
-                  ? _posts.statusText
-                  : 'is fetching more posts',
+                'is fetching more posts',
                 _posts.extra
                   ? `/feed?recycle=true&offset=${_posts.extra ?? ''}`
                   : undefined

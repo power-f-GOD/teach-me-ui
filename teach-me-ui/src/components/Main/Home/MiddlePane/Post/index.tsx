@@ -11,7 +11,7 @@ import ArrowForward from '@material-ui/icons/ArrowForwardIos';
 import { Link } from 'react-router-dom';
 
 import { dispatch, loopThru } from '../../../../../functions/utils';
-import { PostStateProps } from '../../../../../constants/interfaces';
+import { PostStateProps, LoopFind } from '../../../../../constants/interfaces';
 
 import { displayModal } from '../../../../../functions';
 import { triggerSearchKanyimuta } from '../../../../../actions/search';
@@ -92,6 +92,7 @@ const Post: React.FC<
     postsErred?: boolean;
     quote?: PostStateProps;
     userId?: string;
+    forceUpdate?: any;
   }
 > = (props) => {
   const { index, postsErred, quote, userId, ...others } = props;
@@ -104,8 +105,8 @@ const Post: React.FC<
     text,
     date: posted_at,
     reaction,
-    colleague_reposts: reposts,
-    colleague_replies: replies,
+    colleague_reposts,
+    colleague_replies,
     reply_count,
     repost_count,
     upvote_count,
@@ -114,9 +115,11 @@ const Post: React.FC<
   const { username: sender_username, first_name, last_name, profile_photo } =
     sender || {};
   const sender_name = first_name ? `${first_name} ${last_name}` : '';
+  let mostRecentColleagueReplyIndex: number | null = null;
 
   const [mediaPreview, setMediaPreview] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState(0);
+  const [numRepliesToShow, setNumRepliesToShow] = useState(2);
 
   let extra: string | null = '';
 
@@ -138,24 +141,29 @@ const Post: React.FC<
     );
   };
 
-  if (reposts?.length && reposts?.length > 1) {
-    let senderName1 = `${reposts[0]?.sender?.first_name} ${reposts[0]?.sender?.last_name}`;
-    let senderName2 = `${reposts[1]?.sender?.first_name} ${reposts[1]?.sender?.last_name}`;
+  if (colleague_reposts?.length && colleague_reposts?.length > 1) {
+    let senderName1 = `${colleague_reposts[0]?.sender?.first_name} ${colleague_reposts[0]?.sender?.last_name}`;
+    let senderName2 = `${colleague_reposts[1]?.sender?.first_name} ${colleague_reposts[1]?.sender?.last_name}`;
 
-    switch (reposts.length) {
+    switch (colleague_reposts.length) {
       case 2:
         extra = `<b>${senderName1}</b> and <b>${senderName2}</b> reposted <b>${sender_name}</b>'s post`;
         break;
       default:
-        extra = `<b>${senderName1}</b> and <b>${reposts?.length} others</b> reposted <b>${sender_name}</b>'s post`;
+        extra = `<b>${senderName1}</b> and <b>${colleague_reposts?.length} others</b> reposted <b>${sender_name}</b>'s post`;
     }
   } else if (quote) {
     extra = `<b>${sender_name}</b> reposted <b>${quote.sender?.first_name} ${quote.sender?.last_name}</b>'s post`;
-  } else if (replies?.length) {
-    const reply = loopThru(replies, (reply) => reply.sender?.id !== userId, {
-      type: 'find',
-      rightToLeft: true
-    }) as PostStateProps;
+  } else if (colleague_replies?.length) {
+    const { value: reply, index } = (loopThru(
+      colleague_replies,
+      (reply) => reply.sender?.id !== userId,
+      {
+        type: 'find',
+        rightToLeft: true,
+        includeIndex: true
+      }
+    ) ?? {}) as LoopFind<PostStateProps>;
 
     if (reply) {
       extra = `<b>${reply.sender.first_name} ${
@@ -167,8 +175,20 @@ const Post: React.FC<
           ? 'their own'
           : `<b>${sender_name}</b>'s`
       } post`;
+      mostRecentColleagueReplyIndex = index;
     }
   }
+
+  const nReplies = colleague_replies?.length;
+  React.useEffect(() => {
+    if (nReplies) {
+      const reply = colleague_replies?.slice(-1)[0];
+      // console.log(reply, userId, nReplies);
+      if (reply?.pipe && reply?.sender?.id === userId) {
+        setNumRepliesToShow((prev) => prev + 1);
+      }
+    }
+  }, [colleague_replies, nReplies, userId]);
 
   return (
     <>
@@ -234,7 +254,7 @@ const Post: React.FC<
       <Box
         id={id}
         className={`Post ${postsErred ? 'remove-skeleton-animation' : ''} ${
-          replies?.length ? 'has-replies' : ''
+          colleague_replies?.length ? 'has-replies' : ''
         } ${media?.length ? 'has-media' : ''} ${quote ? 'has-quote' : ''}`}>
         {extra && (
           <small
@@ -258,7 +278,7 @@ const Post: React.FC<
           post_id={id!}
           text={text!}
           index={index}
-          reposts={reposts}
+          reposts={colleague_reposts}
           media={media}
           setMediaPreview={setMediaPreview}
           setSelectedMedia={setSelectedMedia}
@@ -266,6 +286,7 @@ const Post: React.FC<
 
         {/* Post footer (reaction buttons) */}
         <PostFooter
+          isLoading={!reaction}
           id={id}
           text={text}
           upvote_count={upvote_count}
@@ -274,15 +295,22 @@ const Post: React.FC<
           repost_count={repost_count}
           reply_count={reply_count}
           repostMeta={others}
-          isLoading={!reaction}
           anchorIsParent={true}
           openCreateRepostModal={openCreateRepostModal}
         />
 
         {/* Post replies */}
-        {replies?.slice(-2).map((reply) => (
-          <PostReply {...reply} key={reply.id} />
-        ))}
+        {colleague_replies
+          ?.slice(
+            // attempt to display the most recent colleague reply (mentioned in extra) instead of a self reply in case of a self reply
+            mostRecentColleagueReplyIndex ?? -numRepliesToShow,
+            mostRecentColleagueReplyIndex !== null
+              ? mostRecentColleagueReplyIndex + 2
+              : undefined
+          )
+          .map((reply) => (
+            <PostReply {...reply} key={reply.id} />
+          ))}
       </Box>
     </>
   );

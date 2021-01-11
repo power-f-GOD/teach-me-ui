@@ -10,7 +10,7 @@ import Box from '@material-ui/core/Box';
 import { Button } from '@material-ui/core';
 
 import { FAIcon } from '../../../../shared/Icons';
-import ReactButton from './ReactionButton';
+import ReactionButton from './ReactionButton';
 
 import { PostCrumbs } from '.';
 import { bigNumberFormat } from '../../../../../functions/utils';
@@ -44,7 +44,7 @@ const PostFooter = (props: PostCrumbs) => {
       <>
         <Row className='post-footer'>
           <Col className='reaction-wrapper d-flex align-items-center'>
-            <ReactButton
+            <ReactionButton
               id={id!}
               reaction={reaction === 'UPVOTE' ? reaction : null}
               num_of_reactions={upvote_count!}
@@ -52,7 +52,7 @@ const PostFooter = (props: PostCrumbs) => {
             />
           </Col>
           <Col className='reaction-wrapper d-flex align-items-center'>
-            <ReactButton
+            <ReactionButton
               id={id!}
               reaction={reaction === 'DOWNVOTE' ? reaction : null}
               num_of_reactions={downvote_count!}

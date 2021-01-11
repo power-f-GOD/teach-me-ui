@@ -7,24 +7,24 @@ import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 // add custom jest matchers from jest-dom
 import '@testing-library/jest-dom/extend-expect';
 
-import {ReactButton} from '../../components/Main/Home/MiddlePane/Post/ReactionButton';
+import {ReactionButton} from '../../components/Main/Home/MiddlePane/Post/ReactionButton';
 
 test('loads and displays placeholder text', async () => {
   render(
     <>
-      <ReactButton
+      <ReactionButton
         id='1'
         type='UPVOTE'
         num_of_reactions={15002}
         reaction='UPVOTE'
       />
-      <ReactButton
+      <ReactionButton
         id='2'
         type='UPVOTE'
         num_of_reactions={1500200}
         reaction='NEUTRAL'
       />
-      <ReactButton
+      <ReactionButton
         id='3'
         type='DOWNVOTE'
         num_of_reactions={150020}

@@ -133,7 +133,11 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
           return (
             <React.Fragment key={i}>
               {nReposts === 1 ? (
-                <Post {...post.colleague_reposts[0]} quote={{ ...post }} userId={userData.id} />
+                <Post
+                  {...post.colleague_reposts[0]}
+                  quote={{ ...post }}
+                  userId={userData.id}
+                />
               ) : (
                 <Post {...post} userId={userData.id} />
               )}

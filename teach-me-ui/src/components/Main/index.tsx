@@ -124,7 +124,6 @@ const Main = (props: MainProps) => {
     if (notifSoundEl) {
       if (play) {
         if (!hasEnded) {
-          console.log('play:', play, 'hasEnded:', hasEnded);
           stopSound();
         }
 
