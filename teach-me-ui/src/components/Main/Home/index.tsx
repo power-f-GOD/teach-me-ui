@@ -9,7 +9,7 @@ import HomeMiddlePane from './MiddlePane';
 import HomeLeftPane from './LeftPane';
 
 import { connect } from 'react-redux';
-import { getPosts } from '../../../actions/main/home';
+import { getPosts, posts } from '../../../actions/main/home';
 import { dispatch, createObserver } from '../../../functions/utils';
 import { PostStateProps, FetchState } from '../../../constants/interfaces';
 
@@ -20,19 +20,24 @@ let observedElement: HTMLElement | null = null;
 
 let observer: IntersectionObserver;
 
-const Home = ({ posts }: { posts: FetchState<PostStateProps> }) => {
+const Home = ({ posts: _posts }: { posts: FetchState<PostStateProps> }) => {
   useEffect(() => {
     document.body.style.overflow =
-      posts.status === 'pending' ? 'hidden' : 'auto';
-  }, [posts.status]);
+      _posts.status === 'pending' ? 'hidden' : 'auto';
+  }, [_posts.status]);
 
   useEffect(() => {
     observedElement = observedElementRef.current;
+
+    return () => {
+      dispatch(posts({ statusText: 'home unmounted' }));
+    };
   }, []);
 
   useEffect(() => {
     const isFetching =
-      /fetching/.test(posts.statusText || '') || posts.status === 'pending';
+      /fetching/.test(_posts.statusText || '') || _posts.status === 'pending';
+    const reachedEnd = /reached end/.test(_posts.statusText || '');
 
     if (observedElement) {
       observer = createObserver(
@@ -40,15 +45,22 @@ const Home = ({ posts }: { posts: FetchState<PostStateProps> }) => {
         (entries) => {
           const entry = entries[0];
 
-          if (entry.isIntersecting && !isFetching && navigator.onLine) {
+          if (
+            entry.isIntersecting &&
+            !isFetching &&
+            !reachedEnd &&
+            navigator.onLine
+          ) {
             dispatch(
               getPosts(
                 'FEED',
                 undefined,
                 true,
-                'is fetching more posts',
-                posts.extra
-                  ? `/feed?recycle=true&offset=${posts.extra ?? ''}`
+                _posts.statusText
+                  ? _posts.statusText
+                  : 'is fetching more posts',
+                _posts.extra
+                  ? `/feed?recycle=true&offset=${_posts.extra ?? ''}`
                   : undefined
               )
             );
@@ -64,7 +76,7 @@ const Home = ({ posts }: { posts: FetchState<PostStateProps> }) => {
       observer?.unobserve(observedElement as Element);
       // window.scrollTo(0, 0);
     };
-  }, [posts.statusText, posts.err, posts.status, posts.extra]);
+  }, [_posts.statusText, _posts.err, _posts.status, _posts.extra]);
 
   return (
     <>
