@@ -62,7 +62,7 @@
       overflow: hidden;
       margin-bottom: -0.25em;
       margin-left: 0.75em;
-      width: calc(100% - 2em);
+      width: calc(100% - 1.5em);
       border-bottom: 0.0625em solid #eee;
       padding: 0.75em 0.75em 0.35rem 0;
     }
@@ -155,8 +155,3 @@
   width: 100%;
   border: none;
 }
-
-@import './QuotedPost';
-@import './ReactionButton';
-@import './Comment';
-@import './Reply';

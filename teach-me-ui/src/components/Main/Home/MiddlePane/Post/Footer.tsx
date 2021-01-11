@@ -92,9 +92,9 @@ const PostFooter = (props: PostCrumbs) => {
 
   return (
     <Container className='d-flex px-3 pb-2'>
-      <Skeleton width='4rem' height='1.65rem' className='mr-2 mt-2' />
-      <Skeleton width='4rem' height='1.65rem' className='mr-2 mt-2' />
-      <Skeleton width='4rem' height='1.65rem' className='mr-2 mt-2' />
+      <Skeleton width='4rem' height='1.65rem' className='mr-4 mt-2' />
+      <Skeleton width='4rem' height='1.65rem' className='mr-4 mt-2' />
+      <Skeleton width='4rem' height='1.65rem' className='mr-4 mt-2' />
       <Container className='ml-auto w-auto'>
         <Skeleton width='4rem' className='mt-2' height='1.65rem' />
       </Container>

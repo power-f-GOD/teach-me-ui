@@ -1,8 +1,38 @@
 @import 'global';
 @import 'animation';
+
 @import 'Index/index';
+
 @import 'Auth/index';
+
 @import 'Main/index';
+
+@import 'Main/Chat/index';
+@import 'Main/Chat/LeftPane/index';
+@import 'Main/Chat/MiddlePane/index';
+@import 'Main/Chat/RightPane/index';
+@import 'Main/Chat/crumbs';
+
+@import 'Main/Home/index';
+@import 'Main/Home/LeftPane/index';
+@import 'Main/Home/MiddlePane/index';
+@import 'Main/Home/MiddlePane/Post/index';
+@import 'Main/Home/MiddlePane/Post/QuotedPost';
+@import 'Main/Home/MiddlePane/Post/ReactionButton';
+@import 'Main/Home/MiddlePane/Post/Comment';
+@import 'Main/Home/MiddlePane/Post/Reply';
+@import 'Main/Home/MiddlePane/Recommendations/index';
+@import 'Main/Home/MiddlePane/Compose';
+@import 'Main/Home/RightPane/index';
+
+@import 'Main/Profile/index';
+@import 'Main/Q&A/index';
+@import 'Main/Search/index';
+
 @import 'crumbs/index';
+
 @import 'modals/index';
+
+@import 'shared/index';
+
 @import 'responsive';

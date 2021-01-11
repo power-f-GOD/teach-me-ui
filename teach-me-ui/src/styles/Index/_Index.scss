@@ -11,12 +11,12 @@
   width: 100%;
 }
 
+@import './Landing';
+@import './404';
+
 .index-container {
   height: inherit;
   min-height: 100%;
   display: flex;
   align-items: center;
 }
-
-@import './Landing';
-@import './404';
