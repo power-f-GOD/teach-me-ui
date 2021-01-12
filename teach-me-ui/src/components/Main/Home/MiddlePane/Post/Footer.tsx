@@ -10,7 +10,7 @@ import Box from '@material-ui/core/Box';
 import { Button } from '@material-ui/core';
 
 import { FAIcon } from '../../../../shared/Icons';
-import ReactButton from './ReactionButton';
+import ReactionButton from './ReactionButton';
 
 import { PostCrumbs } from '.';
 import { bigNumberFormat } from '../../../../../functions/utils';
@@ -44,7 +44,7 @@ const PostFooter = (props: PostCrumbs) => {
       <>
         <Row className='post-footer'>
           <Col className='reaction-wrapper d-flex align-items-center'>
-            <ReactButton
+            <ReactionButton
               id={id!}
               reaction={reaction === 'UPVOTE' ? reaction : null}
               num_of_reactions={upvote_count!}
@@ -52,7 +52,7 @@ const PostFooter = (props: PostCrumbs) => {
             />
           </Col>
           <Col className='reaction-wrapper d-flex align-items-center'>
-            <ReactButton
+            <ReactionButton
               id={id!}
               reaction={reaction === 'DOWNVOTE' ? reaction : null}
               num_of_reactions={downvote_count!}
@@ -67,7 +67,7 @@ const PostFooter = (props: PostCrumbs) => {
                     ? openCreateRepostModal(repostMeta)
                     : null
                 }
-                className={`d-flex align-items-center reaction-button justify-content-center ${
+                className={`ReactionButton d-flex align-items-center justify-content-center ${
                   reposted ? 'reposted' : ''
                 }`}>
                 <FAIcon className='fa-retweet' />
@@ -92,9 +92,9 @@ const PostFooter = (props: PostCrumbs) => {
 
   return (
     <Container className='d-flex px-3 pb-2'>
-      <Skeleton width='4rem' height='1.65rem' className='mr-2 mt-2' />
-      <Skeleton width='4rem' height='1.65rem' className='mr-2 mt-2' />
-      <Skeleton width='4rem' height='1.65rem' className='mr-2 mt-2' />
+      <Skeleton width='4rem' height='1.65rem' className='mr-4 mt-2' />
+      <Skeleton width='4rem' height='1.65rem' className='mr-4 mt-2' />
+      <Skeleton width='4rem' height='1.65rem' className='mr-4 mt-2' />
       <Container className='ml-auto w-auto'>
         <Skeleton width='4rem' className='mt-2' height='1.65rem' />
       </Container>

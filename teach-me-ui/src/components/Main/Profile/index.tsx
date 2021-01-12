@@ -21,8 +21,8 @@ import SchoolOutlinedIcon from '@material-ui/icons/SchoolOutlined';
 import Button from '@material-ui/core/Button';
 
 import Img from '../../shared/Img';
-import ColleagueView from '../../crumbs/ColleagueView';
-import ProfileFeeds from '../../crumbs/ProfileFeeds';
+import ColleagueView from './crumbs/ColleagueView';
+import ProfileFeeds from './crumbs/ProfileFeeds';
 import {
   UserData,
   DeepProfileProps,

@@ -104,7 +104,7 @@ const PostReply = (props: Partial<PostStateProps>) => {
             {/* Post repost */}
             <Col className='text'>
               {processPost(text!)}
-              <TextTruncator anchorEllipsis={true} />
+              <TextTruncator anchorEllipsis={true} lineClamp={4} />
             </Col>
           </Row>
         ) : (

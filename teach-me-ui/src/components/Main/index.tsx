@@ -18,7 +18,7 @@ import ModalFrame from '../modals';
 import Chat from './Chat';
 import Search from './Search';
 import PostPage from './Home/PostPage';
-import Questions from './Q&A/Questions';
+import Questions from './Q&A';
 import QuestionPage from './Q&A/QuestionPage';
 import _404 from '../Index/_404';
 
@@ -124,7 +124,6 @@ const Main = (props: MainProps) => {
     if (notifSoundEl) {
       if (play) {
         if (!hasEnded) {
-          console.log('play:', play, 'hasEnded:', hasEnded);
           stopSound();
         }
 

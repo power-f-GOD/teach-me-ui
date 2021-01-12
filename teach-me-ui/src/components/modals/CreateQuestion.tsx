@@ -30,8 +30,8 @@ import {
   isImage,
   getFileExtension,
 } from '../../functions';
-import TagEditor from '../crumbs/Tags';
-import QuestionEditorBody from '../crumbs/QuestionEditorBody';
+import TagEditor from '../Main/Q&A/crumbs/Tags';
+import QuestionEditorBody from '../Main/Q&A/crumbs/QuestionEditorBody';
 
 const RenderImage = (props: {file: File}) => {
   const { file } = props;

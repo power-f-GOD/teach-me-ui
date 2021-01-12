@@ -58,6 +58,15 @@ export const getPosts = (
       if (error) {
         dispatch(posts({ status: 'settled', statusText: message, err: true }));
       } else {
+        if (isRecycling && !data.length) {
+          return dispatch(
+            posts({
+              status: 'fulfilled',
+              statusText: 'has reached end'
+            })
+          );
+        }
+
         if (!data.length && type === 'FEED') {
           // recursively get (recycled) Posts if no post is returned
           if (!isRecycling && isFetching) {
@@ -97,15 +106,21 @@ export const posts = (_payload: FetchState<PostStateProps[], number>) => {
   const { posts: prevPostsState } = getState() as {
     posts: FetchState<PostStateProps[]>;
   };
-  const { data } = _payload;
+  const { data, statusText } = _payload;
   const pipe = (data ?? [])[0]?.pipe;
   let payload = { ...prevPostsState } as FetchState<PostStateProps[]>;
+  const homeUnmounted = /(home\s?)unmount(s|ed)/.test(statusText || '');
+  const hadReachedEnd = /reached\send/.test(prevPostsState.statusText || '');
   const updateFromPipe = !!pipe;
 
   if (!updateFromPipe) {
     payload = {
       ..._payload,
-      data: [...prevPostsState.data, ...(_payload.data ?? [])],
+      data: homeUnmounted
+        ? hadReachedEnd
+          ? []
+          : [...prevPostsState.data?.slice(-2)]
+        : [...prevPostsState.data, ...(_payload.data ?? [])],
       extra: _payload.extra ?? prevPostsState.extra
     };
   } else {

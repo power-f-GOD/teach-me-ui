@@ -111,7 +111,7 @@ export function loopThru<T>(
   const dataReversed = [];
   const reverse = rightToLeft || returnReverse;
   let i = reverse ? lim : 0;
-  let valueToReturn: LoopFind<T> | T[] | T | number | null = -1;
+  let valueToReturn: LoopFind<T> | T[] | T | number | null = null;
 
   outer: for (; reverse ? i >= 0 : i <= lim; reverse ? i-- : i++) {
     const datum = data[i];

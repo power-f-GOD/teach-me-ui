@@ -19,7 +19,7 @@ interface ReactButtonPropsState {
   socket?: WebSocket;
 }
 
-export const ReactButton: React.FunctionComponent<ReactButtonPropsState> = (
+export const ReactionButton: React.FunctionComponent<ReactButtonPropsState> = (
   props
 ) => {
   const { type, id, reaction, num_of_reactions, socket } = props;
@@ -35,7 +35,7 @@ export const ReactButton: React.FunctionComponent<ReactButtonPropsState> = (
         })
       );
     } else {
-      emitUserOnlineStatus(true, false, {
+      emitUserOnlineStatus(true, !navigator.onLine, {
         open: true,
         message:
           "Something went wrong. Seems you are/were offline. We'll try to reconnect then you can try again.",
@@ -45,13 +45,9 @@ export const ReactButton: React.FunctionComponent<ReactButtonPropsState> = (
     }
   }, [socket, id, type, reacted]);
 
-  // React.useEffect(() => {
-
-  // }, []);
-
   return (
     <Button
-      className={`d-flex align-items-center reaction-button reaction-${reaction?.toLowerCase()}`}
+      className={`ReactionButton d-flex align-items-center reaction-${reaction?.toLowerCase()}`}
       onClick={reactToPost}>
       <FAIcon
         className={`fa-thumbs-${type === 'UPVOTE' ? 'up' : 'down'}`}
@@ -64,5 +60,5 @@ export const ReactButton: React.FunctionComponent<ReactButtonPropsState> = (
 };
 
 export default connect(({ webSocket }: any) => ({ socket: webSocket }))(
-  ReactButton
+  ReactionButton
 );

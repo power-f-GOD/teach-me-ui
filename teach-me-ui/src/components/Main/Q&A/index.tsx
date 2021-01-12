@@ -4,7 +4,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import MiddlePane from './Questions.MiddlePane';
+import MiddlePane from './MiddlePane';
 import HomeRightPane from '../Home/RightPane';
 import HomeLeftPane from '../Home/LeftPane';
 
