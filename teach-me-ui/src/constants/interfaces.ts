@@ -106,6 +106,7 @@ export interface PostStateProps {
   upvotes: number;
   sec_type?: 'REPOST' | 'REPLY';
   type?: 'post' | 'reply';
+  numRepliesToShow?: number;
 }
 
 interface PostExtraProps {

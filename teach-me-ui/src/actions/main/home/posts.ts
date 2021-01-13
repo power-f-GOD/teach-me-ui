@@ -164,6 +164,7 @@ export const posts = (_payload: FetchState<PostStateProps[], number>) => {
             upvote_count: 0,
             downvote_count: 0
           });
+          actualPost.numRepliesToShow = (actualPost.numRepliesToShow ?? 3) + 1;
           actualPost.reply_count = data.parent!.reply_count;
           payload.data![postIndex] = actualPost;
           break;

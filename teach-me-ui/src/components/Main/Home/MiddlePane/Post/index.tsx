@@ -118,7 +118,8 @@ const Post: React.FC<
     reply_count,
     repost_count,
     upvote_count,
-    downvote_count
+    downvote_count,
+    numRepliesToShow
   } = others || {};
   const { username: sender_username, first_name, last_name, profile_photo } =
     sender || {};
@@ -128,7 +129,6 @@ const Post: React.FC<
 
   const [mediaPreview, setMediaPreview] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState(0);
-  const [numRepliesToShow, setNumRepliesToShow] = useState(2);
 
   let extra: string | null = '';
 
@@ -188,16 +188,16 @@ const Post: React.FC<
     }
   }
 
-  const nReplies = colleague_replies?.length;
-  React.useEffect(() => {
-    if (nReplies) {
-      const reply = colleague_replies?.slice(-1)[0];
-      // console.log(reply, userId, nReplies);
-      if (reply?.pipe && reply?.sender?.id === userId) {
-        setNumRepliesToShow((prev) => prev + 1);
-      }
-    }
-  }, [colleague_replies, nReplies, userId]);
+  // const nReplies = colleague_replies?.length;
+  // React.useEffect(() => {
+  //   if (nReplies) {
+  //     const reply = colleague_replies?.slice(-1)[0];
+  //     // console.log(reply, userId, nReplies);
+  //     if (reply?.pipe && reply?.sender?.id === userId) {
+  //       setNumRepliesToShow((prev) => prev + 1);
+  //     }
+  //   }
+  // }, [colleague_replies, nReplies, userId]);
 
   return (
     <>
@@ -332,9 +332,9 @@ const Post: React.FC<
         {colleague_replies
           ?.slice(
             // attempt to display the most recent colleague reply (mentioned in extra) instead of a self reply in case of a self reply
-            mostRecentColleagueReplyIndex ?? -numRepliesToShow,
+            mostRecentColleagueReplyIndex ?? -(numRepliesToShow ?? 3),
             mostRecentColleagueReplyIndex !== null
-              ? mostRecentColleagueReplyIndex + 2
+              ? mostRecentColleagueReplyIndex + (numRepliesToShow ?? 2)
               : undefined
           )
           .map((reply) => (
