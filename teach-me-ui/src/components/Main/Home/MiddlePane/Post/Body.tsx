@@ -86,10 +86,8 @@ const PostBody = (props: PostBodyProps) => {
               display: 'grid',
               gridTemplateColumns: '1fr 1fr',
               gridTemplateRows: `repeat(${
-                (media as any[]).length === 1
-                  ? 2
-                  : Math.ceil((media as any[]).length / 2)
-              }, 9rem)`,
+                media?.length === 1 ? 2 : Math.ceil((media as any[]).length / 2)
+              }, 12rem)`,
               gridAutoFlow: 'row',
               columnGap: '0.2rem',
               rowGap: '0.2rem'
@@ -111,6 +109,7 @@ const PostBody = (props: PostBodyProps) => {
               const mData = JSON.parse(m);
               const url =
                 mData.type === 'raw' ? '/images/file-icon.svg' : mData.url;
+
               return (
                 <div key={i} style={style}>
                   <LazyImg
@@ -136,14 +135,9 @@ const PostBody = (props: PostBodyProps) => {
                         : showModal
                     }
                     src={url}
-                    alt='post'
-                    style={{
-                      objectFit: 'cover',
-                      objectPosition: 'center',
-                      verticalAlign: 'middle',
-                      width: '100%',
-                      height: '100%'
-                    }}
+                    alt='post image'
+                    style={{ opacity: 0 }}
+                    onLoad={(e) => ((e.target as any).style.opacity = 1)}
                   />
                 </div>
               );
@@ -155,13 +149,14 @@ const PostBody = (props: PostBodyProps) => {
 
   return (
     <Box className='mt-1 px-2 pt-2 pb-0'>
-      {(index ?? 0) % 2 === 0 ? (
+      {(index ?? 0) % 2 === 0 && index !== 1 ? (
         <Skeleton height='14rem' className='media' />
       ) : (
         <>
-          <Skeleton height='1rem' width='50%' className='mb-2' />
-          <Skeleton height='1rem' width='85%' className='mb-2' />
-          <Skeleton height='1rem' width='60%' className='mb-2' />
+          <Skeleton height='1rem' width='50%' className='ml-1 mb-2' />
+          <Skeleton height='1rem' width='85%' className='ml-1 mb-2' />
+          <Skeleton height='1rem' width='60%' className='ml-1 mb-2' />
+          <Skeleton height='1rem' width='20%' className='d-block ml-1 mb-2' />
         </>
       )}
     </Box>

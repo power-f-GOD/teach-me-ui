@@ -52,8 +52,8 @@ export const getPosts = (
       true
     )
     .then(({ error, message, data }) => {
-      // console.log(data, offset, url);
       offset = data.slice(-1)[0]?.date ?? Date.now();
+      // console.log(data, _data, offset, url);
 
       if (error) {
         dispatch(posts({ status: 'settled', statusText: message, err: true }));
@@ -106,8 +106,9 @@ export const posts = (_payload: FetchState<PostStateProps[], number>) => {
   const { posts: prevPostsState } = getState() as {
     posts: FetchState<PostStateProps[]>;
   };
-  const { data, statusText } = _payload;
-  const pipe = (data ?? [])[0]?.pipe;
+  const { data: _data, statusText } = _payload;
+  const data = (_data ?? [])[0];
+  const pipe = data?.pipe;
   let payload = { ...prevPostsState } as FetchState<PostStateProps[]>;
   const homeUnmounted = /(home\s?)unmount(s|ed)/.test(statusText || '');
   const hadReachedEnd = /reached\send/.test(prevPostsState.statusText || '');
@@ -124,17 +125,15 @@ export const posts = (_payload: FetchState<PostStateProps[], number>) => {
       extra: _payload.extra ?? prevPostsState.extra
     };
   } else {
-    const data = _payload.data![0];
     let { value: actualPost, index: postIndex } = loopThru(
       payload.data ?? [],
       (post) =>
         post.id === data.id ||
         post.id === data.parent_id ||
-        post.id === data.parent.id,
+        post.id === data.parent?.id,
       { type: 'find', includeIndex: true }
     ) as LoopFind<PostStateProps>;
 
-    // console.log(actualPost, postIndex, data);
     if (actualPost) {
       switch (pipe) {
         case POST_REACTION:
@@ -165,7 +164,7 @@ export const posts = (_payload: FetchState<PostStateProps[], number>) => {
             upvote_count: 0,
             downvote_count: 0
           });
-          actualPost.reply_count = data.parent.reply_count;
+          actualPost.reply_count = data.parent!.reply_count;
           payload.data![postIndex] = actualPost;
           break;
       }

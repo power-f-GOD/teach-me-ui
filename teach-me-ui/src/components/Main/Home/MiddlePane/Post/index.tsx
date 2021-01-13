@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+
 import Box from '@material-ui/core/Box';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
@@ -10,7 +13,11 @@ import ArrowForward from '@material-ui/icons/ArrowForwardIos';
 
 import { Link } from 'react-router-dom';
 
-import { dispatch, loopThru } from '../../../../../functions/utils';
+import {
+  dispatch,
+  loopThru,
+  bigNumberFormat
+} from '../../../../../functions/utils';
 import { PostStateProps, LoopFind } from '../../../../../constants/interfaces';
 
 import { displayModal } from '../../../../../functions';
@@ -23,6 +30,7 @@ import PostReply from './Reply';
 import { CREATE_REPOST } from '../../../../../constants/modals';
 import PostBody from './Body';
 import PostHeader from './Header';
+import { FAIcon } from '../../../../shared/Icons';
 
 export interface PostCrumbs extends Partial<PostStateProps> {
   navigate?: Function;
@@ -115,6 +123,7 @@ const Post: React.FC<
   const { username: sender_username, first_name, last_name, profile_photo } =
     sender || {};
   const sender_name = first_name ? `${first_name} ${last_name}` : '';
+  const numReactions = upvote_count! + +downvote_count!;
   let mostRecentColleagueReplyIndex: number | null = null;
 
   const [mediaPreview, setMediaPreview] = useState(false);
@@ -283,6 +292,26 @@ const Post: React.FC<
           setMediaPreview={setMediaPreview}
           setSelectedMedia={setSelectedMedia}
         />
+
+        {/* Post info */}
+        {reaction && (
+          <Row className='post-info d-flex theme-tertiary'>
+            <Col>
+              <FAIcon className='fa-thumbs-up' />
+              <FAIcon className='fa-thumbs-down' />
+              <Col as='span' className='font-bold'>
+                {bigNumberFormat(numReactions)}
+              </Col>
+              reaction{numReactions === 1 ? '' : 's'}
+            </Col>
+            <Col className='text-right'>
+              <Col as='span' className='font-bold'>
+                {bigNumberFormat(reply_count!)}
+              </Col>
+              repl{reply_count === 1 ? 'y' : 'ies'}
+            </Col>
+          </Row>
+        )}
 
         {/* Post footer (reaction buttons) */}
         <PostFooter
