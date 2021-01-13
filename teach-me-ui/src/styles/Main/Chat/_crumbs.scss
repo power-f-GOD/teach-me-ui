@@ -2,7 +2,7 @@
 
 $incoming-outgoing-spacing: 1.25rem;
 $msgs-spacing: 0.1875rem;
-$msg-radius: 1.5rem;
+$msg-radius: 1.2rem;
 
 .chat-msg-container {
   position: relative;
@@ -108,7 +108,7 @@ $msg-radius: 1.5rem;
     }
   }
 
-  $br: 0.5rem;
+  $br: 0.25rem;
 
   &.incoming {
     margin: 0;
@@ -116,6 +116,7 @@ $msg-radius: 1.5rem;
     .chat-head {
       border-top-right-radius: $msg-radius - 0.25rem;
       border-right: 0.15rem solid;
+      border-top-left-radius: 0.5rem;
 
       &.self {
         border-right-color: $theme-primary-v7;
@@ -145,7 +146,7 @@ $msg-radius: 1.5rem;
         &::before {
           background: $bg-incoming;
           top: 0;
-          left: -$msg-radius + 1rem;
+          left: -$msg-radius + 0.75rem;
           clip-path: polygon(0 0, 95% 0, 70% 75%, 0 0.25rem, 0 0);
         }
       }
@@ -153,7 +154,7 @@ $msg-radius: 1.5rem;
 
     &.first {
       .msg-wrapper {
-        border-radius: 0.5rem $msg-radius $msg-radius $br;
+        border-radius: 0.25rem $msg-radius $msg-radius $br;
       }
     }
 
@@ -205,6 +206,7 @@ $msg-radius: 1.5rem;
     .chat-head {
       border-top-left-radius: $msg-radius - 0.25rem;
       border-left: 0.15rem solid;
+      border-top-right-radius: 0.5rem;
 
       &.self {
         border-left-color: $theme-primary-v7;
@@ -227,7 +229,7 @@ $msg-radius: 1.5rem;
         &::before {
           background: $bg-outgoing;
           top: 0;
-          right: -$msg-radius + 1rem;
+          right: -$msg-radius + 0.75rem;
           clip-path: polygon(25% 0, 100% 0, 100% 0.25rem, 30% 75%, 0 0);
         }
       }

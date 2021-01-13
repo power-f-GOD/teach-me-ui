@@ -12,7 +12,7 @@ import {
 
 let useLiveUrl = true;
 let live = 'teach-me-services.herokuapp.com';
-let local = 'a896946d2434.ngrok.io';
+let local = '240f299c9556.ngrok.io';
 
 export const apiBaseURL = `https://${useLiveUrl ? live : local}/api/v1`;
 export const wsBaseURL = `ws://${useLiveUrl ? live : local}/api/v1`;

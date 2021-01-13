@@ -23,7 +23,6 @@ const PostFooter = (props: PostCrumbs) => {
     upvote_count,
     downvote_count,
     repost_count,
-    reply_count,
     reaction,
     repostMeta,
     reposted,
@@ -59,7 +58,7 @@ const PostFooter = (props: PostCrumbs) => {
               type='DOWNVOTE'
             />
           </Col>
-          {openCreateRepostModal && repostMeta && (
+          {openCreateRepostModal && repostMeta && 2 > 3 && (
             <Col className='reaction-wrapper d-flex align-items-center'>
               <Button
                 onClick={
@@ -81,7 +80,6 @@ const PostFooter = (props: PostCrumbs) => {
                 onClick={handleCommentClick}
                 className='d-flex align-items-center react-to-post justify-content-center'>
                 <FAIcon className='fa-comment-dots' />
-                <Box>{bigNumberFormat(reply_count!)}</Box>
               </Button>
             )}
           </Col>

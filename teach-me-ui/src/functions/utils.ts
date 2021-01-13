@@ -113,34 +113,38 @@ export function loopThru<T>(
   let i = reverse ? lim : 0;
   let valueToReturn: LoopFind<T> | T[] | T | number | null = null;
 
-  outer: for (; reverse ? i >= 0 : i <= lim; reverse ? i-- : i++) {
-    const datum = data[i];
-    let _break = '';
+  try {
+    outer: for (; reverse ? i >= 0 : i <= lim; reverse ? i-- : i++) {
+      const datum = data[i];
+      let _break = '';
 
-    switch (type) {
-      case 'find':
-        if (!!loopCheckCallback(datum, i)) {
-          valueToReturn = includeIndex ? { value: datum, index: i } : datum;
-          break outer;
-        }
+      switch (type) {
+        case 'find':
+          if (!!loopCheckCallback(datum, i)) {
+            valueToReturn = includeIndex ? { value: datum, index: i } : datum;
+            break outer;
+          }
+          break;
+        case 'findIndex':
+          if (!!loopCheckCallback(datum, i)) {
+            valueToReturn = i;
+            break outer;
+          }
+          break;
+        default:
+          _break = loopCheckCallback(datum, i);
+
+          if (returnReverse) {
+            dataReversed.push(datum);
+          }
+      }
+
+      if (_break === 'break') {
         break;
-      case 'findIndex':
-        if (!!loopCheckCallback(datum, i)) {
-          valueToReturn = i;
-          break outer;
-        }
-        break;
-      default:
-        _break = loopCheckCallback(datum, i);
-
-        if (returnReverse) {
-          dataReversed.push(datum);
-        }
+      }
     }
-
-    if (_break === 'break') {
-      break;
-    }
+  } catch (e) {
+    console.error(e);
   }
 
   if (typeof doneCallback === 'function')
@@ -675,7 +679,7 @@ export const getCharacterSequenceFromText = (text: string, char: string) => {
         text.length > 1 &&
         !text.substring(1).match(/[^A-Za-z0-9_.,?!]/)
     );
-    
+
   for (let item of array) {
     if (char === '@') {
       finArray.push(

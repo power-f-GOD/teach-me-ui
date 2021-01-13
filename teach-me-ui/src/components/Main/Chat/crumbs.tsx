@@ -118,7 +118,7 @@ export const Message = (props: {
 
   useEffect(() => {
     const messageEl = messageElRef.current as HTMLElement;
-
+    
     if (messageEl) {
       ([
         { event: 'dblclick', handler: handleSelectMessage },
@@ -145,22 +145,20 @@ export const Message = (props: {
         // console.log('is last message:', isNewMessage, getState().conversation.new_message);
         if (isNewMessage) {
           messageEl.classList.add('chat-last-message');
-        }
 
-        addEventListenerOnce(
-          messageEl,
-          () => {
-            if (isNewMessage) {
+          addEventListenerOnce(
+            messageEl,
+            () => {
               dispatch(conversation(convoId, { new_message: {} }));
               dispatch(
                 conversations({
                   data: [{ id: convoId, new_message: {} }]
                 })
               );
-            }
-          },
-          'animationend'
-        );
+            },
+            'animationend'
+          );
+        }
       }
     }
   }, [

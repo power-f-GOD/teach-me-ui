@@ -101,11 +101,12 @@ export interface PostStateProps {
     profile_photo: string;
     username: string;
   };
-  parent: { id: string; reply_count: number };
+  parent?: { id: string; reply_count: number };
   text: string;
   upvotes: number;
   sec_type?: 'REPOST' | 'REPLY';
   type?: 'post' | 'reply';
+  numRepliesToShow?: number;
 }
 
 interface PostExtraProps {

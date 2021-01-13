@@ -13,10 +13,10 @@ import { getPosts, posts } from '../../../actions/main/home';
 import { dispatch, createObserver } from '../../../functions/utils';
 import { PostStateProps, FetchState } from '../../../constants/interfaces';
 
-const observedElementRef = React.createRef<any>();
+const feedsScrollObservedElemRef = React.createRef<any>();
 
 //used/observed to load/fetch more posts when it is intersecting via the IntersectionObserver
-let observedElement: HTMLElement | null = null;
+let feedsScrollObservedElem: HTMLElement | null = null;
 
 let observer: IntersectionObserver;
 
@@ -27,7 +27,7 @@ const Home = ({ posts: _posts }: { posts: FetchState<PostStateProps> }) => {
   }, [_posts.status]);
 
   useEffect(() => {
-    observedElement = observedElementRef.current;
+    feedsScrollObservedElem = feedsScrollObservedElemRef.current;
 
     return () => {
       dispatch(posts({ statusText: 'home unmounted' }));
@@ -39,7 +39,7 @@ const Home = ({ posts: _posts }: { posts: FetchState<PostStateProps> }) => {
       /fetching/.test(_posts.statusText || '') || _posts.status === 'pending';
     const reachedEnd = /reached end/.test(_posts.statusText || '');
 
-    if (observedElement) {
+    if (feedsScrollObservedElem) {
       observer = createObserver(
         null,
         (entries) => {
@@ -67,11 +67,11 @@ const Home = ({ posts: _posts }: { posts: FetchState<PostStateProps> }) => {
         { threshold: [0.01] }
       );
 
-      observer.observe(observedElement);
+      observer.observe(feedsScrollObservedElem);
     }
 
     return () => {
-      observer?.unobserve(observedElement as Element);
+      observer?.unobserve(feedsScrollObservedElem as Element);
       // window.scrollTo(0, 0);
     };
   }, [_posts.statusText, _posts.err, _posts.status, _posts.extra]);
@@ -90,7 +90,7 @@ const Home = ({ posts: _posts }: { posts: FetchState<PostStateProps> }) => {
             <HomeMiddlePane type={'FEED'} />
             <Container
               className='feeds-scroll-observer py-2'
-              ref={observedElementRef}></Container>
+              ref={feedsScrollObservedElemRef}></Container>
           </Col>
           <Col lg={3} className='d-none hang-in d-lg-block right-pane-col'>
             <HomeRightPane />

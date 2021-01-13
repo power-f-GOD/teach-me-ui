@@ -115,13 +115,15 @@ export const ScrollView = (props: {
         }
       }, 350);
 
-      scrollView.classList.remove('scroll-ended');
-      clearTimeout(hideScrollBarTimeout);
-      hideScrollBarTimeout = setTimeout(() => {
-        if (scrollView) {
-          scrollView!.classList.add('scroll-ended');
-        }
-      }, 400);
+      if (!userDeviceIsMobile) {
+        scrollView.classList.remove('scroll-ended');
+        clearTimeout(hideScrollBarTimeout);
+        hideScrollBarTimeout = setTimeout(() => {
+          if (scrollView) {
+            scrollView!.classList.add('scroll-ended');
+          }
+        }, 400);
+      }
     }
   }, [convoId, offset, convoMessagesStatusText]);
 
@@ -209,10 +211,12 @@ export const ScrollView = (props: {
         }
       }
 
-      if (canAddScrollPadding && !userDeviceIsMobile) {
-        scrollView.classList.add('add-scroll-padding');
-      } else {
-        scrollView.classList.remove('add-scroll-padding');
+      if (!userDeviceIsMobile) {
+        if (canAddScrollPadding) {
+          scrollView.classList.add('add-scroll-padding');
+        } else {
+          scrollView.classList.remove('add-scroll-padding');
+        }
       }
 
       if (/settled|fulfilled/.test(convoMessagesStatus as string)) {

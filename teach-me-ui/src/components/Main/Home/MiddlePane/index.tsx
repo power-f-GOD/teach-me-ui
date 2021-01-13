@@ -43,9 +43,10 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
     recommendations,
     userData
   } = props;
+  const postsIsPending = postStatus === 'pending';
   const isFetching =
     /(updat|fetch|recycl)(e|ing)?/i.test(postsStatusText || '') ||
-    postStatus === 'pending';
+    postsIsPending;
   const username = userData.username || '';
   let profileUsername = profile.username || '';
   // here is where the current user profile check is made to render the views accordingly
@@ -108,13 +109,13 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
   }, [postElements.length, props.type]);
 
   useEffect(() => {
-    if (postStatus !== 'pending') {
+    if (!postsIsPending) {
       document.body.style.overflow =
         postsDataLength && !/chat/.test(window.location.search)
           ? 'auto'
           : 'hidden';
     }
-  }, [postStatus, postsDataLength]);
+  }, [postsIsPending, postsDataLength]);
 
   return (
     <Container className='middle-pane px-0' fluid>
@@ -122,7 +123,7 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
       {!inProfile && !postsData?.length && postStatus === 'fulfilled' && (
         <Recommendations recommendations={recommendations} />
       )}
-      {postStatus !== 'pending' &&
+      {!postsIsPending &&
         postsData?.map((post, i: number) => {
           const renderRecommendations = !inProfile &&
             (i === 2 || (i > 0 && i % 15 === 0)) && (
@@ -145,14 +146,10 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
             </React.Fragment>
           );
         })}
-      {postStatus === 'pending' &&
+      {(isFetching || postsErred || postsIsPending) &&
         Array.from({
-          length: Math.floor(window.innerHeight / 450)
-        }).map((_, i) => <Post key={i} index={i} />)}
-      {(isFetching || postsErred) &&
-        Array.from({ length: 2 }).map((_, i) => (
-          <Post key={i} index={i} postsErred={postsErred} />
-        ))}
+          length: postsIsPending ? Math.floor(window.innerHeight / 200) : 2
+        }).map((_, i) => <Post key={i} index={i} postsErred={postsErred} />)}
     </Container>
   );
 };

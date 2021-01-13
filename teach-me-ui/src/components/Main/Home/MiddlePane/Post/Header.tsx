@@ -43,7 +43,7 @@ const PostHeader = (props: PostHeaderProps) => {
               <Link to={`@${sender_username}`} className='font-bold'>
                 {sender_name}
               </Link>
-              <Box className='theme-tertiary-lighter ml-1'>
+              <Box className='theme-tertiary ml-1'>
                 | @{sender_username}
               </Box>
             </Box>

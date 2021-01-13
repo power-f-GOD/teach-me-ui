@@ -153,7 +153,7 @@ path {
 hr {
   margin: 1.25rem 0;
   height: 0.2rem;
-  border-radius: 0.1rem;
+  border-radius: 0.25rem;
   background-image: linear-gradient(
     to right,
     $theme-secondary,
@@ -668,6 +668,9 @@ div {
 }
 .theme-tertiary-darker {
   color: $theme-tertiary-v3 !important;
+}
+.theme-tertiary-darkest {
+  color: $theme-tertiary-v1 !important;
 }
 .theme-tertiary-lighter {
   color: $theme-tertiary-v7 !important;

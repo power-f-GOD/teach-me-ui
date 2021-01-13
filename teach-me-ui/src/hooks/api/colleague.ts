@@ -21,7 +21,7 @@ export const useFetchDeepProfile = (
   token: string
 ): useApiResponse<DeepProfileProps> => {
   const [...r]: useApiResponse<DeepProfileProps> = useApi<any>({
-    endpoint: `/deep/profile/${id}`,
+    endpoint: `/profile/${id}/deep`,
     method: 'GET',
     headers: { Authorization: `Bearer ${token}` }
   });

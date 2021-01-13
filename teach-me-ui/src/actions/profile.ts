@@ -198,7 +198,7 @@ export const fetchDeepProfile = (id: string) => (dispatch: Function) => {
   const userData = getState().userData as UserData;
   const token = userData.token as string;
   Axios({
-    url: `/deep/profile/${id}`,
+    url: `/profile/${id}/deep`,
     baseURL,
     method: 'GET',
     headers: {
