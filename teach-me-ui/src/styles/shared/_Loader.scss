@@ -15,9 +15,9 @@
     background: $theme-primary-v6;
     display: inline-block;
     border-radius: 50%;
-    box-shadow: 0.0625rem 0.0625rem 0.0625rem rgba(0, 0, 0, 0.2);
-    margin-right: 0.5rem;
-    animation: ellipsisScale 1.35s infinite forwards;
+    // box-shadow: 0.0625rem 0.0625rem 0.0625rem rgba(0, 0, 0, 0.2);
+    margin-right: 0.35rem;
+    animation: ellipsisScale 1s infinite forwards;
     opacity: 0;
 
     &:nth-of-type(2) {

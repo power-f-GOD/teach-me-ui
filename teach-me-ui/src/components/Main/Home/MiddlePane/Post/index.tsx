@@ -20,7 +20,7 @@ import { LazyLoadImage as LazyImg } from 'react-lazy-load-image-component';
 
 import PostFooter from './Footer';
 import PostReply from './Reply';
-import { CREATE_REPOST } from '../../../../../constants/modals';
+import { MAKE_REPOST } from '../../../../../constants/modals';
 import PostBody from './Body';
 import PostHeader from './Header';
 import PostInfo from './Info';
@@ -81,7 +81,7 @@ export const processPost = (post: string) => {
 };
 
 export const openCreateRepostModal = (meta: any) => (e: any) => {
-  displayModal(true, false, CREATE_REPOST, {
+  displayModal(true, false, MAKE_REPOST, {
     title: 'Create Repost',
     post: meta
   });
@@ -278,6 +278,7 @@ const Post: React.FC<
         <PostInfo
           isLoading={!reaction}
           reactions={reactions}
+          reaction_count={(upvote_count ?? 0) + (downvote_count ?? 0)}
           reply_count={reply_count}
         />
 

@@ -11,7 +11,7 @@ import ChatIcon from '@material-ui/icons/Chat';
 
 import { addEventListenerOnce, delay } from '../../../../functions/utils';
 import { SearchState } from '../../../../constants/interfaces';
-import { Skeleton, DISPLAY_INFO } from '../../../shared/Loader';
+import { Skeleton, DISPLAY_INFO } from '../../../shared/Loaders';
 import { Memoize } from '..';
 import { ConversationsList } from './Conversations';
 

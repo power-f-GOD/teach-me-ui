@@ -3,7 +3,7 @@ import { cleanup } from '@testing-library/react';
 import { 
   ReduxAction, 
   ModalState, 
-  CREATE_POST 
+  MAKE_POST 
 } from '../../constants';
 import { 
   hideModal, 
@@ -23,7 +23,7 @@ it("creates modals (inputs) action and should be called with its 'state props' a
     type: expect.any(String),
     payload: {
       open: true,
-      type: CREATE_POST,
+      type: MAKE_POST,
       meta: { title: 'Create Post' }
     }
   };

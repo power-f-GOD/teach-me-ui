@@ -1,4 +1,4 @@
-import { MakeRepostState, MakePostState } from './interfaces';
+import { MakeRepostState, MakePostState, PostStateProps } from './interfaces';
 
 export const REACT_TO_POST = 'REACT_TO_POST';
 export const FETCH_POST_STARTED = 'FETCH_POST_STARTED';
@@ -17,7 +17,6 @@ export const UPDATE_POST = 'UPDATE_POST';
 export const UPDATE_REPOST = 'UPDATE_REPOST';
 export const REPLY_TO_POST = 'REPLY_TO_POST';
 export const SUBMIT_POST = 'SUBMIT_POST';
-export const MAKE_POST = 'MAKE_POST';
 export const GET_TRENDS_STARTED = 'GET_TRENDS_STARTED';
 export const GET_TRENDS_REJECTED = 'GET_TRENDS_REJECTED';
 export const GET_TRENDS_RESOLVED = 'GET_TRENDS_RESOLVED';
@@ -56,4 +55,25 @@ export const makeRepostState: MakeRepostState = {
 
 export const makePostState: MakePostState = {
   status: 'settled'
+};
+
+export const postState: PostStateProps = {
+  downvote_count: 0,
+  reactions: [],
+  reply_count: 0,
+  repost_count: 0,
+  reposted: false,
+  upvote_count: 0,
+  downvotes: 0,
+  id: '',
+  media: [],
+  date: Date.now(),
+  reaction: NEUTRAL,
+  colleague_replies: [],
+  colleague_reposts: [],
+  sender: {} as any,
+  text: '',
+  upvotes: [],
+  type: 'post',
+  numRepliesToShow: 2
 };

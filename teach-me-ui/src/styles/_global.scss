@@ -266,8 +266,8 @@ a {
 
     &:disabled,
     &.Mui-disabled {
-      background-color: #ddd !important;
-      color: #888 !important;
+      background-color: #ccc !important;
+      color: #777 !important;
 
       &::before,
       &::after {
@@ -629,6 +629,11 @@ div {
 
 .vh-100 {
   height: 100vh;
+}
+
+.no-shadow {
+  box-shadow: none;
+  text-shadow: none;
 }
 
 .theme-primary {

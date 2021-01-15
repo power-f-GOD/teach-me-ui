@@ -10,20 +10,28 @@ import {
   apiBaseURL as baseURL,
   UserData,
   SendReplyProps,
-  CREATE_POST,
+  MAKE_POST,
   PostContent,
-  FetchState
+  FetchState,
+  NotificationSoundState,
+  TONE_NAME__OPEN_ENDED,
+  postState
 } from '../../../constants';
 
 import {
   getState,
   checkNetworkStatusWhilstPend,
   getCharacterSequenceFromText,
-  logError
+  logError,
+  http,
+  displayModal,
+  promisedDispatch
 } from '../../../functions';
 
 import axios from 'axios';
 import { pingUser } from '../../notifications';
+import { posts } from './posts';
+import { triggerNotificationSound } from '../..';
 
 export * from './posts';
 export * from './recommendations';
@@ -112,12 +120,6 @@ export const fetchPost: Function = (postId?: string) => (
     .catch((err) => {});
 };
 
-export const createPost = (
-  payload: FetchState<PostStateProps>
-): ReduxAction => {
-  return { type: CREATE_POST, payload };
-};
-
 export const requestCreatePost = ({
   post,
   media
@@ -125,49 +127,75 @@ export const requestCreatePost = ({
   post: PostContent;
   media: Array<string>;
 }) => (dispatch: Function) => {
+  const { userData, notificationSound } = getState() as {
+    userData: UserData;
+    notificationSound: NotificationSoundState;
+  };
+  const toneName: NotificationSoundState['toneName'] = TONE_NAME__OPEN_ENDED;
+  const mentions = getCharacterSequenceFromText(post.text, '@');
+
   dispatch(
     createPost({
       status: 'pending'
     })
   );
-  const token = (getState().userData as UserData).token;
-  const addPost = (payload: any) => {
-    window.scrollTo(0, 0);
-    dispatch(createPost(payload));
-  };
-
   checkNetworkStatusWhilstPend({
-    name: 'makePost',
+    name: 'createPost',
     func: createPost
   });
 
-  axios({
-    url: `post/make`,
-    baseURL,
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Content_Type: 'application/json'
-    },
-    data: {
-      text: post.text,
-      mentions: getCharacterSequenceFromText(post.text, '@'),
-      hashtags: getCharacterSequenceFromText(post.text, '#'),
-      media
-    }
-  })
-    .then(({ data }) => {
-      addPost(data.data);
+  http
+    .post<PostStateProps>(
+      '/post/make',
+      {
+        text: post.text,
+        mentions,
+        hashtags: getCharacterSequenceFromText(post.text, '#'),
+        media
+      },
+      true
+    )
+    .then(({ data, error: err }) => {
+      if (!err) {
+        dispatch(
+          posts({
+            data: [{ ...postState, ...data, sender: userData }],
+            statusText: 'new post created'
+          })
+        );
+        displayModal(false);
+
+        if (notificationSound.isPlaying) {
+          promisedDispatch(
+            triggerNotificationSound({ play: false, isPlaying: false })
+          ).then(() => {
+            dispatch(triggerNotificationSound({ play: true, toneName }));
+          });
+        } else {
+          dispatch(triggerNotificationSound({ play: true, toneName }));
+        }
+      }
+
       dispatch(
         createPost({
-          status: 'fulfilled'
+          status: err ? 'settled' : 'fulfilled',
+          err
         })
       );
-      getCharacterSequenceFromText(post.text, '@') &&
-        pingUser(getCharacterSequenceFromText(post.text, '@'));
+
+      if (mentions.length && !err) {
+        pingUser(mentions);
+      }
     })
     .catch(logError(createPost));
+
   return {
     type: SUBMIT_POST
   };
+};
+
+export const createPost = (
+  payload: FetchState<PostStateProps>
+): ReduxAction => {
+  return { type: MAKE_POST, payload };
 };

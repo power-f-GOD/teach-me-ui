@@ -84,26 +84,15 @@ export interface PostStateProps {
   id: string;
   media: any[];
   date: number;
-  pipe: SocketPipe;
-  parent_id: string;
+  pipe?: SocketPipe;
+  parent_id?: string;
   reaction: Reaction;
   colleague_replies: Partial<PostStateProps>[];
   colleague_reposts: Partial<PostStateProps>[];
-  sender: {
-    cover_photo: string;
-    department: string;
-    first_name: string;
-    id: string;
-    last_name: string;
-    last_seen: number;
-    level: string;
-    online_status: OnlineStatus;
-    profile_photo: string;
-    username: string;
-  };
+  sender: UserData;
   parent?: { id: string; reply_count: number };
   text: string;
-  upvotes: number;
+  upvotes: any[];
   sec_type?: 'REPOST' | 'REPLY';
   type?: 'post' | 'reply';
   numRepliesToShow?: number;
@@ -318,7 +307,7 @@ export interface SnackbarState {
 
 export interface ModalState {
   open: boolean;
-  type?: 'CREATE_POST' | 'CREATE_REPOST';
+  type?: 'MAKE_POST' | 'MAKE_REPOST';
   meta?: { title?: string; [key: string]: any };
 }
 
@@ -480,8 +469,8 @@ export interface NotificationState extends StatusPropsState {
 }
 
 export interface HashTag {
-  hashtag: string;
-  count: 2;
+  tag: string;
+  count: number;
 }
 
 export interface NotificationData {

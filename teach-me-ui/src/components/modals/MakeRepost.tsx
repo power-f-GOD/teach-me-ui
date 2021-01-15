@@ -20,7 +20,7 @@ import { connect } from 'react-redux';
 import { makeRepost } from '../../actions';
 
 
-const CreatePost: React.FC<any> = (props) => {
+const MakePost: React.FC<any> = (props) => {
   const { userData } = props;
   const [state, setState] = useState<any>({
     post: {
@@ -151,5 +151,5 @@ const mapStateToProps = ({ makeRepostStatus, userData }: any) => ({
   userData
 });
 
-export default connect(mapStateToProps)(CreatePost);
+export default connect(mapStateToProps)(MakePost);
 

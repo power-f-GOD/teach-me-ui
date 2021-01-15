@@ -15,9 +15,9 @@ const PostInfo = (props: {
   reactions?: UserData[];
   reply_count?: number;
   isLoading: boolean;
+  reaction_count: number;
 }) => {
-  const { reactions, reply_count, isLoading } = props;
-  const nReactions = reactions?.length;
+  const { reactions, reply_count, isLoading, reaction_count } = props;
   const colleagueThatUpvoted = reactions?.find(
     (colleague) => colleague.reaction === UPVOTE
   );
@@ -28,9 +28,9 @@ const PostInfo = (props: {
         <FAIcon name='thumbs-up' />
         <FAIcon name='thumbs-down' />
         <Col as='span' className='n-reactions font-bold mr-1'>
-          {bigNumberFormat(nReactions)}
+          {bigNumberFormat(reaction_count)}
         </Col>{' '}
-        reaction{nReactions === 1 ? '' : 's'}
+        reaction{reaction_count === 1 ? '' : 's'}
         {!!colleagueThatUpvoted && (
           <Box
             component='span'

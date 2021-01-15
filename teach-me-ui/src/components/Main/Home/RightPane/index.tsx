@@ -37,12 +37,8 @@ const HomeRightPane = ({
         <h4>Trending</h4>
         {trendsStatus !== 'pending' && (
           <ul>
-            {_trends?.map((topic: any, i: number) => (
-              <Topic
-                topic={topic.hashtag}
-                key={i}
-                numberOfDiscussions={topic.count}
-              />
+            {_trends?.map(({ tag, count }, i: number) => (
+              <Topic topic={tag} key={i} numberOfDiscussions={count} />
             ))}
           </ul>
         )}

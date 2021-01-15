@@ -109,26 +109,31 @@ export const posts = (_payload: FetchState<PostStateProps[], number>) => {
   const pipe = data?.pipe;
   let payload = { ...prevPostsState } as FetchState<PostStateProps[]>;
   const homeUnmounted = /(home\s?)unmount(s|ed)/.test(statusText || '');
-  const hadReachedEnd = /reached\send/.test(prevPostsState.statusText || '');
+  const hadReachedEnd = /reached\send/.test(prevPostsState.statusText || ''); //attempt to reset Posts to [] if it had reached end
+  const newPostCreated = /(new\s)?post\screated/.test(statusText || '');
+  const newData = _payload.data ?? [];
+  const resultantData = homeUnmounted
+    ? hadReachedEnd
+      ? []
+      : [...prevPostsState.data?.slice(-3)]
+    : [...prevPostsState.data];
   const updateFromPipe = !!pipe;
 
   if (!updateFromPipe) {
+    if (!homeUnmounted) {
+      resultantData[newPostCreated ? 'unshift' : 'push'](...newData);
+    }
+
     payload = {
       ..._payload,
-      data: homeUnmounted
-        ? hadReachedEnd
-          ? []
-          : [...prevPostsState.data?.slice(-3)]
-        : [...prevPostsState.data, ...(_payload.data ?? [])],
+      data: resultantData,
       extra: _payload.extra ?? prevPostsState.extra
     };
   } else {
     let { value: actualPost, index: postIndex } = loopThru(
       payload.data ?? [],
-      (post) =>
-        post.id === data.id ||
-        post.id === data.parent_id ||
-        post.id === data.parent?.id,
+      ({ id }) =>
+        id === data.id || id === data.parent_id || id === data.parent?.id,
       { type: 'find', includeIndex: true }
     ) as LoopFind<PostStateProps>;
 
