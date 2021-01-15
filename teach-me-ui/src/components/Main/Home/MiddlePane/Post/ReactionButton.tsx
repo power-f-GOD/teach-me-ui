@@ -50,7 +50,7 @@ export const ReactionButton: React.FunctionComponent<ReactButtonPropsState> = (
       className={`ReactionButton d-flex align-items-center reaction-${reaction?.toLowerCase()}`}
       onClick={reactToPost}>
       <FAIcon
-        className={`fa-thumbs-${type === 'UPVOTE' ? 'up' : 'down'}`}
+        name={`thumbs-${type === 'UPVOTE' ? 'up' : 'down'}`}
         variant={reacted ? 'solid' : 'outlined'}
         color={!reacted ? '#888' : 'inherit'}
       />

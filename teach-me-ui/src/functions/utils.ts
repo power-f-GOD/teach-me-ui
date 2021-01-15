@@ -472,7 +472,7 @@ export const logError = (action: Function) => (error: Error) => {
   );
 
   if (process.env.NODE_ENV === 'development') {
-    console.error('An error occured: ');
+    console.error('An error occured: ', error);
   }
 };
 

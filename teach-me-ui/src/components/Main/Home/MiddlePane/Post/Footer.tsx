@@ -69,7 +69,7 @@ const PostFooter = (props: PostCrumbs) => {
                 className={`ReactionButton d-flex align-items-center justify-content-center ${
                   reposted ? 'reposted' : ''
                 }`}>
-                <FAIcon className='fa-retweet' />
+                <FAIcon name='retweet' />
                 <Box>{bigNumberFormat(repost_count!)}</Box>
               </Button>
             </Col>
@@ -79,7 +79,7 @@ const PostFooter = (props: PostCrumbs) => {
               <Button
                 onClick={handleCommentClick}
                 className='d-flex align-items-center react-to-post justify-content-center'>
-                <FAIcon className='fa-comment-dots' />
+                <FAIcon name='comment-dots' />
               </Button>
             )}
           </Col>
@@ -89,8 +89,8 @@ const PostFooter = (props: PostCrumbs) => {
     );
 
   return (
-    <Container className='d-flex px-3 pb-2'>
-      <Skeleton width='4rem' height='1.65rem' className='mr-4 mt-2' />
+    <Container className='d-flex pt-1 pr-3 pl-2 pb-2'>
+      <Skeleton width='4rem' height='1.65rem' className='mr-4 ml-2 mt-2' />
       <Skeleton width='4rem' height='1.65rem' className='mr-4 mt-2' />
       <Skeleton width='4rem' height='1.65rem' className='mr-4 mt-2' />
       <Container className='ml-auto w-auto'>

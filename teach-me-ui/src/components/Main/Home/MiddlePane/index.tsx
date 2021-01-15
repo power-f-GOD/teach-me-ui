@@ -108,15 +108,6 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
     // eslint-disable-next-line
   }, [postElements.length, props.type]);
 
-  useEffect(() => {
-    if (!postsIsPending) {
-      document.body.style.overflow =
-        postsDataLength && !/chat/.test(window.location.search)
-          ? 'auto'
-          : 'hidden';
-    }
-  }, [postsIsPending, postsDataLength]);
-
   return (
     <Container className='middle-pane px-0' fluid>
       {(selfView || !inProfile) && <Compose userData={userData} />}
@@ -146,10 +137,14 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
             </React.Fragment>
           );
         })}
-      {(isFetching || postsErred || postsIsPending) &&
+
+      {/* Skeleton Loader */}
+      {(isFetching || postsErred || postsIsPending || !postsDataLength) &&
         Array.from({
           length: postsIsPending ? Math.floor(window.innerHeight / 200) : 2
-        }).map((_, i) => <Post key={i} index={i} postsErred={postsErred} />)}
+        }).map((_, i) => (
+          <Post key={i} index={i} postsErred={postsErred || !postsDataLength} />
+        ))}
     </Container>
   );
 };

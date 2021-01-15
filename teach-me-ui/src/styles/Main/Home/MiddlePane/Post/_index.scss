@@ -121,7 +121,7 @@
 
   .post-info {
     margin-left: 0.75rem;
-    padding: 0.125em 0.25rem;
+    padding: 0.25rem;
     width: calc(100% - 1.5rem);
     border-top: 0.0625rem solid #eee;
     font-size: 0.85em;
@@ -134,16 +134,21 @@
 
     [class*='fa-thumbs'] {
       color: #aaa !important;
-      font-size: 0.925em;
+      font-size: 0.9em;
     }
 
     .fa-thumbs-up {
-      transform: translateY(-0.125rem);
+      transform: translateY(-0.25em);
     }
 
     .fa-thumbs-down {
-      transform: rotateY(180deg) translateY(0.125rem);
-      margin-right: 0.5rem;
+      transform: rotateY(180deg) translateY(0.25em);
+      margin-right: 0.4em;
+    }
+
+    .n-reactions {
+      min-width: fit-content;
+      max-width: fit-content;
     }
   }
 

@@ -42,7 +42,7 @@ const Signin = (props: SigninPropsState) => {
 
   return (
     <Box
-      width='25rem'
+      width='23rem'
       className='auth-form-wrapper fade-in d-flex flex-column justify-content-center px-1'>
       <Box component='h2' marginY='0.75em' fontSize='1.25rem' fontWeight={900}>
         Sign In

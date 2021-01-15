@@ -37,7 +37,7 @@ const Home = ({ posts: _posts }: { posts: FetchState<PostStateProps> }) => {
   useEffect(() => {
     const isFetching =
       /fetching/.test(_posts.statusText || '') || _posts.status === 'pending';
-    const reachedEnd = /reached end/.test(_posts.statusText || '');
+    const reachedEnd = /reached\send/.test(_posts.statusText || '');
 
     if (feedsScrollObservedElem) {
       observer = createObserver(
@@ -49,6 +49,7 @@ const Home = ({ posts: _posts }: { posts: FetchState<PostStateProps> }) => {
             entry.isIntersecting &&
             !isFetching &&
             !reachedEnd &&
+            !_posts.err &&
             navigator.onLine
           ) {
             dispatch(

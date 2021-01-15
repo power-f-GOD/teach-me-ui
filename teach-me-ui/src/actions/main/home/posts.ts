@@ -52,8 +52,7 @@ export const getPosts = (
       true
     )
     .then(({ error, message, data }) => {
-      offset = data.slice(-1)[0]?.date ?? Date.now();
-      // console.log(data, _data, offset, url);
+      offset = data?.slice(-1)[0]?.date ?? Date.now();
 
       if (error) {
         dispatch(posts({ status: 'settled', statusText: message, err: true }));
@@ -79,9 +78,8 @@ export const getPosts = (
                 `/feed?recycle=true&offset=`
               )
             );
+            return;
           }
-
-          return;
         }
 
         dispatch(
@@ -120,7 +118,7 @@ export const posts = (_payload: FetchState<PostStateProps[], number>) => {
       data: homeUnmounted
         ? hadReachedEnd
           ? []
-          : [...prevPostsState.data?.slice(-2)]
+          : [...prevPostsState.data?.slice(-3)]
         : [...prevPostsState.data, ...(_payload.data ?? [])],
       extra: _payload.extra ?? prevPostsState.extra
     };

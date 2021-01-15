@@ -149,14 +149,14 @@ const PostBody = (props: PostBodyProps) => {
 
   return (
     <Box className='mt-1 px-2 pt-2 pb-0'>
-      {(index ?? 0) % 2 === 0 && index !== 1 ? (
-        <Skeleton height='14rem' className='media' />
+      {((index ?? 0) % 2 === 0 || index === 1) && index !== 0 ? (
+        <Skeleton height='12rem' className='media' />
       ) : (
         <>
           <Skeleton height='1rem' width='50%' className='ml-1 mb-2' />
           <Skeleton height='1rem' width='85%' className='ml-1 mb-2' />
           <Skeleton height='1rem' width='60%' className='ml-1 mb-2' />
-          <Skeleton height='1rem' width='20%' className='d-block ml-1 mb-2' />
+          <Skeleton height='1rem' width='20%' className='d-block ml-1 mt-1 mb-2' />
         </>
       )}
     </Box>

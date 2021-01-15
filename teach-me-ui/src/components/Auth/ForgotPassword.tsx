@@ -34,7 +34,7 @@ const ForgotPassword = (props: any) => {
 
   return (
     <Box
-      width='25rem'
+      width='23rem'
       className='auth-form-wrapper fade-in d-flex flex-column justify-content-center'>
       <Typography component='h2' variant='h6'>
         <Box marginY='0.75em' fontSize='1.25rem' fontWeight={900}>

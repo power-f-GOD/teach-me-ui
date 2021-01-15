@@ -32,7 +32,7 @@ const Recommendations = ({
           <Box
             className='recommendations'
             style={{
-              gridTemplateColumns: `repeat(${_recommendations.length}, 11.5rem)`,
+              gridTemplateColumns: `repeat(${_recommendations.length}, 12rem)`,
               columnGap: userDeviceIsMobile ? '.5rem' : '.75rem'
             }}>
             {_recommendations.map((recommendation, i) =>
