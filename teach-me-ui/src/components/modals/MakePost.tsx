@@ -32,8 +32,9 @@ import {
   getFileExtension
 } from '../../functions';
 import { Container } from '@material-ui/core';
+import Loader from '../shared/Loaders';
 
-const CreatePost = (props: any) => {
+const MakePost = (props: any) => {
   const { userData, sendFile, uploadsProp, makePostProp } = props;
   const { profile_photo, displayName } = userData;
 
@@ -75,11 +76,12 @@ const CreatePost = (props: any) => {
       label.current.style.display = 'none';
       label1.current.style.display = 'none';
     }
+
     setState({
       ...state,
       post: {
         ...state.post,
-        text: value
+        text: value.trim()
       }
     });
   };
@@ -89,6 +91,7 @@ const CreatePost = (props: any) => {
     label1.current.style.display = 'none';
     let selectedUploads = [];
     let removed = false;
+
     for (let file of state.selectedUploads) {
       if (
         e.target.previousElementSibling.getAttribute('id') === file.id &&
@@ -97,8 +100,10 @@ const CreatePost = (props: any) => {
         removed = true;
         continue;
       }
+
       selectedUploads.push(file);
     }
+
     setState({
       ...state,
       selectedUploads
@@ -113,7 +118,7 @@ const CreatePost = (props: any) => {
 
     for (let file of state.selectedFiles) {
       if (
-        e.target.previousElementSibling.getAttribute('title') === file.name &&
+        e.target.previousElementSibling?.getAttribute('title') === file.name &&
         !removed
       ) {
         removed = true;
@@ -136,6 +141,7 @@ const CreatePost = (props: any) => {
     let numberOfSelectedFiles =
       selectedFiles.length + state.selectedUploads.length;
     let files: Array<File> = [];
+
     for (let file of e.target.files) {
       if (file.size > 50000000) {
         files = [];
@@ -146,14 +152,15 @@ const CreatePost = (props: any) => {
           label1.current.style.display = 'block';
           break;
         }
+
         files.push(file);
         numberOfSelectedFiles++;
       }
     }
-    Array.prototype.push.apply(selectedFiles, files);
+
     setState({
       ...state,
-      selectedFiles
+      selectedFiles: [...state.selectedFiles, ...files]
     });
   };
 
@@ -202,9 +209,10 @@ const CreatePost = (props: any) => {
 
   const handleSelectUpload = (e: any) => {
     if (state.tempSelectedUploads[0]) {
+      const tempUploads = state.tempSelectedUploads;
+
       label.current.style.display = 'none';
       label1.current.style.display = 'none';
-      const tempUploads = state.tempSelectedUploads;
       setState({
         ...state,
         selectedUploads: [...state.selectedUploads, ...tempUploads],
@@ -228,9 +236,11 @@ const CreatePost = (props: any) => {
     document.body.click();
     label.current.style.display = 'none';
     label1.current.style.display = 'none';
+
     if (uploadsProp.status !== 'pending' && !uploadsProp.data[0]) {
       dispatch(getUploads);
     }
+
     setState({
       ...state,
       showUploads: true
@@ -245,7 +255,7 @@ const CreatePost = (props: any) => {
   };
 
   const onPostSubmit = () => {
-    if (state.post.text) {
+    if (state.post.text || state.selectedFiles.length) {
       if (state.selectedFiles[0] || state.selectedUploads[0]) {
         sendFilesToServer(
           state.selectedFiles,
@@ -263,18 +273,18 @@ const CreatePost = (props: any) => {
 
   return (
     <Box p={1} pt={0} className='post'>
-      <Row className='container-fluid p-0 mx-auto'>
+      <Row className='container-fluid p-0 mx-auto mb-2'>
         <Box pr={1}>
           <Avatar
             component='span'
             className='chat-avatar compose-avatar'
             alt={displayName}
-            src={profile_photo ? profile_photo : `images/${userData.avatar}`}
+            src={profile_photo ? profile_photo : ''}
           />
         </Box>
         <div className='d-flex flex-column justify-content-center flex-grow-1'>
-          <span>{userData.displayName}</span>
-          <small>{userData.username}</small>
+          <span className='font-bold'>{userData.displayName}</span>
+          <small>@{userData.username}</small>
         </div>
       </Row>
       <form>
@@ -446,22 +456,28 @@ const CreatePost = (props: any) => {
         <Row className='d-flex mx-auto mt-1'>
           {!(state.showUploads && uploadsProp.data[0]) && (
             <Button
-              id={`${
+              disabled={
                 makePostProp.status === 'pending' ||
                 sendFile.status === 'pending' ||
-                !state.post.text
-                  ? 'background-grey'
-                  : ''
-              }`}
-              className='post-button major-button Primary contained p-0 flex-grow-1'
+                (!state.post.text && !state.selectedFiles.length)
+              }
+              className='Primary post-button major-button contained p-0 flex-grow-1'
               onClick={onPostSubmit}
               color={state.post ? 'primary' : 'default'}>
-              {makePostProp.status === 'pending' ? (
-                <CircularProgress size={28} color='inherit' />
-              ) : sendFile.status === 'pending' ? (
-                'uploading files...'
+              {makePostProp.status === 'pending' ||
+              sendFile.status === 'pending' ? (
+                <>
+                  Making post{' '}
+                  <Loader
+                    type='ellipsis'
+                    inline={true}
+                    color='#555'
+                    size={6}
+                    className='ml-2'
+                  />
+                </>
               ) : (
-                'Post'
+                'Make'
               )}
             </Button>
           )}
@@ -478,4 +494,4 @@ const mapStateToProps = ({ userData, sendFiles, uploads, makePost }: any) => ({
   makePostProp: makePost
 });
 
-export default connect(mapStateToProps)(CreatePost);
+export default connect(mapStateToProps)(MakePost);

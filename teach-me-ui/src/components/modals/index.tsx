@@ -13,17 +13,17 @@ import {
   dispatch,
   displayModal,
 } from '../../functions';
-import CreatePost from './CreatePost';
-import CreateRepost from './CreateRepost';
+import MakePost from './MakePost';
+import CreateRepost from './MakeRepost';
 import EditProfile from './Profile.edit';
 import UploadsPreview from './UploadsPreview';
 import Notifications from './Notifications';
-import CreateQuestionOrAnswer from './CreateQuestion';
+import CreateQuestionOrAnswer from './AskQuestion';
 
 import { uploads } from '../../actions';
 import { 
-  CREATE_POST,
-  CREATE_REPOST,
+  MAKE_POST,
+  MAKE_REPOST,
   NOTIFICATIONS,
   SELECT_PHOTO,
   EDIT_PROFILE,
@@ -48,10 +48,10 @@ const ModalFrame = (props: any) => {
   let modalBody = null;
 
   switch (props.modal.type) {
-    case CREATE_POST:
-      modalBody = <CreatePost />;
+    case MAKE_POST:
+      modalBody = <MakePost />;
       break;
-    case CREATE_REPOST:
+    case MAKE_REPOST:
       modalBody = <CreateRepost {...props.modal.meta?.post} />;
       break;
     case EDIT_PROFILE:

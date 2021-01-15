@@ -53,7 +53,7 @@ const RenderImage = (props: {file: File}) => {
 }
 
 
-const CreateQuestion = (props: any) => {
+const AskQuestion = (props: any) => {
   const { 
     // userData, 
   sendFile,
@@ -544,4 +544,4 @@ const mapStateToProps = ({
   askQuestionProp: askQuestion
 });
 
-export default connect(mapStateToProps)(CreateQuestion);
+export default connect(mapStateToProps)(AskQuestion);

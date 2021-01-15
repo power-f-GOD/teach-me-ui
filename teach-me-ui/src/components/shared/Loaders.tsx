@@ -32,13 +32,14 @@ const Loader = (props: {
   color?: string;
   size?: number | string;
   show?: boolean;
+  className?: string;
 }) => {
-  const { type, inline, color, size, show } = props;
-  const _size = typeof size === 'string' ? size : size + 'px';
+  const { type, inline, color, size, show, className } = props;
+  const _size = !size ? 8 : typeof size === 'string' ? size : size + 'px';
   const ellipsisDotStyle = {
     height: _size,
     width: _size,
-    backgroundColor: color
+    background: color ? color : 'white'
   };
 
   useEffect(() => {
@@ -73,7 +74,9 @@ const Loader = (props: {
     case 'ellipsis':
       return (
         <span
-          className={`ellipsis-loader ${show ? 'show' : ''}`}
+          className={`ellipsis-loader ${
+            show === undefined ? 'show' : show ? 'show' : ''
+          } ${className}`}
           aria-label='ellipsis loader'
           style={{ display: inline ? 'inline-block' : 'block' }}>
           <span className='dot' style={ellipsisDotStyle}></span>

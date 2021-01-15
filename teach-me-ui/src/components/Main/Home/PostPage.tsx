@@ -10,7 +10,7 @@ import Box from '@material-ui/core/Box';
 
 import HomeRightPane from './RightPane';
 import Post from './MiddlePane/Post';
-import Loader from '../../shared/Loader';
+import Loader from '../../shared/Loaders';
 
 import { connect } from 'react-redux';
 
