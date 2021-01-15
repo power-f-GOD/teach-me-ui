@@ -25,6 +25,7 @@ export default function post(data: any) {
   const toneName: NotificationSoundState['toneName'] = TONE_NAME__OPEN_ENDED;
 
   try {
+    // console.log('posts pipe:', data);
     switch (data.pipe as SocketPipe) {
       case POST_REACTION:
       case POST_REPLY:

@@ -1,16 +1,19 @@
 import React from 'react';
 
 export const FAIcon = (props: {
-  className: string;
+  name: string;
+  className?: string;
   color?: string;
   fontSize?: string;
   variant?: 'solid' | 'outlined';
 }) => {
-  const { className, color, fontSize, variant } = props;
+  const { className, color, fontSize, variant, name } = props;
 
   return (
     <i
-      className={`${variant === 'outlined' ? 'far' : 'fas'} ${className} icon`}
+      className={`${
+        variant === 'outlined' ? 'far' : 'fas'
+      } fa-${name} ${className} icon`}
       style={{ color, fontSize }}></i>
   );
 };

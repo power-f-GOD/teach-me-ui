@@ -39,6 +39,10 @@ export const SET_TRENDS = 'SET_TRENDS';
 export const POST_REACTION = 'POST_REACTION';
 export const POST_REPLY = 'POST_REPLY';
 
+export const UPVOTE = 'UPVOTE';
+export const NEUTRAL = 'NEUTRAL';
+export const DOWNVOTE = 'DOWNVOTE';
+
 export const fetchState = {
   status: 'settled',
   err: false,

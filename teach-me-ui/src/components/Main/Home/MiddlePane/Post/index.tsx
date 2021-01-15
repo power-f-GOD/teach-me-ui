@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
 
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-
 import Box from '@material-ui/core/Box';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
@@ -13,11 +10,7 @@ import ArrowForward from '@material-ui/icons/ArrowForwardIos';
 
 import { Link } from 'react-router-dom';
 
-import {
-  dispatch,
-  loopThru,
-  bigNumberFormat
-} from '../../../../../functions/utils';
+import { dispatch, loopThru } from '../../../../../functions/utils';
 import { PostStateProps, LoopFind } from '../../../../../constants/interfaces';
 
 import { displayModal } from '../../../../../functions';
@@ -30,7 +23,7 @@ import PostReply from './Reply';
 import { CREATE_REPOST } from '../../../../../constants/modals';
 import PostBody from './Body';
 import PostHeader from './Header';
-import { FAIcon } from '../../../../shared/Icons';
+import PostInfo from './Info';
 
 export interface PostCrumbs extends Partial<PostStateProps> {
   navigate?: Function;
@@ -111,6 +104,7 @@ const Post: React.FC<
     id,
     sender,
     text,
+    reactions,
     date: posted_at,
     reaction,
     colleague_reposts,
@@ -124,7 +118,6 @@ const Post: React.FC<
   const { username: sender_username, first_name, last_name, profile_photo } =
     sender || {};
   const sender_name = first_name ? `${first_name} ${last_name}` : '';
-  const numReactions = upvote_count! + +downvote_count!;
   let mostRecentColleagueReplyIndex: number | null = null;
 
   const [mediaPreview, setMediaPreview] = useState(false);
@@ -151,18 +144,17 @@ const Post: React.FC<
   };
 
   if (colleague_reposts?.length && colleague_reposts?.length > 1) {
-    let senderName1 = `${colleague_reposts[0]?.sender?.first_name} ${colleague_reposts[0]?.sender?.last_name}`;
-    let senderName2 = `${colleague_reposts[1]?.sender?.first_name} ${colleague_reposts[1]?.sender?.last_name}`;
+    let senderName1 = `${colleague_reposts[0]?.sender?.first_name}`;
 
     switch (colleague_reposts.length) {
       case 2:
-        extra = `<b>${senderName1}</b> and <b>${senderName2}</b> reposted <b>${sender_name}</b>'s post`;
+        extra = `<b>${senderName1}</b> and <b>${first_name}</b> reposted <b>${sender_name}</b>'s post`;
         break;
       default:
-        extra = `<b>${senderName1}</b> and <b>${colleague_reposts?.length} others</b> reposted <b>${sender_name}</b>'s post`;
+        extra = `<b>${senderName1}</b> and <b>${colleague_reposts?.length} others</b> reposted <b>${first_name}</b>'s post`;
     }
   } else if (quote) {
-    extra = `<b>${sender_name}</b> reposted <b>${quote.sender?.first_name} ${quote.sender?.last_name}</b>'s post`;
+    extra = `<b>${sender_name}</b> reposted <b>${quote.sender?.first_name}</b>'s post`;
   } else if (colleague_replies?.length) {
     const { value: reply, index } = (loopThru(
       colleague_replies,
@@ -182,22 +174,11 @@ const Post: React.FC<
           ? 'your'
           : reply.sender.username === sender_username
           ? 'their own'
-          : `<b>${sender_name}</b>'s`
+          : `<b>${first_name}</b>'s`
       } post`;
       mostRecentColleagueReplyIndex = index;
     }
   }
-
-  // const nReplies = colleague_replies?.length;
-  // React.useEffect(() => {
-  //   if (nReplies) {
-  //     const reply = colleague_replies?.slice(-1)[0];
-  //     // console.log(reply, userId, nReplies);
-  //     if (reply?.pipe && reply?.sender?.id === userId) {
-  //       setNumRepliesToShow((prev) => prev + 1);
-  //     }
-  //   }
-  // }, [colleague_replies, nReplies, userId]);
 
   return (
     <>
@@ -294,24 +275,11 @@ const Post: React.FC<
         />
 
         {/* Post info */}
-        {reaction && (
-          <Row className='post-info d-flex theme-tertiary'>
-            <Col>
-              <FAIcon className='fa-thumbs-up' />
-              <FAIcon className='fa-thumbs-down' />
-              <Col as='span' className='font-bold'>
-                {bigNumberFormat(numReactions)}
-              </Col>
-              reaction{numReactions === 1 ? '' : 's'}
-            </Col>
-            <Col className='text-right'>
-              <Col as='span' className='font-bold'>
-                {bigNumberFormat(reply_count!)}
-              </Col>
-              repl{reply_count === 1 ? 'y' : 'ies'}
-            </Col>
-          </Row>
-        )}
+        <PostInfo
+          isLoading={!reaction}
+          reactions={reactions}
+          reply_count={reply_count}
+        />
 
         {/* Post footer (reaction buttons) */}
         <PostFooter
@@ -331,7 +299,7 @@ const Post: React.FC<
         {/* Post replies */}
         {colleague_replies
           ?.slice(
-            // attempt to display the most recent colleague reply (mentioned in extra) instead of a self reply in case of a self reply
+            // attempt to display the most recent colleague reply (mentioned in extra) instead of a self reply in case of any
             mostRecentColleagueReplyIndex ?? -(numRepliesToShow ?? 3),
             mostRecentColleagueReplyIndex !== null
               ? mostRecentColleagueReplyIndex + (numRepliesToShow ?? 2)

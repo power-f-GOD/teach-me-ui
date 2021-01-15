@@ -372,7 +372,7 @@ const Signup = (props: SignupPropsState) => {
 
   return (
     <Box
-      width='45rem'
+      width='40rem'
       className='auth-form-wrapper fade-in d-flex flex-column justify-content-center'>
       <Box
         component='h2'
