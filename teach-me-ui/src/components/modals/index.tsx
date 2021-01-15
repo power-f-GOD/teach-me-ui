@@ -13,12 +13,12 @@ import {
   dispatch,
   displayModal,
 } from '../../functions';
-import MakePost from './CreatePost';
+import MakePost from './MakePost';
 import CreateRepost from './MakeRepost';
 import EditProfile from './Profile.edit';
 import UploadsPreview from './UploadsPreview';
 import Notifications from './Notifications';
-import CreateQuestionOrAnswer from './CreateQuestion';
+import CreateQuestionOrAnswer from './AskQuestion';
 
 import { uploads } from '../../actions';
 import { 
