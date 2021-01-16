@@ -156,7 +156,11 @@ const PostBody = (props: PostBodyProps) => {
           <Skeleton height='1rem' width='50%' className='ml-1 mb-2' />
           <Skeleton height='1rem' width='85%' className='ml-1 mb-2' />
           <Skeleton height='1rem' width='60%' className='ml-1 mb-2' />
-          <Skeleton height='1rem' width='20%' className='d-block ml-1 mt-1 mb-2' />
+          <Skeleton
+            height='1rem'
+            width='20%'
+            className='d-block ml-1 mt-1 mb-2'
+          />
         </>
       )}
     </Box>

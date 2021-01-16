@@ -10,7 +10,6 @@ import Skeleton from 'react-loading-skeleton';
 
 import { Link } from 'react-router-dom';
 
-import { formatDate } from '../../../../../functions/utils';
 import { PostStateProps } from '../../../../../types';
 
 import PostFooter from './Footer';
@@ -25,7 +24,7 @@ const PostReply = (props: Partial<PostStateProps>) => {
     id,
     sender,
     text,
-    date: posted_at,
+    date,
     upvote_count,
     downvote_count,
     reaction,
@@ -76,19 +75,14 @@ const PostReply = (props: Partial<PostStateProps>) => {
           />
           <Col className='display-name-wrapper d-flex flex-column justify-content-center'>
             {sender_name ? (
-              <>
-                <Box>
-                  <Link to={`@${sender_username}`} className='font-bold'>
-                    {sender_name}
-                  </Link>
-                  <Box component='span' className='theme-tertiary ml-1'>
-                    | @{sender_username}
-                  </Box>
+              <Box>
+                <Link to={`@${sender_username}`} className='font-bold'>
+                  {sender_name}
+                </Link>
+                <Box component='span' className='theme-tertiary ml-1'>
+                  | @{sender_username}
                 </Box>
-                <Box component='small' className='theme-tertiary'>
-                  {formatDate(+posted_at!)}
-                </Box>
-              </>
+              </Box>
             ) : (
               <>
                 <Skeleton width={150} />
@@ -123,6 +117,7 @@ const PostReply = (props: Partial<PostStateProps>) => {
           reaction={reaction}
           repost_count={repost_count}
           reply_count={reply_count}
+          date={date}
           anchorIsParent={false}
         />
       </Box>

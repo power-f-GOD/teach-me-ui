@@ -13,7 +13,7 @@ import { FAIcon } from '../../../../shared/Icons';
 import ReactionButton from './ReactionButton';
 
 import { PostCrumbs } from '.';
-import { bigNumberFormat } from '../../../../../functions/utils';
+import { bigNumberFormat, formatDate } from '../../../../../functions/utils';
 
 import CreateReply from './CreateReply';
 
@@ -27,6 +27,7 @@ const PostFooter = (props: PostCrumbs) => {
     repostMeta,
     reposted,
     openCreateRepostModal,
+    date,
     anchorIsParent,
     isLoading
   } = props;
@@ -43,6 +44,11 @@ const PostFooter = (props: PostCrumbs) => {
     return (
       <>
         <Row className='post-footer'>
+          {date && (
+            <Col as='small' className='theme-tertiary mr-3 ml-2 text-ellipsis'>
+              {formatDate(date)?.replace('ago', '')}
+            </Col>
+          )}
           <Col className='reaction-wrapper d-flex align-items-center'>
             <ReactionButton
               id={id!}

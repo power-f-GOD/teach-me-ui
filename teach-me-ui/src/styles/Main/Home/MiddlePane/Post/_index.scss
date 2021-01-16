@@ -158,6 +158,12 @@
     margin-left: 0.75em;
     border-top: 0.0625em solid #eee;
     // border-bottom: 0.0625rem solid #eee;
+
+    small {
+      max-width: fit-content;
+      margin-top: -0.5em;
+      transform: translate(-0.125em, 0.5em);
+    }
   }
 
   .reaction-wrapper {
@@ -175,12 +181,39 @@
       &:hover,
       &:focus {
         background-color: rgba(0, 0, 0, 0.11);
+
+        .icon {
+          transform: scale(1.35);
+        }
+
+        .fa-thumbs-up {
+          transform: rotateZ(-20deg) scale(1.35);
+        }
+
+        .fa-thumbs-down {
+          transform: rotateZ(20deg) scale(1.35);
+        }
+
+        &[class*='vote'] {
+          .icon {
+            transform: unset;
+          }
+        }
+      }
+
+      .fa-thumbs-up {
+        transform-origin: left bottom;
+      }
+
+      .fa-thumbs-down {
+        transform-origin: left top;
       }
 
       .icon {
         font-size: 1.1em;
         margin-right: 0.25rem;
         color: #888;
+        transition: transform 0.25s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       }
     }
   }

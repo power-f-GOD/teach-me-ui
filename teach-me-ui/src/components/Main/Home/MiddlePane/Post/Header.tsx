@@ -39,11 +39,11 @@ const PostHeader = (props: PostHeaderProps) => {
       <Col className='d-flex flex-column justify-content-center pl-2'>
         {!isLoading ? (
           <>
-            <Box className='d-flex'>
+            <Box>
               <Link to={`@${sender_username}`} className='font-bold'>
                 {sender_name}
               </Link>
-              <Box className='theme-tertiary ml-1'>
+              <Box component='span' className='theme-tertiary ml-1'>
                 | @{sender_username}
               </Box>
             </Box>

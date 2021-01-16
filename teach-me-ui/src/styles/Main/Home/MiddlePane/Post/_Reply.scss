@@ -6,6 +6,7 @@
 
   &:last-child {
     .post-footer {
+      padding-bottom: 0.35em;
       border-bottom: none;
     }
 
@@ -30,15 +31,25 @@
   $bg: linear-gradient(to right, #f0f0f0, #fefefe);
 
   .display-name-wrapper {
-    padding: 0.25em 0.5em;
+    padding: 0 0.5em;
+    // padding-bottom: 0.125em;
     background: $bg;
     margin-left: 0.55em;
-    border-radius: 0.75em 0.75em 0 0;
+    border-radius: 1em 1em 0 0;
+  }
+
+  .post-avatar {
+    $size: 1.75em;
+
+    margin-right: 0 !important;
+    margin-top: 0;
+    height: $size;
+    width: $size;
   }
 
   .post-body {
-    border-radius: 0 0 0.75em 0.75em;
-    margin: 0 0 0.25em 3.25em;
+    border-radius: 0 0 1em 1em;
+    margin: 0 0 0.25em 3em;
     width: calc(100% - 3.25em);
     background: $bg;
 
@@ -49,29 +60,21 @@
     }
   }
 
-  .post-avatar {
-    $size: 1.95em;
-
-    margin-right: 0 !important;
-    margin-top: -0.15em;
-    height: $size;
-    width: $size;
-  }
-
   .post-footer {
     width: calc(100% - 3.25em) !important;
     margin-left: 3.25em !important;
-    margin-top: -0.25em;
+    margin-top: -0.3em;
     border-top: none;
-    padding: 0.35em 0;
-    border-bottom: 0.0625em solid #eee;
+    padding: 0.25em 0 0.25em 0;
+    border-bottom: none !important; // 0.0625em solid #eee;
   }
 
   .reaction-wrapper {
-    max-width: 5em;
+    max-width: 4.5em;
     padding: 0;
 
     button {
+      max-height: 1.9em;
       background-color: transparent;
 
       &:hover,
