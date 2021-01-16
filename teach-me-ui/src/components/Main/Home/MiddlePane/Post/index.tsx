@@ -113,11 +113,12 @@ const Post: React.FC<
     repost_count,
     upvote_count,
     downvote_count,
-    numRepliesToShow
+    numRepliesToShow: _numRepliesToShow
   } = others || {};
   const { username: sender_username, first_name, last_name, profile_photo } =
     sender || {};
   const sender_name = first_name ? `${first_name} ${last_name}` : '';
+  let numRepliesToShow = _numRepliesToShow ?? 2;
   let mostRecentColleagueReplyIndex: number | null = null;
 
   const [mediaPreview, setMediaPreview] = useState(false);
@@ -178,6 +179,20 @@ const Post: React.FC<
       } post`;
       mostRecentColleagueReplyIndex = index;
     }
+  }
+
+  // attempt to display the most recent colleague reply (mentioned in extra) instead of (only) a self reply in case of any
+  if (colleague_replies?.length) {
+    const threshold =
+      colleague_replies.length -
+      (mostRecentColleagueReplyIndex ?? colleague_replies.length + 1);
+    const indexIsGreaterThanThreshold = numRepliesToShow < threshold;
+
+    if (indexIsGreaterThanThreshold) {
+      numRepliesToShow = threshold;
+    }
+
+    numRepliesToShow = numRepliesToShow > 7 ? 7 : numRepliesToShow;
   }
 
   return (
@@ -281,6 +296,7 @@ const Post: React.FC<
           reaction_count={(upvote_count ?? 0) + (downvote_count ?? 0)}
           reply_count={reply_count}
           sender={sender}
+          userId={userId}
         />
 
         {/* Post footer (reaction buttons) */}
@@ -299,17 +315,9 @@ const Post: React.FC<
         />
 
         {/* Post replies */}
-        {colleague_replies
-          ?.slice(
-            // attempt to display the most recent colleague reply (mentioned in extra) instead of a self reply in case of any
-            mostRecentColleagueReplyIndex ?? -(numRepliesToShow ?? 3),
-            mostRecentColleagueReplyIndex !== null
-              ? mostRecentColleagueReplyIndex + (numRepliesToShow ?? 2)
-              : undefined
-          )
-          .map((reply) => (
-            <PostReply {...reply} key={reply.id} />
-          ))}
+        {colleague_replies?.slice(-numRepliesToShow).map((reply) => (
+          <PostReply {...reply} key={reply.id} />
+        ))}
       </Box>
     </>
   );

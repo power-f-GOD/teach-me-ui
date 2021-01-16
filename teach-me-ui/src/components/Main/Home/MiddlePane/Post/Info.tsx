@@ -17,10 +17,21 @@ const PostInfo = (props: {
   isLoading: boolean;
   reaction_count: number;
   sender?: UserData;
+  userId?: string;
 }) => {
-  const { reactions, reply_count, isLoading, reaction_count, sender } = props;
+  const {
+    reactions,
+    reply_count,
+    isLoading,
+    reaction_count,
+    sender,
+    userId
+  } = props;
   const colleagueThatUpvoted = reactions?.find(
-    (colleague) => colleague.reaction === UPVOTE && colleague.id !== sender?.id
+    (colleague) =>
+      colleague.reaction === UPVOTE &&
+      colleague.id !== sender?.id &&
+      colleague.id !== userId
   );
 
   return !isLoading ? (
