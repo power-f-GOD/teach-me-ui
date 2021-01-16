@@ -35,7 +35,7 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
       data: [profile]
     },
     posts: {
-      status: postStatus,
+      status: postsStatus,
       data: postsData,
       statusText: postsStatusText,
       err: postsErred
@@ -43,7 +43,7 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
     recommendations,
     userData
   } = props;
-  const postsIsPending = postStatus === 'pending';
+  const postsIsPending = postsStatus === 'pending';
   const isFetching =
     /(updat|fetch|recycl)(e|ing)?/i.test(postsStatusText || '') ||
     postsIsPending;
@@ -117,7 +117,7 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
   return (
     <Container className='middle-pane px-0' fluid>
       {(selfView || !inProfile) && <Compose userData={userData} />}
-      {!inProfile && !postsData?.length && postStatus === 'fulfilled' && (
+      {!inProfile && !postsData?.length && postsStatus === 'fulfilled' && (
         <Recommendations recommendations={recommendations} />
       )}
       {!postsIsPending &&
@@ -149,7 +149,13 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
         Array.from({
           length: postsIsPending ? Math.floor(window.innerHeight / 200) : 2
         }).map((_, i) => (
-          <Post key={i} index={i} postsErred={postsErred || !postsDataLength} />
+          <Post
+            key={i}
+            index={i}
+            postsErred={
+              postsErred || (!postsDataLength && postsStatus === 'fulfilled')
+            }
+          />
         ))}
     </Container>
   );

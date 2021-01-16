@@ -49,8 +49,8 @@ export const getPosts = (
       isWall
         ? `/profile/${userId}/posts`
         : url
-        ? `${url.replace(/(offset=)(.*)/, `$1${offset}&limit=10`)}`
-        : '/feed?limit=7',
+        ? `${url.replace(/(offset=)(.*)/, `$1${offset}&limit=8`)}`
+        : '/feed?limit=8',
       true
     )
     .then(({ error, message, data }) => {
@@ -117,7 +117,7 @@ export const posts = (_payload: FetchState<PostStateProps[], number>) => {
   const resultantData = homeUnmounted
     ? hadReachedEnd
       ? []
-      : [...prevPostsState.data?.slice(-3)]
+      : [...prevPostsState.data?.slice(-4)]
     : [...prevPostsState.data];
   const updateFromPipe = !!pipe;
 
@@ -170,7 +170,7 @@ export const posts = (_payload: FetchState<PostStateProps[], number>) => {
             upvote_count: 0,
             downvote_count: 0
           });
-          actualPost.numRepliesToShow = (actualPost.numRepliesToShow ?? 3) + 1;
+          actualPost.numRepliesToShow = (actualPost.numRepliesToShow ?? 2) + 1;
           actualPost.reply_count = actualData.parent!.reply_count;
           finalPayload.data![postIndex] = actualPost;
           break;
