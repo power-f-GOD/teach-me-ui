@@ -169,11 +169,8 @@ function MainNav(props: any) {
             component='div'
             className='profile-photo'
             alt={userData.displayName}
-            src={userData.profile_photo}>
-            {' '}
-            {userData.first_name.substr(0, 1).toLocaleUpperCase()}
-            {userData.last_name.substr(0, 1).toLocaleUpperCase()}{' '}
-          </Avatar>
+            src={userData.profile_photo}
+          />
           <ArrowDropDownIcon fontSize='small' className='avatar' />
         </Container>
       </Box>
@@ -188,11 +185,8 @@ function MainNav(props: any) {
                 component='span'
                 className='profile-avatar-x profile-photo'
                 alt={userData.displayName}
-                src={userData.profile_photo}>
-                {' '}
-                {userData.first_name.substr(0, 1).toLocaleUpperCase()}
-                {userData.last_name.substr(0, 1).toLocaleUpperCase()}{' '}
-              </Avatar>
+                src={userData.profile_photo}
+              />
               <Container as='div' className='user-details p-0'>
                 <Container as='p' className='p-0 m-0 display-name'>
                   {userData.displayName}

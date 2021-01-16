@@ -86,6 +86,12 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
   );
 
   useEffect(() => {
+    if (/(new\s)?post\screated/.test(postsStatusText || '')) {
+      window.scrollTo(0, 0);
+    }
+  }, [postsStatusText]);
+
+  useEffect(() => {
     const type = props.type || 'FEED';
     const userId = (profile as UserData).id || undefined;
 

@@ -49,8 +49,8 @@ export const getPosts = (
       isWall
         ? `/profile/${userId}/posts`
         : url
-        ? `${url.replace(/(offset=)(.*)/, `$1${offset}`)}`
-        : '/feed',
+        ? `${url.replace(/(offset=)(.*)/, `$1${offset}&limit=10`)}`
+        : '/feed?limit=7',
       true
     )
     .then(({ error, message, data }) => {

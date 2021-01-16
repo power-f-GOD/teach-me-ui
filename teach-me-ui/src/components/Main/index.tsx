@@ -26,7 +26,8 @@ import createMemo from '../../Memo';
 import {
   dispatch,
   getState,
-  emitUserOnlineStatus
+  emitUserOnlineStatus,
+  delay
 } from '../../functions/utils';
 import {
   initWebSocket,
@@ -60,6 +61,8 @@ const Memoize = createMemo();
 const notifSoundRef = React.createRef<HTMLAudioElement | null>();
 let notifSoundEl: HTMLAudioElement | null;
 
+let userInteractedWithApp = false;
+
 const Main = (props: MainProps) => {
   const {
     signoutStatus,
@@ -68,7 +71,7 @@ const Main = (props: MainProps) => {
     convosData,
     notificationSound
   } = props;
-  const { play, toneName, hasEnded } = notificationSound;
+  const { play, toneName, hasEnded, isPlaying, isReady } = notificationSound;
   const notifSoundSrc = `/tones/${toneName}.ogg`;
   const unopened_count = convosData?.reduce(
     (a: number, conversation: APIConversationResponse) =>
@@ -106,6 +109,8 @@ const Main = (props: MainProps) => {
         notifSoundEl!.src = notifSoundEl!.src.replace('ogg', 'mp3');
       };
     }
+
+    window.onclick = () => (userInteractedWithApp = true);
   }, []);
 
   useEffect(() => {
@@ -121,18 +126,18 @@ const Main = (props: MainProps) => {
       notifSoundEl!.currentTime = 0;
     };
 
-    if (notifSoundEl) {
+    if (notifSoundEl && userInteractedWithApp && isReady) {
       if (play) {
-        if (!hasEnded) {
+        if (!hasEnded || isPlaying) {
           stopSound();
         }
 
-        notifSoundEl.play();
+        delay(50).then(() => notifSoundEl?.play());
       } else {
         stopSound();
       }
     }
-  }, [play, hasEnded]);
+  }, [play, hasEnded, isReady, isPlaying]);
 
   useEffect(() => {
     dispatch(initWebSocket(userToken as string));

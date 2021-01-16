@@ -27,10 +27,17 @@ interface CreateReplyProps {
   replyToPost?: Function;
   userData?: UserData;
   webSocket?: WebSocket;
+  setOpenCommentClassName: Function;
 }
 
 const CreateReply = (props: CreateReplyProps) => {
-  const { post_id, className, userData, webSocket: socket } = props;
+  const {
+    post_id,
+    className,
+    userData,
+    webSocket: socket,
+    setOpenCommentClassName
+  } = props;
   const { displayName, profile_photo } = userData || {};
   const isOpen = /open/.test(className);
   const openTriggeredByButton = /triggered.*button/.test(className);
@@ -69,6 +76,7 @@ const CreateReply = (props: CreateReplyProps) => {
         inputRef!.current!.value = '';
         setText('');
         setResetHeight(true);
+        setOpenCommentClassName('open');
         delay(50).then(() => setResetHeight(false));
 
         if (mentions?.length) pingUser(mentions);
@@ -83,7 +91,7 @@ const CreateReply = (props: CreateReplyProps) => {
         });
       }
     },
-    [text, post_id, socket]
+    [text, post_id, socket, setOpenCommentClassName]
   );
 
   useEffect(() => {
