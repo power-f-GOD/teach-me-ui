@@ -1,21 +1,23 @@
 import {
   replyState,
-  ReduxAction,
-  PostStateProps,
   REPLY_TO_POST,
   MAKE_POST,
-  ReplyState,
   makePostState,
+  SET_POSTS,
+  SET_RECOMMENDATIONS,
+  fetchState,
+  SET_TRENDS
+} from '../constants';
+import {
+  ReduxAction,
+  PostStateProps,
   MakePostState,
   FetchState,
   ReduxActionV2,
-  SET_POSTS,
-  SET_RECOMMENDATIONS,
-  UserData,
-  fetchState,
   HashTag,
-  SET_TRENDS
-} from '../constants';
+  UserData,
+  ReplyState
+} from '../types';
 
 export const posts = (
   state = { ...fetchState } as FetchState<PostStateProps[]>,

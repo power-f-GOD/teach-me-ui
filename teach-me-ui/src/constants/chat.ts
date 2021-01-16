@@ -1,4 +1,4 @@
-import { ChatState } from './interfaces';
+import { ChatState } from '../types';
 
 export const SET_CHAT_STATE = 'SET_CHAT_STATE';
 

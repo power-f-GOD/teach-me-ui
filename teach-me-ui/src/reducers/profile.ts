@@ -1,8 +1,7 @@
 import { PROFILE_DATA } from '../constants/profile';
 import { searchState } from '../constants/misc';
-import { SearchState, ReduxAction } from '../constants/interfaces';
+import { RequestState, SearchState, ReduxAction } from '../types';
 import {
-  RequestState,
   FETCHED_DEEP_PROFILE_DATA,
   ADD_COLLEAGUE_STARTED,
   ADD_COLLEAGUE_RESOLVED,

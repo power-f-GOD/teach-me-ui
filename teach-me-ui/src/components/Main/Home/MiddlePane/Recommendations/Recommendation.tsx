@@ -7,7 +7,7 @@ import SchoolIcon from '@material-ui/icons/School';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import { UserData } from '../../../../../constants';
+import { UserData } from '../../../../../types';
 
 const Recommendation = (props: UserData) => {
   const {

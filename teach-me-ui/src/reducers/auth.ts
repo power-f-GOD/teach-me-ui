@@ -2,19 +2,21 @@ import {
   SIGNUP_USER,
   FORGOT_PASSWORD_PENDING,
   FORGOT_PASSWORD_COMPLETED,
-  StatusPropsState,
-  ForgotPasswordStatusState,
-  ReduxAction,
   signinState,
   SIGNIN_USER,
   authState,
   signupState,
   AUTHENTICATE_USER,
-  AuthState,
   SIGNOUT_USER,
   signoutState,
   forgotPasswordStatusState
 } from '../constants';
+import {
+  AuthState,
+  StatusPropsState,
+  ForgotPasswordStatusState,
+  ReduxAction
+} from '../types';
 
 export const signup = (
   state: StatusPropsState = signupState,

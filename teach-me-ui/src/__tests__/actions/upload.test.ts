@@ -1,24 +1,18 @@
 import { cleanup } from '@testing-library/react';
 
 import * as actions from '../../actions/upload';
-import { 
-  UploadState, 
-  UPLOADS, 
-  GET_UPLOADS, 
-  SEND_FILES,
-  ReduxAction 
-} from '../../constants';
-
+import { UPLOADS, GET_UPLOADS, SEND_FILES } from '../../constants';
+import { UploadState, ReduxAction } from '../../types';
 
 afterEach(cleanup);
 
-it("sends files to the server", () => {
+it('sends files to the server', () => {
   const mockUploadState: UploadState = {
     status: expect.any(String),
     err: expect.any(Boolean),
     data: expect.any(Object)
   };
-  
+
   const sendFilesAction: ReduxAction = {
     type: SEND_FILES,
     payload: {
@@ -31,14 +25,13 @@ it("sends files to the server", () => {
   expect(actions.sendFiles(mockUploadState)).toMatchObject(sendFilesAction);
 });
 
-
-it("gets files user has uploaded for recycling", () => {
+it('gets files user has uploaded for recycling', () => {
   const mockUploadState: UploadState = {
     status: expect.any(String),
     err: expect.any(Boolean),
     data: expect.any(Object)
   };
-  
+
   const uploadsAction: ReduxAction = {
     type: UPLOADS,
     payload: {
@@ -49,7 +42,7 @@ it("gets files user has uploaded for recycling", () => {
   };
 
   const getUploadsAction: ReduxAction = {
-    type: GET_UPLOADS,
+    type: GET_UPLOADS
   };
 
   const getUploadsMockFunc = jest.fn(() => {
@@ -59,4 +52,3 @@ it("gets files user has uploaded for recycling", () => {
   expect(actions.uploads(mockUploadState)).toMatchObject(uploadsAction);
   expect(actions.getUploads()).toMatchObject(getUploadsAction);
 });
-

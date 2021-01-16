@@ -4,7 +4,8 @@ import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 
 import { displayModal } from '../../../../functions';
-import { MAKE_POST, UserData } from '../../../../constants';
+import { MAKE_POST } from '../../../../constants';
+import { UserData } from '../../../../types';
 
 const openCreatePostModal = (e: any) => {
   displayModal(true, false, MAKE_POST, { title: 'Make a Post' });

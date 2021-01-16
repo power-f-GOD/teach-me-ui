@@ -2,17 +2,11 @@ import { cleanup } from '@testing-library/react';
 
 import * as actions from '../../actions/main/home';
 
+import { SUBMIT_POST, MAKE_POST } from '../../constants';
 import {
-  ReplyState,
-  REPLY_TO_POST,
   ReduxAction,
-  SendReplyProps,
-  PostContent,
-  SUBMIT_POST,
-  MAKE_POST
-} from '../../constants';
-
-import { dispatch } from '../../appStore';
+  PostContent
+} from '../../types';
 
 afterEach(cleanup);
 

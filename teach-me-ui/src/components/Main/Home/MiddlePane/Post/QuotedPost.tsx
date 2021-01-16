@@ -9,7 +9,7 @@ import { Avatar } from '@material-ui/core';
 
 import { processPost } from '.';
 import { formatDate } from '../../../../../functions/utils';
-import { PostStateProps } from '../../../../../constants/interfaces';
+import { PostStateProps } from '../../../../../types';
 
 const QuotedPost = (
   props: Partial<PostStateProps> & { navigate: Function }

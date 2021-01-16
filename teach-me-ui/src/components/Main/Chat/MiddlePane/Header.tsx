@@ -25,11 +25,7 @@ import PersonIcon from '@material-ui/icons/Person';
 import FilterNoneRoundedIcon from '@material-ui/icons/FilterNoneRounded';
 import ReplyRoundedIcon from '@material-ui/icons/ReplyRounded';
 
-import {
-  APIMessageResponse,
-  Partial,
-  OnlineStatus
-} from '../../../../constants/interfaces';
+import { APIMessageResponse, Partial, OnlineStatus } from '../../../../types';
 import {
   chatState,
   conversationMessages,

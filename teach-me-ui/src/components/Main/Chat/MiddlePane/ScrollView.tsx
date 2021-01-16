@@ -14,11 +14,7 @@ import Col from 'react-bootstrap/Col';
 import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import {
-  APIMessageResponse,
-  Partial,
-  FetchState
-} from '../../../../constants/interfaces';
+import { APIMessageResponse, Partial, FetchState } from '../../../../types';
 import { userDeviceIsMobile } from '../../../..';
 import { getConversationMessages } from '../../../../actions/main/chat';
 import { dispatch, interval } from '../../../../functions/utils';

@@ -1,8 +1,5 @@
-import {
-  ReduxAction,
-  SET_COLLEAGUE_REQUESTS,
-  ColleagueRequestProps
-} from '../constants';
+import { SET_COLLEAGUE_REQUESTS } from '../constants';
+import { ReduxAction, ColleagueRequestProps } from '../types';
 
 export const setColleagueRequests = (
   payload: Array<ColleagueRequestProps> = []

@@ -6,10 +6,8 @@ import {
   USERNAME_VALIDATE,
   EMAIL_VALIDATE,
   PASSWORD_VALIDATE,
-  ReduxAction,
   basicInputState,
   institutionInputState,
-  BasicInputState,
   SIGNIN_ID_VALIDATE,
   SIGNIN_PASSWORD_VALIDATE,
   DOB_VALIDATE,
@@ -17,13 +15,17 @@ import {
   LEVEL_VALIDATE,
   DEPARTMENT_VALIDATE,
   POPULATE_MATCHING_INSTITUTIONS,
-  SearchState,
   statusPropsState,
-  InstitutionInputState,
   POPULATE_MATCHING_LEVELS,
   POPULATE_MATCHING_DEPARTMENTS,
   BIO_VALIDATE
 } from '../constants';
+import {
+  ReduxAction,
+  BasicInputState,
+  SearchState,
+  InstitutionInputState
+} from '../types';
 
 export const first_name = (
   state: BasicInputState = basicInputState,
@@ -58,12 +60,12 @@ export const bio = (
   if (action.type === BIO_VALIDATE) {
     let { payload } = action;
     let { value } = payload;
-    let err = !value || value.length > 150
+    let err = !value || value.length > 150;
     let helperText = !value
-        ? ' Bio required.'
-        : value.length > 150
-          ? 'Bio should be 150 characters or less'
-          : ' ';
+      ? ' Bio required.'
+      : value.length > 150
+      ? 'Bio should be 150 characters or less'
+      : ' ';
 
     return {
       value,
@@ -113,7 +115,7 @@ export const username = (
         ? 'Username required.'
         : 'Username not accepted. Use letters, numbers, underscores only.'
       : ' ';
- 
+
     err = 'err' in payload ? payload.err : err;
     helperText = 'helperText' in payload ? payload.helperText : helperText;
 

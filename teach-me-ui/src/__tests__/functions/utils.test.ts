@@ -12,7 +12,7 @@ import {
   countNewNotifications,
   getCharacterSequenceFromText
 } from '../../functions';
-import { ReduxAction, UserData } from '../../constants';
+import { ReduxAction, UserData } from '../../types';
 
 afterEach(cleanup);
 

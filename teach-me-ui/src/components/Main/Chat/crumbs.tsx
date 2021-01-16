@@ -18,10 +18,7 @@ import ReplyRoundedIcon from '@material-ui/icons/ReplyRounded';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 
-import {
-  APIMessageResponse,
-  APIConversationResponse
-} from '../../../constants/interfaces';
+import { APIMessageResponse, APIConversationResponse } from '../../../types';
 import {
   timestampFormatter,
   formatMapDateString,
@@ -118,7 +115,7 @@ export const Message = (props: {
 
   useEffect(() => {
     const messageEl = messageElRef.current as HTMLElement;
-    
+
     if (messageEl) {
       ([
         { event: 'dblclick', handler: handleSelectMessage },

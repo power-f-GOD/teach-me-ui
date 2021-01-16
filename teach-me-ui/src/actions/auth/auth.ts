@@ -1,12 +1,10 @@
 import {
-  ReduxAction,
-  StatusPropsState,
   AUTHENTICATE_USER,
-  AuthState,
   VERIFY_AUTH,
   SIGNOUT_REQUEST,
   SIGNOUT_USER
 } from '../../constants';
+import { ReduxAction, StatusPropsState, AuthState } from '../../types';
 import { populateStateWithUserData, delay, http } from '../../functions';
 import { displaySnackbar } from '../misc';
 import { signin } from './signin';

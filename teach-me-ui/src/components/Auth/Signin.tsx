@@ -11,7 +11,7 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import { SigninPropsState } from '../../constants';
+import { SigninPropsState } from '../../types';
 import { handleSigninRequest, handleSigninInputChange } from '../../functions';
 
 export const refs: any = {

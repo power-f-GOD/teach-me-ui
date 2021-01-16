@@ -15,7 +15,7 @@ import {
   UserData,
   ColleagueRequestProps,
   ColleagueProps
-} from '../../../../constants';
+} from '../../../../types';
 import { cleanUp, dispatch } from '../../../../functions';
 import { fetchColleagueRequests, fetchColleagues } from '../../../../actions';
 

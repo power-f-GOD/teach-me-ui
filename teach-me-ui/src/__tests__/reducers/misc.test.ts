@@ -1,12 +1,11 @@
 import { cleanup } from '@testing-library/react';
 
 import {
-  ReduxAction,
-  SnackbarState,
   snackbarState,
   DISPLAY_SNACK_BAR,
   SET_USER_DISPLAY_NAME
 } from '../../constants';
+import { ReduxAction, SnackbarState } from '../../types';
 import { displayName, snackbar } from '../../reducers/misc';
 
 afterEach(cleanup);

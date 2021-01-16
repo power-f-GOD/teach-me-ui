@@ -13,7 +13,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Row from 'react-bootstrap/Row';
 import Dropdown from 'react-bootstrap/Dropdown';
 
-import { PostEditorState } from '../../constants';
+import { PostEditorState } from '../../types';
 
 import {
   sendFilesToServer,

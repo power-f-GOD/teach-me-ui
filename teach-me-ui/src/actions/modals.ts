@@ -1,4 +1,5 @@
-import { ReduxAction, SHOW_MODAL, HIDE_MODAL, ModalState } from '../constants';
+import { SHOW_MODAL, HIDE_MODAL } from '../constants';
+import { ReduxAction, ModalState } from '../types';
 
 export const showModal: Function = (
   payload: Partial<ModalState> = {}

@@ -1,6 +1,6 @@
 import { SEARCH_KANYIMUTA } from '../constants/search';
 import { searchState } from '../constants/misc';
-import { SearchState, ReduxAction } from '../constants/interfaces';
+import { SearchState, ReduxAction } from '../types';
 
 export const searchKanyimuta = (
   state: SearchState = searchState,

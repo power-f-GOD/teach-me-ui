@@ -1,15 +1,11 @@
 import {
-  ReduxAction,
   DISPLAY_SNACK_BAR,
-  SnackbarState,
   SET_USER_DISPLAY_NAME,
-  UserData,
   POPULATE_STATE_WITH_USER_DATA,
   wsBaseURL,
   INIT_WEB_SOCKET,
   CLOSE_WEB_SOCKET,
   TRIGGER_NOTIFICATION_SOUND,
-  NotificationSoundState,
   TONE_TYPE__INCOMING_MESSAGE,
   TONE_TYPE__ACTION_SUCCESS,
   TONE_NAME__SLOW_SPRING_BOARD,
@@ -19,6 +15,12 @@ import {
   TONE_TYPE__OUTGOING_MESSAGE,
   TONE_NAME__ALL_EYES_ON_ME
 } from '../constants';
+import {
+  NotificationSoundState,
+  ReduxAction,
+  SnackbarState,
+  UserData
+} from '../types';
 import { getState } from '../functions/utils';
 import { dispatch } from '../appStore';
 

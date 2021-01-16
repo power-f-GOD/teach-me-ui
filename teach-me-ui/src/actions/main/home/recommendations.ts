@@ -1,9 +1,5 @@
-import {
-  UserData,
-  FetchState,
-  SET_RECOMMENDATIONS,
-  GET_RECOMMENDATIONS
-} from '../../../constants';
+import { SET_RECOMMENDATIONS, GET_RECOMMENDATIONS } from '../../../constants';
+import { UserData, FetchState } from '../../../types';
 
 import { checkNetworkStatusWhilstPend, http } from '../../../functions';
 

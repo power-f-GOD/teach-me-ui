@@ -15,8 +15,11 @@ import {
   Partial,
   OnlineStatus,
   FetchState
-} from '../../../../constants/interfaces';
-import { conversationMessages, conversations } from '../../../../actions/main/chat';
+} from '../../../../types';
+import {
+  conversationMessages,
+  conversations
+} from '../../../../actions/main/chat';
 import {
   dispatch,
   emitUserOnlineStatus,

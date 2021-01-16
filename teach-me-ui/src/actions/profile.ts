@@ -1,13 +1,9 @@
 import Axios from 'axios';
 
 import {
-  ReduxAction,
-  SearchState,
-  UserData,
   GET_PROFILE_DATA,
   PROFILE_DATA,
   apiBaseURL as baseURL,
-  RequestState,
   ADD_COLLEAGUE_STARTED,
   ADD_COLLEAGUE_RESOLVED,
   ADD_COLLEAGUE_REJECTED,
@@ -36,6 +32,7 @@ import {
   FETCHED_COLLEAGUE_REQUESTS,
   FETCHED_DEEP_PROFILE_DATA
 } from '../constants';
+import { ReduxAction, SearchState, UserData, RequestState } from '../types';
 import { checkNetworkStatusWhilstPend, getState, logError } from '../functions';
 import { pingUser } from './notifications';
 
@@ -251,7 +248,9 @@ export const removeColleagueRejected = (
   };
 };
 
-export const removeColleague = (id: string, userId: string) => (dispatch: Function) => {
+export const removeColleague = (id: string, userId: string) => (
+  dispatch: Function
+) => {
   dispatch(removeColleagueStarted());
   const userData = getState().userData as UserData;
   const token = userData.token as string;
@@ -309,9 +308,11 @@ export const acceptColleagueRejected = (
   };
 };
 
-export const acceptColleague = (id: string, username: string, userId: string) => (
-  dispatch: Function
-) => {
+export const acceptColleague = (
+  id: string,
+  username: string,
+  userId: string
+) => (dispatch: Function) => {
   dispatch(acceptColleagueStarted());
   const userData = getState().userData as UserData;
   const token = userData.token as string;
@@ -370,7 +371,9 @@ export const declineColleagueRejected = (
   };
 };
 
-export const declineColleague = (id: string, userId: string) => (dispatch: Function) => {
+export const declineColleague = (id: string, userId: string) => (
+  dispatch: Function
+) => {
   dispatch(declineColleagueStarted());
   const userData = getState().userData as UserData;
   const token = userData.token as string;

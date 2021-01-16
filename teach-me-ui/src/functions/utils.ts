@@ -1,26 +1,6 @@
 import moment from 'moment';
 import axios, { AxiosResponse, AxiosRequestConfig } from 'axios';
 
-import {
-  ReduxAction,
-  StatusPropsState,
-  BasicInputState,
-  UserData,
-  NetworkAction,
-  Reaction,
-  ONLINE_STATUS,
-  AuthState,
-  ConversationMessages,
-  APIConversationResponse,
-  LoopFind,
-  FetchState,
-  OnlineStatus,
-  apiBaseURL,
-  PostStateProps,
-  APIResponseModel,
-  HTTP
-} from '../constants';
-
 import store from '../appStore';
 import {
   displaySnackbar,
@@ -39,6 +19,24 @@ import {
   getConversationsMessages,
   conversationsMessages
 } from '../actions/main/chat';
+import {
+  HTTP,
+  APIResponseModel,
+  LoopFind,
+  UserData,
+  APIConversationResponse,
+  AuthState,
+  FetchState,
+  ConversationMessages,
+  PostStateProps,
+  OnlineStatus,
+  BasicInputState,
+  Reaction,
+  ReduxAction,
+  NetworkAction,
+  StatusPropsState
+} from '../types';
+import { apiBaseURL, ONLINE_STATUS } from '../constants';
 
 export const { dispatch, getState }: any = store;
 

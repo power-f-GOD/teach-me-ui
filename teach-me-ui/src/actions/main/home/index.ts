@@ -1,22 +1,23 @@
 import {
-  ReduxAction,
   MAKE_REPOST_REJECTED,
   MAKE_REPOST_RESOLVED,
   MAKE_REPOST_STARTED,
   SUBMIT_POST,
-  PostStateProps,
-  FetchPostsState,
-  MakeRepostState,
   apiBaseURL as baseURL,
-  UserData,
-  SendReplyProps,
   MAKE_POST,
-  PostContent,
-  FetchState,
-  NotificationSoundState,
   TONE_NAME__OPEN_ENDED,
   postState
 } from '../../../constants';
+import {
+  PostContent,
+  FetchState,
+  NotificationSoundState,
+  UserData,
+  SendReplyProps,
+  PostStateProps,
+  FetchPostsState,
+  ReduxAction
+} from '../../../types';
 
 import {
   getState,
@@ -64,9 +65,7 @@ export const makeRepostResolved = (
   };
 };
 
-export const makeRepostRejected = (
-  payload?: Partial<MakeRepostState>
-): ReduxAction => {
+export const makeRepostRejected = (payload?: Partial<any>): ReduxAction => {
   return {
     type: MAKE_REPOST_REJECTED,
     payload: { ...payload, status: 'rejected' }

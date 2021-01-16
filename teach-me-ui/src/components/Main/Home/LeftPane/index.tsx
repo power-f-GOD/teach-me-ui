@@ -20,7 +20,7 @@ import {
   FetchState,
   UserData,
   APIConversationResponse
-} from '../../../../constants/interfaces';
+} from '../../../../types';
 import { getState } from '../../../../functions';
 
 interface LeftPaneProps {

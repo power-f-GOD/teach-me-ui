@@ -1,4 +1,4 @@
-import { EditProfileState } from '.'
+import { EditProfileState } from '../types';
 
 export const GET_USER_DETAILS = 'GET_USER_DETAILS';
 export const GET_USER_DETAILS_REQUEST = 'GET_USER_DETAILS_REQUEST';
@@ -19,4 +19,4 @@ export const editProfileState: EditProfileState = {
   err: false,
   status: 'settled',
   data: {}
-}
+};

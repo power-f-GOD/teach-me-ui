@@ -8,7 +8,8 @@ import {
   bigNumberFormat,
   emitUserOnlineStatus
 } from '../../../../../functions';
-import { POST_REACTION, Reaction } from '../../../../../constants';
+import { POST_REACTION } from '../../../../../constants';
+import { Reaction } from '../../../../../types';
 import { FAIcon } from '../../../../shared/Icons';
 
 interface ReactButtonPropsState {

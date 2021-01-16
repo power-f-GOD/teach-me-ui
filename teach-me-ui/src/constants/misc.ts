@@ -8,7 +8,7 @@ import {
   UploadState,
   QuestionState,
   NotificationSoundState
-} from './interfaces';
+} from '../types';
 
 let useLiveUrl = true;
 let live = 'teach-me-services.herokuapp.com';

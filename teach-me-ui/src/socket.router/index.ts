@@ -4,7 +4,7 @@ import chat from './chat';
 import misc from './misc';
 
 import { getState } from '../functions';
-import { SocketPipe } from '../constants';
+import { SocketPipe } from '../types';
 
 export default function activateSocketRouters() {
   const socket: WebSocket = getState().webSocket;

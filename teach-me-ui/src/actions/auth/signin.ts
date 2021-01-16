@@ -1,15 +1,11 @@
+import { SIGNIN_USER, SIGNIN_REQUEST } from '../../constants';
 import {
   ReduxAction,
   StatusPropsState,
-  SIGNIN_USER,
-  SIGNIN_REQUEST,
   SigninFormData,
   UserData
-} from '../../constants';
-import {
-  validateSigninId,
-  validateSigninPassword
-} from '../validate';
+} from '../../types';
+import { validateSigninId, validateSigninPassword } from '../validate';
 import {
   checkNetworkStatusWhilstPend,
   populateStateWithUserData,

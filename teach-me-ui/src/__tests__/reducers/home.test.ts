@@ -1,20 +1,14 @@
 import { cleanup } from '@testing-library/react';
 
 import {
-  ReduxAction,
   MAKE_POST,
   REPLY_TO_POST,
-  ReplyState,
-  MakePostState,
   makePostState,
   replyState
 } from '../../constants';
+import { ReduxAction, ReplyState, MakePostState } from '../../types';
 
-import { 
-   makePost,
-   replyToPost
-} from '../../reducers/home';
-
+import { makePost, replyToPost } from '../../reducers/home';
 
 afterEach(cleanup);
 
@@ -27,7 +21,7 @@ it("post reducers should be called with 'state' and 'action' params and return v
     status: expect.any(String),
     err: expect.any(Boolean),
     data: expect.any(Object)
-  }
+  };
 
   const makePostAction: ReduxAction = {
     type: MAKE_POST,
@@ -45,18 +39,23 @@ it("post reducers should be called with 'state' and 'action' params and return v
     }
   };
 
-  const makePostMockFunc = jest.fn((state: MakePostState, action: ReduxAction) =>
-    makePost(state, action)
+  const makePostMockFunc = jest.fn(
+    (state: MakePostState, action: ReduxAction) => makePost(state, action)
   );
 
-  const replyToPostMockFunc = jest.fn((state: ReplyState, action: ReduxAction) =>
-    replyToPost(state, action)
+  const replyToPostMockFunc = jest.fn(
+    (state: ReplyState, action: ReduxAction) => replyToPost(state, action)
   );
 
   makePostMockFunc(makePostState, makePostAction);
   replyToPostMockFunc(replyState, replyToPostAction);
   expect(makePostMockFunc).toHaveBeenCalledWith(makePostState, makePostAction);
-  expect(replyToPostMockFunc).toHaveBeenCalledWith(replyState, replyToPostAction);
+  expect(replyToPostMockFunc).toHaveBeenCalledWith(
+    replyState,
+    replyToPostAction
+  );
   expect(makePost(makePostState, makePostAction)).toMatchObject(mockPostState);
-  expect(replyToPost(replyState, replyToPostAction)).toMatchObject(mockReplyState);
+  expect(replyToPost(replyState, replyToPostAction)).toMatchObject(
+    mockReplyState
+  );
 });

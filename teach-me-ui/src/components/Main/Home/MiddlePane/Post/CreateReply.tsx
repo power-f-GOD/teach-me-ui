@@ -12,7 +12,7 @@ import Row from 'react-bootstrap/Row';
 import { Button, Avatar } from '@material-ui/core';
 import { TextField } from '@material-ui/core';
 
-import { UserData } from '../../../../../constants/interfaces';
+import { UserData } from '../../../../../types';
 
 import {
   delay,

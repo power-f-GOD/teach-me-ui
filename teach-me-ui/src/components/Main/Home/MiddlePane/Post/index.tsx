@@ -11,7 +11,7 @@ import ArrowForward from '@material-ui/icons/ArrowForwardIos';
 import { Link } from 'react-router-dom';
 
 import { dispatch, loopThru } from '../../../../../functions/utils';
-import { PostStateProps, LoopFind } from '../../../../../constants/interfaces';
+import { PostStateProps, LoopFind } from '../../../../../types';
 
 import { displayModal } from '../../../../../functions';
 import { triggerSearchKanyimuta } from '../../../../../actions/search';
@@ -280,6 +280,7 @@ const Post: React.FC<
           reactions={reactions}
           reaction_count={(upvote_count ?? 0) + (downvote_count ?? 0)}
           reply_count={reply_count}
+          sender={sender}
         />
 
         {/* Post footer (reaction buttons) */}

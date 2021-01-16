@@ -15,7 +15,7 @@ import {
   ConversationsMessages,
   APIConversationResponse,
   ReduxActionV2
-} from '../constants/interfaces';
+} from '../types';
 import { searchState } from '../constants';
 
 export const conversations = (

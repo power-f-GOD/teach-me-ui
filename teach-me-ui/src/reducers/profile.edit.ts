@@ -1,15 +1,13 @@
-import { 
+import {
   GET_USER_DETAILS,
   UPDATE_PASSWORD,
   UPDATE_USERNAME,
   UPDATE_EMAIL,
   UPDATE_USER_DATA,
   UPDATE_ACADEMIC_DATA,
-  ReduxAction,
-  EditProfileState,
-  editProfileState,
+  editProfileState
 } from '../constants';
-
+import { ReduxAction, EditProfileState } from '../types';
 
 export const getUserDetails = (
   state: EditProfileState = editProfileState,
@@ -20,7 +18,7 @@ export const getUserDetails = (
       ...state,
       ...action.payload
     };
-  };
+  }
   return state;
 };
 
@@ -33,7 +31,7 @@ export const updatePassword = (
       ...state,
       ...action.payload
     };
-  };
+  }
   return state;
 };
 
@@ -46,11 +44,11 @@ export const updateEmail = (
       ...state,
       ...action.payload
     };
-  };
+  }
   return state;
 };
 
-export const  updateUsername = (
+export const updateUsername = (
   state: EditProfileState = editProfileState,
   action: ReduxAction
 ) => {
@@ -59,7 +57,7 @@ export const  updateUsername = (
       ...state,
       ...action.payload
     };
-  };
+  }
   return state;
 };
 
@@ -72,7 +70,7 @@ export const updateAcademicData = (
       ...state,
       ...action.payload
     };
-  };
+  }
   return state;
 };
 
@@ -85,6 +83,6 @@ export const updateUserData = (
       ...state,
       ...action.payload
     };
-  };
+  }
   return state;
 };

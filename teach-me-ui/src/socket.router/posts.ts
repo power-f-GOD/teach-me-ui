@@ -10,13 +10,8 @@ import {
 
 import { displayModal } from '../functions';
 
-import {
-  SocketPipe,
-  POST_REACTION,
-  POST_REPLY,
-  NotificationSoundState,
-  TONE_NAME__OPEN_ENDED
-} from '../constants';
+import { POST_REACTION, POST_REPLY, TONE_NAME__OPEN_ENDED } from '../constants';
+import { SocketPipe, NotificationSoundState } from '../types';
 
 export default function post(data: any) {
   const { notificationSound } = getState() as {

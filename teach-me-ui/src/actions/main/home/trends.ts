@@ -1,9 +1,5 @@
-import {
-  FetchState,
-  SET_TRENDS,
-  GET_TRENDS,
-  HashTag
-} from '../../../constants';
+import { SET_TRENDS, GET_TRENDS } from '../../../constants';
+import { FetchState, HashTag } from '../../../types';
 
 import { checkNetworkStatusWhilstPend, http } from '../../../functions';
 

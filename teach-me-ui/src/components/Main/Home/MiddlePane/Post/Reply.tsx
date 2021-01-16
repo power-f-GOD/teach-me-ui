@@ -11,7 +11,7 @@ import Skeleton from 'react-loading-skeleton';
 import { Link } from 'react-router-dom';
 
 import { formatDate } from '../../../../../functions/utils';
-import { PostStateProps } from '../../../../../constants/interfaces';
+import { PostStateProps } from '../../../../../types';
 
 import PostFooter from './Footer';
 import { processPost } from '.';

@@ -14,14 +14,13 @@ import {
   signinId,
   signinPassword
 } from '../../reducers/validate';
+import { basicInputState } from '../../constants';
 import {
-  basicInputState,
-  institutionInputState,
   BasicInputState,
   ReduxAction,
   SearchState,
   InstitutionInputState
-} from '../../constants';
+} from '../../types';
 
 afterEach(cleanup);
 
@@ -62,11 +61,10 @@ it("validate reducers should be called with 'state' and 'action' and return obje
       institution(state, action)
   );
   const departmentMockFunc = jest.fn(
-    (state: BasicInputState, action: ReduxAction) =>
-      department(state, action)
+    (state: BasicInputState, action: ReduxAction) => department(state, action)
   );
-  const levelMockFunc = jest.fn(
-    (state: BasicInputState, action: ReduxAction) => level(state, action)
+  const levelMockFunc = jest.fn((state: BasicInputState, action: ReduxAction) =>
+    level(state, action)
   );
   const matchingInstitutionsMockFunc = jest.fn(
     (state: SearchState, action: ReduxAction) =>

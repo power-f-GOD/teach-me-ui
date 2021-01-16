@@ -2,7 +2,7 @@ import {
   StatusPropsState,
   AuthState,
   ForgotPasswordStatusState
-} from './interfaces';
+} from '../types';
 
 export const SIGNUP_REQUEST = 'SIGNUP_REQUEST';
 export const SIGNUP_USER = 'SIGNUP_USER';
