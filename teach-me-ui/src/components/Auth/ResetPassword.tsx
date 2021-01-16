@@ -17,7 +17,8 @@ import {
   validateResetPasswordFn
 } from '../../functions';
 
-import { BasicInputState, basicInputState } from '../../constants';
+import { basicInputState } from '../../constants';
+import { BasicInputState } from '../../types';
 
 const ResetPassword = (props: any) => {
   const searchParams = new URLSearchParams(window.location.search);

@@ -1,4 +1,5 @@
-import { ReduxAction, FORGOT_PASSWORD_REQUEST } from '../../constants';
+import { FORGOT_PASSWORD_REQUEST } from '../../constants';
+import { ReduxAction } from '../../types';
 import { http } from '../../functions';
 import { displaySnackbar } from '../misc';
 import {

@@ -20,7 +20,7 @@ import {
   SearchState,
   APIMessageResponse,
   ConversationMessages
-} from '../../../../constants/interfaces';
+} from '../../../../types';
 import {
   getConversationMessages,
   conversation,

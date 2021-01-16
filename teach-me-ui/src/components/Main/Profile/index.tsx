@@ -23,12 +23,8 @@ import Button from '@material-ui/core/Button';
 import Img from '../../shared/Img';
 import ColleagueView from './crumbs/ColleagueView';
 import ProfileFeeds from './crumbs/ProfileFeeds';
-import {
-  UserData,
-  DeepProfileProps,
-  EDIT_PROFILE,
-  SELECT_PHOTO
-} from '../../../constants';
+import { EDIT_PROFILE, SELECT_PHOTO } from '../../../constants';
+import { UserData, DeepProfileProps } from '../../../types';
 import { dispatch, cleanUp, displayModal } from '../../../functions';
 import { getProfileData } from '../../../actions';
 import { getConversations } from '../../../actions/main/chat';

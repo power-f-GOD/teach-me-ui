@@ -6,7 +6,7 @@ import {
   InputErrState,
   CreateDepartmentState,
   CreateLevelState
-} from './interfaces';
+} from '../types';
 import { searchState } from './misc';
 
 export const FIRSTNAME_VALIDATE = 'FIRSTNAME_VALIDATE';

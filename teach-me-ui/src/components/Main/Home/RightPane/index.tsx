@@ -6,12 +6,8 @@ import Col from 'react-bootstrap/Col';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 
-import {
-  TopicPropsState,
-  CREATE_QUESTION,
-  FetchState,
-  HashTag
-} from '../../../../constants';
+import { CREATE_QUESTION } from '../../../../constants';
+import { TopicPropsState, FetchState, HashTag } from '../../../../types';
 
 import { bigNumberFormat, displayModal } from '../../../../functions';
 import { connect } from 'react-redux';

@@ -13,7 +13,7 @@ import {
   SendReplyProps,
   AuthState,
   FetchState
-} from '../../../../constants';
+} from '../../../../types';
 
 import { getState, dispatch } from '../../../../functions';
 
@@ -67,6 +67,7 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
     () =>
       new IntersectionObserver((entries, self) => {
         const socket = getState().webSocket as WebSocket;
+
         entries.forEach((entry) => {
           if (entry.isIntersecting && entry.target.id) {
             const data: SendReplyProps = {
@@ -95,7 +96,6 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
         dispatch(getRecommendations());
       }
     }
-
     // eslint-disable-next-line
   }, [props.type]);
 

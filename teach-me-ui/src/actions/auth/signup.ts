@@ -1,11 +1,10 @@
+import { SIGNUP_REQUEST, SIGNUP_USER } from '../../constants';
 import {
-  ReduxAction,
-  SIGNUP_REQUEST,
-  SIGNUP_USER,
   SignupFormData,
   StatusPropsState,
+  ReduxAction,
   UserData
-} from '../../constants';
+} from '../../types';
 import { validateEmail, validateUsername } from '../validate';
 import {
   checkNetworkStatusWhilstPend,

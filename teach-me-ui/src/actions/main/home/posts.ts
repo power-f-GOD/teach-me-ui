@@ -1,13 +1,15 @@
 import {
-  PostStateProps,
-  FetchState,
   SET_POSTS,
-  ReduxActionV2,
   GET_POSTS,
-  LoopFind,
   POST_REACTION,
   POST_REPLY
 } from '../../../constants';
+import {
+  PostStateProps,
+  FetchState,
+  LoopFind,
+  ReduxActionV2
+} from '../../../types';
 
 import {
   getState,
@@ -104,14 +106,14 @@ export const posts = (_payload: FetchState<PostStateProps[], number>) => {
   const { posts: prevPostsState } = getState() as {
     posts: FetchState<PostStateProps[]>;
   };
+  let finalPayload = { ...prevPostsState } as FetchState<PostStateProps[]>;
   const { data: _data, statusText } = _payload;
-  const data = (_data ?? [])[0];
-  const pipe = data?.pipe;
-  let payload = { ...prevPostsState } as FetchState<PostStateProps[]>;
+  const newData = _data ?? [];
+  const actualData = newData[0];
+  const pipe = actualData?.pipe;
   const homeUnmounted = /(home\s?)unmount(s|ed)/.test(statusText || '');
-  const hadReachedEnd = /reached\send/.test(prevPostsState.statusText || ''); //attempt to reset Posts to [] if it had reached end
+  const hadReachedEnd = /reached\send/.test(prevPostsState.statusText || ''); //attempt to reset Posts to [] if it had reached end in order to get fresh feeds
   const newPostCreated = /(new\s)?post\screated/.test(statusText || '');
-  const newData = _payload.data ?? [];
   const resultantData = homeUnmounted
     ? hadReachedEnd
       ? []
@@ -124,52 +126,53 @@ export const posts = (_payload: FetchState<PostStateProps[], number>) => {
       resultantData[newPostCreated ? 'unshift' : 'push'](...newData);
     }
 
-    payload = {
+    finalPayload = {
       ..._payload,
       data: resultantData,
       extra: _payload.extra ?? prevPostsState.extra
     };
   } else {
     let { value: actualPost, index: postIndex } = loopThru(
-      payload.data ?? [],
+      finalPayload.data ?? [],
       ({ id }) =>
-        id === data.id || id === data.parent_id || id === data.parent?.id,
+        id === actualData.id ||
+        id === actualData.parent_id ||
+        id === actualData.parent?.id,
       { type: 'find', includeIndex: true }
     ) as LoopFind<PostStateProps>;
 
     if (actualPost) {
       switch (pipe) {
         case POST_REACTION:
-          if (data.parent_id && actualPost.sec_type !== 'REPLY') {
+          if (actualData.parent_id && actualPost.sec_type !== 'REPLY') {
             let {
               value: actualReply,
               index: replyIndex
             } = loopThru(
               actualPost.colleague_replies ?? [],
-              (reply) => reply.id === data.id,
+              (reply) => reply.id === actualData.id,
               { type: 'find', includeIndex: true }
             ) as LoopFind<PostStateProps>;
 
             actualPost.colleague_replies[replyIndex] = {
               ...actualReply,
-              ...data
+              ...actualData
             };
           } else {
-            actualPost = { ...actualPost, ...data };
+            actualPost = { ...actualPost, ...actualData };
           }
 
-          payload.data![postIndex] = actualPost;
-
+          finalPayload.data![postIndex] = actualPost;
           break;
         case POST_REPLY:
           actualPost.colleague_replies.push({
-            ...data,
+            ...actualData,
             upvote_count: 0,
             downvote_count: 0
           });
           actualPost.numRepliesToShow = (actualPost.numRepliesToShow ?? 3) + 1;
-          actualPost.reply_count = data.parent!.reply_count;
-          payload.data![postIndex] = actualPost;
+          actualPost.reply_count = actualData.parent!.reply_count;
+          finalPayload.data![postIndex] = actualPost;
           break;
       }
     }
@@ -177,6 +180,10 @@ export const posts = (_payload: FetchState<PostStateProps[], number>) => {
 
   return {
     type: SET_POSTS,
-    payload
+    payload: finalPayload
   };
 };
+
+export const getProfilePosts = () => () => {};
+
+export const profilePosts = () => {};

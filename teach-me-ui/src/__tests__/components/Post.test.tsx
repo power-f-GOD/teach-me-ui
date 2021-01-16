@@ -10,7 +10,7 @@ import '@testing-library/jest-dom/extend-expect';
 import Post from '../../components/Main/Home/MiddlePane/Post';
 import { Route, BrowserRouter as Router } from 'react-router-dom';
 
-import { PostStateProps } from '../../constants';
+import { PostStateProps } from '../../types';
 import { Provider } from 'react-redux';
 import store from '../../appStore';
 

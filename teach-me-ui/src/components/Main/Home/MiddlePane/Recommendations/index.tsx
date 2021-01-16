@@ -2,7 +2,7 @@ import React from 'react';
 
 import Box from '@material-ui/core/Box';
 
-import { UserData, FetchState } from '../../../../../constants';
+import { UserData, FetchState } from '../../../../../types';
 
 import { userDeviceIsMobile } from '../../../../../index';
 import Recommendation from './Recommendation';

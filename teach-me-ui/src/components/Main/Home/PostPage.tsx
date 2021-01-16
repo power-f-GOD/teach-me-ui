@@ -19,7 +19,7 @@ import { fetchReplies, fetchPost } from '../../../actions';
 import { Redirect } from 'react-router-dom';
 
 import { dispatch } from '../../../functions';
-import { PostStateProps, FetchState } from '../../../constants';
+import { PostStateProps, FetchState } from '../../../types';
 
 const PostPage = (props: {
   match: any;

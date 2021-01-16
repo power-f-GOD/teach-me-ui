@@ -14,7 +14,8 @@ import * as colleague from './colleague';
 import * as notifications from './notifications';
 import * as editProfile from './profile.edit';
 
-import { ReduxAction, SIGNOUT_USER } from '../constants';
+import { SIGNOUT_USER } from '../constants';
+import { ReduxAction } from '../types';
 
 export default function reducers(state: any, action: ReduxAction) {
   if (action.type === SIGNOUT_USER) {

@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col';
 import Box from '@material-ui/core/Box';
 
 import { bigNumberFormat } from '../../../../../functions/utils';
-import { UserData } from '../../../../../constants/interfaces';
+import { UserData } from '../../../../../types';
 
 import { FAIcon } from '../../../../shared/Icons';
 import { UPVOTE } from '../../../../../constants';
@@ -16,10 +16,11 @@ const PostInfo = (props: {
   reply_count?: number;
   isLoading: boolean;
   reaction_count: number;
+  sender?: UserData;
 }) => {
-  const { reactions, reply_count, isLoading, reaction_count } = props;
+  const { reactions, reply_count, isLoading, reaction_count, sender } = props;
   const colleagueThatUpvoted = reactions?.find(
-    (colleague) => colleague.reaction === UPVOTE
+    (colleague) => colleague.reaction === UPVOTE && colleague.id !== sender?.id
   );
 
   return !isLoading ? (

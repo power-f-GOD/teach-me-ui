@@ -11,7 +11,7 @@ import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import { ONE_TO_ONE } from '../../../../constants/chat';
-import { APIConversationResponse } from '../../../../constants/interfaces';
+import { APIConversationResponse } from '../../../../types';
 import { InfoCard } from '../../../shared/Card';
 import { dispatch } from '../../../../functions';
 import { chatState } from '../../../../actions/main/chat';

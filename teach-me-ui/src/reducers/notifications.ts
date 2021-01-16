@@ -1,10 +1,5 @@
-import { 
-  GET_NOTIFICATIONS,
-  ReduxAction,
-  NotificationState,
-  notificationState,
-} from '../constants';
-
+import { GET_NOTIFICATIONS, notificationState } from '../constants';
+import { ReduxAction, NotificationState } from '../types';
 
 export const getNotifications = (
   state: NotificationState = notificationState,
@@ -15,6 +10,6 @@ export const getNotifications = (
       ...state,
       ...action.payload
     };
-  };
+  }
   return state;
 };

@@ -1,14 +1,8 @@
 import { cleanup } from '@testing-library/react';
 
-import { 
-  ReduxAction, 
-  ModalState, 
-  MAKE_POST 
-} from '../../constants';
-import { 
-  hideModal, 
-  showModal 
-} from '../../actions';
+import { MAKE_POST } from '../../constants';
+import { ReduxAction, ModalState } from '../../types';
+import { hideModal, showModal } from '../../actions';
 
 afterEach(cleanup);
 

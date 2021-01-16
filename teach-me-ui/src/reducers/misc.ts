@@ -1,18 +1,20 @@
 import {
-  ReduxAction,
   snackbarState,
-  SnackbarState,
   userDataState,
-  UserData,
   DISPLAY_SNACK_BAR,
   SET_USER_DISPLAY_NAME,
   POPULATE_STATE_WITH_USER_DATA,
   INIT_WEB_SOCKET,
   notificationSoundState,
-  TRIGGER_NOTIFICATION_SOUND,
+  TRIGGER_NOTIFICATION_SOUND
+} from '../constants';
+import {
+  ReduxAction,
+  UserData,
+  SnackbarState,
   NotificationSoundState,
   ReduxActionV2
-} from '../constants';
+} from '../types';
 
 export const notificationSound = (
   state: NotificationSoundState = notificationSoundState,

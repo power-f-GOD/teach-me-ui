@@ -1,9 +1,9 @@
 import {
-  ReduxAction,
   FORGOT_PASSWORD_PENDING,
   FORGOT_PASSWORD_COMPLETED,
   FORGOT_PASSWORD_REQUEST
 } from '../../constants';
+import { ReduxAction } from '../../types';
 import { http } from '../../functions';
 import { displaySnackbar } from '../misc';
 

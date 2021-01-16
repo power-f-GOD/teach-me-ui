@@ -8,7 +8,7 @@ import {
   LoopFind,
   FetchState,
   APIResponseModel
-} from '../../../constants/interfaces';
+} from '../../../types';
 import {
   GET_CONVERSATION_MESSAGES,
   SET_CONVERSATION_MESSAGES,

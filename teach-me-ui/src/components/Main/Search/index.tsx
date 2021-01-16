@@ -16,7 +16,7 @@ import InputBase from '@material-ui/core/InputBase';
 import SearchIcon from '@material-ui/icons/Search';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
-import { ColleagueData } from '../../../constants/interfaces';
+import { ColleagueData } from '../../../types';
 import { dispatch } from '../../../functions/utils';
 import { triggerSearchKanyimuta } from '../../../actions/search';
 

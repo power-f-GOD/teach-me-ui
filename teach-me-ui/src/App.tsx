@@ -14,7 +14,7 @@ import createMemo from './Memo';
 import { dispatch } from './appStore';
 
 import { emitUserOnlineStatus } from './functions/utils';
-import { AuthState, FetchState } from './constants';
+import { AuthState, FetchState } from './types';
 
 const Memo = createMemo();
 

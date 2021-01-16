@@ -6,7 +6,7 @@ import {
   UserData,
   ConversationsMessages,
   LoopFind
-} from '../../../constants/interfaces';
+} from '../../../types';
 import {
   CHAT_MESSAGE_DELIVERED,
   CHAT_READ_RECEIPT,

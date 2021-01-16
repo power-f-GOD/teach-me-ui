@@ -2,11 +2,10 @@
 
 import {
   GET_NOTIFICATIONS,
-  GET_NOTIFICATIONS_REQUEST,
-  ReduxAction,
+  GET_NOTIFICATIONS_REQUEST
   // apiBaseURL as baseURL,
-  NotificationState
 } from '../constants';
+import { ReduxAction, NotificationState } from '../types';
 
 import {
   logError,

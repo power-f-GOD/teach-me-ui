@@ -16,7 +16,7 @@ import { ClickAwayListener, Container } from '@material-ui/core';
 
 import Row from 'react-bootstrap/Row';
 
-import { QuestionEditor } from '../../constants';
+import { QuestionEditor } from '../../types';
 
 import { 
   // sendFilesToServer,

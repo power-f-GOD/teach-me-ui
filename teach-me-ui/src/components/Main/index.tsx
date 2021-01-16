@@ -44,7 +44,7 @@ import {
   UserData,
   FetchState,
   NotificationSoundState
-} from '../../constants/interfaces';
+} from '../../types';
 
 interface MainProps {
   signoutStatus: StatusPropsState['status'];

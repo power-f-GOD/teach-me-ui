@@ -1,4 +1,4 @@
-import { APIMessageResponse } from '../constants';
+import { APIMessageResponse } from '../types';
 
 const ctx: Worker = self as any;
 

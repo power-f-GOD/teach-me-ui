@@ -9,7 +9,7 @@ import {
   ConversationsMessages,
   LoopFind,
   FetchState
-} from '../../../constants/interfaces';
+} from '../../../types';
 import {
   GET_CONVERSATIONS,
   SET_CONVERSATIONS,

@@ -9,7 +9,7 @@ import Fade from '@material-ui/core/Fade';
 import { promisedDispatch } from '../../functions/utils';
 import { displaySnackbar } from '../../actions/misc';
 import { userDeviceIsMobile } from '../../index';
-import { SnackbarState } from '../../constants';
+import { SnackbarState } from '../../types';
 
 const SnackBar = ({ snackbar }: { snackbar: SnackbarState }) => {
   const { open, message, severity, autoHide, timeout: _timeout } = snackbar;

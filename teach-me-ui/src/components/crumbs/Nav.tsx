@@ -25,16 +25,15 @@ import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 import Badge from '@material-ui/core/Badge';
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 
-import { 
+import {
   handleSignoutRequest,
   getState,
-  countNewNotifications, displayModal
+  countNewNotifications,
+  displayModal
 } from '../../functions';
 
-import { 
-  NOTIFICATIONS, 
-  UserData 
-} from '../../constants';
+import { NOTIFICATIONS } from '../../constants';
+import { UserData } from '../../types';
 import { dispatch } from '../../appStore';
 import { getNotificationsRequest } from '../../actions';
 
@@ -94,14 +93,15 @@ function IndexNav(props: any) {
   );
 }
 
-
 function MainNav(props: any) {
   const { isAuthenticated, className, getNotifications } = props;
   const [showDropdown, setShowDropdown] = useState(false);
   const history = useHistory();
   const userData = getState().userData as UserData;
   const username = userData.username;
-  const numberOfNewNotifications = countNewNotifications(getNotifications.data.notifications);
+  const numberOfNewNotifications = countNewNotifications(
+    getNotifications.data.notifications
+  );
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -111,7 +111,7 @@ function MainNav(props: any) {
 
   const handleProfileNavigation = () => {
     history.push(`/@${username}`);
-  }
+  };
 
   return (
     <>
@@ -130,11 +130,13 @@ function MainNav(props: any) {
           <AccountCircleRoundedIcon className='nav-icon' />
         </NavLink> */}
 
-        <NavLink 
-          to='#' 
-          className='nav-link' 
+        <NavLink
+          to='#'
+          className='nav-link'
           onClick={(e: any) => {
-            displayModal(true, false, NOTIFICATIONS, { title: 'Notifications' });
+            displayModal(true, false, NOTIFICATIONS, {
+              title: 'Notifications'
+            });
           }}
           isActive={(match: any, location: any) => false}>
           <Badge color='secondary' badgeContent={numberOfNewNotifications}>
@@ -142,9 +144,7 @@ function MainNav(props: any) {
           </Badge>
         </NavLink>
 
-        <NavLink 
-          to='/questions' 
-          className='nav-link' >
+        <NavLink to='/questions' className='nav-link'>
           <QuestionAnswerIcon />
         </NavLink>
 
@@ -159,38 +159,62 @@ function MainNav(props: any) {
           onClick={handleSignoutRequest}>
           Sign Out <ArrowForward fontSize='inherit' />
         </Button> */}
-        <Container onClick={(e: any)=> {setShowDropdown(!showDropdown)}} as='div' className='d-flex avatar-container cursor-pointer'>
+        <Container
+          onClick={(e: any) => {
+            setShowDropdown(!showDropdown);
+          }}
+          as='div'
+          className='d-flex avatar-container cursor-pointer'>
           <Avatar
             component='div'
-            
             className='profile-photo'
             alt={userData.displayName}
-            src={userData.profile_photo}
-          > {userData.first_name.substr(0,1).toLocaleUpperCase()}{userData.last_name.substr(0,1).toLocaleUpperCase()} </Avatar>
-          <ArrowDropDownIcon fontSize='small' className='avatar'/>
+            src={userData.profile_photo}>
+            {' '}
+            {userData.first_name.substr(0, 1).toLocaleUpperCase()}
+            {userData.last_name.substr(0, 1).toLocaleUpperCase()}{' '}
+          </Avatar>
+          <ArrowDropDownIcon fontSize='small' className='avatar' />
         </Container>
-
       </Box>
       {showDropdown && (
-        <ClickAwayListener onClickAway={() => {setShowDropdown(false)}}>
+        <ClickAwayListener
+          onClickAway={() => {
+            setShowDropdown(false);
+          }}>
           <Container as='div' className='dropdown p-0'>
             <Container as='div' className='d-flex profile'>
               <Avatar
                 component='span'
                 className='profile-avatar-x profile-photo'
                 alt={userData.displayName}
-                src={userData.profile_photo}
-              > {userData.first_name.substr(0,1).toLocaleUpperCase()}{userData.last_name.substr(0,1).toLocaleUpperCase()} </Avatar>
+                src={userData.profile_photo}>
+                {' '}
+                {userData.first_name.substr(0, 1).toLocaleUpperCase()}
+                {userData.last_name.substr(0, 1).toLocaleUpperCase()}{' '}
+              </Avatar>
               <Container as='div' className='user-details p-0'>
                 <Container as='p' className='p-0 m-0 display-name'>
                   {userData.displayName}
                 </Container>
-                <Container onClick={() => {handleProfileNavigation(); setShowDropdown(false)}} as='div' className='my-profile p-0 m-0 cursor-pointer'>
+                <Container
+                  onClick={() => {
+                    handleProfileNavigation();
+                    setShowDropdown(false);
+                  }}
+                  as='div'
+                  className='my-profile p-0 m-0 cursor-pointer'>
                   My Profile
                 </Container>
               </Container>
             </Container>
-            <Container as='p' className='cursor-pointer sign-out' onClick={() => {handleSignoutRequest(); setShowDropdown(false)}}>
+            <Container
+              as='p'
+              className='cursor-pointer sign-out'
+              onClick={() => {
+                handleSignoutRequest();
+                setShowDropdown(false);
+              }}>
               Sign Out
             </Container>
           </Container>
@@ -203,8 +227,9 @@ function MainNav(props: any) {
 function MainNavMenu(props: any) {
   const { className, getNotifications } = props;
   const username = (getState().userData as UserData).username;
-  const numberOfNewNotifications = countNewNotifications(getNotifications.data.notifications);
-
+  const numberOfNewNotifications = countNewNotifications(
+    getNotifications.data.notifications
+  );
 
   return (
     <Box className={`nav-links-wrapper ${className}`}>
@@ -228,9 +253,9 @@ function MainNavMenu(props: any) {
         </Box>
       </NavLink>
 
-      <NavLink 
-        to='#' 
-        className='nav-link' 
+      <NavLink
+        to='#'
+        className='nav-link'
         onClick={(e: any) => {
           displayModal(true, false, NOTIFICATIONS, { title: 'Notifications' });
         }}
@@ -243,9 +268,7 @@ function MainNavMenu(props: any) {
         </Box>
       </NavLink>
 
-      <NavLink 
-        to='/questions' 
-        className='nav-link' >
+      <NavLink to='/questions' className='nav-link'>
         <QuestionAnswerIcon />
         <Box component='span' className='nav-label ml-3'>
           Q&A

@@ -14,9 +14,12 @@ import SendIcon from '@material-ui/icons/Send';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 
-import { APIMessageResponse } from '../../../../constants/interfaces';
+import { APIMessageResponse } from '../../../../types';
 import { userDeviceIsMobile } from '../../../..';
-import { conversationMessages, conversation } from '../../../../actions/main/chat';
+import {
+  conversationMessages,
+  conversation
+} from '../../../../actions/main/chat';
 import {
   dispatch,
   delay,

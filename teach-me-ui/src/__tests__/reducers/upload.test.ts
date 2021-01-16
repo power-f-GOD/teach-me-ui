@@ -1,18 +1,9 @@
 import { cleanup } from '@testing-library/react';
 
-import {
-  ReduxAction,
-  UploadState,
-  uploadState,
-  SEND_FILES,
-  UPLOADS
-} from '../../constants';
+import { uploadState, SEND_FILES, UPLOADS } from '../../constants';
+import { ReduxAction, UploadState } from '../../types';
 
-import { 
-  sendFiles, 
-  uploads 
-} from '../../reducers/upload';
-
+import { sendFiles, uploads } from '../../reducers/upload';
 
 afterEach(cleanup);
 
@@ -54,5 +45,7 @@ it("upload reducers should be called with 'state' and 'action' params and return
   expect(uploadsMockFunc).toHaveBeenCalledWith(uploadState, uploadsAction);
   expect(sendFilesMockFunc).toHaveBeenCalledWith(uploadState, sendFilesAction);
   expect(uploads(uploadState, uploadsAction)).toMatchObject(mockUploadState);
-  expect(sendFiles(uploadState, sendFilesAction)).toMatchObject(mockUploadState);
+  expect(sendFiles(uploadState, sendFilesAction)).toMatchObject(
+    mockUploadState
+  );
 });

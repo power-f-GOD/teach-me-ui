@@ -7,7 +7,7 @@ import Axios from 'axios';
 import Row from 'react-bootstrap/Row';
 
 import Box from '@material-ui/core/Box';
-import { PostStateProps } from '../../../../../constants/interfaces';
+import { PostStateProps } from '../../../../../types';
 
 import { LazyLoadImage as LazyImg } from 'react-lazy-load-image-component';
 

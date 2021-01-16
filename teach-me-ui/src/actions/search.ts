@@ -1,4 +1,4 @@
-import { SearchState, ReduxAction, UserData } from '../constants/interfaces';
+import { SearchState, ReduxAction, UserData } from '../types';
 import {
   checkNetworkStatusWhilstPend,
   logError,
