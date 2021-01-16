@@ -7,10 +7,6 @@
     background-color: rgba(0, 150, 0, 0.2) !important;
     color: $color;
 
-    svg {
-      color: $color;
-    }
-
     &:hover,
     &:focus {
       background-color: rgba(0, 150, 0, 0.25) !important;
@@ -23,10 +19,6 @@
     background-color: rgba(190, 0, 0, 0.175) !important;
     color: $color;
 
-    svg {
-      color: $color;
-    }
-
     &:hover,
     &:focus {
       background-color: rgba(190, 0, 0, 0.25) !important;
@@ -35,10 +27,6 @@
 
   &.reposted {
     color: $theme-primary-v7;
-
-    svg {
-      color: $theme-primary-v7;
-    }
   }
 
   &:hover,
