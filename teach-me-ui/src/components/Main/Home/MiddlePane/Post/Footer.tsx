@@ -31,6 +31,7 @@ const PostFooter = (props: PostCrumbs) => {
     isLoading
   } = props;
   const [openCommentClassName, setOpenCommentClassName] = useState('');
+
   const handleCommentClick = useCallback(() => {
     setOpenCommentClassName(
       (/open/.test(openCommentClassName) ? 'close' : 'open') +
@@ -84,7 +85,11 @@ const PostFooter = (props: PostCrumbs) => {
             )}
           </Col>
         </Row>
-        <CreateReply post_id={id!} className={openCommentClassName} />
+        <CreateReply
+          post_id={id!}
+          className={openCommentClassName}
+          setOpenCommentClassName={setOpenCommentClassName}
+        />
       </>
     );
 
