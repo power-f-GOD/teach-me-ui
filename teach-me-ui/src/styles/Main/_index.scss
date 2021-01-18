@@ -13,13 +13,6 @@
   background: #eee !important;
 }
 
-@media screen and (min-width: 512px) {
-  .hang-in {
-    position: sticky;
-    top: 5rem;
-  }
-}
-
 .top-navbar {
   background: $theme-primary-v4;
   color: white;

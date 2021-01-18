@@ -1,0 +1,38 @@
+.hang-in {
+  position: sticky;
+  top: 5rem;
+}
+
+.no-hang-in {
+  position: unset;
+}
+
+@media screen and (min-width: 576px) {
+  .hang-in-sm {
+    position: sticky;
+  }
+
+  .no-hang-in-sm {
+    position: unset;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .hang-in-md {
+    position: sticky;
+  }
+
+  .no-hang-in-md {
+    position: unset;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .hang-in-lg {
+    position: sticky;
+  }
+
+  .no-hang-in-lg {
+    position: unset;
+  }
+}

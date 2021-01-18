@@ -115,7 +115,7 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
   }, [postElements.length, props.type]);
 
   return (
-    <Container className='middle-pane px-0' fluid>
+    <Container className='middle-pane px-0 px-sm-3 px-md-0' fluid>
       {(selfView || !inProfile) && <Compose userData={userData} />}
       {!inProfile && !postsData?.length && postsStatus === 'fulfilled' && (
         <Recommendations recommendations={recommendations} />
