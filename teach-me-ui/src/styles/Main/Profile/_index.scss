@@ -15,14 +15,16 @@
   }
 
   .photo-upload-button:hover {
-    box-shadow: 0rem 0.375rem 0.125rem -0.25rem rgba(0,0,0,0.2), 0rem 0.125rem 0.125rem 0rem rgba(0,0,0,0.14), 0rem 0.0625rem 0.3125rem 0rem rgba(0,0,0,0.12);
+    box-shadow: 0rem 0.375rem 0.125rem -0.25rem rgba(0, 0, 0, 0.2),
+      0rem 0.125rem 0.125rem 0rem rgba(0, 0, 0, 0.14),
+      0rem 0.0625rem 0.3125rem 0rem rgba(0, 0, 0, 0.12);
   }
-  
+
   .bio {
     font-style: italic;
     font-weight: bold;
   }
-  
+
   .bio2 {
     display: none;
   }
@@ -37,12 +39,16 @@
     }
   }
 
+  .InfoCard {
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.1);
+  }
+
   .colleague-container {
     min-height: 15rem;
   }
 
   .profile-top {
-    height: 15rem;
+    height: 18rem;
     margin-top: 3.5rem;
     width: 100%;
     background-color: black;
@@ -98,7 +104,7 @@
 
     .profile-photo-change {
       font-size: x-large;
-      color: #0073a0;;
+      color: #0073a0;
     }
 
     .avatar-with-icon {
@@ -107,7 +113,6 @@
 
     .profile-nav-bar {
       background-color: white;
-      box-shadow: 0 0 2px #aaa;
       padding: 0 1.2rem;
       width: max-content;
       position: absolute;
@@ -115,7 +120,7 @@
       left: 50%;
       z-index: 1;
       font-size: small;
-      border-radius: 0.4rem;
+      border-radius: 0.75rem;
       transform: translate(-50%, 50%);
 
       @media screen and (max-width: 512px) {
@@ -196,12 +201,12 @@
     }
   }
 
-  hr {
-    height: 0.0625rem;
-    width: calc(100% - 0.8rem);
-    margin-left: 0.45rem;
-    background: $theme-tertiary-v9;
-  }
+  // hr {
+  //   height: 0.0625rem;
+  //   width: calc(100% - 0.8rem);
+  //   margin-left: 0.45rem;
+  //   background: $theme-tertiary-v9;
+  // }
 
   .rows-wrapper {
     padding: 0.75rem;
@@ -369,64 +374,6 @@
   .status {
     text-align: center;
     font-weight: 500;
-  }
-
-  [class*='card-container'] {
-    display: flex;
-    justify-content: center;
-    padding: 0 1.25rem;
-  }
-
-  [class*='-info-card'] {
-    width: 100%;
-    display: inline-block;
-    max-width: 32rem;
-    position: relative;
-    overflow: hidden;
-    padding: 1.75rem 1.5rem;
-    padding-bottom: 1.5rem;
-    margin-bottom: 1.5rem;
-    background-color: white;
-    box-shadow: 0 0 2.5rem rgba(0, 0, 0, 0.2);
-    border-radius: 1rem;
-    color: $theme-tertiary-v2;
-
-    // @include debugger();
-  }
-
-  [class*='info-section-wrapper'] {
-    min-width: 200%;
-    display: flex;
-    position: relative;
-  }
-
-  [class*='-info-wrapper'],
-  [class*='-info-form'] {
-    width: 50%;
-    transition: 0.25s;
-  }
-
-  [class*='-info-wrapper'] {
-    opacity: 1;
-    position: relative;
-
-    &.hide {
-      position: absolute;
-      visibility: hidden;
-      opacity: 0;
-    }
-  }
-
-  [class*='-info-form'] {
-    position: absolute;
-    opacity: 0;
-    visibility: hidden;
-
-    &.show {
-      visibility: visible;
-      opacity: 1;
-      position: relative;
-    }
   }
 
   .card-title {

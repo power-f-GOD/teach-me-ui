@@ -29,7 +29,7 @@ const HomeRightPane = ({
 
   return (
     <Container fluid className='right-pane'>
-      <Col className='trending-container'>
+      <Col as='section' className='trending-container'>
         <h4>Trending</h4>
         {trendsStatus !== 'pending' && (
           <ul>

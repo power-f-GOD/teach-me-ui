@@ -6,9 +6,10 @@ import Row from 'react-bootstrap/Row';
 import Box from '@material-ui/core/Box';
 
 export interface InfoCardProps {
-  icon: React.FC<any>;
+  icon: Element | JSX.Element | null;
   title: string;
-  data: { name: string; value: string }[];
+  data: { name: string; value: any }[];
+  type?: 'info' | 'colleague';
   bgcolor?: string;
   boxShadow?: string;
   padding?: string;
@@ -24,6 +25,7 @@ export function InfoCard(props: InfoCardProps) {
     bgcolor,
     boxShadow,
     padding,
+    type,
     borderRadius,
     className
   } = props;
@@ -41,7 +43,7 @@ export function InfoCard(props: InfoCardProps) {
           <Box component='h2' className='card-title mr-auto'>
             {title}
           </Box>
-          <Icon className='' fontSize='large' />
+          {Icon}
         </Col>
       </Col>
 
@@ -49,8 +51,8 @@ export function InfoCard(props: InfoCardProps) {
 
       <Box className='academic-info-section-wrapper'>
         <Row className='academic-info-wrapper mx-0'>
-          {data.map(({ name, value }) => (
-            <Info name={name} value={value} key={name} />
+          {data.map(({ name, value }: { name: string; value: string }) => (
+            <Content name={name} value={value} key={name} type={type} />
           ))}
         </Row>
       </Box>
@@ -58,21 +60,36 @@ export function InfoCard(props: InfoCardProps) {
   );
 }
 
-export function Info({ name, value }: InfoCardProps['data'][0]) {
-  return (
-    <Col
-      xs={/email|institution|department/i.test(name) ? 12 : 6}
-      className='info p-0 d-flex mb-3 mt-2 fade-in'>
-      <Col as='span' className='py-0 d-flex flex-column align-items-start px-2'>
-        <Box component='span' className='info-name'>
-          {name}:
-        </Box>
-        <Box component='span' className='info-value'>
-          {value}
-        </Box>
-      </Col>
-    </Col>
-  );
+export function Content({
+  name,
+  value,
+  type
+}: {
+  name: string;
+  value: any;
+  type: InfoCardProps['type'];
+}) {
+  switch (type) {
+    case 'colleague':
+      return <>Colleague name<br /><br /></>;
+    default:
+      return (
+        <Col
+          xs={/email|institution|department/i.test(name) ? 12 : 6}
+          className='info p-0 d-flex mt-2 fade-in'>
+          <Col
+            as='span'
+            className='py-0 d-flex flex-column align-items-start px-2'>
+            <Box component='span' className='info-name'>
+              {name}:
+            </Box>
+            <Box component='span' className='info-value'>
+              {value}
+            </Box>
+          </Col>
+        </Col>
+      );
+  }
 }
 
 export default { InfoCard };

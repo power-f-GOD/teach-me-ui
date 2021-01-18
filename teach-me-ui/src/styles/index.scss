@@ -8,6 +8,7 @@
 @import 'Auth/index';
 
 @import 'Main/index';
+@import 'Main/responsive';
 
 @import 'Main/Chat/index';
 @import 'Main/Chat/LeftPane/index';
@@ -26,6 +27,7 @@
 @import 'Main/Home/MiddlePane/Recommendations/index';
 @import 'Main/Home/MiddlePane/Compose';
 @import 'Main/Home/RightPane/index';
+@import 'Main/Home/MiddlePane/Post/responsive';
 
 @import 'Main/Profile/index';
 @import 'Main/Q&A/index';

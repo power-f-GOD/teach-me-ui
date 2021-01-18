@@ -3,22 +3,17 @@
 .InfoCard {
   width: 100%;
   display: inline-block;
-  max-width: 32rem;
+  // max-width: 35rem;
   position: relative;
   overflow: hidden;
-  margin-bottom: 1.5rem;
-  background: transparent;
-  border-radius: 1.25rem;
-
-  path {
-    stroke: transparent;
-    fill: $theme-tertiary-v2;
-  }
+  margin-bottom: 1rem;
+  border-radius: 1rem;
 
   hr {
     height: 0.25rem;
     width: calc(100% - 0.8rem);
-    margin-left: 0.45rem;
+    margin: 1.5rem 1rem 1rem 0.45rem;
+    opacity: 0.25;
     // background: #eee;
   }
 
@@ -47,10 +42,14 @@
     font-weight: 600;
   }
 
+  .info {
+    margin-bottom: 0.75rem;
+  }
+
   .info-name {
     color: $theme-tertiary-v6;
     text-transform: uppercase;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.125rem;
   }
 
   .info-value {
