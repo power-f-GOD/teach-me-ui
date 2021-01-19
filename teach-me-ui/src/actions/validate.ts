@@ -4,8 +4,6 @@ import {
   USERNAME_VALIDATE,
   EMAIL_VALIDATE,
   PASSWORD_VALIDATE,
-  ReduxAction,
-  BasicInputState,
   SIGNIN_ID_VALIDATE,
   SIGNIN_PASSWORD_VALIDATE,
   DOB_VALIDATE,
@@ -14,14 +12,18 @@ import {
   LEVEL_VALIDATE,
   GET_MATCHING_INSTITUTIONS,
   POPULATE_MATCHING_INSTITUTIONS,
-  SearchState,
   POPULATE_MATCHING_DEPARTMENTS,
   POPULATE_MATCHING_LEVELS,
   GET_MATCHING_DEPARTMENTS,
   GET_MATCHING_LEVELS,
-  BIO_VALIDATE,
-  InstitutionInputState
+  BIO_VALIDATE
 } from '../constants';
+import {
+  SearchState,
+  ReduxAction,
+  BasicInputState,
+  InstitutionInputState
+} from '../types';
 import {
   logError,
   getState,

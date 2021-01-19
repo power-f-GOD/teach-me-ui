@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
+import { connect } from 'react-redux';
 
 import Container from 'react-bootstrap/Container';
 
@@ -9,14 +10,13 @@ import Recommendations from './Recommendations';
 import {
   PostStateProps,
   UserData,
-  SocketProps,
+  SendReplyProps,
   AuthState,
   FetchState
-} from '../../../../constants';
+} from '../../../../types';
 
 import { getState, dispatch } from '../../../../functions';
 
-import { connect } from 'react-redux';
 import { getPosts, getRecommendations } from '../../../../actions';
 
 interface HomeMiddlePaneProps {
@@ -35,7 +35,7 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
       data: [profile]
     },
     posts: {
-      status: postStatus,
+      status: postsStatus,
       data: postsData,
       statusText: postsStatusText,
       err: postsErred
@@ -43,9 +43,10 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
     recommendations,
     userData
   } = props;
-  const isFetching = /(updat|fetch|recycl)(e|ing)?/i.test(
-    postsStatusText || ''
-  );
+  const postsIsPending = postsStatus === 'pending';
+  const isFetching =
+    /(updat|fetch|recycl)(e|ing)?/i.test(postsStatusText || '') ||
+    postsIsPending;
   const username = userData.username || '';
   let profileUsername = profile.username || '';
   // here is where the current user profile check is made to render the views accordingly
@@ -66,9 +67,10 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
     () =>
       new IntersectionObserver((entries, self) => {
         const socket = getState().webSocket as WebSocket;
+
         entries.forEach((entry) => {
           if (entry.isIntersecting && entry.target.id) {
-            const data: SocketProps = {
+            const data: SendReplyProps = {
               pipe: 'POST_INTERACTION',
               post_id: entry.target.id,
               interaction: 'SEEN'
@@ -84,6 +86,12 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
   );
 
   useEffect(() => {
+    if (/(new\s)?post\screated/.test(postsStatusText || '')) {
+      window.scrollTo(0, 0);
+    }
+  }, [postsStatusText]);
+
+  useEffect(() => {
     const type = props.type || 'FEED';
     const userId = (profile as UserData).id || undefined;
 
@@ -94,7 +102,6 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
         dispatch(getRecommendations());
       }
     }
-
     // eslint-disable-next-line
   }, [props.type]);
 
@@ -107,47 +114,48 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
     // eslint-disable-next-line
   }, [postElements.length, props.type]);
 
-  useEffect(() => {
-    if (postStatus !== 'pending') {
-      document.body.style.overflow =
-        postsDataLength && !/chat/.test(window.location.search)
-          ? 'auto'
-          : 'hidden';
-    }
-  }, [postStatus, postsDataLength]);
-
   return (
-    <Container className='middle-pane px-0' fluid>
+    <Container className='middle-pane px-0 px-sm-3 px-md-0' fluid>
       {(selfView || !inProfile) && <Compose userData={userData} />}
-      {!inProfile && !postsData?.length && postStatus === 'fulfilled' && (
+      {!inProfile && !postsData?.length && postsStatus === 'fulfilled' && (
         <Recommendations recommendations={recommendations} />
       )}
-      {postStatus !== 'pending' &&
+      {!postsIsPending &&
         postsData?.map((post, i: number) => {
           const renderRecommendations = !inProfile &&
             (i === 2 || (i > 0 && i % 15 === 0)) && (
               <Recommendations recommendations={recommendations} />
             );
-          const nReposts = post.reposts?.length;
+          const nReposts = post.colleague_reposts?.length;
 
           return (
             <React.Fragment key={i}>
               {nReposts === 1 ? (
-                <Post {...post.reposts[0]} quote={{ ...post }} />
+                <Post
+                  {...post.colleague_reposts[0]}
+                  quote={{ ...post }}
+                  userId={userData.id}
+                />
               ) : (
-                <Post {...post} />
+                <Post {...post} userId={userData.id} />
               )}
               {renderRecommendations}
             </React.Fragment>
           );
         })}
-      {postStatus === 'pending' &&
+
+      {/* Skeleton Loader */}
+      {(isFetching || postsErred || postsIsPending || !postsDataLength) &&
         Array.from({
-          length: Math.floor(window.innerHeight / 450)
-        }).map((_, i) => <Post key={i} index={i} />)}
-      {(isFetching || postsErred) &&
-        Array.from({ length: 2 }).map((_, i) => (
-          <Post key={i} index={i} postsErred={postsErred} />
+          length: postsIsPending ? Math.floor(window.innerHeight / 200) : 2
+        }).map((_, i) => (
+          <Post
+            key={i}
+            index={i}
+            postsErred={
+              postsErred || (!postsDataLength && postsStatus === 'fulfilled')
+            }
+          />
         ))}
     </Container>
   );

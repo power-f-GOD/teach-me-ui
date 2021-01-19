@@ -1,26 +1,6 @@
 import moment from 'moment';
 import axios, { AxiosResponse, AxiosRequestConfig } from 'axios';
 
-import {
-  ReduxAction,
-  StatusPropsState,
-  BasicInputState,
-  UserData,
-  NetworkAction,
-  Reaction,
-  ONLINE_STATUS,
-  AuthState,
-  ConversationMessages,
-  APIConversationResponse,
-  LoopFind,
-  FetchState,
-  OnlineStatus,
-  apiBaseURL,
-  PostStateProps,
-  APIResponseModel,
-  HTTP
-} from '../constants';
-
 import store from '../appStore';
 import {
   displaySnackbar,
@@ -38,7 +18,25 @@ import {
   conversations,
   getConversationsMessages,
   conversationsMessages
-} from '../actions/chat';
+} from '../actions/main/chat';
+import {
+  HTTP,
+  APIResponseModel,
+  LoopFind,
+  UserData,
+  APIConversationResponse,
+  AuthState,
+  FetchState,
+  ConversationMessages,
+  PostStateProps,
+  OnlineStatus,
+  BasicInputState,
+  Reaction,
+  ReduxAction,
+  NetworkAction,
+  StatusPropsState
+} from '../types';
+import { apiBaseURL, ONLINE_STATUS } from '../constants';
 
 export const { dispatch, getState }: any = store;
 
@@ -111,36 +109,40 @@ export function loopThru<T>(
   const dataReversed = [];
   const reverse = rightToLeft || returnReverse;
   let i = reverse ? lim : 0;
-  let valueToReturn: LoopFind<T> | T[] | T | number | null = -1;
+  let valueToReturn: LoopFind<T> | T[] | T | number | null = null;
 
-  outer: for (; reverse ? i >= 0 : i <= lim; reverse ? i-- : i++) {
-    const datum = data[i];
-    let _break = '';
+  try {
+    outer: for (; reverse ? i >= 0 : i <= lim; reverse ? i-- : i++) {
+      const datum = data[i];
+      let _break = '';
 
-    switch (type) {
-      case 'find':
-        if (!!loopCheckCallback(datum, i)) {
-          valueToReturn = includeIndex ? { value: datum, index: i } : datum;
-          break outer;
-        }
+      switch (type) {
+        case 'find':
+          if (!!loopCheckCallback(datum, i)) {
+            valueToReturn = includeIndex ? { value: datum, index: i } : datum;
+            break outer;
+          }
+          break;
+        case 'findIndex':
+          if (!!loopCheckCallback(datum, i)) {
+            valueToReturn = i;
+            break outer;
+          }
+          break;
+        default:
+          _break = loopCheckCallback(datum, i);
+
+          if (returnReverse) {
+            dataReversed.push(datum);
+          }
+      }
+
+      if (_break === 'break') {
         break;
-      case 'findIndex':
-        if (!!loopCheckCallback(datum, i)) {
-          valueToReturn = i;
-          break outer;
-        }
-        break;
-      default:
-        _break = loopCheckCallback(datum, i);
-
-        if (returnReverse) {
-          dataReversed.push(datum);
-        }
+      }
     }
-
-    if (_break === 'break') {
-      break;
-    }
+  } catch (e) {
+    console.error(e);
   }
 
   if (typeof doneCallback === 'function')
@@ -468,7 +470,7 @@ export const logError = (action: Function) => (error: Error) => {
   );
 
   if (process.env.NODE_ENV === 'development') {
-    console.error('An error occured: ');
+    console.error('An error occured: ', error);
   }
 };
 
@@ -675,6 +677,7 @@ export const getCharacterSequenceFromText = (text: string, char: string) => {
         text.length > 1 &&
         !text.substring(1).match(/[^A-Za-z0-9_.,?!]/)
     );
+
   for (let item of array) {
     if (char === '@') {
       finArray.push(

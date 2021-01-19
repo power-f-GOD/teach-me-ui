@@ -1,8 +1,5 @@
-import {
-  ApiProps,
-  apiBaseURL as baseURL,
-  useApiResponse
-} from '../../constants';
+import { apiBaseURL as baseURL } from '../../constants';
+import { ApiProps, UseApiResponse } from '../../types';
 import { dispatch } from '../../functions';
 import { displaySnackbar } from '../../actions';
 import { useState, useCallback, useEffect } from 'react';
@@ -15,7 +12,7 @@ export default function useApi<T>(
   body: T = {} as T,
   lazy: boolean = true,
   runWithResult: Function = () => {}
-): useApiResponse<any> {
+): UseApiResponse<any> {
   const [data, setData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const callback = useCallback(async () => {

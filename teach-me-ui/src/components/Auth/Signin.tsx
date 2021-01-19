@@ -11,7 +11,7 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import { SigninPropsState } from '../../constants';
+import { SigninPropsState } from '../../types';
 import { handleSigninRequest, handleSigninInputChange } from '../../functions';
 
 export const refs: any = {
@@ -42,7 +42,7 @@ const Signin = (props: SigninPropsState) => {
 
   return (
     <Box
-      width='25rem'
+      width='23rem'
       className='auth-form-wrapper fade-in d-flex flex-column justify-content-center px-1'>
       <Box component='h2' marginY='0.75em' fontSize='1.25rem' fontWeight={900}>
         Sign In

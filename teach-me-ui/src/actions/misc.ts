@@ -1,24 +1,26 @@
 import {
-  ReduxAction,
   DISPLAY_SNACK_BAR,
-  SnackbarState,
   SET_USER_DISPLAY_NAME,
-  UserData,
   POPULATE_STATE_WITH_USER_DATA,
   wsBaseURL,
   INIT_WEB_SOCKET,
   CLOSE_WEB_SOCKET,
   TRIGGER_NOTIFICATION_SOUND,
-  NotificationSoundState,
   TONE_TYPE__INCOMING_MESSAGE,
   TONE_TYPE__ACTION_SUCCESS,
   TONE_NAME__SLOW_SPRING_BOARD,
-  TONE_NAME__OPEN_ENDED,
   TONE_NAME__EXQUISITE,
   TONE_NAME__PIECE_OF_CAKE,
   TONE_TYPE__GENERAL,
-  TONE_TYPE__OUTGOING_MESSAGE
+  TONE_TYPE__OUTGOING_MESSAGE,
+  TONE_NAME__ALL_EYES_ON_ME
 } from '../constants';
+import {
+  NotificationSoundState,
+  ReduxAction,
+  SnackbarState,
+  UserData
+} from '../types';
 import { getState } from '../functions/utils';
 import { dispatch } from '../appStore';
 
@@ -36,7 +38,7 @@ export const triggerNotificationSound = (_payload: NotificationSoundState) => {
       payload.toneName = TONE_NAME__SLOW_SPRING_BOARD;
       break;
     case TONE_TYPE__OUTGOING_MESSAGE:
-      payload.toneName = TONE_NAME__OPEN_ENDED;
+      payload.toneName = TONE_NAME__ALL_EYES_ON_ME;
       break;
     case TONE_TYPE__ACTION_SUCCESS:
       payload.toneName = TONE_NAME__EXQUISITE;

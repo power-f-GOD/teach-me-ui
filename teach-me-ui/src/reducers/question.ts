@@ -1,9 +1,6 @@
 import { ASK_QUESTION } from '../constants';
-import { 
-	questionState,
-	QuestionState,
-	ReduxAction
-} from '../constants';
+import { questionState } from '../constants';
+import { QuestionState, ReduxAction } from '../types';
 
 export const askQuestion = (
   state: QuestionState = questionState,

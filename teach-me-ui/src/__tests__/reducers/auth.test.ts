@@ -1,18 +1,20 @@
 import { cleanup } from '@testing-library/react';
 
 import {
-  ReduxAction,
-  StatusPropsState,
   authState,
   signupState,
   signinState,
   signoutState,
-  AuthState,
   AUTHENTICATE_USER,
-  ForgotPasswordStatusState,
   forgotPasswordStatusState,
   FORGOT_PASSWORD_COMPLETED
 } from '../../constants';
+import {
+  ForgotPasswordStatusState,
+  AuthState,
+  ReduxAction,
+  StatusPropsState
+} from '../../types';
 import {
   signin,
   signup,

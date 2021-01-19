@@ -6,15 +6,15 @@ import Col from 'react-bootstrap/Col';
 
 import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
-import SchoolIcon from '@material-ui/icons/School';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import { ONE_TO_ONE } from '../../../../constants/chat';
-import { APIConversationResponse } from '../../../../constants/interfaces';
-import { InfoCard } from '../../../shared/Cards';
+import { APIConversationResponse } from '../../../../types';
+import { InfoCard } from '../../../shared/Card';
 import { dispatch } from '../../../../functions';
-import { chatState } from '../../../../actions/chat';
+import { chatState } from '../../../../actions/main/chat';
+import { FAIcon } from '../../../shared/Icons';
 
 interface ChatRightPaneProps {
   convoType: string;
@@ -100,8 +100,8 @@ const ChatRightPane = (props: ChatRightPaneProps) => {
 
           <Box className={`info-card-wrapper text-center`}>
             <InfoCard
-              title='Academic Info'
-              icon={SchoolIcon}
+              title='Education'
+              icon={<FAIcon name='university' />}
               data={[
                 {
                   name: 'institution',

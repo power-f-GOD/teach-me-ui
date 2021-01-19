@@ -6,12 +6,8 @@ import Col from 'react-bootstrap/Col';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 
-import {
-  TopicPropsState,
-  CREATE_QUESTION,
-  FetchState,
-  HashTag
-} from '../../../../constants';
+import { CREATE_QUESTION } from '../../../../constants';
+import { TopicPropsState, FetchState, HashTag } from '../../../../types';
 
 import { bigNumberFormat, displayModal } from '../../../../functions';
 import { connect } from 'react-redux';
@@ -33,16 +29,12 @@ const HomeRightPane = ({
 
   return (
     <Container fluid className='right-pane'>
-      <Col className='trending-container'>
+      <Col as='section' className='trending-container'>
         <h4>Trending</h4>
         {trendsStatus !== 'pending' && (
           <ul>
-            {_trends?.map((topic: any, i: number) => (
-              <Topic
-                topic={topic.hashtag}
-                key={i}
-                numberOfDiscussions={topic.count}
-              />
+            {_trends?.map(({ tag, count }, i: number) => (
+              <Topic topic={tag} key={i} numberOfDiscussions={count} />
             ))}
           </ul>
         )}

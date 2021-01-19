@@ -14,13 +14,9 @@ import Col from 'react-bootstrap/Col';
 import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import {
-  APIMessageResponse,
-  Partial,
-  FetchState
-} from '../../../../constants/interfaces';
+import { APIMessageResponse, Partial, FetchState } from '../../../../types';
 import { userDeviceIsMobile } from '../../../..';
-import { getConversationMessages } from '../../../../actions/chat';
+import { getConversationMessages } from '../../../../actions/main/chat';
 import { dispatch, interval } from '../../../../functions/utils';
 import {
   Message,
@@ -28,10 +24,7 @@ import {
   SelectedMessageValue,
   NewMessageBar
 } from '../crumbs';
-import {
-  ChatMiddlePaneProps,
-  messagesStatusInfo
-} from '.';
+import { ChatMiddlePaneProps, messagesStatusInfo } from '.';
 import { Memoize } from '..';
 
 export const ScrollViewContext = createContext(
@@ -118,13 +111,15 @@ export const ScrollView = (props: {
         }
       }, 350);
 
-      scrollView.classList.remove('scroll-ended');
-      clearTimeout(hideScrollBarTimeout);
-      hideScrollBarTimeout = setTimeout(() => {
-        if (scrollView) {
-          scrollView!.classList.add('scroll-ended');
-        }
-      }, 400);
+      if (!userDeviceIsMobile) {
+        scrollView.classList.remove('scroll-ended');
+        clearTimeout(hideScrollBarTimeout);
+        hideScrollBarTimeout = setTimeout(() => {
+          if (scrollView) {
+            scrollView!.classList.add('scroll-ended');
+          }
+        }, 400);
+      }
     }
   }, [convoId, offset, convoMessagesStatusText]);
 
@@ -212,10 +207,12 @@ export const ScrollView = (props: {
         }
       }
 
-      if (canAddScrollPadding && !userDeviceIsMobile) {
-        scrollView.classList.add('add-scroll-padding');
-      } else {
-        scrollView.classList.remove('add-scroll-padding');
+      if (!userDeviceIsMobile) {
+        if (canAddScrollPadding) {
+          scrollView.classList.add('add-scroll-padding');
+        } else {
+          scrollView.classList.remove('add-scroll-padding');
+        }
       }
 
       if (/settled|fulfilled/.test(convoMessagesStatus as string)) {
@@ -256,16 +253,18 @@ export const ScrollView = (props: {
       as='section'
       className={`chat-scroll-view custom-scroll-bar grey-scrollbar`}
       onScroll={handleScrollViewScroll}>
-      <Box
-        id='chat-date-sticky'
-        className={`chat-date-wrapper text-center ${
-          convoMessages.length ? 'show' : 'hide'
-        }`}>
-        <Container
-          as='span'
-          className='chat-date d-inline-block w-auto'
-          ref={stickyChatDateRef}></Container>
-      </Box>
+      {!userDeviceIsMobile && (
+        <Box
+          id='chat-date-sticky'
+          className={`chat-date-wrapper text-center ${
+            convoMessages.length ? 'show' : 'hide'
+          }`}>
+          <Container
+            as='span'
+            className='chat-date d-inline-block w-auto'
+            ref={stickyChatDateRef}></Container>
+        </Box>
+      )}
 
       <Box
         className={`more-messages-loader theme-tertiary-darker mt-auto ${

@@ -1,8 +1,5 @@
-import {
-  SET_COLLEAGUE_REQUESTS,
-  ReduxAction,
-  ColleagueRequestProps
-} from '../constants';
+import { SET_COLLEAGUE_REQUESTS } from '../constants';
+import { ReduxAction, ColleagueRequestProps } from '../types';
 
 export const colleagueRequests = (
   state: Array<ColleagueRequestProps> = [],

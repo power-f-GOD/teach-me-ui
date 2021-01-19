@@ -2,8 +2,8 @@ import { dispatch } from '../functions';
 
 import { getNotificationsRequest } from '../actions';
 
-import { SocketPipe } from '../constants';
-import { getConversations } from '../actions/chat';
+import { SocketPipe } from '../types';
+import { getConversations } from '../actions/main/chat';
 
 export default function notifications(data: any) {
   try {

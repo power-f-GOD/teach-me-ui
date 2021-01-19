@@ -8,12 +8,14 @@ import {
   UploadState,
   QuestionState,
   NotificationSoundState
-} from './interfaces';
+} from '../types';
 
-export const apiBaseURL = 'https://teach-me-services.herokuapp.com/api/v1';
-// export const apiBaseURL = 'http://6c391cdf1194.ngrok.io/api/v1';
-export const wsBaseURL = 'wss://teach-me-services.herokuapp.com/api/v1';
-// export const wsBaseURL = 'ws://6c391cdf1194.ngrok.io/api/v1';
+let useLiveUrl = true;
+let live = 'teach-me-services.herokuapp.com';
+let local = '240f299c9556.ngrok.io';
+
+export const apiBaseURL = `https://${useLiveUrl ? live : local}/api/v1`;
+export const wsBaseURL = `ws://${useLiveUrl ? live : local}/api/v1`;
 
 export const DISPLAY_SNACK_BAR = 'DISPLAY_SNACK_BAR';
 
@@ -37,13 +39,17 @@ export const TONE_NAME__QUITE_IMPRESSED = 'quite-impressed-565';
 export const TONE_NAME__SLOW_SPRING_BOARD = 'slow-spring-board-570';
 export const TONE_NAME__OPEN_ENDED = 'open-ended-563';
 export const TONE_NAME__JUNTOS = 'juntos-607';
+export const TONE_NAME__ALL_EYES_ON_ME = 'all-eyes-on-me-465';
+export const TONE_NAME__SUPPRESSED = 'suppressed-437';
+export const TONE_NAME__JUST_LIKE_THAT = 'just-like-that-404';
 
 export const notificationSoundState: NotificationSoundState = {
   play: false,
   isPlaying: false,
   isReady: false,
   toneName: TONE_NAME__PIECE_OF_CAKE,
-  toneType: TONE_TYPE__GENERAL
+  toneType: TONE_TYPE__GENERAL,
+  hasEnded: false
 };
 
 export const snackbarState: SnackbarState = {

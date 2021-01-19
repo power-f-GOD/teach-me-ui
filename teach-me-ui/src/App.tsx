@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import Index from './components/Index/Index';
 import Auth from './components/Auth/Auth';
 import Main from './components/Main';
-import Loader from './components/shared/Loader';
+import Loader from './components/shared/Loaders';
 import SnackBar from './components/crumbs/SnackBar';
 import ProtectedRoute from './ProtectedRoute';
 
@@ -14,7 +14,7 @@ import createMemo from './Memo';
 import { dispatch } from './appStore';
 
 import { emitUserOnlineStatus } from './functions/utils';
-import { AuthState, FetchState } from './constants';
+import { AuthState, FetchState } from './types';
 
 const Memo = createMemo();
 

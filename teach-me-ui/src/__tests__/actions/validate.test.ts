@@ -4,8 +4,7 @@ import {
   ReduxAction,
   BasicInputState,
   InstitutionInputState,
-  inputErrState
-} from '../../constants';
+} from '../../types';
 
 import {
   validateFirstname,

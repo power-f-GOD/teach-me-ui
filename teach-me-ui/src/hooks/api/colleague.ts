@@ -1,10 +1,10 @@
 import useApi from './base';
-import { useApiResponse, DeepProfileProps } from '../../constants';
+import { UseApiResponse, DeepProfileProps } from '../../types';
 
 export const useAddColleague = (
   id: string,
   token: string
-): useApiResponse<any> => {
+): UseApiResponse<any> => {
   const [...r] = useApi<any>(
     {
       endpoint: '/colleague/request',
@@ -19,9 +19,9 @@ export const useAddColleague = (
 export const useFetchDeepProfile = (
   id: string,
   token: string
-): useApiResponse<DeepProfileProps> => {
-  const [...r]: useApiResponse<DeepProfileProps> = useApi<any>({
-    endpoint: `/deep/profile/${id}`,
+): UseApiResponse<DeepProfileProps> => {
+  const [...r]: UseApiResponse<DeepProfileProps> = useApi<any>({
+    endpoint: `/profile/${id}/deep`,
     method: 'GET',
     headers: { Authorization: `Bearer ${token}` }
   });
@@ -31,7 +31,7 @@ export const useFetchDeepProfile = (
 export const useRemoveColleagueRequest = (
   request_id: string,
   token: string
-): useApiResponse<any> => {
+): UseApiResponse<any> => {
   const [...r] = useApi<any>(
     {
       endpoint: '/colleague/request/remove',
@@ -46,7 +46,7 @@ export const useRemoveColleagueRequest = (
 export const useAcceptColleagueRequest = (
   request_id: string,
   token: string
-): useApiResponse<any> => {
+): UseApiResponse<any> => {
   const [...r] = useApi<any>(
     {
       endpoint: '/colleague/request/accept',
@@ -61,7 +61,7 @@ export const useAcceptColleagueRequest = (
 export const useDeclineColleagueRequest = (
   request_id: string,
   token: string
-): useApiResponse<any> => {
+): UseApiResponse<any> => {
   const [...r] = useApi<any>(
     {
       endpoint: '/colleague/request/decline',
@@ -76,7 +76,7 @@ export const useDeclineColleagueRequest = (
 export const useUnColleague = (
   id: string,
   token: string
-): useApiResponse<any> => {
+): UseApiResponse<any> => {
   const [...r] = useApi<any>(
     {
       endpoint: '/uncolleague',
@@ -90,8 +90,8 @@ export const useUnColleague = (
 
 export const useFetchColleagueRequests = (
   token: string
-): useApiResponse<any> => {
-  const [...r]: useApiResponse<any> = useApi<any>(
+): UseApiResponse<any> => {
+  const [...r]: UseApiResponse<any> = useApi<any>(
     {
       endpoint: '/colleague/requests',
       method: 'GET',
@@ -103,8 +103,8 @@ export const useFetchColleagueRequests = (
   return r;
 };
 
-export const useFetchColleagues = (token: string): useApiResponse<any> => {
-  const r: useApiResponse<any> = useApi<any>(
+export const useFetchColleagues = (token: string): UseApiResponse<any> => {
+  const r: UseApiResponse<any> = useApi<any>(
     {
       endpoint: '/colleague/find',
       method: 'GET',

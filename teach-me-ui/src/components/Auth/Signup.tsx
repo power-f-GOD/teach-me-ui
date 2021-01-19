@@ -36,7 +36,7 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 // import Worker from 'worker-loader!./worker.ts';
 
 import createMemo from '../../Memo';
-import { SignupPropsState } from '../../constants/interfaces';
+import { SignupPropsState } from '../../types';
 import {
   handleSignupInputChange,
   handleSignupRequest
@@ -372,7 +372,7 @@ const Signup = (props: SignupPropsState) => {
 
   return (
     <Box
-      width='45rem'
+      width='40rem'
       className='auth-form-wrapper fade-in d-flex flex-column justify-content-center'>
       <Box
         component='h2'

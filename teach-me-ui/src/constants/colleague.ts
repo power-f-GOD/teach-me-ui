@@ -1,4 +1,4 @@
-import { RequestState } from './interfaces';
+import { RequestState } from '../types';
 
 export const SET_COLLEAGUE_REQUESTS = 'SET_COLLEAGUE_REQUESTS';
 export const FETCHED_DEEP_PROFILE_DATA = 'FETCHED_DEEP_PROFILE_DATA';

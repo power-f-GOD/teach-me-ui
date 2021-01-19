@@ -10,8 +10,8 @@ import ForumIcon from '@material-ui/icons/Forum';
 import ChatIcon from '@material-ui/icons/Chat';
 
 import { addEventListenerOnce, delay } from '../../../../functions/utils';
-import { SearchState } from '../../../../constants/interfaces';
-import { Skeleton, DISPLAY_INFO } from '../../../shared/Loader';
+import { SearchState } from '../../../../types';
+import { Skeleton, DISPLAY_INFO } from '../../../shared/Loaders';
 import { Memoize } from '..';
 import { ConversationsList } from './Conversations';
 

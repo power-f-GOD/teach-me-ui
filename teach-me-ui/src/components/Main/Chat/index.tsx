@@ -11,14 +11,14 @@ import {
   getConversationMessages,
   conversation,
   conversationsMessages
-} from '../../../actions/chat';
+} from '../../../actions/main/chat';
 import {
   ChatState,
   UserData,
   SearchState,
   APIConversationResponse,
   AuthState
-} from '../../../constants/interfaces';
+} from '../../../types';
 import ChatLeftPane from './LeftPane';
 import ChatMiddlePane from './MiddlePane';
 import ChatRightPane from './RightPane';

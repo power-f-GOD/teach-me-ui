@@ -1,7 +1,7 @@
 import { ONLINE_STATUS } from '../constants/misc';
 import { dispatch, getState } from '../functions/utils';
-import { conversations, conversation } from '../actions/chat';
-import { ChatState, APIConversationResponse, UserData } from '../constants';
+import { conversations, conversation } from '../actions/main/chat';
+import { ChatState, APIConversationResponse, UserData } from '../types';
 
 export default function misc(message: any) {
   const { conversation: _conversation, userData } = getState() as {

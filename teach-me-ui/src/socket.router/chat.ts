@@ -5,7 +5,7 @@ import {
   FetchState,
   ChatSocketMessageResponse,
   NotificationSoundState
-} from '../constants/interfaces';
+} from '../types';
 import { getState, dispatch, promisedDispatch } from '../functions/utils';
 import {
   CHAT_NEW_MESSAGE,
@@ -20,7 +20,7 @@ import {
   conversations,
   conversation,
   conversationsMessages
-} from '../actions/chat';
+} from '../actions/main/chat';
 import { triggerNotificationSound } from '../actions';
 import {
   TONE_TYPE__INCOMING_MESSAGE,

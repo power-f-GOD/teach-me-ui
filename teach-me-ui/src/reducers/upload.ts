@@ -1,10 +1,5 @@
-import { 
-  SEND_FILES, 
-  ReduxAction, 
-  UPLOADS,
-  UploadState,
-  uploadState
-} from '../constants';
+import { SEND_FILES, UPLOADS, uploadState } from '../constants';
+import { ReduxAction, UploadState } from '../types';
 
 export const sendFiles = (
   state: UploadState = uploadState,
@@ -15,7 +10,7 @@ export const sendFiles = (
       ...state,
       ...action.payload
     };
-  };
+  }
   return state;
 };
 
@@ -28,6 +23,6 @@ export const uploads = (
       ...state,
       ...action.payload
     };
-  };
+  }
   return state;
 };

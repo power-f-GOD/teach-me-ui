@@ -6,6 +6,7 @@ pipelines:
         script:
           - cd teach-me-ui
           - npm install
+          - npx browserslist@latest --update-db
           - npm test -- --coverage --coverageDirectory=output/coverage/jest
           - tar -czvf coverage.tar.gz output/coverage/jest
           # - npm run autoprefix:r
@@ -25,6 +26,7 @@ pipelines:
           script:
             - cd teach-me-ui
             - npm install
+            - npx browserslist@latest --update-db
             - npm test -- --coverage --coverageDirectory=output/coverage/jest
             - tar -czvf coverage.tar.gz output/coverage/jest
             # - npm run autoprefix:r
@@ -53,6 +55,7 @@ pipelines:
           script:
             - cd teach-me-ui
             - npm install
+            - npx browserslist@latest --update-db
             - npm test -- --coverage --coverageDirectory=output/coverage/jest
             - tar -czvf coverage.tar.gz output/coverage/jest
             # - npm run autoprefix:r

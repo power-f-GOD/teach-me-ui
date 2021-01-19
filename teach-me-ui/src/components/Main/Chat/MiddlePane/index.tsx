@@ -15,8 +15,11 @@ import {
   Partial,
   OnlineStatus,
   FetchState
-} from '../../../../constants/interfaces';
-import { conversationMessages, conversations } from '../../../../actions/chat';
+} from '../../../../types';
+import {
+  conversationMessages,
+  conversations
+} from '../../../../actions/main/chat';
 import {
   dispatch,
   emitUserOnlineStatus,
@@ -29,7 +32,7 @@ import {
 import { SelectedMessageValue } from '../crumbs';
 import { MiddlePaneHeader } from './Header';
 import { ScrollView } from './ScrollView';
-import MessageBox from './Footer';
+import MessageBox from './MessageBox';
 import { Memoize } from '..';
 
 export interface ChatMiddlePaneProps {

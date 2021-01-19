@@ -1,11 +1,6 @@
 import { cleanup } from '@testing-library/react';
 
-
 import {
-  ReduxAction,
-  SignupFormData,
-  AuthState,
-  SigninFormData,
   SIGNIN_USER,
   SIGNUP_USER,
   SIGNUP_REQUEST,
@@ -13,12 +8,18 @@ import {
   FORGOT_PASSWORD_REQUEST,
   FORGOT_PASSWORD_PENDING,
   FORGOT_PASSWORD_COMPLETED,
-  StatusPropsState,
   VERIFY_AUTH,
   AUTHENTICATE_USER,
   SIGNOUT_USER,
   SIGNOUT_REQUEST
 } from '../../constants';
+import {
+  ReduxAction,
+  SignupFormData,
+  AuthState,
+  SigninFormData,
+  StatusPropsState
+} from '../../types';
 import {
   requestSignin,
   requestSignup,

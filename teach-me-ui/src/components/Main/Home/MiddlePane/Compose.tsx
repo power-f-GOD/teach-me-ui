@@ -4,10 +4,11 @@ import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 
 import { displayModal } from '../../../../functions';
-import { CREATE_POST, UserData } from '../../../../constants';
+import { MAKE_POST } from '../../../../constants';
+import { UserData } from '../../../../types';
 
 const openCreatePostModal = (e: any) => {
-  displayModal(true, false, CREATE_POST, { title: 'Create Post' });
+  displayModal(true, false, MAKE_POST, { title: 'Make a Post' });
 };
 
 export const Compose: React.FunctionComponent<{

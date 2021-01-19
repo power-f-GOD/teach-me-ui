@@ -4,10 +4,12 @@ const RenderImage = (props: { file: File }) => {
   const { file } = props;
   const img = useRef<any | undefined>();
 
-	let reader = new FileReader();
-	
+  let reader = new FileReader();
+
   reader.onload = (e) => {
-    img.current.src = e.target!.result as string;
+    if (img.current) {
+      img.current.src = e.target!.result as string;
+    }
   };
   reader.readAsDataURL(file);
 

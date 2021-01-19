@@ -12,21 +12,22 @@ import Home from './Home';
 import About from '../Index/About';
 import Support from '../Index/Support';
 import Profile from './Profile';
-import ProfileRedirect from './ProfileRedirect';
-import Loader from '../shared/Loader';
+import ProfileRedirect from './Profile/ProfileRedirect';
+import Loader from '../shared/Loaders';
 import ModalFrame from '../modals';
 import Chat from './Chat';
 import Search from './Search';
-import PostPage from './PostPage';
-import Questions from './Questions';
-import QuestionPage from './QuestionPage';
+import PostPage from './Home/PostPage';
+import Questions from './Q&A';
+import QuestionPage from './Q&A/QuestionPage';
 import _404 from '../Index/_404';
 
 import createMemo from '../../Memo';
 import {
   dispatch,
   getState,
-  emitUserOnlineStatus
+  emitUserOnlineStatus,
+  delay
 } from '../../functions/utils';
 import {
   initWebSocket,
@@ -34,14 +35,17 @@ import {
   triggerNotificationSound
 } from '../../actions/misc';
 import activateSocketRouters from '../../socket.router';
-import { getConversations, getConversationsMessages } from '../../actions/chat';
+import {
+  getConversations,
+  getConversationsMessages
+} from '../../actions/main/chat';
 import {
   APIConversationResponse,
   StatusPropsState,
   UserData,
   FetchState,
   NotificationSoundState
-} from '../../constants/interfaces';
+} from '../../types';
 
 interface MainProps {
   signoutStatus: StatusPropsState['status'];
@@ -57,6 +61,8 @@ const Memoize = createMemo();
 const notifSoundRef = React.createRef<HTMLAudioElement | null>();
 let notifSoundEl: HTMLAudioElement | null;
 
+let userInteractedWithApp = false;
+
 const Main = (props: MainProps) => {
   const {
     signoutStatus,
@@ -65,7 +71,7 @@ const Main = (props: MainProps) => {
     convosData,
     notificationSound
   } = props;
-  const { play, isPlaying, toneName } = notificationSound;
+  const { play, toneName, hasEnded, isPlaying, isReady } = notificationSound;
   const notifSoundSrc = `/tones/${toneName}.ogg`;
   const unopened_count = convosData?.reduce(
     (a: number, conversation: APIConversationResponse) =>
@@ -82,15 +88,29 @@ const Main = (props: MainProps) => {
         dispatch(triggerNotificationSound({ isReady: true }));
       };
       notifSoundEl.onplaying = () => {
-        dispatch(triggerNotificationSound({ isPlaying: true, play: true }));
+        dispatch(
+          triggerNotificationSound({
+            isPlaying: true,
+            play: true,
+            hasEnded: false
+          })
+        );
       };
       notifSoundEl.onended = () => {
-        dispatch(triggerNotificationSound({ isPlaying: false, play: false }));
+        dispatch(
+          triggerNotificationSound({
+            isPlaying: false,
+            play: false,
+            hasEnded: true
+          })
+        );
       };
       notifSoundEl.onerror = () => {
         notifSoundEl!.src = notifSoundEl!.src.replace('ogg', 'mp3');
       };
     }
+
+    window.onclick = () => (userInteractedWithApp = true);
   }, []);
 
   useEffect(() => {
@@ -106,18 +126,18 @@ const Main = (props: MainProps) => {
       notifSoundEl!.currentTime = 0;
     };
 
-    if (notifSoundEl) {
+    if (notifSoundEl && userInteractedWithApp && isReady) {
       if (play) {
-        if (isPlaying) {
+        if (!hasEnded || isPlaying) {
           stopSound();
         }
 
-        notifSoundEl.play();
+        delay(50).then(() => notifSoundEl?.play());
       } else {
         stopSound();
       }
     }
-  }, [play, isPlaying]);
+  }, [play, hasEnded, isReady, isPlaying]);
 
   useEffect(() => {
     dispatch(initWebSocket(userToken as string));
