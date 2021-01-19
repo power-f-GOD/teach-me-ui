@@ -174,7 +174,7 @@ function MainNav(props: any) {
       {showDropdown && (
         <ClickAwayListener onClickAway={() => {setShowDropdown(false)}}>
           <Container as='div' className='dropdown p-0'>
-            <Container as='div' className='d-flex profile'>
+            {/* <Container as='div' className='d-flex profile'>
               <Avatar
                 component='span'
                 className='profile-avatar-x profile-photo'
@@ -189,6 +189,9 @@ function MainNav(props: any) {
                   My Profile
                 </Container>
               </Container>
+            </Container> */}
+            <Container as='p' className='cursor-pointer profile' onClick={() => {handleProfileNavigation(); setShowDropdown(false)}}>
+              My Profile
             </Container>
             <Container as='p' className='cursor-pointer sign-out' onClick={() => {handleSignoutRequest(); setShowDropdown(false)}}>
               Sign Out

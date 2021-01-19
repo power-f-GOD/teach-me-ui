@@ -88,7 +88,6 @@ const Profile = (props: any) => {
     unColleagueStatus
   } = props;
   const data: UserData = profileData.data[0];
-  console.log(data);
   
   const { auth } = props;
   const { isAuthenticated } = auth;
@@ -227,9 +226,6 @@ const Profile = (props: any) => {
   const openCoverPhotoEditModal = (e: any) => {
     displayModal(true, false, SELECT_PHOTO, { title: 'Select Cover Photo' });
   };
-
-  console.log(basicInfo, academicInfo);
-  
 
   return (
     <Box className={`Profile ${selfView ? 'self-view' : ''} fade-in pb-3`}>
