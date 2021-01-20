@@ -71,6 +71,8 @@ const UploadsPreview = (props: any) => {
     } else {
       dispatch(updateUserDataRequest({cover_photo: id})(dispatch));
     }
+    console.log(id);
+    
     window.history.back();
     displayModal(false);
   }
@@ -122,7 +124,7 @@ const UploadsPreview = (props: any) => {
                     key={i} 
                     className='col-4 upload-div-wrapper cursor-pointer'
                     onClick={(e: any) => {
-                      selectUpload(file._id);
+                      selectUpload(file.id);
                     }}
                   >
                     <img 
