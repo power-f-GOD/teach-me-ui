@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 
 import Container from 'react-bootstrap/Container';
 
+import { FAIcon } from '../shared/Icons';
+
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
@@ -203,7 +205,7 @@ function MainNav(props: any) {
               </Container>
             </Container> */}
             <Container as='p' className='cursor-pointer profile' onClick={() => {handleProfileNavigation(); setShowDropdown(false)}}>
-              My Profile
+              <FAIcon name='user-circle' fontSize='1.2rem' /> My Profile
             </Container>
             <Container
               as='p'
@@ -212,7 +214,7 @@ function MainNav(props: any) {
                 handleSignoutRequest();
                 setShowDropdown(false);
               }}>
-              Sign Out
+              <FAIcon name='sign-out-alt' fontSize='1.1rem' /> Sign Out
             </Container>
           </Container>
         </ClickAwayListener>

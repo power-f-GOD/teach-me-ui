@@ -12,7 +12,7 @@ import Home from './Home';
 import About from '../Index/About';
 import Support from '../Index/Support';
 import Profile from './Profile';
-import ProfileRedirect from './Profile/ProfileRedirect';
+import ProfileRedirect from './Profile/Redirect';
 import Loader from '../shared/Loaders';
 import ModalFrame from '../modals';
 import Chat from './Chat';
@@ -110,7 +110,10 @@ const Main = (props: MainProps) => {
       };
     }
 
-    window.onclick = () => (userInteractedWithApp = true);
+    window.onclick = () => {
+      userInteractedWithApp = true;
+      window.onclick = null;
+    };
   }, []);
 
   useEffect(() => {

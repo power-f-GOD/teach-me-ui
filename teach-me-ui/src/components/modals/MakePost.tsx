@@ -5,10 +5,8 @@ import { connect } from 'react-redux';
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
 import AttachmentIcon from '@material-ui/icons/Attachment';
-import CloseIcon from '@material-ui/icons/Close';
 
 import Row from 'react-bootstrap/Row';
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -118,7 +116,7 @@ const MakePost = (props: any) => {
 
     for (let file of state.selectedFiles) {
       if (
-        e.target.previousElementSibling?.getAttribute('title') === file.name &&
+        e.currentTarget.previousElementSibling?.getAttribute('title') === file.name &&
         !removed
       ) {
         removed = true;
@@ -336,7 +334,7 @@ const MakePost = (props: any) => {
                     type='button'
                     className='upload-remove-img-btn rounded-circle'
                     onClick={removeFile}>
-                    <CloseIcon fontSize='small' />
+                    x
                   </button>
                 </div>
               ))}
@@ -373,7 +371,7 @@ const MakePost = (props: any) => {
             </Container>
           </Row>
         )}
-        {state.showUploads && uploadsProp.data[0] && (
+        {(state.showUploads && uploadsProp.data[0] && uploadsProp.status !== 'pending') && (
           <Row as='h4' className='upload-select-header'>
             Select files
           </Row>
@@ -388,7 +386,13 @@ const MakePost = (props: any) => {
           <Box component='div' id='grid-box-uploads' className='scroll-image'>
             {state.showUploads ? (
               uploadsProp.status === 'pending' ? (
-                <CircularProgress className='upload-progress margin-auto' />
+                <Loader
+                type='ellipsis'
+                inline={true}
+                color='#555'
+                size={6}
+                className='ml-2'
+              />
               ) : uploadsProp.data[0] ? (
                 uploadsProp.data.map((file: any, i: number) => (
                   <Container
@@ -434,7 +438,7 @@ const MakePost = (props: any) => {
             )}
           </Box>
         </Row>
-        {state.showUploads && uploadsProp.data[0] && (
+        {(state.showUploads && uploadsProp.data[0] && uploadsProp.status !== 'pending') && (
           <Row className='d-flex mx-auto mt-1'>
             <Container component='div' className='width-100 p-0'>
               <Button

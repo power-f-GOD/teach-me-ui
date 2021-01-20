@@ -5,7 +5,7 @@
 
   [class*='container-'],
   .container {
-    max-width: 1300px;
+    max-width: $app-max-width;
   }
 
   [class*='container-fluid'] {
@@ -226,7 +226,7 @@
 
   //Profile style(s)
   .Profile {
-    overflow: hidden;
+    // overflow: hidden;
 
     .profile-top {
       height: 17rem;
@@ -466,7 +466,6 @@
     }
 
     .cover-button {
-      padding: 0;
       padding-right: 0.2rem;
     }
   }
