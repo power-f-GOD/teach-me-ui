@@ -13,13 +13,15 @@ import {
   TONE_NAME__PIECE_OF_CAKE,
   TONE_TYPE__GENERAL,
   TONE_TYPE__OUTGOING_MESSAGE,
-  TONE_NAME__ALL_EYES_ON_ME
+  TONE_NAME__ALL_EYES_ON_ME,
+  SET_WINDOW_WIDTH
 } from '../constants';
 import {
   NotificationSoundState,
   ReduxAction,
   SnackbarState,
-  UserData
+  UserData,
+  ReduxActionV2
 } from '../types';
 import { getState } from '../functions/utils';
 import { dispatch } from '../appStore';
@@ -57,6 +59,13 @@ export const triggerNotificationSound = (_payload: NotificationSoundState) => {
 export const displaySnackbar = (payload: SnackbarState): ReduxAction => {
   return {
     type: DISPLAY_SNACK_BAR,
+    payload
+  };
+};
+
+export const setWindowWidth = (payload: number): ReduxActionV2<number> => {
+  return {
+    type: SET_WINDOW_WIDTH,
     payload
   };
 };

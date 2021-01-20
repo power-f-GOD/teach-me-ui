@@ -40,6 +40,13 @@ import { apiBaseURL, ONLINE_STATUS } from '../constants';
 
 export const { dispatch, getState }: any = store;
 
+export const transform = (el: HTMLElement, val: string) => {
+  el.style.webkitTransform = val;
+  (el.style as any).mozTransform = val;
+  (el.style as any).oTransform = val;
+  el.style.transform = val;
+};
+
 export const http: Readonly<Omit<HTTP, 'token'>> & { token: string } = {
   token: getState().userData.token,
   returnRequestConfig: (

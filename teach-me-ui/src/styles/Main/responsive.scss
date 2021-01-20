@@ -1,11 +1,17 @@
 .hang-in {
+  // @include debugger();
   position: sticky;
+}
+
+[class*=hang-in] {
   top: 5rem;
 }
 
 .no-hang-in {
   position: unset;
 }
+
+
 
 @media screen and (min-width: 576px) {
   .hang-in-sm {

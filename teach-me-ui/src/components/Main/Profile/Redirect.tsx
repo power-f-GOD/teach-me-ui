@@ -10,7 +10,6 @@ import Loader from '../../shared/Loaders';
  */
 
 const ProfileRedirect = (props: any) => {
-  console.log(props);
   const userId = props.match.params.id;
   const { profileData } = props;
   useEffect(() => {

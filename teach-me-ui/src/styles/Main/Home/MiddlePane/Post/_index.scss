@@ -74,6 +74,10 @@
 
   .post-header {
     padding: 0.75em 0.75em 0;
+
+    a {
+      color: inherit;
+    }
   }
 
   .post-avatar {
@@ -173,6 +177,7 @@
 
     button {
       max-height: 2em;
+      height: 2em;
       width: auto;
       border-radius: 2em;
       font-size: 0.95em;

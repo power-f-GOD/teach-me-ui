@@ -12,7 +12,7 @@ import Footer from '../crumbs/Footer';
 import _404 from './_404';
 import Search from '../Main/Search';
 import Profile from '../Main/Profile';
-import ProfileRedirect from '../Main/Profile/ProfileRedirect';
+import ProfileRedirect from '../Main/Profile/Redirect';
 
 const Index = (props: any) => {
   React.useEffect(() => () => window.scrollTo(0, 0), []);

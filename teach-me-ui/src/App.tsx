@@ -15,12 +15,19 @@ import { dispatch } from './appStore';
 
 import { emitUserOnlineStatus } from './functions/utils';
 import { AuthState, FetchState } from './types';
+import { setWindowWidth } from './actions';
 
 const Memo = createMemo();
 
 const App = (props: any) => {
   const { signout, auth } = props;
   const { status: authStatus, isAuthenticated } = auth;
+
+  React.useEffect(() => {
+    window.onresize = () => {
+      dispatch(setWindowWidth(window.innerWidth));
+    };
+  }, []);
 
   if (authStatus === 'pending' || signout?.status === 'pending') {
     return <Loader />;

@@ -1,0 +1,86 @@
+.Profile {
+  &.self-view {
+    .profile-nav-bar-wrapper {
+      top: unset !important;
+    }
+
+    .profile-nav-bar {
+      box-shadow: none;
+    }
+  }
+
+  .profile-nav-bar-observee {
+    position: relative;
+    transform: translateY(-6rem);
+  }
+
+  .profile-nav-bar-wrapper {
+    position: sticky;
+    top: 3.5rem;
+    max-width: unset;
+    z-index: 5;
+    padding: 0;
+
+    &.is-sticking {
+      background-color: white;
+
+      .profile-nav-bar {
+        border-radius: 0;
+      }
+    }
+  }
+
+  .profile-nav-bar {
+    background-color: white;
+    padding: 0 1.2rem;
+    bottom: 0;
+    left: 0;
+    font-size: small;
+    border-radius: 0;
+    box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.2);
+    transform: unset;
+    transition: 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    .more-btn {
+      background: #ccc !important;
+      color: #000;
+      box-shadow: none;
+      font-size: small !important;
+      padding: 0 !important;
+      margin: 0 0.3rem;
+
+      [class*='Icon'] {
+        font-size: 1.8rem;
+      }
+
+      path {
+        fill: black;
+        stroke: transparent;
+      }
+    }
+
+    a {
+      text-decoration: none;
+      .nav-item {
+        height: 100%;
+        padding: 1rem;
+        margin: 0 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        color: black;
+        border-bottom: 2px solid transparent;
+
+        &.active {
+          color: #00537e;
+          border-bottom: 2px solid #00537e;
+        }
+      }
+    }
+  }
+
+  .InfoCard {
+    &.header {
+      box-shadow: none;
+    }
+  }
+}
