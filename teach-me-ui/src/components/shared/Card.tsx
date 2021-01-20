@@ -8,7 +8,8 @@ import Box from '@material-ui/core/Box';
 export interface InfoCardProps {
   icon: Element | JSX.Element | null;
   title: string;
-  data: { name: string; value: any }[];
+  data?: { name: string; value: any }[];
+  hr?: boolean;
   type?: 'info' | 'colleague';
   bgcolor?: string;
   boxShadow?: string;
@@ -17,17 +18,19 @@ export interface InfoCardProps {
   className?: string;
 }
 
-export function InfoCard(props: InfoCardProps) {
+export function InfoCard(props: { children?: any } & InfoCardProps) {
   const {
     title,
     icon: Icon,
     data,
+    hr,
     bgcolor,
     boxShadow,
     padding,
     type,
     borderRadius,
-    className
+    className,
+    children
   } = props;
 
   return (
@@ -47,13 +50,14 @@ export function InfoCard(props: InfoCardProps) {
         </Col>
       </Col>
 
-      <hr />
+      {hr === undefined ? <hr /> : hr && <hr />}
 
       <Box className='academic-info-section-wrapper'>
-        <Row className='academic-info-wrapper mx-0'>
-          {data.map(({ name, value }: { name: string; value: string }) => (
+        <Row className='academic-info-wrapper d-block mx-0'>
+          {data?.map(({ name, value }: { name: string; value: string }) => (
             <Content name={name} value={value} key={name} type={type} />
           ))}
+          {children}
         </Row>
       </Box>
     </Box>
@@ -71,15 +75,17 @@ export function Content({
 }) {
   switch (type) {
     case 'colleague':
-      return <>Colleague name<br /><br /></>;
+      return (
+        <>
+          Colleague name
+          <br />
+          <br />
+        </>
+      );
     default:
       return (
-        <Col
-          xs={/email|institution|department/i.test(name) ? 12 : 6}
-          className='info p-0 d-flex mt-2 fade-in'>
-          <Col
-            as='span'
-            className='py-0 d-flex flex-column align-items-start px-2'>
+        <Col className='info w-auto d-inline-block p-0 mt-2 fade-in'>
+          <Col as='span' className='py-0 pl-2 pr-4 mr-1 w-auto d-inline-block'>
             <Box component='span' className='info-name'>
               {name}:
             </Box>

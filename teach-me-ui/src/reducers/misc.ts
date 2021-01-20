@@ -6,7 +6,8 @@ import {
   POPULATE_STATE_WITH_USER_DATA,
   INIT_WEB_SOCKET,
   notificationSoundState,
-  TRIGGER_NOTIFICATION_SOUND
+  TRIGGER_NOTIFICATION_SOUND,
+  SET_WINDOW_WIDTH
 } from '../constants';
 import {
   ReduxAction,
@@ -54,5 +55,16 @@ export const webSocket = (state: any = null, action: ReduxAction) => {
   if (action.type === INIT_WEB_SOCKET) {
     return action.payload;
   }
+  return state;
+};
+
+export const windowWidth = (
+  state: number = 0,
+  action: ReduxActionV2<number>
+) => {
+  if (action.type === SET_WINDOW_WIDTH) {
+    return action.payload;
+  }
+
   return state;
 };
