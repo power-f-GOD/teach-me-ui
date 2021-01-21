@@ -23,12 +23,12 @@
   .dropdown {
     position: fixed !important;
     display: block;
-    width: fit-content;
+    width: 10rem;
     background-color: #ddd;
     border-radius: 0.5rem;
     box-shadow: 0rem 0.2rem 0.75rem rgba(0,0,0,0.15);
     right: 1rem;
-    top: 4.5rem;
+    top: 4.2rem;
 
     .display-name {
       font-weight: bold;
@@ -51,8 +51,13 @@
     }
 
     .profile {
+      margin: 0rem;
       padding-left: 0.3rem !important;
       border-radius: 0.5rem 0.5rem 0rem 0rem;
+
+      &:hover {
+        background-color: #eee;
+      }
 
       .my-profile {
         border-radius: 1rem;
