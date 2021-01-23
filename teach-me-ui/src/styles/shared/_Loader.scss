@@ -16,7 +16,7 @@
     display: inline-block;
     border-radius: 50%;
     // box-shadow: 0.0625rem 0.0625rem 0.0625rem rgba(0, 0, 0, 0.2);
-    margin-right: 0.35rem;
+    margin-right: 0.25rem;
     animation: ellipsisScale 1s infinite forwards;
     opacity: 0;
 
@@ -32,15 +32,15 @@
 
 @keyframes ellipsisScale {
   0% {
-    transform: scale(1);
-    opacity: 1;
+    transform: scale(0.4);
+    opacity: 0.25;
   }
   50% {
-    transform: scale(0.5);
-    opacity: 0;
-  }
-  100% {
     transform: scale(1);
     opacity: 1;
+  }
+  100% {
+    transform: scale(0.4);
+    opacity: 0.25;
   }
 }

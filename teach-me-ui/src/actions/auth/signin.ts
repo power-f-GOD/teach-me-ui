@@ -1,4 +1,4 @@
-import { SIGNIN_USER, SIGNIN_REQUEST } from '../../constants';
+import { SIGNIN_USER, SIGNIN_REQUEST, PLACEHOLDER_BIO } from '../../constants';
 import {
   ReduxAction,
   StatusPropsState,
@@ -35,7 +35,8 @@ export const requestSignin = (data: SigninFormData) => (
 
         populateStateWithUserData({
           ...userData,
-          displayName
+          displayName,
+          bio: userData.bio || PLACEHOLDER_BIO
         }).then(() => {
           http.token = userData.token!;
           dispatch(signin({ status: 'fulfilled' }));

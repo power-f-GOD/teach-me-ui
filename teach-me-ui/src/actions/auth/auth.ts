@@ -2,7 +2,8 @@ import {
   AUTHENTICATE_USER,
   VERIFY_AUTH,
   SIGNOUT_REQUEST,
-  SIGNOUT_USER
+  SIGNOUT_USER,
+  PLACEHOLDER_BIO
 } from '../../constants';
 import { ReduxAction, StatusPropsState, AuthState } from '../../types';
 import { populateStateWithUserData, delay, http } from '../../functions';
@@ -18,7 +19,8 @@ export const verifyAuth = () => (dispatch: Function): ReduxAction => {
 
   if (userData?.token) {
     populateStateWithUserData({
-      ...userData
+      ...userData,
+      bio: userData.bio || PLACEHOLDER_BIO
     }).then(() => {
       http.token = userData.token!;
       dispatch(auth({ status: 'fulfilled', isAuthenticated: true }));

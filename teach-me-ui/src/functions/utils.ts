@@ -316,7 +316,7 @@ export const emitUserOnlineStatus = (
 export const cleanUp = (isUnmount: boolean) => {
   let shouldCleanUp =
     /@/.test(window.location.pathname) &&
-    (getState().profileData.data[0] as UserData).username !==
+    (getState().profileData.data as UserData).username !==
       window.location.pathname.split('/')[1].replace('@', '');
   shouldCleanUp = isUnmount ? isUnmount : shouldCleanUp;
 
@@ -741,7 +741,7 @@ export const formatDate = (dateTime: Date | number) => {
 };
 
 export const formatMapDateString = (
-  timestamp: number | string,
+  timestamp?: number | string,
   includeDay?: boolean,
   includeYear?: boolean,
   dayMonthSeparator?: string
@@ -751,7 +751,7 @@ export const formatMapDateString = (
   }
 
   const today = new Date().toDateString();
-  const dateString = new Date(timestamp).toDateString();
+  const dateString = new Date(timestamp || Date.now()).toDateString();
   const dateIsToday = dateString === today;
   const dateIsYesterday =
     (Math.abs(

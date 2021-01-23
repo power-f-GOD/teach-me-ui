@@ -1,9 +1,9 @@
 .Profile {
   @media screen and (max-width: 575px) {
     &.self-view {
-.profile-nav-bar {
-  box-shadow: none;
-}
+      .profile-nav-bar {
+        box-shadow: none;
+      }
     }
 
     .profile-nav-bar-wrapper {
@@ -35,10 +35,7 @@
     }
   }
 
-
   @media screen and (min-width: 768px) {
-    
-
     .profile-nav-bar-wrapper {
       // @include debugger();
       top: 6.75rem;
@@ -71,8 +68,6 @@
   }
 
   @media screen and (min-width: 992px) {
-    
-
     .middle-pane-wrapper {
       transform: translateY(-5.25rem);
     }
@@ -91,6 +86,14 @@
 
     .Compose {
       top: 10.25rem;
+    }
+  }
+
+  @media screen and (min-width: 1301px) {
+    .profile-top {
+      .change-cover {
+        right: calc(50vw - (1300px / 2) + 0.75rem);
+      }
     }
   }
 }

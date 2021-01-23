@@ -35,7 +35,7 @@
   .comment-field {
     flex-grow: 1;
     height: auto;
-    max-width: calc(100% - 7.75em);
+    max-width: calc(100% - 5.5em);
 
     > div.MuiInputBase-root {
       background: #fff;
@@ -56,7 +56,9 @@
 
   .comment-button {
     align-self: flex-end;
-    margin-left: 0.5em;
+    margin-left: 0.25em;
+    height: 2.35rem;
+    width: 2.35rem;
     border-radius: 2em;
 
     &:disabled {

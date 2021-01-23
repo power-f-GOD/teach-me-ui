@@ -6,6 +6,6 @@ export * from './main/home';
 export * from './colleague';
 export * from './notifications';
 export * from './question';
-export * from './profile';
+export * from './main/profile';
 export * from './upload';
 export * from './profile.edit';

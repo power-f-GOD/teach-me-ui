@@ -10,14 +10,17 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Collapse from '@material-ui/core/Collapse';
 
-import { useDeclineColleagueRequest, useUnColleague } from '../../../../hooks/api';
+import {
+  useDeclineColleagueRequest,
+  useUnColleague
+} from '../../../../hooks/api';
 import {
   UserData,
   ColleagueRequestProps,
   ColleagueProps
 } from '../../../../types';
-import { cleanUp, dispatch } from '../../../../functions';
-import { fetchColleagueRequests, fetchColleagues } from '../../../../actions';
+import { cleanUp } from '../../../../functions';
+// import { fetchColleagueRequests, fetchColleagues } from '../../../../actions';
 
 export default () => {
   const [active, setActive] = useState<'1' | '2'>('1');
@@ -69,7 +72,7 @@ const ColleaguesBase = (props: any) => {
 
   const { colleagues } = props;
   useEffect(() => {
-    dispatch(fetchColleagues());
+    // dispatch(fetchColleagues());
   }, []);
 
   return colleagues.length === 0 ? (
@@ -113,7 +116,11 @@ const Colleague: FunctionComponent<{
           component='span'
           className='chat-avatar request-avatar mr-2'
           alt={colleague.firstname}
-          src={colleague.profile_photo ? colleague.profile_photo : '/images/avatar-1.png' }
+          src={
+            colleague.profile_photo
+              ? colleague.profile_photo
+              : '/images/avatar-1.png'
+          }
         />
         <div className='d-flex justify-content-around flex-column'>
           <div className='font-bold'>
@@ -154,7 +161,7 @@ const ColleagueRequestsBase = (props: any) => {
   const token = (userData as UserData).token as string;
 
   useEffect(() => {
-    dispatch(fetchColleagueRequests());
+    // dispatch(fetchColleagueRequests());
   }, []);
   return colleagueRequests.length === 0 ? (
     <Empty loading={fetchColleagueRequestsStatus.status === 'pending'} />
@@ -200,7 +207,11 @@ const Request: FunctionComponent<{
           component='span'
           className='chat-avatar request-avatar mr-2'
           alt={request.sender.firstname}
-          src={request.sender.profile_photo ? request.sender.profile_photo : '/images/avatar-1.png' }
+          src={
+            request.sender.profile_photo
+              ? request.sender.profile_photo
+              : '/images/avatar-1.png'
+          }
         />
         <div className='d-flex justify-content-around flex-column'>
           <div>

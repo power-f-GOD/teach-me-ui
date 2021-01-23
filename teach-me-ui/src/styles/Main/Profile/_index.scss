@@ -20,15 +20,6 @@
       0rem 0.0625rem 0.3125rem 0rem rgba(0, 0, 0, 0.12);
   }
 
-  .bio {
-    font-style: italic;
-    font-weight: bold;
-  }
-
-  .bio2 {
-    display: none;
-  }
-
   .details-card {
     background-color: white;
     border-radius: 0.5rem;
@@ -82,8 +73,8 @@
     .change-cover {
       width: max-content;
       position: absolute;
-      bottom: 5%;
-      right: 5%;
+      bottom: 1rem;
+      right: 1rem;
       z-index: 1;
       font-size: small;
       cursor: pointer;
@@ -246,13 +237,19 @@
 
   .colleague-action-button {
     position: relative;
-    min-width: 9rem;
+    min-width: 6rem;
+    width: auto;
     justify-content: center;
     transition: 0.3s;
     box-shadow: none;
     font-size: 0.8rem !important;
-    padding: 0 !important;
+    padding: 0.25rem 1rem !important;
     margin: 0.5rem 0.8rem;
+
+    &:disabled {
+      background: $theme-primary !important;
+      color: white !important;
+    }
 
     [class*='Icon'] {
       font-size: 1.5rem;
@@ -266,6 +263,7 @@
     &.decline-request {
       background-color: $theme-tertiary-v6;
     }
+
     &.add-colleague {
       background: $theme-primary-v5;
       path {
@@ -273,6 +271,7 @@
         stroke: transparent;
       }
     }
+
     &.cancel-request {
       background: #ccc !important;
       color: black;
@@ -298,7 +297,7 @@
   .display-name {
     margin: 0.5rem 0;
     font-weight: bold;
-    font-size: 1.5rem;
+    font-size: 1.75rem;
   }
 
   .username {
@@ -356,13 +355,4 @@
   box-shadow: 0rem 0.375rem 0.125rem -0.25rem rgba(0, 0, 0, 0.2),
     0rem 0.125rem 0.125rem 0rem rgba(0, 0, 0, 0.14),
     0rem 0.0625rem 0.3125rem 0rem rgba(0, 0, 0, 0.12);
-}
-
-.bio {
-  font-style: italic;
-  font-weight: bold;
-}
-
-.bio2 {
-  display: none;
 }

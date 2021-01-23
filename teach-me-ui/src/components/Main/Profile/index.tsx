@@ -1,6 +1,7 @@
 import React, { useEffect, createRef } from 'react';
+import Skeleton from 'react-loading-skeleton';
 
-import { Redirect, Switch, Route } from 'react-router-dom';
+import { Redirect, Switch, Route, match as Match } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import Row from 'react-bootstrap/Row';
@@ -16,15 +17,20 @@ import Img from '../../shared/Img';
 import ColleagueView from './crumbs/ColleagueView';
 import ProfileFeeds from './crumbs/ProfileFeeds';
 import { SELECT_PHOTO } from '../../../constants';
-import { UserData } from '../../../types';
+import { UserData, FetchState, AuthState } from '../../../types';
 import {
   dispatch,
   cleanUp,
   displayModal,
-  createObserver
+  createObserver,
+  formatMapDateString
 } from '../../../functions';
-import { getProfileData, setWindowWidth } from '../../../actions';
-import * as api from '../../../actions/profile';
+import {
+  getProfileData,
+  setWindowWidth,
+  getDeepProfileData
+} from '../../../actions';
+// import * as api from '../../../actions/main/profile/profile';
 import { InfoCard } from '../../shared/Card';
 import { FAIcon } from '../../shared/Icons';
 import ProfileNavBar, { profileNavWrapperRef } from './NavBar';
@@ -78,9 +84,18 @@ let profileNavBarObservee: HTMLElement | null = null;
 
 let observer: IntersectionObserver;
 
-const Profile = (props: any) => {
+export interface ProfileProps {
+  profileData: FetchState<UserData>;
+  userData: UserData;
+  windowWidth: number;
+  auth: AuthState;
+  match: Match;
+  location: Location;
+}
+
+const Profile = (props: ProfileProps) => {
   const { profileData, userData, windowWidth, auth } = props;
-  const data: UserData = profileData.data[0];
+  const data = profileData.data ?? ({} as UserData);
   const { isAuthenticated } = auth;
 
   firstname = data.first_name || '';
@@ -92,12 +107,12 @@ const Profile = (props: any) => {
   institution = data.institution || '';
   department = data.department || '';
   level = data.level || '';
-  bio = data.bio || 'Hi, there! I use Kanyimuta!';
+  bio = data.bio || '';
 
   //username of currently authenticated user which will be used to check if the current profile data requested is for another user or currently authenticated user in order to render the views accordingly
   username = '@' + (userData.username || '');
 
-  let { userId } = props.match.params;
+  let { userId } = (props.match.params ?? {}) as any;
   const isId = /^@\w+$/.test('@' + userId);
   userId = isId ? '@' + userId.toLowerCase() : username;
   // here is where the check is made to render the views accordingly
@@ -125,22 +140,24 @@ const Profile = (props: any) => {
   useEffect(() => {
     profileNavBarObservee = profileNavBarObserveeRef.current;
 
-    observer = createObserver(null, (entries) => {
-      entries.forEach((entry) => {
-        if (profileNavWrapper) {
-          profileNavWrapper.classList[entry.isIntersecting ? 'remove' : 'add'](
-            'observee-is-sticking'
-          );
-        }
+    if (profileNavBarObservee) {
+      observer = createObserver(null, (entries) => {
+        entries.forEach((entry) => {
+          if (profileNavWrapper) {
+            profileNavWrapper.classList[
+              entry.isIntersecting ? 'remove' : 'add'
+            ]('observee-is-sticking');
+          }
+        });
       });
-    });
 
-    observer.observe(profileNavBarObservee as Element);
+      observer.observe(profileNavBarObservee as Element);
 
-    return () => {
-      observer.unobserve(profileNavBarObservee as Element);
-    };
-  }, [windowWidth]);
+      return () => {
+        observer.unobserve(profileNavBarObservee as Element);
+      };
+    }
+  }, []);
 
   useEffect(() => {
     profileNavWrapper = profileNavWrapperRef.current;
@@ -154,7 +171,7 @@ const Profile = (props: any) => {
 
   useEffect(() => {
     if (data.id && !selfView) {
-      dispatch(api.fetchDeepProfile(data.id));
+      dispatch(getDeepProfileData(data.id));
     }
     // eslint-disable-next-line
   }, [data.id, selfView, username]);
@@ -176,11 +193,11 @@ const Profile = (props: any) => {
     return () => {
       cleanUp(true);
     };
-  }, [userId, profileData.username]);
+  }, [userId]);
 
   if (!isId) {
     return <Redirect to={`/${username}`} />;
-  } else if (profileData.err || !profileData.data[0]) {
+  } else if (profileData.err || !profileData.data) {
     return <Redirect to='/404' />;
   }
 
@@ -225,15 +242,45 @@ const Profile = (props: any) => {
             )}
           </div>
 
-          <Col className='d-flex flex-column px-4 pt-1'>
-            <Col as='span' className='display-name p-0 my-1'>
+          <Col className='px-4 pt-1'>
+            <Col as='h1' className='display-name p-0 my-0 d-inline-flex'>
               {selfView ? userData.displayName : displayName}
+              {!selfView && !displayName && (
+                <>
+                  <Skeleton className='on-dark' width={140} />
+                  <Skeleton className='on-dark ml-3' width={120} />
+                </>
+              )}
             </Col>
-            <Col as='span' className='username p-0 mb-1'>
+            <Col as='span' className='username d-block p-0 mb-2'>
               {selfView ? `@${userData.username}` : userId}
+              {!selfView && !userId && (
+                <Skeleton className='on-dark' width={160} />
+              )}
             </Col>
-            <Col as='span' className='bio p-0'>
-              {selfView ? userData.bio : bio}
+            <Col
+              as='span'
+              className='theme-tertiary-lightest text-ellipsis p-0 mt-1'>
+              <FAIcon name='pen' /> {selfView ? userData.bio : bio}
+              {!selfView && !bio && (
+                <Skeleton className='on-dark' width={300} />
+              )}
+            </Col>
+            <Col
+              as='span'
+              className='p-0 theme-tertiary-lighter d-block capitalize my-1'>
+              <FAIcon name='calendar-day' /> Joined{' '}
+              {formatMapDateString(
+                selfView
+                  ? userData?.date_joined
+                  : profileData.data?.date_joined,
+                false,
+                true,
+                ','
+              )}
+              {!selfView && !profileData.data?.date_joined && (
+                <Skeleton className='on-dark' width={160} />
+              )}
             </Col>
           </Col>
         </Container>
@@ -242,14 +289,11 @@ const Profile = (props: any) => {
             <Button
               variant='contained'
               size='small'
-              className='cover-button'
+              className='cover-button btn-tertiary text px-2 py-1'
               color='default'
               onClick={openCoverPhotoEditModal}>
-              <PhotoCameraIcon
-                fontSize='inherit'
-                className='profile-photo-change'
-              />{' '}
-              <span className='edit-cover-photo'>Edit Cover Photo</span>
+              <FAIcon name='image' className='mr-2 mx-1' fontSize='1.75em' />
+              Edit Cover Photo
             </Button>
           </div>
         )}
@@ -258,7 +302,7 @@ const Profile = (props: any) => {
       {/* Profile Nav Bar */}
       {windowWidth < 992 && (
         <ProfileNavBar
-          profileUserData={data}
+          profileData={data}
           selfView={selfView}
           location={props.location}
         />
@@ -271,22 +315,24 @@ const Profile = (props: any) => {
             md={12}
             lg={3}
             className='hang-in no-hang-in hang-in-lg d-flex flex-lg-column flex-sm-row flex-column mt-3 pl-sm-3 px-0 my-sm-0'>
-            <InfoCard
-              title='Account'
-              icon={<FAIcon name='user' fontSize='1.5em' />}
-              data={basicInfo}
-              bgcolor='#fff'
-              boxShadow='none'
-              padding='1rem 0.75rem 0.75rem'
-              className='mr-sm-3'
-            />
+            {selfView && (
+              <InfoCard
+                title='Account'
+                icon={<FAIcon name='user' fontSize='1.5em' />}
+                data={basicInfo}
+                bgcolor='#fff'
+                boxShadow='none'
+                padding='0.75rem'
+                className='mr-sm-3'
+              />
+            )}
             <InfoCard
               title='Education'
               icon={<FAIcon name='university' fontSize='1.5em' />}
               data={academicInfo}
               bgcolor='#fff'
               boxShadow='none'
-              padding='1rem 0.75rem 0.75rem'
+              padding='0.75rem'
               className='mr-sm-3'
             />
           </Col>
@@ -305,7 +351,7 @@ const Profile = (props: any) => {
               {/* Profile Nav Bar */}
               {windowWidth > 991 && (
                 <ProfileNavBar
-                  profileUserData={data}
+                  profileData={data}
                   selfView={selfView}
                   location={props.location}
                 />
@@ -318,7 +364,7 @@ const Profile = (props: any) => {
                 bgcolor='#fff'
                 boxShadow='none'
                 hr={false}
-                padding='1rem 0.75rem'
+                padding='0.75rem'
                 className='mb-2 header'
               />
               <Switch>

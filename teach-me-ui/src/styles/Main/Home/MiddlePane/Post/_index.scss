@@ -1,5 +1,7 @@
 .Post {
-  box-shadow: 0 0.1rem 0 #bbb, 0 0 0.125rem 0 #bbb;
+  box-shadow: 
+  // 0 0.25rem 1.75rem rgba(0, 0, 0, 0.15);
+    0 0.1rem 0 #bbb, 0 0 0.125rem 0 #ccc;
   overflow: hidden;
 }
 
