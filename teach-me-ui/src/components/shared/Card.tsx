@@ -1,4 +1,5 @@
 import React from 'react';
+import Skeleton from 'react-loading-skeleton';
 
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
@@ -84,13 +85,13 @@ export function Content({
       );
     default:
       return (
-        <Col className='info w-auto d-inline-block p-0 mt-2 fade-in'>
+        <Col className='info w-auto d-inline-block p-0 mt-2 fade-in-opacity'>
           <Col as='span' className='py-0 pl-2 pr-4 mr-1 w-auto d-inline-block'>
             <Box component='span' className='info-name'>
               {name}:
             </Box>
             <Box component='span' className='info-value'>
-              {value}
+              {value ? value : <Skeleton />}
             </Box>
           </Col>
         </Col>

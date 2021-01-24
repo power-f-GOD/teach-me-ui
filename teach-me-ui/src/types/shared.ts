@@ -145,6 +145,8 @@ export interface UserData {
   last_name: string;
   level: string;
   email?: string;
+  dob?: string;
+  date_joined?: number;
   date_of_birth?: string;
   online_status?: OnlineStatus;
   username: string;

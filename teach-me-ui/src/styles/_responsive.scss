@@ -440,18 +440,6 @@
   }
 }
 
-@media only screen and (max-width: 700px) {
-  .bio {
-    display: none;
-  }
-  .bio2 {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-style: italic;
-  }
-}
-
 @media only screen and (max-width: 575px) {
   .modal-contents {
     overflow-y: auto !important;
@@ -461,10 +449,6 @@
 
 @media only screen and (max-width: 950px) {
   .Profile {
-    .change-cover {
-      bottom: 15% !important;
-    }
-
     .cover-button {
       padding-right: 0.2rem;
     }
@@ -482,13 +466,6 @@
       .edit-cover-photo {
         display: none;
       }
-    }
-
-    .change-cover {
-      margin: 0 !important;
-      padding: 0 !important;
-      bottom: 2% !important;
-      right: 2% !important;
     }
   }
 }

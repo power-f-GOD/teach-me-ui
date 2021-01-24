@@ -9,8 +9,9 @@ import React, {
 import { connect } from 'react-redux';
 
 import Row from 'react-bootstrap/Row';
-import { Button, Avatar } from '@material-ui/core';
-import { TextField } from '@material-ui/core';
+import IconButton from '@material-ui/core/IconButton';
+import Avatar from '@material-ui/core/Avatar';
+import TextField from '@material-ui/core/TextField';
 
 import { UserData } from '../../../../../types';
 
@@ -20,6 +21,7 @@ import {
   emitUserOnlineStatus
 } from '../../../../../functions';
 import { pingUser } from '../../../../../actions';
+import { FAIcon } from '../../../../shared/Icons';
 
 interface CreateReplyProps {
   post_id: string;
@@ -154,13 +156,13 @@ const CreateReply = (props: CreateReplyProps) => {
             disabled: !isOpen
           }}
         />
-        <Button
-          variant='contained'
+        <IconButton
+          // variant='contained'
           onClick={submitReply}
           disabled={!text || !isOpen}
-          className='comment-button btn-secondary contained'>
-          Reply
-        </Button>
+          className='comment-button btn-primary contained p-2'>
+          <FAIcon name='paper-plane' fontSize='1.15rem' />
+        </IconButton>
       </Row>
     </form>
   );

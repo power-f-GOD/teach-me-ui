@@ -1,8 +1,14 @@
-import { PROFILE_DATA } from '../constants/profile';
 import { searchState } from '../constants/misc';
-import { RequestState, SearchState, ReduxAction } from '../types';
 import {
-  FETCHED_DEEP_PROFILE_DATA,
+  RequestState,
+  SearchState,
+  ReduxAction,
+  ReduxActionV2,
+  ColleagueAction,
+  DeepProfileProps
+} from '../types';
+import {
+  DEEP_PROFILE_DATA,
   ADD_COLLEAGUE_STARTED,
   ADD_COLLEAGUE_RESOLVED,
   ADD_COLLEAGUE_REJECTED,
@@ -29,8 +35,29 @@ import {
   FETCH_COLLEAGUE_REQUESTS_RESOLVED,
   requestState,
   FETCHED_COLLEAGUES,
-  FETCHED_COLLEAGUE_REQUESTS
+  FETCHED_COLLEAGUE_REQUESTS,
+  COLLEAGUE_ACTION,
+  PROFILE_DATA,
+  ADD_COLLEAGUE
 } from '../constants';
+
+export const colleagueAction = (
+  state = {
+    ...searchState,
+    action: ADD_COLLEAGUE,
+    data: {}
+  } as ColleagueAction,
+  action: ReduxActionV2<ColleagueAction>
+) => {
+  if (action.type === COLLEAGUE_ACTION) {
+    return {
+      ...state,
+      ...action.payload
+    };
+  }
+
+  return state;
+};
 
 export const profileData = (
   state: SearchState = { ...searchState, data: [{}] },
@@ -72,10 +99,13 @@ export const fetchDeepProfileStatus = (
   }
 };
 
-export const deepProfileData = (state = null, action: ReduxAction) => {
+export const deepProfileData = (
+  state = {} as DeepProfileProps,
+  action: ReduxActionV2<DeepProfileProps>
+) => {
   switch (action.type) {
-    case FETCHED_DEEP_PROFILE_DATA:
-      return action.payload;
+    case DEEP_PROFILE_DATA:
+      return { ...state, ...action.payload };
     default:
       return state;
   }

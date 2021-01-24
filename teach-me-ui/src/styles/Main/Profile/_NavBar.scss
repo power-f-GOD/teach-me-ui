@@ -76,6 +76,83 @@
         }
       }
     }
+
+    &.is-responding-view {
+      .colleague-action-button {
+        transform: scale(0.75);
+      }
+
+      .icon-button {
+        opacity: 1;
+        pointer-events: unset !important;
+        transform: translateX(0) scale(1);
+
+        &.back {
+          transform: translateX(calc(-100% - 0.5rem)) scale(1);
+        }
+
+        &.cancel {
+          transform: translateX(calc(100% + 0.5rem)) scale(1);
+        }
+
+        &:disabled {
+          opacity: 0.25;
+        }
+      }
+    }
+  }
+
+  .buttons-wrapper {
+    // @include debugger();
+    width: auto;
+    margin: unset;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  .colleague-action-button {
+    white-space: nowrap;
+    transition: 0.2s;
+    transform: scale(1);
+  }
+
+  .icon-button {
+    height: 2.5rem;
+    width: 2.5rem;
+    position: absolute;
+    z-index: 5;
+    border-radius: 50%;
+    color: $theme-primary;
+    background: rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    pointer-events: none !important;
+    transform: translateX(0) scale(0.5);
+    transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    &:hover,
+    &:focus {
+      .tool-tip {
+        opacity: 1;
+        transform: translateY(0.5rem);
+      }
+    }
+
+    .tool-tip {
+      display: inline-block;
+      position: absolute;
+      font-size: 0.65em;
+      white-space: nowrap;
+      padding: 0.2em 0.5em;
+      border-radius: 0.35rem;
+      top: 115%;
+      opacity: 0;
+      pointer-events: none;
+      color: white;
+      box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.25);
+      background: rgba(0, 0, 0, 0.75);
+      transition: 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
   }
 
   .InfoCard {

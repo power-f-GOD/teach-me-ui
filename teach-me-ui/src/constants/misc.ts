@@ -12,7 +12,7 @@ import {
 
 let useLiveUrl = true;
 let live = 'teach-me-services.herokuapp.com';
-let local = '240f299c9556.ngrok.io';
+let local = 'd1929a075f41.ngrok.io';
 
 export const apiBaseURL = `https://${useLiveUrl ? live : local}/api/v1`;
 export const wsBaseURL = `ws://${useLiveUrl ? live : local}/api/v1`;
@@ -28,6 +28,8 @@ export const ONLINE_STATUS = 'ONLINE_STATUS';
 
 export const TRIGGER_NOTIFICATION_SOUND = 'TRIGGER_NOTIFICATION_SOUND';
 export const SET_WINDOW_WIDTH = 'SET_WINDOW_WIDTH';
+
+export const PLACEHOLDER_BIO = "Hi, there! I'm awesome! I use Kanyimuta!";
 
 export const TONE_TYPE__INCOMING_MESSAGE = 'INCOMING_MESSAGE';
 export const TONE_TYPE__OUTGOING_MESSAGE = 'OUTGOING_MESSAGE';

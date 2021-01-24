@@ -21,7 +21,7 @@ import { getPosts, getRecommendations } from '../../../../actions';
 
 interface HomeMiddlePaneProps {
   auth: AuthState;
-  profileData: FetchState<UserData[]>;
+  profileData: FetchState<UserData>;
   posts: FetchState<PostStateProps[]>;
   userData: UserData;
   recommendations: FetchState<UserData[]>;
@@ -31,9 +31,7 @@ interface HomeMiddlePaneProps {
 const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
   const {
     auth: { isAuthenticated },
-    profileData: {
-      data: [profile]
-    },
+    profileData: { data: profile },
     posts: {
       status: postsStatus,
       data: postsData,
@@ -48,7 +46,7 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
     /(updat|fetch|recycl)(e|ing)?/i.test(postsStatusText || '') ||
     postsIsPending;
   const username = userData.username || '';
-  let profileUsername = profile.username || '';
+  let profileUsername = profile?.username || '';
   // here is where the current user profile check is made to render the views accordingly
   const isSelf =
     !!username && !!profileUsername && profileUsername === username;

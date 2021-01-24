@@ -1,36 +1,46 @@
-import React, { useState, createRef } from 'react';
+import React, { useState, useEffect, createRef } from 'react';
 
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
+import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Box from '@material-ui/core/Box';
-import AddColleagueIcon from '@material-ui/icons/PersonAdd';
 import MoreIcon from '@material-ui/icons/MoreHoriz';
-import PendingIcon from '@material-ui/icons/RemoveCircle';
-import RejectIcon from '@material-ui/icons/Close';
-import CreateOutlinedIcon from '@material-ui/icons/CreateOutlined';
 import Button from '@material-ui/core/Button';
 
-import { UserData, DeepProfileProps, AuthState } from '../../../types';
+import {
+  UserData,
+  DeepProfileProps,
+  AuthState,
+  ColleagueAction,
+  FetchState
+} from '../../../types';
 import { dispatch, displayModal } from '../../../functions';
-import * as api from '../../../actions/profile';
-import { EDIT_PROFILE } from '../../../constants';
+// import * as api from '../../../actions/main/profile/profile';
+import {
+  EDIT_PROFILE,
+  ADD_COLLEAGUE,
+  IS_COLLEAGUE,
+  PENDING_REQUEST,
+  AWAITING_REQUEST_ACTION,
+  ACCEPT_REQUEST,
+  DECLINE_REQUEST,
+  UNCOLLEAGUE,
+  CANCEL_REQUEST
+} from '../../../constants';
 import { getConversations } from '../../../actions/main/chat';
+import Loader from '../../shared/Loaders';
+import { FAIcon } from '../../shared/Icons';
+import { requestColleagueAction } from '../../../actions';
+import IconButton from '@material-ui/core/IconButton';
 
 interface ProfileNavBarProps {
-  profileUserData: UserData;
+  profileData: UserData;
   selfView: boolean;
   location: Location;
-  deepProfileData?: any;
-  addColleagueStatus?: any;
-  fetchDeepProfileStatus?: any;
-  removeColleagueStatus?: any;
-  acceptColleagueStatus?: any;
-  declineColleagueStatus?: any;
-  unColleagueStatus?: any;
+  deepProfileData?: FetchState<DeepProfileProps>;
+  colleagueAction?: ColleagueAction;
   userId?: string;
   isAuthenticated?: boolean;
 }
@@ -38,75 +48,46 @@ interface ProfileNavBarProps {
 export const profileNavWrapperRef = createRef<HTMLElement | null>();
 
 const ProfileNavBar = (props: ProfileNavBarProps) => {
-  const {
-    profileUserData,
-    deepProfileData,
-    addColleagueStatus,
-    fetchDeepProfileStatus,
-    removeColleagueStatus,
-    acceptColleagueStatus,
-    declineColleagueStatus,
-    unColleagueStatus,
-    selfView,
-    location,
-    userId,
-    isAuthenticated
-  } = props || {};
+  const { profileData, deepProfileData, colleagueAction, selfView, location } =
+    props || {};
+  const colleagueActionIsPending =
+    colleagueAction?.status === 'pending' ||
+    deepProfileData?.status === 'pending' ||
+    !deepProfileData?.data?.status;
+  const hasPendingRequest = deepProfileData?.data?.status === PENDING_REQUEST;
+  const isColleague = deepProfileData?.data?.status === IS_COLLEAGUE;
 
-  const [acceptWasClicked, setAcceptWasClicked] = useState(false);
-  const [declineWasClicked, setDeclineWasClicked] = useState(false);
-  const [colleagueButtonWasClicked, setColleagueButtonWasClicked] = useState(
-    false
-  );
+  const [isRespondingView, setIsRespondingView] = useState<boolean>(false);
+  const [action, setAction] = useState<{
+    jsx: React.ReactFragment;
+    type: ColleagueAction['action'];
+  }>({
+    jsx: <>Add Colleague +</>,
+    type: ADD_COLLEAGUE
+  });
 
-  const onColleagueActionClick = async (e: any, decline?: boolean) => {
-    setColleagueButtonWasClicked(true);
-    const deepData = deepProfileData as DeepProfileProps;
-    switch (deepData.status) {
-      case 'NOT_COLLEAGUES':
-        await dispatch(
-          api.addColleague(
-            profileUserData?.id || '',
-            profileUserData?.username || ''
-          )
-        );
-        break;
-      case 'PENDING_REQUEST':
-        await dispatch(
-          api.removeColleague(
-            deepData.request_id as string,
-            profileUserData?.id || ''
-          )
-        );
-        break;
-      case 'AWAITING_REQUEST_ACTION':
-        if (decline) {
-          setAcceptWasClicked(false);
-          setDeclineWasClicked(true);
-        } else {
-          setAcceptWasClicked(true);
-          setDeclineWasClicked(false);
+  const onColleagueActionClick = (
+    showRespondButtons?: boolean,
+    _action?: ColleagueAction['action'] | null
+  ) => () => {
+    setIsRespondingView(showRespondButtons ?? false);
+
+    if (_action === null) return;
+
+    dispatch(
+      requestColleagueAction({
+        action: _action ?? action.type,
+        data: {
+          displayName: profileData?.displayName,
+          colleague_id: profileData?.id,
+          request_id: deepProfileData?.data?.request_id
         }
-        !decline
-          ? await dispatch(
-              api.acceptColleague(
-                deepData.request_id as string,
-                profileUserData?.username || '',
-                profileUserData?.id || ''
-              )
-            )
-          : await dispatch(
-              api.declineColleague(
-                deepData.request_id as string,
-                profileUserData?.id || ''
-              )
-            );
-        break;
-      case 'IS_COLLEAGUE':
-        await dispatch(api.unColleague(profileUserData?.id || ''));
-        break;
+      })
+    );
+
+    if (action.type === ACCEPT_REQUEST) {
+      dispatch(getConversations('settled')(dispatch));
     }
-    dispatch(getConversations('settled')(dispatch));
   };
 
   const openEditProfileModal = () => {
@@ -114,16 +95,66 @@ const ProfileNavBar = (props: ProfileNavBarProps) => {
   };
 
   const handleEditClick = () => {
-    openEditProfileModal();
+    if (2 > 3) {
+      openEditProfileModal();
+    }
   };
+
+  const deepProfileDataStatus = deepProfileData?.data?.status;
+  useEffect(() => {
+    let action = {
+      //NOT_COLLEAGUES -> default
+      text: 'Add Colleague',
+      iconName: 'user-plus',
+      type: ADD_COLLEAGUE
+    };
+
+    setAction(() => {
+      switch (deepProfileDataStatus) {
+        case IS_COLLEAGUE:
+          action = {
+            text: 'Colleagues',
+            iconName: 'user-check',
+            type: UNCOLLEAGUE
+          };
+          break;
+        case PENDING_REQUEST:
+          action = {
+            text: 'Respond',
+            iconName: 'user-plus',
+            type: ACCEPT_REQUEST
+          };
+          break;
+        case AWAITING_REQUEST_ACTION:
+          action = {
+            text: 'Cancel Request',
+            iconName: 'user-slash',
+            type: CANCEL_REQUEST
+          };
+          break;
+      }
+
+      return {
+        jsx: (
+          <>
+            {action.text} <FAIcon name={action.iconName} className='ml-2' />
+          </>
+        ),
+        type: action.type as ColleagueAction['action']
+      };
+    });
+  }, [deepProfileDataStatus]);
 
   return (
     <>
       <Col
         className='profile-nav-bar-wrapper'
         ref={profileNavWrapperRef as any}>
-        <Col className='profile-nav-bar d-flex justify-content-center align-items-center'>
-          <Link to={`/${userId}`}>
+        <Col
+          className={`profile-nav-bar d-flex justify-content-center align-items-center ${
+            isRespondingView ? 'is-responding-view' : ''
+          }`}>
+          <Link to='' onClick={(e) => e.preventDefault()}>
             <div
               className={`nav-item ${
                 !/colleagues/.test(location.pathname) ? 'active' : ''
@@ -131,155 +162,74 @@ const ProfileNavBar = (props: ProfileNavBarProps) => {
               WALL
             </div>
           </Link>
-          {selfView && (
-            <Link to={`/${userId}/colleagues`}>
-              <div
-                className={`nav-item colleague-nav ${
-                  /colleagues/.test(location.pathname) ? 'active' : ''
-                }`}>
-                COLLEAGUES
-              </div>
-            </Link>
-          )}
-          {!selfView &&
-            (isAuthenticated && deepProfileData !== null ? (
-              <>
-                {deepProfileData.status === 'NOT_COLLEAGUES' && (
-                  <Button
-                    variant='contained'
-                    size='small'
-                    className='colleague-action-button add-colleague primary'
-                    color='primary'
-                    disabled={
-                      colleagueButtonWasClicked &&
-                      (addColleagueStatus.status === 'pending' ||
-                        fetchDeepProfileStatus.status === 'pending')
-                    }
-                    onClick={onColleagueActionClick}>
-                    {colleagueButtonWasClicked &&
-                    (addColleagueStatus.status === 'pending' ||
-                      fetchDeepProfileStatus.status === 'pending') ? (
-                      <Box textAlign='center'>
-                        <CircularProgress size={28} color='inherit' />
-                      </Box>
-                    ) : (
-                      <>
-                        <AddColleagueIcon fontSize='inherit' /> Add Colleague
-                      </>
-                    )}
-                  </Button>
-                )}
-                {deepProfileData.status === 'PENDING_REQUEST' && (
-                  <Button
-                    variant='contained'
-                    size='small'
-                    className='colleague-action-button cancel-request'
-                    color='primary'
-                    disabled={
-                      colleagueButtonWasClicked &&
-                      (removeColleagueStatus.status === 'pending' ||
-                        fetchDeepProfileStatus.status === 'pending')
-                    }
-                    onClick={onColleagueActionClick}>
-                    {colleagueButtonWasClicked &&
-                    (removeColleagueStatus.status === 'pending' ||
-                      fetchDeepProfileStatus.status === 'pending') ? (
-                      <Box textAlign='center'>
-                        <CircularProgress size={28} color='inherit' />
-                      </Box>
-                    ) : (
-                      <>
-                        <PendingIcon fontSize='inherit' /> Cancel Request
-                      </>
-                    )}
-                  </Button>
-                )}
-                {deepProfileData.status === 'AWAITING_REQUEST_ACTION' && (
+          {!selfView && (
+            <Container className='buttons-wrapper px-0 d-flex '>
+              <Button
+                variant='contained'
+                size='small'
+                className={`colleague-action-button add-colleague primary ${
+                  isRespondingView ? 'hide' : ''
+                }`}
+                color='primary'
+                disabled={colleagueActionIsPending || isRespondingView}
+                onClick={onColleagueActionClick(
+                  hasPendingRequest || isColleague,
+                  hasPendingRequest || isColleague ? null : undefined
+                )}>
+                {colleagueActionIsPending ? (
                   <>
-                    <Button
-                      variant='contained'
-                      size='small'
-                      id='accept'
-                      className='colleague-action-button accept-request'
-                      color='primary'
-                      disabled={
-                        colleagueButtonWasClicked &&
-                        acceptWasClicked &&
-                        (acceptColleagueStatus.status === 'pending' ||
-                          fetchDeepProfileStatus.status === 'pending')
-                      }
-                      onClick={onColleagueActionClick}>
-                      {colleagueButtonWasClicked &&
-                      acceptWasClicked &&
-                      (acceptColleagueStatus.status === 'pending' ||
-                        fetchDeepProfileStatus.status === 'pending') ? (
-                        <Box textAlign='center'>
-                          <CircularProgress size={28} color='inherit' />
-                        </Box>
-                      ) : (
-                        <>
-                          <AddColleagueIcon fontSize='inherit' /> Accept Request
-                        </>
-                      )}
-                    </Button>
-                    <Button
-                      variant='contained'
-                      size='small'
-                      id='decline'
-                      className='colleague-action-button decline-request'
-                      color='primary'
-                      disabled={
-                        colleagueButtonWasClicked &&
-                        declineWasClicked &&
-                        (declineColleagueStatus.status === 'pending' ||
-                          fetchDeepProfileStatus.status === 'pending')
-                      }
-                      onClick={(e: any) => {
-                        onColleagueActionClick(e, true);
-                      }}>
-                      {colleagueButtonWasClicked &&
-                      declineWasClicked &&
-                      (declineColleagueStatus.status === 'pending' ||
-                        fetchDeepProfileStatus.status === 'pending') ? (
-                        <Box textAlign='center'>
-                          <CircularProgress size={28} color='inherit' />
-                        </Box>
-                      ) : (
-                        <>
-                          <RejectIcon fontSize='inherit' />{' '}
-                          <span className='colleaguing-text'>Decline</span>
-                        </>
-                      )}
-                    </Button>
+                    A sec...{' '}
+                    <Loader
+                      type='ellipsis'
+                      inline={true}
+                      size={6}
+                      className='ml-2'
+                    />
                   </>
+                ) : (
+                  <>{action.jsx}</>
                 )}
-                {deepProfileData.status === 'IS_COLLEAGUE' && (
-                  <Button
-                    variant='contained'
-                    size='large'
-                    className='colleague-action-button uncolleague'
-                    color='primary'
-                    disabled={
-                      colleagueButtonWasClicked &&
-                      (unColleagueStatus.status === 'pending' ||
-                        fetchDeepProfileStatus.status === 'pending')
-                    }
-                    onClick={onColleagueActionClick}>
-                    {colleagueButtonWasClicked &&
-                    (unColleagueStatus.status === 'pending' ||
-                      fetchDeepProfileStatus.status === 'pending') ? (
-                      <Box textAlign='center'>
-                        <CircularProgress size={28} color='inherit' />
-                      </Box>
-                    ) : (
-                      <>
-                        <PendingIcon fontSize='inherit' /> Uncolleague
-                      </>
-                    )}
-                  </Button>
+              </Button>
+              {/* Go back */}
+              <IconButton
+                size='small'
+                className='back icon-button primary'
+                color='primary'
+                disabled={!isRespondingView}
+                onClick={onColleagueActionClick(false, null)}>
+                <FAIcon name='chevron-left' />
+                <span className='tool-tip'>Go back</span>
+              </IconButton>
+              {/* Accept */}
+              <IconButton
+                size='small'
+                className='check icon-button primary'
+                color='primary'
+                disabled={!isRespondingView || isColleague}
+                onClick={onColleagueActionClick(false, ACCEPT_REQUEST)}>
+                <FAIcon name='check' />
+                {!isColleague && (
+                  <span className='tool-tip'>Accept Request</span>
                 )}
-              </>
-            ) : null)}
+              </IconButton>
+
+              <IconButton
+                size='small'
+                className='cancel icon-button primary'
+                color='primary'
+                disabled={!isRespondingView}
+                onClick={onColleagueActionClick(
+                  false,
+                  hasPendingRequest ? DECLINE_REQUEST : UNCOLLEAGUE
+                )}>
+                <FAIcon name='times' />
+                <span className='tool-tip'>
+                  {hasPendingRequest ? 'Decline Request' : 'Uncolleague'}
+                </span>
+              </IconButton>
+            </Container>
+          )}
+
           {selfView ? (
             <>
               <Button
@@ -288,7 +238,7 @@ const ProfileNavBar = (props: ProfileNavBarProps) => {
                 className='colleague-action-button add-colleague'
                 color='primary'
                 onClick={handleEditClick}>
-                <CreateOutlinedIcon fontSize='inherit' /> Edit Profile
+                Edit Profile <FAIcon name='user-edit' className='ml-2' />
               </Button>
             </>
           ) : (
@@ -314,14 +264,7 @@ const mapStateToProps = (
   state: { userData: UserData; auth: AuthState } & ProfileNavBarProps
 ) => ({
   deepProfileData: state.deepProfileData,
-  addColleagueStatus: state.addColleagueStatus,
-  fetchDeepProfileStatus: state.fetchDeepProfileStatus,
-  removeColleagueStatus: state.removeColleagueStatus,
-  acceptColleagueStatus: state.acceptColleagueStatus,
-  declineColleagueStatus: state.declineColleagueStatus,
-  unColleagueStatus: state.unColleagueStatus,
-  userId: state.userData.id,
-  isAuthenticated: state.auth.isAuthenticated
+  colleagueAction: state.colleagueAction
 });
 
 export default connect(mapStateToProps)(ProfileNavBar);

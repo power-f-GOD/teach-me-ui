@@ -1,10 +1,35 @@
+import { FetchState } from '.';
+
+export interface DeepProfileProps {
+  status?:
+    | 'IS_COLLEAGUE'
+    | 'PENDING_REQUEST'
+    | 'AWAITING_REQUEST_ACTION'
+    | 'NOT_COLLEAGUES';
+  mutual_colleagues?: number;
+  request_id?: string;
+}
+
+export interface ColleagueAction
+  extends FetchState<{
+    colleague_id?: string;
+    request_id?: string;
+    username?: string;
+    displayName?: string;
+  }> {
+  action:
+    | 'ADD_COLLEAGUE'
+    | 'CANCEL_REQUEST'
+    | 'ACCEPT_REQUEST'
+    | 'DECLINE_REQUEST'
+    | 'UNCOLLEAGUE';
+}
+
 export interface RequestState {
   status: 'pending' | 'rejected' | 'resolved';
   error?: boolean;
   message?: string;
 }
-
-
 
 export interface ColleagueProps {
   [x: string]: any;
@@ -34,16 +59,6 @@ interface ColleagueRequestSender {
 interface ColleagueRequest {
   date: number;
   id: string;
-}
-
-export interface DeepProfileProps {
-  status:
-    | 'IS_COLLEAGUE'
-    | 'PENDING_REQUEST'
-    | 'AWAITING_REQUEST_ACTION'
-    | 'NOT_COLLEAGUES';
-  mutual_colleagues?: number;
-  request_id?: string;
 }
 
 export interface ColleagueData {

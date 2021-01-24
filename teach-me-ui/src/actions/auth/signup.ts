@@ -1,4 +1,4 @@
-import { SIGNUP_REQUEST, SIGNUP_USER } from '../../constants';
+import { SIGNUP_REQUEST, SIGNUP_USER, PLACEHOLDER_BIO } from '../../constants';
 import {
   SignupFormData,
   StatusPropsState,
@@ -44,17 +44,7 @@ export const requestSignup = (data: SignupFormData) => (
   dispatch(signup({ status: 'pending', statusText: ' ' }));
   //check if user is online as lost network connection is not a failure state for Firebase db in order to give response to user
   checkNetworkStatusWhilstPend({ name: 'signup', func: signup });
-  console.log({
-    first_name,
-    last_name,
-    username,
-    email,
-    date_of_birth,
-    password,
-    institution_id: institution,
-    department,
-    level
-  });
+
   http
     .post<UserData>('/auth/register', {
       first_name,
@@ -73,7 +63,8 @@ export const requestSignup = (data: SignupFormData) => (
 
         populateStateWithUserData({
           ...data,
-          displayName
+          displayName,
+          bio: data.bio || PLACEHOLDER_BIO
         }).then(() => {
           http.token = data.token!;
           dispatch(signup({ status: 'fulfilled' }));

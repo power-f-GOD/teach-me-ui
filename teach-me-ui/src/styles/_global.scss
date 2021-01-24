@@ -45,7 +45,7 @@ body {
       }
 
       &::-webkit-scrollbar-track {
-        background: $theme-tertiary-v9;
+        background: $theme-tertiary-v8;
       }
 
       &::-webkit-scrollbar-thumb {
@@ -142,6 +142,8 @@ h3,
 h4,
 h5,
 h6 {
+  line-height: 2rem;
+
   a {
     text-decoration: none;
   }
@@ -178,6 +180,7 @@ button {
 button,
 a {
   text-transform: unset !important;
+  border-radius: 0.5rem;
 
   &[class*='outlined'] {
     display: inline-flex;
@@ -199,10 +202,11 @@ a {
 
   &[class*='Primary'],
   &[class*='primary'],
+  &[class*='btn-primary'],
   &[class*='Secondary'],
   &[class*='btn-secondary'] {
+    border-radius: 0.5rem;
     min-height: 2.25rem;
-    border-radius: 0.25rem;
     background-color: $theme-primary;
 
     &[class*='contained'] {
@@ -267,8 +271,10 @@ a {
 
     &:disabled,
     &.Mui-disabled {
-      background-color: #ccc !important;
+      background-color: #ddd !important;
       color: #777 !important;
+      cursor: not-allowed;
+      pointer-events: unset;
 
       &::before,
       &::after {
@@ -283,6 +289,7 @@ a {
 
   &[class*='Secondary'],
   &[class*='btn-secondary'] {
+    border-radius: 0.5rem;
     background-color: $theme-secondary;
 
     &[class*='contained'] {
@@ -291,6 +298,23 @@ a {
 
     &[class*='text'] {
       color: $theme-secondary;
+    }
+  }
+
+  &[class*='Tertiary'],
+  &[class*='btn-tertiary'] {
+    border-radius: 0.5rem;
+    min-height: 2.25rem;
+    background-color: $theme-tertiary-v9;
+
+    &[class*='contained'] {
+      background-color: $theme-tertiary-v2;
+      color: $theme-tertiary-v9;
+    }
+
+    &[class*='text'] {
+      color: $theme-tertiary-v2;
+      background-color: $theme-tertiary-v9;
     }
   }
 }
@@ -396,7 +420,24 @@ a {
 }
 
 .react-loading-skeleton {
+  $bg1: #f5f5f5;
+  $bg2: #eee;
+  $bgOnDark1: transparent;
+  $bgOnDark2: rgba(255, 255, 255, 0.25);
+
   border-radius: 1rem !important;
+  background-color: $bg2 !important;
+  background-image: linear-gradient(90deg, $bg2, $bg1, $bg2) !important;
+
+  &.on-dark {
+    background-color: $bgOnDark2 !important;
+    background-image: linear-gradient(
+      90deg,
+      $bgOnDark1,
+      $bgOnDark2,
+      $bgOnDark1
+    ) !important;
+  }
 
   &.media {
     border-radius: 0 !important;
@@ -493,6 +534,10 @@ div {
   .MuiCardContent-root {
     padding: 2rem;
   }
+}
+
+.MuiAlert-root {
+  border-radius: 0.65rem;
 }
 
 .MuiAlert-filledSuccess,
@@ -594,6 +639,10 @@ div {
 
 .uppercase {
   text-transform: uppercase !important;
+}
+
+.capitalize {
+  text-transform: capitalize !important;
 }
 
 .text-ellipsis {
