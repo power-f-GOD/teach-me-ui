@@ -39,15 +39,20 @@
   }
 
   .profile-top {
-    height: 18rem;
-    margin-top: 3.5rem;
+    height: 19rem;
+    padding-top: 3.5rem;
     width: 100%;
     background-color: black;
     position: relative;
     background-color: #00537e;
 
+    > *, & + * {
+      z-index: 1;
+      position: relative;
+    }
+
     &::before {
-      @include before-or-after($zi: 0, $bg: rgba(0, 0, 0, 0.25));
+      @include before-or-after($zi: 1, $bg: rgba(0, 0, 0, 0.25));
     }
 
     .details-container {
@@ -66,7 +71,9 @@
       position: absolute;
       width: 100%;
       height: 100%;
+      z-index: 0 !important;
       object-fit: cover;
+      transform: translateY(-3.5rem);
       object-position: center;
     }
 

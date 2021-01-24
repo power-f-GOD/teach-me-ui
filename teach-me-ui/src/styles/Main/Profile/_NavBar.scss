@@ -115,6 +115,10 @@
     white-space: nowrap;
     transition: 0.2s;
     transform: scale(1);
+
+    .icon {
+      font-size: 1.1em;
+    }
   }
 
   .icon-button {
