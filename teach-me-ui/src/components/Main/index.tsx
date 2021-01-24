@@ -196,6 +196,7 @@ const Main = (props: MainProps) => {
         <Memoize
           memoizedComponent={Nav}
           for='main'
+          location={props.location}
           isAuthenticated={!!userToken}
         />
         <Switch>

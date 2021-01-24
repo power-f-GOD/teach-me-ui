@@ -40,17 +40,17 @@ import { dispatch } from '../../appStore';
 import { getNotificationsRequest } from '../../actions';
 
 const Nav = (props: any) => {
-  const forIndexPage = /index/i.test(props.for);
+  const forIndexPage = /index|@\w+/i.test(props.for);
+  const forProfile = /\/@\w+$/i.test(props.location.pathname);
   const forLandingPage =
-    forIndexPage && /\/index|\/$|\/[^a-z]+$/i.test(window.location.href);
+    (forIndexPage || forProfile) &&
+    /\/index|\/$|\/[^a-z]+$|\/@\w+$/i.test(window.location.href);
 
   return (
     <Box component='nav'>
       <ElevationScroll
         {...props}
-        forLandingPage={
-          forLandingPage && !/404/.test(window.location.pathname)
-        }>
+        forLandingPage={forLandingPage && !/404/.test(props.location.pathname)}>
         <AppBar position='fixed' className='mobile-width'>
           <Container>
             <Toolbar className='nav-toolbar'>
@@ -204,7 +204,13 @@ function MainNav(props: any) {
                 </Container>
               </Container>
             </Container> */}
-            <Container as='p' className='cursor-pointer profile' onClick={() => {handleProfileNavigation(); setShowDropdown(false)}}>
+            <Container
+              as='p'
+              className='cursor-pointer profile'
+              onClick={() => {
+                handleProfileNavigation();
+                setShowDropdown(false);
+              }}>
               <FAIcon name='user-circle' fontSize='1.2rem' /> My Profile
             </Container>
             <Container

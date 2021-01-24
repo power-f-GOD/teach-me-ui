@@ -81,7 +81,9 @@ export const getConversations = (
       }
 
       //hide Snackbar in case it's currently displayed (due to an error event)
-      dispatch(displaySnackbar({ timeout: 1000 }));
+      if (getState().conversations.err) {
+        dispatch(displaySnackbar({ timeout: 1000 }));
+      }
     })
     .catch(logError(conversations));
 

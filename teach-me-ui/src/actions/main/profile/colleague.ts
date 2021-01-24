@@ -29,6 +29,7 @@ export const requestColleagueAction = (_payload: ColleagueAction) => (
 ) => {
   const { action, data: _data } = _payload;
   const { colleague_id, request_id, displayName } = _data ?? {};
+  const userFirstName = displayName?.split(' ')[0];
   let deepProfileStatus: DeepProfileProps['status'] = NOT_COLLEAGUES;
   let feedBack = '';
   const data = {
@@ -62,9 +63,7 @@ export const requestColleagueAction = (_payload: ColleagueAction) => (
     case DECLINE_REQUEST:
       data.url += '/decline';
       deepProfileStatus = NOT_COLLEAGUES;
-      feedBack = `You declined ${
-        displayName?.split(' ')[0]
-      }'s colleague request.`;
+      feedBack = `You declined ${userFirstName}'s colleague request.`;
       break;
     case UNCOLLEAGUE:
       data.url = '/colleague/remove';
@@ -74,24 +73,40 @@ export const requestColleagueAction = (_payload: ColleagueAction) => (
   }
 
   http
-    .post<any>(data.url, data.payload, true)
-    .then(({ error, message: _message, data: _data }) => {
-      const payload = { action, data: _data };
-      const hasAlreadyPending = /pending.*request/.test(_message || '');
+    .post<{ id: string }>(data.url, data.payload, true)
+    .then(({ error, message, data: _data }) => {
+      const { id: request_id } = _data ?? {};
+      const payload = { action, data: { request_id } };
+      const deepProfilePayload = { request_id, status: deepProfileStatus };
+      const hasAlreadyPending = /pending.*request/.test(message || '');
+      const notExist = /not.*(found|exist)/.test(message || '');
 
       if (error) delete payload.data;
 
+      if (!request_id) delete deepProfilePayload.request_id;
+
+      // console.log(request_id, message);
       if (hasAlreadyPending) {
         deepProfileStatus = PENDING_REQUEST;
-        feedBack = `There is already a pending colleague request from ${displayName}. You can accept/decline now.`;
+        feedBack = `There is already a pending colleague request from ${userFirstName}. You can accept/decline now.`;
       }
+
+      if (notExist) {
+        deepProfileStatus = NOT_COLLEAGUES;
+        feedBack = `User, probably, unsent their request. You may re-initiate a colleague request.`;
+      }
+
+      deepProfilePayload.status = deepProfileStatus;
 
       dispatch(
         displaySnackbar({
           open: true,
           message: feedBack,
-          severity: /cancel|remove|decline/.test(data.url) ? 'info' : 'success',
-          timeout: 5000
+          severity: /IS_COLLEAGUE|AWAITING/.test(deepProfileStatus!)
+            ? 'success'
+            : 'info',
+          timeout: 5000,
+          autoHide: false
         })
       );
       dispatch(
@@ -104,7 +119,7 @@ export const requestColleagueAction = (_payload: ColleagueAction) => (
       );
       dispatch(
         deepProfileData({
-          data: { request_id: _data?.id, status: deepProfileStatus }
+          data: deepProfilePayload
         })
       );
     })

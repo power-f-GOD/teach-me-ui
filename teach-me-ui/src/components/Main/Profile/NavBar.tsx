@@ -17,7 +17,6 @@ import {
   FetchState
 } from '../../../types';
 import { dispatch, displayModal } from '../../../functions';
-// import * as api from '../../../actions/main/profile/profile';
 import {
   EDIT_PROFILE,
   ADD_COLLEAGUE,
@@ -121,7 +120,7 @@ const ProfileNavBar = (props: ProfileNavBarProps) => {
         case PENDING_REQUEST:
           action = {
             text: 'Respond',
-            iconName: 'user-plus',
+            iconName: 'user-clock',
             type: ACCEPT_REQUEST
           };
           break;
@@ -207,7 +206,7 @@ const ProfileNavBar = (props: ProfileNavBarProps) => {
                 color='primary'
                 disabled={!isRespondingView || isColleague}
                 onClick={onColleagueActionClick(false, ACCEPT_REQUEST)}>
-                <FAIcon name='check' />
+                <FAIcon name='user-check' />
                 {!isColleague && (
                   <span className='tool-tip'>Accept Request</span>
                 )}
@@ -222,7 +221,7 @@ const ProfileNavBar = (props: ProfileNavBarProps) => {
                   false,
                   hasPendingRequest ? DECLINE_REQUEST : UNCOLLEAGUE
                 )}>
-                <FAIcon name='times' />
+                <FAIcon name='user-times' />
                 <span className='tool-tip'>
                   {hasPendingRequest ? 'Decline Request' : 'Uncolleague'}
                 </span>

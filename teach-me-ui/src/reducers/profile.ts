@@ -5,7 +5,8 @@ import {
   ReduxAction,
   ReduxActionV2,
   ColleagueAction,
-  DeepProfileProps
+  DeepProfileProps,
+  FetchState
 } from '../types';
 import {
   DEEP_PROFILE_DATA,
@@ -52,7 +53,8 @@ export const colleagueAction = (
   if (action.type === COLLEAGUE_ACTION) {
     return {
       ...state,
-      ...action.payload
+      ...action.payload,
+      data: { ...state.data, ...action.payload?.data }
     };
   }
 
@@ -100,12 +102,16 @@ export const fetchDeepProfileStatus = (
 };
 
 export const deepProfileData = (
-  state = {} as DeepProfileProps,
-  action: ReduxActionV2<DeepProfileProps>
+  state = {} as FetchState<DeepProfileProps>,
+  action: ReduxActionV2<FetchState<DeepProfileProps>>
 ) => {
   switch (action.type) {
     case DEEP_PROFILE_DATA:
-      return { ...state, ...action.payload };
+      return {
+        ...state,
+        ...action.payload,
+        data: { ...state.data, ...action.payload?.data }
+      };
     default:
       return state;
   }
