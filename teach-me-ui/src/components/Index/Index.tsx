@@ -23,7 +23,7 @@ const Index = (props: any) => {
 
   return (
     <Grid className='index-root-grid custom-scroll-bar fade-in'>
-      <Nav for='index' />
+      <Nav for='index' location={props.location} />
 
       <Box className='index-root-box'>
         <Switch>
