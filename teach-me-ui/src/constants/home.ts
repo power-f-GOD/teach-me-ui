@@ -1,9 +1,4 @@
-import { MakePostState, PostStateProps } from '../types';
-
-// @Prince, work to ensure these next three lines are removed; Check where they are being referenced then modify their implementations
-export const MAKE_REPOST_STARTED = 'MAKE_REPOST_STARTED';
-export const MAKE_REPOST_RESOLVED = 'MAKE_REPOST_RESOLVED';
-export const MAKE_REPOST_REJECTED = 'MAKE_REPOST_REJECTED';
+import { MakePostState, PostStateProps, StatusPropsState } from '../types';
 
 export const REPLY_TO_POST = 'REPLY_TO_POST';
 export const SUBMIT_POST = 'SUBMIT_POST';
@@ -41,6 +36,11 @@ export const fetchState = {
 export const makePostState: MakePostState = {
   status: 'settled'
 };
+
+export const makeRepostState: StatusPropsState = {
+  status: 'settled',
+  err: false
+}
 
 export const postState: PostStateProps = {
   downvote_count: 0,

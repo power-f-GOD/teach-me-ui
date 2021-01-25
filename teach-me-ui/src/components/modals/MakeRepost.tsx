@@ -1,9 +1,8 @@
-import React, { useState, useRef, ChangeEvent, MouseEvent } from 'react';
+import React, { useState, MouseEvent } from 'react';
 
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -15,9 +14,13 @@ import {
   displayModal
 } from '../../functions';
 
+import Loader from '../shared/Loaders';
+
+import Editor from '../crumbs/Editor';
+
 import { connect } from 'react-redux';
 
-import { makeRepost } from '../../actions';
+import { makeRepostRequest } from '../../actions';
 
 
 const MakePost: React.FC<any> = (props) => {
@@ -31,13 +34,13 @@ const MakePost: React.FC<any> = (props) => {
     },
   });
 
-  const editor = useRef<HTMLTextAreaElement | any>();
+  const onUpdate = (value: string) => {
+    const post = value.trim();
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const post = e.target.value;
     setState({
       ...state,
       post: {
+        ...state.post,
         text: post,
         mentions: getCharacterSequenceFromText(post, '@'),
         hashtags: getCharacterSequenceFromText(post, '#')
@@ -61,7 +64,7 @@ const MakePost: React.FC<any> = (props) => {
 
   const onPostSubmit = (e: MouseEvent<HTMLButtonElement>) => {
     dispatch(
-      makeRepost({
+      makeRepostRequest({
         pipe: 'POST_REPOST',
         text: state.post.text,
         post_id: props.id
@@ -70,33 +73,23 @@ const MakePost: React.FC<any> = (props) => {
   };
 
   return (
-    <Box p={1} pt={0}>
-      <Row className='container-fluid p-0 mx-auto'>
-        <Avatar
-          component='span'
-          className='chat-avatar compose-avatar'
-          alt={userData.displayName}
-          src={userData.profile_photo ? userData.profile_photo : `images/${userData.avatar}`}
-        />
+    <Box className='repost' p={1} pt={0}>
+      <Row className='container-fluid p-0 mx-auto mb-2'>
+        <Box pr={1}>
+          <Avatar
+            component='span'
+            className='chat-avatar compose-avatar'
+            alt={userData.displayName}
+            src={userData.profile_photo ? userData.profile_photo : ''}
+          />
+        </Box>
         <div className='d-flex flex-column justify-content-center flex-grow-1'>
-          <span>{userData.displayName}</span>
-          <small>{userData.username}</small>
+          <span className='font-bold'>{userData.displayName}</span>
+          <small>@{userData.username}</small>
         </div>
       </Row>
       <form>
-        <div id='suggestion-container'>
-          <textarea
-            className='create-repost-textarea mt-1'
-            autoFocus
-            rows={10}
-            id='post-input'
-            onChange={(e: any) => {
-              onChange(e);
-            }}
-            placeholder={`What's on your mind, ${userData.displayName.split(' ')[0]}`}
-            ref={editor}>
-          </textarea>
-        </div>
+        <Editor onUpdate={onUpdate} />
         <Box className='quoted-post mx-auto'>
           <Row className='container-fluid px-2 mx-auto p-0 align-items-center'>
             <Avatar
@@ -105,12 +98,17 @@ const MakePost: React.FC<any> = (props) => {
               alt={props.sender_name}
               src={`/images/${props.userAvatar}`}
             />
-            <Col className='d-flex flex-grow-1 flex-column'>
+            <Col className='d-flex flex-grow-1 flex-column names'>
               <Box component='div' fontWeight='bold'>
                 {props.sender.first_name} {' '} {props.sender.last_name}
+                <Box component='span' color='#777' className='username'>
+                  @{props.sender.username}
+                </Box>
               </Box>
-              <Box component='div' color='#777'>
-                @{props.sender.username}
+              <Box
+                component='small'
+                color='#888'>
+                {formatDate(props.date as number)}
               </Box>
             </Col>
           </Row>
@@ -119,23 +117,25 @@ const MakePost: React.FC<any> = (props) => {
               {/* {processPostFn(props.parent?.text as string)} */}
               {props.text as string}
             </Box>
-            <Box
-              component='small'
-              textAlign='right'
-              width='100%'
-              color='#888'
-              pt={1}>
-              {formatDate(props.date as number)}
-            </Box>
           </Row>
         </Box>
         <Row className='d-flex mx-auto mt-1'>
           <Button
+            disabled={props.makeRepost.status === 'pending'}
             onClick={onPostSubmit}
             color={'primary'}
             className='post-button major-button Primary contained p-0 flex-grow-1'>
-            {props.makeRepostStatus.status === 'pending' ? (
-              <CircularProgress size={28} color='inherit' />
+            {props.makeRepost.status === 'pending' ? (
+              <>
+                Reposting{' '}
+                <Loader
+                  type='ellipsis'
+                  inline={true}
+                  color='#555'
+                  size={6}
+                  className='ml-2'
+                />
+              </>
             ) : (
               `Repost${state.post.text ? ' with comment' : ''}`
             )}
@@ -146,8 +146,8 @@ const MakePost: React.FC<any> = (props) => {
   );
 };
 
-const mapStateToProps = ({ makeRepostStatus, userData }: any) => ({
-  makeRepostStatus,
+const mapStateToProps = ({ makeRepost, userData }: any) => ({
+  makeRepost,
   userData
 });
 

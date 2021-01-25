@@ -65,7 +65,7 @@ const PostFooter = (props: PostCrumbs) => {
               type='DOWNVOTE'
             />
           </Col>
-          {openCreateRepostModal && repostMeta && 2 > 3 && (
+          {openCreateRepostModal && repostMeta && (
             <Col className='reaction-wrapper d-flex align-items-center'>
               <Button
                 onClick={
