@@ -1,12 +1,14 @@
 import {
   replyState,
   REPLY_TO_POST,
+  MAKE_REPOST,
   MAKE_POST,
   makePostState,
   SET_POSTS,
   SET_RECOMMENDATIONS,
   fetchState,
-  SET_TRENDS
+  SET_TRENDS,
+  makeRepostState
 } from '../constants';
 import {
   ReduxAction,
@@ -16,7 +18,8 @@ import {
   ReduxActionV2,
   HashTag,
   UserData,
-  ReplyState
+  ReplyState,
+  StatusPropsState
 } from '../types';
 
 export const posts = (
@@ -76,5 +79,19 @@ export const makePost = (
       ...action.payload
     };
   }
+  return state;
+};
+
+export const makeRepost = (
+  state: StatusPropsState = makeRepostState,
+  action: ReduxAction
+) => {
+  if (action.type === MAKE_REPOST) {
+    return {
+      ...state,
+      ...action.payload
+    };
+  }
+
   return state;
 };
