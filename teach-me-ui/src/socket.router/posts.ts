@@ -1,21 +1,21 @@
 import { dispatch, getState, promisedDispatch } from '../functions';
 
 import {
-  makeRepostResolved,
-  makeRepostRejected,
   createPost,
   posts,
-  triggerNotificationSound
+  triggerNotificationSound,
+  makeRepost
 } from '../actions';
 
 import { displayModal } from '../functions';
 
-import { POST_REACTION, POST_REPLY, TONE_NAME__OPEN_ENDED } from '../constants';
+import { postState, POST_REACTION, POST_REPLY, TONE_NAME__OPEN_ENDED } from '../constants';
 import { SocketPipe, NotificationSoundState } from '../types';
 
 export default function post(data: any) {
-  const { notificationSound } = getState() as {
+  const { notificationSound, userData} = getState() as {
     notificationSound: NotificationSoundState;
+    userData: any
   };
   const toneName: NotificationSoundState['toneName'] = TONE_NAME__OPEN_ENDED;
 
@@ -47,15 +47,36 @@ export default function post(data: any) {
           if (data.action_count !== undefined) dispatch(createPost(data));
           document.querySelector('.middle-pane-col')?.scrollTo(0, 0);
           dispatch(
-            makeRepostResolved({
-              error: false,
-              message: 'Repost was made successfully'
+            makeRepost({
+              err: false,
+              status: 'fulfilled'
             })
           );
+          console.log(data);
+            
+          dispatch(
+            posts({
+              data: [{ ...postState, ...data, sender: userData }],
+              statusText: 'new post created'
+            })
+          );
+          displayModal(false);
+  
+          if (notificationSound.isPlaying) {
+            promisedDispatch(
+              triggerNotificationSound({ play: false, isPlaying: false })
+            ).then(() => {
+              dispatch(triggerNotificationSound({ play: true, toneName }));
+            });
+          } else {
+            dispatch(triggerNotificationSound({ play: true, toneName }));
+          }
+        
+
           window.history.back();
           dispatch(displayModal(false));
         } else {
-          dispatch(makeRepostRejected({ error: true, message: data.message }));
+          dispatch(makeRepost({ err: true, status: 'settled', statusText:data.message }));
         }
         break;
       // if (!data.error) {

@@ -1,0 +1,21 @@
+.repost {
+  .quoted-post {
+    border: 0.1rem solid #888;
+    border-radius: 1rem;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+
+    .names {
+      padding-left: 0.5rem;
+
+      .username {
+        border-left: 0.13rem solid #aaa;
+        font-weight: normal;
+        margin-left: 0.3rem;
+        padding-left: 0.3rem;
+      }
+    }
+
+    
+  }
+}

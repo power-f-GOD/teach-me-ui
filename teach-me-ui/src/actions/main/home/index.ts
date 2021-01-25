@@ -1,7 +1,5 @@
 import {
-  MAKE_REPOST_REJECTED,
-  MAKE_REPOST_RESOLVED,
-  MAKE_REPOST_STARTED,
+  MAKE_REPOST,
   SUBMIT_POST,
   apiBaseURL as baseURL,
   MAKE_POST,
@@ -15,8 +13,8 @@ import {
   UserData,
   SendReplyProps,
   PostStateProps,
-  FetchPostsState,
-  ReduxAction
+  ReduxAction,
+  StatusPropsState
 } from '../../../types';
 
 import {
@@ -38,38 +36,19 @@ export * from './posts';
 export * from './recommendations';
 export * from './trends';
 
-export const makeRepost = (payload: SendReplyProps) => (dispatch: Function) => {
-  dispatch(makeRepostStarted());
+export const makeRepost = (payload: StatusPropsState) => {
+  return {
+    type: MAKE_REPOST,
+    payload
+  };
+};
 
+export const makeRepostRequest = (payload: SendReplyProps) => (dispatch: Function) => {
+  dispatch(makeRepost({status: 'pending'}))
   const socket = getState().webSocket as WebSocket;
   console.log(payload);
 
   socket.send(JSON.stringify(payload));
-};
-
-export const makeRepostStarted = (
-  payload?: Partial<FetchPostsState>
-): ReduxAction => {
-  return {
-    type: MAKE_REPOST_STARTED,
-    payload: { ...payload, status: 'pending' }
-  };
-};
-
-export const makeRepostResolved = (
-  payload?: Partial<FetchPostsState>
-): ReduxAction => {
-  return {
-    type: MAKE_REPOST_RESOLVED,
-    payload: { ...payload, status: 'resolved' }
-  };
-};
-
-export const makeRepostRejected = (payload?: Partial<any>): ReduxAction => {
-  return {
-    type: MAKE_REPOST_REJECTED,
-    payload: { ...payload, status: 'rejected' }
-  };
 };
 
 export const fetchReplies = (postId?: string) => (dispatch: Function) => {
@@ -155,6 +134,8 @@ export const requestCreatePost = ({
       true
     )
     .then(({ data, error: err }) => {
+      console.log(data);
+      
       if (!err) {
         dispatch(
           posts({
