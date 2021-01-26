@@ -200,10 +200,9 @@ const Main = (props: MainProps) => {
           isAuthenticated={!!userToken}
         />
         <Switch>
-          <Route path={['/', '/index', '/home']} exact component={Home} />
+          <Route path={['/', '/index', '/home', '/p/:id']} exact component={Home} />
           <Route path='/about' component={About} />
           <Route path='/support' component={Support} />
-          <Route path='/p/:id' component={PostPage} />
           <Route path='/@:userId' component={Profile} />
           <Route path='/profile/:id' component={ProfileRedirect} />
           <Route path={['/search/:query', '/search']} component={Search} />
