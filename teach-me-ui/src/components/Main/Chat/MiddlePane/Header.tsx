@@ -42,7 +42,7 @@ import {
   emitUserOnlineStatus,
   promisedDispatch,
   getState
-} from '../../../../functions/utils';
+} from '../../../../utils';
 import { placeHolderDisplayName, Memoize } from '..';
 import {
   CHAT_MESSAGE_DELETED,

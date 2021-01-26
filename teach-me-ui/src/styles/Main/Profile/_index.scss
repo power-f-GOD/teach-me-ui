@@ -226,8 +226,8 @@
     }
 
     path {
-      fill: white;
-      stroke: $theme-tertiary-v1;
+      fill: white !important;
+      stroke: $theme-tertiary-v9;
     }
   }
 
@@ -273,8 +273,9 @@
 
     &.add-colleague {
       background: $theme-primary-v5;
+      
       path {
-        fill: white;
+        fill: white !important;
         stroke: transparent;
       }
     }

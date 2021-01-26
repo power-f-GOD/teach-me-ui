@@ -39,8 +39,10 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
       err: postsErred
     },
     recommendations,
-    userData
+    userData,
+    type: _type
   } = props;
+
   const postsIsPending = postsStatus === 'pending';
   const isFetching =
     /(updat|fetch|recycl)(e|ing)?/i.test(postsStatusText || '') ||
@@ -90,7 +92,7 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
   }, [postsStatusText]);
 
   useEffect(() => {
-    const type = props.type || 'FEED';
+    const type = _type || 'FEED';
     const userId = (profile as UserData).id || undefined;
 
     if (!postsData?.length) {
@@ -101,16 +103,16 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
       }
     }
     // eslint-disable-next-line
-  }, [props.type]);
+  }, [_type]);
 
   useEffect(() => {
-    if (props.type === 'FEED') {
+    if (_type === 'FEED') {
       postElements.forEach((post) => {
         observer.observe(post);
       });
     }
     // eslint-disable-next-line
-  }, [postElements.length, props.type]);
+  }, [postElements.length, _type]);
 
   return (
     <Container className='middle-pane px-0 px-sm-3 px-md-0' fluid>

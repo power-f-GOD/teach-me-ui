@@ -10,7 +10,7 @@ import HomeLeftPane from './LeftPane';
 
 import { connect } from 'react-redux';
 import { getPosts, posts } from '../../../actions/main/home';
-import { dispatch, createObserver } from '../../../functions/utils';
+import { dispatch, createObserver } from '../../../utils';
 import { PostStateProps, FetchState } from '../../../types';
 
 const feedsScrollObservedElemRef = React.createRef<any>();

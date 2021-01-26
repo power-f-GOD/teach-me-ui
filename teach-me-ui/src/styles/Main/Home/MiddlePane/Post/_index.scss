@@ -14,12 +14,6 @@
   border-radius: 0.85rem;
   margin-bottom: 0.85rem;
 
-  &.remove-skeleton-animation {
-    [class*='skeletonStyles'] {
-      animation: unset !important;
-    }
-  }
-
   &.has-replies {
     .post-footer {
       border-bottom: 0.0625rem solid #eee;

@@ -1,6 +1,6 @@
 import { showModal, hideModal, setLastseen } from '../actions';
 import { getState } from '../appStore';
-import { dispatch } from './utils';
+import { dispatch } from '../utils';
 
 export const displayModal = (
   visibility: boolean,
@@ -9,7 +9,7 @@ export const displayModal = (
   meta?: { [key: string]: any },
 ) => {
   setLastseen()
-  if (notification && getState().getNotifications.data.notifications[0] && !getState().getNotifications.data.notifications[0].seen) setLastseen();
+  if (notification && getState().notifications.data.notifications[0] && !getState().notifications.data.notifications[0].seen) setLastseen();
 
   if (visibility) {
     return dispatch(showModal({ type, meta }));

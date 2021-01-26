@@ -1,33 +1,15 @@
 import { searchState } from '../constants/misc';
 import {
   RequestState,
-  SearchState,
   ReduxAction,
   ReduxActionV2,
   ColleagueAction,
   DeepProfileProps,
-  FetchState
+  FetchState,
+  UserData
 } from '../types';
 import {
   DEEP_PROFILE_DATA,
-  ADD_COLLEAGUE_STARTED,
-  ADD_COLLEAGUE_RESOLVED,
-  ADD_COLLEAGUE_REJECTED,
-  FETCH_DEEP_PROFILE_STARTED,
-  FETCH_DEEP_PROFILE_REJECTED,
-  FETCH_DEEP_PROFILE_RESOLVED,
-  REMOVE_COLLEAGUE_STARTED,
-  REMOVE_COLLEAGUE_REJECTED,
-  REMOVE_COLLEAGUE_RESOLVED,
-  ACCEPT_COLLEAGUE_STARTED,
-  ACCEPT_COLLEAGUE_REJECTED,
-  ACCEPT_COLLEAGUE_RESOLVED,
-  DECLINE_COLLEAGUE_STARTED,
-  DECLINE_COLLEAGUE_REJECTED,
-  DECLINE_COLLEAGUE_RESOLVED,
-  UNCOLLEAGUE_STARTED,
-  UNCOLLEAGUE_REJECTED,
-  UNCOLLEAGUE_RESOLVED,
   FETCH_COLLEAGUES_STARTED,
   FETCH_COLLEAGUES_REJECTED,
   FETCH_COLLEAGUES_RESOLVED,
@@ -62,8 +44,8 @@ export const colleagueAction = (
 };
 
 export const profileData = (
-  state: SearchState = { ...searchState, data: [{}] },
-  action: ReduxAction
+  state = { ...searchState, data: {} } as FetchState<UserData>,
+  action: ReduxActionV2<FetchState<UserData>>
 ) => {
   if (action.type === PROFILE_DATA) {
     return {
@@ -72,33 +54,6 @@ export const profileData = (
     };
   }
   return state;
-};
-
-export const addColleagueStatus = (
-  state: RequestState = requestState,
-  action: ReduxAction
-) => {
-  switch (action.type) {
-    case ADD_COLLEAGUE_REJECTED:
-    case ADD_COLLEAGUE_RESOLVED:
-    case ADD_COLLEAGUE_STARTED:
-      return action.payload;
-    default:
-      return state;
-  }
-};
-export const fetchDeepProfileStatus = (
-  state: RequestState = requestState,
-  action: ReduxAction
-) => {
-  switch (action.type) {
-    case FETCH_DEEP_PROFILE_REJECTED:
-    case FETCH_DEEP_PROFILE_RESOLVED:
-    case FETCH_DEEP_PROFILE_STARTED:
-      return action.payload;
-    default:
-      return state;
-  }
 };
 
 export const deepProfileData = (
@@ -112,59 +67,6 @@ export const deepProfileData = (
         ...action.payload,
         data: { ...state.data, ...action.payload?.data }
       };
-    default:
-      return state;
-  }
-};
-
-export const removeColleagueStatus = (
-  state: RequestState = requestState,
-  action: ReduxAction
-) => {
-  switch (action.type) {
-    case REMOVE_COLLEAGUE_REJECTED:
-    case REMOVE_COLLEAGUE_RESOLVED:
-    case REMOVE_COLLEAGUE_STARTED:
-      return action.payload;
-    default:
-      return state;
-  }
-};
-export const acceptColleagueStatus = (
-  state: RequestState = requestState,
-  action: ReduxAction
-) => {
-  switch (action.type) {
-    case ACCEPT_COLLEAGUE_REJECTED:
-    case ACCEPT_COLLEAGUE_RESOLVED:
-    case ACCEPT_COLLEAGUE_STARTED:
-      return action.payload;
-    default:
-      return state;
-  }
-};
-export const declineColleagueStatus = (
-  state: RequestState = requestState,
-  action: ReduxAction
-) => {
-  switch (action.type) {
-    case DECLINE_COLLEAGUE_REJECTED:
-    case DECLINE_COLLEAGUE_RESOLVED:
-    case DECLINE_COLLEAGUE_STARTED:
-      return action.payload;
-    default:
-      return state;
-  }
-};
-export const unColleagueStatus = (
-  state: RequestState = requestState,
-  action: ReduxAction
-) => {
-  switch (action.type) {
-    case UNCOLLEAGUE_REJECTED:
-    case UNCOLLEAGUE_RESOLVED:
-    case UNCOLLEAGUE_STARTED:
-      return action.payload;
     default:
       return state;
   }

@@ -1,24 +1,48 @@
-import { GET_PROFILE_DATA, PROFILE_DATA, PLACEHOLDER_BIO } from '../../../constants';
-import { ReduxAction, UserData, FetchState } from '../../../types';
+import {
+  GET_PROFILE_DATA,
+  PROFILE_DATA,
+  PLACEHOLDER_BIO
+} from '../../../constants';
+import { ReduxActionV2, UserData, FetchState } from '../../../types';
 import {
   checkNetworkStatusWhilstPend,
   logError,
   http
 } from '../../../functions';
 
-export const getProfileData = (userId: string) => (
-  dispatch: Function
-): ReduxAction => {
+export const getProfileData = (username: string) => (
+  dispatch: Function,
+  getState: Function
+): ReduxActionV2<any> => {
+  const userData = getState().userData as UserData;
+
+  if (userData.username === username) {
+    // ensure to make profileData data always defined (if self)
+    dispatch(
+      profileData({
+        status: 'fulfilled',
+        err: false,
+        data: getState().userData
+      })
+    );
+
+    return {
+      type: GET_PROFILE_DATA
+    };
+  }
+
   checkNetworkStatusWhilstPend({
     name: 'profileData',
     func: profileData
   });
-  dispatch(profileData({ status: 'pending' }));
+  dispatch(
+    profileData({ status: 'pending', data: {}, err: !navigator.onLine })
+  );
 
   http
-    .get<UserData>(`/profile/${userId}`, false)
+    .get<UserData>(`/profile/${username}`, false)
     .then(({ error, message, data }) => {
-      const displayName = `${data.first_name} ${data.last_name}`;
+      const displayName = `${data?.first_name} ${data?.last_name}`;
 
       dispatch(
         profileData({
@@ -29,8 +53,8 @@ export const getProfileData = (userId: string) => (
             ? {
                 ...data,
                 displayName,
-                dob: data.date_of_birth,
-                bio: data.bio || PLACEHOLDER_BIO
+                dob: data?.date_of_birth,
+                bio: data?.bio || PLACEHOLDER_BIO
               }
             : {}
         })
@@ -40,13 +64,13 @@ export const getProfileData = (userId: string) => (
 
   return {
     type: GET_PROFILE_DATA,
-    newState: userId
+    newState: username
   };
 };
 
 export const profileData = (
   payload: FetchState<UserData | {}>
-): ReduxAction => {
+): ReduxActionV2<FetchState<UserData | {}>> => {
   return {
     type: PROFILE_DATA,
     payload

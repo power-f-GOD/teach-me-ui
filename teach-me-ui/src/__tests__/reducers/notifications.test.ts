@@ -1,8 +1,8 @@
 import { cleanup } from '@testing-library/react';
 
-import { notificationState, GET_NOTIFICATIONS } from '../../constants';
+import { notificationState, SET_NOTIFICATIONS } from '../../constants';
 import { ReduxAction, NotificationState } from '../../types';
-import { getNotifications } from '../../reducers/notifications';
+import { notifications } from '../../reducers/notifications';
 
 afterEach(cleanup);
 
@@ -14,7 +14,7 @@ it("notifications reducers should be called with 'state' and 'action' params and
   };
 
   const getNotificationsAction: ReduxAction = {
-    type: GET_NOTIFICATIONS,
+    type: SET_NOTIFICATIONS,
     payload: {
       status: expect.any(String),
       err: expect.any(Boolean),
@@ -24,7 +24,7 @@ it("notifications reducers should be called with 'state' and 'action' params and
 
   const getNotificationsMockFunc = jest.fn(
     (state: NotificationState, action: ReduxAction) =>
-      getNotifications(state, action)
+      notifications(state, action)
   );
 
   getNotificationsMockFunc(notificationState, getNotificationsAction);
@@ -33,6 +33,6 @@ it("notifications reducers should be called with 'state' and 'action' params and
     getNotificationsAction
   );
   expect(
-    getNotifications(notificationState, getNotificationsAction)
+    notifications(notificationState, getNotificationsAction)
   ).toMatchObject(mockNotificationState);
 });

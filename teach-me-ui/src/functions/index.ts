@@ -1,5 +1,5 @@
 export * from './signup';
-export * from './utils';
+export * from '../utils';
 export * from './signin';
 export * from './main';
 export * from './modals';

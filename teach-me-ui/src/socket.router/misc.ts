@@ -1,5 +1,5 @@
 import { ONLINE_STATUS } from '../constants/misc';
-import { dispatch, getState } from '../functions/utils';
+import { dispatch, getState } from '../utils';
 import { conversations, conversation } from '../actions/main/chat';
 import { ChatState, APIConversationResponse, UserData } from '../types';
 

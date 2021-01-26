@@ -446,6 +446,12 @@ a {
   }
 }
 
+.de-animate-skeleton {
+  [class*='skeletonStyles'] {
+    animation: unset !important;
+  }
+}
+
 .MuiOutlinedInput-root {
   &:hover,
   &:focus {

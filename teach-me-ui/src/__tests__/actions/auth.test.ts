@@ -34,7 +34,7 @@ import {
   verifyAuth,
   requestSignout
 } from '../../actions';
-import { dispatch } from '../../functions/utils';
+import { dispatch } from '../../utils';
 
 afterEach(cleanup);
 

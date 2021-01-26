@@ -6,7 +6,7 @@ import {
   ChatSocketMessageResponse,
   NotificationSoundState
 } from '../types';
-import { getState, dispatch, promisedDispatch } from '../functions/utils';
+import { getState, dispatch, promisedDispatch } from '../utils';
 import {
   CHAT_NEW_MESSAGE,
   CHAT_MESSAGE_DELIVERED,

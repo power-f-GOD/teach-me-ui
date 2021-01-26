@@ -28,7 +28,7 @@ import {
   getState,
   emitUserOnlineStatus,
   delay
-} from '../../functions/utils';
+} from '../../utils';
 import {
   initWebSocket,
   closeWebSocket,

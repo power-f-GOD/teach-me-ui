@@ -1,4 +1,4 @@
-import { dispatch } from './utils';
+import { dispatch } from '../utils';
 
 import { doForgotPassword, doResetPassword } from '../actions';
 

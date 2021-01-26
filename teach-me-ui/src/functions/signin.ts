@@ -1,7 +1,7 @@
 import { ChangeEvent } from 'react';
 
 import { refs as signinRefs } from '../components/Auth/Signin';
-import { getState, dispatch } from './utils';
+import { getState, dispatch } from '../utils';
 import { SigninFormData } from '../types';
 import {
   validateSigninId,

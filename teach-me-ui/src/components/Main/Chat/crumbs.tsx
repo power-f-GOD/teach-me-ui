@@ -28,7 +28,7 @@ import {
   createObserver,
   dispatch,
   getState
-} from '../../../functions/utils';
+} from '../../../utils';
 import { conversation, conversations } from '../../../actions/main/chat';
 import { stickyChatDateRef } from './MiddlePane/ScrollView';
 import { messageBoxRef } from './MiddlePane/MessageBox';

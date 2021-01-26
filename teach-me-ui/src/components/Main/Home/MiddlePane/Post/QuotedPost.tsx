@@ -8,7 +8,7 @@ import Box from '@material-ui/core/Box';
 import { Avatar } from '@material-ui/core';
 
 import { processPost } from '.';
-import { formatDate } from '../../../../../functions/utils';
+import { formatDate } from '../../../../../utils';
 import { PostStateProps } from '../../../../../types';
 
 const QuotedPost = (
