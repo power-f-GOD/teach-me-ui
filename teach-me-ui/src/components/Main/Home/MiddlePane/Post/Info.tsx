@@ -5,10 +5,10 @@ import Col from 'react-bootstrap/Col';
 
 import Box from '@material-ui/core/Box';
 
-import { bigNumberFormat } from '../../../../../functions/utils';
+import { bigNumberFormat } from '../../../../../utils';
 import { UserData } from '../../../../../types';
 
-import { FAIcon } from '../../../../shared/Icons';
+import { FAIcon } from '../../../../shared';
 import { UPVOTE } from '../../../../../constants';
 
 const PostInfo = (props: {

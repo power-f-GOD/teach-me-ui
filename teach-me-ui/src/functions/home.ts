@@ -2,7 +2,7 @@ import { displaySnackbar } from '../actions';
 
 import Axios from 'axios';
 
-import { dispatch, getState } from './utils';
+import { dispatch, getState } from '../utils';
 
 import { apiBaseURL as baseURL } from '../constants';
 import { UserData } from '../types';

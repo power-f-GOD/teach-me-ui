@@ -5,13 +5,15 @@ import store from '../appStore';
 import {
   displaySnackbar,
   setUserData,
-  profileData as _profileData,
+  profileData,
   initWebSocket,
   closeWebSocket,
   posts,
-  getPosts
+  getPosts,
+  getDeepProfileData,
+  getProfileData
 } from '../actions';
-import { userDeviceIsMobile } from '../';
+import { userDeviceIsMobile } from '..';
 import activateSocketRouters from '../socket.router';
 import {
   getConversations,
@@ -34,7 +36,8 @@ import {
   Reaction,
   ReduxAction,
   NetworkAction,
-  StatusPropsState
+  StatusPropsState,
+  DeepProfileProps
 } from '../types';
 import { apiBaseURL, ONLINE_STATUS } from '../constants';
 
@@ -83,9 +86,9 @@ export const http: Readonly<Omit<HTTP, 'token'>> & { token: string } = {
    * @param data data to be posted to destination
    * @param requiresAuth that is if token/authentication will be required for the get action
    */
-  post: async <T>(
+  post: async <T, T2 = any>(
     url: string,
-    data?: any,
+    data?: T2,
     requiresAuth?: boolean,
     contentType?: string
   ) => {
@@ -220,13 +223,17 @@ export const emitUserOnlineStatus = (
     auth,
     conversations: _conversations,
     conversationsMessages: _conversationsMessages,
-    posts: _posts
+    posts: _posts,
+    profileData: _profile,
+    deepProfileData: _deepProfile
   } = getState() as {
     userData: UserData & APIConversationResponse;
     auth: AuthState;
     conversations: FetchState<APIConversationResponse[]>;
     conversationsMessages: ConversationMessages;
     posts: FetchState<PostStateProps[]>;
+    profileData: FetchState<UserData>;
+    deepProfileData: FetchState<DeepProfileProps>;
   };
   let timeToEmitOnlineStatus: any = undefined;
 
@@ -252,6 +259,14 @@ export const emitUserOnlineStatus = (
       } else if (navigator.onLine) {
         dispatch(posts({ status: 'fulfilled', err: false }));
       }
+    }
+
+    if (_profile.err && _deepProfile.data?.username) {
+      dispatch(getProfileData(_deepProfile.data.username));
+    }
+
+    if (_deepProfile.err && _deepProfile.data?.username) {
+      dispatch(getDeepProfileData(_deepProfile.data.username));
     }
 
     return function recurse() {
@@ -322,10 +337,10 @@ export const cleanUp = (isUnmount: boolean) => {
 
   if (shouldCleanUp) {
     dispatch(
-      _profileData({
+      profileData({
         status: 'settled',
         err: false,
-        data: [{}]
+        data: {}
       })
     );
   }

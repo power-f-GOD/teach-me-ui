@@ -1,16 +1,28 @@
 import { DEEP_PROFILE_DATA } from '../../../constants';
 import { FetchState, ReduxActionV2, DeepProfileProps } from '../../../types';
-import { checkNetworkStatusWhilstPend, http } from '../../../functions';
+import {
+  checkNetworkStatusWhilstPend,
+  http,
+  logError
+} from '../../../functions';
 
-export const getDeepProfileData = (id: string) => (dispatch: Function) => {
+export const getDeepProfileData = (username: string) => (
+  dispatch: Function
+) => {
   checkNetworkStatusWhilstPend({
     name: 'deepProfileData',
     func: deepProfileData
   });
-  dispatch(deepProfileData({ status: 'pending' }));
+  dispatch(
+    deepProfileData({
+      status: 'pending',
+      data: { username },
+      err: !navigator.onLine
+    })
+  );
 
   http
-    .get<DeepProfileProps>(`/profile/${id}/deep`, true)
+    .get<DeepProfileProps>(`/profile/${username}/deep`, true)
     .then(({ error, message, data }) => {
       const payload = { data };
 
@@ -25,7 +37,7 @@ export const getDeepProfileData = (id: string) => (dispatch: Function) => {
         })
       );
     })
-    .catch(deepProfileData);
+    .catch(logError(deepProfileData));
 };
 
 export const deepProfileData = (

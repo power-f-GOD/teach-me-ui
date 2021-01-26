@@ -25,7 +25,7 @@ import {
   delay,
   preventEnterNewLine,
   emitUserOnlineStatus
-} from '../../../../functions/utils';
+} from '../../../../utils';
 import { CHAT_TYPING } from '../../../../constants/chat';
 import { SelectedMessageValue, ChatHead } from '../crumbs';
 import { scrollView } from './ScrollView';

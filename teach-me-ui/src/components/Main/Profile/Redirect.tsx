@@ -14,7 +14,7 @@ const ProfileRedirect = (props: any) => {
   const { profileData } = props;
   useEffect(() => {
     cleanUp(true);
-    dispatch(getProfileData(userId.replace('@', ''))(dispatch));
+    dispatch(getProfileData(userId.replace('@', '')));
 
     return () => {
       cleanUp(true);

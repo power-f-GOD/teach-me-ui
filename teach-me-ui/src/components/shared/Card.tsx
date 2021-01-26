@@ -6,18 +6,7 @@ import Row from 'react-bootstrap/Row';
 
 import Box from '@material-ui/core/Box';
 
-export interface InfoCardProps {
-  icon: Element | JSX.Element | null;
-  title: string;
-  data?: { name: string; value: any }[];
-  hr?: boolean;
-  type?: 'info' | 'colleague';
-  bgcolor?: string;
-  boxShadow?: string;
-  padding?: string;
-  borderRadius?: string;
-  className?: string;
-}
+import { InfoCardProps } from '../../types';
 
 export function InfoCard(props: { children?: any } & InfoCardProps) {
   const {

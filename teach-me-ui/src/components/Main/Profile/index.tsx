@@ -63,22 +63,6 @@ window.addEventListener('popstate', () => {
   cleanUp(false);
 });
 
-let [
-  firstname,
-  lastname,
-  displayName,
-  username,
-  email,
-  // dob,
-  institution,
-  department,
-  level,
-  bio
-] = Array(11).fill('');
-
-let basicInfo: InfoProps[];
-let academicInfo: InfoProps[];
-
 let profileNavWrapper: HTMLElement | null = null;
 let profileNavBarObservee: HTMLElement | null = null;
 
@@ -89,53 +73,60 @@ export interface ProfileProps {
   userData: UserData;
   windowWidth: number;
   auth: AuthState;
-  match: Match;
+  match: Match<{ userId?: string }>;
   location: Location;
 }
 
 const Profile = (props: ProfileProps) => {
-  const { profileData, userData, windowWidth, auth } = props;
-  const data = profileData.data ?? ({} as UserData);
+  const {
+    profileData: _profileData,
+    userData,
+    windowWidth,
+    auth,
+    match
+  } = props;
+  const data = _profileData.data ?? ({} as UserData);
   const { isAuthenticated } = auth;
+  const username = (match.params.userId || data.username || '').toLowerCase();
+  const atUsername = '@' + username;
+  // const dob = data.date_of_birth?.split('-').reverse().join('-') || '';
+  const isUserId = /^@\w+$/.test(atUsername);
+  const isSelfView = isAuthenticated ? username === userData.username : false;
+  const {
+    first_name,
+    last_name,
+    displayName,
+    email,
+    institution,
+    department,
+    level,
+    bio,
+    profile_photo,
+    cover_photo,
+    date_joined
+  } = isSelfView ? userData : data;
 
-  firstname = data.first_name || '';
-  lastname = data.last_name || '';
-  displayName = data.displayName || '';
-  email = data.email || '';
-  email = email + '';
-  // dob = data.date_of_birth?.split('-').reverse().join('-') || '';
-  institution = data.institution || '';
-  department = data.department || '';
-  level = data.level || '';
-  bio = data.bio || '';
-
-  //username of currently authenticated user which will be used to check if the current profile data requested is for another user or currently authenticated user in order to render the views accordingly
-  username = '@' + (userData.username || '');
-
-  let { userId } = (props.match.params ?? {}) as any;
-  const isId = /^@\w+$/.test('@' + userId);
-  userId = isId ? '@' + userId.toLowerCase() : username;
-  // here is where the check is made to render the views accordingly
-  const isSelf = userId === username;
-  let selfView = isAuthenticated ? isSelf : false;
-
-  basicInfo = [
-    { name: 'Firstname', value: selfView ? userData.first_name : firstname },
-    { name: 'Lastname', value: selfView ? userData.last_name : lastname },
-    { name: 'Username', value: selfView ? userData.username : userId }
-    // { name: 'Bio', value: selfView ? userData.bio ? userData.bio : 'Hey there, I use Kanyimuta' : bio },
-    // { name: 'Date of birth', value: selfView ? userData.dob : dob },
-    // { name: 'Email', value: selfView ? userData.email : email }
+  const basicInfo: InfoProps[] = [
+    { name: 'Firstname', value: first_name },
+    { name: 'Lastname', value: last_name },
+    { name: 'Username', value: username },
+    // { name: 'Bio', value: bio },
+    // { name: 'Date of birth', value: dob },
+    { name: 'Email', value: email }
+  ];
+  const academicInfo: InfoProps[] = [
+    { name: 'Institution', value: institution },
+    { name: 'Department', value: department },
+    { name: 'Level', value: level }
   ];
 
-  academicInfo = [
-    {
-      name: 'Institution',
-      value: selfView ? userData.institution : institution
-    },
-    { name: 'Department', value: selfView ? userData.department : department },
-    { name: 'Level', value: selfView ? userData.level : level }
-  ];
+  const openProfilePhotoEditModal = () => {
+    displayModal(true, false, SELECT_PHOTO, { title: 'Select Profile Photo' });
+  };
+
+  const openCoverPhotoEditModal = (e: any) => {
+    displayModal(true, false, SELECT_PHOTO, { title: 'Select Cover Photo' });
+  };
 
   useEffect(() => {
     profileNavBarObservee = profileNavBarObserveeRef.current;
@@ -167,73 +158,50 @@ const Profile = (props: ProfileProps) => {
         windowWidth > 767 && windowWidth < 992 ? 'observe' : 'unobserve'
       ](profileNavBarObservee);
     }
-  }, [windowWidth, selfView]);
+  }, [windowWidth, isSelfView]);
 
   useEffect(() => {
-    if (data.id && !selfView) {
-      dispatch(getDeepProfileData(data.id));
+    if (!isSelfView) {
+      dispatch(getDeepProfileData(username));
     }
-    // eslint-disable-next-line
-  }, [data.id, selfView, username]);
+
+    dispatch(getProfileData(username));
+    window.scrollTo(0, 0);
+  }, [username, isSelfView]);
 
   useEffect(() => {
     dispatch(setWindowWidth(window.innerWidth));
 
-    if (!selfView) {
-      return () => {
-        window.scrollTo(0, 0);
-      };
-    }
-  }, [selfView]);
-
-  useEffect(() => {
-    cleanUp(true);
-    dispatch(getProfileData(userId.replace('@', ''))(dispatch));
-
     return () => {
-      cleanUp(true);
+      window.scrollTo(0, 0);
     };
-  }, [userId]);
+  }, []);
 
-  if (!isId) {
-    return <Redirect to={`/${username}`} />;
-  } else if (profileData.err || !profileData.data) {
+  if (!isUserId) {
+    return <Redirect to={`/${atUsername}`} />;
+  } else if (
+    !_profileData.data?.first_name &&
+    _profileData.status === 'fulfilled'
+  ) {
     return <Redirect to='/404' />;
   }
 
-  // if (
-  //   !/chat=o1/.test(window.location.search) && false &&
-  //   profileData.status !== 'fulfilled'
-  // ) {
-  //   //instead of this, you can use a React Skeleton loader; didn't have the time to add, so I deferred.
-  //   return <Loader />;
-  // }
-
-  const openProfilePhotoEditModal = () => {
-    displayModal(true, false, SELECT_PHOTO, { title: 'Select Profile Photo' });
-  };
-
-  const openCoverPhotoEditModal = (e: any) => {
-    displayModal(true, false, SELECT_PHOTO, { title: 'Select Cover Photo' });
-  };
-
   return (
-    <Box className={`Profile ${selfView ? 'self-view' : ''} fade-in pb-3`}>
+    <Box
+      className={`Profile ${isSelfView ? 'self-view' : ''} ${
+        _profileData.err ? 'de-animate-skeleton' : ''
+      } fade-in pb-3`}>
       <Box component='div' className='profile-top'>
-        <Img
-          alt={displayName}
-          className='cover-photo'
-          src={selfView ? userData.cover_photo : data.cover_photo}
-        />
+        <Img alt={displayName} className='cover-photo' src={cover_photo} />
         <Container className='details-container'>
           <div className='avatar-with-icon'>
             <Avatar
               component='span'
               className='profile-avatar profile-photo'
               alt={displayName}
-              src={selfView ? userData.profile_photo : data.profile_photo}
+              src={profile_photo}
             />
-            {selfView && (
+            {isSelfView && (
               <div
                 onClick={openProfilePhotoEditModal}
                 className='profile-photo-change-container'>
@@ -244,47 +212,34 @@ const Profile = (props: ProfileProps) => {
 
           <Col className='px-4 pt-1'>
             <Col as='h1' className='display-name p-0 my-0 d-inline-flex'>
-              {selfView ? userData.displayName : displayName}
-              {!selfView && !displayName && (
+              {displayName || (
                 <>
-                  <Skeleton className='on-dark' width={140} />
-                  <Skeleton className='on-dark ml-3' width={120} />
+                  <Skeleton className='on-dark' width={160} />
+                  <Skeleton className='on-dark ml-3' width={140} />
                 </>
               )}
             </Col>
             <Col as='span' className='username d-block p-0 mb-2'>
-              {selfView ? `@${userData.username}` : userId}
-              {!selfView && !userId && (
-                <Skeleton className='on-dark' width={160} />
-              )}
+              {atUsername || <Skeleton className='on-dark' width={160} />}
             </Col>
             <Col
               as='span'
               className='theme-tertiary-lightest text-ellipsis p-0 mt-1'>
-              <FAIcon name='pen' /> {selfView ? userData.bio : bio}
-              {!selfView && !bio && (
-                <Skeleton className='on-dark' width={300} />
-              )}
+              {bio || <Skeleton className='on-dark' width={340} />}
             </Col>
             <Col
               as='span'
               className='p-0 theme-tertiary-lighter d-block capitalize my-1'>
               <FAIcon name='calendar-day' /> Joined{' '}
-              {formatMapDateString(
-                selfView
-                  ? userData?.date_joined
-                  : profileData.data?.date_joined,
-                false,
-                true,
-                ','
-              )}
-              {!selfView && !profileData.data?.date_joined && (
+              {date_joined ? (
+                formatMapDateString(date_joined, false, true, ',')
+              ) : (
                 <Skeleton className='on-dark' width={160} />
               )}
             </Col>
           </Col>
         </Container>
-        {selfView && (
+        {isSelfView && (
           <div className='change-cover'>
             <Button
               variant='contained'
@@ -303,7 +258,7 @@ const Profile = (props: ProfileProps) => {
       {windowWidth < 992 && (
         <ProfileNavBar
           profileData={data}
-          selfView={selfView}
+          selfView={isSelfView}
           location={props.location}
         />
       )}
@@ -314,8 +269,10 @@ const Profile = (props: ProfileProps) => {
           <Col
             md={12}
             lg={3}
-            className='hang-in no-hang-in hang-in-lg d-flex flex-lg-column flex-sm-row flex-column mt-3 pl-sm-3 px-0 my-sm-0'>
-            {selfView && (
+            className={`${
+              isSelfView ? '' : 'hang-in no-hang-in hang-in-lg'
+            } d-flex flex-lg-column flex-sm-row flex-column mt-3 pl-sm-3 px-0 my-sm-0`}>
+            {isSelfView && (
               <InfoCard
                 title='Account'
                 icon={<FAIcon name='user' fontSize='1.5em' />}
@@ -352,7 +309,7 @@ const Profile = (props: ProfileProps) => {
               {windowWidth > 991 && (
                 <ProfileNavBar
                   profileData={data}
-                  selfView={selfView}
+                  selfView={isSelfView}
                   location={props.location}
                 />
               )}
@@ -368,7 +325,7 @@ const Profile = (props: ProfileProps) => {
                 className='mb-2 header'
               />
               <Switch>
-                {selfView && (
+                {isSelfView && (
                   <Route
                     path='/@:userId/colleagues'
                     exact

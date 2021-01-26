@@ -1,11 +1,12 @@
 // import axios from 'axios';
 
 import {
+  SET_NOTIFICATIONS,
   GET_NOTIFICATIONS,
-  GET_NOTIFICATIONS_REQUEST
+  PING_USER
   // apiBaseURL as baseURL,
 } from '../constants';
-import { ReduxAction, NotificationState } from '../types';
+import { ReduxAction, NotificationState, PingUserProps } from '../types';
 
 import {
   logError,
@@ -15,117 +16,66 @@ import {
   http
 } from '../functions';
 
-import { displaySnackbar } from '../actions';
-
-export const getNotifications = (payload: NotificationState) => {
-  return {
-    type: GET_NOTIFICATIONS,
-    payload
-  };
-};
-
-export const getNotificationsRequest = (date: number) => (
+export const getNotifications = (date: number) => (
   dispatch: Function
 ): ReduxAction => {
-  // let token = getState().userData.token;
-
   checkNetworkStatusWhilstPend({
-    name: 'getNotifications',
-    func: getNotifications
+    name: 'notifications',
+    func: notifications
   });
-  dispatch(getNotifications({ status: 'pending' }));
+  dispatch(notifications({ status: 'pending' }));
 
-  // axios({
-  //   url: `/notifications?offset=${date}`,
-  //   baseURL,
-  //   method: 'GET',
-  //   headers: {
-  //     Authorization: `Bearer ${token}`,
-  //     Content_Type: 'application/json'
-  //   }
-  // })
   http
-    .get(`/notifications?offset=${date}`, true)
-    .then((response: any) => {
-      const { error, data } = response;
-      if (!error) {
-        const { notifications, entities } = data as {
-          notifications: Array<string>;
-          entities: any;
-        };
-        dispatch(
-          getNotifications({
-            status: 'fulfilled',
-            err: false,
-            data: {
-              notifications,
-              entities
-            }
-          })
-        );
-      } else {
-        dispatch(
-          getNotifications({
-            status: 'fulfilled',
-            err: true
-          })
-        );
-      }
+    .get<{
+      notifications: Array<string>;
+      entities: any;
+    }>(`/notifications?offset=${date}`, true)
+    .then(({ error: err, data: { notifications: notifs, entities } }) => {
+      dispatch(
+        notifications({
+          status: err ? 'settled' : 'fulfilled',
+          err,
+          data: !err
+            ? {
+                notifications: notifs,
+                entities
+              }
+            : {}
+        })
+      );
     })
-    .catch(logError(getNotifications));
+    .catch(logError(notifications));
+
   return {
-    type: GET_NOTIFICATIONS_REQUEST,
+    type: GET_NOTIFICATIONS,
     newState: date
   };
 };
 
-export const pingUser = (
-  users: string[],
-  data?: { type?: 'NEW_CONVERSATION' }
-) => {
+export const notifications = (payload: NotificationState) => {
+  return {
+    type: SET_NOTIFICATIONS,
+    payload
+  };
+};
+
+export const pingUser = <T = PingUserProps>(users: string[], data?: T) => {
   const socket: WebSocket = getState().webSocket as WebSocket;
 
   socket.send(
     JSON.stringify({
       users: users,
-      pipe: 'PING_USER',
-      data: {
-        type: data?.type
-      }
+      pipe: PING_USER,
+      data
     })
   );
 };
 
 export const setLastseen = () => {
-  // let token = getState().userData.token;
-
-  // axios({
-  //   url: 'notifications/seen',
-  //   baseURL,
-  //   method: 'POST',
-  //   headers: {
-  //     Authorization: `Bearer ${token}`,
-  //     Content_Type: 'application/json'
-  //   }
-  // })
   http
     .post('/notifications/seen', {}, true)
-    .then((data) => {
-      dispatch(getNotificationsRequest(Date.now())(dispatch));
+    .then(() => {
+      dispatch(getNotifications(Date.now())(dispatch));
     })
-    .catch((e: any) => {
-      let message = /network/i.test(e.message)
-        ? 'A network error occurred. Check your internet connection.'
-        : e.message;
-
-      dispatch(
-        displaySnackbar({
-          open: true,
-          message: navigator.onLine
-            ? `${message[0].toUpperCase()}${message.slice(1)}.`
-            : 'You are offline.',
-          severity: 'error'
-        })
-      );
-    });
+    .catch(logError(notifications));
 };

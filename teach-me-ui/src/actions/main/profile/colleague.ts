@@ -8,13 +8,13 @@ import {
   ADD_COLLEAGUE,
   NOT_COLLEAGUES,
   IS_COLLEAGUE,
-  AWAITING_REQUEST_ACTION,
-  PENDING_REQUEST
+  AWAITING_REQUEST_ACTION
 } from '../../../constants';
 import {
   ReduxActionV2,
   ColleagueAction,
-  DeepProfileProps
+  DeepProfileProps,
+  PingUserProps
 } from '../../../types';
 import {
   checkNetworkStatusWhilstPend,
@@ -23,12 +23,13 @@ import {
 } from '../../../functions';
 import { deepProfileData } from './deepProfile';
 import { displaySnackbar } from '../../misc';
+import { pingUser, getConversations } from '../..';
 
 export const requestColleagueAction = (_payload: ColleagueAction) => (
   dispatch: Function
 ) => {
   const { action, data: _data } = _payload;
-  const { colleague_id, request_id, displayName } = _data ?? {};
+  const { colleague_id, request_id, displayName, username } = _data ?? {};
   const userFirstName = displayName?.split(' ')[0];
   let deepProfileStatus: DeepProfileProps['status'] = NOT_COLLEAGUES;
   let feedBack = '';
@@ -75,40 +76,35 @@ export const requestColleagueAction = (_payload: ColleagueAction) => (
   http
     .post<{ id: string }>(data.url, data.payload, true)
     .then(({ error, message, data: _data }) => {
-      const { id: request_id } = _data ?? {};
-      const payload = { action, data: { request_id } };
-      const deepProfilePayload = { request_id, status: deepProfileStatus };
-      const hasAlreadyPending = /pending.*request/.test(message || '');
-      const notExist = /not.*(found|exist)/.test(message || '');
+      const { id: res_request_id } = _data ?? {};
+      const payload = { action, data: { request_id: res_request_id } };
+      const deepProfilePayload = {
+        request_id: res_request_id,
+        status: deepProfileStatus
+      };
+      // const hasPendingRequest = /pending.*request/.test(message || '');
+      // const notExist = /not.*(found|exist)/.test(message || '');
+      // const alreadyColleagues = /already.*(colleagues)/.test(message || '');
 
       if (error) delete payload.data;
 
-      if (!request_id) delete deepProfilePayload.request_id;
-
-      // console.log(request_id, message);
-      if (hasAlreadyPending) {
-        deepProfileStatus = PENDING_REQUEST;
-        feedBack = `There is already a pending colleague request from ${userFirstName}. You can accept/decline now.`;
-      }
-
-      if (notExist) {
-        deepProfileStatus = NOT_COLLEAGUES;
-        feedBack = `User, probably, unsent their request. You may re-initiate a colleague request.`;
-      }
+      // switch (true) {
+      //   case hasPendingRequest:
+      //     deepProfileStatus = PENDING_REQUEST;
+      //     feedBack = `There is already a pending colleague request from ${userFirstName}. You can accept/decline now.`;
+      //     break;
+      //   case notExist:
+      //     deepProfileStatus = NOT_COLLEAGUES;
+      //     feedBack = `User, either already unsent their request or accepted your colleague request.`;
+      //     break;
+      //   case alreadyColleagues:
+      //     deepProfileStatus = IS_COLLEAGUE;
+      //     feedBack = `You and ${userFirstName} are already colleagues.`;
+      //     break;
+      // }
 
       deepProfilePayload.status = deepProfileStatus;
 
-      dispatch(
-        displaySnackbar({
-          open: true,
-          message: feedBack,
-          severity: /IS_COLLEAGUE|AWAITING/.test(deepProfileStatus!)
-            ? 'success'
-            : 'info',
-          timeout: 5000,
-          autoHide: false
-        })
-      );
       dispatch(
         colleagueAction({
           err: error ?? false,
@@ -122,6 +118,34 @@ export const requestColleagueAction = (_payload: ColleagueAction) => (
           data: deepProfilePayload
         })
       );
+      dispatch(
+        displaySnackbar({
+          open: true,
+          message: feedBack,
+          severity: /IS_COLLEAGUE|AWAITING/.test(deepProfileStatus!)
+            ? 'success'
+            : 'info',
+          timeout: 5000
+        })
+      );
+
+      if (username) {
+        pingUser<PingUserProps['data']>([username], {
+          type: deepProfileStatus,
+          payload: {
+            action,
+            request_id: res_request_id
+          }
+        });
+      }
+
+      switch (action) {
+        case ACCEPT_REQUEST:
+        case DECLINE_REQUEST:
+        case UNCOLLEAGUE:
+          dispatch(getConversations('settled')(dispatch));
+          break;
+      }
     })
     .catch(logError(colleagueAction));
 

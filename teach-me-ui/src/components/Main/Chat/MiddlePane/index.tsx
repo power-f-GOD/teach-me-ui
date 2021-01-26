@@ -24,7 +24,7 @@ import {
   dispatch,
   emitUserOnlineStatus,
   loopThru
-} from '../../../../functions/utils';
+} from '../../../../utils';
 import {
   CHAT_READ_RECEIPT,
   CHAT_MESSAGE_DELIVERED

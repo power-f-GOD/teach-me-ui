@@ -8,6 +8,8 @@ import Col from 'react-bootstrap/Col';
 
 import MoreIcon from '@material-ui/icons/MoreHoriz';
 import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import CloudOffIcon from '@material-ui/icons/CloudOff';
 
 import {
   UserData,
@@ -28,11 +30,10 @@ import {
   UNCOLLEAGUE,
   CANCEL_REQUEST
 } from '../../../constants';
-import { getConversations } from '../../../actions/main/chat';
+import { requestColleagueAction } from '../../../actions';
+
 import Loader from '../../shared/Loaders';
 import { FAIcon } from '../../shared/Icons';
-import { requestColleagueAction } from '../../../actions';
-import IconButton from '@material-ui/core/IconButton';
 
 interface ProfileNavBarProps {
   profileData: UserData;
@@ -47,14 +48,19 @@ interface ProfileNavBarProps {
 export const profileNavWrapperRef = createRef<HTMLElement | null>();
 
 const ProfileNavBar = (props: ProfileNavBarProps) => {
-  const { profileData, deepProfileData, colleagueAction, selfView, location } =
-    props || {};
+  const {
+    profileData,
+    deepProfileData: _deepProfileData,
+    colleagueAction,
+    selfView,
+    location
+  } = props || {};
   const colleagueActionIsPending =
     colleagueAction?.status === 'pending' ||
-    deepProfileData?.status === 'pending' ||
-    !deepProfileData?.data?.status;
-  const hasPendingRequest = deepProfileData?.data?.status === PENDING_REQUEST;
-  const isColleague = deepProfileData?.data?.status === IS_COLLEAGUE;
+    _deepProfileData?.status === 'pending' ||
+    !_deepProfileData?.data?.status;
+  const hasPendingRequest = _deepProfileData?.data?.status === PENDING_REQUEST;
+  const isColleague = _deepProfileData?.data?.status === IS_COLLEAGUE;
 
   const [isRespondingView, setIsRespondingView] = useState<boolean>(false);
   const [action, setAction] = useState<{
@@ -79,14 +85,11 @@ const ProfileNavBar = (props: ProfileNavBarProps) => {
         data: {
           displayName: profileData?.displayName,
           colleague_id: profileData?.id,
-          request_id: deepProfileData?.data?.request_id
+          request_id: _deepProfileData?.data?.request_id,
+          username: profileData?.username
         }
       })
     );
-
-    if (action.type === ACCEPT_REQUEST) {
-      dispatch(getConversations('settled')(dispatch));
-    }
   };
 
   const openEditProfileModal = () => {
@@ -99,7 +102,7 @@ const ProfileNavBar = (props: ProfileNavBarProps) => {
     }
   };
 
-  const deepProfileDataStatus = deepProfileData?.data?.status;
+  const deepProfileDataStatus = _deepProfileData?.data?.status;
   useEffect(() => {
     let action = {
       //NOT_COLLEAGUES -> default
@@ -170,12 +173,21 @@ const ProfileNavBar = (props: ProfileNavBarProps) => {
                   isRespondingView ? 'hide' : ''
                 }`}
                 color='primary'
-                disabled={colleagueActionIsPending || isRespondingView}
+                disabled={
+                  colleagueActionIsPending ||
+                  isRespondingView ||
+                  !navigator.onLine
+                }
                 onClick={onColleagueActionClick(
                   hasPendingRequest || isColleague,
                   hasPendingRequest || isColleague ? null : undefined
                 )}>
-                {colleagueActionIsPending ? (
+                {!navigator.onLine ? (
+                  <>
+                    Offline!
+                    <CloudOffIcon htmlColor='inherit' className='ml-2' />
+                  </>
+                ) : colleagueActionIsPending ? (
                   <>
                     A sec...{' '}
                     <Loader
@@ -211,7 +223,7 @@ const ProfileNavBar = (props: ProfileNavBarProps) => {
                   <span className='tool-tip'>Accept Request</span>
                 )}
               </IconButton>
-
+              {/* Decline */}
               <IconButton
                 size='small'
                 className='cancel icon-button primary'

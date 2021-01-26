@@ -6,7 +6,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import Slide from '@material-ui/core/Slide';
 import Fade from '@material-ui/core/Fade';
 
-import { promisedDispatch } from '../../functions/utils';
+import { promisedDispatch } from '../../utils';
 import { displaySnackbar } from '../../actions/misc';
 import { userDeviceIsMobile } from '../../index';
 import { SnackbarState } from '../../types';

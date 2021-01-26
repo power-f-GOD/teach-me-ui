@@ -17,7 +17,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
 import { ColleagueData } from '../../../types';
-import { dispatch } from '../../../functions/utils';
+import { dispatch } from '../../../utils';
 import { triggerSearchKanyimuta } from '../../../actions/search';
 
 const searchBoxRef = createRef<HTMLInputElement>();

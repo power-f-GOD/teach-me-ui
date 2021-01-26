@@ -23,7 +23,7 @@ import {
   UserData,
   ReduxActionV2
 } from '../types';
-import { getState } from '../functions/utils';
+import { getState } from '../utils';
 import { dispatch } from '../appStore';
 
 export const triggerNotificationSound = (_payload: NotificationSoundState) => {

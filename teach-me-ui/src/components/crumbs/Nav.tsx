@@ -37,14 +37,14 @@ import {
 import { NOTIFICATIONS } from '../../constants';
 import { UserData } from '../../types';
 import { dispatch } from '../../appStore';
-import { getNotificationsRequest } from '../../actions';
+import { getNotifications } from '../../actions';
 
 const Nav = (props: any) => {
   const forIndexPage = /index|@\w+/i.test(props.for);
   const forProfile = /\/@\w+$/i.test(props.location.pathname);
   const forLandingPage =
     (forIndexPage || forProfile) &&
-    /\/index|\/$|\/[^a-z]+$|\/@\w+$/i.test(window.location.href);
+    /\/index|\/$|\/[^a-z]+$|\/@\w+/i.test(window.location.pathname);
 
   return (
     <Box component='nav'>
@@ -96,18 +96,18 @@ function IndexNav(props: any) {
 }
 
 function MainNav(props: any) {
-  const { isAuthenticated, className, getNotifications } = props;
+  const { isAuthenticated, className, notifications } = props;
   const [showDropdown, setShowDropdown] = useState(false);
   const history = useHistory();
   const userData = getState().userData as UserData;
   const username = userData.username;
   const numberOfNewNotifications = countNewNotifications(
-    getNotifications.data.notifications
+    notifications.data.notifications
   );
 
   useEffect(() => {
     if (isAuthenticated) {
-      dispatch(getNotificationsRequest(Date.now())(dispatch));
+      dispatch(getNotifications(Date.now()));
     }
   }, [isAuthenticated]);
 
@@ -230,10 +230,10 @@ function MainNav(props: any) {
 }
 
 function MainNavMenu(props: any) {
-  const { className, getNotifications } = props;
+  const { className, notifications } = props;
   const username = (getState().userData as UserData).username;
   const numberOfNewNotifications = countNewNotifications(
-    getNotifications.data.notifications
+    notifications.data.notifications
   );
 
   return (
@@ -276,7 +276,7 @@ function MainNavMenu(props: any) {
       <NavLink to='/questions' className='nav-link'>
         <QuestionAnswerIcon />
         <Box component='span' className='nav-label ml-3'>
-          Q&A
+          Q&amp;A
         </Box>
       </NavLink>
 
@@ -385,6 +385,6 @@ function TemporaryDrawer(props: any) {
   );
 }
 
-const mapStateToProps = ({ getNotifications }: any) => ({ getNotifications });
+const mapStateToProps = ({ notifications }: any) => ({ notifications });
 
 export default connect(mapStateToProps)(Nav);

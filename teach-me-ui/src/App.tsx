@@ -13,7 +13,7 @@ import { verifyAuth } from './actions/auth';
 import createMemo from './Memo';
 import { dispatch } from './appStore';
 
-import { emitUserOnlineStatus } from './functions/utils';
+import { emitUserOnlineStatus } from './utils';
 import { AuthState, FetchState } from './types';
 import { setWindowWidth } from './actions';
 

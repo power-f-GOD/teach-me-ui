@@ -15,13 +15,13 @@ import ListItem from '@material-ui/core/ListItem';
 import { 
   formatDate, 
   formatNotification 
-} from '../../functions/utils';
+} from '../../utils';
 import { displayModal } from '../../functions';
 
 const Notifications = (props: any) => {
-  const { getNotifications } = props;
-  const result = getNotifications.data.notifications;
-  const entities = getNotifications.data.entities;
+  const { notifications } = props;
+  const result = notifications.data.notifications;
+  const entities = notifications.data.entities;
 
   const removeModal = () => {
     displayModal(false, true);
@@ -45,7 +45,7 @@ const Notifications = (props: any) => {
 
   return (
     <Box className='dropdown-contents'>
-      {getNotifications.status === 'pending' ? (
+      {notifications.status === 'pending' ? (
         <Box className='first-skeleton notification-container mx-auto'>
           {Array(6).fill('').map((j,i) => (
             <React.Fragment key={i}>
@@ -95,6 +95,6 @@ const Notifications = (props: any) => {
     </Box>
   );
 };
-const mapStateToProps = ({ getNotifications }: any) => ({ getNotifications });
+const mapStateToProps = ({ notifications }: any) => ({ notifications });
 
 export default connect(mapStateToProps)(Notifications);

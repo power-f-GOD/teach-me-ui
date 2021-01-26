@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -8,9 +9,7 @@ import Avatar from '@material-ui/core/Avatar';
 
 import Skeleton from 'react-loading-skeleton';
 
-import { Link } from 'react-router-dom';
-
-import { formatDate } from '../../../../../functions/utils';
+import { formatDate } from '../../../../../utils';
 
 interface PostHeaderProps {
   isLoading: boolean;

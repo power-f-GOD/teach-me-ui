@@ -9,13 +9,18 @@ import {
 
 import { displayModal } from '../functions';
 
-import { postState, POST_REACTION, POST_REPLY, TONE_NAME__OPEN_ENDED } from '../constants';
+import {
+  postState,
+  POST_REACTION,
+  POST_REPLY,
+  TONE_NAME__OPEN_ENDED
+} from '../constants';
 import { SocketPipe, NotificationSoundState } from '../types';
 
 export default function post(data: any) {
-  const { notificationSound, userData} = getState() as {
+  const { notificationSound, userData } = getState() as {
     notificationSound: NotificationSoundState;
-    userData: any
+    userData: any;
   };
   const toneName: NotificationSoundState['toneName'] = TONE_NAME__OPEN_ENDED;
 
@@ -52,8 +57,8 @@ export default function post(data: any) {
               status: 'fulfilled'
             })
           );
-          console.log(data);
-            
+          // console.log(data);
+
           dispatch(
             posts({
               data: [{ ...postState, ...data, sender: userData }],
@@ -61,7 +66,7 @@ export default function post(data: any) {
             })
           );
           displayModal(false);
-  
+
           if (notificationSound.isPlaying) {
             promisedDispatch(
               triggerNotificationSound({ play: false, isPlaying: false })
@@ -71,31 +76,19 @@ export default function post(data: any) {
           } else {
             dispatch(triggerNotificationSound({ play: true, toneName }));
           }
-        
 
           window.history.back();
           dispatch(displayModal(false));
         } else {
-          dispatch(makeRepost({ err: true, status: 'settled', statusText:data.message }));
+          dispatch(
+            makeRepost({
+              err: true,
+              status: 'settled',
+              statusText: data.message
+            })
+          );
         }
         break;
-      // if (!data.error) {
-      //   dispatch(
-      //     replyToPost({
-      //       status: 'fulfilled',
-      //       err: false,
-      //       data
-      //     })
-      //   );
-      // } else {
-      //   dispatch(
-      //     replyToPost({
-      //       status: 'fulfilled',
-      //       err: true,
-      //       data
-      //     })
-      //   );
-      // }
       default:
         break;
     }

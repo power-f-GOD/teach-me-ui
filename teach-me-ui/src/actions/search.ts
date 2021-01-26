@@ -1,14 +1,6 @@
 import { SearchState, ReduxAction, UserData } from '../types';
-import {
-  checkNetworkStatusWhilstPend,
-  logError,
-  delay,
-  http
-} from '../functions/utils';
-import {
-  SEARCH_KANYIMUTA,
-  TRIGGER_SEARCH_KANYIMUTA
-} from '../constants/search';
+import { checkNetworkStatusWhilstPend, logError, delay, http } from '../utils';
+import { SEARCH_KANYIMUTA, TRIGGER_SEARCH_KANYIMUTA } from '../constants';
 
 export const searchKanyimuta = (payload: SearchState) => {
   return {

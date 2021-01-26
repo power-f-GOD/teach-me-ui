@@ -17,7 +17,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { APIMessageResponse, Partial, FetchState } from '../../../../types';
 import { userDeviceIsMobile } from '../../../..';
 import { getConversationMessages } from '../../../../actions/main/chat';
-import { dispatch, interval } from '../../../../functions/utils';
+import { dispatch, interval } from '../../../../utils';
 import {
   Message,
   ChatDate,

@@ -10,17 +10,17 @@ import ArrowForward from '@material-ui/icons/ArrowForwardIos';
 
 import { Link } from 'react-router-dom';
 
-import { dispatch, loopThru } from '../../../../../functions/utils';
+import { dispatch, loopThru } from '../../../../../utils';
 import { PostStateProps, LoopFind } from '../../../../../types';
 
 import { displayModal } from '../../../../../functions';
-import { triggerSearchKanyimuta } from '../../../../../actions/search';
+import { triggerSearchKanyimuta } from '../../../../../actions';
 
 import { LazyLoadImage as LazyImg } from 'react-lazy-load-image-component';
 
 import PostFooter from './Footer';
 import PostReply from './Reply';
-import { MAKE_REPOST } from '../../../../../constants/modals';
+import { MAKE_REPOST } from '../../../../../constants';
 import PostBody from './Body';
 import PostHeader from './Header';
 import PostInfo from './Info';
