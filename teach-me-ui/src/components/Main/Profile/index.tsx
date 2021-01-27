@@ -28,7 +28,8 @@ import {
 import {
   getProfileData,
   setWindowWidth,
-  getDeepProfileData
+  getDeepProfileData,
+  displaySnackbar
 } from '../../../actions';
 // import * as api from '../../../actions/main/profile/profile';
 import { InfoCard } from '../../shared/Card';
@@ -73,7 +74,7 @@ export interface ProfileProps {
   userData: UserData;
   windowWidth: number;
   auth: AuthState;
-  match: Match<{ userId?: string }>;
+  match: Match<{ userId?: string; id?: string }>;
   location: Location;
 }
 
@@ -87,10 +88,12 @@ const Profile = (props: ProfileProps) => {
   } = props;
   const data = _profileData.data ?? ({} as UserData);
   const { isAuthenticated } = auth;
-  const username = (match.params.userId || data.username || '').toLowerCase();
-  const atUsername = '@' + username;
+  const username = (match.params.userId || data.username || '')?.toLowerCase();
+  const atUsername = '@' + (username || '');
+  const profileId = match.params.id || '';
+  const idOrUsername = profileId || username;
   // const dob = data.date_of_birth?.split('-').reverse().join('-') || '';
-  const isUserId = /^@\w+$/.test(atUsername);
+  const userNotFound = /user.*not\sfound/.test(_profileData.statusText || '');
   const isSelfView = isAuthenticated ? username === userData.username : false;
   const {
     first_name,
@@ -162,12 +165,12 @@ const Profile = (props: ProfileProps) => {
 
   useEffect(() => {
     if (!isSelfView) {
-      dispatch(getDeepProfileData(username));
+      dispatch(getDeepProfileData(idOrUsername));
     }
 
-    dispatch(getProfileData(username));
+    dispatch(getProfileData(idOrUsername));
     window.scrollTo(0, 0);
-  }, [username, isSelfView]);
+  }, [idOrUsername, isSelfView]);
 
   useEffect(() => {
     dispatch(setWindowWidth(window.innerWidth));
@@ -176,14 +179,16 @@ const Profile = (props: ProfileProps) => {
       window.scrollTo(0, 0);
     };
   }, []);
-
-  if (!isUserId) {
-    return <Redirect to={`/${atUsername}`} />;
-  } else if (
-    !_profileData.data?.first_name &&
-    _profileData.status === 'fulfilled'
-  ) {
-    return <Redirect to='/404' />;
+  
+  if (userNotFound) {
+    dispatch(
+      displaySnackbar({
+        open: true,
+        message: `User with ID, ${profileId || atUsername}, not found.`,
+        severity: 'info'
+      })
+    );
+    return <Redirect to={`/404`} />;
   }
 
   return (
@@ -220,11 +225,12 @@ const Profile = (props: ProfileProps) => {
               )}
             </Col>
             <Col as='span' className='username d-block p-0 mb-2'>
-              {atUsername || <Skeleton className='on-dark' width={160} />}
+              @{username || <Skeleton className='on-dark ml-1' width={130} />}
             </Col>
             <Col
               as='span'
               className='theme-tertiary-lightest text-ellipsis p-0 mt-1'>
+              <FAIcon name='pen' />{' '}
               {bio || <Skeleton className='on-dark' width={340} />}
             </Col>
             <Col
@@ -332,8 +338,11 @@ const Profile = (props: ProfileProps) => {
                     component={ColleagueView}
                   />
                 )}
-                <Route path='/@:userId' exact component={ProfileFeeds} />
-                <Redirect to={`/@${data.username}`} />
+                <Route
+                  path={['/@:userId', '/profile/:id']}
+                  component={ProfileFeeds}
+                />
+                {/* <Redirect to={`/@${data.username}`} /> */}
               </Switch>
             </Col>
 

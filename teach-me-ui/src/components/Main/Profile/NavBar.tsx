@@ -57,8 +57,7 @@ const ProfileNavBar = (props: ProfileNavBarProps) => {
   } = props || {};
   const colleagueActionIsPending =
     colleagueAction?.status === 'pending' ||
-    _deepProfileData?.status === 'pending' ||
-    !_deepProfileData?.data?.status;
+    _deepProfileData?.status === 'pending';
   const hasPendingRequest = _deepProfileData?.data?.status === PENDING_REQUEST;
   const isColleague = _deepProfileData?.data?.status === IS_COLLEAGUE;
 
