@@ -75,33 +75,15 @@ export const requestColleagueAction = (_payload: ColleagueAction) => (
 
   http
     .post<{ id: string }>(data.url, data.payload, true)
-    .then(({ error, message, data: _data }) => {
+    .then(({ error, data: _data }) => {
       const { id: res_request_id } = _data ?? {};
       const payload = { action, data: { request_id: res_request_id } };
       const deepProfilePayload = {
         request_id: res_request_id,
         status: deepProfileStatus
       };
-      // const hasPendingRequest = /pending.*request/.test(message || '');
-      // const notExist = /not.*(found|exist)/.test(message || '');
-      // const alreadyColleagues = /already.*(colleagues)/.test(message || '');
 
       if (error) delete payload.data;
-
-      // switch (true) {
-      //   case hasPendingRequest:
-      //     deepProfileStatus = PENDING_REQUEST;
-      //     feedBack = `There is already a pending colleague request from ${userFirstName}. You can accept/decline now.`;
-      //     break;
-      //   case notExist:
-      //     deepProfileStatus = NOT_COLLEAGUES;
-      //     feedBack = `User, either already unsent their request or accepted your colleague request.`;
-      //     break;
-      //   case alreadyColleagues:
-      //     deepProfileStatus = IS_COLLEAGUE;
-      //     feedBack = `You and ${userFirstName} are already colleagues.`;
-      //     break;
-      // }
 
       deepProfilePayload.status = deepProfileStatus;
 

@@ -41,10 +41,12 @@ import { getNotifications } from '../../actions';
 
 const Nav = (props: any) => {
   const forIndexPage = /index|@\w+/i.test(props.for);
-  const forProfile = /\/@\w+$/i.test(props.location.pathname);
+  const forProfile = /\/(@\w+|profile\/.+)$/i.test(props.location.pathname);
   const forLandingPage =
     (forIndexPage || forProfile) &&
-    /\/index|\/$|\/[^a-z]+$|\/@\w+/i.test(window.location.pathname);
+    /\/index|\/$|\/[^a-z]+$|\/(@\w+|profile\/.+)/i.test(
+      window.location.pathname
+    );
 
   return (
     <Box component='nav'>

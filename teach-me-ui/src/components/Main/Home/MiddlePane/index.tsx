@@ -54,7 +54,7 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
     !!username && !!profileUsername && profileUsername === username;
   const postElements = document.querySelectorAll('.Post');
   let selfView = isAuthenticated ? isSelf : false;
-  let inProfile = /@\w+/.test(window.location.pathname);
+  let inProfile = /\/(@\w+|profile\/.+)/.test(window.location.pathname);
   const postsDataLength = postsData?.length;
 
   const config: IntersectionObserverInit = {
