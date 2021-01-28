@@ -47,8 +47,8 @@ const App = (props: any) => {
                     '/about',
                     '/support',
                     '/profile/:id',
-                    '/@:userId',
-                    '/@:userId/colleagues',
+                    '/@:username',
+                    '/@:username/colleagues',
                     '/search',
                     '/p/:id',
                     '/questions',
@@ -73,8 +73,8 @@ const App = (props: any) => {
               '/index',
               '/about',
               '/profile/:id',
-              '/@:userId',
-              '/@:userId/colleagues',
+              '/@:username',
+              '/@:username/colleagues',
               '/support',
               '/*'
             ]}

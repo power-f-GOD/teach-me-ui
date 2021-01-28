@@ -17,7 +17,7 @@ export const Compose: React.FunctionComponent<{
   const { first_name, profile_photo } = userData;
 
   return (
-    <Box className='Compose d-flex flex-column'>
+    <Box className='Compose d-flex flex-column mb-2 mb-sm-3'>
       <Box display='flex'>
         <Box pr={1} className='d-flex align-items-center'>
           <Avatar
@@ -28,7 +28,7 @@ export const Compose: React.FunctionComponent<{
           />
         </Box>
         <Box
-          className='compose-question theme-tertiary-lighter'
+          className='compose-question theme-tertiary'
           onClick={openCreatePostModal}
           role='compose'>
           {first_name}, have any educative thought?

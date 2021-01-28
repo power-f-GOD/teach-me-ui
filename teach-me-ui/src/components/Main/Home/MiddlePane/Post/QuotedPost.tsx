@@ -27,12 +27,14 @@ const QuotedPost = (
           alt={sender_name}
           src={profile_photo ? profile_photo : ''}
         />
-        <Col className='d-flex flex-column justify-content-center pl-2'>
-          <Box className='d-flex'>
-            <Link to={`@${username}`} className='post-sender font-bold'>
+        <Col className='header d-flex flex-column justify-content-center pl-2'>
+          <Box>
+            <Link to={`/@${username}`} className='post-sender font-bold'>
               {sender_name}
             </Link>
-            <Box className='theme-tertiary-lighter ml-1'>| @{username}</Box>
+            <Col as='span' className='theme-tertiary ml-1 px-0'>
+              | @{username}
+            </Col>
           </Box>
           <Box component='small' className='theme-tertiary'>
             {formatDate(posted_at!)}

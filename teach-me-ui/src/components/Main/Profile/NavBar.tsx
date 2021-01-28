@@ -36,7 +36,7 @@ import Loader from '../../shared/Loaders';
 import { FAIcon } from '../../shared/Icons';
 
 interface ProfileNavBarProps {
-  profileData: UserData;
+  data: UserData;
   selfView: boolean;
   location: Location;
   deepProfileData?: FetchState<DeepProfileProps>;
@@ -49,7 +49,7 @@ export const profileNavWrapperRef = createRef<HTMLElement | null>();
 
 const ProfileNavBar = (props: ProfileNavBarProps) => {
   const {
-    profileData,
+    data,
     deepProfileData: _deepProfileData,
     colleagueAction,
     selfView,
@@ -82,10 +82,10 @@ const ProfileNavBar = (props: ProfileNavBarProps) => {
       requestColleagueAction({
         action: _action ?? action.type,
         data: {
-          displayName: profileData?.displayName,
-          colleague_id: profileData?.id,
+          displayName: data?.displayName,
+          colleague_id: data?.id,
           request_id: _deepProfileData?.data?.request_id,
-          username: profileData?.username
+          username: data?.username
         }
       })
     );
@@ -148,112 +148,120 @@ const ProfileNavBar = (props: ProfileNavBarProps) => {
 
   return (
     <>
-      <Col
-        className='profile-nav-bar-wrapper'
-        ref={profileNavWrapperRef as any}>
+      <Col className='nav-bar-wrapper' ref={profileNavWrapperRef as any}>
         <Col
-          className={`profile-nav-bar d-flex justify-content-center align-items-center ${
+          className={`nav-bar primary-bar d-flex justify-content-start justify-content-sm-center align-items-center ${
             isRespondingView ? 'is-responding-view' : ''
           }`}>
-          <Link to='' onClick={(e) => e.preventDefault()}>
+          <Link
+            to=''
+            onClick={(e) => e.preventDefault()}
+            className='ml-0 ml-sm-2'>
             <div
               className={`nav-item ${
-                !/colleagues/.test(location.pathname) ? 'active' : ''
+                /@|profile/.test(location.pathname) ? 'active' : ''
               }`}>
-              WALL
+              POSTS
             </div>
           </Link>
-          {!selfView && (
-            <Container className='buttons-wrapper px-0 d-flex '>
-              <Button
-                variant='contained'
-                size='small'
-                className={`colleague-action-button add-colleague primary ${
-                  isRespondingView ? 'hide' : ''
-                }`}
-                color='primary'
-                disabled={
-                  colleagueActionIsPending ||
-                  isRespondingView ||
-                  !navigator.onLine
-                }
-                onClick={onColleagueActionClick(
-                  hasPendingRequest || isColleague,
-                  hasPendingRequest || isColleague ? null : undefined
-                )}>
-                {!navigator.onLine ? (
-                  <>
-                    Offline!
-                    <CloudOffIcon htmlColor='inherit' className='ml-2' />
-                  </>
-                ) : colleagueActionIsPending ? (
-                  <>
-                    A sec...{' '}
-                    <Loader
-                      type='ellipsis'
-                      inline={true}
-                      size={6}
-                      className='ml-2'
-                    />
-                  </>
-                ) : (
-                  <>{action.jsx}</>
-                )}
-              </Button>
-              {/* Go back */}
-              <IconButton
-                size='small'
-                className='back icon-button primary'
-                color='primary'
-                disabled={!isRespondingView}
-                onClick={onColleagueActionClick(false, null)}>
-                <FAIcon name='chevron-left' />
-                <span className='tool-tip'>Go back</span>
-              </IconButton>
-              {/* Accept */}
-              <IconButton
-                size='small'
-                className='check icon-button primary'
-                color='primary'
-                disabled={!isRespondingView || isColleague}
-                onClick={onColleagueActionClick(false, ACCEPT_REQUEST)}>
-                <FAIcon name='user-check' />
-                {!isColleague && (
-                  <span className='tool-tip'>Accept Request</span>
-                )}
-              </IconButton>
-              {/* Decline */}
-              <IconButton
-                size='small'
-                className='cancel icon-button primary'
-                color='primary'
-                disabled={!isRespondingView}
-                onClick={onColleagueActionClick(
-                  false,
-                  hasPendingRequest ? DECLINE_REQUEST : UNCOLLEAGUE
-                )}>
-                <FAIcon name='user-times' />
-                <span className='tool-tip'>
-                  {hasPendingRequest ? 'Decline Request' : 'Uncolleague'}
-                </span>
-              </IconButton>
-            </Container>
-          )}
+          {/* <Link to='' onClick={(e) => e.preventDefault()}>
+            <div
+              className={`nav-item ${
+                /questions/.test(location.pathname) ? 'active' : ''
+              }`}>
+              QUESTIONS
+            </div>
+          </Link> */}
 
-          {selfView ? (
-            <>
+          <Container className='buttons-wrapper px-0 d-flex ml-auto ml-sm-2'>
+            {!selfView ? (
+              <>
+                {' '}
+                <Button
+                  variant='contained'
+                  size='small'
+                  className={`colleague-action-button mr-sm-2 primary ${
+                    isRespondingView ? 'hide' : ''
+                  }`}
+                  color='primary'
+                  disabled={
+                    colleagueActionIsPending ||
+                    isRespondingView ||
+                    !navigator.onLine
+                  }
+                  onClick={onColleagueActionClick(
+                    hasPendingRequest || isColleague,
+                    hasPendingRequest || isColleague ? null : undefined
+                  )}>
+                  {!navigator.onLine ? (
+                    <>
+                      Offline!
+                      <CloudOffIcon htmlColor='inherit' className='ml-2' />
+                    </>
+                  ) : colleagueActionIsPending ? (
+                    <>
+                      A sec...{' '}
+                      <Loader
+                        type='ellipsis'
+                        inline={true}
+                        size={6}
+                        className='ml-2'
+                      />
+                    </>
+                  ) : (
+                    <>{action.jsx}</>
+                  )}
+                </Button>
+                {/* Go back */}
+                <IconButton
+                  size='small'
+                  className='back icon-button primary'
+                  color='primary'
+                  disabled={!isRespondingView}
+                  onClick={onColleagueActionClick(false, null)}>
+                  <FAIcon name='chevron-left' />
+                  <span className='tool-tip'>Go back</span>
+                </IconButton>
+                {/* Accept */}
+                <IconButton
+                  size='small'
+                  className='check icon-button primary'
+                  color='primary'
+                  disabled={!isRespondingView || isColleague}
+                  onClick={onColleagueActionClick(false, ACCEPT_REQUEST)}>
+                  <FAIcon name='user-check' />
+                  {!isColleague && (
+                    <span className='tool-tip'>Accept Request</span>
+                  )}
+                </IconButton>
+                {/* Decline */}
+                <IconButton
+                  size='small'
+                  className='cancel icon-button primary'
+                  color='primary'
+                  disabled={!isRespondingView}
+                  onClick={onColleagueActionClick(
+                    false,
+                    hasPendingRequest ? DECLINE_REQUEST : UNCOLLEAGUE
+                  )}>
+                  <FAIcon name='user-times' />
+                  <span className='tool-tip'>
+                    {hasPendingRequest ? 'Decline Request' : 'Uncolleague'}
+                  </span>
+                </IconButton>
+              </>
+            ) : (
               <Button
                 variant='contained'
                 size='large'
-                className='colleague-action-button add-colleague'
+                className='colleague-action-button mr-sm-2'
                 color='primary'
                 onClick={handleEditClick}>
                 Edit Profile <FAIcon name='user-edit' className='ml-2' />
               </Button>
-            </>
-          ) : (
-            ''
-          )}
+            )}
+          </Container>
+
           {false && (
             <Button
               variant='contained'

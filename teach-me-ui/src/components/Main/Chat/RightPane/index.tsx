@@ -68,7 +68,7 @@ const ChatRightPane = (props: ChatRightPaneProps) => {
       {convoType === ONE_TO_ONE ? (
         <Container
           as='section'
-          className='chat-user-info-container custom-scroll-bar small-bar grey-scrollbar p-3 debugger'>
+          className='chat-user-info-container custom-scroll-bar grey-scrollbar p-3 debugger'>
           <Row as='section' className='m-0 flex-column mb-5'>
             <Col className='p-0 text-center'>
               <Avatar

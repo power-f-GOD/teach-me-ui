@@ -76,7 +76,7 @@ const PostReply = (props: Partial<PostStateProps>) => {
           <Col className='display-name-wrapper d-flex flex-column justify-content-center'>
             {sender_name ? (
               <Box>
-                <Link to={`@${sender_username}`} className='font-bold'>
+                <Link to={`/@${sender_username}`} className='font-bold'>
                   {sender_name}
                 </Link>
                 <Box component='span' className='theme-tertiary ml-1'>

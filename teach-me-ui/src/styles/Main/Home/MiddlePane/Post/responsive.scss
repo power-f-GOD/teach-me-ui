@@ -9,6 +9,7 @@
   .Post {
     border-radius: 0;
     box-shadow: none;
+    margin-bottom: 0.75em;
 
     .post-header {
       padding-left: 0.75em;
@@ -32,11 +33,6 @@
       &.extra {
         margin-left: 0.75em;
       }
-    }
-
-    .QuotedPost {
-      margin: 0.75em 0.75em 0 0.75em !important;
-      width: calc(100% - 1em);
     }
 
     .Comment {

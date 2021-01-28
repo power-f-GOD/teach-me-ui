@@ -198,7 +198,7 @@ const Main = (props: MainProps) => {
           <Route path='/about' component={About} />
           <Route path='/support' component={Support} />
           <Route path='/p/:id' component={PostPage} />
-          <Route path={['/@:userId', '/profile/:id']} component={Profile} />
+          <Route path={['/@:username', '/profile/:id']} component={Profile} />
           <Route path={['/search/:query', '/search']} component={Search} />
           <Route
             path={['/questions', '/questions/tagged/:tag']}

@@ -1,0 +1,226 @@
+.Profile {
+  header {
+    height: 22rem;
+    padding-top: 3.5rem;
+    width: 100%;
+    overflow: hidden;
+    background-color: white;
+    position: relative;
+
+    > *,
+    & + * {
+      z-index: 1;
+      position: relative;
+    }
+  }
+
+  .details-container {
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    text-shadow: 0 0 0.15rem rgba(0, 0, 0, 0.5);
+  }
+
+  .cover-photo-container {
+    z-index: 0;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    transform: translateY(-3.5rem);
+    background-color: #00537e;
+
+    &::before {
+      @include before-or-after($zi: 1, $bg: rgba(0, 0, 0, 0.4));
+    }
+  }
+
+  .cover-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+
+  .change-cover {
+    width: max-content;
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 1;
+    font-size: small;
+    cursor: pointer;
+    // transform: translate(-50%, 50%);
+  }
+
+  .avatar-with-icon {
+    position: relative;
+  }
+
+  .profile-avatar {
+    $size: 9.5rem;
+
+    height: $size;
+    margin: 1rem 0;
+    width: $size;
+    font-size: 2.5rem;
+    background: $theme-primary-v5;
+    color: #fff;
+    border: 0.125rem solid #fff;
+  }
+
+  .change-avatar-button {
+    $size: 2.75rem;
+
+    height: $size;
+    width: $size;
+    position: absolute;
+    right: 0.15rem;
+    bottom: 1.15rem;
+    z-index: 2;
+    color: $theme-tertiary-v2;
+    background-color: rgba(255, 255, 255, 0.6);
+
+    &:hover,
+    &:focus {
+      background: rgba(255, 255, 255, 0.8) !important;
+    }
+  }
+
+  .MuiSvgIcon-root {
+    font-size: 2.5rem;
+  }
+
+  .display-name {
+    margin: 0.5rem 0;
+    font-weight: bold;
+    font-size: 2rem;
+    color: white;
+  }
+
+  .username {
+    margin: 0.5rem 0;
+    font-size: 1.3rem;
+    color: #ddd;
+  }
+
+  .bio {
+    color: #ddd;
+  }
+
+  .date-joined {
+    color: #bbb;
+  }
+
+  .change-cover-photo-button {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.6) !important;
+
+    &:hover,
+    &:focus {
+      background: rgba(255, 255, 255, 0.8) !important;
+    }
+  }
+
+  .edit-cover-photo {
+    margin-left: 0.2rem;
+  }
+
+  .photo-upload-button {
+    padding: 0em;
+    box-shadow: 0rem 0.2rem 0.06rem -0.125rem rgba(0, 0, 0, 0.2),
+      0rem 0.125rem 0.125rem 0rem rgba(0, 0, 0, 0.14),
+      0rem 0.0625rem 0.3125rem 0rem rgba(0, 0, 0, 0.12);
+    background-color: #e0e0e0;
+    border-radius: 0.25em;
+    padding: 0.4em 1em;
+    font-size: 0.8125rem;
+    font-weight: normal;
+    cursor: pointer;
+    color: #000;
+
+    &:hover {
+      box-shadow: 0rem 0.375rem 0.125rem -0.25rem rgba(0, 0, 0, 0.2),
+        0rem 0.125rem 0.125rem 0rem rgba(0, 0, 0, 0.14),
+        0rem 0.0625rem 0.3125rem 0rem rgba(0, 0, 0, 0.12);
+    }
+  }
+
+  @media screen and (max-width: 575px) {
+    header {
+      height: auto;
+    }
+
+    .cover-photo-container {
+      height: 18.25rem;
+      border-radius: 0 0 50% 50%;
+      overflow: hidden;
+      width: 200%;
+      left: -50%;
+    }
+
+    .cover-photo {
+      width: 100vw;
+      position: relative;
+      left: 25%;
+    }
+
+    .details-container {
+      margin-top: 9.5rem;
+      padding-bottom: 2.5rem;
+      flex-direction: column;
+      text-shadow: unset;
+
+      * {
+        justify-content: center;
+        text-align: center !important;
+      }
+
+      .react-loading-skeleton {
+        $bg1: #f0f0f0;
+        $bg2: #e6e6e6;
+
+        border-radius: 1rem !important;
+        background-color: $bg2 !important;
+        background-image: linear-gradient(90deg, $bg2, $bg1, $bg2) !important;
+      }
+    }
+
+    .profile-avatar {
+      $size: 9rem;
+
+      height: $size;
+      width: $size;
+      border: 0.4rem solid #fff;
+    }
+
+    .display-name {
+      color: $theme-tertiary-v2;
+    }
+
+    .username {
+      color: $theme-tertiary-v5;
+    }
+
+    .bio {
+      color: $theme-tertiary-v5;
+      white-space: unset;
+    }
+
+    .date-joined {
+      color: $theme-tertiary-v7;
+    }
+
+    .change-cover-photo-button {
+      bottom: unset;
+      right: 0.5rem;
+      top: 11rem;
+    }
+  }
+}
