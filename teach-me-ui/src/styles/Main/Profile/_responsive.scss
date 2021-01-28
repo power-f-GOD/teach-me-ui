@@ -1,13 +1,7 @@
 .Profile {
   @media screen and (max-width: 575px) {
-    &.self-view {
-      .nav-bar {
-        box-shadow: none;
-      }
-    }
-
     .nav-bar-wrapper {
-      margin-bottom: 1rem;
+      margin-bottom: 0.125em;
     }
   }
 
@@ -21,10 +15,6 @@
       transform: translateX(calc(50vw - 50%));
       width: max-content;
       border-radius: 0.75rem;
-    }
-
-    .Compose {
-      top: 4rem;
     }
 
     .InfoCard {
@@ -55,10 +45,6 @@
       }
     }
 
-    .Compose {
-      top: 5rem;
-    }
-
     .InfoCard {
       &.header {
         width: 100%;
@@ -82,10 +68,6 @@
     .nav-bar {
       transform: translate(-0.5rem);
       width: 100%;
-    }
-
-    .Compose {
-      top: 10.25rem;
     }
   }
 

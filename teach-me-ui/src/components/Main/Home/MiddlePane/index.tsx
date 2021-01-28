@@ -116,7 +116,12 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
 
   return (
     <Container className='middle-pane px-0 px-sm-3 px-md-0' fluid>
-      {(selfView || !inProfile) && <Compose userData={userData} />}
+      {(selfView || !inProfile) && (
+        <Compose
+          userData={userData}
+          className={`${inProfile ? 'no-shadow no-hang-in' : ''}`}
+        />
+      )}
       {!inProfile && !postsData?.length && postsStatus === 'fulfilled' && (
         <Recommendations recommendations={recommendations} />
       )}

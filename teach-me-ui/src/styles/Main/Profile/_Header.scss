@@ -34,7 +34,7 @@
     background-color: #00537e;
 
     &::before {
-      @include before-or-after($zi: 1, $bg: rgba(0, 0, 0, 0.4));
+      @include before-or-after($zi: 1, $bg: rgba(0, 0, 0, 0.5));
     }
   }
 
@@ -82,7 +82,7 @@
     bottom: 1.15rem;
     z-index: 2;
     color: $theme-tertiary-v2;
-    background-color: rgba(255, 255, 255, 0.6);
+    background-color: rgba(255, 255, 255, 0.5);
 
     &:hover,
     &:focus {
@@ -119,8 +119,8 @@
     position: absolute;
     right: 1rem;
     bottom: 1rem;
-    z-index: 1;
-    background: rgba(255, 255, 255, 0.6) !important;
+    z-index: 6;
+    background: rgba(255, 255, 255, 0.5) !important;
 
     &:hover,
     &:focus {
@@ -158,7 +158,7 @@
     }
 
     .cover-photo-container {
-      height: 18.25rem;
+      height: 17rem;
       border-radius: 0 0 50% 50%;
       overflow: hidden;
       width: 200%;
@@ -172,8 +172,8 @@
     }
 
     .details-container {
-      margin-top: 9.5rem;
-      padding-bottom: 2.5rem;
+      margin-top: 8.25rem;
+      padding-bottom: 2rem;
       flex-direction: column;
       text-shadow: unset;
 
@@ -201,26 +201,26 @@
     }
 
     .display-name {
-      color: $theme-tertiary-v2;
+      color: $theme-tertiary-v1;
     }
 
     .username {
-      color: $theme-tertiary-v5;
+      color: $theme-tertiary-v4;
     }
 
     .bio {
-      color: $theme-tertiary-v5;
+      color: $theme-tertiary-v4;
       white-space: unset;
     }
 
     .date-joined {
-      color: $theme-tertiary-v7;
+      color: $theme-tertiary-v6;
     }
 
     .change-cover-photo-button {
       bottom: unset;
       right: 0.5rem;
-      top: 11rem;
+      top: 10rem;
     }
   }
 }

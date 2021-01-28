@@ -636,6 +636,12 @@ div {
   }
 }
 
+.MuiTooltip-popper {
+  * {
+    font-size: 0.7em !important;
+  }
+}
+
 .text-right {
   text-align: right;
 }
@@ -709,8 +715,8 @@ div {
 }
 
 .no-shadow {
-  box-shadow: none;
-  text-shadow: none;
+  box-shadow: none !important;
+  text-shadow: none !important;
 }
 
 .theme-primary {

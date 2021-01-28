@@ -7,6 +7,7 @@ import Col from 'react-bootstrap/Col';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
+import Tooltip from '@material-ui/core/Tooltip';
 import Box from '@material-ui/core/Box';
 
 import { SELECT_PHOTO } from '../../../constants';
@@ -45,6 +46,7 @@ const ProfileHeader = (props: {
           className='cover-photo'
           src={
             cover_photo ||
+            'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/summer-flowers-1590678054.jpg?crop=1.00xw:0.752xh;0,0.159xh&resize=1200:*' ||
             'https://www.thoughtco.com/thmb/mik7Z00SAYN786BQbieXWOzZmc8=/2121x1414/filters:fill(auto,1)/lotus-flower-828457262-5c6334b646e0fb0001dcd75a.jpg'
           }
         />
@@ -59,11 +61,13 @@ const ProfileHeader = (props: {
             src={profile_photo}
           />
           {isSelfView && (
-            <IconButton
-              onClick={openProfilePhotoEditModal}
-              className='change-avatar-button'>
-              <FAIcon name='camera' />
-            </IconButton>
+            <Tooltip title='Edit profile photo'>
+              <IconButton
+                onClick={openProfilePhotoEditModal}
+                className='change-avatar-button'>
+                <FAIcon name='camera' />
+              </IconButton>
+            </Tooltip>
           )}
         </Box>
 
@@ -95,15 +99,21 @@ const ProfileHeader = (props: {
       </Container>
 
       {isSelfView && (
-        <Button
-          variant='contained'
-          size='small'
-          className='change-cover-photo-button btn-tertiary text px-3 py-1'
-          color='default'
-          onClick={openCoverPhotoEditModal}>
-          <FAIcon name='image' className='mr-2' fontSize='1.75em' />
-          Edit{windowWidth > 767 && ' Cover Photo'}
-        </Button>
+        <Tooltip title={windowWidth < 768 ? 'Edit cover photo' : ''}>
+          <Button
+            variant='contained'
+            size='small'
+            className='change-cover-photo-button fade-in btn-tertiary text px-2 px-md-3 py-1'
+            color='default'
+            onClick={openCoverPhotoEditModal}>
+            <FAIcon name='image' className='mr-1 mr-sm-2' fontSize='1.75em' />
+            {windowWidth > 767 ? (
+              'Edit Cover Photo'
+            ) : (
+              <FAIcon name='pen' fontSize='1.25em' />
+            )}
+          </Button>
+        </Tooltip>
       )}
     </Container>
   );
