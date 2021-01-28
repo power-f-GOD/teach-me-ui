@@ -38,18 +38,6 @@
   .app-bar-links {
     display: none;
   }
-
-  //Profile style(s)
-  .Profile {
-    .close-edit-button,
-    .edit-button {
-      right: 1.25rem;
-
-      [class*='Icon'] {
-        margin-right: 0.7rem;
-      }
-    }
-  }
 }
 
 @media screen and (max-width: 991px) {
@@ -226,12 +214,6 @@
 
   //Profile style(s)
   .Profile {
-    // overflow: hidden;
-
-    .profile-top {
-      height: 17rem;
-    }
-
     .profile-avatar-x {
       height: 7rem;
       width: 7rem;
@@ -447,29 +429,6 @@
   }
 }
 
-@media only screen and (max-width: 950px) {
-  .Profile {
-    .cover-button {
-      padding-right: 0.2rem;
-    }
-  }
-}
-
-@media only screen and (max-width: 512px) {
-  .Profile {
-    .cover-button {
-      border-radius: 10px !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      background: transparent !important;
-
-      .edit-cover-photo {
-        display: none;
-      }
-    }
-  }
-}
-
 @media only screen and (max-width: 480px) {
   // .relative {
   //   height: 7.5em;
@@ -560,6 +519,12 @@
 }
 
 @media only screen and (max-width: 575px) {
+  html,
+  body,
+  #root {
+    font-size: 0.975rem;
+  }
+
   .shift {
     margin-left: -0.47rem;
   }

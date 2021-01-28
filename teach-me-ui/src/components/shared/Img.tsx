@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default (props: any) => {
+export const Img = (props: any) => {
   const [error, setError] = useState(false);
   const onError = (e: any) => {
     setError(true);

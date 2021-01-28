@@ -31,7 +31,7 @@ const Index = (props: any) => {
           <Route path='/support' component={Support} />
           <Route path={['/search/:query', '/search']} component={Search} />
           <Route
-            path={['/@:userId', '/@:userId/colleagues', '/profile/:id']}
+            path={['/@:username', '/@:username/colleagues', '/profile/:id']}
             component={Profile}
           />
           <Route component={_404} />

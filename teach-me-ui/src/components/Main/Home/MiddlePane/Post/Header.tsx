@@ -39,7 +39,7 @@ const PostHeader = (props: PostHeaderProps) => {
         {!isLoading ? (
           <>
             <Box>
-              <Link to={`@${sender_username}`} className='font-bold'>
+              <Link to={`/@${sender_username}`} className='font-bold'>
                 {sender_name}
               </Link>
               <Box component='span' className='theme-tertiary ml-1'>

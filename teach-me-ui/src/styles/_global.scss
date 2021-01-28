@@ -41,7 +41,8 @@ body {
     textarea,
     .MuiDialogContent-root {
       &::-webkit-scrollbar {
-        width: 0.6em;
+        width: 0.5em;
+        height: 0.5em;
       }
 
       &::-webkit-scrollbar-track {
@@ -56,14 +57,23 @@ body {
       .small-bar,
       &.small-bar {
         &::-webkit-scrollbar {
-          width: 0.5em;
+          width: 0.25em;
+          height: 0.25em;
+        }
+      }
+
+      .large-bar,
+      &.large-bar {
+        &::-webkit-scrollbar {
+          width: 0.75em;
+          height: 0.75em;
         }
       }
 
       .primary-bar,
       &.primary-bar {
         &::-webkit-scrollbar-thumb {
-          background: $theme-primary-v6;
+          background: $theme-primary-v5;
         }
       }
 
@@ -89,6 +99,17 @@ body {
 
         &::-webkit-scrollbar-thumb {
           border-radius: 1rem;
+        }
+      }
+
+      .square-bar,
+      &.square-bar {
+        &::-webkit-scrollbar-track {
+          border-radius: 0;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          border-radius: 0;
         }
       }
     }

@@ -48,7 +48,7 @@ const HomeLeftPane = (props: LeftPaneProps) => {
 
   return (
     <Container as='section' className='left-pane'>
-      <Container className='rows-wrapper custom-scroll-bar small-bar rounded-bar tertiary-bar'>
+      <Container className='rows-wrapper custom-scroll-bar rounded-bar tertiary-bar'>
         <Row as='section' className='d-block'>
           <Col
             className='cover-photo'

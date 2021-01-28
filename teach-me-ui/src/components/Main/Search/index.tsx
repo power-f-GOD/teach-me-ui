@@ -130,7 +130,7 @@ const Search = (props: any) => {
             </Box>
           ) : (
             <List
-              className={`search-results-wrapper custom-scroll-bar tertiary-bar rounded-bar small-bar`}
+              className={`search-results-wrapper custom-scroll-bar tertiary-bar rounded-bar`}
               aria-label='search results'>
               {results.slice(0, 20).map((result, key) => (
                 <ListItem button divider key={key} className='search-result'>

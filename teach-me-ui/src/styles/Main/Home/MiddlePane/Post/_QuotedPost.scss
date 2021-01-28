@@ -9,6 +9,12 @@
   font-size: 0.9rem;
   background: rgba(0, 0, 0, 0.035);
 
+  .header {
+    a {
+      color: inherit;
+    }
+  }
+
   .post-avatar {
     $size: 2.15em;
 
