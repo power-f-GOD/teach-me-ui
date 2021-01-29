@@ -25,7 +25,8 @@ const App = (props: any) => {
 
   React.useEffect(() => {
     window.onresize = () => {
-      dispatch(setWindowWidth(window.innerWidth));
+      // Attepmt to fix test-build error/failure
+      if (setWindowWidth) dispatch(setWindowWidth(window.innerWidth));
     };
     window.onresize(window as any);
   }, []);
