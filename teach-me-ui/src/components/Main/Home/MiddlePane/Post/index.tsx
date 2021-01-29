@@ -152,10 +152,26 @@ const Post: React.FC<
         extra = `<b>${senderName1}</b> and <b>${first_name}</b> reposted <b>${sender_name}</b>'s post`;
         break;
       default:
-        extra = `<b>${senderName1}</b> and <b>${colleague_reposts?.length} others</b> reposted <b>${first_name}</b>'s post`;
+        extra = `${
+          colleague_reposts[0]?.sender?.id === userId
+            ? 'You'
+            : `<b>${senderName1}</b>`
+        } and <b>${
+          colleague_reposts?.length - 1
+        } others</b> reposted ${
+          sender?.id === userId ? 'your' : `<b>${first_name}</b>'s`
+        }  post`;
     }
   } else if (quote) {
-    extra = `<b>${sender_name}</b> reposted <b>${quote.sender?.first_name}</b>'s post`;
+    extra = `<b>${sender_name}</b> reposted ${
+      quote.sender.id === sender?.id
+        ? 'their own'
+        : `<b>${quote.sender?.first_name}</b>'s`
+    } post`;
+
+    if (quote.sender.id === userId) {
+      extra = '';
+    }
   } else if (colleague_replies?.length) {
     const { value: reply, index } = (loopThru(
       colleague_replies,
@@ -260,7 +276,9 @@ const Post: React.FC<
         id={id}
         className={`Post ${postsErred ? 'remove-skeleton-animation' : ''} ${
           colleague_replies?.length ? 'has-replies' : ''
-        } ${media?.length ? 'has-media' : ''} ${quote ? 'has-quote' : ''}`}>
+        } ${media?.length ? 'has-media' : ''} ${
+          quote ? 'has-quote' : colleague_reposts?.length ? 'has-quotes' : ''
+        }`}>
         {extra && (
           <small
             className='extra'

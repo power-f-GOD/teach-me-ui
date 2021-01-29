@@ -648,8 +648,8 @@ div {
 }
 
 .MuiList-padding {
-  padding-top: 0.35rem;
-  padding-bottom: 0.35rem;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
 }
 
 .MuiMenuItem-gutters {
@@ -658,11 +658,16 @@ div {
 }
 
 .MuiListItem-root {
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+  border-top: 0.0625rem solid #e4e4e4;
 
   &:nth-child(even) {
     background-color: #f2f2f2;
+  }
+
+  &:last-child {
+    border-bottom: 0.0625rem solid #e4e4e4;
   }
 }
 
@@ -671,6 +676,7 @@ div {
 }
 
 .MuiListItemText-root {
+  margin-top: 0.25rem;
   &.font-bold {
     .MuiListItemText-primary {
       font-weight: bold;

@@ -1,9 +1,11 @@
 .Post {
-  box-shadow: 
-  0 0.125em 0.25em rgba(0, 0, 0, 0.1),
-    0 0.1rem 0 rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0.125em rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  border: 0.0625rem solid rgba(0, 0, 0, 0.25);
+  padding-bottom: 0.25em;
 }
+
+$pad-x: 1.1em;
 
 .Post,
 .Reply {
@@ -11,7 +13,7 @@
   background-color: white;
   position: relative;
   font-size: 1rem;
-  border-radius: 0.85rem;
+  border-radius: $pad-x;
   margin-bottom: 0.95rem;
 
   &.has-replies {
@@ -35,8 +37,15 @@
 
   &.has-quote {
     .QuotedPost {
-      margin: 0.75rem;
+      margin: $pad-x - 0.125em;
       margin-bottom: 0;
+    }
+  }
+
+  &.has-quotes {
+    .QuotedPost {
+      margin: $pad-x - 0.125em;
+      margin-top: 0;
     }
   }
 
@@ -57,10 +66,10 @@
       font-size: 0.8em;
       overflow: hidden;
       margin-bottom: -0.25em;
-      margin-left: 0.75em;
-      width: calc(100% - 1.5em);
+      margin-left: $pad-x + 0.2em;
+      width: calc(100% - (#{$pad-x} * 2));
       border-bottom: 0.0625em solid #eee;
-      padding: 0.75em 0.75em 0.35rem 0;
+      padding: ($pad-x - 0.25em) ($pad-x - 0.25em) 0.4em 0;
     }
 
     b {
@@ -69,7 +78,7 @@
   }
 
   .post-header {
-    padding: 0.75em 0.75em 0;
+    padding: ($pad-x - 0.25em) ($pad-x) 0;
 
     a {
       color: inherit !important;
@@ -87,7 +96,7 @@
     overflow: hidden;
 
     .text {
-      padding: 0.75em 0.55em;
+      padding: ($pad-x - 0.25em) ($pad-x - 0.25em);
       width: 100%;
       cursor: pointer;
       background: inherit;
@@ -120,9 +129,9 @@
   }
 
   .post-info {
-    margin-left: 0.75rem;
-    padding: 0.25rem;
-    width: calc(100% - 1.5rem);
+    margin-left: $pad-x + 0.15em;
+    padding: 0.25em;
+    width: calc(100% - (#{($pad-x + 0.15em) * 2}));
     border-top: 0.0625rem solid #eee;
     font-size: 0.85em;
 
@@ -153,9 +162,9 @@
   }
 
   .post-footer {
-    padding: 0.5em 0;
-    width: calc(100% - 1.5em);
-    margin-left: 0.75em;
+    padding: 0.4em 0;
+    width: calc(100% - #{($pad-x) * 2});
+    margin-left: $pad-x;
     border-top: 0.0625em solid #eee;
     // border-bottom: 0.0625rem solid #eee;
 
@@ -172,16 +181,18 @@
     margin-right: 0.25rem;
 
     button {
-      max-height: 2em;
-      height: 2em;
+      max-height: 2.125em;
+      height: 2.125em;
       width: auto;
-      border-radius: 2em;
+      border-radius: 0.5em;
       font-size: 0.95em;
-      background-color: rgba(0, 0, 0, 0.06);
+      border: 0.0625em solid #eee;
+      background-color: rgba(0, 0, 0, 0.05);
 
       &:hover,
       &:focus {
         background-color: rgba(0, 0, 0, 0.11);
+        border-color: transparent;
 
         .icon {
           transform: scale(1.35);
@@ -193,6 +204,10 @@
 
         .fa-thumbs-down {
           transform: rotateZ(20deg) scale(1.35);
+        }
+
+        .fa-retweet {
+          transform: rotateZ(15deg) scale(1.35);
         }
 
         &[class*='vote'] {
@@ -211,7 +226,7 @@
       }
 
       .icon {
-        font-size: 1.1em;
+        font-size: 1.25em;
         margin-right: 0.25rem;
         color: #888;
         transition: transform 0.25s cubic-bezier(0.68, -0.55, 0.265, 1.55);

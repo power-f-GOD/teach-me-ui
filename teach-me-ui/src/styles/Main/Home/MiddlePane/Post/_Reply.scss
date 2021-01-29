@@ -1,8 +1,13 @@
+$pad-x: 1.2em;
+
 .Reply {
   font-size: 0.9em;
-  padding: 0.5em 0.75em 0 0.75em;
-  // border-radius: unset !important;
-  margin-bottom: 0;
+  padding: 0 $pad-x;
+  margin-bottom: 0.125em;
+
+  &:first-of-type {
+    margin-top: 0.5rem;
+  }
 
   &:last-child {
     .post-footer {
@@ -74,8 +79,9 @@
     padding: 0;
 
     button {
-      max-height: 1.9em;
+      max-height: 1.95em;
       background-color: transparent;
+      border-color: transparent;
 
       &:hover,
       &:focus {

@@ -65,7 +65,7 @@ const PostReply = (props: Partial<PostStateProps>) => {
   return (
     <>
       {/* Post */}
-      <Box id={id} className={`Reply fade-in-opacity`}>
+      <Box id={id} component='section' className={`Reply fade-in-opacity`}>
         {/* Post header */}
         <Row className='post-header'>
           <Avatar

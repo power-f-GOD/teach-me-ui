@@ -3,45 +3,46 @@
     border-radius: 0;
     top: 3.5em;
     margin: 0 0 0.75em 0;
-    padding: 0.5em 0.75em;
+    padding: 0.5em 0.85em;
   }
 
   .Post {
     border-radius: 0;
     box-shadow: none;
-    margin-bottom: 0.75em;
+    border: none;
+    margin-bottom: 0.7em;
 
-    .post-header {
-      padding-left: 0.75em;
-      padding-right: 0.75em;
-    }
+    // .post-header {
+    //   padding-left: 0.75em;
+    //   padding-right: 0.75em;
+    // }
 
-    .post-body {
-      .text {
-        padding: 0.75em 0.5em;
-      }
-    }
+    // .post-body {
+    //   .text {
+    //     padding: 0.75em 0.5em;
+    //   }
+    // }
 
-    .post-footer {
-      margin-left: 0.75em;
-      width: calc(100% - 1.5em);
-    }
+    // .post-footer {
+    //   margin-left: 0.75em;
+    //   width: calc(100% - 1.5em);
+    // }
   }
 
-  .Post {
-    small {
-      &.extra {
-        margin-left: 0.75em;
-      }
-    }
+  // .Post {
+  //   small {
+  //     &.extra {
+  //       margin-left: 0.75em;
+  //     }
+  //   }
 
-    .Comment {
-      padding: 0 0.75em;
-    }
-  }
+  //   .Comment {
+  //     padding: 0 0.75em;
+  //   }
+  // }
 
   .Reply {
-    border-radius: 0;
+    // border-radius: 0;
     // padding: 0.5rem 0.75rem 0;
   }
 
