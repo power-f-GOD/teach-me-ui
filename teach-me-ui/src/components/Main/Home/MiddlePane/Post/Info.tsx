@@ -52,7 +52,7 @@ const PostInfo = (props: {
             <Col as='span' className='font-bold theme-tertiary'>
               {colleagueThatUpvoted.first_name} {colleagueThatUpvoted.last_name}
             </Col>{' '}
-            upvoted)
+            likes this)
           </Box>
         )}
       </Col>

@@ -73,7 +73,7 @@ const ProfileLink = (props: { userData?: UserData; className?: string }) => {
         open={!!menuAnchorEl}
         onClose={handleProfileMenuClose(null)}
         transformOrigin={{
-          vertical: -75,
+          vertical: -80,
           horizontal: 'center'
         }}>
         <MenuItem onClick={handleProfileMenuClose('profile')}>
