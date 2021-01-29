@@ -79,7 +79,8 @@ const Home = ({ posts: _posts }: { posts: FetchState<PostStateProps> }) => {
 
   return (
     <>
-      <Container className='Home fade-in'>
+      <Container
+        className={`Home fade-in ${_posts.err ? 'de-animate-skeleton' : ''}`}>
         <Row className='mx-auto justify-content-around align-items-start pt-3'>
           <Col
             lg={3}

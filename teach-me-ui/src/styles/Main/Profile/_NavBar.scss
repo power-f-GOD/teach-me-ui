@@ -1,14 +1,4 @@
 .Profile {
-  &.self-view {
-    .nav-bar-wrapper {
-      top: unset !important;
-    }
-
-    .nav-bar {
-      box-shadow: none;
-    }
-  }
-
   .nav-bar-observee {
     position: relative;
     transform: translateY(-6rem);
@@ -38,7 +28,7 @@
     position: relative;
     font-size: small;
     border-radius: 0;
-    box-shadow: 0 1.25rem 1.5rem rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1rem 1.5rem rgba(0, 0, 0, 0.1);
     transform: unset;
     transition: 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 

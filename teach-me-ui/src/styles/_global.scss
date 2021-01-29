@@ -636,6 +636,49 @@ div {
   }
 }
 
+.MuiTooltip-popper {
+  * {
+    font-size: 0.7em !important;
+  }
+}
+
+.MuiPaper-rounded {
+  border-radius: 0.75em;
+  box-shadow: 0 0.25em 1.5rem rgba(0, 0, 0, 0.25);
+}
+
+.MuiList-padding {
+  padding-top: 0.35rem;
+  padding-bottom: 0.35rem;
+}
+
+.MuiMenuItem-gutters {
+  padding-left: 0.85rem;
+  padding-right: 0.85rem;
+}
+
+.MuiListItem-root {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+
+  &:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+}
+
+.MuiListItemIcon-root {
+  min-width: 3.25rem;
+}
+
+.MuiListItemText-root {
+  &.font-bold {
+    .MuiListItemText-primary {
+      font-weight: bold;
+      font-size: 1.15em;
+    }
+  }
+}
+
 .text-right {
   text-align: right;
 }
@@ -709,8 +752,8 @@ div {
 }
 
 .no-shadow {
-  box-shadow: none;
-  text-shadow: none;
+  box-shadow: none !important;
+  text-shadow: none !important;
 }
 
 .theme-primary {

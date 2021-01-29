@@ -30,12 +30,21 @@
       position: center;
       color: #eee;
     }
+
+    > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    &::before {
+      @include before-or-after($bg: rgba(0,0,0,0.35), $zi: 0);
+    }
   }
 
   .avatar {
     $size: 4.5rem;
 
-    top: -3.25rem;
+    top: -3rem;
     width: $size;
     height: $size;
     border: 0.35rem solid white;

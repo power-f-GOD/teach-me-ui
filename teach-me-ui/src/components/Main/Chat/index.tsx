@@ -227,9 +227,9 @@ const Chat = (props: ChatProps) => {
     if (/chat/.test(location.pathname)) {
       props.location.pathname = pathname;
       props.location.search = queryParam;
+      document.body.style.overflow = 'hidden';
     }
 
-    document.body.style.overflow = 'hidden';
     document.querySelectorAll('.Main > *').forEach((component: any) => {
       if (!/ChatBox/.test(component.className)) {
         component.inert = true;

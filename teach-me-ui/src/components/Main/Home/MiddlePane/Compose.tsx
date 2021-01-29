@@ -11,13 +11,15 @@ const openCreatePostModal = (e: any) => {
   displayModal(true, false, MAKE_POST, { title: 'Make a Post' });
 };
 
-export const Compose: React.FunctionComponent<{
+export const Compose = (props: {
   userData: Partial<UserData>;
-}> = ({ userData }) => {
+  className?: string;
+}) => {
+  const { className, userData } = props;
   const { first_name, profile_photo } = userData;
 
   return (
-    <Box className='Compose d-flex flex-column mb-2 mb-sm-3'>
+    <Box className={`Compose scale-up d-flex flex-column mb-sm-4 mb-md-3 ${className}`}>
       <Box display='flex'>
         <Box pr={1} className='d-flex align-items-center'>
           <Avatar

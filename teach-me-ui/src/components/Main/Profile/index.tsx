@@ -112,13 +112,13 @@ const Profile = (props: ProfileProps) => {
   }, [windowWidth, isSelfView]);
 
   useEffect(() => {
-    if (!isSelfView) {
+    if (!isSelfView && isAuthenticated) {
       dispatch(getDeepProfileData(idOrUsername));
     }
 
     dispatch(getProfileData(idOrUsername));
     window.scrollTo(0, 0);
-  }, [idOrUsername, isSelfView]);
+  }, [idOrUsername, isAuthenticated, isSelfView]);
 
   useEffect(() => {
     dispatch(setWindowWidth(window.innerWidth));

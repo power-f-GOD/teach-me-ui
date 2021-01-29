@@ -52,7 +52,8 @@ const HomeLeftPane = (props: LeftPaneProps) => {
         <Row as='section' className='d-block'>
           <Col
             className='cover-photo'
-            style={{ backgroundImage: `url(${cover_photo})` }}></Col>
+            style={{ backgroundImage: `url(${cover_photo})` }}
+          />
           <Avatar
             component='span'
             className={`avatar ${profile_photo ? 'has-photo' : ''}`}

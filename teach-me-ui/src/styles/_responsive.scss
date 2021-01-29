@@ -1,8 +1,4 @@
 @media screen and (min-width: 1024px) {
-  .drawer {
-    display: none;
-  }
-
   [class*='container-'],
   .container {
     max-width: $app-max-width;
@@ -10,16 +6,6 @@
 
   [class*='container-fluid'] {
     max-width: 100%;
-  }
-
-  @media screen and (max-width: 1152px) {
-    .drawer {
-      display: flex;
-    }
-
-    .app-bar-links {
-      display: none;
-    }
   }
 }
 
@@ -29,14 +15,6 @@
   .container-md,
   .container-sm {
     max-width: 100%;
-  }
-
-  .drawer {
-    display: flex;
-  }
-
-  .app-bar-links {
-    display: none;
   }
 }
 
@@ -301,18 +279,6 @@
 }
 
 @media screen and (max-width: 599px) {
-  .drawer {
-    .search {
-      display: none;
-    }
-  }
-
-  .drawer-nav {
-    .search {
-      display: inline-flex;
-    }
-  }
-
   // landing page styles
   .landing-splash-container {
     font-size: 0.95em !important;
