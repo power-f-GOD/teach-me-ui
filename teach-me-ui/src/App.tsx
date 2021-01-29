@@ -27,6 +27,7 @@ const App = (props: any) => {
     window.onresize = () => {
       dispatch(setWindowWidth(window.innerWidth));
     };
+    window.onresize(window as any);
   }, []);
 
   if (authStatus === 'pending' || signout?.status === 'pending') {

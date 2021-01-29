@@ -46,8 +46,7 @@ const ProfileHeader = (props: {
           className='cover-photo'
           src={
             cover_photo ||
-            'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/summer-flowers-1590678054.jpg?crop=1.00xw:0.752xh;0,0.159xh&resize=1200:*' ||
-            'https://www.thoughtco.com/thmb/mik7Z00SAYN786BQbieXWOzZmc8=/2121x1414/filters:fill(auto,1)/lotus-flower-828457262-5c6334b646e0fb0001dcd75a.jpg'
+            'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/summer-flowers-1590678054.jpg?crop=1.00xw:0.752xh;0,0.159xh&resize=1200:*'
           }
         />
       </Container>
@@ -110,7 +109,7 @@ const ProfileHeader = (props: {
             {windowWidth > 767 ? (
               'Edit Cover Photo'
             ) : (
-              <FAIcon name='pen' fontSize='1.25em' />
+              <FAIcon name='pen' fontSize='1em' />
             )}
           </Button>
         </Tooltip>

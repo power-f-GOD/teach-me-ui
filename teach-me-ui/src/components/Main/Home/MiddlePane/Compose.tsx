@@ -19,7 +19,7 @@ export const Compose = (props: {
   const { first_name, profile_photo } = userData;
 
   return (
-    <Box className={`Compose scale-up d-flex flex-column mb-2 mb-sm-3 ${className}`}>
+    <Box className={`Compose scale-up d-flex flex-column mb-sm-4 mb-md-3 ${className}`}>
       <Box display='flex'>
         <Box pr={1} className='d-flex align-items-center'>
           <Avatar
