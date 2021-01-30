@@ -42,7 +42,9 @@ export default function MainNavMenu(props: any) {
         <NavLink
           exact
           to={`/@${username}`}
-          isActive={(_, location) => /\/@\w+/.test(location.pathname)}
+          isActive={(_, location) =>
+            /\/(@\w+|profile\/.+)/.test(location.pathname)
+          }
           className='nav-link'>
           <FAIcon name='user-circle' />
           <Box component='span' className='nav-label'>

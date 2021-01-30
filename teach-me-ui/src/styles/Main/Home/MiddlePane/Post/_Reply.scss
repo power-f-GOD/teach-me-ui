@@ -1,6 +1,7 @@
 $pad-x: 1.2em;
 
 .Reply {
+  
   font-size: 0.9em;
   padding: 0 $pad-x;
   margin-bottom: 0.125em;
@@ -11,7 +12,6 @@ $pad-x: 1.2em;
 
   &:last-child {
     .post-footer {
-      padding-bottom: 0.35em;
       border-bottom: none;
     }
 
@@ -66,20 +66,21 @@ $pad-x: 1.2em;
   }
 
   .post-footer {
+    // @include debugger();
     width: calc(100% - 3.25em) !important;
     margin-left: 3.25em !important;
     margin-top: -0.3em;
     border-top: none;
     padding: 0.25em 0 0.25em 0;
-    border-bottom: none !important; // 0.0625em solid #eee;
+    border-bottom: none !important;
   }
 
   .reaction-wrapper {
-    max-width: 4.5em;
+    justify-content: center;
     padding: 0;
 
     button {
-      max-height: 1.95em;
+      max-height: 2em;
       background-color: transparent;
       border-color: transparent;
 

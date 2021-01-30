@@ -49,7 +49,6 @@
 }
 
 .notification-result {
-  padding: 0.3rem 0.8rem;
   display: block;
 
   a {
@@ -63,15 +62,10 @@
     display: block;
     width: 3.4rem !important;
     height: 3.5rem !important;
-    margin-right: 0.4rem;
   }
 
   .dropdown-contents {
     width: 100%;
-  }
-  .notification-result {
-    margin-bottom: 0.04em;
-    padding: 0.3rem 0.5rem;
   }
 
   .notification-container1 {
@@ -98,10 +92,6 @@
 
 .notifications-skeleton {
   margin-left: 4em !important;
-}
-
-.notification-result > div > span > img {
-  margin-right: 0.4em;
 }
 
 .notification-avatar {

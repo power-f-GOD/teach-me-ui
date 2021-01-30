@@ -43,10 +43,12 @@ const ProfileHeader = (props: {
       <Container fluid className='cover-photo-container px-0'>
         <Img
           alt={displayName}
-          className='cover-photo'
+          className={`cover-photo ${
+            displayName && cover_photo ? 'fade-in-opacity' : ''
+          }`}
           src={
             cover_photo ||
-            'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/summer-flowers-1590678054.jpg?crop=1.00xw:0.752xh;0,0.159xh&resize=1200:*'
+            'https://www.thoughtco.com/thmb/mik7Z00SAYN786BQbieXWOzZmc8=/2121x1414/filters:fill(auto,1)/lotus-flower-828457262-5c6334b646e0fb0001dcd75a.jpg'
           }
         />
       </Container>
