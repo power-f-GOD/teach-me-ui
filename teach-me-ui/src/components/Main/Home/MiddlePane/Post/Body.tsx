@@ -87,10 +87,10 @@ const PostBody = (props: PostBodyProps) => {
               gridTemplateColumns: '1fr 1fr',
               gridTemplateRows: `repeat(${
                 media?.length === 1 ? 2 : Math.ceil((media as any[]).length / 2)
-              }, 12rem)`,
+              }, 12em)`,
               gridAutoFlow: 'row',
-              columnGap: '0.4rem',
-              rowGap: '0.4rem'
+              columnGap: '0.3em',
+              rowGap: '0.3em'
             }}>
             {media?.map((m, i, self) => {
               const style: any = {};

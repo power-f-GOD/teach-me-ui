@@ -109,7 +109,7 @@ $pad-x: 1.1em;
       border: 0.25em dashed transparent;
       border-top: none;
       border-bottom: none;
-      white-space: pre-wrap;
+      white-space: pre-line;
 
       &:hover,
       &:focus {
@@ -117,7 +117,8 @@ $pad-x: 1.1em;
       }
     }
 
-    img {
+    img,
+    video {
       object-fit: cover;
       object-position: center;
       vertical-align: middle;
@@ -125,12 +126,18 @@ $pad-x: 1.1em;
       height: 100%;
       border-radius: $pad-x / 1.5;
       transition: 0.5s;
+
+      &:hover {
+        transition: 0.25s;
+        transform: scale(1.02);
+      }
     }
   }
 
   .media-container {
-    width: calc(100% - (#{($pad-x) * 2}));
-    margin: 0.25em 0 0.5em $pad-x;
+    width: calc(100% - (#{($pad-x / 2.5) * 2}));
+    margin: 0.25em 0 0.5em (($pad-x / 2.5));
+    cursor: pointer;
   }
 
   .post-info {

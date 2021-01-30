@@ -51,7 +51,7 @@
   }
 }
 
-$btn-size: 2.75em;
+$btn-size: 3em;
 
 .nav-link {
   $size: $btn-size;
@@ -67,17 +67,20 @@ $btn-size: 2.75em;
   margin: 0 0 0 1rem;
   padding: 0.75em;
   font-size: 1rem;
-  color: rgba(255, 255, 255, 0.6) !important;
+  color: white !important;
+  opacity: 0.6;
+  // color: rgba(255, 255, 255, 0.6) !important;
   text-transform: uppercase !important;
-  transition: 0.35s;
+  transition: 0.3s, font-weight 0s;
   position: relative;
 
   &.active {
-    color: white !important;
+    opacity: 1;
+    font-weight: bold;
 
     &::before {
       background: unset;
-      border-color: #eee;
+      border-color: #fff;
     }
 
     .profile-photo {
@@ -90,7 +93,8 @@ $btn-size: 2.75em;
 
   &:hover,
   &:focus {
-    color: white !important;
+    opacity: 1;
+    font-weight: bolder;
 
     &::before {
       transform: rotateZ(-60deg) scale(1.09);
@@ -100,12 +104,10 @@ $btn-size: 2.75em;
   }
 
   &::before {
-    @include before-or-after(
-      $br: 50%,
-      $bg: rgba(255, 255, 255, 0.125),
-      $tr: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)
-    );
-    border: 0.125rem solid transparent;
+    @include before-or-after($br: 50%, $bg: rgba(255, 255, 255, 0.125));
+    transition: border-color 0.1s,
+      transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 0.15rem solid transparent;
   }
 
   .nav-label {
@@ -119,15 +121,17 @@ $btn-size: 2.75em;
 
 .drawer {
   .menu-button {
-    max-height: $btn-size;
-    max-width: $btn-size;
-    background-color: rgba(255, 255, 255, 0.075);
+    $size: $btn-size - 1em;
+
+    max-height: $size;
+    max-width: $size;
+    background-color: rgba(255, 255, 255, 0.1);
     margin-left: 0.0625em;
     transition: 0.3s;
 
     &:hover,
     &:focus {
-      background-color: rgba(255, 255, 255, 0.3);
+      background-color: rgba(255, 255, 255, 0.2);
     }
   }
 }
@@ -160,8 +164,8 @@ $btn-size: 2.75em;
     }
 
     &:before {
-      height: $btn-size;
-      width: $btn-size;
+      height: $btn-size - 0.125em;
+      width: $btn-size - 0.125em;
       left: 0.125em;
     }
 
@@ -190,23 +194,5 @@ $btn-size: 2.75em;
     overflow-x: hidden;
     background: $theme-primary-v3;
     max-width: 300px;
-  }
-}
-
-@media screen and (min-width: 576px) {
-  $btn-size: 3rem;
-
-  .nav-link {
-    $size: $btn-size;
-
-    max-height: $size;
-    max-width: $size;
-  }
-
-  .drawer {
-    .menu-button {
-      max-height: $btn-size;
-      max-width: $btn-size;
-    }
   }
 }
