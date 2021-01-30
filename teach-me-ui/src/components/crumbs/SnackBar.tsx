@@ -8,7 +8,6 @@ import Fade from '@material-ui/core/Fade';
 
 import { promisedDispatch } from '../../utils';
 import { displaySnackbar } from '../../actions/misc';
-import { userDeviceIsMobile } from '../../index';
 import { SnackbarState } from '../../types';
 
 const SnackBar = (props: { snackbar: SnackbarState; windowWidth: number }) => {
@@ -30,11 +29,11 @@ const SnackBar = (props: { snackbar: SnackbarState; windowWidth: number }) => {
 
   return (
     <Slide
-      direction={closed ? (windowWidth < 576 ? 'down' : 'right') : 'up'}
+      direction={closed ? (windowWidth < 576 ? 'up' : 'right') : 'up'}
       in={open && !closed}
       mountOnEnter
       unmountOnExit
-      timeout={userDeviceIsMobile ? (closed ? 225 : 275) : closed ? 325 : 375}>
+      timeout={windowWidth < 576 ? (closed ? 200 : 250) : closed ? 300 : 350}>
       <Snackbar
         open
         onClose={handleClose}
