@@ -89,8 +89,8 @@ const PostBody = (props: PostBodyProps) => {
                 media?.length === 1 ? 2 : Math.ceil((media as any[]).length / 2)
               }, 12rem)`,
               gridAutoFlow: 'row',
-              columnGap: '0.2rem',
-              rowGap: '0.2rem'
+              columnGap: '0.4rem',
+              rowGap: '0.4rem'
             }}>
             {media?.map((m, i, self) => {
               const style: any = {};

@@ -86,7 +86,9 @@ const ProfileLink = (props: { userData?: UserData; className?: string }) => {
             secondary={'My Profile'}
           />
         </MenuItem>
-        <MenuItem onClick={handleProfileMenuClose('signout')}>
+        <MenuItem
+          onClick={handleProfileMenuClose('signout')}
+          className='theme-bg-tertiary-lightest'>
           <ListItemIcon>
             <FAIcon name='sign-out-alt' fontSize='1.25rem' className='mr-2' />
           </ListItemIcon>

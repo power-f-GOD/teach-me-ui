@@ -133,6 +133,7 @@ body {
 img {
   max-width: 100%;
   height: auto;
+  transition: 0.35s;
 }
 
 input {
@@ -155,6 +156,10 @@ a {
   &:focus {
     text-decoration: underline;
   }
+}
+
+strong {
+  font-weight: bolder;
 }
 
 h1,
@@ -660,14 +665,14 @@ div {
 .MuiListItem-root {
   padding-top: 0.2rem;
   padding-bottom: 0.2rem;
-  border-top: 0.0625rem solid #e4e4e4;
+  border-top: 0.0625rem solid #e0e0e0;
 
   &:nth-child(even) {
-    background-color: #f2f2f2;
+    // background-color: #f2f2f2;
   }
 
   &:last-child {
-    border-bottom: 0.0625rem solid #e4e4e4;
+    border-bottom: 0.0625rem solid #e0e0e0;
   }
 }
 
@@ -676,8 +681,9 @@ div {
 }
 
 .MuiListItemText-root {
-  margin-top: 0.25rem;
   &.font-bold {
+    margin-top: 0.25rem;
+
     .MuiListItemText-primary {
       font-weight: bold;
       font-size: 1.15em;
@@ -810,16 +816,32 @@ div {
   color: $theme-tertiary-v9 !important;
 }
 
-.theme-bgcolor-primary {
+.theme-bg-primary {
   background-color: $theme-primary;
 }
 
-.theme-bgcolor-secondary {
+.theme-bg-secondary {
   background-color: $theme-secondary;
 }
 
-.theme-bgcolor-tertiary {
+.theme-bg-tertiary-darkest {
+  background-color: $theme-tertiary-v1;
+}
+
+.theme-bg-tertiary-darker {
+  background-color: $theme-tertiary-v3;
+}
+
+.theme-bg-tertiary {
   background-color: $theme-tertiary;
+}
+
+.theme-bg-tertiary-lighter {
+  background-color: $theme-tertiary-v7;
+}
+
+.theme-bg-tertiary-lightest {
+  background-color: #eee;
 }
 
 [class*='theme-'] {

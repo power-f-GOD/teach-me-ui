@@ -77,5 +77,13 @@
         right: calc(50vw - (1300px / 2) + 0.75rem);
       }
     }
+
+    .Post {
+      .reaction-wrapper {
+        &:last-child {
+          max-width: 22%;
+        }
+      }
+    }
   }
 }

@@ -15,7 +15,7 @@ export default function NavGeneralLinks(props: any) {
           to='/'
           isActive={(_, { pathname }) => ['/', '/home'].includes(pathname)}
           className='nav-link'>
-          <FAIcon name='home' className='nav-icon' />
+          <FAIcon name='home' />
           <Box component='span' className='nav-label'>
             Home
           </Box>
@@ -25,7 +25,7 @@ export default function NavGeneralLinks(props: any) {
       {props.forIndex ? (
         <Tooltip title='Know About Us'>
           <NavLink to='/about' className='nav-link d-none'>
-            <FAIcon name='info-circle' className='nav-icon' />
+            <FAIcon name='info-circle' />
             <Box component='span' className='nav-label'>
               About
             </Box>
@@ -44,7 +44,7 @@ export default function NavGeneralLinks(props: any) {
       <Box component='span' marginX='1.5em' />
       <Tooltip title='Seek Support'>
         <NavLink exact to='/support' className='nav-link d-none'>
-          <FAIcon name='question-circle' className='nav-icon' />
+          <FAIcon name='question-circle' />
           <Box component='span' className='nav-label ml-3'>
             Support
           </Box>

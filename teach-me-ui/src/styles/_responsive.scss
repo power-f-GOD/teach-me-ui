@@ -278,7 +278,17 @@
   }
 }
 
-@media screen and (max-width: 599px) {
+@media screen and (max-width: 575px) {
+  .MuiSnackbar-root {
+    bottom: 0;
+    right: 0;
+    left: 0;
+  }
+
+  .MuiAlert-root {
+    border-radius: 0;
+  }
+
   // landing page styles
   .landing-splash-container {
     font-size: 0.95em !important;
@@ -389,29 +399,23 @@
 }
 
 @media only screen and (max-width: 575px) {
+  html,
+  body,
+  #root {
+    font-size: 0.975rem;
+  }
+
+  .shift {
+    margin-left: -0.47rem;
+  }
+
+  .shift2 {
+    margin-left: 0.5rem;
+  }
+
   .modal-contents {
     overflow-y: auto !important;
     max-height: 85vh;
-  }
-}
-
-@media only screen and (max-width: 480px) {
-  // .relative {
-  //   height: 7.5em;
-  // }
-
-  .decline-request {
-    min-width: 3rem !important;
-    max-width: 5rem;
-    [class*='Icon'] {
-      margin: 0 !important;
-    }
-    .MuiButton-label {
-      width: max-content !important;
-    }
-    .colleaguing-text {
-      display: none !important;
-    }
   }
 
   .post {
@@ -481,22 +485,6 @@
     ::-webkit-scrollbar-thumb:hover {
       background: rgb(170, 168, 168);
     }
-  }
-}
-
-@media only screen and (max-width: 575px) {
-  html,
-  body,
-  #root {
-    font-size: 0.975rem;
-  }
-
-  .shift {
-    margin-left: -0.47rem;
-  }
-
-  .shift2 {
-    margin-left: 0.5rem;
   }
 }
 

@@ -11,7 +11,8 @@ import { displaySnackbar } from '../../actions/misc';
 import { userDeviceIsMobile } from '../../index';
 import { SnackbarState } from '../../types';
 
-const SnackBar = ({ snackbar }: { snackbar: SnackbarState }) => {
+const SnackBar = (props: { snackbar: SnackbarState; windowWidth: number }) => {
+  const { snackbar, windowWidth } = props;
   const { open, message, severity, autoHide, timeout: _timeout } = snackbar;
   const [closed, setClosed] = useState<boolean>(false);
   let timeout: any;
@@ -29,7 +30,7 @@ const SnackBar = ({ snackbar }: { snackbar: SnackbarState }) => {
 
   return (
     <Slide
-      direction={closed ? 'right' : 'up'}
+      direction={closed ? (windowWidth < 576 ? 'down' : 'right') : 'up'}
       in={open && !closed}
       mountOnEnter
       unmountOnExit
@@ -56,6 +57,8 @@ const SnackBar = ({ snackbar }: { snackbar: SnackbarState }) => {
   );
 };
 
-export default connect(({ snackbar }: any) => {
-  return { snackbar };
-})(SnackBar);
+export default connect(
+  (state: { snackbar: SnackbarState; windowWidth: number }) => {
+    return { snackbar: state.snackbar, windowWidth: state.windowWidth };
+  }
+)(SnackBar);

@@ -60,3 +60,21 @@
     max-width: calc(100% - 0.75rem);
   }
 }
+
+.Post {
+  @media screen and (min-width: 1301px) {
+    .reaction-wrapper {
+      &:nth-of-type(2) {
+        justify-content: flex-start !important;
+      }
+
+      &:nth-of-type(3) {
+        justify-content: flex-end !important;
+      }
+
+      &:last-child {
+        max-width: 25%;
+      }
+    }
+  }
+}

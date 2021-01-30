@@ -20,62 +20,6 @@
   align-items: center;
   padding: 0;
 
-  .dropdown {
-    position: fixed !important;
-    display: block;
-    width: 10rem;
-    background-color: #ddd;
-    border-radius: 0.5rem;
-    box-shadow: 0rem 0.2rem 0.75rem rgba(0, 0, 0, 0.15);
-    right: 1rem;
-    top: 4.2rem;
-
-    .display-name {
-      font-weight: bold;
-    }
-
-    .sign-out,
-    .profile {
-      background-color: white;
-      color: black;
-      padding: 0.5rem;
-    }
-
-    .sign-out {
-      margin: 0rem;
-      margin-top: 0.09375rem !important;
-      border-radius: 0rem 0rem 0.5rem 0.5rem;
-
-      &:hover {
-        background-color: #eee;
-      }
-    }
-
-    .profile {
-      margin: 0rem;
-      padding-left: 0.3rem !important;
-      border-radius: 0.5rem 0.5rem 0rem 0rem;
-
-      &:hover {
-        background-color: #eee;
-      }
-
-      .my-profile {
-        border-radius: 1rem;
-        background-color: #8ba22a;
-        color: white;
-        width: fit-content;
-        padding-right: 0.5rem !important;
-        padding-left: 0.5rem !important;
-        font-weight: bold;
-      }
-    }
-
-    .user-details {
-      margin-left: 0.5rem;
-    }
-  }
-
   a {
     text-decoration: none;
 
@@ -105,30 +49,12 @@
     background: inherit;
     color: inherit;
   }
-
-  .avatar-container {
-    margin-top: -0.35rem !important;
-    position: relative;
-    align-items: center;
-
-    &:hover {
-      color: $theme-secondary-v8 !important;
-    }
-
-    .avatar {
-      position: absolute;
-      right: 0.1rem;
-      top: 1.85rem;
-    }
-  }
 }
 
-.nav-icon {
-  transition: 0.35s;
-}
+$btn-size: 2.75em;
 
 .nav-link {
-  $size: 3rem;
+  $size: $btn-size;
 
   min-height: $size;
   height: $size;
@@ -141,7 +67,7 @@
   margin: 0 0 0 1rem;
   padding: 0.75em;
   font-size: 1rem;
-  color: rgba(255, 255, 255, 0.7) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
   text-transform: uppercase !important;
   transition: 0.35s;
   position: relative;
@@ -176,7 +102,7 @@
   &::before {
     @include before-or-after(
       $br: 50%,
-      $bg: rgba(255, 255, 255, 0.2),
+      $bg: rgba(255, 255, 255, 0.125),
       $tr: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)
     );
     border: 0.125rem solid transparent;
@@ -193,7 +119,9 @@
 
 .drawer {
   .menu-button {
-    background-color: rgba(255, 255, 255, 0.1);
+    max-height: $btn-size;
+    max-width: $btn-size;
+    background-color: rgba(255, 255, 255, 0.075);
     margin-left: 0.0625em;
     transition: 0.3s;
 
@@ -232,8 +160,9 @@
     }
 
     &:before {
-      width: 3rem;
-      height: 3rem;
+      height: $btn-size;
+      width: $btn-size;
+      left: 0.125em;
     }
 
     .icon {
@@ -261,5 +190,23 @@
     overflow-x: hidden;
     background: $theme-primary-v3;
     max-width: 300px;
+  }
+}
+
+@media screen and (min-width: 576px) {
+  $btn-size: 3rem;
+
+  .nav-link {
+    $size: $btn-size;
+
+    max-height: $size;
+    max-width: $size;
+  }
+
+  .drawer {
+    .menu-button {
+      max-height: $btn-size;
+      max-width: $btn-size;
+    }
   }
 }

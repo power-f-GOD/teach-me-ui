@@ -45,7 +45,11 @@ const PostFooter = (props: PostCrumbs) => {
       <>
         <Row className='post-footer'>
           {date && (
-            <Col as='small' className='theme-tertiary mr-3 ml-2 text-ellipsis'>
+            <Col
+              xs={3}
+              sm={2}
+              as='small'
+              className='theme-tertiary px-0 text-ellipsis'>
               {formatDate(date)?.replace('ago', '')}
             </Col>
           )}
@@ -57,7 +61,7 @@ const PostFooter = (props: PostCrumbs) => {
               type='UPVOTE'
             />
           </Col>
-          <Col className='reaction-wrapper d-flex align-items-center'>
+          <Col className='reaction-wrapper justify-content-sm-start justify-content-start d-flex align-items-center'>
             <ReactionButton
               id={id!}
               reaction={reaction === 'DOWNVOTE' ? reaction : null}
@@ -66,7 +70,7 @@ const PostFooter = (props: PostCrumbs) => {
             />
           </Col>
           {openCreateRepostModal && repostMeta && (
-            <Col className='reaction-wrapper d-flex align-items-center'>
+            <Col className='reaction-wrapper d-flex justify-content-sm-end justify-content-start align-items-center'>
               <Button
                 onClick={
                   openCreateRepostModal
@@ -78,10 +82,20 @@ const PostFooter = (props: PostCrumbs) => {
                 }`}>
                 <FAIcon name='retweet' />
                 <Box>{bigNumberFormat(repost_count!)}</Box>
+                <Box
+                  component='span'
+                  className='desc d-none d-sm-inline d-md-none d-xl-inline'>
+                  repost{repost_count! === 1 ? '' : 's'}
+                </Box>
               </Button>
             </Col>
           )}
-          <Col className='reaction-wrapper d-flex align-items-center justify-content-end ml-auto mr-0'>
+
+          <Col
+            xs={3}
+            sm={date ? 5 : 3}
+            md={4}
+            className='reaction-wrapper d-flex align-items-center justify-content-end mr-0'>
             {anchorIsParent && (
               <Button
                 onClick={handleCommentClick}
