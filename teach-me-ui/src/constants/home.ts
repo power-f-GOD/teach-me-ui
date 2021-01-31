@@ -3,6 +3,9 @@ import { MakePostState, PostStateProps, StatusPropsState } from '../types';
 export const REPLY_TO_POST = 'REPLY_TO_POST';
 export const SUBMIT_POST = 'SUBMIT_POST';
 
+export const FETCH_POST = 'FETCH_POST';
+export const FETCH_REPLIES = 'FETCH_REPLIES';
+
 export const GET_POSTS = 'GET_POSTS';
 export const SET_POSTS = 'SET_POSTS';
 
@@ -42,6 +45,12 @@ export const makeRepostState: StatusPropsState = {
   err: false
 }
 
+export const fetchRepliesState: StatusPropsState = {
+  status: 'settled',
+  err: false,
+  data: []
+}
+
 export const postState: PostStateProps = {
   downvote_count: 0,
   reactions: [],
@@ -60,5 +69,12 @@ export const postState: PostStateProps = {
   text: '',
   upvotes: [],
   type: 'post',
-  numRepliesToShow: 2
+  numRepliesToShow: 2,
+  reposts: []
 };
+
+export const fetchPostState: StatusPropsState = {
+  status: 'settled',
+  err: false,
+  data: postState
+}

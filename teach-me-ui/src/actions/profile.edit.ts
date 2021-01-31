@@ -407,7 +407,6 @@ export const updateUserDataRequest = (
     func: updateUserData
   });
   dispatch(updateUserData({ status: 'pending' }));
-  console.log(data);
 
   axios({
     url: '/account/update',

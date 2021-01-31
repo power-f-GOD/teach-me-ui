@@ -7,5 +7,6 @@ export * from './colleague';
 export * from './notifications';
 export * from './question';
 export * from './main/profile';
+export * from './search';
 export * from './upload';
 export * from './profile.edit';

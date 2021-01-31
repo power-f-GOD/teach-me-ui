@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Box from '@material-ui/core/Box';
 import Modal from '@material-ui/core/Modal';
@@ -14,7 +14,7 @@ import { dispatch, loopThru } from '../../../../../functions/utils';
 import { PostStateProps, LoopFind } from '../../../../../types';
 
 import { displayModal } from '../../../../../functions';
-import { triggerSearchKanyimuta } from '../../../../../actions/search';
+import { triggerSearchKanyimuta, fetchRepliesRequest } from '../../../../../actions';
 
 import { LazyLoadImage as LazyImg } from 'react-lazy-load-image-component';
 
@@ -94,9 +94,12 @@ const Post: React.FC<
     quote?: PostStateProps;
     userId?: string;
     forceUpdate?: any;
+    replies?: any;
   }
 > = (props) => {
   const { index, postsErred, quote, userId, ...others } = props;
+  // console.log(props);
+  
   const {
     // type,
     media,
@@ -113,8 +116,14 @@ const Post: React.FC<
     repost_count,
     upvote_count,
     downvote_count,
-    numRepliesToShow: _numRepliesToShow
+    numRepliesToShow: _numRepliesToShow,
+    replies
   } = others || {};
+
+  useEffect(()=> {
+    id && dispatch(fetchRepliesRequest(id))
+  }, [id])
+
   const { username: sender_username, first_name, last_name, profile_photo } =
     sender || {};
   const sender_name = first_name ? `${first_name} ${last_name}` : '';
@@ -278,6 +287,7 @@ const Post: React.FC<
 
         {/* Post body */}
         <PostBody
+          head={!!props.head}
           isLoading={!sender_name}
           quote={quote}
           post_id={id!}
@@ -315,9 +325,13 @@ const Post: React.FC<
         />
 
         {/* Post replies */}
-        {colleague_replies?.slice(-numRepliesToShow).map((reply) => (
-          <PostReply {...reply} key={reply.id} />
-        ))}
+        {props.head ? (
+          replies.map((reply: any) => (
+            <PostReply {...reply} key={reply.id} />
+        ))) : (
+          colleague_replies?.slice(-numRepliesToShow).map((reply) => (
+            <PostReply {...reply} key={reply.id} />
+        )))}
       </Box>
     </>
   );

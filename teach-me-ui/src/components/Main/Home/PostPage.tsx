@@ -3,88 +3,62 @@ import React from 'react';
 // import Box from '@material-ui/core/Box';
 
 import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 
-import Box from '@material-ui/core/Box';
-
-import HomeRightPane from './RightPane';
 import Post from './MiddlePane/Post';
-import Loader from '../../shared/Loaders';
 
 import { connect } from 'react-redux';
 
-import { fetchReplies, fetchPost } from '../../../actions';
+import { fetchPostRequest } from '../../../actions';
 
 import { Redirect } from 'react-router-dom';
 
 import { dispatch } from '../../../functions';
-import { PostStateProps, FetchState } from '../../../types';
+import { PostStateProps } from '../../../types';
 
 const PostPage = (props: {
   match: any;
-  posts: FetchState<PostStateProps[]>;
-  fetchSinglePostStatus: any;
-  post: any;
+  // posts: FetchState<PostStateProps[]>;
+  fetchPost: any;
+  fetchReplies: any
 }) => {
-  const { match, fetchSinglePostStatus } = props;
+  const { match, fetchPost, fetchReplies } = props;
   // const { status: postsStatus } = posts;
 
   React.useEffect(() => {
     window.scrollTo(0, 0);
-    dispatch(fetchPost(match.params.id));
+    dispatch(fetchPostRequest(match.params.id));
   }, [match.params.id]);
+  
+  if (fetchPost.err) {
+    return <Redirect to='/404' />;
+  }
 
-  if (fetchSinglePostStatus === 'pending') {
-    return <Loader />;
+  const formatPostData = (post: PostStateProps) => {
+    let tempPost: any = {};
+    tempPost = post.reposts[0];
+    tempPost.quote = post;
+    tempPost.reposts = [];
+    return tempPost;
   }
-  if (fetchSinglePostStatus === 'rejected') {
-    return <Redirect to='/' />;
+
+  if (fetchPost.data.reposts[0]) {
+    fetchPost.data = formatPostData(fetchPost.data);
   }
+  
   return (
     <>
-      <Container className='Home fade-in'>
-        <Row className='flex-row m-2 justify-content-between'>
-          <Col lg={9} md={9} className='middle-pane-col pr-2'>
-            <Post head {...{ ...props.post, sec_type: undefined }} />
-            <Replies id={props.match.params.id} />
-          </Col>
-          <Col lg={3} className='d-none d-lg-block right-pane-col'>
-            <HomeRightPane />
-          </Col>
-        </Row>
+      <Container className='p-0 fade-in'>
+        <Post head {...{ ...fetchPost.data, replies: fetchReplies.data }} />
       </Container>
     </>
   );
 };
 
-const RepliesBase = (props: any) => {
-  React.useEffect(() => {
-    dispatch(fetchReplies(props.id));
-  }, [props.id]);
-  return (
-    <Box ml={5}>
-      {props.fetchPostStatus.status === 'resolved' &&
-        props.posts.map((reply: any, i: number) => {
-          return <Post key={i} {...{ ...reply, sec_type: undefined }} />;
-        })}
-      {props.fetchPostStatus.status === 'pending' &&
-        Array.from({ length: 4 }).map((_, i) => <Post key={i} />)}
-    </Box>
-  );
-};
 
-const mapStateToProps = (state: any, ownProps: any) => ({
+const mapStateToProps = ({fetchPost, fetchReplies }: any, ownProps: any) => ({
   ...ownProps,
-  posts: state.posts
+  fetchPost,
+  fetchReplies
 });
 
-const Replies = connect(mapStateToProps)(RepliesBase);
-
-export default connect(
-  ({ singlePost, fetchSinglePostStatus }: any, ownProps: any) => ({
-    ...ownProps,
-    post: singlePost,
-    fetchSinglePostStatus
-  })
-)(PostPage);
+export default connect(mapStateToProps)(PostPage);

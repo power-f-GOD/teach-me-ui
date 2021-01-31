@@ -52,7 +52,7 @@ const ModalFrame = (props: any) => {
       modalBody = <MakePost />;
       break;
     case MAKE_REPOST:
-      modalBody = <CreateRepost {...props.modal.meta?.post} />;
+      modalBody = <CreateRepost post={props.modal.meta?.post} />;
       break;
     case EDIT_PROFILE:
       modalBody = <EditProfile />;

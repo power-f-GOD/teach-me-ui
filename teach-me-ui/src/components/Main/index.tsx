@@ -17,7 +17,6 @@ import Loader from '../shared/Loaders';
 import ModalFrame from '../modals';
 import Chat from './Chat';
 import Search from './Search';
-import PostPage from './Home/PostPage';
 import Questions from './Q&A';
 import QuestionPage from './Q&A/QuestionPage';
 import _404 from '../Index/_404';

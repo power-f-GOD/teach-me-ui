@@ -2,6 +2,7 @@ import { UserData, SocketPipe, SocketStruct, StatusPropsState } from "./shared";
 import { ColleagueData } from "./profile";
 
 export interface PostStateProps {
+  head?: boolean;
   downvote_count: number;
   reactions: UserData[];
   reply_count: number;
@@ -24,6 +25,7 @@ export interface PostStateProps {
   sec_type?: 'REPOST' | 'REPLY';
   type?: 'post' | 'reply';
   numRepliesToShow?: number;
+  reposts: Array<any>
 }
 
 export interface SendReplyProps extends SocketStruct {

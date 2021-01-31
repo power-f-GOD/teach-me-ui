@@ -9,13 +9,12 @@ import {
 
 import { displayModal } from '../functions';
 
-import { postState, POST_REACTION, POST_REPLY, TONE_NAME__OPEN_ENDED } from '../constants';
+import { POST_REACTION, POST_REPLY, TONE_NAME__OPEN_ENDED } from '../constants';
 import { SocketPipe, NotificationSoundState } from '../types';
 
 export default function post(data: any) {
-  const { notificationSound, userData} = getState() as {
+  const { notificationSound } = getState() as {
     notificationSound: NotificationSoundState;
-    userData: any
   };
   const toneName: NotificationSoundState['toneName'] = TONE_NAME__OPEN_ENDED;
 
@@ -52,14 +51,6 @@ export default function post(data: any) {
               status: 'fulfilled'
             })
           );
-          console.log(data);
-            
-          dispatch(
-            posts({
-              data: [{ ...postState, ...data, sender: userData }],
-              statusText: 'new post created'
-            })
-          );
           displayModal(false);
   
           if (notificationSound.isPlaying) {
@@ -72,7 +63,6 @@ export default function post(data: any) {
             dispatch(triggerNotificationSound({ play: true, toneName }));
           }
         
-
           window.history.back();
           dispatch(displayModal(false));
         } else {

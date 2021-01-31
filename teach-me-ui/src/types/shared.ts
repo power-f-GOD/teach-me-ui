@@ -98,6 +98,7 @@ export interface StatusPropsState {
   status?: 'settled' | 'pending' | 'fulfilled';
   err?: boolean;
   statusText?: string;
+  data?: any;
 }
 
 export interface SearchState extends StatusPropsState {
