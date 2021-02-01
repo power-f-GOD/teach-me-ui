@@ -106,6 +106,7 @@ export const fetchPost = (payload: FetchState<Object, string>) => {
 };
 
 export const fetchPostRequest = (postId?: string) => ( dispatch: Function) => {
+  dispatch(fetchReplies({status: 'pending', data:[]}));
   dispatch(fetchPost({status: 'pending', data: postState}));
 
   checkNetworkStatusWhilstPend({
