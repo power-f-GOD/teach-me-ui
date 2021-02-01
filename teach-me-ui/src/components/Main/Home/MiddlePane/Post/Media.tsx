@@ -21,8 +21,8 @@ const Media = ({
           media?.length === 1 ? 2 : Math.ceil((media as any[]).length / 2)
         }, 12em)`,
         gridAutoFlow: 'row',
-        columnGap: '0.3em',
-        rowGap: '0.3em'
+        columnGap: '0.25em',
+        rowGap: '0.25em'
       }}>
       {media?.map((m, i, self) => {
         const style: any = {};

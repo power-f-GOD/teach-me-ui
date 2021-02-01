@@ -87,7 +87,12 @@ $btn-size: 3em;
 
       width: $size;
       height: $size;
+      background-color: $theme-primary-v4;
     }
+  }
+
+  &.new-notification {
+    opacity: 1;
   }
 
   &:hover,
