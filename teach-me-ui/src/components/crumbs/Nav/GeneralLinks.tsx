@@ -23,14 +23,24 @@ export default function NavGeneralLinks(props: any) {
       </Tooltip>
 
       {props.forIndex ? (
-        <Tooltip title='Know About Us'>
-          <NavLink to='/about' className='nav-link d-none'>
-            <FAIcon name='info-circle' />
-            <Box component='span' className='nav-label'>
-              About
-            </Box>
-          </NavLink>
-        </Tooltip>
+        <>
+          <Tooltip title='Know About Us'>
+            <NavLink to='/about' className='nav-link'>
+              <FAIcon name='info-circle' />
+              <Box component='span' className='nav-label'>
+                About
+              </Box>
+            </NavLink>
+          </Tooltip>
+          <Tooltip title='Seek Support'>
+            <NavLink to='/support' className='nav-link'>
+              <FAIcon name='question' />
+              <Box component='span' className='nav-label'>
+                Support
+              </Box>
+            </NavLink>
+          </Tooltip>
+        </>
       ) : (
         <Tooltip title='View Question &amp; Answer discussions'>
           <NavLink to='/questions' className='nav-link'>

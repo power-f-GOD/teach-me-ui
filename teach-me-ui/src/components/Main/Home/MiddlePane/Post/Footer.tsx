@@ -114,12 +114,16 @@ const PostFooter = (props: PostCrumbs) => {
     );
 
   return (
-    <Container className='d-flex pt-1 pr-3 pl-2 pb-2'>
-      <Skeleton width='4rem' height='1.65rem' className='mr-4 ml-2 mt-2' />
-      <Skeleton width='4rem' height='1.65rem' className='mr-4 mt-2' />
-      <Skeleton width='4rem' height='1.65rem' className='mr-4 mt-2' />
-      <Container className='ml-auto w-auto'>
-        <Skeleton width='4rem' className='mt-2' height='1.65rem' />
+    <Container className='d-flex justify-content-between pt-1 pr-3 pl-2 pb-2'>
+      <Skeleton
+        width='5rem'
+        height='1.85em'
+        className='button mr-4 ml-2 mt-2'
+      />
+      <Skeleton width='5rem' height='1.85em' className='mr-4 mt-2' />
+      <Skeleton width='5rem' height='1.85em' className='mr-4 mt-2' />
+      <Container className='w-auto'>
+        <Skeleton width='4rem' className='mt-2' height='1.85em' />
       </Container>
     </Container>
   );

@@ -54,7 +54,7 @@ const Landing = () => {
                 <br />
                 <Box fontSize='1.05em'>
                   The online Community where Students, Lecturers, Academics,
-                  Universities converge!
+                  Universities converge...
                 </Box>
               </Box>
               <br />

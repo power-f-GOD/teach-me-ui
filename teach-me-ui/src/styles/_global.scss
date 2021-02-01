@@ -378,7 +378,7 @@ a {
 
   &.gradient {
     background: {
-      image: linear-gradient(to right, $theme-secondary, $theme-primary);
+      image: $theme-gradient;
       position: 90% center;
       size: 200%;
     }
@@ -451,7 +451,7 @@ a {
   $bgOnDark1: transparent;
   $bgOnDark2: rgba(255, 255, 255, 0.25);
 
-  border-radius: 1rem !important;
+  border-radius: 0.65rem !important;
   background-color: $bg2 !important;
   background-image: linear-gradient(90deg, $bg2, $bg1, $bg2) !important;
 
@@ -466,9 +466,13 @@ a {
   }
 
   &.media {
-    border-radius: 0 !important;
-    margin-left: -1rem;
-    width: calc(100% + 2rem);
+    border-radius: 1em !important;
+    margin-left: -0.2em;
+    width: calc(100% + 0.4em);
+  }
+
+  &.button {
+    border-radius: 0.5em;
   }
 }
 
@@ -666,10 +670,6 @@ div {
   padding-top: 0.2rem;
   padding-bottom: 0.2rem;
   border-top: 0.0625rem solid #e0e0e0;
-
-  &:nth-child(even) {
-    // background-color: #f2f2f2;
-  }
 
   &:last-child {
     border-bottom: 0.0625rem solid #e0e0e0;

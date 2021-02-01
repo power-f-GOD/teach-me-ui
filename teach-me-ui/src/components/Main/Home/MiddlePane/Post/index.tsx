@@ -91,12 +91,11 @@ const Post: React.FC<
   Partial<PostStateProps> & {
     index?: number;
     postsErred?: boolean;
-    quote?: PostStateProps;
     userId?: string;
     forceUpdate?: any;
   }
 > = (props) => {
-  const { index, postsErred, quote, userId, ...others } = props;
+  const { index, postsErred, userId, ...others } = props;
   const {
     // type,
     media,
@@ -105,7 +104,8 @@ const Post: React.FC<
     sender,
     text,
     reactions,
-    date: posted_at,
+    date,
+    parent,
     reaction,
     colleague_reposts,
     colleague_replies,
@@ -156,20 +156,20 @@ const Post: React.FC<
           colleague_reposts[0]?.sender?.id === userId
             ? 'You'
             : `<b>${senderName1}</b>`
-        } and <b>${
-          colleague_reposts?.length - 1
-        } others</b> reposted ${
+        } and <b>${colleague_reposts?.length - 1} others</b> reposted ${
           sender?.id === userId ? 'your' : `<b>${first_name}</b>'s`
         }  post`;
     }
-  } else if (quote) {
+  } else if (parent) {
     extra = `<b>${sender_name}</b> reposted ${
-      quote.sender.id === sender?.id
+      parent.sender!.id === sender?.id
         ? 'their own'
-        : `<b>${quote.sender?.first_name}</b>'s`
+        : parent.sender!.id === userId
+        ? 'your'
+        : `<b>${parent.sender!.first_name}</b>'s`
     } post`;
 
-    if (quote.sender.id === userId) {
+    if (sender?.id === userId) {
       extra = '';
     }
   } else if (colleague_replies?.length) {
@@ -277,7 +277,7 @@ const Post: React.FC<
         className={`Post ${postsErred ? 'remove-skeleton-animation' : ''} ${
           colleague_replies?.length ? 'has-replies' : ''
         } ${media?.length ? 'has-media' : ''} ${
-          quote ? 'has-quote' : colleague_reposts?.length ? 'has-quotes' : ''
+          parent ? 'has-quote' : colleague_reposts?.length ? 'has-quotes' : ''
         }`}>
         {extra && (
           <small
@@ -291,13 +291,13 @@ const Post: React.FC<
           sender_name={sender_name}
           sender_username={sender_username}
           profile_photo={profile_photo}
-          posted_at={posted_at}
+          posted_at={date}
         />
 
         {/* Post body */}
         <PostBody
           isLoading={!sender_name}
-          quote={quote}
+          parent={parent}
           post_id={id!}
           text={text!}
           index={index}
@@ -311,6 +311,7 @@ const Post: React.FC<
         <PostInfo
           isLoading={!reaction}
           reactions={reactions}
+          reaction={reaction!}
           reaction_count={(upvote_count ?? 0) + (downvote_count ?? 0)}
           reply_count={reply_count}
           sender={sender}

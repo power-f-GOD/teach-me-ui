@@ -68,8 +68,7 @@ $btn-size: 3em;
   padding: 0.75em;
   font-size: 1rem;
   color: white !important;
-  opacity: 0.6;
-  // color: rgba(255, 255, 255, 0.6) !important;
+  opacity: 0.55;
   text-transform: uppercase !important;
   transition: 0.3s, font-weight 0s;
   position: relative;
@@ -79,7 +78,7 @@ $btn-size: 3em;
     font-weight: bold;
 
     &::before {
-      background: unset;
+      background: $theme-gradient;
       border-color: #fff;
     }
 
@@ -125,7 +124,6 @@ $btn-size: 3em;
 
     max-height: $size;
     max-width: $size;
-    background-color: rgba(255, 255, 255, 0.1);
     margin-left: 0.0625em;
     transition: 0.3s;
 
@@ -170,11 +168,12 @@ $btn-size: 3em;
     }
 
     .icon {
-      margin-right: 1.75rem !important;
+      position: absolute;
     }
 
     .nav-label {
       display: inline-block;
+      transform: translateX(3em);
     }
   }
 

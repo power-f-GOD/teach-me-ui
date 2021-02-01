@@ -138,6 +138,8 @@ $theme-tertiary-v9: rgb(
   $tert-b + (25 * 4)
 );
 
+$theme-gradient: linear-gradient(to right, $theme-secondary, $theme-primary);
+
 $success: rgb(27, 136, 27);
 $error: rgb(255, 34, 34);
 $info: #222;

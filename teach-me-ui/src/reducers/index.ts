@@ -19,7 +19,7 @@ import { ReduxAction } from '../types';
 
 export default function reducers(state: any, action: ReduxAction) {
   if (action.type === SIGNOUT_USER) {
-    state = undefined;
+    state = { windowWidth: state.windowWidth };
   }
 
   return combineReducers({

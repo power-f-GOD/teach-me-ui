@@ -14,15 +14,17 @@ import MainNav from './Main.Nav';
 import MainNavMenu from './Main.NavMenu';
 import IndexNav from './Index.Nav';
 import ProfileLink from './ProfileLink';
-import { FetchState } from '../../../types';
+import { FetchState, AuthState } from '../../../types';
 
 const Nav = (props: {
   windowWidth: number;
   notifications: FetchState<{ notifications: any[]; entities: any }>;
+  auth: AuthState;
   for: string;
   location: Location;
 }) => {
-  const { windowWidth, location } = props;
+  const { windowWidth, location, auth } = props;
+  const isAuthenticated = auth.isAuthenticated;
   const forIndexPage = /index|@\w+/i.test(props.for);
   const forProfile = /\/(@\w+|profile\/.+)$/i.test(location.pathname);
   const forLandingPage =
@@ -61,7 +63,10 @@ const Nav = (props: {
               )}
 
               {windowWidth < 768 && (
-                <TemporaryDrawer className='order-0 order-md-2'>
+                <TemporaryDrawer
+                  className={`${
+                    isAuthenticated ? 'order-0' : 'order-2'
+                  } order-md-2`}>
                   {forIndexPage ? (
                     <IndexNav {...props} />
                   ) : (
@@ -81,10 +86,12 @@ const Nav = (props: {
 
 const mapStateToProps = ({
   notifications,
-  windowWidth
+  windowWidth,
+  auth
 }: {
   notifications: FetchState<{ notifications: any[]; entities: any }>;
   windowWidth: number;
-}) => ({ notifications, windowWidth });
+  auth: AuthState;
+}) => ({ notifications, windowWidth, auth });
 
 export default connect(mapStateToProps)(Nav);

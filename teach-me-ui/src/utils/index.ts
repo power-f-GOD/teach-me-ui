@@ -112,16 +112,18 @@ export function loopThru<T>(
   },
   doneCallback?: (data?: T[]) => T[] | any
 ): LoopFind<T> | T[] | T | number | null {
-  const { type, rightToLeft, includeIndex, returnReverse, makeCopy } =
-    options || {};
-  const data = makeCopy ? _data.slice() : _data;
-  const lim = data.length - 1;
-  const dataReversed = [];
-  const reverse = rightToLeft || returnReverse;
-  let i = reverse ? lim : 0;
-  let valueToReturn: LoopFind<T> | T[] | T | number | null = null;
-
   try {
+    const { type, rightToLeft, includeIndex, returnReverse, makeCopy } =
+      options || {};
+    const data = makeCopy ? _data.slice() : _data;
+    const lim = data.length - 1;
+    const dataReversed = [];
+    const reverse = rightToLeft || returnReverse;
+    let i = reverse ? lim : 0;
+    let valueToReturn = (type === 'find'
+      ? { value: null, index: null }
+      : null) as LoopFind<T> | T[] | T | number | null;
+
     outer: for (; reverse ? i >= 0 : i <= lim; reverse ? i-- : i++) {
       const datum = data[i];
       let _break = '';
@@ -151,18 +153,19 @@ export function loopThru<T>(
         break;
       }
     }
+
+    if (typeof doneCallback === 'function')
+      doneCallback(returnReverse ? dataReversed : data);
+
+    return /find/.test(type!)
+      ? valueToReturn
+      : returnReverse
+      ? dataReversed
+      : data;
   } catch (e) {
     console.error(e);
+    return null;
   }
-
-  if (typeof doneCallback === 'function')
-    doneCallback(returnReverse ? dataReversed : data);
-
-  return /find/.test(type!)
-    ? valueToReturn
-    : returnReverse
-    ? dataReversed
-    : data;
 }
 
 export const createObserver = (

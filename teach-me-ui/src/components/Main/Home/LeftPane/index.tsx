@@ -47,7 +47,9 @@ const HomeLeftPane = (props: LeftPaneProps) => {
   );
 
   return (
-    <Container as='section' className='left-pane'>
+    <Container
+      as='section'
+      className={`left-pane ${cover_photo ? 'has-cover-photo' : ''}`}>
       <Container className='rows-wrapper custom-scroll-bar rounded-bar tertiary-bar'>
         <Row as='section' className='d-block'>
           <Col

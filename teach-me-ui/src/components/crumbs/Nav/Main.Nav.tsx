@@ -41,6 +41,9 @@ const MainNav = (props: MainNavProps) => {
         <Tooltip title='Search Kanyimuta'>
           <NavLink to='/search' className='nav-link'>
             <FAIcon name='search' />
+            <Box component='span' className='nav-label'>
+              Search
+            </Box>
           </NavLink>
         </Tooltip>
 
@@ -59,6 +62,9 @@ const MainNav = (props: MainNavProps) => {
             isActive={(match: any, location: any) => false}>
             <Badge color='secondary' badgeContent={numberOfNewNotifications}>
               <FAIcon name='bell' />
+              <Box component='span' className='nav-label'>
+                Notifications
+              </Box>
             </Badge>
           </NavLink>
         </Tooltip>
