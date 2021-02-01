@@ -140,12 +140,13 @@ export const posts = (_payload: FetchState<PostStateProps[], number>) => {
         id === pipeData.parent?.id,
       { type: 'find', includeIndex: true }
     ) as LoopFind<PostStateProps>;
-    const isReply = !!pipeData.parent_id;
+    const isForReply = !!pipeData.parent_id;
+    // console.log(actualPost, pipeData)
 
     if (actualPost) {
       switch (pipe) {
         case POST_REACTION:
-          if (isReply && actualPost.sec_type !== 'REPLY') {
+          if (isForReply && actualPost.sec_type !== 'REPLY') {
             let {
               value: actualReply,
               index: replyIndex

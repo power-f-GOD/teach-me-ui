@@ -21,7 +21,7 @@ import NavGeneralLinks from './GeneralLinks';
 export default function MainNavMenu(props: any) {
   const { className, notifications } = props;
   const username = (getState().userData as UserData).username;
-  const numberOfNewNotifications = countNewNotifications(
+  const numOfNewNotifs = countNewNotifications(
     notifications.data.notifications
   );
 
@@ -56,7 +56,7 @@ export default function MainNavMenu(props: any) {
       <Tooltip title='See Notifications'>
         <NavLink
           to='#'
-          className='nav-link'
+          className={`nav-link ${numOfNewNotifs ? 'new-notification' : ''}`}
           onClick={(e) => {
             e.preventDefault();
             displayModal(true, false, NOTIFICATIONS, {
@@ -64,7 +64,7 @@ export default function MainNavMenu(props: any) {
             });
           }}
           isActive={(match: any, location: any) => false}>
-          <Badge color='secondary' badgeContent={numberOfNewNotifications}>
+          <Badge color='secondary' badgeContent={numOfNewNotifs}>
             <FAIcon name='bell' />
           </Badge>
           <Box component='span' className='nav-label'>
