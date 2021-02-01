@@ -12,7 +12,7 @@ import HomeLeftPane from './LeftPane';
 
 import { connect } from 'react-redux';
 import { getPosts, posts } from '../../../actions/main/home';
-import { dispatch, createObserver } from '../../../functions/utils';
+import { dispatch, createObserver } from '../../../utils';
 import { PostStateProps, FetchState } from '../../../types';
 import PostPage from './PostPage';
 
@@ -83,7 +83,8 @@ const Home = (props: { posts: FetchState<PostStateProps>; location: any}) => {
 
   return (
     <>
-      <Container className='Home fade-in'>
+      <Container
+        className={`Home fade-in ${_posts.err ? 'de-animate-skeleton' : ''}`}>
         <Row className='mx-auto justify-content-around align-items-start pt-3'>
           <Col
             lg={3}

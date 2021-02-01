@@ -14,7 +14,7 @@
 }
 
 .fade-in-opacity {
-  animation: fadeInOpacity 0.5s;
+  animation: fadeInOpacity 0.6s;
 }
 
 @keyframes fadeInOpacity {
@@ -228,7 +228,7 @@
 
 .hide {
   transition: opacity 0.35s;
-  transition-delay: 0.275s;
+  transition-delay: 0.25s;
   // visibility: hidden;
   opacity: 0 !important;
   pointer-events: none;
@@ -236,7 +236,7 @@
 
 .show {
   transition: opacity 0.35s;
-  transition-delay: 0.275s;
+  transition-delay: 0.25s;
   // visibility: visible;
   opacity: 1 !important;
 }

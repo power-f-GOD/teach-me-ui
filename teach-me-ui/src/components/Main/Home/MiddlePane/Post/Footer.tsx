@@ -9,11 +9,11 @@ import Skeleton from 'react-loading-skeleton';
 import Box from '@material-ui/core/Box';
 import { Button } from '@material-ui/core';
 
-import { FAIcon } from '../../../../shared/Icons';
+import { FAIcon } from '../../../../shared';
 import ReactionButton from './ReactionButton';
 
 import { PostCrumbs } from '.';
-import { bigNumberFormat, formatDate } from '../../../../../functions/utils';
+import { bigNumberFormat, formatDate } from '../../../../../utils';
 
 import CreateReply from './CreateReply';
 
@@ -45,7 +45,11 @@ const PostFooter = (props: PostCrumbs) => {
       <>
         <Row className='post-footer'>
           {date && (
-            <Col as='small' className='theme-tertiary mr-3 ml-2 text-ellipsis'>
+            <Col
+              xs={3}
+              sm={2}
+              as='small'
+              className='theme-tertiary px-0 text-ellipsis'>
               {formatDate(date)?.replace('ago', '')}
             </Col>
           )}
@@ -57,7 +61,7 @@ const PostFooter = (props: PostCrumbs) => {
               type='UPVOTE'
             />
           </Col>
-          <Col className='reaction-wrapper d-flex align-items-center'>
+          <Col className='reaction-wrapper justify-content-sm-start justify-content-start d-flex align-items-center'>
             <ReactionButton
               id={id!}
               reaction={reaction === 'DOWNVOTE' ? reaction : null}
@@ -66,7 +70,7 @@ const PostFooter = (props: PostCrumbs) => {
             />
           </Col>
           {openCreateRepostModal && repostMeta && (
-            <Col className='reaction-wrapper d-flex align-items-center'>
+            <Col className='reaction-wrapper d-flex justify-content-sm-end justify-content-start align-items-center'>
               <Button
                 onClick={
                   openCreateRepostModal
@@ -78,10 +82,20 @@ const PostFooter = (props: PostCrumbs) => {
                 }`}>
                 <FAIcon name='retweet' />
                 <Box>{bigNumberFormat(repost_count!)}</Box>
+                <Box
+                  component='span'
+                  className='desc d-none d-sm-inline d-md-none d-xl-inline'>
+                  repost{repost_count! === 1 ? '' : 's'}
+                </Box>
               </Button>
             </Col>
           )}
-          <Col className='reaction-wrapper d-flex align-items-center justify-content-end ml-auto mr-0'>
+
+          <Col
+            xs={3}
+            sm={date ? 5 : 3}
+            md={4}
+            className='reaction-wrapper d-flex align-items-center justify-content-end mr-0'>
             {anchorIsParent && (
               <Button
                 onClick={handleCommentClick}
@@ -100,12 +114,16 @@ const PostFooter = (props: PostCrumbs) => {
     );
 
   return (
-    <Container className='d-flex pt-1 pr-3 pl-2 pb-2'>
-      <Skeleton width='4rem' height='1.65rem' className='mr-4 ml-2 mt-2' />
-      <Skeleton width='4rem' height='1.65rem' className='mr-4 mt-2' />
-      <Skeleton width='4rem' height='1.65rem' className='mr-4 mt-2' />
-      <Container className='ml-auto w-auto'>
-        <Skeleton width='4rem' className='mt-2' height='1.65rem' />
+    <Container className='d-flex justify-content-between pt-1 pr-3 pl-2 pb-2'>
+      <Skeleton
+        width='5rem'
+        height='1.85em'
+        className='button mr-4 ml-2 mt-2'
+      />
+      <Skeleton width='5rem' height='1.85em' className='mr-4 mt-2' />
+      <Skeleton width='5rem' height='1.85em' className='mr-4 mt-2' />
+      <Container className='w-auto'>
+        <Skeleton width='4rem' className='mt-2' height='1.85em' />
       </Container>
     </Container>
   );

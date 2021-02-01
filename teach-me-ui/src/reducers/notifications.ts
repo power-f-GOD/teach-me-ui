@@ -1,14 +1,15 @@
-import { GET_NOTIFICATIONS, notificationState } from '../constants';
+import { SET_NOTIFICATIONS, notificationState } from '../constants';
 import { ReduxAction, NotificationState } from '../types';
 
-export const getNotifications = (
+export const notifications = (
   state: NotificationState = notificationState,
   action: ReduxAction
 ) => {
-  if (action.type === GET_NOTIFICATIONS) {
+  if (action.type === SET_NOTIFICATIONS) {
     return {
       ...state,
-      ...action.payload
+      ...action.payload,
+      data: { ...state.data, ...action.payload.data }
     };
   }
   return state;

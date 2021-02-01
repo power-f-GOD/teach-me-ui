@@ -33,7 +33,12 @@
 
 
 @import 'Main/Profile/index';
+@import 'Main/Profile/Header';
 @import 'Main/Profile/NavBar';
+@import 'Main/Profile/LeftPane';
+@import 'Main/Profile/MiddlePane';
+@import 'Main/Profile/RightPane';
+@import 'Main/Profile/crumbs';
 @import 'Main/Profile/responsive';
 
 @import 'Main/Q&A/index';

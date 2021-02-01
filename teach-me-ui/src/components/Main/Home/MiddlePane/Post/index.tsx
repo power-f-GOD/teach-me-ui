@@ -10,7 +10,7 @@ import ArrowForward from '@material-ui/icons/ArrowForwardIos';
 
 import { Link } from 'react-router-dom';
 
-import { dispatch, loopThru } from '../../../../../functions/utils';
+import { dispatch, loopThru } from '../../../../../utils';
 import { PostStateProps, LoopFind } from '../../../../../types';
 
 import { displayModal } from '../../../../../functions';
@@ -20,7 +20,7 @@ import { LazyLoadImage as LazyImg } from 'react-lazy-load-image-component';
 
 import PostFooter from './Footer';
 import PostReply from './Reply';
-import { MAKE_REPOST } from '../../../../../constants/modals';
+import { MAKE_REPOST } from '../../../../../constants';
 import PostBody from './Body';
 import PostHeader from './Header';
 import PostInfo from './Info';
@@ -91,10 +91,10 @@ const Post: React.FC<
   Partial<PostStateProps> & {
     index?: number;
     postsErred?: boolean;
-    quote?: PostStateProps;
     userId?: string;
     forceUpdate?: any;
     replies?: any;
+    quote?: any
   }
 > = (props) => {
   const { index, postsErred, quote, userId, ...others } = props;
@@ -108,7 +108,8 @@ const Post: React.FC<
     sender,
     text,
     reactions,
-    date: posted_at,
+    date,
+    parent,
     reaction,
     colleague_reposts,
     colleague_replies,
@@ -161,10 +162,26 @@ const Post: React.FC<
         extra = `<b>${senderName1}</b> and <b>${first_name}</b> reposted <b>${sender_name}</b>'s post`;
         break;
       default:
-        extra = `<b>${senderName1}</b> and <b>${colleague_reposts?.length} others</b> reposted <b>${first_name}</b>'s post`;
+        extra = `${
+          colleague_reposts[0]?.sender?.id === userId
+            ? 'You'
+            : `<b>${senderName1}</b>`
+        } and <b>${colleague_reposts?.length - 1} others</b> reposted ${
+          sender?.id === userId ? 'your' : `<b>${first_name}</b>'s`
+        }  post`;
     }
-  } else if (quote) {
-    extra = `<b>${sender_name}</b> reposted <b>${quote.sender?.first_name}</b>'s post`;
+  } else if (parent) {
+    extra = `<b>${sender_name}</b> reposted ${
+      parent.sender!.id === sender?.id
+        ? 'their own'
+        : parent.sender!.id === userId
+        ? 'your'
+        : `<b>${parent.sender!.first_name}</b>'s`
+    } post`;
+
+    if (sender?.id === userId) {
+      extra = '';
+    }
   } else if (colleague_replies?.length) {
     const { value: reply, index } = (loopThru(
       colleague_replies,
@@ -269,7 +286,9 @@ const Post: React.FC<
         id={id}
         className={`Post ${postsErred ? 'remove-skeleton-animation' : ''} ${
           colleague_replies?.length ? 'has-replies' : ''
-        } ${media?.length ? 'has-media' : ''} ${quote ? 'has-quote' : ''}`}>
+        } ${media?.length ? 'has-media' : ''} ${
+          parent ? 'has-quote' : colleague_reposts?.length ? 'has-quotes' : ''
+        }`}>
         {extra && (
           <small
             className='extra'
@@ -282,14 +301,14 @@ const Post: React.FC<
           sender_name={sender_name}
           sender_username={sender_username}
           profile_photo={profile_photo}
-          posted_at={posted_at}
+          posted_at={date}
         />
 
         {/* Post body */}
         <PostBody
           head={!!props.head}
           isLoading={!sender_name}
-          quote={quote}
+          parent={parent}
           post_id={id!}
           text={text!}
           index={index}
@@ -303,6 +322,7 @@ const Post: React.FC<
         <PostInfo
           isLoading={!reaction}
           reactions={reactions}
+          reaction={reaction!}
           reaction_count={(upvote_count ?? 0) + (downvote_count ?? 0)}
           reply_count={reply_count}
           sender={sender}

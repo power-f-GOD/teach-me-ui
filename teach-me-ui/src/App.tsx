@@ -13,7 +13,7 @@ import { verifyAuth } from './actions/auth';
 import createMemo from './Memo';
 import { dispatch } from './appStore';
 
-import { emitUserOnlineStatus } from './functions/utils';
+import { emitUserOnlineStatus } from './utils';
 import { AuthState, FetchState } from './types';
 import { setWindowWidth } from './actions';
 
@@ -25,8 +25,10 @@ const App = (props: any) => {
 
   React.useEffect(() => {
     window.onresize = () => {
-      dispatch(setWindowWidth(window.innerWidth));
+      // Attepmt to fix test-build error/failure
+      if (setWindowWidth) dispatch(setWindowWidth(window.innerWidth));
     };
+    window.onresize(window as any);
   }, []);
 
   if (authStatus === 'pending' || signout?.status === 'pending') {
@@ -47,8 +49,8 @@ const App = (props: any) => {
                     '/about',
                     '/support',
                     '/profile/:id',
-                    '/@:userId',
-                    '/@:userId/colleagues',
+                    '/@:username',
+                    '/@:username/colleagues',
                     '/search',
                     '/p/:id',
                     '/questions',
@@ -73,8 +75,8 @@ const App = (props: any) => {
               '/index',
               '/about',
               '/profile/:id',
-              '/@:userId',
-              '/@:userId/colleagues',
+              '/@:username',
+              '/@:username/colleagues',
               '/support',
               '/*'
             ]}

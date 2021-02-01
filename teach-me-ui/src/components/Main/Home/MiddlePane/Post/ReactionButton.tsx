@@ -47,19 +47,29 @@ export const ReactionButton: React.FunctionComponent<ReactButtonPropsState> = (
   }, [socket, id, type, reacted]);
 
   return (
-    <Button
-      className={`ReactionButton d-flex align-items-center reaction-${reaction?.toLowerCase()}`}
-      onClick={reactToPost}>
-      <FAIcon
-        name={`thumbs-${type === 'UPVOTE' ? 'up' : 'down'}`}
-        variant={reacted ? 'solid' : 'outlined'}
-        color={!reacted ? '#888' : 'inherit'}
-      />
-      <Box>{bigNumberFormat(num_of_reactions)}</Box>
-    </Button>
+    <>
+      <Button
+        className={`ReactionButton d-flex px-3 align-items-center reaction-${reaction?.toLowerCase()} ${
+          reacted ? 'font-bold' : ''
+        }`}
+        onClick={reactToPost}>
+        <FAIcon
+          name={`thumbs-${type === 'UPVOTE' ? 'up' : 'down'}`}
+          variant={reacted ? 'solid' : 'outlined'}
+          color={!reacted ? '#888' : 'inherit'}
+        />
+        <Box component='span'>{bigNumberFormat(num_of_reactions)}</Box>
+        <Box
+          component='span'
+          className='desc d-none d-sm-inline d-md-none d-xl-inline'>
+          {type === 'UPVOTE' ? 'like' : 'dislike'}
+          {num_of_reactions === 1 ? '' : 's'}
+        </Box>
+      </Button>
+    </>
   );
 };
 
-export default connect(({ webSocket }: any) => ({ socket: webSocket }))(
-  ReactionButton
-);
+export default connect(({ webSocket }: { webSocket: WebSocket }) => ({
+  socket: webSocket
+}))(ReactionButton);

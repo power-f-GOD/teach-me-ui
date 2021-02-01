@@ -39,8 +39,10 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
       err: postsErred
     },
     recommendations,
-    userData
+    userData,
+    type: _type
   } = props;
+
   const postsIsPending = postsStatus === 'pending';
   const isFetching =
     /(updat|fetch|recycl)(e|ing)?/i.test(postsStatusText || '') ||
@@ -52,7 +54,7 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
     !!username && !!profileUsername && profileUsername === username;
   const postElements = document.querySelectorAll('.Post');
   let selfView = isAuthenticated ? isSelf : false;
-  let inProfile = /@\w+/.test(window.location.pathname);
+  let inProfile = /\/(@\w+|profile\/.+)/.test(window.location.pathname);
   const postsDataLength = postsData?.length;
 
   const config: IntersectionObserverInit = {
@@ -90,7 +92,7 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
   }, [postsStatusText]);
 
   useEffect(() => {
-    const type = props.type || 'FEED';
+    const type = _type || 'FEED';
     const userId = (profile as UserData).id || undefined;
 
     if (!postsData?.length) {
@@ -101,43 +103,39 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
       }
     }
     // eslint-disable-next-line
-  }, [props.type]);
+  }, [_type]);
 
   useEffect(() => {
-    if (props.type === 'FEED') {
+    if (_type === 'FEED') {
       postElements.forEach((post) => {
         observer.observe(post);
       });
     }
     // eslint-disable-next-line
-  }, [postElements.length, props.type]);
+  }, [postElements.length, _type]);
 
   return (
     <Container className='middle-pane px-0 px-sm-3 px-md-0' fluid>
-      {(selfView || !inProfile) && <Compose userData={userData} />}
+      {(selfView || !inProfile) && (
+        <Compose
+          userData={userData}
+          className={`${inProfile ? 'no-shadow no-hang-in' : ''}`}
+        />
+      )}
       {!inProfile && !postsData?.length && postsStatus === 'fulfilled' && (
         <Recommendations recommendations={recommendations} />
       )}
       {!postsIsPending &&
         postsData?.map((post, i: number) => {
-          const renderRecommendations = !inProfile &&
-            (i === 2 || (i > 0 && i % 15 === 0)) && (
-              <Recommendations recommendations={recommendations} />
-            );
-          const nReposts = post.colleague_reposts?.length;
+          const shouldRenderRecommendations =
+            !inProfile && (i === 2 || (i > 0 && i % 15 === 0));
 
           return (
             <React.Fragment key={i}>
-              {nReposts === 1 ? (
-                <Post
-                  {...post.colleague_reposts[0]}
-                  quote={{ ...post }}
-                  userId={userData.id}
-                />
-              ) : (
-                <Post {...post} userId={userData.id} />
+              <Post {...post} userId={userData.id} />
+              {shouldRenderRecommendations && (
+                <Recommendations recommendations={recommendations} />
               )}
-              {renderRecommendations}
             </React.Fragment>
           );
         })}

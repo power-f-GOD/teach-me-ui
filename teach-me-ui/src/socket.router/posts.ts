@@ -9,8 +9,14 @@ import {
 
 import { displayModal } from '../functions';
 
-import { POST_REACTION, POST_REPLY, TONE_NAME__OPEN_ENDED } from '../constants';
+import { 
+  POST_REACTION, 
+  POST_REPLY, 
+  TONE_NAME__OPEN_ENDED 
+} from '../constants';
+
 import { SocketPipe, NotificationSoundState } from '../types';
+
 
 export default function post(data: any) {
   const { notificationSound } = getState() as {
@@ -19,11 +25,9 @@ export default function post(data: any) {
   const toneName: NotificationSoundState['toneName'] = TONE_NAME__OPEN_ENDED;
 
   try {
-    // console.log('posts pipe:', data);
     switch (data.pipe as SocketPipe) {
       case POST_REACTION:
       case POST_REPLY:
-        // console.log(data);
         dispatch(posts({ data: [{ ...data }] }));
 
         if (data.pipe === POST_REPLY) {
@@ -52,7 +56,7 @@ export default function post(data: any) {
             })
           );
           displayModal(false);
-  
+
           if (notificationSound.isPlaying) {
             promisedDispatch(
               triggerNotificationSound({ play: false, isPlaying: false })
@@ -62,30 +66,18 @@ export default function post(data: any) {
           } else {
             dispatch(triggerNotificationSound({ play: true, toneName }));
           }
-        
           window.history.back();
           dispatch(displayModal(false));
         } else {
-          dispatch(makeRepost({ err: true, status: 'settled', statusText:data.message }));
+          dispatch(
+            makeRepost({
+              err: true,
+              status: 'settled',
+              statusText: data.message
+            })
+          );
         }
         break;
-      // if (!data.error) {
-      //   dispatch(
-      //     replyToPost({
-      //       status: 'fulfilled',
-      //       err: false,
-      //       data
-      //     })
-      //   );
-      // } else {
-      //   dispatch(
-      //     replyToPost({
-      //       status: 'fulfilled',
-      //       err: true,
-      //       data
-      //     })
-      //   );
-      // }
       default:
         break;
     }

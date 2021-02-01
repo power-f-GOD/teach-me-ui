@@ -1,20 +1,10 @@
 .Profile {
-  &.self-view {
-    .profile-nav-bar-wrapper {
-      top: unset !important;
-    }
-
-    .profile-nav-bar {
-      box-shadow: none;
-    }
-  }
-
-  .profile-nav-bar-observee {
+  .nav-bar-observee {
     position: relative;
     transform: translateY(-6rem);
   }
 
-  .profile-nav-bar-wrapper {
+  .nav-bar-wrapper {
     position: sticky;
     top: 3.5rem;
     max-width: unset;
@@ -24,20 +14,21 @@
     &.is-sticking {
       background-color: white;
 
-      .profile-nav-bar {
+      .nav-bar {
         border-radius: 0;
       }
     }
   }
 
-  .profile-nav-bar {
+  .nav-bar {
     background-color: white;
-    padding: 0 1.2rem;
+    padding: 0 1rem;
     bottom: 0;
     left: 0;
+    position: relative;
     font-size: small;
     border-radius: 0;
-    box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1rem 1.5rem rgba(0, 0, 0, 0.1);
     transform: unset;
     transition: 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
@@ -61,12 +52,13 @@
 
     a {
       text-decoration: none;
+
       .nav-item {
         height: 100%;
         padding: 1rem;
-        margin: 0 1rem;
         font-weight: bold;
         cursor: pointer;
+        margin-right: 0.25rem;
         color: black;
         border-bottom: 2px solid transparent;
 
@@ -112,9 +104,20 @@
   }
 
   .colleague-action-button {
+    position: relative;
+    min-width: 6rem;
+    box-shadow: none;
+    padding: 0.4rem 0.9rem !important;
+    margin: 0;
+    margin-left: 0.75rem;
     white-space: nowrap;
     transition: 0.2s;
     transform: scale(1);
+
+    &:disabled {
+      background: $theme-primary !important;
+      color: white !important;
+    }
 
     .icon {
       font-size: 1.1em;

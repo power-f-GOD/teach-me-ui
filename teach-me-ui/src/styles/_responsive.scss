@@ -1,8 +1,4 @@
 @media screen and (min-width: 1024px) {
-  .drawer {
-    display: none;
-  }
-
   [class*='container-'],
   .container {
     max-width: $app-max-width;
@@ -10,16 +6,6 @@
 
   [class*='container-fluid'] {
     max-width: 100%;
-  }
-
-  @media screen and (max-width: 1152px) {
-    .drawer {
-      display: flex;
-    }
-
-    .app-bar-links {
-      display: none;
-    }
   }
 }
 
@@ -29,26 +15,6 @@
   .container-md,
   .container-sm {
     max-width: 100%;
-  }
-
-  .drawer {
-    display: flex;
-  }
-
-  .app-bar-links {
-    display: none;
-  }
-
-  //Profile style(s)
-  .Profile {
-    .close-edit-button,
-    .edit-button {
-      right: 1.25rem;
-
-      [class*='Icon'] {
-        margin-right: 0.7rem;
-      }
-    }
   }
 }
 
@@ -226,12 +192,6 @@
 
   //Profile style(s)
   .Profile {
-    // overflow: hidden;
-
-    .profile-top {
-      height: 17rem;
-    }
-
     .profile-avatar-x {
       height: 7rem;
       width: 7rem;
@@ -318,17 +278,15 @@
   }
 }
 
-@media screen and (max-width: 599px) {
-  .drawer {
-    .search {
-      display: none;
-    }
+@media screen and (max-width: 575px) {
+  .MuiSnackbar-root {
+    bottom: 0;
+    right: 0;
+    left: 0;
   }
 
-  .drawer-nav {
-    .search {
-      display: inline-flex;
-    }
+  .MuiAlert-root {
+    border-radius: 0;
   }
 
   // landing page styles
@@ -441,52 +399,23 @@
 }
 
 @media only screen and (max-width: 575px) {
+  html,
+  body,
+  #root {
+    font-size: 0.95rem;
+  }
+
+  .shift {
+    margin-left: -0.47rem;
+  }
+
+  .shift2 {
+    margin-left: 0.5rem;
+  }
+
   .modal-contents {
     overflow-y: auto !important;
     max-height: 85vh;
-  }
-}
-
-@media only screen and (max-width: 950px) {
-  .Profile {
-    .cover-button {
-      padding-right: 0.2rem;
-    }
-  }
-}
-
-@media only screen and (max-width: 512px) {
-  .Profile {
-    .cover-button {
-      border-radius: 10px !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      background: transparent !important;
-
-      .edit-cover-photo {
-        display: none;
-      }
-    }
-  }
-}
-
-@media only screen and (max-width: 480px) {
-  // .relative {
-  //   height: 7.5em;
-  // }
-
-  .decline-request {
-    min-width: 3rem !important;
-    max-width: 5rem;
-    [class*='Icon'] {
-      margin: 0 !important;
-    }
-    .MuiButton-label {
-      width: max-content !important;
-    }
-    .colleaguing-text {
-      display: none !important;
-    }
   }
 
   .post {
@@ -556,16 +485,6 @@
     ::-webkit-scrollbar-thumb:hover {
       background: rgb(170, 168, 168);
     }
-  }
-}
-
-@media only screen and (max-width: 575px) {
-  .shift {
-    margin-left: -0.47rem;
-  }
-
-  .shift2 {
-    margin-left: 0.5rem;
   }
 }
 

@@ -1,7 +1,7 @@
 import { ChangeEvent } from 'react';
 
 import * as actions from '../actions/validate';
-import { getState, dispatch } from './utils';
+import { getState, dispatch } from '../utils';
 import { refs as signupRefs } from '../components/Auth/Signup';
 import { requestSignup } from '../actions';
 import { SignupFormData, SignupPropsState } from '../types';

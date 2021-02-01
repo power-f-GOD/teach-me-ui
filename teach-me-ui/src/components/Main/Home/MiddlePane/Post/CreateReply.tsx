@@ -152,7 +152,7 @@ const CreateReply = (props: CreateReplyProps) => {
           fullWidth
           inputRef={inputRef}
           inputProps={{
-            className: 'small-bar tertiary-bar rounded-bar',
+            className: 'tertiary-bar rounded-bar',
             disabled: !isOpen
           }}
         />

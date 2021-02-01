@@ -1,44 +1,42 @@
 .hang-in {
   // @include debugger();
-  position: sticky;
+  position: sticky !important;
 }
 
-[class*=hang-in] {
+[class*='hang-in'] {
   top: 5rem;
 }
 
 .no-hang-in {
-  position: unset;
+  position: unset !important;
 }
-
-
 
 @media screen and (min-width: 576px) {
   .hang-in-sm {
-    position: sticky;
+    position: sticky !important;
   }
 
   .no-hang-in-sm {
-    position: unset;
+    position: unset !important;
   }
 }
 
 @media screen and (min-width: 768px) {
   .hang-in-md {
-    position: sticky;
+    position: sticky !important;
   }
 
   .no-hang-in-md {
-    position: unset;
+    position: unset !important;
   }
 }
 
 @media screen and (min-width: 992px) {
   .hang-in-lg {
-    position: sticky;
+    position: sticky !important;
   }
 
   .no-hang-in-lg {
-    position: unset;
+    position: unset !important;
   }
 }

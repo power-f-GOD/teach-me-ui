@@ -1,52 +1,16 @@
 @media only screen and (max-width: 575px) {
   .Compose {
     border-radius: 0;
-    top: 3.5em;
+    top: 3.5rem;
     margin: 0 0 0.75em 0;
-    padding: 0.5em 0.75em;
+    padding: 0.5em 1em;
   }
 
   .Post {
     border-radius: 0;
     box-shadow: none;
-
-    .post-header {
-      padding-left: 0.75em;
-      padding-right: 0.75em;
-    }
-
-    .post-body {
-      .text {
-        padding: 0.75em 0.5em;
-      }
-    }
-
-    .post-footer {
-      margin-left: 0.75em;
-      width: calc(100% - 1.5em);
-    }
-  }
-
-  .Post {
-    small {
-      &.extra {
-        margin-left: 0.75em;
-      }
-    }
-
-    .QuotedPost {
-      margin: 0.75em 0.75em 0 0.75em !important;
-      width: calc(100% - 1em);
-    }
-
-    .Comment {
-      padding: 0 0.75em;
-    }
-  }
-
-  .Reply {
-    border-radius: 0;
-    // padding: 0.5rem 0.75rem 0;
+    border: none;
+    margin-bottom: 0.75em;
   }
 
   .recommendations-heading {
@@ -61,5 +25,23 @@
     padding-right: 0.75rem !important;
     margin: 1.5rem 0 1.5rem 0.75rem;
     max-width: calc(100% - 0.75rem);
+  }
+}
+
+.Post {
+  @media screen and (min-width: 1301px) {
+    .reaction-wrapper {
+      &:nth-of-type(2) {
+        justify-content: flex-start !important;
+      }
+
+      &:nth-of-type(3) {
+        justify-content: flex-end !important;
+      }
+
+      &:last-child {
+        max-width: 25%;
+      }
+    }
   }
 }

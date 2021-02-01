@@ -17,7 +17,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
 import { ColleagueData } from '../../../types';
-import { dispatch } from '../../../functions/utils';
+import { dispatch } from '../../../utils';
 import { triggerSearchKanyimuta } from '../../../actions/search';
 
 const searchBoxRef = createRef<HTMLInputElement>();
@@ -130,7 +130,7 @@ const Search = (props: any) => {
             </Box>
           ) : (
             <List
-              className={`search-results-wrapper custom-scroll-bar tertiary-bar rounded-bar small-bar`}
+              className={`search-results-wrapper custom-scroll-bar tertiary-bar rounded-bar`}
               aria-label='search results'>
               {results.slice(0, 20).map((result, key) => (
                 <ListItem button divider key={key} className='search-result'>

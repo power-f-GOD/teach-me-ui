@@ -41,7 +41,8 @@ body {
     textarea,
     .MuiDialogContent-root {
       &::-webkit-scrollbar {
-        width: 0.6em;
+        width: 0.5em;
+        height: 0.5em;
       }
 
       &::-webkit-scrollbar-track {
@@ -56,14 +57,23 @@ body {
       .small-bar,
       &.small-bar {
         &::-webkit-scrollbar {
-          width: 0.5em;
+          width: 0.25em;
+          height: 0.25em;
+        }
+      }
+
+      .large-bar,
+      &.large-bar {
+        &::-webkit-scrollbar {
+          width: 0.75em;
+          height: 0.75em;
         }
       }
 
       .primary-bar,
       &.primary-bar {
         &::-webkit-scrollbar-thumb {
-          background: $theme-primary-v6;
+          background: $theme-primary-v5;
         }
       }
 
@@ -91,6 +101,17 @@ body {
           border-radius: 1rem;
         }
       }
+
+      .square-bar,
+      &.square-bar {
+        &::-webkit-scrollbar-track {
+          border-radius: 0;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          border-radius: 0;
+        }
+      }
     }
   }
 }
@@ -112,6 +133,7 @@ body {
 img {
   max-width: 100%;
   height: auto;
+  transition: 0.35s;
 }
 
 input {
@@ -134,6 +156,10 @@ a {
   &:focus {
     text-decoration: underline;
   }
+}
+
+strong {
+  font-weight: bolder;
 }
 
 h1,
@@ -352,7 +378,7 @@ a {
 
   &.gradient {
     background: {
-      image: linear-gradient(to right, $theme-secondary, $theme-primary);
+      image: $theme-gradient;
       position: 90% center;
       size: 200%;
     }
@@ -425,7 +451,7 @@ a {
   $bgOnDark1: transparent;
   $bgOnDark2: rgba(255, 255, 255, 0.25);
 
-  border-radius: 1rem !important;
+  border-radius: 0.65rem !important;
   background-color: $bg2 !important;
   background-image: linear-gradient(90deg, $bg2, $bg1, $bg2) !important;
 
@@ -440,9 +466,19 @@ a {
   }
 
   &.media {
-    border-radius: 0 !important;
-    margin-left: -1rem;
-    width: calc(100% + 2rem);
+    border-radius: 1em !important;
+    margin-left: -0.2em;
+    width: calc(100% + 0.4em);
+  }
+
+  &.button {
+    border-radius: 0.5em;
+  }
+}
+
+.de-animate-skeleton {
+  [class*='skeletonStyles'] {
+    animation: unset !important;
   }
 }
 
@@ -609,6 +645,52 @@ div {
   }
 }
 
+.MuiTooltip-popper {
+  * {
+    font-size: 0.7em !important;
+  }
+}
+
+.MuiPaper-rounded {
+  border-radius: 0.75em;
+  box-shadow: 0 0.25em 1.5rem rgba(0, 0, 0, 0.25);
+}
+
+.MuiList-padding {
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+
+.MuiMenuItem-gutters {
+  padding-left: 0.85rem;
+  padding-right: 0.85rem;
+}
+
+.MuiListItem-root {
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+  border-top: 0.0625rem solid #e0e0e0;
+
+  &:last-child {
+    border-bottom: 0.0625rem solid #e0e0e0;
+  }
+}
+
+.MuiListItemIcon-root {
+  min-width: 3.25rem;
+}
+
+.MuiListItemText-root {
+  &.font-bold {
+    margin-top: 0.25rem;
+
+    .MuiListItemText-primary {
+      font-weight: bold;
+      font-size: 1.15em;
+    }
+  }
+}
+
 .text-right {
   text-align: right;
 }
@@ -682,8 +764,8 @@ div {
 }
 
 .no-shadow {
-  box-shadow: none;
-  text-shadow: none;
+  box-shadow: none !important;
+  text-shadow: none !important;
 }
 
 .theme-primary {
@@ -734,16 +816,32 @@ div {
   color: $theme-tertiary-v9 !important;
 }
 
-.theme-bgcolor-primary {
+.theme-bg-primary {
   background-color: $theme-primary;
 }
 
-.theme-bgcolor-secondary {
+.theme-bg-secondary {
   background-color: $theme-secondary;
 }
 
-.theme-bgcolor-tertiary {
+.theme-bg-tertiary-darkest {
+  background-color: $theme-tertiary-v1;
+}
+
+.theme-bg-tertiary-darker {
+  background-color: $theme-tertiary-v3;
+}
+
+.theme-bg-tertiary {
   background-color: $theme-tertiary;
+}
+
+.theme-bg-tertiary-lighter {
+  background-color: $theme-tertiary-v7;
+}
+
+.theme-bg-tertiary-lightest {
+  background-color: #eee;
 }
 
 [class*='theme-'] {

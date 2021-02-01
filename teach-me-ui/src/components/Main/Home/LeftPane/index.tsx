@@ -47,12 +47,15 @@ const HomeLeftPane = (props: LeftPaneProps) => {
   );
 
   return (
-    <Container as='section' className='left-pane'>
-      <Container className='rows-wrapper custom-scroll-bar small-bar rounded-bar tertiary-bar'>
+    <Container
+      as='section'
+      className={`left-pane ${cover_photo ? 'has-cover-photo' : ''}`}>
+      <Container className='rows-wrapper custom-scroll-bar rounded-bar tertiary-bar'>
         <Row as='section' className='d-block'>
           <Col
             className='cover-photo'
-            style={{ backgroundImage: `url(${cover_photo})` }}></Col>
+            style={{ backgroundImage: `url(${cover_photo})` }}
+          />
           <Avatar
             component='span'
             className={`avatar ${profile_photo ? 'has-photo' : ''}`}

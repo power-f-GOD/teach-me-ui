@@ -8,6 +8,7 @@ export interface DeepProfileProps {
     | 'NOT_COLLEAGUES';
   mutual_colleagues?: number;
   request_id?: string;
+  username?: string;
 }
 
 export interface ColleagueAction

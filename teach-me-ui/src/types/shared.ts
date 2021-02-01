@@ -6,6 +6,20 @@ export type Partial<T> = {
   [P in keyof T]?: T[P];
 };
 
+export interface InfoCardProps {
+  icon: Element | JSX.Element | null;
+  title: string;
+  data?: { name: string; value: any }[];
+  hr?: boolean;
+  type?: 'info' | 'colleague';
+  bgcolor?: string;
+  boxShadow?: string;
+  padding?: string;
+  borderRadius?: string;
+  className?: string;
+  children?: any;
+}
+
 export interface NotificationSoundState {
   play?: boolean;
   isPlaying?: boolean;
@@ -145,7 +159,7 @@ export interface UserData {
   last_seen?: number;
   last_name: string;
   level: string;
-  email?: string;
+  email: string;
   dob?: string;
   date_joined?: number;
   date_of_birth?: string;

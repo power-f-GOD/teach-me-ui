@@ -2,6 +2,19 @@
   // @include debugger();
   padding-right: 1rem !important;
 
+  &.has-cover-photo {
+    .cover-photo {
+      &::before {
+        // background: rgba(0, 0, 0, 0.35) !important;
+        opacity: 0.65;
+      }
+    }
+
+    .avatar {
+      background-color: $theme-secondary-v6;
+    }
+  }
+
   .container,
   .col,
   .row,
@@ -30,19 +43,29 @@
       position: center;
       color: #eee;
     }
+
+    > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    &::before {
+      @include before-or-after($bg: $theme-gradient, $zi: 0);
+    }
   }
 
   .avatar {
     $size: 4.5rem;
 
-    top: -3.25rem;
+    top: -3rem;
     width: $size;
     height: $size;
     border: 0.35rem solid white;
     display: inline-flex;
-    background-color: #bbb;
+    background-color: $theme-secondary-v5;
 
     &.has-photo {
+      background-color: rgba($sec-r, $sec-g, $sec-b, 0.65);
       top: -2.75rem;
     }
 
@@ -65,8 +88,10 @@
   }
 
   .display-name {
-    font-size: 1.25rem;
-    margin-bottom: 0.65rem;
+    font-size: 1.4rem;
+    margin-bottom: 0.25rem;
+    padding-bottom: 0.25rem;
+    color: white;
 
     &.light {
       color: white;

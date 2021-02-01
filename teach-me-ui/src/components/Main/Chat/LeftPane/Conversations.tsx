@@ -13,7 +13,7 @@ import {
   conversationMessages,
   conversationsMessages
 } from '../../../../actions/main/chat';
-import { dispatch, delay } from '../../../../functions/utils';
+import { dispatch, delay } from '../../../../utils';
 import {
   ChatState,
   APIConversationResponse,

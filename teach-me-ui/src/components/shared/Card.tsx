@@ -6,20 +6,9 @@ import Row from 'react-bootstrap/Row';
 
 import Box from '@material-ui/core/Box';
 
-export interface InfoCardProps {
-  icon: Element | JSX.Element | null;
-  title: string;
-  data?: { name: string; value: any }[];
-  hr?: boolean;
-  type?: 'info' | 'colleague';
-  bgcolor?: string;
-  boxShadow?: string;
-  padding?: string;
-  borderRadius?: string;
-  className?: string;
-}
+import { InfoCardProps } from '../../types';
 
-export function InfoCard(props: { children?: any } & InfoCardProps) {
+export function InfoCard(props: InfoCardProps) {
   const {
     title,
     icon: Icon,
@@ -37,7 +26,7 @@ export function InfoCard(props: { children?: any } & InfoCardProps) {
   return (
     <Box
       component='section'
-      className={`InfoCard text-left ${className}`}
+      className={`InfoCard text-left fade-in-opacity ${className}`}
       bgcolor={bgcolor ? bgcolor : 'white'}
       boxShadow={boxShadow ? boxShadow : '0 0 2.5rem rgba(0, 0, 0, 0.2)'}
       padding={padding ? padding : '1rem'}

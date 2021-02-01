@@ -9,7 +9,7 @@ import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
 import ForumIcon from '@material-ui/icons/Forum';
 import ChatIcon from '@material-ui/icons/Chat';
 
-import { addEventListenerOnce, delay } from '../../../../functions/utils';
+import { addEventListenerOnce, delay } from '../../../../utils';
 import { SearchState } from '../../../../types';
 import { Skeleton, DISPLAY_INFO } from '../../../shared/Loaders';
 import { Memoize } from '..';

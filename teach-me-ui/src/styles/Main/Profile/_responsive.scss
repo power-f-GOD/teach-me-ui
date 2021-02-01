@@ -1,30 +1,20 @@
 .Profile {
   @media screen and (max-width: 575px) {
-    &.self-view {
-      .profile-nav-bar {
-        box-shadow: none;
-      }
-    }
-
-    .profile-nav-bar-wrapper {
-      margin-bottom: 1rem;
+    .nav-bar-wrapper {
+      margin-bottom: 0.125em;
     }
   }
 
   @media screen and (min-width: 576px) {
-    .profile-nav-bar-wrapper {
+    .nav-bar-wrapper {
       top: 6rem;
       transform: translateY(-50%);
     }
 
-    .profile-nav-bar {
+    .nav-bar {
       transform: translateX(calc(50vw - 50%));
       width: max-content;
       border-radius: 0.75rem;
-    }
-
-    .Compose {
-      top: 4rem;
     }
 
     .InfoCard {
@@ -36,7 +26,7 @@
   }
 
   @media screen and (min-width: 768px) {
-    .profile-nav-bar-wrapper {
+    .nav-bar-wrapper {
       // @include debugger();
       top: 6.75rem;
       width: 100%;
@@ -47,16 +37,12 @@
           padding-right: 0.25rem;
           // transform: translateY(-50%);
 
-          .profile-nav-bar {
+          .nav-bar {
             width: 100%;
             transform: translateX(0.5rem);
           }
         }
       }
-    }
-
-    .Compose {
-      top: 5rem;
     }
 
     .InfoCard {
@@ -72,27 +58,31 @@
       transform: translateY(-5.25rem);
     }
 
-    .profile-nav-bar-wrapper {
+    .nav-bar-wrapper {
       top: 10.25rem;
       transform: unset;
       width: calc(100% + 1rem);
       margin-bottom: 1.75rem;
     }
 
-    .profile-nav-bar {
+    .nav-bar {
       transform: translate(-0.5rem);
       width: 100%;
-    }
-
-    .Compose {
-      top: 10.25rem;
     }
   }
 
   @media screen and (min-width: 1301px) {
-    .profile-top {
-      .change-cover {
+    header {
+      .change-cover-photo-button {
         right: calc(50vw - (1300px / 2) + 0.75rem);
+      }
+    }
+
+    .Post {
+      .reaction-wrapper {
+        &:last-child {
+          max-width: 22%;
+        }
       }
     }
   }
