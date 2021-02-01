@@ -25,7 +25,7 @@ interface MainNavProps {
 
 const MainNav = (props: MainNavProps) => {
   const { isAuthenticated, className, notifications } = props;
-  const numberOfNewNotifications = countNewNotifications(
+  const numOfNewNotifs = countNewNotifications(
     notifications.data?.notifications || []
   );
 
@@ -52,7 +52,7 @@ const MainNav = (props: MainNavProps) => {
         <Tooltip title='See Notifications'>
           <NavLink
             to='#'
-            className='nav-link'
+            className={`nav-link ${numOfNewNotifs ? 'new-notification' : ''}`}
             onClick={(e: any) => {
               e.preventDefault();
               displayModal(true, false, NOTIFICATIONS, {
@@ -60,7 +60,7 @@ const MainNav = (props: MainNavProps) => {
               });
             }}
             isActive={(match: any, location: any) => false}>
-            <Badge color='secondary' badgeContent={numberOfNewNotifications}>
+            <Badge color='secondary' badgeContent={numOfNewNotifs}>
               <FAIcon name='bell' />
               <Box component='span' className='nav-label'>
                 Notifications

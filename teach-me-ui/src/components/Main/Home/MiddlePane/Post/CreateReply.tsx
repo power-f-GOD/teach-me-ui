@@ -75,6 +75,7 @@ const CreateReply = (props: CreateReplyProps) => {
 
       if (socket && socket.readyState === socket.OPEN && online) {
         socket?.send(JSON.stringify({ ...payload }));
+        // console.log('payload from frontend:', payload)
         inputRef!.current!.value = '';
         setText('');
         setResetHeight(true);

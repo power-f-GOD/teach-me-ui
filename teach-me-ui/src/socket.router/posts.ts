@@ -29,6 +29,7 @@ export default function post(data: any) {
       case POST_REACTION:
       case POST_REPLY:
         dispatch(posts({ data: [{ ...data }] }));
+        // console.log('data from server:', data);
 
         if (data.pipe === POST_REPLY) {
           if (notificationSound.isPlaying) {
