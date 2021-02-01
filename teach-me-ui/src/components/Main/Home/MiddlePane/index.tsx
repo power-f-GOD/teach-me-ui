@@ -127,24 +127,15 @@ const HomeMiddlePane = (props: HomeMiddlePaneProps) => {
       )}
       {!postsIsPending &&
         postsData?.map((post, i: number) => {
-          const renderRecommendations = !inProfile &&
-            (i === 2 || (i > 0 && i % 15 === 0)) && (
-              <Recommendations recommendations={recommendations} />
-            );
-          const nReposts = post.colleague_reposts?.length;
+          const shouldRenderRecommendations =
+            !inProfile && (i === 2 || (i > 0 && i % 15 === 0));
 
           return (
             <React.Fragment key={i}>
-              {nReposts === 1 ? (
-                <Post
-                  {...post.colleague_reposts[0]}
-                  quote={{ ...post }}
-                  userId={userData.id}
-                />
-              ) : (
-                <Post {...post} userId={userData.id} />
+              <Post {...post} userId={userData.id} />
+              {shouldRenderRecommendations && (
+                <Recommendations recommendations={recommendations} />
               )}
-              {renderRecommendations}
             </React.Fragment>
           );
         })}

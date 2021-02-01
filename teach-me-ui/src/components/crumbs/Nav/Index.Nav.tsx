@@ -14,6 +14,9 @@ export default function IndexNav(props: any) {
       <Tooltip title='Search Kanyimuta'>
         <NavLink to='/search' className='nav-link'>
           <FAIcon name='search' />
+          <Box component='span' className='nav-label'>
+            Search
+          </Box>
         </NavLink>
       </Tooltip>
 
@@ -21,6 +24,9 @@ export default function IndexNav(props: any) {
       <Tooltip title='Sign In'>
         <NavLink to='/signin' className='nav-link'>
           <FAIcon name='sign-in-alt' />
+          <Box component='span' className='nav-label'>
+            Sign In
+          </Box>
         </NavLink>
       </Tooltip>
     </Box>

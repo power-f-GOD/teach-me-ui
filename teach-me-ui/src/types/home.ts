@@ -1,5 +1,5 @@
-import { UserData, SocketPipe, SocketStruct, StatusPropsState } from "./shared";
-import { ColleagueData } from "./profile";
+import { UserData, SocketPipe, SocketStruct, StatusPropsState } from './shared';
+import { ColleagueData } from './profile';
 
 export interface PostStateProps {
   downvote_count: number;
@@ -15,10 +15,10 @@ export interface PostStateProps {
   pipe?: SocketPipe;
   parent_id?: string;
   reaction: Reaction;
-  colleague_replies: Partial<PostStateProps>[];
-  colleague_reposts: Partial<PostStateProps>[];
+  colleague_replies: PostStateProps[];
+  colleague_reposts: PostStateProps[];
   sender: UserData;
-  parent?: { id: string; reply_count: number };
+  parent?: Partial<PostStateProps>;
   text: string;
   upvotes: any[];
   sec_type?: 'REPOST' | 'REPLY';

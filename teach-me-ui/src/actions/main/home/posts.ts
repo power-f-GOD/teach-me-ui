@@ -109,15 +109,15 @@ export const posts = (_payload: FetchState<PostStateProps[], number>) => {
   let finalPayload = { ...prevPostsState } as FetchState<PostStateProps[]>;
   const { data: _data, statusText } = _payload;
   const newData = _data ?? [];
-  const actualData = newData[0];
-  const pipe = actualData?.pipe;
+  const pipeData = newData[0];
+  const pipe = pipeData?.pipe;
   const homeUnmounted = /(home\s?)unmount(s|ed)/.test(statusText || '');
   const hadReachedEnd = /reached\send/.test(prevPostsState.statusText || ''); //attempt to reset Posts to [] if it had reached end in order to get fresh feeds
   const newPostCreated = /(new\s)?post\screated/.test(statusText || '');
   const resultantData = homeUnmounted
     ? hadReachedEnd
       ? []
-      : [...prevPostsState.data?.slice(-4)]
+      : [...prevPostsState.data?.slice(-3)]
     : [...prevPostsState.data];
   const updateFromPipe = !!pipe;
 
@@ -135,43 +135,48 @@ export const posts = (_payload: FetchState<PostStateProps[], number>) => {
     let { value: actualPost, index: postIndex } = loopThru(
       finalPayload.data ?? [],
       ({ id }) =>
-        id === actualData.id ||
-        id === actualData.parent_id ||
-        id === actualData.parent?.id,
+        id === pipeData.id ||
+        id === pipeData.parent_id ||
+        id === pipeData.parent?.id,
       { type: 'find', includeIndex: true }
     ) as LoopFind<PostStateProps>;
+    const isReply = !!pipeData.parent_id;
 
     if (actualPost) {
       switch (pipe) {
         case POST_REACTION:
-          if (actualData.parent_id && actualPost.sec_type !== 'REPLY') {
+          if (isReply && actualPost.sec_type !== 'REPLY') {
             let {
               value: actualReply,
               index: replyIndex
             } = loopThru(
               actualPost.colleague_replies ?? [],
-              (reply) => reply.id === actualData.id,
+              (reply) => reply.id === pipeData.id,
               { type: 'find', includeIndex: true }
             ) as LoopFind<PostStateProps>;
 
             actualPost.colleague_replies[replyIndex] = {
               ...actualReply,
-              ...actualData
+              ...pipeData
             };
           } else {
-            actualPost = { ...actualPost, ...actualData };
+            actualPost = { ...actualPost, ...pipeData };
           }
 
           finalPayload.data![postIndex] = actualPost;
           break;
         case POST_REPLY:
+          if (!actualPost.colleague_replies) {
+            actualPost.colleague_replies = [];
+          }
+
           actualPost.colleague_replies.push({
-            ...actualData,
+            ...pipeData,
             upvote_count: 0,
             downvote_count: 0
           });
           actualPost.numRepliesToShow = (actualPost.numRepliesToShow ?? 2) + 1;
-          actualPost.reply_count = actualData.parent!.reply_count;
+          actualPost.reply_count = pipeData.parent!.reply_count!;
           finalPayload.data![postIndex] = actualPost;
           break;
       }
@@ -183,7 +188,5 @@ export const posts = (_payload: FetchState<PostStateProps[], number>) => {
     payload: finalPayload
   };
 };
-
-export const getProfilePosts = () => () => {};
 
 export const profilePosts = () => {};

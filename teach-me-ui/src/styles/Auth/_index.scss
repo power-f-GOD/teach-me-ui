@@ -53,9 +53,9 @@
   width: auto;
   max-width: 100%;
   padding: 2.5em 2.75rem;
-  border-radius: 1rem;
-  box-shadow: 0 1em 6em 2em rgba(0, 0, 0, 0.085),
-    0 0em 5em 2em rgba(0, 0, 0, 0.055);
+  border-radius: 1.5rem;
+  box-shadow: 0 0 4em 2em rgba(0, 0, 0, 0.05), 0 0 4em 1em rgba(0, 0, 0, 0.025),
+    0 0 3em 1em rgba(0, 0, 0, 0.025);
 
   .input-set fieldset {
     border-right: 0.175rem solid $theme-primary-v7;

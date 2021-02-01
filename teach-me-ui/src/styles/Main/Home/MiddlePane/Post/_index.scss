@@ -5,7 +5,7 @@
   padding-bottom: 0.25em;
 }
 
-$pad-x: 1.1em;
+$pad-x: 1em;
 
 .Post,
 .Reply {
@@ -135,8 +135,8 @@ $pad-x: 1.1em;
   }
 
   .media-container {
-    width: calc(100% - (#{($pad-x / 2.5) * 2}));
-    margin: 0.25em 0 0.5em (($pad-x / 2.5));
+    width: calc(100% - (#{($pad-x / 4) * 2}));
+    margin: 0.25em 0 0.5em (($pad-x / 4));
     cursor: pointer;
   }
 
@@ -154,17 +154,25 @@ $pad-x: 1.1em;
     }
 
     [class*='fa-thumbs'] {
-      color: #aaa !important;
+      // color: #aaa !important;
       font-size: 0.9em;
+      opacity: 0.55;
+
+      &.liked {
+        color: #009600 !important;
+      }
+
+      &.disliked {
+        color: #be0000 !important;
+      }
     }
 
     .fa-thumbs-up {
-      transform: translateY(-0.25em);
+      transform: translateY(-0.0625em);
     }
 
     .fa-thumbs-down {
-      transform: rotateY(180deg) translateY(0.25em);
-      margin-right: 0.4em;
+      transform: rotateY(180deg) translate(0.175em, 0.125em);
     }
 
     .n-reactions {

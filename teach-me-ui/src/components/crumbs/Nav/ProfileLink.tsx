@@ -12,10 +12,15 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { FAIcon } from '../../shared/Icons';
 
 import { handleSignoutRequest } from '../../../functions';
-import { UserData } from '../../../types';
+import { UserData, AuthState } from '../../../types';
 
-const ProfileLink = (props: { userData?: UserData; className?: string }) => {
-  const { displayName, username, profile_photo } = props.userData || {};
+const ProfileLink = (props: {
+  userData?: UserData;
+  auth?: AuthState;
+  className?: string;
+}) => {
+  const { userData, auth } = props;
+  const { displayName, username, profile_photo } = userData || {};
 
   const [menuAnchorEl, setMenuAnchorEl] = React.useState<null | HTMLElement>(
     null
@@ -46,6 +51,8 @@ const ProfileLink = (props: { userData?: UserData; className?: string }) => {
         break;
     }
   };
+
+  if (!auth?.isAuthenticated) return null;
 
   return (
     <>
@@ -99,6 +106,9 @@ const ProfileLink = (props: { userData?: UserData; className?: string }) => {
   );
 };
 
-export default connect(({ userData }: { userData: UserData }) => ({
-  userData
-}))(ProfileLink);
+export default connect(
+  ({ userData, auth }: { userData: UserData; auth: AuthState }) => ({
+    userData,
+    auth
+  })
+)(ProfileLink);

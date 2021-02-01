@@ -10,17 +10,22 @@ import { Avatar } from '@material-ui/core';
 import { processPost } from '.';
 import { formatDate } from '../../../../../utils';
 import { PostStateProps } from '../../../../../types';
+import Media from './Media';
 
 const QuotedPost = (
-  props: Partial<PostStateProps> & { navigate: Function }
+  props: Partial<PostStateProps> & {
+    navigate: Function;
+    showModal(e: React.MouseEvent<HTMLImageElement, MouseEvent>): void;
+  }
 ) => {
-  const { id, sender, date: posted_at, text, navigate } = props || {};
+  const { id, sender, date: posted_at, text, media, navigate, showModal } =
+    props || {};
   const { first_name, last_name, profile_photo, username } = sender || {};
   const sender_name = `${first_name} ${last_name}`;
 
   return (
     <Box className='QuotedPost' data-id={id} onClick={navigate(id as string)}>
-      <Row className='mx-0 align-items-center'>
+      <Row className='mx-0 align-items-center my-2 px-2'>
         <Avatar
           component='span'
           className='post-avatar'
@@ -42,10 +47,11 @@ const QuotedPost = (
         </Col>
       </Row>
 
-      <Row className='container-fluid  mx-auto'>
-        <Box component='div' pt={1} px={0} className='break-word'>
+      <Row className='container-fluid mt-2 mx-auto'>
+        <Box component='div' className='px-2 pb-2'>
           {processPost(text as string)}
         </Box>
+        <Media media={media} showModal={showModal} />
       </Row>
     </Box>
   );
