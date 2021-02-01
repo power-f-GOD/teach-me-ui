@@ -126,7 +126,7 @@ export const fetchPostRequest = (postId?: string) => ( dispatch: Function) => {
           fetchPost({
             status: 'fulfilled',
             err: false,
-            data: data
+            data
           })
         );
       } else {

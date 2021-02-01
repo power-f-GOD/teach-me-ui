@@ -35,15 +35,17 @@ const PostPage = (props: {
 
   const formatPostData = (post: PostStateProps) => {
     let tempPost: any = {};
-    tempPost = post.reposts[0];
+    tempPost = post.parent;
     tempPost.quote = post;
-    tempPost.reposts = [];
+    tempPost.parent = {};
     return tempPost;
   }
 
-  if (fetchPost.data.reposts[0]) {
+  if (fetchPost.data.parent) {
     fetchPost.data = formatPostData(fetchPost.data);
   }
+
+  console.log(fetchPost.data);
   
   return (
     <>
