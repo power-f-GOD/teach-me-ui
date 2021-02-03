@@ -27,7 +27,7 @@ const Nav = (props: {
   const { windowWidth, location, auth } = props;
   const isAuthenticated = auth.isAuthenticated;
   const forIndexComponent = !isAuthenticated && props.for === 'index';
-  const forProfile = inProfile(location.pathname);
+  const forProfile = inProfile ? inProfile(location.pathname) : false; // attempt to fix build failure
   const transparentizeNavBar =
     (forIndexComponent && /\/(index)?$/.test(location.pathname)) || forProfile;
 
