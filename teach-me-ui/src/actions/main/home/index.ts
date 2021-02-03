@@ -43,8 +43,10 @@ export const makeRepost = (payload: StatusPropsState) => {
   };
 };
 
-export const makeRepostRequest = (payload: SendReplyProps) => (dispatch: Function) => {
-  dispatch(makeRepost({status: 'pending'}))
+export const makeRepostRequest = (payload: SendReplyProps) => (
+  dispatch: Function
+) => {
+  dispatch(makeRepost({ status: 'pending' }));
   const socket = getState().webSocket as WebSocket;
   console.log(payload);
 
@@ -134,8 +136,6 @@ export const requestCreatePost = ({
       true
     )
     .then(({ data, error: err }) => {
-      console.log(data);
-      
       if (!err) {
         dispatch(
           posts({

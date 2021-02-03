@@ -141,7 +141,7 @@ const Signup = (props: SignupPropsState) => {
           .map((word: string) =>
             /^(in|of|and|on)$/i.test(word)
               ? word.toLowerCase()
-              : word[0].toUpperCase() + word.slice(1).toLowerCase()
+              : word.toLowerCase().replace(/^\w|-\w/g, (a) => a.toUpperCase())
           )
           .join(' ');
 

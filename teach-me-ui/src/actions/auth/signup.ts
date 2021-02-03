@@ -32,15 +32,6 @@ export const requestSignup = (data: SignupFormData) => (
   const [day, month, year] = dob.split('/');
   const date_of_birth = `${year}-${month}-${day}`;
 
-  first_name = `${first_name[0].toUpperCase()}${first_name
-    .slice(1)
-    .toLowerCase()}`;
-  last_name = `${last_name[0].toUpperCase()}${last_name
-    .slice(1)
-    .toLowerCase()}`;
-  username = username.toLowerCase();
-  email = email.toLowerCase();
-
   dispatch(signup({ status: 'pending', statusText: ' ' }));
   //check if user is online as lost network connection is not a failure state for Firebase db in order to give response to user
   checkNetworkStatusWhilstPend({ name: 'signup', func: signup });

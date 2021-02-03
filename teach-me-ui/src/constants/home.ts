@@ -3,8 +3,10 @@ import { MakePostState, PostStateProps, StatusPropsState } from '../types';
 export const REPLY_TO_POST = 'REPLY_TO_POST';
 export const SUBMIT_POST = 'SUBMIT_POST';
 
-export const GET_POSTS = 'GET_POSTS';
-export const SET_POSTS = 'SET_POSTS';
+export const GET_FEEDS_POSTS = 'GET_FEEDS_POSTS';
+export const SET_FEEDS_POSTS = 'SET_FEEDS_POSTS';
+export const GET_PROFILE_POSTS = 'GET_PROFILE_POSTS';
+export const SET_PROFILE_POSTS = 'SET_PROFILE_POSTS';
 
 export const GET_RECOMMENDATIONS = 'GET_RECOMMENDATIONS';
 export const SET_RECOMMENDATIONS = 'SET_RECOMMENDATIONS';
@@ -15,9 +17,12 @@ export const SET_TRENDS = 'SET_TRENDS';
 export const POST_REACTION = 'POST_REACTION';
 export const POST_REPLY = 'POST_REPLY';
 
-export const UPVOTE = 'UPVOTE';
-export const NEUTRAL = 'NEUTRAL';
-export const DOWNVOTE = 'DOWNVOTE';
+export const POST_REACTION__LIKE = 'UPVOTE';
+export const POST_REACTION__NEUTRAL = 'NEUTRAL';
+export const POST_REACTION__DOWNVOTE = 'DOWNVOTE';
+
+export const POSTS_ANCHOR__HOME = 'HOME';
+export const POSTS_ANCHOR__PROFILE = 'PROFILE';
 
 // To self - Keep this yet, don't touch/remove; Use/test when back-end is up and running again to avoid breaking things
 export const POSTS_EVENT__FEEDS_REACHED_END = 'POSTS_EVENT__FEEDS_REACHED_END';
@@ -40,7 +45,7 @@ export const makePostState: MakePostState = {
 export const makeRepostState: StatusPropsState = {
   status: 'settled',
   err: false
-}
+};
 
 export const postState: PostStateProps = {
   downvote_count: 0,
@@ -53,7 +58,7 @@ export const postState: PostStateProps = {
   id: '',
   media: [],
   date: Date.now(),
-  reaction: NEUTRAL,
+  reaction: POST_REACTION__NEUTRAL,
   colleague_replies: [],
   colleague_reposts: [],
   sender: {} as any,

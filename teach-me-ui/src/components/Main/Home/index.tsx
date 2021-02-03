@@ -30,7 +30,7 @@ const Home = ({ posts: _posts }: { posts: FetchState<PostStateProps> }) => {
     feedsScrollObservedElem = feedsScrollObservedElemRef.current;
 
     return () => {
-      dispatch(posts({ statusText: 'home unmounted' }));
+      dispatch(posts({ statusText: 'feeds unmounted' }));
     };
   }, []);
 
@@ -54,8 +54,6 @@ const Home = ({ posts: _posts }: { posts: FetchState<PostStateProps> }) => {
           ) {
             dispatch(
               getPosts(
-                'FEED',
-                undefined,
                 true,
                 'is fetching more posts',
                 _posts.extra
@@ -89,7 +87,7 @@ const Home = ({ posts: _posts }: { posts: FetchState<PostStateProps> }) => {
             <HomeLeftPane />
           </Col>
           <Col lg={6} md={8} className='middle-pane-col px-3'>
-            <HomeMiddlePane type={'FEED'} />
+            <HomeMiddlePane />
             <Container
               className='feeds-scroll-observer py-2'
               ref={feedsScrollObservedElemRef}></Container>

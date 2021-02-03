@@ -9,7 +9,7 @@ import { bigNumberFormat } from '../../../../../utils';
 import { UserData, PostStateProps } from '../../../../../types';
 
 import { FAIcon } from '../../../../shared';
-import { UPVOTE, DOWNVOTE } from '../../../../../constants';
+import { POST_REACTION__LIKE, POST_REACTION__DOWNVOTE } from '../../../../../constants';
 
 const PostInfo = (props: {
   reactions?: UserData[];
@@ -31,16 +31,16 @@ const PostInfo = (props: {
   } = props;
   const colleagueThatUpvoted = reactions?.find(
     (colleague) =>
-      colleague.reaction === UPVOTE &&
+      colleague.reaction === POST_REACTION__LIKE &&
       colleague.id !== sender?.id &&
       colleague.id !== userId
   );
   const oneLikes =
-    !!reactions?.find((colleague) => colleague.reaction === UPVOTE) ||
-    reaction === UPVOTE;
+    !!reactions?.find((colleague) => colleague.reaction === POST_REACTION__LIKE) ||
+    reaction === POST_REACTION__LIKE;
   const oneDislikes =
-    !!reactions?.find((colleague) => colleague.reaction === DOWNVOTE) ||
-    reaction === DOWNVOTE;
+    !!reactions?.find((colleague) => colleague.reaction === POST_REACTION__DOWNVOTE) ||
+    reaction === POST_REACTION__DOWNVOTE;
 
   return !isLoading ? (
     <Row className='post-info d-flex theme-tertiary'>

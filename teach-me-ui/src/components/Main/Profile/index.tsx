@@ -8,7 +8,12 @@ import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 
 import Box from '@material-ui/core/Box';
-import { UserData, FetchState, AuthState } from '../../../types';
+import {
+  UserData,
+  FetchState,
+  AuthState,
+  PostStateProps
+} from '../../../types';
 import { dispatch, createObserver } from '../../../functions';
 import {
   getProfileData,
@@ -38,10 +43,6 @@ export const refs: any = {
   levelInput: createRef<HTMLInputElement>()
 };
 
-// window.addEventListener('popstate', () => {
-//   cleanUp(false);
-// });
-
 let navBarWrapper: HTMLElement | null = null;
 let navBarObservee: HTMLElement | null = null;
 
@@ -49,6 +50,7 @@ let observer: IntersectionObserver;
 
 export interface ProfileProps {
   profileData: FetchState<UserData>;
+  profilePosts: FetchState<PostStateProps[]>;
   userData: UserData;
   windowWidth: number;
   auth: AuthState;
@@ -59,6 +61,7 @@ export interface ProfileProps {
 const Profile = (props: ProfileProps) => {
   const {
     profileData: _profileData,
+    profilePosts: _profilePosts,
     userData,
     windowWidth,
     auth,
@@ -171,7 +174,8 @@ const Profile = (props: ProfileProps) => {
             className='d-flex align-items-start flex-column flex-md-row px-0'>
             {/* Profile Middle Pane */}
             <ProfileMiddlePane
-              data={finalData}
+              profileData={{ ..._profileData, data: finalData }}
+              profilePosts={_profilePosts}
               isSelfView={isSelfView}
               windowWidth={windowWidth}
               location={location}
@@ -190,6 +194,7 @@ const mapStateToProps = (state: ProfileProps) => ({
   auth: state.auth,
   userData: state.userData,
   profileData: state.profileData,
+  profilePosts: state.profilePosts,
   windowWidth: state.windowWidth
 });
 
