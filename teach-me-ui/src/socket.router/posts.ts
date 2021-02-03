@@ -1,10 +1,11 @@
-import { dispatch, getState, promisedDispatch } from '../functions';
+import { dispatch, getState, promisedDispatch, inProfile } from '../functions';
 
 import {
   createPost,
   posts,
   triggerNotificationSound,
-  makeRepost
+  makeRepost,
+  profilePosts
 } from '../actions';
 
 import { displayModal } from '../functions';
@@ -17,21 +18,23 @@ import {
 } from '../constants';
 import { SocketPipe, NotificationSoundState } from '../types';
 
-export default function post(data: any) {
+export default function post(_data: any) {
   const { notificationSound, userData } = getState() as {
     notificationSound: NotificationSoundState;
     userData: any;
   };
   const toneName: NotificationSoundState['toneName'] = TONE_NAME__OPEN_ENDED;
 
+  // console.log('data from server:', data);
   try {
-    switch (data.pipe as SocketPipe) {
+    switch (_data.pipe as SocketPipe) {
       case POST_REACTION:
-      case POST_REPLY:
-        dispatch(posts({ data: [{ ...data }] }));
-        // console.log('data from server:', data);
+      case POST_REPLY: {
+        const data = [{ ..._data }];
 
-        if (data.pipe === POST_REPLY) {
+        dispatch(inProfile() ? profilePosts({ data }) : posts({ data }));
+
+        if (_data.pipe === POST_REPLY) {
           if (notificationSound.isPlaying) {
             promisedDispatch(
               triggerNotificationSound({ play: false, isPlaying: false })
@@ -42,52 +45,49 @@ export default function post(data: any) {
             dispatch(triggerNotificationSound({ play: true, toneName }));
           }
         }
+
         break;
-      case 'POST_REPOST':
-        if (!data.error) {
-          // if (data.count !== undefined) {
-          //   dispatch(updateRepostData(data as RepostResult));
-          // }
-          if (data.action_count !== undefined) dispatch(createPost(data));
-          document.querySelector('.middle-pane-col')?.scrollTo(0, 0);
-          dispatch(
-            makeRepost({
-              err: false,
-              status: 'fulfilled'
-            })
-          );
-          // console.log(data);
+      }
+      case 'POST_REPOST': {
+        const data = {
+          data: [{ ...postState, ..._data, sender: userData }],
+          statusText: 'new post created'
+        };
 
-          dispatch(
-            posts({
-              data: [{ ...postState, ...data, sender: userData }],
-              statusText: 'new post created'
-            })
-          );
-          displayModal(false);
+        if (_data.action_count !== undefined) dispatch(createPost(_data));
 
-          if (notificationSound.isPlaying) {
-            promisedDispatch(
-              triggerNotificationSound({ play: false, isPlaying: false })
-            ).then(() => {
-              dispatch(triggerNotificationSound({ play: true, toneName }));
-            });
-          } else {
+        dispatch(inProfile() ? profilePosts({ ...data }) : posts({ ...data }));
+        dispatch(
+          makeRepost({
+            err: false,
+            status: 'fulfilled'
+          })
+        );
+        displayModal(false);
+        window.history.back();
+
+        if (notificationSound.isPlaying) {
+          promisedDispatch(
+            triggerNotificationSound({ play: false, isPlaying: false })
+          ).then(() => {
             dispatch(triggerNotificationSound({ play: true, toneName }));
-          }
-
-          window.history.back();
-          dispatch(displayModal(false));
+          });
         } else {
+          dispatch(triggerNotificationSound({ play: true, toneName }));
+        }
+
+        if (_data.error) {
           dispatch(
             makeRepost({
               err: true,
               status: 'settled',
-              statusText: data.message
+              statusText: _data.message
             })
           );
         }
+
         break;
+      }
       default:
         break;
     }

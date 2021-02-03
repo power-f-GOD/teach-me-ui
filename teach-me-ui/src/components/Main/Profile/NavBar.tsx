@@ -244,14 +244,16 @@ const ProfileNavBar = (props: ProfileNavBarProps) => {
                   </IconButton>
                 </>
               ) : (
-                <Button
-                  variant='contained'
-                  size='large'
-                  className='colleague-action-button mr-sm-2'
-                  color='primary'
-                  onClick={handleEditClick}>
-                  Edit Profile <FAIcon name='user-edit' className='ml-2' />
-                </Button>
+                false && (
+                  <Button
+                    variant='contained'
+                    size='large'
+                    className='colleague-action-button mr-sm-2'
+                    color='primary'
+                    onClick={handleEditClick}>
+                    Edit Profile <FAIcon name='user-edit' className='ml-2' />
+                  </Button>
+                )
               )}
             </Container>
           )}

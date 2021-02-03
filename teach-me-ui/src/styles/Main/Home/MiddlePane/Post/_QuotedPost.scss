@@ -3,7 +3,7 @@ $pad-x: 1.1em;
 .QuotedPost {
   border-radius: $pad-x - 0.25em;
   border: 0.125rem solid #ddd;
-  padding: 0.125em .3em;
+  padding: 0.125em 0.3em;
   margin: $pad-x;
   // margin-right: $pad-x + 0.25em !important;
   margin-top: 0;
@@ -23,5 +23,9 @@ $pad-x: 1.1em;
 
     height: $size;
     width: $size;
+  }
+
+  .post-text {
+    white-space: pre-line;
   }
 }

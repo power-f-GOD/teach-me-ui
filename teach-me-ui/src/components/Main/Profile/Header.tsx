@@ -41,16 +41,18 @@ const ProfileHeader = (props: {
   return (
     <Container as='header' fluid className='header px-0'>
       <Container fluid className='cover-photo-container px-0'>
-        <Img
-          alt={displayName}
-          className={`cover-photo ${
-            displayName && cover_photo ? 'fade-in-opacity' : ''
-          }`}
-          src={
-            cover_photo ||
-            'https://www.thoughtco.com/thmb/mik7Z00SAYN786BQbieXWOzZmc8=/2121x1414/filters:fill(auto,1)/lotus-flower-828457262-5c6334b646e0fb0001dcd75a.jpg'
-          }
-        />
+        {cover_photo && (
+          <Img
+            alt={displayName}
+            className={`cover-photo ${
+              displayName && cover_photo ? 'fade-in-opacity' : ''
+            }`}
+            src={
+              cover_photo ||
+              'https://www.thoughtco.com/thmb/mik7Z00SAYN786BQbieXWOzZmc8=/2121x1414/filters:fill(auto,1)/lotus-flower-828457262-5c6334b646e0fb0001dcd75a.jpg'
+            }
+          />
+        )}
       </Container>
 
       <Container className='details-container'>
@@ -60,6 +62,11 @@ const ProfileHeader = (props: {
             className='profile-avatar profile-photo'
             alt={displayName}
             src={profile_photo}
+            imgProps={{
+              className: 'fade-in-opacity d-none',
+              onLoad: (e: React.SyntheticEvent<HTMLImageElement, Event>) =>
+                (e.target as HTMLImageElement).classList.remove('d-none')
+            }}
           />
           {isSelfView && (
             <Tooltip title='Edit profile photo'>

@@ -1,39 +1,21 @@
-import {
-  SET_POSTS,
-  GET_POSTS,
-  POST_REACTION,
-  POST_REPLY
-} from '../../../constants';
-import {
-  PostStateProps,
-  FetchState,
-  LoopFind,
-  ReduxActionV2
-} from '../../../types';
-
+import { SET_FEEDS_POSTS, GET_FEEDS_POSTS } from '../../../constants';
+import { PostStateProps, FetchState, ReduxActionV2 } from '../../../types';
 import {
   getState,
   checkNetworkStatusWhilstPend,
   logError,
-  http,
-  loopThru
+  http
 } from '../../../functions';
+import { updatePost } from '../../../utils/posts';
 
-export const getPosts = (
-  type: 'FEED' | 'WALL',
-  userId?: string,
-  update = false,
-  statusText?: string,
-  url?: string
-) => (dispatch: Function): ReduxActionV2<any> => {
-  const isWall = type === 'WALL' && !!userId;
+export const getPosts = (update = false, statusText?: string, url?: string) => (
+  dispatch: Function
+): ReduxActionV2<any> => {
   const payload = {
     status: 'pending',
     statusText,
     err: false
   } as FetchState<PostStateProps[]>;
-  const isRecycling = /recycl(e|ing)/i.test(statusText || '');
-  const isFetching = /fetching/i.test(statusText || '');
   let offset = getState().posts.extra;
 
   if (update) delete payload.status;
@@ -46,15 +28,26 @@ export const getPosts = (
 
   http
     .get<PostStateProps[]>(
-      isWall
-        ? `/profile/${userId}/posts`
-        : url
-        ? `${url.replace(/(offset=)(.*)/, `$1${offset}&limit=8`)}`
-        : '/feed?limit=8',
+      url
+        ? `${url.replace(/(offset=)(.*)/, `$1${offset}&limit=4`)}`
+        : '/feed?limit=4',
       true
     )
     .then(({ error, message, data }) => {
+      const isRecycling = /recycl(e|ing)/i.test(statusText || '');
+      const isFetching = /fetching/i.test(statusText || '');
       offset = data?.slice(-1)[0]?.date ?? Date.now();
+
+      console.log(
+        'offset:',
+        offset,
+        '\n\n',
+        'data returned from server:',
+        data,
+        '\n\n',
+        'statusText:',
+        statusText
+      );
 
       if (error) {
         dispatch(posts({ status: 'settled', statusText: message, err: true }));
@@ -68,13 +61,11 @@ export const getPosts = (
           );
         }
 
-        if (!data.length && type === 'FEED') {
+        if (!data.length) {
           // recursively get (recycled) Posts if no post is returned
           if (!isRecycling && isFetching) {
             dispatch(
               getPosts(
-                type,
-                userId,
                 update,
                 'fetching recycled posts',
                 `/feed?recycle=true&offset=`
@@ -98,96 +89,13 @@ export const getPosts = (
     .catch(logError(posts));
 
   return {
-    type: GET_POSTS
+    type: GET_FEEDS_POSTS
   };
 };
 
 export const posts = (_payload: FetchState<PostStateProps[], number>) => {
-  const { posts: prevPostsState } = getState() as {
-    posts: FetchState<PostStateProps[]>;
-  };
-  let finalPayload = { ...prevPostsState } as FetchState<PostStateProps[]>;
-  const { data: _data, statusText } = _payload;
-  const newData = _data ?? [];
-  const pipeData = newData[0];
-  const pipe = pipeData?.pipe;
-  const homeUnmounted = /(home\s?)unmount(s|ed)/.test(statusText || '');
-  const hadReachedEnd = /reached\send/.test(prevPostsState.statusText || ''); //attempt to reset Posts to [] if it had reached end in order to get fresh feeds
-  const newPostCreated = /(new\s)?post\screated/.test(statusText || '');
-  const resultantData = homeUnmounted
-    ? hadReachedEnd
-      ? []
-      : [...prevPostsState.data?.slice(-3)]
-    : [...prevPostsState.data];
-  const updateFromPipe = !!pipe;
-
-  if (!updateFromPipe) {
-    if (!homeUnmounted) {
-      resultantData[newPostCreated ? 'unshift' : 'push'](...newData);
-    }
-
-    finalPayload = {
-      ..._payload,
-      data: resultantData,
-      extra: _payload.extra ?? prevPostsState.extra
-    };
-  } else {
-    let { value: actualPost, index: postIndex } = loopThru(
-      finalPayload.data ?? [],
-      ({ id }) =>
-        id === pipeData.id ||
-        id === pipeData.parent_id ||
-        id === pipeData.parent?.id,
-      { type: 'find', includeIndex: true }
-    ) as LoopFind<PostStateProps>;
-    const isForReply = !!pipeData.parent_id;
-    // console.log(actualPost, pipeData)
-
-    if (actualPost) {
-      switch (pipe) {
-        case POST_REACTION:
-          if (isForReply && actualPost.sec_type !== 'REPLY') {
-            let {
-              value: actualReply,
-              index: replyIndex
-            } = loopThru(
-              actualPost.colleague_replies ?? [],
-              (reply) => reply.id === pipeData.id,
-              { type: 'find', includeIndex: true }
-            ) as LoopFind<PostStateProps>;
-
-            actualPost.colleague_replies[replyIndex] = {
-              ...actualReply,
-              ...pipeData
-            };
-          } else {
-            actualPost = { ...actualPost, ...pipeData };
-          }
-
-          finalPayload.data![postIndex] = actualPost;
-          break;
-        case POST_REPLY:
-          if (!actualPost.colleague_replies) {
-            actualPost.colleague_replies = [];
-          }
-
-          actualPost.colleague_replies.push({
-            ...pipeData,
-            upvote_count: 0,
-            downvote_count: 0
-          });
-          actualPost.numRepliesToShow = (actualPost.numRepliesToShow ?? 2) + 1;
-          actualPost.reply_count = pipeData.parent!.reply_count!;
-          finalPayload.data![postIndex] = actualPost;
-          break;
-      }
-    }
-  }
-
   return {
-    type: SET_POSTS,
-    payload: finalPayload
+    type: SET_FEEDS_POSTS,
+    payload: updatePost(_payload)
   };
 };
-
-export const profilePosts = () => {};

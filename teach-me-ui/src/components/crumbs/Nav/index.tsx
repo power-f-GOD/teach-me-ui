@@ -15,6 +15,7 @@ import MainNavMenu from './Main.NavMenu';
 import IndexNav from './Index.Nav';
 import ProfileLink from './ProfileLink';
 import { FetchState, AuthState } from '../../../types';
+import { inProfile } from '../../../utils';
 
 const Nav = (props: {
   windowWidth: number;
@@ -25,19 +26,18 @@ const Nav = (props: {
 }) => {
   const { windowWidth, location, auth } = props;
   const isAuthenticated = auth.isAuthenticated;
-  const forIndexPage = /index|@\w+/i.test(props.for);
-  const forProfile = /\/(@\w+|profile\/.+)$/i.test(location.pathname);
-  const forLandingPage =
-    (forIndexPage || forProfile) &&
-    /\/index|\/$|\/[^a-z]+$|\/(@\w+|profile\/.+)/i.test(
-      window.location.pathname
-    );
+  const forIndexComponent = !isAuthenticated && props.for === 'index';
+  const forProfile = inProfile(location.pathname);
+  const transparentizeNavBar =
+    (forIndexComponent && /\/(index)?$/.test(location.pathname)) || forProfile;
 
   return (
     <Box component='nav'>
       <ElevationScroll
         {...props}
-        forLandingPage={forLandingPage && !/404/.test(props.location.pathname)}>
+        forLandingPage={
+          transparentizeNavBar && !/404/.test(props.location.pathname)
+        }>
         <AppBar position='fixed' className='mobile-width'>
           <Container>
             <Toolbar className='nav-toolbar'>
@@ -48,7 +48,7 @@ const Nav = (props: {
               </Link>
               {windowWidth >= 768 && (
                 <>
-                  {forIndexPage ? (
+                  {forIndexComponent ? (
                     <IndexNav
                       {...props}
                       className='app-bar-links order-2 order-md-1'
@@ -67,7 +67,7 @@ const Nav = (props: {
                   className={`${
                     isAuthenticated ? 'order-0' : 'order-2'
                   } order-md-2`}>
-                  {forIndexPage ? (
+                  {forIndexComponent ? (
                     <IndexNav {...props} />
                   ) : (
                     <MainNavMenu {...props} />

@@ -4,11 +4,12 @@ import {
   MAKE_REPOST,
   MAKE_POST,
   makePostState,
-  SET_POSTS,
+  SET_FEEDS_POSTS,
   SET_RECOMMENDATIONS,
   fetchState,
   SET_TRENDS,
-  makeRepostState
+  makeRepostState,
+  SET_PROFILE_POSTS
 } from '../constants';
 import {
   ReduxAction,
@@ -26,7 +27,18 @@ export const posts = (
   state = { ...fetchState } as FetchState<PostStateProps[]>,
   { type, payload }: ReduxActionV2<FetchState<PostStateProps>>
 ) => {
-  if (type === SET_POSTS) {
+  if (type === SET_FEEDS_POSTS) {
+    return { ...state, ...payload };
+  }
+
+  return state;
+};
+
+export const profilePosts = (
+  state = { ...fetchState } as FetchState<PostStateProps[]>,
+  { type, payload }: ReduxActionV2<FetchState<PostStateProps>>
+) => {
+  if (type === SET_PROFILE_POSTS) {
     return { ...state, ...payload };
   }
 
