@@ -219,6 +219,6 @@ export const requestCreatePost = ({
 
 export const createPost = (
   payload: FetchState<PostStateProps>
-): ReduxActionV2<any> => {
+): ReduxActionV2<FetchState<PostStateProps>> => {
   return { type: MAKE_POST, payload };
 };

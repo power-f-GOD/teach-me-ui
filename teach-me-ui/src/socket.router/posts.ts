@@ -1,7 +1,6 @@
 import { dispatch, getState, promisedDispatch } from '../functions';
 
 import {
-  createPost,
   posts,
   triggerNotificationSound,
   makeRepost
@@ -10,8 +9,10 @@ import {
 import { displayModal } from '../functions';
 
 import { 
+  postState,
   POST_REACTION, 
   POST_REPLY, 
+  POST_REPOST,
   TONE_NAME__OPEN_ENDED 
 } from '../constants';
 
@@ -43,32 +44,36 @@ export default function post(data: any) {
           }
         }
         break;
-      case 'POST_REPOST':
+      case POST_REPOST:
         if (!data.error) {
-          // if (data.count !== undefined) {
-          //   dispatch(updateRepostData(data as RepostResult));
-          // }
-          if (data.action_count !== undefined) dispatch(createPost(data));
-          document.querySelector('.middle-pane-col')?.scrollTo(0, 0);
-          dispatch(
-            makeRepost({
-              err: false,
-              status: 'fulfilled'
-            })
-          );
-          displayModal(false);
-
-          if (notificationSound.isPlaying) {
-            promisedDispatch(
-              triggerNotificationSound({ play: false, isPlaying: false })
-            ).then(() => {
+          const { userData } = getState();
+          console.log(data)
+          if (data.sender.id === userData.id) {
+            dispatch(
+              posts({
+                data: [{ ...postState, ...data, pipe: undefined }],
+                statusText: 'new post created'
+              })
+            );
+          
+            // if (data.action_count !== undefined) dispatch(createPost(data));
+            dispatch(
+              makeRepost({
+                err: false,
+                status: 'fulfilled'
+              })
+            );
+            if (notificationSound.isPlaying) {
+              promisedDispatch(
+                triggerNotificationSound({ play: false, isPlaying: false })
+              ).then(() => {
+                dispatch(triggerNotificationSound({ play: true, toneName }));
+              });
+            } else {
               dispatch(triggerNotificationSound({ play: true, toneName }));
-            });
-          } else {
-            dispatch(triggerNotificationSound({ play: true, toneName }));
+            }
+            dispatch(displayModal(false));
           }
-          window.history.back();
-          dispatch(displayModal(false));
         } else {
           dispatch(
             makeRepost({

@@ -13,7 +13,6 @@ import { fetchPostRequest } from '../../../actions';
 import { Redirect } from 'react-router-dom';
 
 import { dispatch } from '../../../functions';
-import { PostStateProps } from '../../../types';
 
 const PostPage = (props: {
   match: any;
@@ -32,20 +31,6 @@ const PostPage = (props: {
   if (fetchPost.err) {
     return <Redirect to='/404' />;
   }
-
-  const formatPostData = (post: PostStateProps) => {
-    let tempPost: any = {};
-    tempPost = post.parent;
-    tempPost.quote = post;
-    tempPost.parent = {};
-    return tempPost;
-  }
-
-  if (fetchPost.data.parent) {
-    fetchPost.data = formatPostData(fetchPost.data);
-  }
-
-  console.log(fetchPost.data);
   
   return (
     <>

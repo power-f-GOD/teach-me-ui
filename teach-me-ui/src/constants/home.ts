@@ -1,4 +1,4 @@
-import { MakePostState, PostStateProps, StatusPropsState } from '../types';
+import { FetchState, MakePostState, PostStateProps } from '../types';
 
 export const REPLY_TO_POST = 'REPLY_TO_POST';
 export const SUBMIT_POST = 'SUBMIT_POST';
@@ -17,6 +17,7 @@ export const SET_TRENDS = 'SET_TRENDS';
 
 export const POST_REACTION = 'POST_REACTION';
 export const POST_REPLY = 'POST_REPLY';
+export const POST_REPOST = 'POST_REPOST';
 
 export const UPVOTE = 'UPVOTE';
 export const NEUTRAL = 'NEUTRAL';
@@ -40,12 +41,12 @@ export const makePostState: MakePostState = {
   status: 'settled'
 };
 
-export const makeRepostState: StatusPropsState = {
+export const makeRepostState: FetchState<any> = {
   status: 'settled',
   err: false
 }
 
-export const fetchRepliesState: StatusPropsState = {
+export const fetchRepliesState: FetchState<Array<Object>> = {
   status: 'settled',
   err: false,
   data: []
@@ -69,11 +70,10 @@ export const postState: PostStateProps = {
   text: '',
   upvotes: [],
   type: 'post',
-  numRepliesToShow: 2,
-  reposts: []
+  numRepliesToShow: 2
 };
 
-export const fetchPostState: StatusPropsState = {
+export const fetchPostState: FetchState<PostStateProps> = {
   status: 'settled',
   err: false,
   data: postState

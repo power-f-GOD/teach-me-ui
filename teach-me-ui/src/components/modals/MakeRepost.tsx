@@ -22,6 +22,8 @@ import { makeRepostRequest } from '../../actions';
 
 import QuotedPost from '../Main/Home/MiddlePane/Post/QuotedPost';
 
+import { POST_REPOST } from '../../constants';
+
 
 const MakeRePost: React.FC<any> = (props) => {
   const { userData } = props;
@@ -65,9 +67,9 @@ const MakeRePost: React.FC<any> = (props) => {
   const onPostSubmit = (e: MouseEvent<HTMLButtonElement>) => {
     dispatch(
       makeRepostRequest({
-        pipe: 'POST_REPOST',
+        pipe: POST_REPOST,
         text: state.post.text,
-        post_id: props.id
+        post_id: props.post.id
       })
     );
   };
