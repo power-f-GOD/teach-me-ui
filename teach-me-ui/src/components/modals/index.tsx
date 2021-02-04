@@ -32,7 +32,6 @@ import {
 } from '../../constants/modals';
 
 const removeModal = (event: any) => {
-  window.history.back();
   displayModal(false);
   dispatch(uploads({
     showUploads: false
@@ -40,7 +39,6 @@ const removeModal = (event: any) => {
 };
 
 const removeNotificationModal = (event: any) => {
-  window.history.back();
   displayModal(false, true);
 }
 

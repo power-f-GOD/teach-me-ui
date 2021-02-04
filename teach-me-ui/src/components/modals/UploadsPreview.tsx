@@ -72,7 +72,6 @@ const UploadsPreview = (props: any) => {
       dispatch(updateUserDataRequest({cover_photo: id})(dispatch));
     }
     
-    window.history.back();
     displayModal(false);
   }
 

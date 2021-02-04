@@ -19,7 +19,7 @@ const ProfileRightPane = () => {
         title='Colleagues'
         icon={<FAIcon name='user-friends' fontSize='1.5em' />}
         type='colleague'
-        bgcolor='#fff'
+        bgColor='#fff'
         boxShadow='none'
         padding='1rem 0.75rem 0.75rem'
         className='mb-2'

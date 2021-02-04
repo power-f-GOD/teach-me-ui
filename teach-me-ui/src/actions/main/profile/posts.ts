@@ -9,27 +9,27 @@ import {
   getState,
   checkNetworkStatusWhilstPend,
   logError,
-  http
+  http,
+  isAuthenticated
 } from '../../../functions';
 import { updatePost } from '../../../utils/posts';
 
 export const getProfilePosts = (
   userId: string,
-  update = false,
   statusText?: string,
   url?: string
 ) => (dispatch: Function): ReduxActionV2<any> => {
-  const payload = {
-    status: 'pending',
-    statusText,
-    err: false,
-    data: []
-  } as FetchState<PostStateProps[]>;
-  let offset = getState().profilePosts.extra;
+  let { extra: offset } = getState().profilePosts as FetchState<PostStateProps>;
+  let isGettingNew = /getting\s?new/.test(statusText || '');
+  const limit = 5;
 
-  if (update) delete payload.status;
-
-  dispatch(profilePosts(payload));
+  dispatch(
+    profilePosts({
+      ...(isGettingNew ? { status: 'pending', data: [] } : {}),
+      statusText,
+      err: false
+    })
+  );
   checkNetworkStatusWhilstPend({
     name: 'profilePosts',
     func: profilePosts
@@ -38,26 +38,21 @@ export const getProfilePosts = (
   http
     .get<PostStateProps[]>(
       url
-        ? `${url.replace(/(offset=)(.*)/, `$1${offset}&limit=4`)}`
-        : `/profile/${userId}/posts?limit=4`,
-      true
+        ? `${url.replace(/(offset=)(.*)/, `$1${offset}`)}`
+        : `/profile/${userId}/posts?limit=${limit}`,
+      isAuthenticated()
     )
     .then(({ error: err, message, data }) => {
-      offset = data?.slice(-1)[0]?.date ?? Date.now(); //'extra', here, is 'offset' for purpose of recycling
-
-      let finalData = {
-        data,
-        extra: offset
-      };
-
-      if (err) finalData = {} as any;
+      //'extra', here, is 'offset' for purpose of recycling
+      offset = data?.slice(-1)[0]?.date || offset || Date.now();
 
       dispatch(
         profilePosts({
           status: err ? 'settled' : 'fulfilled',
-          statusText: !data.length ? 'has reached end' : !err ? '' : message,
+          statusText: !data?.length ? 'has reached end' : !err ? '' : message,
           err,
-          ...finalData
+          ...(!err ? { data } : {}),
+          extra: offset
         })
       );
     })

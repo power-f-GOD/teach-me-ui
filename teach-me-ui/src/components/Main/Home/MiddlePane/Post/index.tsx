@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+import Container from 'react-bootstrap/Container';
+
 import Box from '@material-ui/core/Box';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
@@ -10,17 +12,24 @@ import ArrowForward from '@material-ui/icons/ArrowForwardIos';
 
 import { Link } from 'react-router-dom';
 
-import { dispatch, loopThru } from '../../../../../utils';
+import { dispatch, loopThru, createObserver } from '../../../../../utils';
 import { PostStateProps, LoopFind, AuthState } from '../../../../../types';
 
 import { displayModal } from '../../../../../functions';
-import { triggerSearchKanyimuta, fetchRepliesRequest } from '../../../../../actions';
+import {
+  triggerSearchKanyimuta,
+  fetchRepliesRequest
+} from '../../../../../actions';
 
 import { LazyLoadImage as LazyImg } from 'react-lazy-load-image-component';
 
 import PostFooter from './Footer';
 import PostReply from './Reply';
-import { MAKE_REPOST } from '../../../../../constants';
+import {
+  MAKE_REPOST,
+  POST_INTERACTION,
+  POST_INTERACTION__SEEN
+} from '../../../../../constants';
 import PostBody from './Body';
 import PostHeader from './Header';
 import PostInfo from './Info';
@@ -34,59 +43,11 @@ export interface PostCrumbs extends Partial<PostStateProps> {
   auth?: AuthState;
 }
 
-const stopProp = (e: any) => {
-  e.stopPropagation();
-};
+const postElementRef = React.createRef<any>();
 
-export const processPost = (post: string) => {
-  if (!post) return;
+let postElement: HTMLElement | null = null;
 
-  const mid = post.replace(/([\t\r\n\f]+)/gi, ' $1 ');
-  return mid
-    .trim()
-    .split(/ /gi)
-    .map((w, i) => {
-      w = w.replace(/ /gi, '');
-      return /(^@)[A-Za-z0-9_]+[,.!?]*$/.test(w) ? (
-        <Box component='span' key={i}>
-          <Link
-            onClick={stopProp}
-            to={`/${/[,.!]+$/.test(w) ? w.slice(0, -1) : w}`}>{`${
-            /[,.!]+$/.test(w) ? w.slice(0, -1) : w
-          }`}</Link>
-          {`${/[,.!]+$/.test(w) ? w.slice(-1) : ''}`}{' '}
-        </Box>
-      ) : /(^#)[A-Za-z0-9_]+[,.!?]*$/.test(w) ? (
-        <Box component='span' key={i}>
-          <Link
-            onClick={(e: any) => {
-              stopProp(e);
-              dispatch(triggerSearchKanyimuta(w)(dispatch));
-            }}
-            to={`/search?q=${w.substring(1)}`}>
-            {w}
-          </Link>{' '}
-        </Box>
-      ) : /^https?:\/\/(?!\.)[A-Za-z0-9.-]+.[A-Za-z0-9.]+(\/[A-Za-z-/0-9@]+)?$/.test(
-          w
-        ) ? (
-        <Box component='span' key={i}>
-          <a onClick={stopProp} href={w} target='blank'>
-            {w}
-          </a>{' '}
-        </Box>
-      ) : (
-        <React.Fragment key={i}>{w} </React.Fragment>
-      );
-    });
-};
-
-export const openCreateRepostModal = (meta: any) => (e: any) => {
-  displayModal(true, false, MAKE_REPOST, {
-    title: 'Create Repost',
-    post: meta
-  });
-};
+let observer: IntersectionObserver;
 
 const Post: React.FC<
   Partial<PostStateProps> & {
@@ -95,12 +56,18 @@ const Post: React.FC<
     userId?: string;
     forceUpdate?: any;
     replies?: any;
-    quote?: any
+    quote?: any;
+    webSocket?: WebSocket;
   }
 > = (props) => {
-  const { index, postsErred, quote, userId, ...others } = props;
-  // console.log(props);
-  
+  const {
+    index,
+    postsErred,
+    quote,
+    userId,
+    webSocket: socket,
+    ...others
+  } = props;
   const {
     // type,
     media,
@@ -118,14 +85,11 @@ const Post: React.FC<
     repost_count,
     upvote_count,
     downvote_count,
+    head,
     numRepliesToShow: _numRepliesToShow,
     replies
   } = others || {};
-
-  useEffect(()=> {
-    id && dispatch(fetchRepliesRequest(id))
-  }, [id])
-
+  const parent_id = parent?.id;
   const { username: sender_username, first_name, last_name, profile_photo } =
     sender || {};
   const sender_name = first_name ? `${first_name} ${last_name}` : '';
@@ -154,6 +118,55 @@ const Post: React.FC<
         : newIndex
     );
   };
+
+  useEffect(() => {
+    if (head && id) {
+      dispatch(fetchRepliesRequest(id));
+    }
+  }, [id, head]);
+
+  useEffect(() => {
+    postElement = postElementRef.current;
+
+    if (postElement && !head) {
+      observer = createObserver(
+        null,
+        (entries) => {
+          const entry = entries[0];
+          const emitSeen = (id: string, parent_id?: string) => {
+            if (socket && socket.readyState === socket.OPEN) {
+              socket.send(
+                JSON.stringify({
+                  pipe: POST_INTERACTION,
+                  post_id: id,
+                  interaction: POST_INTERACTION__SEEN
+                })
+              );
+            }
+
+            if (parent_id) {
+              emitSeen(parent_id);
+            }
+          };
+
+          if (entry.isIntersecting) {
+            emitSeen(id!, parent_id);
+
+            if (postElement) {
+              observer.unobserve(postElement);
+            }
+          }
+        },
+        { threshold: [0.125] }
+      );
+
+      observer.observe(postElement);
+    }
+
+    return () => {
+      observer?.unobserve(postElement as Element);
+    };
+  }, [id, head, socket, parent_id]);
 
   if (colleague_reposts?.length && colleague_reposts?.length > 1) {
     let senderName1 = `${colleague_reposts[0]?.sender?.first_name}`;
@@ -283,13 +296,14 @@ const Post: React.FC<
       </Modal>
 
       {/* Post */}
-      <Box
+      <Container
         id={id}
         className={`Post ${postsErred ? 'remove-skeleton-animation' : ''} ${
           colleague_replies?.length ? 'has-replies' : ''
         } ${media?.length ? 'has-media' : ''} ${
           parent ? 'has-quote' : colleague_reposts?.length ? 'has-quotes' : ''
-        }`}>
+        } mx-0 px-0`}
+        ref={postElementRef}>
         {extra && (
           <small
             className='extra'
@@ -346,16 +360,68 @@ const Post: React.FC<
         />
 
         {/* Post replies */}
-        {props.head ? (
-          replies.map((reply: any) => (
-            <PostReply {...reply} key={reply.id} />
-        ))) : (
-          colleague_replies?.slice(-numRepliesToShow).map((reply) => (
-            <PostReply {...reply} key={reply.id} />
-        )))}
-      </Box>
+        {head
+          ? replies.map((reply: any) => <PostReply {...reply} key={reply.id} />)
+          : colleague_replies
+              ?.slice(-numRepliesToShow)
+              .map((reply) => <PostReply {...reply} key={reply.id} />)}
+      </Container>
     </>
   );
+};
+
+const stopProp = (e: any) => {
+  e.stopPropagation();
+};
+
+export const processPost = (post: string) => {
+  if (!post) return;
+
+  const mid = post.replace(/([\t\r\n\f]+)/gi, ' $1 ');
+  return mid
+    .trim()
+    .split(/ /gi)
+    .map((w, i) => {
+      w = w.replace(/ /gi, '');
+      return /(^@)[A-Za-z0-9_]+[,.!?]*$/.test(w) ? (
+        <Box component='span' key={i}>
+          <Link
+            onClick={stopProp}
+            to={`/${/[,.!]+$/.test(w) ? w.slice(0, -1) : w}`}>{`${
+            /[,.!]+$/.test(w) ? w.slice(0, -1) : w
+          }`}</Link>
+          {`${/[,.!]+$/.test(w) ? w.slice(-1) : ''}`}{' '}
+        </Box>
+      ) : /(^#)[A-Za-z0-9_]+[,.!?]*$/.test(w) ? (
+        <Box component='span' key={i}>
+          <Link
+            onClick={(e: any) => {
+              stopProp(e);
+              dispatch(triggerSearchKanyimuta(w)(dispatch));
+            }}
+            to={`/search?q=${w.substring(1)}`}>
+            {w}
+          </Link>{' '}
+        </Box>
+      ) : /^https?:\/\/(?!\.)[A-Za-z0-9.-]+.[A-Za-z0-9.]+(\/[A-Za-z-/0-9@]+)?$/.test(
+          w
+        ) ? (
+        <Box component='span' key={i}>
+          <a onClick={stopProp} href={w} target='blank'>
+            {w}
+          </a>{' '}
+        </Box>
+      ) : (
+        <React.Fragment key={i}>{w} </React.Fragment>
+      );
+    });
+};
+
+export const openCreateRepostModal = (meta: any) => (e: any) => {
+  displayModal(true, false, MAKE_REPOST, {
+    title: 'Create Repost',
+    post: meta
+  });
 };
 
 export default Post;

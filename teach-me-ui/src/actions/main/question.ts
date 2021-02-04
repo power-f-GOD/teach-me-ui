@@ -5,14 +5,14 @@ import {
   ASK_QUESTION
   // apiBaseURL as baseURL,
   // UserData
-} from '../constants';
-import { QuestionState, ReduxAction } from '../types';
+} from '../../constants';
+import { QuestionState, ReduxAction } from '../../types';
 import {
   checkNetworkStatusWhilstPend,
   // getState,
   http,
   logError
-} from '../functions';
+} from '../../functions';
 
 export const askQuestion = (payload: QuestionState) => {
   return {

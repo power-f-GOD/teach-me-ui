@@ -5,7 +5,7 @@ import {
   ReduxAction,
   UserData
 } from '../../types';
-import { validateEmail, validateUsername } from '../validate';
+import { validateEmail, validateUsername } from './validate';
 import {
   checkNetworkStatusWhilstPend,
   populateStateWithUserData,

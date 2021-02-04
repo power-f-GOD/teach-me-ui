@@ -47,7 +47,7 @@ const ProfileMiddlePane = (props: {
         title='Posts'
         icon={<FAIcon name='comments' fontSize='1.5em' />}
         type='colleague'
-        bgcolor='#fff'
+        bgColor='#fff'
         boxShadow='none'
         hr={false}
         padding='0.75rem'

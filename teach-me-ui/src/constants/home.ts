@@ -23,6 +23,9 @@ export const POST_REACTION = 'POST_REACTION';
 export const POST_REPLY = 'POST_REPLY';
 export const POST_REPOST = 'POST_REPOST';
 
+export const POST_INTERACTION = 'POST_INTERACTION';
+export const POST_INTERACTION__SEEN = 'SEEN';
+
 export const POST_REACTION__LIKE = 'UPVOTE';
 export const POST_REACTION__NEUTRAL = 'NEUTRAL';
 export const POST_REACTION__DOWNVOTE = 'DOWNVOTE';

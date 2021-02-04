@@ -1,6 +1,6 @@
 import { cleanup } from '@testing-library/react';
 
-import * as actions from '../../actions/notifications';
+import * as actions from '../../actions/main/notifications';
 import { SET_NOTIFICATIONS, GET_NOTIFICATIONS } from '../../constants';
 import { NotificationState, ReduxAction } from '../../types';
 

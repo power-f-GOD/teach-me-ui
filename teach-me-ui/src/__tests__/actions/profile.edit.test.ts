@@ -10,7 +10,7 @@ import { EditProfileState, ReduxAction } from '../../types';
 
 import { cleanup } from '@testing-library/react';
 
-import * as actions from '../../actions/profile.edit';
+import * as actions from '../../actions/main/profile/edit';
 
 afterEach(cleanup);
 

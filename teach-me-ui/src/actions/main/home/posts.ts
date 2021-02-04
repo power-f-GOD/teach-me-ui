@@ -11,16 +11,18 @@ import { updatePost } from '../../../utils/posts';
 export const getPosts = (update = false, statusText?: string, url?: string) => (
   dispatch: Function
 ): ReduxActionV2<any> => {
-  const payload = {
-    status: 'pending',
-    statusText,
-    err: false
-  } as FetchState<PostStateProps[]>;
-  let offset = getState().posts.extra;
+  const { posts: _posts } = getState() as {
+    posts: FetchState<PostStateProps>;
+  };
+  let prevOffset = _posts.extra;
 
-  if (update) delete payload.status;
-
-  dispatch(posts(payload));
+  dispatch(
+    posts({
+      ...(!update ? { status: 'pending' } : {}),
+      statusText,
+      err: false
+    })
+  );
   checkNetworkStatusWhilstPend({
     name: 'posts',
     func: posts
@@ -29,25 +31,16 @@ export const getPosts = (update = false, statusText?: string, url?: string) => (
   http
     .get<PostStateProps[]>(
       url
-        ? `${url.replace(/(offset=)(.*)/, `$1${offset}&limit=4`)}`
-        : '/feed?limit=4',
+        ? `${'/feed?recycle=true&offset='.replace(
+            /(offset=)(.*)/,
+            `$1${prevOffset || Date.now()}&limit=10`
+          )}`
+        : '/feed?limit=10',
       true
     )
-    .then(({ error, message, data }) => {
+    .then(({ error, message, data, meta }) => {
       const isRecycling = /recycl(e|ing)/i.test(statusText || '');
       const isFetching = /fetching/i.test(statusText || '');
-      offset = data?.slice(-1)[0]?.date ?? Date.now();
-
-      console.log(
-        'offset:',
-        offset,
-        '\n\n',
-        'data returned from server:',
-        data,
-        '\n\n',
-        'statusText:',
-        statusText
-      );
 
       if (error) {
         dispatch(posts({ status: 'settled', statusText: message, err: true }));
@@ -71,6 +64,7 @@ export const getPosts = (update = false, statusText?: string, url?: string) => (
                 `/feed?recycle=true&offset=`
               )
             );
+
             return;
           }
         }
@@ -81,7 +75,7 @@ export const getPosts = (update = false, statusText?: string, url?: string) => (
             statusText: '',
             err: false,
             data,
-            extra: offset //'extra', here, is 'offset' for purpose of recycling
+            extra: meta?.offset //'extra', here, is 'offset' for purpose of recycling
           })
         );
       }

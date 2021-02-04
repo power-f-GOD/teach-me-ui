@@ -110,7 +110,7 @@ const ChatRightPane = (props: ChatRightPaneProps) => {
                 { name: 'department', value: department as string },
                 { name: 'level', value: level as string }
               ]}
-              bgcolor='#fff'
+              bgColor='#fff'
               boxShadow='none'
               padding='0.25rem 0'
             />

@@ -51,7 +51,6 @@ const MakePost = (props: any) => {
 
   if (makePostProp.status === 'fulfilled') {
     dispatch(createPost({ status: 'settled' }));
-    window.history.back();
     displayModal(false);
   }
 
@@ -116,7 +115,8 @@ const MakePost = (props: any) => {
 
     for (let file of state.selectedFiles) {
       if (
-        e.currentTarget.previousElementSibling?.getAttribute('title') === file.name &&
+        e.currentTarget.previousElementSibling?.getAttribute('title') ===
+          file.name &&
         !removed
       ) {
         removed = true;
@@ -371,11 +371,13 @@ const MakePost = (props: any) => {
             </Container>
           </Row>
         )}
-        {(state.showUploads && uploadsProp.data[0] && uploadsProp.status !== 'pending') && (
-          <Row as='h4' className='upload-select-header'>
-            Select files
-          </Row>
-        )}
+        {state.showUploads &&
+          uploadsProp.data[0] &&
+          uploadsProp.status !== 'pending' && (
+            <Row as='h4' className='upload-select-header'>
+              Select files
+            </Row>
+          )}
         <Container component='p' ref={label} className='upload-label'>
           *files should be maximum of 50mb
         </Container>
@@ -387,12 +389,12 @@ const MakePost = (props: any) => {
             {state.showUploads ? (
               uploadsProp.status === 'pending' ? (
                 <Loader
-                type='ellipsis'
-                inline={true}
-                color='#555'
-                size={6}
-                className='ml-2'
-              />
+                  type='ellipsis'
+                  inline={true}
+                  color='#555'
+                  size={6}
+                  className='ml-2'
+                />
               ) : uploadsProp.data[0] ? (
                 uploadsProp.data.map((file: any, i: number) => (
                   <Container
@@ -438,25 +440,27 @@ const MakePost = (props: any) => {
             )}
           </Box>
         </Row>
-        {(state.showUploads && uploadsProp.data[0] && uploadsProp.status !== 'pending') && (
-          <Row className='d-flex mx-auto mt-1'>
-            <Container component='div' className='width-100 p-0'>
-              <Button
-                onClick={handleSelectUpload}
-                variant='contained'
-                color='primary'>
-                select
-              </Button>
-              <Button
-                id='upload-float-button'
-                onClick={cancelSelectUpload}
-                variant='contained'
-                color='secondary'>
-                cancel
-              </Button>
-            </Container>
-          </Row>
-        )}
+        {state.showUploads &&
+          uploadsProp.data[0] &&
+          uploadsProp.status !== 'pending' && (
+            <Row className='d-flex mx-auto mt-1'>
+              <Container component='div' className='width-100 p-0'>
+                <Button
+                  onClick={handleSelectUpload}
+                  variant='contained'
+                  color='primary'>
+                  select
+                </Button>
+                <Button
+                  id='upload-float-button'
+                  onClick={cancelSelectUpload}
+                  variant='contained'
+                  color='secondary'>
+                  cancel
+                </Button>
+              </Container>
+            </Row>
+          )}
         <Row className='d-flex mx-auto mt-1'>
           {!(state.showUploads && uploadsProp.data[0]) && (
             <Button

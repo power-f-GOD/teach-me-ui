@@ -43,6 +43,8 @@ import { apiBaseURL, ONLINE_STATUS } from '../constants';
 
 export const { dispatch, getState }: any = store;
 
+export const isAuthenticated = (): boolean => !!getState().auth.isAuthenticated;
+
 export const inProfile = (pathname?: string) =>
   /^\/(@[a-z0-9_]+[a-z0-9_.]*[a-z0-9_]|profile\/[a-z0-9]+)/i.test(
     pathname || window.location.pathname
@@ -67,7 +69,7 @@ export const http: Readonly<Omit<HTTP, 'token'>> & { token: string } = {
     url: `${apiBaseURL}${url}`,
     method,
     headers: {
-      Authorization: requiresAuth ? `Bearer ${http.token}` : null,
+      ...(requiresAuth ? { Authorization: `Bearer ${http.token}` } : {}),
       'Content-Type': contentType || 'application/json'
     },
     data,

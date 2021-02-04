@@ -26,11 +26,11 @@ const Recommendations = ({
         <>
           <Box
             component='h3'
-            className='font-bold theme-tertiary-darker recommendations-heading'>
+            className='font-bold theme-tertiary-darker recommendations-heading fade-in-opacity'>
             Colleauges you may know
           </Box>
           <Box
-            className='recommendations'
+            className='recommendations fade-in-opacity'
             style={{
               gridTemplateColumns: `repeat(${_recommendations.length}, 12rem)`,
               columnGap: userDeviceIsMobile ? '.5rem' : '.75rem'

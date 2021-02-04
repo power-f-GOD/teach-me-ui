@@ -9,7 +9,7 @@ import Loader from './components/shared/Loaders';
 import SnackBar from './components/crumbs/SnackBar';
 import ProtectedRoute from './ProtectedRoute';
 
-import { verifyAuth } from './actions/auth';
+import { verifyAuth } from './actions';
 import createMemo from './Memo';
 import { dispatch } from './appStore';
 
@@ -24,6 +24,9 @@ const App = (props: any) => {
   const { status: authStatus, isAuthenticated } = auth;
 
   React.useEffect(() => {
+    //verify auth to keep user logged in assuming page is refreshed/reloaded
+    dispatch(verifyAuth());
+
     window.onresize = () => {
       // Attepmt to fix test-build error/failure
       if (setWindowWidth) dispatch(setWindowWidth(window.innerWidth));
@@ -90,9 +93,6 @@ const App = (props: any) => {
     </>
   );
 };
-
-//verify auth to keep user logged in assuming page is refreshed/reloaded
-dispatch(verifyAuth()(dispatch));
 
 window.ononline = () => {
   emitUserOnlineStatus(true, false, { open: true })();

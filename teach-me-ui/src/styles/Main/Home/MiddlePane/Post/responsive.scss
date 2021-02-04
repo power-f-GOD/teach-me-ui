@@ -11,6 +11,19 @@
     box-shadow: none;
     border: none;
     margin-bottom: 0.75em;
+
+    .post-info {
+      .text-ellipsis {
+        transition: 0.3s, background-color 0.2s;
+
+        &:hover {
+          position: absolute;
+          background-color: white;
+          width: 100%;
+          transform: translateX(-1em);
+        }
+      }
+    }
   }
 
   .recommendations-heading {

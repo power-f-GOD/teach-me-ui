@@ -19,7 +19,7 @@ const ProfileLeftPane = (props: { data: UserData; isSelfView: boolean }) => {
     // bio
   } = data;
   // const dob = date_of_birth?.split('-').reverse().join('-') || '';
-
+  // console.log('date of birth:', date_of_birth);
   const basicInfo: InfoCardProps['data'] = [
     { name: 'Firstname', value: first_name },
     { name: 'Lastname', value: last_name },
@@ -46,7 +46,7 @@ const ProfileLeftPane = (props: { data: UserData; isSelfView: boolean }) => {
           title='Account'
           icon={<FAIcon name='user' fontSize='1.5em' />}
           data={basicInfo}
-          bgcolor='#fff'
+          bgColor='#fff'
           boxShadow='none'
           padding='0.75rem'
           className='mr-sm-3'
@@ -56,7 +56,7 @@ const ProfileLeftPane = (props: { data: UserData; isSelfView: boolean }) => {
         title='Education'
         icon={<FAIcon name='university' fontSize='1.5em' />}
         data={academicInfo}
-        bgcolor='#fff'
+        bgColor='#fff'
         boxShadow='none'
         padding='0.75rem'
         className='mr-sm-3'

@@ -10,32 +10,37 @@ export const updatePost = (
     posts: FetchState<PostStateProps[]>;
     profilePosts: FetchState<PostStateProps[]>;
   };
-  const prevPostsState =
-    anchor === POSTS_ANCHOR__PROFILE ? profilePosts : posts;
+  const anchorIsProfile = anchor === POSTS_ANCHOR__PROFILE;
+  const prevPostsState = !anchorIsProfile ? posts : profilePosts;
   let finalPayload = { ...prevPostsState } as FetchState<PostStateProps[]>;
   const { data: _data, statusText } = _payload;
   const newData = _data ?? [];
   const pipeData = newData[0];
   const pipe = pipeData?.pipe;
-  const feedsUnmounted = /(feeds?\s?)unmount(s|ed)/.test(statusText || '');
-  const willGetNewPosts = /(getting)?\snew\s?posts/.test(statusText || '');
+  const feedsUnmounts = /(feeds?\s?)unmount(s|ed)/.test(statusText || '');
   const hadReachedEnd = /reached\send/.test(prevPostsState.statusText || ''); //attempt to reset Posts to [] if it had reached end in order to get fresh feeds
   const newPostCreated = /(new\s)?post\screated/.test(statusText || '');
-  const resultantData = feedsUnmounted
-    ? hadReachedEnd
-      ? []
-      : [...prevPostsState.data?.slice(-3)]
-    : [...prevPostsState.data];
   const updateFromSocket = !!pipe;
+  let resultantData = [] as PostStateProps[];
+
+  if (anchorIsProfile) {
+    resultantData = feedsUnmounts ? [] : [...prevPostsState.data];
+  } else {
+    resultantData = feedsUnmounts
+      ? hadReachedEnd
+        ? []
+        : [...prevPostsState.data?.slice(-3)]
+      : [...prevPostsState.data];
+  }
 
   if (!updateFromSocket) {
-    if (!feedsUnmounted) {
+    if (!feedsUnmounts) {
       resultantData[newPostCreated ? 'unshift' : 'push'](...newData);
     }
 
     finalPayload = {
       ..._payload,
-      data: willGetNewPosts ? [] : resultantData,
+      data: resultantData,
       extra: _payload.extra ?? prevPostsState.extra
     };
   } else {

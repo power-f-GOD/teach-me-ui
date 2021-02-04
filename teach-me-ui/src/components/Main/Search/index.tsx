@@ -18,7 +18,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 
 import { ColleagueData } from '../../../types';
 import { dispatch } from '../../../utils';
-import { triggerSearchKanyimuta } from '../../../actions/search';
+import { triggerSearchKanyimuta } from '../../../actions/main/search';
 
 const searchBoxRef = createRef<HTMLInputElement>();
 const searchInputRef = createRef<HTMLInputElement>();

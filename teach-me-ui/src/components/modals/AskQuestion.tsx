@@ -90,7 +90,6 @@ const AskQuestion = (props: any) => {
 
   if (askQuestionProp.status === 'fulfilled') {
     dispatch(askQuestion({status: 'settled'}));
-    window.history.back();
     displayModal(false);
   }
 
