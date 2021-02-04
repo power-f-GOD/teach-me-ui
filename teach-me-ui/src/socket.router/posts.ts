@@ -75,7 +75,7 @@ export default function post(_data: any) {
                 status: 'fulfilled'
               })
             );
-      
+            displayModal(false);
             if (notificationSound.isPlaying) {
               promisedDispatch(
                 triggerNotificationSound({ play: false, isPlaying: false })
