@@ -2,6 +2,7 @@ import { UserData, SocketPipe, SocketStruct, StatusPropsState } from './shared';
 import { ColleagueData } from './profile';
 
 export interface PostStateProps {
+  head?: boolean;
   downvote_count: number;
   reactions: UserData[];
   reply_count: number;

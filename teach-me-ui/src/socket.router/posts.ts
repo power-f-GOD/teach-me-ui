@@ -1,27 +1,29 @@
 import { dispatch, getState, promisedDispatch, inProfile } from '../functions';
 
 import {
-  createPost,
   posts,
   triggerNotificationSound,
   makeRepost,
-  profilePosts
+  profilePosts,
+  createPost
 } from '../actions';
 
 import { displayModal } from '../functions';
 
-import {
+import { 
   postState,
-  POST_REACTION,
-  POST_REPLY,
-  TONE_NAME__OPEN_ENDED
+  POST_REACTION, 
+  POST_REPLY, 
+  POST_REPOST,
+  TONE_NAME__OPEN_ENDED 
 } from '../constants';
-import { SocketPipe, NotificationSoundState } from '../types';
+
+import { SocketPipe, NotificationSoundState, UserData } from '../types';
 
 export default function post(_data: any) {
   const { notificationSound, userData } = getState() as {
     notificationSound: NotificationSoundState;
-    userData: any;
+    userData: UserData;
   };
   const toneName: NotificationSoundState['toneName'] = TONE_NAME__OPEN_ENDED;
 
@@ -48,35 +50,44 @@ export default function post(_data: any) {
 
         break;
       }
-      case 'POST_REPOST': {
-        const data = {
-          data: [{ ...postState, ..._data, sender: userData }],
-          statusText: 'new post created'
-        };
+      case POST_REPOST: {
+        if (!_data.error) {
+          const data = {
+            data: [{ ...postState, ..._data, sender: userData }],
+            statusText: 'new post created'
+          };
 
-        if (_data.action_count !== undefined) dispatch(createPost(_data));
+          if (_data.action_count !== undefined) dispatch(createPost(_data));
 
-        dispatch(inProfile() ? profilePosts({ ...data }) : posts({ ...data }));
-        dispatch(
-          makeRepost({
-            err: false,
-            status: 'fulfilled'
-          })
-        );
-        displayModal(false);
-        window.history.back();
+          dispatch(inProfile() ? profilePosts({ ...data }) : posts({ ...data }));
+          if (_data.sender.id === userData.id) {
+            dispatch(
+              posts({
+                data: [{ ...postState, ..._data, pipe: undefined }],
+                statusText: 'new post created'
+              })
+            );
+          
+            // if (data.action_count !== undefined) dispatch(createPost(data));
+            dispatch(
+              makeRepost({
+                err: false,
+                status: 'fulfilled'
+              })
+            );
+            displayModal(false);
+            if (notificationSound.isPlaying) {
+              promisedDispatch(
+                triggerNotificationSound({ play: false, isPlaying: false })
+              ).then(() => {
+                dispatch(triggerNotificationSound({ play: true, toneName }));
+              });
+            } else {
+              dispatch(triggerNotificationSound({ play: true, toneName }));
+            }
+          }
 
-        if (notificationSound.isPlaying) {
-          promisedDispatch(
-            triggerNotificationSound({ play: false, isPlaying: false })
-          ).then(() => {
-            dispatch(triggerNotificationSound({ play: true, toneName }));
-          });
         } else {
-          dispatch(triggerNotificationSound({ play: true, toneName }));
-        }
-
-        if (_data.error) {
           dispatch(
             makeRepost({
               err: true,
@@ -85,7 +96,6 @@ export default function post(_data: any) {
             })
           );
         }
-
         break;
       }
       default:

@@ -262,7 +262,6 @@ export const conversationMessages = (payload: ConversationMessages) => {
       }
     }
   } else {
-    // console.log('payload:', payload);
     const messageId = payload.data![0].id;
     let { value, index: indexOfInitial } = (loopThru(
       previousMessages,

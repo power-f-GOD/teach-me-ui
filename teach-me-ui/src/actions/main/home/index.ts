@@ -1,7 +1,8 @@
 import {
   MAKE_REPOST,
   SUBMIT_POST,
-  apiBaseURL as baseURL,
+  FETCH_POST,
+  FETCH_REPLIES,
   MAKE_POST,
   TONE_NAME__OPEN_ENDED,
   postState
@@ -13,8 +14,7 @@ import {
   UserData,
   SendReplyProps,
   PostStateProps,
-  ReduxAction,
-  StatusPropsState
+  ReduxActionV2
 } from '../../../types';
 
 import {
@@ -27,7 +27,6 @@ import {
   promisedDispatch
 } from '../../../functions';
 
-import axios from 'axios';
 import { pingUser } from '../../notifications';
 import { posts } from './posts';
 import { triggerNotificationSound } from '../..';
@@ -36,68 +35,110 @@ export * from './posts';
 export * from './recommendations';
 export * from './trends';
 
-export const makeRepost = (payload: StatusPropsState) => {
+export const makeRepost = (payload: FetchState<Object, string>) => {
   return {
     type: MAKE_REPOST,
     payload
   };
 };
 
-export const makeRepostRequest = (payload: SendReplyProps) => (
-  dispatch: Function
-) => {
-  dispatch(makeRepost({ status: 'pending' }));
+export const makeRepostRequest = (payload: SendReplyProps) => (dispatch: Function) => {
+  dispatch(makeRepost({status: 'pending'}))
+
+  checkNetworkStatusWhilstPend({
+    name: 'makeRepost',
+    func: makeRepost
+  });
+
   const socket = getState().webSocket as WebSocket;
-  console.log(payload);
+  // console.log(payload);
 
   socket.send(JSON.stringify(payload));
 };
 
-export const fetchReplies = (postId?: string) => (dispatch: Function) => {
-  const userData = getState().userData as UserData;
-  const headers =
-    userData && userData.token
-      ? { Authorization: `Bearer ${userData.token}` }
-      : {};
-  axios({
-    url: `/post/${postId}/replies?limit=10&skip=0`,
-    baseURL,
-    method: 'GET',
-    headers
-  })
-    .then((res) => {
-      if (res.data.error) {
-        throw new Error(res.data.message);
-      }
-      return res.data.data.replies;
-    })
-    .then((state) => {})
-    .catch((err) => {});
+export const fetchReplies = (payload: FetchState<Array<Object>, string>) => {
+  return {
+    type: FETCH_REPLIES,
+    payload
+  };
 };
 
-export const fetchPost: Function = (postId?: string) => (
-  dispatch: Function
-) => {
-  const userData = getState().userData as UserData;
-  const headers =
-    userData && userData.token
-      ? { Authorization: `Bearer ${userData.token}` }
-      : {};
+export const fetchRepliesRequest = (postId?: string) => (dispatch: Function) => {
+  dispatch(fetchReplies({status: 'pending', data:[]}));
 
-  axios({
-    url: `/post/${postId}`,
-    baseURL,
-    method: 'GET',
-    headers
-  })
+  checkNetworkStatusWhilstPend({
+    name: 'fetchReplies',
+    func: fetchReplies
+  });
+
+  http
+    .get(`/post/${postId}/replies?limit=10&offset=0`, true)
     .then((res) => {
-      if (res.data.error) {
-        throw new Error(res.data.message);
+      const { error, data } = res as {
+        error: boolean;
+        data: any;
+      };
+      if (!error) {
+        dispatch(
+          fetchReplies({
+            status: 'fulfilled',
+            err: false,
+            data: data
+          })
+        );
+      } else {
+        dispatch(
+          fetchReplies({
+            status: 'fulfilled',
+            err: true
+          })
+        );
       }
-      return res.data.data;
     })
-    .then((state) => {})
-    .catch((err) => {});
+    .catch(logError(fetchReplies));
+};
+
+export const fetchPost = (payload: FetchState<Object, string>) => {
+  return {
+    type: FETCH_POST,
+    payload
+  };
+};
+
+export const fetchPostRequest = (postId?: string) => ( dispatch: Function) => {
+  dispatch(fetchReplies({status: 'pending', data:[]}));
+  dispatch(fetchPost({status: 'pending', data: postState}));
+
+  checkNetworkStatusWhilstPend({
+    name: 'fetchPost',
+    func: fetchPost
+  });
+
+  http
+    .get(`/post/${postId}`, true)
+    .then((res) => {
+      const { error, data } = res as {
+        error: boolean;
+        data: any;
+      };
+      if (!error) {
+        dispatch(
+          fetchPost({
+            status: 'fulfilled',
+            err: false,
+            data
+          })
+        );
+      } else {
+        dispatch(
+          fetchPost({
+            status: 'fulfilled',
+            err: true
+          })
+        );
+      }
+    })
+    .catch(logError(fetchPost));
 };
 
 export const requestCreatePost = ({
@@ -176,6 +217,6 @@ export const requestCreatePost = ({
 
 export const createPost = (
   payload: FetchState<PostStateProps>
-): ReduxAction => {
+): ReduxActionV2<FetchState<PostStateProps>> => {
   return { type: MAKE_POST, payload };
 };

@@ -13,6 +13,7 @@ import TextTruncator from '../../../../shared/TextTruncator';
 import Media from './Media';
 
 interface PostBodyProps {
+  head?: boolean;
   isLoading: boolean;
   parent?: Partial<PostStateProps>;
   post_id: string;
@@ -40,8 +41,9 @@ const PostBody = (props: PostBodyProps) => {
   const history = useHistory();
 
   const navigate = useCallback(
-    (id: string) => () => {
-      if (2 > 3) history.push(`/p/${id}`);
+    (id: string, head?: boolean) => () => {
+      if (head) return;
+      history.push(`/p/${id}`);
     },
     [history]
   );
@@ -69,7 +71,7 @@ const PostBody = (props: PostBodyProps) => {
 
         <Box
           component='div'
-          onClick={navigate(id!)}
+          onClick={navigate(id!, props.head)}
           className={`text ${!text?.trim() ? 'py-2' : ''}`}
           data-id={id}>
           {processPost(text!)}

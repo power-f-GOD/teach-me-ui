@@ -16,7 +16,6 @@ import Loader from '../shared/Loaders';
 import ModalFrame from '../modals';
 import Chat from './Chat';
 import Search from './Search';
-import PostPage from './Home/PostPage';
 import Questions from './Q&A';
 import QuestionPage from './Q&A/QuestionPage';
 import _404 from '../Index/_404';
@@ -194,10 +193,9 @@ const Main = (props: MainProps) => {
           isAuthenticated={!!userToken}
         />
         <Switch>
-          <Route path={['/', '/index', '/home']} exact component={Home} />
+          <Route path={['/', '/index', '/home', '/p/:id']} exact component={Home} />
           <Route path='/about' component={About} />
           <Route path='/support' component={Support} />
-          <Route path='/p/:id' component={PostPage} />
           <Route path={['/@:username', '/profile/:id']} component={Profile} />
           <Route path={['/search/:query', '/search']} component={Search} />
           <Route

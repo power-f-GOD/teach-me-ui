@@ -1,5 +1,9 @@
 import {
   replyState,
+  fetchRepliesState,
+  fetchPostState,
+  FETCH_POST,
+  FETCH_REPLIES,
   REPLY_TO_POST,
   MAKE_REPOST,
   MAKE_POST,
@@ -99,6 +103,34 @@ export const makeRepost = (
   action: ReduxAction
 ) => {
   if (action.type === MAKE_REPOST) {
+    return {
+      ...state,
+      ...action.payload
+    };
+  }
+
+  return state;
+};
+
+export const fetchReplies = (
+  state: StatusPropsState = fetchRepliesState,
+  action: ReduxAction
+) => {
+  if (action.type === FETCH_REPLIES) {
+    return {
+      ...state,
+      ...action.payload
+    };
+  }
+
+  return state;
+};
+
+export const fetchPost = (
+  state: StatusPropsState = fetchPostState,
+  action: ReduxAction
+) => {
+  if (action.type === FETCH_POST) {
     return {
       ...state,
       ...action.payload

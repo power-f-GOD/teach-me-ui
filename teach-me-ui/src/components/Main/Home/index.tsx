@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 
+import {Route, Switch} from 'react-router-dom';
+
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -12,6 +14,7 @@ import { connect } from 'react-redux';
 import { getPosts, posts } from '../../../actions/main/home';
 import { dispatch, createObserver } from '../../../utils';
 import { PostStateProps, FetchState } from '../../../types';
+import PostPage from './PostPage';
 
 const feedsScrollObservedElemRef = React.createRef<any>();
 
@@ -20,7 +23,8 @@ let feedsScrollObservedElem: HTMLElement | null = null;
 
 let observer: IntersectionObserver;
 
-const Home = ({ posts: _posts }: { posts: FetchState<PostStateProps> }) => {
+const Home = (props: { posts: FetchState<PostStateProps>; location: any}) => {
+  const _posts = props.posts;
   useEffect(() => {
     document.body.style.overflow =
       _posts.status === 'pending' ? 'hidden' : 'auto';
@@ -87,10 +91,19 @@ const Home = ({ posts: _posts }: { posts: FetchState<PostStateProps> }) => {
             <HomeLeftPane />
           </Col>
           <Col lg={6} md={8} className='middle-pane-col px-3'>
-            <HomeMiddlePane />
-            <Container
-              className='feeds-scroll-observer py-2'
-              ref={feedsScrollObservedElemRef}></Container>
+            <Switch>
+              <Route
+                path={['/', '/index', '/home']}
+                exact
+                component={HomeMiddlePane}
+              />
+              <Route path={['/p/:id']} exact component={PostPage} />
+              
+            </Switch>
+            {!/p/.test(props.location.pathname) && (
+              <Container
+                className='feeds-scroll-observer py-2'
+                ref={feedsScrollObservedElemRef}></Container>)}
           </Col>
           <Col lg={3} className='d-none hang-in d-lg-block right-pane-col'>
             <HomeRightPane />

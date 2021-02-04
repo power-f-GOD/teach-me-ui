@@ -5,11 +5,9 @@ import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 
 import {
   getCharacterSequenceFromText,
-  formatDate,
   dispatch,
   displayModal
 } from '../../functions';
@@ -22,8 +20,12 @@ import { connect } from 'react-redux';
 
 import { makeRepostRequest } from '../../actions';
 
+import QuotedPost from '../Main/Home/MiddlePane/Post/QuotedPost';
 
-const MakePost: React.FC<any> = (props) => {
+import { POST_REPOST } from '../../constants';
+
+
+const MakeRePost: React.FC<any> = (props) => {
   const { userData } = props;
   const [state, setState] = useState<any>({
     post: {
@@ -65,9 +67,9 @@ const MakePost: React.FC<any> = (props) => {
   const onPostSubmit = (e: MouseEvent<HTMLButtonElement>) => {
     dispatch(
       makeRepostRequest({
-        pipe: 'POST_REPOST',
+        pipe: POST_REPOST,
         text: state.post.text,
-        post_id: props.id
+        post_id: props.post.id
       })
     );
   };
@@ -90,35 +92,7 @@ const MakePost: React.FC<any> = (props) => {
       </Row>
       <form>
         <Editor onUpdate={onUpdate} />
-        <Box className='quoted-post mx-auto'>
-          <Row className='container-fluid px-2 mx-auto p-0 align-items-center'>
-            <Avatar
-              component='span'
-              className='post-avatar'
-              alt={props.sender_name}
-              src={`/images/${props.userAvatar}`}
-            />
-            <Col className='d-flex flex-grow-1 flex-column names'>
-              <Box component='div' fontWeight='bold'>
-                {props.sender.first_name} {' '} {props.sender.last_name}
-                <Box component='span' color='#777' className='username'>
-                  @{props.sender.username}
-                </Box>
-              </Box>
-              <Box
-                component='small'
-                color='#888'>
-                {formatDate(props.date as number)}
-              </Box>
-            </Col>
-          </Row>
-          <Row className='container-fluid  mx-auto'>
-            <Box component='div' pt={1} px={0} className='break-word'>
-              {/* {processPostFn(props.parent?.text as string)} */}
-              {props.text as string}
-            </Box>
-          </Row>
-        </Box>
+        <QuotedPost head {...props.post} />
         <Row className='d-flex mx-auto mt-1'>
           <Button
             disabled={props.makeRepost.status === 'pending'}
@@ -151,5 +125,5 @@ const mapStateToProps = ({ makeRepost, userData }: any) => ({
   userData
 });
 
-export default connect(mapStateToProps)(MakePost);
+export default connect(mapStateToProps)(MakeRePost);
 
