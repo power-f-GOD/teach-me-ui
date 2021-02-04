@@ -3,21 +3,29 @@ import { Switch, Route } from 'react-router-dom';
 
 import Col from 'react-bootstrap/Col';
 import ColleagueView from './crumbs/ColleagueView';
-import ProfileFeeds from './crumbs/ProfileFeeds';
-import { UserData } from '../../../types';
+import { UserData, FetchState, PostStateProps } from '../../../types';
 import { InfoCard } from '../../shared/Card';
 import { FAIcon } from '../../shared/Icons';
 import ProfileNavBar from './NavBar';
+import Feeds from '../../shared/Feeds';
+import { POSTS_ANCHOR__PROFILE } from '../../../constants';
 
 export const middlePaneRef = createRef<HTMLElement | null>();
 
 const ProfileMiddlePane = (props: {
-  data: UserData;
+  profileData: FetchState<UserData>;
+  profilePosts: FetchState<PostStateProps[]>;
   isSelfView: boolean;
   windowWidth: number;
   location: Location;
 }) => {
-  const { data, isSelfView, windowWidth, location } = props;
+  const {
+    profileData,
+    profilePosts,
+    isSelfView,
+    windowWidth,
+    location
+  } = props;
 
   return (
     <Col
@@ -27,7 +35,11 @@ const ProfileMiddlePane = (props: {
       ref={middlePaneRef as any}>
       {/* Profile Nav Bar */}
       {windowWidth > 991 && (
-        <ProfileNavBar data={data} selfView={isSelfView} location={location} />
+        <ProfileNavBar
+          data={profileData.data!}
+          selfView={isSelfView}
+          location={location}
+        />
       )}
 
       {/* Posts */}
@@ -51,7 +63,14 @@ const ProfileMiddlePane = (props: {
         )}
         <Route
           path={['/@:username', '/profile/:id']}
-          component={ProfileFeeds}
+          render={(props) => (
+            <Feeds
+              {...props}
+              anchor={POSTS_ANCHOR__PROFILE}
+              anchorProfileData={profileData}
+              anchorPosts={profilePosts}
+            />
+          )}
         />
       </Switch>
     </Col>

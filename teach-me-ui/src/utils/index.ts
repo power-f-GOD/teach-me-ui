@@ -43,6 +43,11 @@ import { apiBaseURL, ONLINE_STATUS } from '../constants';
 
 export const { dispatch, getState }: any = store;
 
+export const inProfile = (pathname?: string) =>
+  /^\/(@[a-z0-9_]+[a-z0-9_.]*[a-z0-9_]|profile\/[a-z0-9]+)/i.test(
+    pathname || window.location.pathname
+  );
+
 export const transform = (el: HTMLElement, val: string) => {
   el.style.webkitTransform = val;
   (el.style as any).mozTransform = val;
@@ -258,7 +263,7 @@ export const emitUserOnlineStatus = (
 
     if (_posts.err) {
       if (!_posts.data?.length) {
-        dispatch(getPosts('FEED', undefined, !!_posts.data?.length));
+        dispatch(getPosts(!!_posts.data?.length));
       } else if (navigator.onLine) {
         dispatch(posts({ status: 'fulfilled', err: false }));
       }

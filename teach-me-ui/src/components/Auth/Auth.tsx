@@ -24,7 +24,7 @@ const Auth = (props: any) => {
       <Box className='auth-main-box' component='main'>
         <Box component='section' className='form-section custom-scroll-bar'>
           <Box marginY='1.5em' textAlign='center' width='100%'>
-            <h4 className='text-center'>
+            <h4 className='text-center fade-in'>
               <Link to='/'>
                 <Box component='h3' className='logo gradient'>
                   Kanyimuta!

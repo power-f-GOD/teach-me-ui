@@ -177,8 +177,6 @@ export const requestCreatePost = ({
       true
     )
     .then(({ data, error: err }) => {
-      console.log(data);
-      
       if (!err) {
         dispatch(
           posts({

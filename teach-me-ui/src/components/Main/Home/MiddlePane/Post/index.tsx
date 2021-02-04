@@ -11,7 +11,7 @@ import ArrowForward from '@material-ui/icons/ArrowForwardIos';
 import { Link } from 'react-router-dom';
 
 import { dispatch, loopThru } from '../../../../../utils';
-import { PostStateProps, LoopFind } from '../../../../../types';
+import { PostStateProps, LoopFind, AuthState } from '../../../../../types';
 
 import { displayModal } from '../../../../../functions';
 import { triggerSearchKanyimuta, fetchRepliesRequest } from '../../../../../actions';
@@ -31,6 +31,7 @@ export interface PostCrumbs extends Partial<PostStateProps> {
   repostMeta?: PostStateProps | any;
   anchorIsParent?: boolean;
   isLoading?: boolean;
+  auth?: AuthState;
 }
 
 const stopProp = (e: any) => {

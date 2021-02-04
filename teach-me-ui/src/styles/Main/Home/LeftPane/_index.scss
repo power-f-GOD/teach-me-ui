@@ -2,19 +2,6 @@
   // @include debugger();
   padding-right: 1rem !important;
 
-  &.has-cover-photo {
-    .cover-photo {
-      &::before {
-        // background: rgba(0, 0, 0, 0.35) !important;
-        opacity: 0.65;
-      }
-    }
-
-    .avatar {
-      background-color: $theme-secondary-v6;
-    }
-  }
-
   .container,
   .col,
   .row,
@@ -41,7 +28,7 @@
     background: {
       size: cover;
       position: center;
-      color: #eee;
+      color: #fff;
     }
 
     > * {
@@ -50,7 +37,7 @@
     }
 
     &::before {
-      @include before-or-after($bg: $theme-gradient, $zi: 0);
+      @include before-or-after($bg: $theme-gradient, $o: 0.65, $zi: 0);
     }
   }
 
@@ -62,7 +49,7 @@
     height: $size;
     border: 0.35rem solid white;
     display: inline-flex;
-    background-color: $theme-secondary-v5;
+    background-color: $theme-secondary-v6;
 
     &.has-photo {
       background-color: rgba($sec-r, $sec-g, $sec-b, 0.65);

@@ -34,7 +34,7 @@ export const first_name = (
   if (action.type === FIRSTNAME_VALIDATE) {
     let { payload } = action;
     let { value } = payload;
-    let err = !value || /\d+|\W+|_/.test(value);
+    let err = !value || !/^\w+-?\w+$/.test(value) || /_/.test(value);
     let helperText = err
       ? !value
         ? 'Firstname required.'
@@ -83,7 +83,7 @@ export const last_name = (
   if (action.type === LASTNAME_VALIDATE) {
     let { payload } = action;
     let { value } = payload;
-    let err = !value || /\d+|\W+|_/.test(value);
+    let err = !value || !/^\w+-?\w+$/.test(value) || /_/.test(value);
     let helperText = err
       ? !value
         ? 'Lastname required.'
@@ -109,11 +109,13 @@ export const username = (
   if (action.type === USERNAME_VALIDATE) {
     let { payload } = action;
     let value = payload.value || state.value;
-    let err = !value || !/^[a-z0-9_]+$/i.test(value);
+    let err = !value || !/^[a-z0-9_]+[a-z0-9_.]*[a-z0-9_]+$/i.test(value);
     let helperText = err
       ? !value
         ? 'Username required.'
-        : 'Username not accepted. Use letters, numbers, underscores only.'
+        : value.length < 2
+        ? 'Username length should be greater than one.'
+        : 'Username not accepted. Use letters, numbers, underscores. Must not start/end with periods.'
       : ' ';
 
     err = 'err' in payload ? payload.err : err;

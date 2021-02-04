@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { connect } from 'react-redux';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -9,12 +10,12 @@ import Skeleton from 'react-loading-skeleton';
 import Box from '@material-ui/core/Box';
 import { Button } from '@material-ui/core';
 
-import { FAIcon } from '../../../../shared';
 import ReactionButton from './ReactionButton';
 
 import { PostCrumbs } from '.';
 import { bigNumberFormat, formatDate } from '../../../../../utils';
-
+import { AuthState } from '../../../../../types';
+import { FAIcon } from '../../../../shared';
 import CreateReply from './CreateReply';
 
 const PostFooter = (props: PostCrumbs) => {
@@ -29,7 +30,8 @@ const PostFooter = (props: PostCrumbs) => {
     openCreateRepostModal,
     date,
     anchorIsParent,
-    isLoading
+    isLoading,
+    auth
   } = props;
   const [openCommentClassName, setOpenCommentClassName] = useState('');
 
@@ -39,6 +41,10 @@ const PostFooter = (props: PostCrumbs) => {
         ' triggered-by-button-click'
     );
   }, [openCommentClassName]);
+
+  if (!auth?.isAuthenticated) {
+    return null;
+  }
 
   if (!isLoading)
     return (
@@ -129,4 +135,6 @@ const PostFooter = (props: PostCrumbs) => {
   );
 };
 
-export default PostFooter;
+export default connect(({ auth }: { auth: AuthState }) => ({ auth }))(
+  PostFooter
+);

@@ -1,9 +1,11 @@
-import { dispatch, getState, promisedDispatch } from '../functions';
+import { dispatch, getState, promisedDispatch, inProfile } from '../functions';
 
 import {
   posts,
   triggerNotificationSound,
-  makeRepost
+  makeRepost,
+  profilePosts,
+  createPost
 } from '../actions';
 
 import { displayModal } from '../functions';
@@ -16,23 +18,25 @@ import {
   TONE_NAME__OPEN_ENDED 
 } from '../constants';
 
-import { SocketPipe, NotificationSoundState } from '../types';
+import { SocketPipe, NotificationSoundState, UserData } from '../types';
 
-
-export default function post(data: any) {
-  const { notificationSound } = getState() as {
+export default function post(_data: any) {
+  const { notificationSound, userData } = getState() as {
     notificationSound: NotificationSoundState;
+    userData: UserData;
   };
   const toneName: NotificationSoundState['toneName'] = TONE_NAME__OPEN_ENDED;
 
+  // console.log('data from server:', data);
   try {
-    switch (data.pipe as SocketPipe) {
+    switch (_data.pipe as SocketPipe) {
       case POST_REACTION:
-      case POST_REPLY:
-        dispatch(posts({ data: [{ ...data }] }));
-        // console.log('data from server:', data);
+      case POST_REPLY: {
+        const data = [{ ..._data }];
 
-        if (data.pipe === POST_REPLY) {
+        dispatch(inProfile() ? profilePosts({ data }) : posts({ data }));
+
+        if (_data.pipe === POST_REPLY) {
           if (notificationSound.isPlaying) {
             promisedDispatch(
               triggerNotificationSound({ play: false, isPlaying: false })
@@ -43,14 +47,23 @@ export default function post(data: any) {
             dispatch(triggerNotificationSound({ play: true, toneName }));
           }
         }
+
         break;
-      case POST_REPOST:
-        if (!data.error) {
-          const { userData } = getState();
-          if (data.sender.id === userData.id) {
+      }
+      case POST_REPOST: {
+        if (!_data.error) {
+          const data = {
+            data: [{ ...postState, ..._data, sender: userData }],
+            statusText: 'new post created'
+          };
+
+          if (_data.action_count !== undefined) dispatch(createPost(_data));
+
+          dispatch(inProfile() ? profilePosts({ ...data }) : posts({ ...data }));
+          if (_data.sender.id === userData.id) {
             dispatch(
               posts({
-                data: [{ ...postState, ...data, pipe: undefined }],
+                data: [{ ...postState, ..._data, pipe: undefined }],
                 statusText: 'new post created'
               })
             );
@@ -62,6 +75,7 @@ export default function post(data: any) {
                 status: 'fulfilled'
               })
             );
+      
             if (notificationSound.isPlaying) {
               promisedDispatch(
                 triggerNotificationSound({ play: false, isPlaying: false })
@@ -71,18 +85,19 @@ export default function post(data: any) {
             } else {
               dispatch(triggerNotificationSound({ play: true, toneName }));
             }
-            dispatch(displayModal(false));
           }
+
         } else {
           dispatch(
             makeRepost({
               err: true,
               status: 'settled',
-              statusText: data.message
+              statusText: _data.message
             })
           );
         }
         break;
+      }
       default:
         break;
     }

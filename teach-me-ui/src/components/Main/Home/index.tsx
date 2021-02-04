@@ -34,7 +34,7 @@ const Home = (props: { posts: FetchState<PostStateProps>; location: any}) => {
     feedsScrollObservedElem = feedsScrollObservedElemRef.current;
 
     return () => {
-      dispatch(posts({ statusText: 'home unmounted' }));
+      dispatch(posts({ statusText: 'feeds unmounted' }));
     };
   }, []);
 
@@ -58,8 +58,6 @@ const Home = (props: { posts: FetchState<PostStateProps>; location: any}) => {
           ) {
             dispatch(
               getPosts(
-                'FEED',
-                undefined,
                 true,
                 'is fetching more posts',
                 _posts.extra
