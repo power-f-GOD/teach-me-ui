@@ -47,7 +47,6 @@ export default function post(data: any) {
       case POST_REPOST:
         if (!data.error) {
           const { userData } = getState();
-          console.log(data)
           if (data.sender.id === userData.id) {
             dispatch(
               posts({

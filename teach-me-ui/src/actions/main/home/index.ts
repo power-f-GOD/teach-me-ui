@@ -72,7 +72,7 @@ export const fetchRepliesRequest = (postId?: string) => (dispatch: Function) => 
   });
 
   http
-    .get(`/post/${postId}/replies?limit=10&skip=0`, true)
+    .get(`/post/${postId}/replies?limit=10&offset=0`, true)
     .then((res) => {
       const { error, data } = res as {
         error: boolean;
