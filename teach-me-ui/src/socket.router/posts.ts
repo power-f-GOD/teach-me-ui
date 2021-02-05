@@ -31,6 +31,7 @@ export default function post(
     userData: UserData;
   };
   const toneName: NotificationSoundState['toneName'] = TONE_NAME__OPEN_ENDED;
+  const senderIsSelf = userData.id === _data.sender?.id;
 
   // console.log('payload from server:', _data);
   try {
@@ -43,22 +44,26 @@ export default function post(
         break;
       }
       case POST_REPOST: {
-        const data = {
-          data: [{ ...postState, ..._data, sender: userData, pipe: undefined }],
-          statusText: 'new post created'
-        };
+        if (senderIsSelf) {
+          const data = {
+            data: [
+              { ...postState, ..._data, sender: userData, pipe: undefined }
+            ],
+            statusText: 'new post created'
+          };
 
-        dispatch(inProfile() ? profilePosts({ ...data }) : posts({ ...data }));
-        dispatch(
-          makeRepost({
-            err: false,
-            status: 'fulfilled'
-          })
-        );
+          dispatch(
+            inProfile() ? profilePosts({ ...data }) : posts({ ...data })
+          );
+          dispatch(
+            makeRepost({
+              err: false,
+              status: 'fulfilled'
+            })
+          );
 
-        // @Prince, instead of this check I'm currently temporarily doing, you should check if the modal is currently being displayed to dispatch this action else skip
-        // And although, I've put a check in the action to test for the window location hash too which would prevent history.back() from being called unnecessarily
-        if (userData.id === _data.sender?.id) {
+          // @Prince, instead of this check I'm currently temporarily doing, you should check if the modal is currently being displayed to dispatch this action else skip
+          // And although, I've put a check in the action to test for the window location hash too which would prevent history.back() from being called unnecessarily
           displayModal(false);
         }
 
@@ -69,7 +74,7 @@ export default function post(
     }
   } catch (e) {}
 
-  if (userData.id === _data.sender?.id) {
+  if (senderIsSelf) {
     switch (_data.pipe) {
       case POST_REPLY:
       case POST_REPOST:
