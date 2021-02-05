@@ -27,7 +27,7 @@ import {
   promisedDispatch
 } from '../../../functions';
 
-import { pingUser } from '../../notifications';
+import { pingUser } from '../notifications';
 import { posts } from './posts';
 import { triggerNotificationSound } from '../..';
 
@@ -42,8 +42,10 @@ export const makeRepost = (payload: FetchState<Object, string>) => {
   };
 };
 
-export const makeRepostRequest = (payload: SendReplyProps) => (dispatch: Function) => {
-  dispatch(makeRepost({status: 'pending'}))
+export const makeRepostRequest = (payload: SendReplyProps) => (
+  dispatch: Function
+) => {
+  dispatch(makeRepost({ status: 'pending' }));
 
   checkNetworkStatusWhilstPend({
     name: 'makeRepost',
@@ -63,8 +65,10 @@ export const fetchReplies = (payload: FetchState<Array<Object>, string>) => {
   };
 };
 
-export const fetchRepliesRequest = (postId?: string) => (dispatch: Function) => {
-  dispatch(fetchReplies({status: 'pending', data:[]}));
+export const fetchRepliesRequest = (postId?: string) => (
+  dispatch: Function
+) => {
+  dispatch(fetchReplies({ status: 'pending', data: [] }));
 
   checkNetworkStatusWhilstPend({
     name: 'fetchReplies',
@@ -105,9 +109,9 @@ export const fetchPost = (payload: FetchState<Object, string>) => {
   };
 };
 
-export const fetchPostRequest = (postId?: string) => ( dispatch: Function) => {
-  dispatch(fetchReplies({status: 'pending', data:[]}));
-  dispatch(fetchPost({status: 'pending', data: postState}));
+export const fetchPostRequest = (postId?: string) => (dispatch: Function) => {
+  dispatch(fetchReplies({ status: 'pending', data: [] }));
+  dispatch(fetchPost({ status: 'pending', data: postState }));
 
   checkNetworkStatusWhilstPend({
     name: 'fetchPost',

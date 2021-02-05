@@ -5,8 +5,8 @@ import {
   GET_NOTIFICATIONS,
   PING_USER
   // apiBaseURL as baseURL,
-} from '../constants';
-import { ReduxAction, NotificationState, PingUserProps } from '../types';
+} from '../../constants';
+import { ReduxAction, NotificationState, PingUserProps } from '../../types';
 
 import {
   logError,
@@ -14,7 +14,7 @@ import {
   getState,
   dispatch,
   http
-} from '../functions';
+} from '../../functions';
 
 export const getNotifications = (date: number) => (
   dispatch: Function

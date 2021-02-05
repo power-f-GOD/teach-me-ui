@@ -25,13 +25,11 @@ import { dispatch, getState, emitUserOnlineStatus, delay } from '../../utils';
 import {
   initWebSocket,
   closeWebSocket,
-  triggerNotificationSound
-} from '../../actions/misc';
-import activateSocketRouters from '../../socket.router';
-import {
+  triggerNotificationSound,
   getConversations,
   getConversationsMessages
-} from '../../actions/main/chat';
+} from '../../actions';
+import activateSocketRouters from '../../socket.router';
 import {
   APIConversationResponse,
   StatusPropsState,
@@ -39,6 +37,7 @@ import {
   FetchState,
   NotificationSoundState
 } from '../../types';
+import { displayModal } from '../../functions';
 
 interface MainProps {
   signoutStatus: StatusPropsState['status'];
@@ -62,7 +61,8 @@ const Main = (props: MainProps) => {
     userToken,
     webSocket: socket,
     convosData,
-    notificationSound
+    notificationSound,
+    location
   } = props;
   const { play, toneName, hasEnded, isPlaying, isReady } = notificationSound;
   const notifSoundSrc = `/tones/${toneName}.ogg`;
@@ -108,6 +108,21 @@ const Main = (props: MainProps) => {
       window.onclick = null;
     };
   }, []);
+
+  useEffect(() => {
+    const prevHash = location.hash;
+    const hideModal = () => {
+      if (/#modal/.test(prevHash)) {
+        displayModal(false, false, undefined);
+      }
+    };
+
+    window.addEventListener('popstate', hideModal);
+
+    return () => {
+      window.removeEventListener('popstate', hideModal);
+    };
+  }, [location.hash]);
 
   useEffect(() => {
     if (notifSoundEl) {
@@ -193,7 +208,11 @@ const Main = (props: MainProps) => {
           isAuthenticated={!!userToken}
         />
         <Switch>
-          <Route path={['/', '/index', '/home', '/p/:id']} exact component={Home} />
+          <Route
+            path={['/', '/index', '/home', '/p/:id']}
+            exact
+            component={Home}
+          />
           <Route path='/about' component={About} />
           <Route path='/support' component={Support} />
           <Route path={['/@:username', '/profile/:id']} component={Profile} />

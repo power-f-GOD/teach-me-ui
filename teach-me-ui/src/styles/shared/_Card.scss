@@ -9,6 +9,11 @@
   margin-bottom: 1rem;
   border-radius: 1rem;
 
+  @media screen and (max-width: 575px) {
+    border-radius: 0;
+    box-shadow: none;
+  }
+
   hr {
     height: 0.25rem;
     width: calc(100% - 0.8rem);

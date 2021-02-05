@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { validateEmail } from '.';
+import { validateEmail } from '../..';
 
 import {
   GET_USER_DETAILS,
@@ -16,17 +16,17 @@ import {
   UPDATE_ACADEMIC_DATA_REQUEST,
   UPDATE_PROFILE_REQUEST,
   apiBaseURL as baseURL
-} from '../constants';
-import { EditProfileState, ReduxAction } from '../types';
+} from '../../../constants';
+import { EditProfileState, ReduxAction } from '../../../types';
 
 import {
   logError,
   checkNetworkStatusWhilstPend,
   getState,
   populateStateWithUserData
-} from '../functions';
+} from '../../../functions';
 
-import { validateUsername } from './validate';
+import { validateUsername } from '../../auth/validate';
 
 export const updateProfileRequest = (data: any) => (
   dispatch: Function
@@ -407,6 +407,7 @@ export const updateUserDataRequest = (
     func: updateUserData
   });
   dispatch(updateUserData({ status: 'pending' }));
+  console.log(data);
 
   axios({
     url: '/account/update',

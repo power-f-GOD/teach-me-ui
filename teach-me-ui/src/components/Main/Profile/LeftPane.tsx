@@ -12,19 +12,19 @@ const ProfileLeftPane = (props: { data: UserData; isSelfView: boolean }) => {
     last_name,
     email,
     username,
-    // date_of_birth,
+    date_of_birth,
     institution,
     department,
     level
     // bio
   } = data;
-  // const dob = date_of_birth?.split('-').reverse().join('-') || '';
-
+  const dob = date_of_birth?.split('-').reverse().join('-') || '';
+  
   const basicInfo: InfoCardProps['data'] = [
     { name: 'Firstname', value: first_name },
     { name: 'Lastname', value: last_name },
     { name: 'Username', value: username },
-    // { name: 'Date of birth', value: dob },
+    { name: 'Date of birth', value: dob },
     { name: 'Email', value: email }
     // { name: 'Bio', value: bio! }
   ];
@@ -46,7 +46,7 @@ const ProfileLeftPane = (props: { data: UserData; isSelfView: boolean }) => {
           title='Account'
           icon={<FAIcon name='user' fontSize='1.5em' />}
           data={basicInfo}
-          bgcolor='#fff'
+          bgColor='#fff'
           boxShadow='none'
           padding='0.75rem'
           className='mr-sm-3'
@@ -56,7 +56,7 @@ const ProfileLeftPane = (props: { data: UserData; isSelfView: boolean }) => {
         title='Education'
         icon={<FAIcon name='university' fontSize='1.5em' />}
         data={academicInfo}
-        bgcolor='#fff'
+        bgColor='#fff'
         boxShadow='none'
         padding='0.75rem'
         className='mr-sm-3'

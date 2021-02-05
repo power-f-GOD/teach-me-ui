@@ -17,19 +17,19 @@ import {
   GET_MATCHING_DEPARTMENTS,
   GET_MATCHING_LEVELS,
   BIO_VALIDATE
-} from '../constants';
+} from '../../constants';
 import {
   SearchState,
   ReduxAction,
   BasicInputState,
   InstitutionInputState
-} from '../types';
+} from '../../types';
 import {
   logError,
   getState,
   checkNetworkStatusWhilstPend,
   http
-} from '../functions';
+} from '../../functions';
 
 export const validateFirstname = (payload: BasicInputState): ReduxAction => {
   return {

@@ -11,6 +11,19 @@
     box-shadow: none;
     border: none;
     margin-bottom: 0.75em;
+
+    .post-info {
+      .text-ellipsis {
+        transition: 0.3s, background-color 0.2s;
+
+        &:hover {
+          position: absolute;
+          background-color: white;
+          width: 100%;
+          transform: translateX(-1em);
+        }
+      }
+    }
   }
 
   .recommendations-heading {
@@ -25,6 +38,25 @@
     padding-right: 0.75rem !important;
     margin: 1.5rem 0 1.5rem 0.75rem;
     max-width: calc(100% - 0.75rem);
+  }
+}
+
+@media screen and (max-width: 767px) {
+  body.is-dedicated {
+    .Post {
+      min-height: calc(100vh - 3.5em);
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+  }
+}
+
+@media screen and (min-width: 768px) {
+  body.is-dedicated {
+    .Post {
+      font-size: 1.025em;
+      min-height: calc(100vh - 6em);
+    }
   }
 }
 

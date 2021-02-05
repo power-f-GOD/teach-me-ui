@@ -73,8 +73,11 @@ export const sendFilesToServer = (files: Array<File>, callbackAction: Function, 
         err: false
       }));
       dispatch(getUploads);
-      idParameter.includes('photo') && window.history.back();
-      idParameter.includes('photo') && displayModal(false);
+      
+      if (idParameter.includes('photo')) {
+        displayModal(false);
+      }
+       
       let fileId = array ? ids : ids[0];
       let parameters : any = {...actionParameters};
       parameters[`${idParameter}`] = fileId;

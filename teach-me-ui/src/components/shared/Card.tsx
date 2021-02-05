@@ -14,7 +14,7 @@ export function InfoCard(props: InfoCardProps) {
     icon: Icon,
     data,
     hr,
-    bgcolor,
+    bgColor,
     boxShadow,
     padding,
     type,
@@ -26,11 +26,13 @@ export function InfoCard(props: InfoCardProps) {
   return (
     <Box
       component='section'
-      className={`InfoCard text-left fade-in-opacity ${className}`}
-      bgcolor={bgcolor ? bgcolor : 'white'}
-      boxShadow={boxShadow ? boxShadow : '0 0 2.5rem rgba(0, 0, 0, 0.2)'}
-      padding={padding ? padding : '1rem'}
-      borderRadius={borderRadius ? borderRadius : '1.25rem'}>
+      className={`InfoCard text-left ${className}`}
+      style={{
+        boxShadow: boxShadow,
+        borderRadius: borderRadius,
+        padding: padding ?? '1rem',
+        backgroundColor: bgColor ?? 'white'
+      }}>
       <Col className='info p-0 d-flex my-1'>
         <Col className='py-0 px-2 d-flex justify-content-between align-items-center'>
           <Box component='h2' className='card-title mr-auto'>

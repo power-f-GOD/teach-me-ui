@@ -55,7 +55,7 @@ export default function MainNavMenu(props: any) {
 
       <Tooltip title='See Notifications'>
         <NavLink
-          to='#'
+          to='#modal'
           className={`nav-link ${numOfNewNotifs ? 'new-notification' : ''}`}
           onClick={(e) => {
             e.preventDefault();
@@ -63,7 +63,7 @@ export default function MainNavMenu(props: any) {
               title: 'Notifications'
             });
           }}
-          isActive={(match: any, location: any) => false}>
+          activeClassName=''>
           <Badge color='secondary' badgeContent={numOfNewNotifs}>
             <FAIcon name='bell' />
           </Badge>

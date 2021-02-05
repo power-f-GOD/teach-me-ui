@@ -4,102 +4,84 @@ import {
   posts,
   triggerNotificationSound,
   makeRepost,
-  profilePosts,
-  createPost
+  profilePosts
 } from '../actions';
 
 import { displayModal } from '../functions';
 
-import { 
+import {
   postState,
-  POST_REACTION, 
-  POST_REPLY, 
-  POST_REPOST,
-  TONE_NAME__OPEN_ENDED 
+  POST_REACTION,
+  POST_REPLY,
+  TONE_NAME__OPEN_ENDED,
+  POST_REPOST
 } from '../constants';
+import {
+  SocketPipe,
+  NotificationSoundState,
+  PostStateProps,
+  UserData
+} from '../types';
 
-import { SocketPipe, NotificationSoundState, UserData } from '../types';
-
-export default function post(_data: any) {
+export default function post(
+  _data: { message: string; error: boolean } & Partial<PostStateProps>
+) {
   const { notificationSound, userData } = getState() as {
     notificationSound: NotificationSoundState;
     userData: UserData;
   };
   const toneName: NotificationSoundState['toneName'] = TONE_NAME__OPEN_ENDED;
 
-  // console.log('data from server:', data);
+  // console.log('payload from server:', _data);
   try {
     switch (_data.pipe as SocketPipe) {
       case POST_REACTION:
       case POST_REPLY: {
-        const data = [{ ..._data }];
+        const data = [{ ..._data }] as PostStateProps[];
 
         dispatch(inProfile() ? profilePosts({ data }) : posts({ data }));
-
-        if (_data.pipe === POST_REPLY) {
-          if (notificationSound.isPlaying) {
-            promisedDispatch(
-              triggerNotificationSound({ play: false, isPlaying: false })
-            ).then(() => {
-              dispatch(triggerNotificationSound({ play: true, toneName }));
-            });
-          } else {
-            dispatch(triggerNotificationSound({ play: true, toneName }));
-          }
-        }
-
         break;
       }
       case POST_REPOST: {
-        if (!_data.error) {
-          const data = {
-            data: [{ ...postState, ..._data, sender: userData }],
-            statusText: 'new post created'
-          };
+        const data = {
+          data: [{ ...postState, ..._data, sender: userData, pipe: undefined }],
+          statusText: 'new post created'
+        };
 
-          if (_data.action_count !== undefined) dispatch(createPost(_data));
+        dispatch(inProfile() ? profilePosts({ ...data }) : posts({ ...data }));
+        dispatch(
+          makeRepost({
+            err: false,
+            status: 'fulfilled'
+          })
+        );
 
-          dispatch(inProfile() ? profilePosts({ ...data }) : posts({ ...data }));
-          if (_data.sender.id === userData.id) {
-            dispatch(
-              posts({
-                data: [{ ...postState, ..._data, pipe: undefined }],
-                statusText: 'new post created'
-              })
-            );
-          
-            // if (data.action_count !== undefined) dispatch(createPost(data));
-            dispatch(
-              makeRepost({
-                err: false,
-                status: 'fulfilled'
-              })
-            );
-            displayModal(false);
-            if (notificationSound.isPlaying) {
-              promisedDispatch(
-                triggerNotificationSound({ play: false, isPlaying: false })
-              ).then(() => {
-                dispatch(triggerNotificationSound({ play: true, toneName }));
-              });
-            } else {
-              dispatch(triggerNotificationSound({ play: true, toneName }));
-            }
-          }
-
-        } else {
-          dispatch(
-            makeRepost({
-              err: true,
-              status: 'settled',
-              statusText: _data.message
-            })
-          );
+        // @Prince, instead of this check I'm currently temporarily doing, you should check if the modal is currently being displayed to dispatch this action else skip
+        // And although, I've put a check in the action to test for the window location hash too which would prevent history.back() from being called unnecessarily
+        if (userData.id === _data.sender?.id) {
+          displayModal(false);
         }
+
         break;
       }
       default:
         break;
     }
   } catch (e) {}
+
+  if (userData.id === _data.sender?.id) {
+    switch (_data.pipe) {
+      case POST_REPLY:
+      case POST_REPOST:
+        if (notificationSound.isPlaying) {
+          promisedDispatch(
+            triggerNotificationSound({ play: false, isPlaying: false })
+          ).then(() => {
+            dispatch(triggerNotificationSound({ play: true, toneName }));
+          });
+        } else {
+          dispatch(triggerNotificationSound({ play: true, toneName }));
+        }
+    }
+  }
 }

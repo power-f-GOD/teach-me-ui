@@ -64,7 +64,7 @@ const PostInfo = (props: {
         {!!colleagueThatUpvoted && (
           <Box
             component='span'
-            className='font-italic text-ellipsis ml-2 pr-1'
+            className='text-ellipsis ml-2 pr-1'
             fontSize='0.85em'>
             (
             <Col as='span' className='font-bold theme-tertiary'>

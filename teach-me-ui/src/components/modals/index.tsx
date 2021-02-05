@@ -9,9 +9,10 @@ import CloseIcon from '@material-ui/icons/Close';
 
 import { connect } from 'react-redux';
 
-import { 
+import {
   dispatch,
   displayModal,
+  eraseLastHistoryStateOnClick
 } from '../../functions';
 import MakePost from './MakePost';
 import CreateRepost from './MakeRepost';
@@ -21,7 +22,7 @@ import Notifications from './Notifications';
 import CreateQuestionOrAnswer from './AskQuestion';
 
 import { uploads } from '../../actions';
-import { 
+import {
   MAKE_POST,
   MAKE_REPOST,
   NOTIFICATIONS,
@@ -32,17 +33,21 @@ import {
 } from '../../constants/modals';
 
 const removeModal = (event: any) => {
-  window.history.back();
+  eraseLastHistoryStateOnClick(window.location.pathname);
+
   displayModal(false);
-  dispatch(uploads({
-    showUploads: false
-  }))
+  dispatch(
+    uploads({
+      showUploads: false
+    })
+  );
 };
 
 const removeNotificationModal = (event: any) => {
-  window.history.back();
+  eraseLastHistoryStateOnClick(window.location.pathname);
+
   displayModal(false, true);
-}
+};
 
 const ModalFrame = (props: any) => {
   let modalBody = null;
@@ -63,15 +68,19 @@ const ModalFrame = (props: any) => {
     case NOTIFICATIONS:
       modalBody = <Notifications />;
       break;
-    case  CREATE_QUESTION:
+    case CREATE_QUESTION:
       modalBody = <CreateQuestionOrAnswer />;
       break;
     case CREATE_ANSWER:
-      modalBody =  <CreateQuestionOrAnswer answer />;
+      modalBody = <CreateQuestionOrAnswer answer />;
   }
   return (
     <Modal
-      onClose={props.modal.type === NOTIFICATIONS ? removeNotificationModal : removeModal}
+      onClose={
+        props.modal.type === NOTIFICATIONS
+          ? removeNotificationModal
+          : removeModal
+      }
       className='modal-wrapper'
       open={props.modal.open}
       closeAfterTransition
@@ -83,11 +92,27 @@ const ModalFrame = (props: any) => {
         }
       }}>
       <Fade in={props.modal.open}>
-        <Box className='main-modal' style={{width: props.modal.type === NOTIFICATIONS ? 'max-content' : '90vw'}}>
-          <div style={{marginBottom: props.modal.type === NOTIFICATIONS ? '0px' : '0.5rem'}} className='cancel-modal d-flex container justify-content-between action-bar p-0'>
+        <Box
+          className='main-modal'
+          style={{
+            width: props.modal.type === NOTIFICATIONS ? 'max-content' : '90vw'
+          }}>
+          <div
+            style={{
+              marginBottom:
+                props.modal.type === NOTIFICATIONS ? '0px' : '0.5rem'
+            }}
+            className='cancel-modal d-flex container justify-content-between action-bar p-0'>
             <span></span>
-            <h4 className='m-0 text-center align-self-center font-bold'>{props.modal.meta?.title}</h4>
-            <div onClick={props.modal.type === NOTIFICATIONS ? removeNotificationModal : removeModal}>
+            <h4 className='m-0 text-center align-self-center font-bold'>
+              {props.modal.meta?.title}
+            </h4>
+            <div
+              onClick={
+                props.modal.type === NOTIFICATIONS
+                  ? removeNotificationModal
+                  : removeModal
+              }>
               <Box
                 component='button'
                 className='close-btn'
@@ -99,7 +124,17 @@ const ModalFrame = (props: any) => {
               </Box>
             </div>
           </div>
-          <Box className='modal-contents' padding={props.modal.type === 'EDIT_PROFILE' ? '20px' : props.modal.type === NOTIFICATIONS ? '0px' : '7px'}>{modalBody}</Box>
+          <Box
+            className='modal-contents'
+            padding={
+              props.modal.type === 'EDIT_PROFILE'
+                ? '20px'
+                : props.modal.type === NOTIFICATIONS
+                ? '0px'
+                : '7px'
+            }>
+            {modalBody}
+          </Box>
         </Box>
       </Fade>
     </Modal>

@@ -1,6 +1,6 @@
 import { ChangeEvent } from 'react';
 
-import * as actions from '../actions/validate';
+import * as actions from '../actions/auth/validate';
 import { getState, dispatch } from '../utils';
 import { refs as editProfileRefs } from '../components/modals/Profile.edit';
 import { 

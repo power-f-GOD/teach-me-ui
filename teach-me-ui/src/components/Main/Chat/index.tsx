@@ -224,7 +224,7 @@ const Chat = (props: ChatProps) => {
   useEffect(() => {
     const [pathname, queryParam] = ['/chat/0', '?0'];
 
-    if (/chat/.test(location.pathname)) {
+    if (/\/chat/.test(location.pathname)) {
       props.location.pathname = pathname;
       props.location.search = queryParam;
       document.body.style.overflow = 'hidden';

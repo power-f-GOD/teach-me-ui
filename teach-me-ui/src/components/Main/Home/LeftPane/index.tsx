@@ -16,16 +16,10 @@ import Col from 'react-bootstrap/Col';
 
 import Box from '@material-ui/core/Box';
 
-import {
-  FetchState,
-  UserData,
-  APIConversationResponse
-} from '../../../../types';
-import { getState } from '../../../../functions';
+import { UserData } from '../../../../types';
 
 interface LeftPaneProps {
   userData: UserData;
-  convosLength: number;
 }
 
 const HomeLeftPane = (props: LeftPaneProps) => {
@@ -36,15 +30,9 @@ const HomeLeftPane = (props: LeftPaneProps) => {
     institution,
     department,
     profile_photo,
-    cover_photo
+    cover_photo,
+    colleague_count
   }: UserData = userData;
-  const conversations = getState().conversations as FetchState<
-    APIConversationResponse[]
-  >; //using getState instead of props to prevent redundant re-renders
-  const numOfColleagues = conversations.data?.reduce(
-    (n, convo) => (convo.friendship ? n + 1 : n),
-    0
-  );
 
   return (
     <Container
@@ -91,8 +79,8 @@ const HomeLeftPane = (props: LeftPaneProps) => {
               </Box>
               <Box
                 component='span'
-                className={`number ${numOfColleagues ? 'font-bold' : ''}`}>
-                {numOfColleagues}
+                className={`number ${colleague_count ? 'font-bold' : ''}`}>
+                {colleague_count}
               </Box>
             </Col>
           </Col>
@@ -141,6 +129,5 @@ const HomeLeftPane = (props: LeftPaneProps) => {
 };
 
 export default connect((state: any) => ({
-  userData: state.userData,
-  convosLength: state.conversations.data.length
+  userData: state.userData
 }))(HomeLeftPane);

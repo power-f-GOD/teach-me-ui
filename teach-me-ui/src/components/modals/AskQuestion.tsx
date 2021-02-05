@@ -1,8 +1,4 @@
-import React, {
-  useState, 
-  useRef,
-  ChangeEvent
-} from 'react';
+import React, { useState, useRef, ChangeEvent } from 'react';
 
 import { connect } from 'react-redux';
 
@@ -18,48 +14,41 @@ import Row from 'react-bootstrap/Row';
 
 import { QuestionEditor } from '../../types';
 
-import { 
+import {
   // sendFilesToServer,
   getUploads,
   // sendQuestionToServer,
   askQuestion
 } from '../../actions';
-import { 
-  displayModal, 
+import {
+  displayModal,
   dispatch,
   isImage,
-  getFileExtension,
+  getFileExtension
 } from '../../functions';
 import TagEditor from '../Main/Q&A/crumbs/Tags';
 import QuestionEditorBody from '../Main/Q&A/crumbs/QuestionEditorBody';
 
-const RenderImage = (props: {file: File}) => {
+const RenderImage = (props: { file: File }) => {
   const { file } = props;
   const img = useRef<any | undefined>();
 
   let reader = new FileReader();
   reader.onload = (e) => {
     img.current.setAttribute('src', e.target!.result as string);
-  }
+  };
   reader.readAsDataURL(file);
 
-  return (
-    <img
-      ref={img} 
-      className='img'
-      alt={file.name}
-      title={file.name}/> 
-  )
-}
-
+  return <img ref={img} className='img' alt={file.name} title={file.name} />;
+};
 
 const AskQuestion = (props: any) => {
-  const { 
-    // userData, 
-  sendFile,
-  uploadsProp,
-  askQuestionProp
-} = props;
+  const {
+    // userData,
+    sendFile,
+    uploadsProp,
+    askQuestionProp
+  } = props;
   // const { profile_photo, displayName } = userData;
 
   const label = useRef<HTMLLabelElement | any>();
@@ -85,28 +74,13 @@ const AskQuestion = (props: any) => {
         ...state.question,
         tags
       }
-    })
-  }
+    });
+  };
 
   if (askQuestionProp.status === 'fulfilled') {
-    dispatch(askQuestion({status: 'settled'}));
-    window.history.back();
+    dispatch(askQuestion({ status: 'settled' }));
     displayModal(false);
   }
-
-  const removeModal = () => {
-    displayModal(false, true);
-  }
-
-  const closeModal = (e: any) => {
-    if (String(window.location.hash)  === '') removeModal();
-  }
-
-  window.onhashchange = closeModal;
-
-  setTimeout(() => {
-    window.location.hash = 'modal';
-  }, 0);
 
   const onChange = (header: string) => ({ currentTarget }: any) => {
     if (label.current && label1.current) {
@@ -119,7 +93,7 @@ const AskQuestion = (props: any) => {
         ...state.question,
         [header]: currentTarget.value
       }
-    })
+    });
   };
 
   const removeUpload = (e: any) => {
@@ -128,7 +102,10 @@ const AskQuestion = (props: any) => {
     let selectedUploads = [];
     let removed = false;
     for (let file of state.selectedUploads) {
-      if (e.target.previousElementSibling.getAttribute('id') === file.id && !removed) {
+      if (
+        e.target.previousElementSibling.getAttribute('id') === file.id &&
+        !removed
+      ) {
         removed = true;
         continue;
       }
@@ -137,33 +114,37 @@ const AskQuestion = (props: any) => {
     setState({
       ...state,
       selectedUploads
-    })
-  }
+    });
+  };
 
   const removeFile = (e: any) => {
     label.current.style.display = 'none';
     label1.current.style.display = 'none';
     let selectedFiles = [];
-    let removed = false
+    let removed = false;
     for (let file of state.selectedFiles) {
-      if (e.target.previousElementSibling.getAttribute('title') === file.name && !removed) {
+      if (
+        e.target.previousElementSibling.getAttribute('title') === file.name &&
+        !removed
+      ) {
         removed = true;
         continue;
       }
-      
+
       selectedFiles.push(file);
     }
     setState({
       ...state,
       selectedFiles
-    })
+    });
   };
 
   const fileSelectedHandler = (e: ChangeEvent<any>) => {
     label.current.style.display = 'none';
     label1.current.style.display = 'none';
     let selectedFiles = state.selectedFiles;
-    let numberOfSelectedFiles = (selectedFiles.length + state.selectedUploads.length);
+    let numberOfSelectedFiles =
+      selectedFiles.length + state.selectedUploads.length;
     let files: Array<File> = [];
     for (let file of e.target.files) {
       if (file.size > 50000000) {
@@ -174,7 +155,7 @@ const AskQuestion = (props: any) => {
         if (numberOfSelectedFiles >= 5) {
           label1.current.style.display = 'block';
           break;
-        };
+        }
         files.push(file);
         numberOfSelectedFiles++;
       }
@@ -188,10 +169,13 @@ const AskQuestion = (props: any) => {
 
   const toggleSelectPreUpload = (e: any) => {
     label1.current.style.display = 'none';
-    const numberOfUploads = (state.selectedFiles.length + state.selectedUploads.length + state.tempSelectedUploads.length);
+    const numberOfUploads =
+      state.selectedFiles.length +
+      state.selectedUploads.length +
+      state.tempSelectedUploads.length;
     const button = e.currentTarget.children[1];
     const element = e.currentTarget.children[0];
-    
+
     if (button.classList[0] === 'check-button') {
       if (numberOfUploads >= 5) {
         label1.current.style.display = 'block';
@@ -202,29 +186,29 @@ const AskQuestion = (props: any) => {
       setState({
         ...state,
         tempSelectedUploads: [
-          ...state.tempSelectedUploads, 
+          ...state.tempSelectedUploads,
           {
-            url: element.getAttribute('src'), 
+            url: element.getAttribute('src'),
             id: element.getAttribute('id'),
             title: element.getAttribute('title'),
-            image: (element.classList[0] === 'img')
+            image: element.classList[0] === 'img'
           }
         ]
-      })
+      });
     } else {
       button.classList.remove('check-button-selected');
       button.classList.add('check-button');
-      let selectedUploads = []
+      let selectedUploads = [];
       for (let uploaded of state.tempSelectedUploads) {
         if (uploaded.url === element.getAttribute('src')) continue;
-          selectedUploads.push(uploaded)
+        selectedUploads.push(uploaded);
       }
       setState({
         ...state,
         tempSelectedUploads: selectedUploads
-      })
+      });
     }
-  }
+  };
 
   const handleSelectUpload = (e: any) => {
     if (state.tempSelectedUploads[0]) {
@@ -233,25 +217,22 @@ const AskQuestion = (props: any) => {
       const tempUploads = state.tempSelectedUploads;
       setState({
         ...state,
-        selectedUploads: [
-          ...state.selectedUploads, 
-          ...tempUploads
-        ],
-        tempSelectedUploads : [],
+        selectedUploads: [...state.selectedUploads, ...tempUploads],
+        tempSelectedUploads: [],
         showUploads: false
-      })
+      });
     }
-  }
+  };
 
   const cancelSelectUpload = (e: any) => {
     label.current.style.display = 'none';
     label1.current.style.display = 'none';
     setState({
       ...state,
-      tempSelectedUploads : [],
+      tempSelectedUploads: [],
       showUploads: false
     });
-  }
+  };
 
   const displayUploads = (e: any) => {
     document.body.click();
@@ -264,19 +245,19 @@ const AskQuestion = (props: any) => {
       ...state,
       showUploads: true
     });
-  }
+  };
 
   const hideUploadedFiles = (e: any) => {
     setState({
       ...state,
       showUploads: false
     });
-  }
+  };
 
   const toggleDropdown = (e: any) => {
     e.stopPropagation();
     setShowDropdown(!showDropdown);
-  }
+  };
 
   // const onPostSubmit = () => {
   //   if (state.post.text) {
@@ -291,79 +272,110 @@ const AskQuestion = (props: any) => {
   return (
     <Box p={1} pt={0} className='create-question'>
       <form>
-      {!props.answer && (
-        <>
-          <Row className='d-flex mx-auto mt-0'>
-            <label className='question-label' htmlFor='question-title'>Title</label>
-          </Row>
-          <Row className='d-flex mx-auto mt-0'>
-            <input 
-              required
-              maxLength={150}
-              className='question-input input' 
-              id='question-title'
-              placeholder=' title of question e.g How do I create a neural network'
-              onChange={onChange('title')} 
-              type='text' />
-          </Row>
-          <Row className='d-flex mx-auto mt-3'>
-            <label className='question-label' htmlFor='question-body'>Body</label>
-          </Row>
-        </>
-      )}
-      {!props.answer ? (
-        <Row className='d-flex mx-auto mt-0'>
-          <small>Give details on the question </small>
-        </Row>
-      ) : (
-        <Row className='d-flex mx-auto mt-0'>
-          <small>Give a detailed answer </small>
-        </Row>
-      )}
-          
-      <QuestionEditorBody body={state.question.body} onChange={onChange('body')}/>
-      {!props.answer && (
-        <> 
-          <Row className='d-flex mx-auto mt-3'>
-            <label className='question-label' htmlFor='question-tags'>Tags</label>
-          </Row>
-          <Row className='d-flex mx-auto mt-0'>
-            <small>Add tags to decribe what your question is about </small>
-          </Row>
-          <Row className='d-flex mx-auto mt-0'>
-            <small className='hint'>*use space to add a tag</small>
-          </Row>
-          <Row className='d-flex mx-auto mt-0'>
-            <TagEditor tags={state.question.tags} setTags={setTags} setShowDropdown={setShowDropdown}/>
-          </Row>
-        </>
-      )}
-      {!(state.showUploads && uploadsProp.data[0]) && (
-        <>
-          <Row className='d-flex mx-auto mt-3'>
-        <small>You can also add files to help understand your {props.question ? 'question' : 'answer'}</small>
-          </Row>
-          <Row className='mx-auto mt-1' style={{position: 'relative'}}>
-            <ClickAwayListener onClickAway={(e: any) => {setShowDropdown(false)}}>
-              <Button onClick={toggleDropdown} variant='contained' color='primary' className='file-button' > 
-                <AttachmentIcon className='cursor-pointer question-attach mr-2'/>{' '}Attach file(s)
-              </Button>
-            </ClickAwayListener>
-            <Container onClick={(e: any) => {setShowDropdown(false)}} className={`${showDropdown ? 'd-block' : 'd-none'} dropdown-contents upload-drop-menu`}>
-              <label 
-                htmlFor='my-input' 
-                onClick={hideUploadedFiles} 
-                className='upload-menu-options'>
-                  local Disk
+        {!props.answer && (
+          <>
+            <Row className='d-flex mx-auto mt-0'>
+              <label className='question-label' htmlFor='question-title'>
+                Title
               </label>
-              <hr id='upload-divider'/>
-              <div className='upload-menu-options' onClick={displayUploads}>
-                uploaded files
-              </div>
-            </Container>
+            </Row>
+            <Row className='d-flex mx-auto mt-0'>
+              <input
+                required
+                maxLength={150}
+                className='question-input input'
+                id='question-title'
+                placeholder=' title of question e.g How do I create a neural network'
+                onChange={onChange('title')}
+                type='text'
+              />
+            </Row>
+            <Row className='d-flex mx-auto mt-3'>
+              <label className='question-label' htmlFor='question-body'>
+                Body
+              </label>
+            </Row>
+          </>
+        )}
+        {!props.answer ? (
+          <Row className='d-flex mx-auto mt-0'>
+            <small>Give details on the question </small>
           </Row>
-        </>
-      )}
+        ) : (
+          <Row className='d-flex mx-auto mt-0'>
+            <small>Give a detailed answer </small>
+          </Row>
+        )}
+
+        <QuestionEditorBody
+          body={state.question.body}
+          onChange={onChange('body')}
+        />
+        {!props.answer && (
+          <>
+            <Row className='d-flex mx-auto mt-3'>
+              <label className='question-label' htmlFor='question-tags'>
+                Tags
+              </label>
+            </Row>
+            <Row className='d-flex mx-auto mt-0'>
+              <small>Add tags to decribe what your question is about </small>
+            </Row>
+            <Row className='d-flex mx-auto mt-0'>
+              <small className='hint'>*use space to add a tag</small>
+            </Row>
+            <Row className='d-flex mx-auto mt-0'>
+              <TagEditor
+                tags={state.question.tags}
+                setTags={setTags}
+                setShowDropdown={setShowDropdown}
+              />
+            </Row>
+          </>
+        )}
+        {!(state.showUploads && uploadsProp.data[0]) && (
+          <>
+            <Row className='d-flex mx-auto mt-3'>
+              <small>
+                You can also add files to help understand your{' '}
+                {props.question ? 'question' : 'answer'}
+              </small>
+            </Row>
+            <Row className='mx-auto mt-1' style={{ position: 'relative' }}>
+              <ClickAwayListener
+                onClickAway={(e: any) => {
+                  setShowDropdown(false);
+                }}>
+                <Button
+                  onClick={toggleDropdown}
+                  variant='contained'
+                  color='primary'
+                  className='file-button'>
+                  <AttachmentIcon className='cursor-pointer question-attach mr-2' />{' '}
+                  Attach file(s)
+                </Button>
+              </ClickAwayListener>
+              <Container
+                onClick={(e: any) => {
+                  setShowDropdown(false);
+                }}
+                className={`${
+                  showDropdown ? 'd-block' : 'd-none'
+                } dropdown-contents upload-drop-menu`}>
+                <label
+                  htmlFor='my-input'
+                  onClick={hideUploadedFiles}
+                  className='upload-menu-options'>
+                  local Disk
+                </label>
+                <hr id='upload-divider' />
+                <div className='upload-menu-options' onClick={displayUploads}>
+                  uploaded files
+                </div>
+              </Container>
+            </Row>
+          </>
+        )}
         <input
           multiple={true}
           id='my-input'
@@ -375,155 +387,178 @@ const AskQuestion = (props: any) => {
           <Row className='d-flex mx-auto mt-1'>
             <Container component='div' id='upload-grid-box'>
               {state.selectedFiles.map((file: File, i: number) => (
-                <div 
+                <div
                   title={file.name}
-                  key={i} 
-                  className={`upload-relative ${isImage(file) ? 'upload-div-wrapper1' : 'upload-non-image-files'}`}>
+                  key={i}
+                  className={`upload-relative ${
+                    isImage(file)
+                      ? 'upload-div-wrapper1'
+                      : 'upload-non-image-files'
+                  }`}>
                   {isImage(file) ? (
-                    <RenderImage file={file}/>
+                    <RenderImage file={file} />
                   ) : (
                     <p title={file.name}>{getFileExtension(file.name)}</p>
                   )}
-                  <button 
-                    type='button' 
+                  <button
+                    type='button'
                     className='upload-remove-img-btn rounded-circle'
                     onClick={removeFile}>
-                      <CloseIcon fontSize='small'/>
+                    <CloseIcon fontSize='small' />
                   </button>
                 </div>
               ))}
- 
+
               {state.selectedUploads.map((file: any, i: number) => (
-                <div 
-                  key={i} 
-                  className={`upload-relative ${file.image ? 'upload-div-wrapper1' : 'upload-non-image-files'}`}
-                  title={`${file.title !== 'Untitled' ? file.title : 'from uploads'}`}>
+                <div
+                  key={i}
+                  className={`upload-relative ${
+                    file.image
+                      ? 'upload-div-wrapper1'
+                      : 'upload-non-image-files'
+                  }`}
+                  title={`${
+                    file.title !== 'Untitled' ? file.title : 'from uploads'
+                  }`}>
                   {file.image ? (
-                    <img 
+                    <img
                       id={file.id}
                       className='img'
-                      alt={file.name} 
-                      src={`${file.url}`}/>
+                      alt={file.name}
+                      src={`${file.url}`}
+                    />
                   ) : (
                     <p id={file.id}>{file.title}</p>
                   )}
                   <button
-                    onClick={removeUpload} 
+                    onClick={removeUpload}
                     type='button'
                     className='upload-remove-img-btn rounded-circle'>
-                      x
+                    x
                   </button>
                 </div>
               ))}
             </Container>
           </Row>
         )}
-        {(state.showUploads && uploadsProp.data[0]) && (
-          <Row as='h4'
-            className='upload-select-header'>
-              Select files
+        {state.showUploads && uploadsProp.data[0] && (
+          <Row as='h4' className='upload-select-header'>
+            Select files
           </Row>
         )}
-        <Container
-          component='p'
-          ref={label}
-          className='upload-label'>
+        <Container component='p' ref={label} className='upload-label'>
           *files should be maximum of 50mb
         </Container>
-        <Container
-          component='p'
-          ref={label1}
-          className='upload-label'
-          >
+        <Container component='p' ref={label1} className='upload-label'>
           *we think five files are enough to explain your question
         </Container>
         <Row className='d-flex mx-auto mt-1'>
-          <Box
-            component='div'
-            id='grid-box-uploads' 
-            className='scroll-image'
-          >
-            {state.showUploads ?
-              uploadsProp.status === 'pending' 
-              ? <CircularProgress className='upload-progress margin-auto'/> 
-              : uploadsProp.data[0] 
-              ? uploadsProp.data.map((file: any, i: number) => (
-                <Container component='div' key={i} onClick={toggleSelectPreUpload} className='col-4 upload-div-wrapper'>
-                  {file.type === 'image' ? (
-                    <img 
-                      src={file.thumbnail ? file.thumbnail : file.url} 
-                      className='img' 
-                      alt={file.public_id} 
-                      id={file.id}
-                      title={`${file.title ? file.title : ''}`}
-                    />
-                  ) : (
-                    <div 
-                      id={file._id}
-                      title={file.title} 
-                      className='upload-div-wrapper non-image-uploads'>
+          <Box component='div' id='grid-box-uploads' className='scroll-image'>
+            {state.showUploads ? (
+              uploadsProp.status === 'pending' ? (
+                <CircularProgress className='upload-progress margin-auto' />
+              ) : uploadsProp.data[0] ? (
+                uploadsProp.data.map((file: any, i: number) => (
+                  <Container
+                    component='div'
+                    key={i}
+                    onClick={toggleSelectPreUpload}
+                    className='col-4 upload-div-wrapper'>
+                    {file.type === 'image' ? (
+                      <img
+                        src={file.thumbnail ? file.thumbnail : file.url}
+                        className='img'
+                        alt={file.public_id}
+                        id={file.id}
+                        title={`${file.title ? file.title : ''}`}
+                      />
+                    ) : (
+                      <div
+                        id={file._id}
+                        title={file.title}
+                        className='upload-div-wrapper non-image-uploads'>
                         <p>{file.title}</p>
-                    </div>
-                  )}
-                  <button type='button' className='check-button'>
-                    ✓
+                      </div>
+                    )}
+                    <button type='button' className='check-button'>
+                      ✓
+                    </button>
+                  </Container>
+                ))
+              ) : (
+                <Container className='no-uploads' component='p'>
+                  You have no uploads
+                  <button
+                    className='cursor-pointer'
+                    id='float-button-no-uploads'
+                    onClick={cancelSelectUpload}
+                    color='secondary'>
+                    cancel
                   </button>
                 </Container>
-              ))
-              : <Container
-                  className='no-uploads'
-                  component='p' 
-                >You have no uploads 
-              <button 
-                className='cursor-pointer'
-                id='float-button-no-uploads'
-                onClick={cancelSelectUpload}
-                color='secondary'>
-                  cancel
-              </button></Container>
-              : ''
-            }
+              )
+            ) : (
+              ''
+            )}
           </Box>
         </Row>
         {state.showUploads && uploadsProp.data[0] && (
           <Row className='d-flex mx-auto mt-1'>
-            <Container component='div' className='width-100 p-0'
-            >
-            <Button 
-              onClick={handleSelectUpload}
-              variant='contained'
-              color='primary'>
+            <Container component='div' className='width-100 p-0'>
+              <Button
+                onClick={handleSelectUpload}
+                variant='contained'
+                color='primary'>
                 select
-            </Button>
-            <Button 
-              id='upload-float-button'
-              onClick={cancelSelectUpload}
-              variant='contained'
-              color='secondary'>
+              </Button>
+              <Button
+                id='upload-float-button'
+                onClick={cancelSelectUpload}
+                variant='contained'
+                color='secondary'>
                 cancel
-            </Button>
+              </Button>
             </Container>
           </Row>
         )}
         <Row className='d-flex mx-auto mt-1'>
           {!(state.showUploads && uploadsProp.data[0]) && (
             <Button
-              id={`${ (
-                askQuestionProp.status === 'pending' 
-                || sendFile.status === 'pending' 
-                || (!props.answer ? !(state.question.title && state.question.body && state.question.tags[0]) : (!state.question.body))
-              ) ? 'background-grey' : ''}`}
+              id={`${
+                askQuestionProp.status === 'pending' ||
+                sendFile.status === 'pending' ||
+                (!props.answer
+                  ? !(
+                      state.question.title &&
+                      state.question.body &&
+                      state.question.tags[0]
+                    )
+                  : !state.question.body)
+                  ? 'background-grey'
+                  : ''
+              }`}
               className='post-button major-button Primary contained p-0 flex-grow-1'
               // onClick={onPostSubmit}
-              color={(!props.answer ? (state.question.title && state.question.body && state.question.tags[0]) : (state.question.body)) ? 'primary' : 'default'}
-            >
+              color={
+                (
+                  !props.answer
+                    ? state.question.title &&
+                      state.question.body &&
+                      state.question.tags[0]
+                    : state.question.body
+                )
+                  ? 'primary'
+                  : 'default'
+              }>
               {askQuestionProp.status === 'pending' ? (
                 <CircularProgress size={28} color='inherit' />
               ) : sendFile.status === 'pending' ? (
                 'uploading files...'
+              ) : props.answer ? (
+                'Answer'
               ) : (
-                props.answer ? 'Answer' : 'Ask'
-              )} 
+                'Ask'
+              )}
             </Button>
           )}
         </Row>
@@ -532,14 +567,14 @@ const AskQuestion = (props: any) => {
   );
 };
 
-const mapStateToProps = ({ 
-  // userData, 
-  sendFiles, 
+const mapStateToProps = ({
+  // userData,
+  sendFiles,
   uploads,
   askQuestion
-}: any) => ({ 
-  // userData, 
-  sendFile: sendFiles, 
+}: any) => ({
+  // userData,
+  sendFile: sendFiles,
   uploadsProp: uploads,
   askQuestionProp: askQuestion
 });

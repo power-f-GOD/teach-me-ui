@@ -15,7 +15,7 @@ let live = 'teach-me-services.herokuapp.com';
 let local = '2f7754434c07.ngrok.io';
 
 export const apiBaseURL = `https://${useLiveUrl ? live : local}/api/v1`;
-export const wsBaseURL = `ws://${useLiveUrl ? live : local}/api/v1`;
+export const wsBaseURL = `ws://${useLiveUrl || true ? live : local}/api/v1`;
 
 export const DISPLAY_SNACK_BAR = 'DISPLAY_SNACK_BAR';
 
@@ -98,7 +98,8 @@ export const userDataState: UserData = {
   department: '',
   level: '',
   id: '',
-  token: ''
+  token: '',
+  colleague_count: 0
 };
 
 export const replyState: ReplyState = {

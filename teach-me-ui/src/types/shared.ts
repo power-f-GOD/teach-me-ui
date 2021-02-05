@@ -12,7 +12,7 @@ export interface InfoCardProps {
   data?: { name: string; value: any }[];
   hr?: boolean;
   type?: 'info' | 'colleague';
-  bgcolor?: string;
+  bgColor?: string;
   boxShadow?: string;
   padding?: string;
   borderRadius?: string;
@@ -127,6 +127,7 @@ export interface APIResponseModel<T> {
   error: boolean;
   message?: string;
   data: T;
+  meta?: { offset?: number; [key: string]: any };
 }
 
 export interface SnackbarState {
@@ -161,6 +162,7 @@ export interface UserData {
   email: string;
   dob?: string;
   date_joined?: number;
+  colleague_count: number;
   date_of_birth?: string;
   online_status?: OnlineStatus;
   username: string;
