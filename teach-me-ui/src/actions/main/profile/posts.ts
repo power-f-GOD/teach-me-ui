@@ -43,7 +43,6 @@ export const getProfilePosts = (
       isAuthenticated()
     )
     .then(({ error: err, message, data }) => {
-      //'extra', here, is 'offset' for purpose of recycling
       offset = data?.slice(-1)[0]?.date || offset || Date.now();
 
       dispatch(
@@ -52,7 +51,7 @@ export const getProfilePosts = (
           statusText: !data?.length ? 'has reached end' : !err ? '' : message,
           err,
           ...(!err ? { data } : {}),
-          extra: offset
+          extra: offset //'extra', here, is 'offset' for purpose of recycling
         })
       );
     })

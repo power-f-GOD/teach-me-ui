@@ -304,7 +304,7 @@ const Post: React.FC<
           parent ? 'has-quote' : colleague_reposts?.length ? 'has-quotes' : ''
         } mx-0 px-0`}
         ref={postElementRef}>
-        {extra && (
+        {extra && !head && (
           <small
             className='extra'
             dangerouslySetInnerHTML={{ __html: extra }}></small>

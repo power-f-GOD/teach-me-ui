@@ -12,19 +12,19 @@ const ProfileLeftPane = (props: { data: UserData; isSelfView: boolean }) => {
     last_name,
     email,
     username,
-    // date_of_birth,
+    date_of_birth,
     institution,
     department,
     level
     // bio
   } = data;
-  // const dob = date_of_birth?.split('-').reverse().join('-') || '';
-  // console.log('date of birth:', date_of_birth);
+  const dob = date_of_birth?.split('-').reverse().join('-') || '';
+  
   const basicInfo: InfoCardProps['data'] = [
     { name: 'Firstname', value: first_name },
     { name: 'Lastname', value: last_name },
     { name: 'Username', value: username },
-    // { name: 'Date of birth', value: dob },
+    { name: 'Date of birth', value: dob },
     { name: 'Email', value: email }
     // { name: 'Bio', value: bio! }
   ];

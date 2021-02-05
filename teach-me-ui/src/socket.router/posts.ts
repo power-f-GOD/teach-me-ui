@@ -31,7 +31,7 @@ export default function post(
     userData: UserData;
   };
   const toneName: NotificationSoundState['toneName'] = TONE_NAME__OPEN_ENDED;
-  
+
   // console.log('payload from server:', _data);
   try {
     switch (_data.pipe as SocketPipe) {
@@ -69,17 +69,19 @@ export default function post(
     }
   } catch (e) {}
 
-  switch (_data.pipe) {
-    case POST_REPLY:
-    case POST_REPOST:
-      if (notificationSound.isPlaying) {
-        promisedDispatch(
-          triggerNotificationSound({ play: false, isPlaying: false })
-        ).then(() => {
+  if (userData.id === _data.sender?.id) {
+    switch (_data.pipe) {
+      case POST_REPLY:
+      case POST_REPOST:
+        if (notificationSound.isPlaying) {
+          promisedDispatch(
+            triggerNotificationSound({ play: false, isPlaying: false })
+          ).then(() => {
+            dispatch(triggerNotificationSound({ play: true, toneName }));
+          });
+        } else {
           dispatch(triggerNotificationSound({ play: true, toneName }));
-        });
-      } else {
-        dispatch(triggerNotificationSound({ play: true, toneName }));
-      }
+        }
+    }
   }
 }

@@ -63,21 +63,21 @@ const Feeds = (props: FeedsProps) => {
   const { data: profile } = anchorUserData || {};
   const inProfile = anchor === POSTS_ANCHOR__PROFILE;
   const username = userData!.username || '';
-  const profileUsername = profile?.username || '';
+  const profileIdOrUsername = profile?.username || profile?.id || '';
   const anchPostsIsPending = anchPostsStatus === 'pending';
   const anchPostsLength = anchPostsData?.length;
   const anchPostsUrl = anchPostsExtra
     ? inProfile
-      ? `/profile/${profileUsername}/posts?limit=10&offset=`
+      ? `/profile/${profileIdOrUsername}/posts?limit=10&offset=`
       : `/feed?recycle=true&offset=`
     : undefined;
   const isFetching =
-    /(updat|fetch|recycl)(e|ing)?/i.test(anchPostsStatusText || '') ||
+    /(updat|fetch|recycl|gett)(e|ing)?/i.test(anchPostsStatusText || '') ||
     anchPostsIsPending;
   const reachedEnd = /reached\send/.test(anchPostsStatusText || '');
   //currently viewed user profile check
   const isSelf =
-    !!username && !!profileUsername && profileUsername === username;
+    !!username && !!profileIdOrUsername && profileIdOrUsername === username;
   const selfView = isAuthenticated ? isSelf : false;
   const dataIsEmpty = !anchPostsData?.length && anchPostsStatus === 'fulfilled';
 
@@ -91,7 +91,7 @@ const Feeds = (props: FeedsProps) => {
         dispatch(profilePosts({ statusText: 'feeds unmounts' }));
       }
     };
-  }, [inProfile, profileUsername]); // require profileUsername for unmount; do not remove
+  }, [inProfile, profileIdOrUsername]); // require profileUsername for unmount; do not remove
 
   useEffect(() => {
     if (/(new\s)?post\screated/.test(anchPostsStatusText || '')) {
@@ -101,16 +101,17 @@ const Feeds = (props: FeedsProps) => {
 
   useEffect(() => {
     if (!inProfile) {
-      if (!anchPostsLength) {
+      if (!anchPostsLength && !isFetching) {
         dispatch(getPosts(!!anchPostsLength));
         dispatch(getRecommendations());
       }
     } else {
-      if (profileUsername && !anchPostsLength) {
-        dispatch(getProfilePosts(profileUsername, 'getting new posts'));
+      if (profileIdOrUsername && !anchPostsLength && !isFetching) {
+        dispatch(getProfilePosts(profileIdOrUsername, 'getting new posts'));
       }
     }
-  }, [inProfile, profileUsername, anchPostsLength]);
+    //eslint-disable-next-line
+  }, [inProfile, profileIdOrUsername, anchPostsLength]);
 
   useEffect(() => {
     if (feedsScrollObservedElem) {
@@ -129,9 +130,9 @@ const Feeds = (props: FeedsProps) => {
           ) {
             if (!inProfile) {
               dispatch(getPosts(true, statusText, anchPostsUrl));
-            } else {
+            } else if (profileIdOrUsername) {
               dispatch(
-                getProfilePosts(profileUsername, statusText, anchPostsUrl)
+                getProfilePosts(profileIdOrUsername, statusText, anchPostsUrl)
               );
             }
           }
@@ -151,7 +152,7 @@ const Feeds = (props: FeedsProps) => {
     anchPostsUrl,
     anchPostsIsPending,
     inProfile,
-    profileUsername,
+    profileIdOrUsername,
     isFetching,
     reachedEnd,
     socket
@@ -160,7 +161,7 @@ const Feeds = (props: FeedsProps) => {
   return (
     <>
       <Container
-        className={`middle-pane px-0 px-sm-3 px-md-0 ${className}`}
+        className={`Feeds middle-pane px-0 px-sm-3 px-md-0 ${className}`}
         fluid>
         {(selfView || !inProfile) && (
           <Memoize
@@ -217,7 +218,7 @@ const Feeds = (props: FeedsProps) => {
           ))}
         {(dataIsEmpty || reachedEnd) && !isFetching && (
           <Empty
-            headerText='No more Posts'
+            headerText={dataIsEmpty ? 'No Posts' : 'No more Posts'}
             riderText={
               inProfile
                 ? dataIsEmpty
@@ -225,7 +226,17 @@ const Feeds = (props: FeedsProps) => {
                   : "That's all we could find."
                 : "You're all caught up!"
             }
-            imageWidth='50%'
+            imageWidth='60%'
+            action={
+              !inProfile
+                ? {
+                    func: () => {
+                      window.scrollTo(0, 0);
+                      dispatch(getPosts(false, undefined, anchPostsUrl));
+                    }
+                  }
+                : undefined
+            }
           />
         )}
       </Container>

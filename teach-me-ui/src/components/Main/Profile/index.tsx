@@ -80,7 +80,11 @@ const Profile = (props: ProfileProps) => {
   const idOrUsername = profileId || username;
   const userNotFound = /user.*not\sfound/.test(_profileData.statusText || '');
   const isSelfView = isAuthenticated ? username === userData.username : false;
-  const finalData = { ...(isSelfView ? userData : data), username };
+  const finalData = {
+    ...(isSelfView ? userData : data),
+    username,
+    ...(profileId ? { id: profileId } : {})
+  };
 
   useEffect(() => {
     navBarObservee = navBarObserveeRef.current;

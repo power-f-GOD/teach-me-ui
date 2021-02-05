@@ -41,6 +41,25 @@
   }
 }
 
+@media screen and (max-width: 767px) {
+  body.is-dedicated {
+    .Post {
+      min-height: calc(100vh - 3.5em);
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+  }
+}
+
+@media screen and (min-width: 768px) {
+  body.is-dedicated {
+    .Post {
+      font-size: 1.025em;
+      min-height: calc(100vh - 6em);
+    }
+  }
+}
+
 .Post {
   @media screen and (min-width: 1301px) {
     .reaction-wrapper {

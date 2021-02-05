@@ -86,16 +86,6 @@ const EditProfile = (props: any) => {
     getUserDetailsProp
   } = props;
 
-  const removeModal = () => {
-    displayModal(false, true);
-  }
-  
-  const closeModal = (e: any) => {
-    if (String(window.location.hash)  === '') removeModal();
-  }
-  
-  window.onhashchange = closeModal;
-
   if (updateAcademicData.status === 'fulfilled'
       && updateUserData.status === 'fulfilled'
       && updateEmail.status === 'fulfilled'

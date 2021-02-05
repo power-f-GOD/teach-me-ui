@@ -162,6 +162,7 @@ export interface UserData {
   email: string;
   dob?: string;
   date_joined?: number;
+  colleague_count: number;
   date_of_birth?: string;
   online_status?: OnlineStatus;
   username: string;

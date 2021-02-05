@@ -12,13 +12,13 @@ export const getPosts = (update = false, statusText?: string, url?: string) => (
   dispatch: Function
 ): ReduxActionV2<any> => {
   const { posts: _posts } = getState() as {
-    posts: FetchState<PostStateProps>;
+    posts: FetchState<PostStateProps[]>;
   };
-  let prevOffset = _posts.extra;
+  const offset = _posts.data?.length ? _posts.extra : Date.now();
 
   dispatch(
     posts({
-      ...(!update ? { status: 'pending' } : {}),
+      status: update ? 'fulfilled' : 'pending',
       statusText,
       err: false
     })
@@ -33,7 +33,7 @@ export const getPosts = (update = false, statusText?: string, url?: string) => (
       url
         ? `${'/feed?recycle=true&offset='.replace(
             /(offset=)(.*)/,
-            `$1${prevOffset || Date.now()}&limit=10`
+            `$1${offset || Date.now()}&limit=10`
           )}`
         : '/feed?limit=10',
       true

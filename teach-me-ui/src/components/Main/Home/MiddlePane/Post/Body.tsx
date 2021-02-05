@@ -43,6 +43,7 @@ const PostBody = (props: PostBodyProps) => {
   const navigate = useCallback(
     (id: string, head?: boolean) => () => {
       if (head) return;
+
       history.push(`/p/${id}`);
     },
     [history]
@@ -81,14 +82,16 @@ const PostBody = (props: PostBodyProps) => {
         {/* {sec_type === 'REPOST' &&
         text && */}
         {!quote &&
-          reposts?.map((repost) => (
-            <QuotedPost
-              {...repost}
-              navigate={navigate}
-              showModal={showModal}
-              key={repost.id}
-            />
-          ))}
+          reposts
+            ?.slice(5)
+            .map((repost) => (
+              <QuotedPost
+                {...repost}
+                navigate={navigate}
+                showModal={showModal}
+                key={repost.id}
+              />
+            ))}
 
         <Media media={media} showModal={showModal} />
       </Row>

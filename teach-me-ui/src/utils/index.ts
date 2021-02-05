@@ -45,6 +45,18 @@ export const { dispatch, getState }: any = store;
 
 export const isAuthenticated = (): boolean => !!getState().auth.isAuthenticated;
 
+/**
+ * Note: Function should only be called in an (onClick) event listener that actually change(s|d) history state.
+ * And basically or mainly, this function is for to just erase the #modal hash in history state so that when a user taps/clicks Back, they actually go back and not going back to the hash, #modal.
+ * @param url string of replacer URL
+ */
+export const eraseLastHistoryStateOnClick = (url: string) => {
+  window.history.replaceState({}, document.title, url);
+  setTimeout(() => {
+    window.history.back();
+  }, 100);
+};
+
 export const inProfile = (pathname?: string) =>
   /^\/(@[a-z0-9_]+[a-z0-9_.]*[a-z0-9_]|profile\/[a-z0-9]+)/i.test(
     pathname || window.location.pathname

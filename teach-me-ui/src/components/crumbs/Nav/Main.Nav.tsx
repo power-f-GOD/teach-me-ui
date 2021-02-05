@@ -51,7 +51,7 @@ const MainNav = (props: MainNavProps) => {
 
         <Tooltip title='See Notifications'>
           <NavLink
-            to='#'
+            to='#modal'
             className={`nav-link ${numOfNewNotifs ? 'new-notification' : ''}`}
             onClick={(e: any) => {
               e.preventDefault();
@@ -59,7 +59,7 @@ const MainNav = (props: MainNavProps) => {
                 title: 'Notifications'
               });
             }}
-            isActive={(match: any, location: any) => false}>
+            activeClassName=''>
             <Badge color='secondary' badgeContent={numOfNewNotifs}>
               <FAIcon name='bell' />
               <Box component='span' className='nav-label'>

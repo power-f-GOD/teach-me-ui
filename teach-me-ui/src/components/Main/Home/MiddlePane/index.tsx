@@ -8,6 +8,7 @@ import Feeds from '../../../shared/Feeds';
 interface HomeMiddlePaneProps {
   posts: FetchState<PostStateProps[]>;
   recommendations: FetchState<UserData[]>;
+  location: Location;
 }
 
 const HomeMiddlePane = (props: HomeMiddlePaneProps) => {

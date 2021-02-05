@@ -6,11 +6,7 @@ import Button from '@material-ui/core/Button';
 
 import Row from 'react-bootstrap/Row';
 
-import {
-  getCharacterSequenceFromText,
-  dispatch,
-  displayModal
-} from '../../functions';
+import { getCharacterSequenceFromText, dispatch } from '../../functions';
 
 import Loader from '../shared/Loaders';
 
@@ -24,7 +20,6 @@ import QuotedPost from '../Main/Home/MiddlePane/Post/QuotedPost';
 
 import { POST_REPOST } from '../../constants';
 
-
 const MakeRePost: React.FC<any> = (props) => {
   const { userData } = props;
   const [state, setState] = useState<any>({
@@ -33,7 +28,7 @@ const MakeRePost: React.FC<any> = (props) => {
       mentions: [],
       hashtags: [],
       media: []
-    },
+    }
   });
 
   const onUpdate = (value: string) => {
@@ -49,20 +44,6 @@ const MakeRePost: React.FC<any> = (props) => {
       }
     });
   };
-
-  const removeModal = () => {
-    displayModal(false, true);
-  }
-
-  const closeModal = (e: any) => {
-    if (String(window.location.hash)  === '') removeModal();
-  }
-
-  window.onhashchange = closeModal;
-
-  setTimeout(() => {
-    window.location.hash = 'modal';
-  }, 0);
 
   const onPostSubmit = (e: MouseEvent<HTMLButtonElement>) => {
     dispatch(
@@ -126,4 +107,3 @@ const mapStateToProps = ({ makeRepost, userData }: any) => ({
 });
 
 export default connect(mapStateToProps)(MakeRePost);
-

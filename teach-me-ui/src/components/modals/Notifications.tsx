@@ -12,32 +12,22 @@ import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import ListItem from '@material-ui/core/ListItem';
 
-import { formatDate, formatNotification } from '../../utils';
+import {
+  formatDate,
+  formatNotification,
+  eraseLastHistoryStateOnClick
+} from '../../utils';
 import { displayModal } from '../../functions';
 
 const Notifications = (props: any) => {
   const { notifications } = props;
   const result = notifications.data.notifications;
   const entities = notifications.data.entities;
-
-  const removeModal = () => {
-    displayModal(false, true);
-  };
-
-  const closeModal = (e: any) => {
-    if (String(window.location.hash) === '') removeModal();
-  };
-
-  window.onhashchange = closeModal;
-
   let read = false;
+
   const makeReadTrue = () => {
     read = true;
   };
-
-  setTimeout(() => {
-    window.location.hash = 'modal';
-  }, 0);
 
   return (
     <Box className='dropdown-contents'>
@@ -99,8 +89,9 @@ const Notifications = (props: any) => {
                       to={`${action}`}
                       key={key}
                       style={{ textDecoration: 'none' }}
-                      onClick={(e: any) => {
-                        removeModal();
+                      onClick={() => {
+                        eraseLastHistoryStateOnClick(action);
+                        displayModal(false, true, undefined);
                       }}>
                       {' '}
                       <div className='d-flex color-black'>

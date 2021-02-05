@@ -54,20 +54,6 @@ const MakePost = (props: any) => {
     displayModal(false);
   }
 
-  const removeModal = () => {
-    displayModal(false, true);
-  };
-
-  const closeModal = (e: any) => {
-    if (window.location.hash === '') removeModal();
-  };
-
-  window.onhashchange = closeModal;
-
-  setTimeout(() => {
-    window.location.hash = 'modal';
-  }, 0);
-
   const onUpdate = (value: string) => {
     if (label.current && label1.current) {
       label.current.style.display = 'none';

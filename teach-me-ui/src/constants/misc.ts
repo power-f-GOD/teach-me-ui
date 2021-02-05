@@ -98,7 +98,8 @@ export const userDataState: UserData = {
   department: '',
   level: '',
   id: '',
-  token: ''
+  token: '',
+  colleague_count: 0
 };
 
 export const replyState: ReplyState = {

@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -24,7 +23,10 @@ const QuotedPost = (
   const sender_name = `${first_name} ${last_name}`;
 
   return (
-    <Box className='QuotedPost' data-id={id} onClick={()=>{!props.head && navigate(id as string)()}}>
+    <Box
+      className='QuotedPost'
+      data-id={id}
+      onClick={!props.head ? navigate(id as string) : undefined}>
       <Row className='mx-0 align-items-center my-2 px-2'>
         <Avatar
           component='span'
@@ -39,9 +41,9 @@ const QuotedPost = (
                 {sender_name}
               </Box>
             ) : (
-              <Link to={`/@${username}`} className='post-sender font-bold'>
+              <Col as='span' className='post-sender font-bold'>
                 {sender_name}
-              </Link>
+              </Col>
             )}
             <Col as='span' className='theme-tertiary ml-1 px-0'>
               | @{username}
