@@ -160,13 +160,13 @@ export const requestCreatePost = ({
   const mentions = getCharacterSequenceFromText(post.text, '@');
 
   dispatch(
-    createPost({
+    makePost({
       status: 'pending'
     })
   );
   checkNetworkStatusWhilstPend({
-    name: 'createPost',
-    func: createPost
+    name: 'makePost',
+    func: makePost
   });
 
   http
@@ -202,7 +202,7 @@ export const requestCreatePost = ({
       }
 
       dispatch(
-        createPost({
+        makePost({
           status: err ? 'settled' : 'fulfilled',
           err
         })
@@ -212,14 +212,14 @@ export const requestCreatePost = ({
         pingUser(mentions);
       }
     })
-    .catch(logError(createPost));
+    .catch(logError(makePost));
 
   return {
     type: SUBMIT_POST
   };
 };
 
-export const createPost = (
+export const makePost = (
   payload: FetchState<PostStateProps>
 ): ReduxActionV2<FetchState<PostStateProps>> => {
   return { type: MAKE_POST, payload };

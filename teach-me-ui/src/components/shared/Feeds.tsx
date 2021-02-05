@@ -188,10 +188,14 @@ const Feeds = (props: FeedsProps) => {
                   {...post}
                   userId={profile?.id || userData!.id}
                   webSocket={socket}
-                  forceUpdate={post.colleague_replies
-                    ?.concat(post.colleague_reposts)
-                    .map((entity) => entity.reaction)
-                    .join('')}
+                  forceUpdate={
+                    post.colleague_replies
+                      ?.map((entity) => entity?.reaction + entity?.date)
+                      .join('') +
+                    post.reaction +
+                    post.repost_count +
+                    post.date
+                  }
                 />
                 {shouldRenderRecommendations && (
                   <Memoize
@@ -232,7 +236,9 @@ const Feeds = (props: FeedsProps) => {
                 ? {
                     func: () => {
                       window.scrollTo(0, 0);
-                      dispatch(getPosts(false, undefined, anchPostsUrl));
+                      dispatch(
+                        getPosts(false, 'refreshing feeds', anchPostsUrl)
+                      );
                     }
                   }
                 : undefined

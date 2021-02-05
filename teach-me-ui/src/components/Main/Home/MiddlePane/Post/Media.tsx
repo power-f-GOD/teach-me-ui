@@ -15,14 +15,14 @@ const Media = ({
     <Box
       className='media-container'
       style={{
-        display: 'grid',
+        display: media?.length === 1 ? 'block' : 'grid',
         gridTemplateColumns: '1fr 1fr',
         gridTemplateRows: `repeat(${
           media?.length === 1 ? 2 : Math.ceil((media as any[]).length / 2)
         }, 12em)`,
         gridAutoFlow: 'row',
-        columnGap: '0.25em',
-        rowGap: '0.25em'
+        columnGap: '0.15em',
+        rowGap: '0.15em'
       }}>
       {media?.map((m, i, self) => {
         const style: any = {};

@@ -164,16 +164,19 @@ const Post: React.FC<
     }
 
     return () => {
-      observer?.unobserve(postElement as Element);
+      if (postElement) {
+        observer?.unobserve(postElement as Element);
+      }
     };
   }, [id, head, socket, parent_id]);
 
   if (colleague_reposts?.length && colleague_reposts?.length > 1) {
     let senderName1 = `${colleague_reposts[0]?.sender?.first_name}`;
+    let senderName2 = `${colleague_reposts[1]?.sender?.first_name}`;
 
     switch (colleague_reposts.length) {
       case 2:
-        extra = `<b>${senderName1}</b> and <b>${first_name}</b> reposted <b>${sender_name}</b>'s post`;
+        extra = `<b>${senderName1}</b> and <b>${senderName2}</b> reposted <b>${sender_name}</b>'s post`;
         break;
       default:
         extra = `${
@@ -186,7 +189,7 @@ const Post: React.FC<
     }
   } else if (parent) {
     extra = `<b>${sender_name}</b> reposted ${
-      parent.sender!.id === sender?.id
+      parent.sender!.id === sender!.id
         ? 'their own'
         : parent.sender!.id === userId
         ? 'your'

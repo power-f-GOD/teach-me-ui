@@ -35,13 +35,13 @@ it('sends post to the sever', () => {
   const submitPostMockFunc = jest.fn(
     (payload: PostContent, media: Array<string>) => {
       return (dispatch: Function) => {
-        actions.createPost(mockPostState);
+        actions.makePost(mockPostState);
       };
     }
   );
 
   submitPostMockFunc(mockPostProps, mockMedia);
   expect(submitPostMockFunc).toHaveBeenCalledWith(mockPostProps, mockMedia);
-  // expect(actions.createPost(mockPostState)).toMatchObject(makePostAction);
+  // expect(actions.makePost(mockPostState)).toMatchObject(makePostAction);
   // expect(actions.submitPost(mockPostProps, mockMedia)(dispatch)).toMatchObject(submitPostAction);
 });

@@ -14,7 +14,7 @@ export const getPosts = (update = false, statusText?: string, url?: string) => (
   const { posts: _posts } = getState() as {
     posts: FetchState<PostStateProps[]>;
   };
-  const offset = _posts.data?.length ? _posts.extra : Date.now();
+  const offset = _posts.data?.length && update ? _posts.extra : Date.now();
 
   dispatch(
     posts({
