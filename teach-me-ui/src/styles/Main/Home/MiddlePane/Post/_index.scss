@@ -123,7 +123,7 @@ $pad-x: 1em;
     width: calc(100% - (#{($pad-x / 4) * 2}));
     margin: 0.25em 0 0.5em (($pad-x / 4));
     cursor: pointer;
-    // max-height: 40em;
+    max-height: 40em;
     border-radius: $pad-x / 1.25;
     position: relative;
     overflow: hidden;

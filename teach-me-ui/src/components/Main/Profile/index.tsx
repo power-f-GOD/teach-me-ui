@@ -149,7 +149,7 @@ const Profile = (props: ProfileProps) => {
   return (
     <Box
       className={`Profile ${isSelfView ? 'self-view' : ''} ${
-        _profileData.err ? 'de-animate-skeleton' : ''
+        _profilePosts.err ? 'de-animate-skeleton' : ''
       } fade-in pb-3`}>
       {/* Profile Header */}
       <ProfileHeader
