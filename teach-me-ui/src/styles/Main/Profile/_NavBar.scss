@@ -10,6 +10,7 @@
     max-width: unset;
     z-index: 5;
     padding: 0;
+    transition: transform 0.3s;
 
     &.is-sticking {
       background-color: white;
