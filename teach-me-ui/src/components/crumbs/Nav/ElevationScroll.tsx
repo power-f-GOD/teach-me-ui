@@ -17,9 +17,7 @@ export default function ElevationScroll(props: {
   });
 
   if (atHome && windowWidth < 768) {
-    document.body.classList[trigger ? 'add' : 'remove']('hide-nav');
-  } else {
-    document.body.classList.remove('hide-nav');
+    document.body.dataset.hideNav = '' + trigger;
   }
 
   return React.cloneElement(children, {
