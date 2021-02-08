@@ -1,11 +1,11 @@
-import { displaySnackbar } from '../actions';
+import { displaySnackbar, fetchReplies } from '../actions';
 
 import Axios from 'axios';
 
 import { dispatch, getState } from '../utils';
 
-import { apiBaseURL as baseURL } from '../constants';
-import { UserData } from '../types';
+import { apiBaseURL as baseURL, POST_REACTION, POST_REPLY } from '../constants';
+import { PostStateProps, UserData } from '../types';
 
 export const fetchMentionsFn = (value: string) => {
   const token = (getState().userData as UserData).token;
@@ -32,3 +32,17 @@ export const fetchMentionsFn = (value: string) => {
       );
     });
 };
+
+export const updatePostPage = (data: PostStateProps) => {
+  switch (data.pipe) {
+    case POST_REPLY:
+      dispatch(fetchReplies({ data: [data] }, true));
+      break;
+    case POST_REACTION:
+      console.log(data);
+      break;
+    default:
+      break;
+  }
+  
+}

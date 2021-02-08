@@ -57,6 +57,9 @@ export const eraseLastHistoryStateOnClick = (url: string) => {
   }, 100);
 };
 
+export const inPostPage = () => 
+  window.location.pathname.includes('/p/');
+
 export const inProfile = (pathname?: string) =>
   /^\/(@[a-z0-9_]+[a-z0-9_.]*[a-z0-9_]|profile\/[a-z0-9]+)/i.test(
     pathname || window.location.pathname
@@ -775,6 +778,8 @@ export const formatDate = (dateTime: Date | number) => {
       ? duration.seconds() + ' seconds ago'
       : 'just now';
   }
+
+  return 'just now'
 };
 
 export const formatMapDateString = (
