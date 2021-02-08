@@ -1,4 +1,4 @@
-import { dispatch, getState, promisedDispatch, inProfile } from '../functions';
+import { dispatch, getState, promisedDispatch, inProfile, inPostPage, updatePostPage } from '../functions';
 
 import {
   posts,
@@ -41,6 +41,7 @@ export default function post(
         const data = [{ ..._data }] as PostStateProps[];
 
         dispatch(inProfile() ? profilePosts({ data }) : posts({ data }));
+        inPostPage() && updatePostPage(data[0]);
         break;
       }
       case POST_REPOST: {
