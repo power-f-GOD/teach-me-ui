@@ -1,6 +1,6 @@
 @import '../constants';
 
-body.hide-nav {
+body[data-hide-nav='true'] {
   .MuiAppBar-root {
     transform: translateY(-105%);
     box-shadow: none;
