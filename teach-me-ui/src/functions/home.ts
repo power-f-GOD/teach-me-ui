@@ -39,6 +39,7 @@ export const updatePostPage = (data: PostStateProps) => {
       dispatch(fetchReplies({ data: [data] }, true));
       break;
     case POST_REACTION:
+      
       // if (data.parent_id) {
       //   let finalReplies = []
       //   const { fetchReplies:repliesInState } = getState();
