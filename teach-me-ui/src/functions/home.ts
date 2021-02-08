@@ -39,7 +39,30 @@ export const updatePostPage = (data: PostStateProps) => {
       dispatch(fetchReplies({ data: [data] }, true));
       break;
     case POST_REACTION:
-      console.log(data);
+      // if (data.parent_id) {
+      //   let finalReplies = []
+      //   const { fetchReplies:repliesInState } = getState();
+      //   let tempRepliesInState : Array<PostStateProps> = Array.from(repliesInState);
+      //   for (let reply of tempRepliesInState) {
+      //     if (reply.id === data.id) {
+      //       switch (reply.reaction) {
+      //         case 'UPVOTE':
+                
+      //           break;
+      //         case 'DOWNVOTE':
+
+      //           break;
+      //         case 'NEUTRAL':
+
+      //           break;
+            
+      //         default:
+      //           break;
+      //       }  
+      //   }
+      // } else {
+
+      // }
       break;
     default:
       break;
