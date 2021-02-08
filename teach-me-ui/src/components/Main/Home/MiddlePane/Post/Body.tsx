@@ -79,11 +79,14 @@ const PostBody = (props: PostBodyProps) => {
           <TextTruncator lineClamp={8} anchorEllipsis={true} />
         </Box>
 
+        <Media media={media} showModal={showModal} />
+
         {/* {sec_type === 'REPOST' &&
         text && */}
         {!quote &&
           reposts
-            ?.slice(5)
+            ?.filter((repost) => (reposts.length > 5 ? repost.text : repost))
+            .slice(0, 5)
             .map((repost) => (
               <QuotedPost
                 {...repost}
@@ -92,8 +95,6 @@ const PostBody = (props: PostBodyProps) => {
                 key={repost.id}
               />
             ))}
-
-        <Media media={media} showModal={showModal} />
       </Row>
     );
 

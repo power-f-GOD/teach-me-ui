@@ -4,17 +4,27 @@ import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 
 export default function ElevationScroll(props: {
   children: React.ReactElement;
-  forLandingPage: boolean;
+  transparentizeNavBar: boolean;
+  windowWidth: number;
+  location: Location;
 }) {
-  const { children, forLandingPage } = props;
+  const { children, transparentizeNavBar, windowWidth, location } = props;
+  const atHome = /^\/(home|index)?$/.test(location.pathname);
 
   let trigger = useScrollTrigger({
-    disableHysteresis: true,
+    disableHysteresis: !atHome,
     threshold: 60
   });
 
+  if (atHome && windowWidth < 768) {
+    document.body.classList[trigger ? 'add' : 'remove']('hide-nav');
+  } else {
+    document.body.classList.remove('hide-nav');
+  }
+
   return React.cloneElement(children, {
     elevation: trigger ? 8 : 0,
-    className: trigger || !forLandingPage ? 'nav-background' : ''
+    className:
+      trigger || !transparentizeNavBar || atHome ? 'nav-background' : ''
   });
 }

@@ -1,4 +1,9 @@
-import { POST_REACTION, POST_REPLY, POSTS_ANCHOR__PROFILE } from '../constants';
+import {
+  POST_REACTION,
+  POST_REPLY,
+  POSTS_ANCHOR__PROFILE,
+  POST_REACTION__NEUTRAL
+} from '../constants';
 import { PostStateProps, FetchState, LoopFind } from '../types';
 import { getState, loopThru } from '../functions';
 
@@ -18,6 +23,7 @@ export const updatePost = (
   const pipeData = newData[0];
   const pipe = pipeData?.pipe;
   const feedsUnmounts = /(feeds?\s?)unmount(s|ed)/.test(statusText || '');
+  const refreshingFeeds = /refreshing\s(feeds?)?/.test(statusText || '');
   const hadReachedEnd = /reached\send/.test(prevPostsState.statusText || ''); //attempt to reset Posts to [] if it had reached end in order to get fresh feeds
   const newPostCreated = /(new\s)?post\screated/.test(statusText || '');
   const updateFromSocket = !!pipe;
@@ -40,7 +46,7 @@ export const updatePost = (
 
     finalPayload = {
       ..._payload,
-      data: resultantData,
+      data: refreshingFeeds ? [] : resultantData,
       extra: _payload.extra ?? prevPostsState.extra
     };
   } else {
@@ -86,7 +92,8 @@ export const updatePost = (
           actualPost.colleague_replies.push({
             ...pipeData,
             upvote_count: 0,
-            downvote_count: 0
+            downvote_count: 0,
+            reaction: POST_REACTION__NEUTRAL
           });
           actualPost.numRepliesToShow = (actualPost.numRepliesToShow ?? 2) + 1;
           actualPost.reply_count = pipeData.parent!.reply_count!;

@@ -11,16 +11,17 @@ import {
   posts,
   getPosts,
   getDeepProfileData,
-  getProfileData
-} from '../actions';
-import { userDeviceIsMobile } from '..';
-import activateSocketRouters from '../socket.router';
-import {
+  getProfileData,
+  getProfilePosts,
   getConversations,
   conversations,
   getConversationsMessages,
-  conversationsMessages
-} from '../actions/main/chat';
+  conversationsMessages,
+  profilePosts,
+  getRecommendations
+} from '../actions';
+import { userDeviceIsMobile } from '..';
+import activateSocketRouters from '../socket.router';
 import {
   HTTP,
   APIResponseModel,
@@ -250,6 +251,7 @@ export const emitUserOnlineStatus = (
     conversationsMessages: _conversationsMessages,
     posts: _posts,
     profileData: _profile,
+    profilePosts: _profilePosts,
     deepProfileData: _deepProfile
   } = getState() as {
     userData: UserData & APIConversationResponse;
@@ -258,6 +260,7 @@ export const emitUserOnlineStatus = (
     conversationsMessages: ConversationMessages;
     posts: FetchState<PostStateProps[]>;
     profileData: FetchState<UserData>;
+    profilePosts: FetchState<PostStateProps[]>;
     deepProfileData: FetchState<DeepProfileProps>;
   };
   let timeToEmitOnlineStatus: any = undefined;
@@ -281,17 +284,26 @@ export const emitUserOnlineStatus = (
     if (_posts.err) {
       if (!_posts.data?.length) {
         dispatch(getPosts(!!_posts.data?.length));
+        dispatch(getRecommendations());
       } else if (navigator.onLine) {
         dispatch(posts({ status: 'fulfilled', err: false }));
       }
     }
 
-    if (_profile.err && _deepProfile.data?.username) {
-      dispatch(getProfileData(_deepProfile.data.username));
+    if (_profilePosts.err) {
+      if (!_profilePosts.data?.length && _profile.data?.username) {
+        dispatch(getProfilePosts(_profile.data?.username));
+      } else if (navigator.onLine) {
+        dispatch(profilePosts({ status: 'fulfilled', err: false }));
+      }
     }
 
-    if (_deepProfile.err && _deepProfile.data?.username) {
-      dispatch(getDeepProfileData(_deepProfile.data.username));
+    if (_profile.err && _profile.data?.username) {
+      dispatch(getProfileData(_profile.data?.username));
+    }
+
+    if (_deepProfile.err && _profile.data?.username) {
+      dispatch(getDeepProfileData(_profile.data?.username));
     }
 
     return function recurse() {

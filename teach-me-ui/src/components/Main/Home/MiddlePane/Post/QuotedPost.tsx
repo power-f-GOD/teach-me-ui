@@ -55,10 +55,12 @@ const QuotedPost = (
         </Col>
       </Row>
 
-      <Row className='container-fluid mt-2 post-text mx-auto'>
-        <Box component='div' className='px-2 pb-2'>
-          {processPost(text as string)}
-        </Box>
+      <Row className='mt-2 post-text mx-0'>
+        {text && (
+          <Box component='div' className='px-2 pb-2'>
+            {processPost(text as string)}
+          </Box>
+        )}
         <Media media={media} showModal={showModal} />
       </Row>
     </Box>

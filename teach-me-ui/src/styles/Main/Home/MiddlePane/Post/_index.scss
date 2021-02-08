@@ -8,7 +8,8 @@
 $pad-x: 1em;
 
 .Post,
-.Reply {
+.Reply,
+.QuotedPost {
   // @include debugger();
   background-color: white;
   position: relative;
@@ -116,28 +117,33 @@ $pad-x: 1em;
         border-color: #ccc;
       }
     }
-
-    img,
-    video {
-      object-fit: cover;
-      object-position: center;
-      vertical-align: middle;
-      width: 100%;
-      height: 100%;
-      border-radius: $pad-x / 1.5;
-      transition: 0.5s;
-
-      &:hover {
-        transition: 0.25s;
-        transform: scale(1.02);
-      }
-    }
   }
 
   .media-container {
     width: calc(100% - (#{($pad-x / 4) * 2}));
     margin: 0.25em 0 0.5em (($pad-x / 4));
     cursor: pointer;
+    max-height: 40em;
+    border-radius: $pad-x / 1.25;
+    position: relative;
+    overflow: hidden;
+
+    img,
+    video {
+      object-fit: cover;
+      object-position: top center;
+      vertical-align: middle;
+      width: 100%;
+      height: 100%;
+      // border-radius: $pad-x / 1.5;
+      transition: 0.5s;
+
+      &:hover {
+        border-radius: 0;
+        transition: 0.25s;
+        transform: scale(1.0125);
+      }
+    }
   }
 
   .post-info {

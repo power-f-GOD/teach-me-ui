@@ -35,7 +35,7 @@ const Nav = (props: {
     <Box component='nav'>
       <ElevationScroll
         {...props}
-        forLandingPage={
+        transparentizeNavBar={
           transparentizeNavBar && !/404/.test(props.location.pathname)
         }>
         <AppBar position='fixed' className='mobile-width'>

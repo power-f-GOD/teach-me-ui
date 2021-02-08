@@ -1,10 +1,21 @@
 @import '../constants';
 
+body.hide-nav {
+  .MuiAppBar-root {
+    transform: translateY(-105%);
+    box-shadow: none;
+  }
+
+  .Compose {
+    transform: translateY(-210%);
+  }
+}
+
 .MuiAppBar-root {
   // @include debugger();
 
   background-color: transparent !important;
-  transition: 0.3s;
+  transition: 0.4s;
   width: 100%;
   left: 0;
 }

@@ -14,7 +14,8 @@ export const getPosts = (update = false, statusText?: string, url?: string) => (
   const { posts: _posts } = getState() as {
     posts: FetchState<PostStateProps[]>;
   };
-  const offset = _posts.data?.length ? _posts.extra : Date.now();
+  const limit = 5;
+  const offset = _posts.data?.length && update ? _posts.extra : Date.now();
 
   dispatch(
     posts({
@@ -33,9 +34,9 @@ export const getPosts = (update = false, statusText?: string, url?: string) => (
       url
         ? `${'/feed?recycle=true&offset='.replace(
             /(offset=)(.*)/,
-            `$1${offset || Date.now()}&limit=10`
+            `$1${offset || Date.now()}&limit=${limit}`
           )}`
-        : '/feed?limit=10',
+        : `/feed?limit=${limit}`,
       true
     )
     .then(({ error, message, data, meta }) => {

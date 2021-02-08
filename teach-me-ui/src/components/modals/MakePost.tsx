@@ -16,7 +16,7 @@ import { PostEditorState } from '../../types';
 import {
   sendFilesToServer,
   getUploads,
-  createPost,
+  makePost,
   requestCreatePost
 } from '../../actions';
 
@@ -50,7 +50,7 @@ const MakePost = (props: any) => {
   });
 
   if (makePostProp.status === 'fulfilled') {
-    dispatch(createPost({ status: 'settled' }));
+    dispatch(makePost({ status: 'settled' }));
     displayModal(false);
   }
 
