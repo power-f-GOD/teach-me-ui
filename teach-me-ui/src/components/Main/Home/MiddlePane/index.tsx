@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { PostStateProps, UserData, FetchState } from '../../../../types';
 import { POSTS_ANCHOR__HOME } from '../../../../constants';
-import Feeds from '../../../shared/Feeds';
+import { Feeds } from '../../../shared';
 
 interface HomeMiddlePaneProps {
   posts: FetchState<PostStateProps[]>;

@@ -4,6 +4,7 @@ body[data-hide-nav='true'] {
   .MuiAppBar-root {
     transform: translateY(-4rem);
     // opacity: 0;
+    transition-delay: 0.2s;
     pointer-events: none;
   }
 
@@ -17,7 +18,7 @@ body[data-hide-nav='true'] {
   // @include debugger();
 
   background-color: transparent !important;
-  transition: 0.3s ease 0.2s;
+  transition: 0.3s;
   width: 100%;
   left: 0;
 }

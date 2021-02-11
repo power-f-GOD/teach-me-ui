@@ -1,16 +1,20 @@
-.Profile {
-  header {
-    height: 22rem;
-    padding-top: 3.5rem;
-    width: 100%;
-    overflow: hidden;
-    background-color: white;
-    position: relative;
+.ProfileHeader {
+  height: 22rem;
+  padding-top: 3.5rem;
+  width: 100%;
+  overflow: hidden;
+  background-color: white;
+  position: relative;
 
-    > *,
-    & + * {
-      z-index: 1;
-      position: relative;
+  > *,
+  & + * {
+    z-index: 1;
+    position: relative;
+  }
+
+  &.is-self-view {
+    .MuiBadge-dot {
+      display: none;
     }
   }
 
@@ -72,6 +76,16 @@
     border: 0.125rem solid #fff;
   }
 
+  .MuiBadge-dot {
+    $size: 1.75em;
+
+    height: $size;
+    border-width: 0.25em;
+    width: $size;
+    bottom: 2.8em;
+    right: 2.3em;
+  }
+
   .change-avatar-button {
     $size: 2.75rem;
 
@@ -90,20 +104,16 @@
     }
   }
 
-  .MuiSvgIcon-root {
-    font-size: 2.5rem;
-  }
-
   .display-name {
-    margin: 0.5rem 0;
+    margin: 0.5em 0;
     font-weight: bold;
-    font-size: 2rem;
+    font-size: 2em;
     color: white;
   }
 
   .username {
-    margin: 0.5rem 0;
-    font-size: 1.3rem;
+    margin: 0.5em 0;
+    font-size: 1.3em;
     color: #ddd;
   }
 
@@ -113,6 +123,10 @@
 
   .date-joined {
     color: #bbb;
+  }
+
+  .MuiSvgIcon-root {
+    font-size: 2.5em;
   }
 
   .change-cover-photo-button {
@@ -153,8 +167,33 @@
   }
 
   @media screen and (max-width: 575px) {
-    header {
+    & {
       height: auto;
+
+      .profile-avatar {
+        $size: 9rem;
+
+        height: $size;
+        width: $size;
+        border: 0.4rem solid #fff;
+      }
+
+      .display-name {
+        color: $theme-tertiary-v1;
+      }
+
+      .username {
+        color: $theme-tertiary-v4;
+      }
+
+      .bio {
+        color: $theme-tertiary-v4;
+        white-space: unset;
+      }
+
+      .date-joined {
+        color: $theme-tertiary-v6;
+      }
     }
 
     .cover-photo-container {
@@ -190,31 +229,6 @@
         background-color: $bg2 !important;
         background-image: linear-gradient(90deg, $bg2, $bg1, $bg2) !important;
       }
-    }
-
-    .profile-avatar {
-      $size: 9rem;
-
-      height: $size;
-      width: $size;
-      border: 0.4rem solid #fff;
-    }
-
-    .display-name {
-      color: $theme-tertiary-v1;
-    }
-
-    .username {
-      color: $theme-tertiary-v4;
-    }
-
-    .bio {
-      color: $theme-tertiary-v4;
-      white-space: unset;
-    }
-
-    .date-joined {
-      color: $theme-tertiary-v6;
     }
 
     .change-cover-photo-button {

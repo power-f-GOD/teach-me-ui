@@ -92,7 +92,7 @@ const MakeRePost: React.FC<any> = (props) => {
                 />
               </>
             ) : (
-              `Repost${state.post.text ? ' with comment' : ''}`
+              `Make${state.post.text ? ' with Comment' : ''}`
             )}
           </Button>
         </Row>

@@ -21,22 +21,22 @@ const Nav = (props: {
   windowWidth: number;
   notifications: FetchState<{ notifications: any[]; entities: any }>;
   auth: AuthState;
-  for: string;
   location: Location;
 }) => {
   const { windowWidth, location, auth } = props;
-  const isAuthenticated = auth.isAuthenticated;
-  const forIndexComponent = !isAuthenticated && props.for === 'index';
+  const isAuthenticated = auth?.isAuthenticated;
   const forProfile = inProfile ? inProfile(location.pathname) : false; // attempt to fix build failure
-  const transparentizeNavBar =
-    (forIndexComponent && /\/(index)?$/.test(location.pathname)) || forProfile;
+  const canTransparentizeNavBar =
+    (!isAuthenticated && /^\/(index|home)?$/.test(location.pathname)) ||
+    forProfile;
 
   return (
     <Box component='nav'>
       <ElevationScroll
         {...props}
-        transparentizeNavBar={
-          transparentizeNavBar && !/404/.test(props.location.pathname)
+        isAuthenticated={isAuthenticated!}
+        canTransparentizeNavBar={
+          canTransparentizeNavBar && !/404/.test(location?.pathname)
         }>
         <AppBar position='fixed' className='mobile-width'>
           <Container>
@@ -46,9 +46,9 @@ const Nav = (props: {
                   Kanyimuta!
                 </Box>
               </Link>
-              {windowWidth >= 768 && (
+              {windowWidth! >= 768 && (
                 <>
-                  {forIndexComponent ? (
+                  {!isAuthenticated ? (
                     <IndexNav
                       {...props}
                       className='app-bar-links order-2 order-md-1'
@@ -62,12 +62,12 @@ const Nav = (props: {
                 </>
               )}
 
-              {windowWidth < 768 && (
+              {windowWidth! < 768 && (
                 <TemporaryDrawer
                   className={`${
                     isAuthenticated ? 'order-0' : 'order-2'
                   } order-md-2`}>
-                  {forIndexComponent ? (
+                  {!isAuthenticated ? (
                     <IndexNav {...props} />
                   ) : (
                     <MainNavMenu {...props} />
@@ -75,7 +75,7 @@ const Nav = (props: {
                 </TemporaryDrawer>
               )}
 
-              {windowWidth < 768 && <ProfileLink className='ml-auto' />}
+              {windowWidth! < 768 && <ProfileLink className='ml-auto' />}
             </Toolbar>
           </Container>
         </AppBar>

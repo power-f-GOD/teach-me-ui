@@ -1,0 +1,86 @@
+.ProfileRightPane {
+  .InfoCard {
+    max-height: calc(100vh - 6em);
+    overflow: auto;
+  }
+
+  .User {
+    transition: 0.3s;
+    font-size: 0.9em;
+
+    .sub-container {
+      background: rgba($sec-r + 25, $sec-g + 25, $sec-b + 25, 0.075);
+      padding: 0.5em 0.75em;
+      min-width: 100%;
+      border-radius: 0.75em;
+      margin-bottom: 0.125em;
+      transition: 0.3s;
+      border: 0.25em solid transparent;
+    }
+
+    &:last-child {
+      margin-bottom: unset;
+    }
+
+    &:hover,
+    &:focus-within {
+      .sub-container {
+        background: #f6f6f6;
+        border-color: #ddd;
+      }
+
+      .profile-photo {
+        background: #ccc;
+      }
+
+      .MuiBadge-dot {
+        opacity: 1;
+      }
+    }
+
+    a {
+      min-width: 100%;
+      color: inherit;
+      text-decoration: unset;
+    }
+
+    .MuiBadge-dot {
+      border: 0.2em solid white;
+      opacity: 0.5;
+    }
+  }
+
+  .profile-photo {
+    $size: 3.25em;
+
+    height: $size;
+    width: $size;
+    transition: background-color 0.3s;
+    background-color: rgba($sec-r, $sec-g, $sec-b, 0.4);
+  }
+
+  .display-name {
+    font-size: 1.15em;
+  }
+
+  .username {
+    font-size: 1em;
+  }
+
+  .department {
+    font-size: 0.85em;
+  }
+
+  @media screen and (max-width: 767px) {
+    .InfoCard {
+      max-height: 24.75em;
+      box-shadow: none !important;
+    }
+  }
+
+  @media screen and (max-width: 565px) {
+    .User {
+      font-size: 0.95em;
+    }
+  }
+}

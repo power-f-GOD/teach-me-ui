@@ -54,6 +54,19 @@
   }
 }
 
+.rotate-infinitely {
+  animation: rotate 2s infinite linear;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotateZ(0);
+  }
+  to {
+    transform: rotateZ(360deg);
+  }
+}
+
 .slide-in-right {
   animation: slideInRight 1s ease;
 }

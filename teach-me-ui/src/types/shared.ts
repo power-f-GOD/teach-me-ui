@@ -17,6 +17,7 @@ export interface InfoCardProps {
   padding?: string;
   borderRadius?: string;
   className?: string;
+  headerClassName?: string;
   children?: any;
 }
 

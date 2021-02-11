@@ -8,18 +8,23 @@ import {
   ADD_COLLEAGUE,
   NOT_COLLEAGUES,
   IS_COLLEAGUE,
-  AWAITING_REQUEST_ACTION
+  AWAITING_REQUEST_ACTION,
+  SET_COLLEAGUES,
+  GET_COLLEAGUES
 } from '../../../constants';
 import {
   ReduxActionV2,
   ColleagueAction,
   DeepProfileProps,
-  PingUserProps
+  PingUserProps,
+  FetchState,
+  ColleagueData
 } from '../../../types';
 import {
   checkNetworkStatusWhilstPend,
   http,
-  logError
+  logError,
+  getState
 } from '../../../functions';
 import { deepProfileData } from './deepProfile';
 import { displaySnackbar } from '../../misc';
@@ -142,37 +147,69 @@ export const colleagueAction = (
   return { type: COLLEAGUE_ACTION, payload };
 };
 
-// export const fetchColleagues = () => (dispatch: Function) => {
-//   dispatch(fetchColleaguesStarted());
-//   const userData = getState().userData as UserData;
-//   const token = userData.token as string;
-//   Axios({
-//     url: `/colleague/find`,
-//     baseURL,
-//     method: 'GET',
-//     headers: {
-//       Authorization: `Bearer ${token}`
-//     }
-//   })
-//     .then((res) => {
-//       if (res.data.error) {
-//         throw new Error(res.data.message);
-//       }
-//       return res.data.data;
-//     })
-//     .then((state) => {
-//       dispatch(fetchedColleagues(state.colleagues));
-//       dispatch(
-//         fetchColleaguesResolved({
-//           error: false,
-//           message: state.message
-//         })
-//       );
-//     })
-//     .catch((err) => {
-//       dispatch(fetchColleaguesRejected({ error: true, message: err.message }));
-//     });
-// };
+export const getColleagues = (
+  username: string,
+  statusText?: string,
+  offset?: number
+) => (dispatch: Function) => {
+  const isFetchingMore = /fetching\smore/.test(statusText || '');
+  const limit = 5;
+
+  checkNetworkStatusWhilstPend({
+    name: 'colleagues',
+    func: colleagues
+  });
+  dispatch(
+    colleagues({
+      ...(isFetchingMore ? {} : { status: 'pending' }),
+      statusText,
+      err: !navigator.onLine
+    })
+  );
+
+  http
+    .get<ColleagueData[]>(
+      `/colleague/find?user=${username}&limit=${limit}&offset=${offset}`,
+      true
+    )
+    .then(({ error: err, message, data }) => {
+      dispatch(
+        colleagues({
+          err: err ?? false,
+          status: err ? 'settled' : 'fulfilled',
+          statusText: message ?? (data.length < limit ? 'reached end' : ''),
+          ...(!err ? { data } : {})
+        })
+      );
+    })
+    .catch(logError(colleagues));
+
+  return {
+    type: GET_COLLEAGUES
+  };
+};
+
+export const colleagues = (
+  payload: FetchState<ColleagueData[]>
+): ReduxActionV2<FetchState<ColleagueData[]>> => {
+  const { colleagues: _colleagues } = getState() as {
+    colleagues: FetchState<ColleagueData[]>;
+  };
+  let finalPayload = { ..._colleagues, ...payload } as FetchState<
+    ColleagueData[]
+  >;
+  const wasFetchingMore = /fetching\smore/.test(_colleagues.statusText || '');
+  // const updateFromSocket = /from\ssocket/.test(_colleagues.statusText || '');
+
+  if (wasFetchingMore) {
+    finalPayload.data = [..._colleagues.data, ...payload.data];
+  }
+
+  return {
+    type: SET_COLLEAGUES,
+    payload: finalPayload
+  };
+};
 
 // export const fetchColleagueRequests = () => (dispatch: Function) => {
 //   dispatch(fetchColleagueRequestsStarted());
@@ -206,13 +243,4 @@ export const colleagueAction = (
 //         fetchColleagueRequestsRejected({ error: true, message: err.message })
 //       );
 //     });
-// };
-
-// export const fetchedColleagues = (
-//   payload?: Partial<RequestState>
-// ): ReduxAction => {
-//   return {
-//     type: FETCHED_COLLEAGUES,
-//     payload
-//   };
 // };
