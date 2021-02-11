@@ -134,6 +134,12 @@ img {
   max-width: 100%;
   height: auto;
   transition: 0.35s;
+
+  &[data-hide='true'],
+  &[aria-hidden='true'] {
+    opacity: 0 !important;
+    pointer-events: none;
+  }
 }
 
 input {
@@ -690,6 +696,34 @@ div {
   }
 }
 
+.online {
+  .MuiBadge-dot {
+    background-color: limegreen !important;
+  }
+}
+
+.away {
+  .MuiBadge-dot {
+    background-color: orange !important;
+  }
+}
+
+.offline {
+  .MuiBadge-dot {
+    background-color: rgba(135, 135, 135, 0.85) !important;
+  }
+}
+
+.MuiBadge-dot {
+  $size: 1.25em;
+
+  height: $size;
+  width: $size;
+  border: 0.2em solid white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
 .text-right {
   text-align: right;
 }
@@ -732,6 +766,10 @@ div {
   white-space: nowrap;
   text-overflow: ellipsis;
   max-width: 100%;
+}
+
+.no-select {
+  user-select: none;
 }
 
 .w-0 {

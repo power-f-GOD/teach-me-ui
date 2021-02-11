@@ -9,6 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import Box from '@material-ui/core/Box';
+import Badge from '@material-ui/core/Badge';
 
 import { SELECT_PHOTO } from '../../../constants';
 import { UserData } from '../../../types';
@@ -27,7 +28,8 @@ const ProfileHeader = (props: {
     cover_photo,
     date_joined,
     bio,
-    username
+    username,
+    online_status
   } = data;
 
   const openProfilePhotoEditModal = () => {
@@ -39,7 +41,10 @@ const ProfileHeader = (props: {
   };
 
   return (
-    <Container as='header' fluid className='header px-0'>
+    <Container
+      as='header'
+      fluid
+      className={`${isSelfView ? 'is-self-view' : ''} ProfileHeader px-0`}>
       <Container fluid className='cover-photo-container px-0'>
         {cover_photo && (
           <Img
@@ -57,17 +62,27 @@ const ProfileHeader = (props: {
 
       <Container className='details-container'>
         <Box className='avatar-with-icon px-0 mx-0'>
-          <Avatar
-            component='span'
-            className='profile-avatar profile-photo'
-            alt={displayName}
-            src={profile_photo}
-            imgProps={{
-              className: 'fade-in-opacity d-none',
-              onLoad: (e: React.SyntheticEvent<HTMLImageElement, Event>) =>
-                (e.target as HTMLImageElement).classList.remove('d-none')
+          <Badge
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right'
             }}
-          />
+            className={online_status?.toLowerCase() ?? 'offline'}
+            overlap='circle'
+            variant='dot'>
+            <Avatar
+              component='span'
+              className='profile-avatar profile-photo'
+              alt={displayName}
+              src={profile_photo}
+              imgProps={{
+                'aria-hidden': true,
+                onLoad: (e: React.SyntheticEvent<HTMLImageElement, Event>) =>
+                  ((e.target as any).ariaHidden = false)
+              }}
+            />
+          </Badge>
+
           {isSelfView && (
             <Tooltip title='Edit profile photo'>
               <IconButton

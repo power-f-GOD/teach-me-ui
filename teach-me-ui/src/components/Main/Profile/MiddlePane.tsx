@@ -4,10 +4,8 @@ import { Switch, Route } from 'react-router-dom';
 import Col from 'react-bootstrap/Col';
 import ColleagueView from './crumbs/ColleagueView';
 import { UserData, FetchState, PostStateProps } from '../../../types';
-import { InfoCard } from '../../shared/Card';
-import { FAIcon } from '../../shared/Icons';
+import { InfoCard, Feeds, FAIcon } from '../../shared';
 import ProfileNavBar from './NavBar';
-import Feeds from '../../shared/Feeds';
 import { POSTS_ANCHOR__PROFILE } from '../../../constants';
 
 export const middlePaneRef = createRef<HTMLElement | null>();
@@ -52,6 +50,7 @@ const ProfileMiddlePane = (props: {
         hr={false}
         padding='0.75rem'
         className='mb-2 header'
+        headerClassName='pb-0'
       />
       <Switch>
         {isSelfView && (
@@ -77,4 +76,4 @@ const ProfileMiddlePane = (props: {
   );
 };
 
-export default ProfileMiddlePane;
+export default React.memo(ProfileMiddlePane);

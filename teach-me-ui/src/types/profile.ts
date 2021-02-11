@@ -1,4 +1,5 @@
 import { FetchState } from '.';
+import { UserData } from './shared';
 
 export interface DeepProfileProps {
   status?:
@@ -62,14 +63,8 @@ interface ColleagueRequest {
   id: string;
 }
 
-export interface ColleagueData {
-  firstname: string;
-  lastname: string;
-  username: string;
-  institution: string;
-  department: string;
-  level: string;
-  id: string;
+export interface ColleagueData extends UserData {
+  since?: number;
 }
 
 export interface EditProfileState {

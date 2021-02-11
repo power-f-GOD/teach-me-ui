@@ -10,18 +10,15 @@ import {
 } from '../types';
 import {
   DEEP_PROFILE_DATA,
-  FETCH_COLLEAGUES_STARTED,
-  FETCH_COLLEAGUES_REJECTED,
-  FETCH_COLLEAGUES_RESOLVED,
   FETCH_COLLEAGUE_REQUESTS_STARTED,
   FETCH_COLLEAGUE_REQUESTS_REJECTED,
   FETCH_COLLEAGUE_REQUESTS_RESOLVED,
   requestState,
-  FETCHED_COLLEAGUES,
   FETCHED_COLLEAGUE_REQUESTS,
   COLLEAGUE_ACTION,
   PROFILE_DATA,
-  ADD_COLLEAGUE
+  ADD_COLLEAGUE,
+  SET_COLLEAGUES
 } from '../constants';
 
 export const colleagueAction = (
@@ -53,6 +50,7 @@ export const profileData = (
       ...action.payload
     };
   }
+
   return state;
 };
 
@@ -72,27 +70,18 @@ export const deepProfileData = (
   }
 };
 
-export const fetchColleaguesStatus = (
-  state: RequestState = requestState,
+export const colleagues = (
+  state = { ...searchState, data: [] } as FetchState<UserData[]>,
   action: ReduxAction
 ) => {
-  switch (action.type) {
-    case FETCH_COLLEAGUES_REJECTED:
-    case FETCH_COLLEAGUES_RESOLVED:
-    case FETCH_COLLEAGUES_STARTED:
-      return action.payload;
-    default:
-      return state;
+  if (action.type === SET_COLLEAGUES) {
+    return {
+      ...state,
+      ...action.payload
+    };
   }
-};
 
-export const colleagues = (state: Array<any> = [], action: ReduxAction) => {
-  switch (action.type) {
-    case FETCHED_COLLEAGUES:
-      return action.payload;
-    default:
-      return state;
-  }
+  return state;
 };
 
 export const fetchColleagueRequestsStatus = (

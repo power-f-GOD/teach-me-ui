@@ -14,10 +14,19 @@
     box-shadow: none;
   }
 
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    padding-bottom: 1em;
+    padding-top: 0.25em;
+    background: inherit;
+  }
+
   hr {
-    height: 0.25rem;
-    width: calc(100% - 0.8rem);
-    margin: 1rem 1rem 0.75rem 0.45rem;
+    height: 0.25em;
+    width: calc(100% - 0.8em);
+    margin: 0 1em 0.75em 0.45em;
     opacity: 0.25;
     // background: #eee;
   }
@@ -45,6 +54,8 @@
     margin: 0;
     font-size: 1.25rem;
     font-weight: 600;
+    position: sticky;
+    top: 0;
   }
 
   .info {

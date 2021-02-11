@@ -58,8 +58,7 @@ export const eraseLastHistoryStateOnClick = (url: string) => {
   }, 100);
 };
 
-export const inPostPage = () => 
-  window.location.pathname.includes('/p/');
+export const inPostPage = () => window.location.pathname.includes('/p/');
 
 export const inProfile = (pathname?: string) =>
   /^\/(@[a-z0-9_]+[a-z0-9_.]*[a-z0-9_]|profile\/[a-z0-9]+)/i.test(
@@ -85,7 +84,9 @@ export const http: Readonly<Omit<HTTP, 'token'>> & { token: string } = {
     url: `${apiBaseURL}${url}`,
     method,
     headers: {
-      ...(requiresAuth ? { Authorization: `Bearer ${http.token}` } : {}),
+      ...(requiresAuth
+        ? { Authorization: `Bearer ${http.token}` }
+        : {}),
       'Content-Type': contentType || 'application/json'
     },
     data,
@@ -791,7 +792,7 @@ export const formatDate = (dateTime: Date | number) => {
       : 'just now';
   }
 
-  return 'just now'
+  return 'just now';
 };
 
 export const formatMapDateString = (

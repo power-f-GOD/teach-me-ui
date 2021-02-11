@@ -201,12 +201,7 @@ const Main = (props: MainProps) => {
     <>
       <ModalFrame />
       <Row className='Main fade-in mx-0'>
-        <Memoize
-          memoizedComponent={Nav}
-          for='main'
-          location={props.location}
-          isAuthenticated={!!userToken}
-        />
+        <Memoize memoizedComponent={Nav} location={props.location} />
         <Switch>
           <Route
             path={['/', '/index', '/home', '/p/:id']}
