@@ -27,7 +27,8 @@ const ProfileRightPane = (props: {
   } = props;
   const colleaguesIsPending = _colleagues.status === 'pending';
   const isFetching =
-    /fetching\smore/.test(_colleagues.statusText || '') || colleaguesIsPending;
+    (/fetching\smore/.test(_colleagues.statusText || '') && !_colleagues.err) ||
+    colleaguesIsPending;
   const thatsAll = /reached\send/.test(_colleagues.statusText || '');
   const colleaguesData = colleaguesIsPending
     ? (Array((colleague_count > 5 ? 5 : colleague_count) || 5).fill(
@@ -51,7 +52,7 @@ const ProfileRightPane = (props: {
         title={`Colleagues (${
           colleaguesIsPending
             ? '0/0'
-            : `${_colleagues.data?.length}/${colleague_count}`
+            : `${_colleagues.data?.length}/${colleague_count || 0}`
         })`}
         icon={<FAIcon name='user-friends' fontSize='1.5em' />}
         type='colleague'
@@ -61,17 +62,17 @@ const ProfileRightPane = (props: {
         headerClassName='py-3'>
         {' '}
         <Row className='mx-0'>
-          {colleaguesData!.length ? (
-            colleaguesData!.map((colleague, i) => (
-              <User {...colleague} linkify={true} key={i} />
-            ))
-          ) : (
-            <Empty
-              headerText='No Colleagues'
-              riderText='User has no colleagues yet.'
-              imageWidth='60%'
-            />
-          )}
+          {colleaguesData!.length
+            ? colleaguesData!.map((colleague, i) => (
+                <User {...colleague} linkify={true} key={i} />
+              ))
+            : !_colleagues.err && (
+                <Empty
+                  headerText='No Colleagues'
+                  riderText='User has no colleagues yet.'
+                  imageWidth='60%'
+                />
+              )}
           {shouldRenderMoreButton && (
             <Col xs={12} className='px-1 text-center mb-1'>
               <Button

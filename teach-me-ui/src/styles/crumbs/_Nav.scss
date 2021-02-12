@@ -3,13 +3,13 @@
 body[data-hide-nav='true'] {
   .MuiAppBar-root {
     transform: translateY(-4rem);
-    // opacity: 0;
     transition-delay: 0.2s;
     pointer-events: none;
   }
 
   .Compose {
-    transform: translateY(-8rem);
+    transform: translateY(-4rem);
+    opacity: 0;
     pointer-events: none;
   }
 }

@@ -42,6 +42,9 @@ import {
 } from '../types';
 import { apiBaseURL, ONLINE_STATUS } from '../constants';
 
+export * from './chat';
+export * from './posts';
+
 export const { dispatch, getState }: any = store;
 
 export const isAuthenticated = (): boolean => !!getState().auth.isAuthenticated;
@@ -84,9 +87,7 @@ export const http: Readonly<Omit<HTTP, 'token'>> & { token: string } = {
     url: `${apiBaseURL}${url}`,
     method,
     headers: {
-      ...(requiresAuth
-        ? { Authorization: `Bearer ${http.token}` }
-        : {}),
+      ...(requiresAuth ? { Authorization: `Bearer ${http.token}` } : {}),
       'Content-Type': contentType || 'application/json'
     },
     data,

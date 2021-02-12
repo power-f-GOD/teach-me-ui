@@ -1,6 +1,6 @@
 import React, { useState, useEffect, createRef } from 'react';
 
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import Container from 'react-bootstrap/Container';
@@ -15,7 +15,8 @@ import {
   DeepProfileProps,
   AuthState,
   ColleagueAction,
-  FetchState
+  FetchState,
+  APIConversationResponse
 } from '../../../types';
 import { dispatch, displayModal } from '../../../functions';
 import {
@@ -42,6 +43,7 @@ interface ProfileNavBarProps {
   colleagueAction?: ColleagueAction;
   userId?: string;
   isAuthenticated?: boolean;
+  conversationWith: FetchState<APIConversationResponse>;
 }
 
 export const profileNavWrapperRef = createRef<HTMLElement | null>();
@@ -53,7 +55,8 @@ const ProfileNavBar = (props: ProfileNavBarProps) => {
     colleagueAction,
     selfView,
     location,
-    isAuthenticated
+    isAuthenticated,
+    conversationWith: _conversationWith
   } = props || {};
   const colleagueActionIsPending =
     colleagueAction?.status === 'pending' ||
@@ -71,6 +74,7 @@ const ProfileNavBar = (props: ProfileNavBarProps) => {
     iconName: 'user-plus',
     type: ADD_COLLEAGUE
   });
+  const history = useHistory();
 
   const onColleagueActionClick = (
     showRespondButtons?: boolean,
@@ -215,17 +219,29 @@ const ProfileNavBar = (props: ProfileNavBarProps) => {
                     <FAIcon name='chevron-left' />
                     <span className='tool-tip'>Go back</span>
                   </IconButton>
-                  {/* Accept */}
+                  {/* Accept / Message */}
                   <IconButton
                     size='small'
                     className='check icon-button primary'
                     color='primary'
-                    disabled={!isRespondingView || isColleague}
-                    onClick={onColleagueActionClick(false, ACCEPT_REQUEST)}>
-                    <FAIcon name='user-check' />
-                    {!isColleague && (
-                      <span className='tool-tip'>Accept Request</span>
-                    )}
+                    disabled={!isRespondingView}
+                    onClick={
+                      isColleague
+                        ? () => {
+                            history.push(
+                              `/chat/${_conversationWith.data?.id || 0}?1&ref=${
+                                data.username
+                              }`
+                            );
+                          }
+                        : onColleagueActionClick(false, ACCEPT_REQUEST)
+                    }>
+                    <FAIcon name={isColleague ? 'comment-alt' : 'user-check'} />
+                    <span className='tool-tip'>
+                      {isColleague
+                        ? `Chat with ${data.first_name || 'Colleague'}`
+                        : 'Accept Request'}
+                    </span>
                   </IconButton>
                   {/* Decline */}
                   <IconButton
@@ -279,7 +295,8 @@ const mapStateToProps = (
 ) => ({
   deepProfileData: state.deepProfileData,
   colleagueAction: state.colleagueAction,
-  isAuthenticated: state.auth.isAuthenticated
+  isAuthenticated: state.auth.isAuthenticated,
+  conversationWith: state.conversationWith
 });
 
 export default connect(mapStateToProps)(ProfileNavBar);

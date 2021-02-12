@@ -1,7 +1,6 @@
 $pad-x: 1.2em;
 
 .Reply {
-  
   font-size: 0.9em;
   padding: 0 $pad-x;
   margin-bottom: 0.125em;
@@ -84,11 +83,6 @@ $pad-x: 1.2em;
       max-height: 2em;
       background-color: transparent;
       border-color: transparent;
-
-      &:hover,
-      &:focus {
-        background-color: #f0f0f0;
-      }
     }
   }
 

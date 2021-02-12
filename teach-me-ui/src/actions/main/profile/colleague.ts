@@ -153,7 +153,7 @@ export const getColleagues = (
   offset?: number
 ) => (dispatch: Function) => {
   const isFetchingMore = /fetching\smore/.test(statusText || '');
-  const limit = 5;
+  const limit = isFetchingMore ? 10 : 5;
 
   checkNetworkStatusWhilstPend({
     name: 'colleagues',
@@ -202,7 +202,7 @@ export const colleagues = (
   // const updateFromSocket = /from\ssocket/.test(_colleagues.statusText || '');
 
   if (wasFetchingMore) {
-    finalPayload.data = [..._colleagues.data, ...payload.data];
+    finalPayload.data = [..._colleagues.data, ...(payload.data || [])];
   }
 
   return {

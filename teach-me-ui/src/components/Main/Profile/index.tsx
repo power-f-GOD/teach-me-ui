@@ -21,7 +21,8 @@ import {
   setWindowWidth,
   getDeepProfileData,
   displaySnackbar,
-  getColleagues
+  getColleagues,
+  getConversationWith
 } from '../../../actions';
 import ProfileNavBar, { profileNavWrapperRef } from './NavBar';
 import ProfileHeader from './Header';
@@ -126,6 +127,7 @@ const Profile = (props: ProfileProps) => {
     if (isAuthenticated) {
       if (!isSelfView) {
         dispatch(getDeepProfileData(idOrUsername));
+        dispatch(getConversationWith(idOrUsername));
       }
 
       dispatch(getColleagues(idOrUsername));

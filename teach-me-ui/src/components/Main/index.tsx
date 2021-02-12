@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Switch, Route, Redirect, Link } from 'react-router-dom';
+import { Switch, Route, Redirect, Link, useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import Row from 'react-bootstrap/Row';
@@ -72,6 +72,8 @@ const Main = (props: MainProps) => {
     0
   );
 
+  const history = useHistory();
+
   // handles notification sound events
   useEffect(() => {
     notifSoundEl = notifSoundRef.current as HTMLAudioElement;
@@ -123,6 +125,12 @@ const Main = (props: MainProps) => {
       window.removeEventListener('popstate', hideModal);
     };
   }, [location.hash]);
+
+  useEffect(() => {
+    if (/\/chat/.test(window.location.pathname)) {
+      history.replace('/chat/0?0');
+    }
+  }, [history]);
 
   useEffect(() => {
     if (notifSoundEl) {

@@ -20,11 +20,7 @@ import {
   conversationMessages,
   conversations
 } from '../../../../actions/main/chat';
-import {
-  dispatch,
-  emitUserOnlineStatus,
-  loopThru
-} from '../../../../utils';
+import { dispatch, emitUserOnlineStatus, loopThru } from '../../../../utils';
 import {
   CHAT_READ_RECEIPT,
   CHAT_MESSAGE_DELIVERED
