@@ -58,16 +58,7 @@ export const makeRepostRequest = (payload: SendReplyProps) => (
   socket.send(JSON.stringify(payload));
 };
 
-export const fetchReplies = (payload: FetchState<Array<PostStateProps>, string>, realtime?: boolean) => {
-  const { fetchReplies } = getState();
-  if (realtime) {
-    payload.data![0] = {
-      ...payload.data![0],
-      upvote_count: 0,
-      downvote_count: 0,
-    };
-    payload.data = [payload.data![0],...fetchReplies.data]
-  }
+export const fetchReplies = (payload: FetchState<Array<PostStateProps>, string>) => {
   return {
     type: FETCH_REPLIES,
     payload
@@ -92,12 +83,11 @@ export const fetchRepliesRequest = (postId?: string) => (
         data: any;
       };
       if (!error) {
-        console.log()
         dispatch(
           fetchReplies({
             status: 'fulfilled',
             err: false,
-            data: data
+            data: data.reverse()
           })
         );
       } else {

@@ -80,7 +80,8 @@ export const postState: PostStateProps = {
   text: '',
   upvotes: [],
   type: 'post',
-  numRepliesToShow: 2
+  numRepliesToShow: 2,
+  replies:[]
 };
 
 export const fetchPostState: FetchState<PostStateProps> = {

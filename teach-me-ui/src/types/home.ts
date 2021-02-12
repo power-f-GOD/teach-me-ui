@@ -25,6 +25,7 @@ export interface PostStateProps {
   sec_type?: 'REPOST' | 'REPLY';
   type?: 'post' | 'reply';
   numRepliesToShow?: number;
+  replies?: PostStateProps[];
 }
 
 export interface SendReplyProps extends SocketStruct {

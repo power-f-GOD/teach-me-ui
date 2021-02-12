@@ -14,6 +14,7 @@ export const updatePost = (
   let { posts, profilePosts } = getState() as {
     posts: FetchState<PostStateProps[]>;
     profilePosts: FetchState<PostStateProps[]>;
+    fetchPost: FetchState<PostStateProps>;
   };
   const anchorIsProfile = anchor === POSTS_ANCHOR__PROFILE;
   const prevPostsState = !anchorIsProfile ? posts : profilePosts;
