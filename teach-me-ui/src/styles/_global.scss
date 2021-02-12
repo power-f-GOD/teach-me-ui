@@ -459,6 +459,7 @@ a {
 
   border-radius: 0.65rem !important;
   background-color: $bg2 !important;
+  max-width: 100%;
   background-image: linear-gradient(90deg, $bg2, $bg1, $bg2) !important;
 
   &.on-dark {

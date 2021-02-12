@@ -12,9 +12,8 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { ONE_TO_ONE } from '../../../../constants/chat';
 import { APIConversationResponse } from '../../../../types';
 import { InfoCard } from '../../../shared/Card';
-import { dispatch } from '../../../../functions';
-import { chatState } from '../../../../actions/main/chat';
 import { FAIcon } from '../../../shared/Icons';
+import { useHistory } from 'react-router-dom';
 
 interface ChatRightPaneProps {
   convoType: string;
@@ -44,9 +43,11 @@ const ChatRightPane = (props: ChatRightPaneProps) => {
     ? 'away'
     : 'online';
 
+  const history = useHistory();
+
   const handleBackButtonClick = React.useCallback(() => {
-    dispatch(chatState({ queryParam: '?1' }));
-  }, []);
+    history.goBack();
+  }, [history]);
 
   return (
     <>

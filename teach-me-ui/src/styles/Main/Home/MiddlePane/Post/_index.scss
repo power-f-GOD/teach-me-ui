@@ -123,7 +123,7 @@ $pad-x: 1em;
     width: calc(100% - (#{($pad-x / 4) * 2}));
     margin: 0.25em 0 0.5em (($pad-x / 4));
     cursor: pointer;
-    max-height: 37.5em;
+    max-height: 35em;
     border-radius: $pad-x / 1.5;
     // position: relative;
     overflow: hidden;
@@ -213,7 +213,6 @@ $pad-x: 1em;
       border-radius: 0.65em;
       font-size: 0.95em;
       border: 0.0625em solid #eee;
-      background-color: rgba(0, 0, 0, 0.03);
 
       &:hover,
       &:focus {

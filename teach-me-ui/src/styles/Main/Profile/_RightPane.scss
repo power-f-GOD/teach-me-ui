@@ -9,7 +9,8 @@
     font-size: 0.9em;
 
     .sub-container {
-      background: rgba($sec-r + 25, $sec-g + 25, $sec-b + 25, 0.075);
+      // background: rgba($sec-r + 25, $sec-g + 25, $sec-b + 25, 0.075);
+      background-color: #f8f8f8;
       padding: 0.5em 0.75em;
       min-width: 100%;
       border-radius: 0.75em;
@@ -56,7 +57,7 @@
     height: $size;
     width: $size;
     transition: background-color 0.3s;
-    background-color: rgba($sec-r, $sec-g, $sec-b, 0.4);
+    background-color: rgba($sec-r, $sec-g, $sec-b, 0.5);
   }
 
   .display-name {

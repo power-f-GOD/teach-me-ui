@@ -34,13 +34,11 @@ export function InfoCard(props: InfoCardProps) {
         padding: padding ?? '1rem',
         backgroundColor: bgColor ?? 'white'
       }}>
-      <Col as='header' className={`px-0 d-flex ${headerClassName ?? ''}`}>
-        <Col className='py-0 px-2 d-flex justify-content-between align-items-center'>
-          <Box className='card-title mr-auto'>
-            {title}
-          </Box>
+      <Col as='header' className={`px-0 ${headerClassName ?? ''}`}>
+        <Box className='card-title px-2 d-flex justify-content-between align-items-center'>
+          <Box className='mr-auto'>{title}</Box>
           {Icon}
-        </Col>
+        </Box>
       </Col>
 
       {hr === undefined ? <hr /> : hr && <hr />}

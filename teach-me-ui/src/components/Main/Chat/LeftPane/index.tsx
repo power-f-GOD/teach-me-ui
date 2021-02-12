@@ -13,7 +13,7 @@ import { addEventListenerOnce, delay } from '../../../../utils';
 import { SearchState } from '../../../../types';
 import { Skeleton, DISPLAY_INFO } from '../../../shared/Loaders';
 import { Memoize } from '..';
-import { ConversationsList } from './Conversations';
+import Conversations from './Conversations';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -80,11 +80,7 @@ const ChatLeftPane = (props: ChatLeftPaneProps) => {
               .fill('')
               .map((_, key) => <Skeleton type={DISPLAY_INFO} key={key} />)
           ) : _conversations.data?.length ? (
-            <Memoize
-              memoizedComponent={ConversationsList}
-              userId={userId}
-              conversations={_conversations}
-            />
+            <Conversations userId={userId} conversations={_conversations} />
           ) : (
             <Box padding='2rem' textAlign='center'>
               {window.navigator.onLine &&

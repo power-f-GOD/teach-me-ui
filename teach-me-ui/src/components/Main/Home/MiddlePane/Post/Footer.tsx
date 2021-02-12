@@ -105,7 +105,7 @@ const PostFooter = (props: PostCrumbs) => {
             {anchorIsParent && (
               <Button
                 onClick={handleCommentClick}
-                className='d-flex align-items-center react-to-post justify-content-center'>
+                className='ReactionButton d-flex align-items-center react-to-post justify-content-center'>
                 <FAIcon name='comment-dots' />
               </Button>
             )}

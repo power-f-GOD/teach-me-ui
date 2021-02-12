@@ -8,28 +8,31 @@ import {
   UserData,
   ConversationsMessages,
   LoopFind,
-  FetchState
+  FetchState,
+  ReduxActionV2
 } from '../../../types';
 import {
   GET_CONVERSATIONS,
   SET_CONVERSATIONS,
   SET_CONVERSATION,
+  GET_CONVERSATION_WITH,
+  SET_CONVERSATION_WITH,
   CHAT_MESSAGE_DELIVERED,
   CHAT_READ_RECEIPT,
   CHAT_MESSAGE_DELETED,
   CHAT_MESSAGE_DELETED_FOR,
   CHAT_NEW_MESSAGE,
-  CHAT_TYPING
-} from '../../../constants/chat';
-import { ONLINE_STATUS } from '../../../constants/misc';
+  CHAT_TYPING,
+  ONLINE_STATUS
+} from '../../../constants';
 import {
   logError,
   getState,
   checkNetworkStatusWhilstPend,
   loopThru,
+  dispatch,
   http
 } from '../../../functions';
-import { dispatch } from '../../../appStore';
 import { displaySnackbar } from '../../misc';
 import { conversationsMessages } from '.';
 
@@ -342,6 +345,48 @@ export const conversation = (
   // console.trace('payload.....', payload, data);
   return {
     type: SET_CONVERSATION,
+    payload
+  };
+};
+
+export const getConversationWith = (username: string) => (
+  dispatch: Function
+) => {
+  checkNetworkStatusWhilstPend({
+    name: 'conversationWith',
+    func: conversationWith
+  });
+  dispatch(
+    conversationWith({
+      status: 'pending',
+      err: !navigator.onLine
+    })
+  );
+
+  http
+    .get<APIConversationResponse>(`/conversations/with/${username}`, true)
+    .then(({ error: err, message, data }) => {
+      dispatch(
+        conversationWith({
+          err,
+          status: err ? 'settled' : 'fulfilled',
+          statusText: message ?? '',
+          ...(!err ? { data } : {})
+        })
+      );
+    })
+    .catch(logError(conversationWith));
+
+  return {
+    type: GET_CONVERSATION_WITH
+  };
+};
+
+export const conversationWith = (
+  payload: FetchState<APIConversationResponse>
+): ReduxActionV2<FetchState<APIConversationResponse>> => {
+  return {
+    type: SET_CONVERSATION_WITH,
     payload
   };
 };

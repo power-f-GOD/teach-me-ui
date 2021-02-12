@@ -6,7 +6,7 @@ import React, {
   createRef,
   useContext
 } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -27,7 +27,6 @@ import ReplyRoundedIcon from '@material-ui/icons/ReplyRounded';
 
 import { APIMessageResponse, Partial, OnlineStatus } from '../../../../types';
 import {
-  chatState,
   conversationMessages,
   conversations,
   conversation,
@@ -100,6 +99,7 @@ export const MiddlePaneHeader = (props: {
     moreOptionsContainerIsVisible,
     setMoreOptionsIsVisible
   ] = useState<boolean>(false);
+  const history = useHistory();
 
   const handleCloseChatClick = useCallback(() => {
     //store/save updated convoMessages in state before close
@@ -128,8 +128,8 @@ export const MiddlePaneHeader = (props: {
   }, []);
 
   const handleUserInfoOptionClick = useCallback(() => {
-    dispatch(chatState({ queryParam: '?2' }, true));
-  }, []);
+    history.push(`${window.location.pathname}?2`);
+  }, [history]);
 
   useEffect(() => {
     moreOptionsContainer = moreOptionsContainerRef.current;
@@ -190,12 +190,14 @@ export const MiddlePaneHeader = (props: {
               <Box
                 component='span'
                 className='chat-header-control-wrapper more-options-wrapper ml-1'>
-                <IconButton
-                  className='more-button'
-                  onClick={toggleMoreOptionsPopover}
-                  aria-label='more'>
-                  <MoreVertIcon />
-                </IconButton>
+                {convoId && (
+                  <IconButton
+                    className='more-button'
+                    onClick={toggleMoreOptionsPopover}
+                    aria-label='more'>
+                    <MoreVertIcon />
+                  </IconButton>
+                )}
 
                 <Container
                   as='span'
@@ -265,6 +267,8 @@ function MiddlePandeHeaderConversationNameAndStatus(props: {
     windowWidth
   } = useContext(ColleagueNameAndStatusContext);
   const [canDisplayAwayDate, setCanDisplayAwayDate] = useState(false);
+  const history = useHistory();
+
   const [lastSeenDate, lastSeenTime] = [
     formatMapDateString(convoLastSeen as number),
     timestampFormatter(convoLastSeen)
@@ -287,13 +291,13 @@ function MiddlePandeHeaderConversationNameAndStatus(props: {
     : '...';
 
   const handleConversationsMenuClick = useCallback(() => {
-    dispatch(chatState({ queryParam: '?0' }));
+    history.push(`${window.location.pathname}?0`);
     promisedDispatch(
       conversations({ data: [{ id: convoId, unread_count: 0 }] })
     ).then(() => {
       dispatch(conversation(convoId!));
     });
-  }, [convoId]);
+  }, [convoId, history]);
 
   const displayAwayDate = useCallback(() => {
     renderAwayDateTimeout = setTimeout(() => {
