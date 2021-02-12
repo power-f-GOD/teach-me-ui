@@ -42,6 +42,9 @@ import {
 } from '../types';
 import { apiBaseURL, ONLINE_STATUS } from '../constants';
 
+export * from './chat';
+export * from './posts';
+
 export const { dispatch, getState }: any = store;
 
 export const isAuthenticated = (): boolean => !!getState().auth.isAuthenticated;
@@ -58,8 +61,7 @@ export const eraseLastHistoryStateOnClick = (url: string) => {
   }, 100);
 };
 
-export const inPostPage = () => 
-  window.location.pathname.includes('/p/');
+export const inPostPage = () => window.location.pathname.includes('/p/');
 
 export const inProfile = (pathname?: string) =>
   /^\/(@[a-z0-9_]+[a-z0-9_.]*[a-z0-9_]|profile\/[a-z0-9]+)/i.test(
@@ -791,7 +793,7 @@ export const formatDate = (dateTime: Date | number) => {
       : 'just now';
   }
 
-  return 'just now'
+  return 'just now';
 };
 
 export const formatMapDateString = (

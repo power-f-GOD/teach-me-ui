@@ -20,6 +20,7 @@ export function InfoCard(props: InfoCardProps) {
     type,
     borderRadius,
     className,
+    headerClassName,
     children
   } = props;
 
@@ -33,13 +34,11 @@ export function InfoCard(props: InfoCardProps) {
         padding: padding ?? '1rem',
         backgroundColor: bgColor ?? 'white'
       }}>
-      <Col className='info p-0 d-flex my-1'>
-        <Col className='py-0 px-2 d-flex justify-content-between align-items-center'>
-          <Box component='h2' className='card-title mr-auto'>
-            {title}
-          </Box>
+      <Col as='header' className={`px-0 ${headerClassName ?? ''}`}>
+        <Box className='card-title px-2 d-flex justify-content-between align-items-center'>
+          <Box className='mr-auto'>{title}</Box>
           {Icon}
-        </Col>
+        </Box>
       </Col>
 
       {hr === undefined ? <hr /> : hr && <hr />}

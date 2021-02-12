@@ -1,10 +1,11 @@
 .ReactionButton {
   transition: 0.3s;
+  background-color: rgba(0, 0, 0, 0.03);
 
   &.reaction-upvote {
     $color: rgb(0, 150, 0);
 
-    background-color: rgba(0, 150, 0, 0.2) !important;
+    background-color: rgba(0, 150, 0, 0.15);
     color: $color;
 
     &:hover,
@@ -16,12 +17,12 @@
   &.reaction-downvote {
     $color: rgb(190, 0, 0);
 
-    background-color: rgba(190, 0, 0, 0.175) !important;
+    background-color: rgba(190, 0, 0, 0.125);
     color: $color;
 
     &:hover,
     &:focus {
-      background-color: rgba(190, 0, 0, 0.25) !important;
+      background-color: rgba(190, 0, 0, 0.225) !important;
     }
   }
 
@@ -31,7 +32,7 @@
 
   &:hover,
   &:focus {
-    background-color: #ddd;
+    background-color: #f0f0f0;
   }
 
   .desc {

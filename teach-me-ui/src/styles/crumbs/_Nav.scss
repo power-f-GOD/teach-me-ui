@@ -1,13 +1,16 @@
 @import '../constants';
 
-body.hide-nav {
+body[data-hide-nav='true'] {
   .MuiAppBar-root {
-    transform: translateY(-105%);
-    box-shadow: none;
+    transform: translateY(-4rem);
+    transition-delay: 0.2s;
+    pointer-events: none;
   }
 
   .Compose {
-    transform: translateY(-210%);
+    transform: translateY(-4rem);
+    opacity: 0;
+    pointer-events: none;
   }
 }
 
@@ -15,7 +18,7 @@ body.hide-nav {
   // @include debugger();
 
   background-color: transparent !important;
-  transition: 0.4s;
+  transition: 0.3s;
   width: 100%;
   left: 0;
 }

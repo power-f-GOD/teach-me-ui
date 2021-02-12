@@ -8,6 +8,7 @@ import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 
 import Box from '@material-ui/core/Box';
+
 import {
   UserData,
   FetchState,
@@ -19,7 +20,9 @@ import {
   getProfileData,
   setWindowWidth,
   getDeepProfileData,
-  displaySnackbar
+  displaySnackbar,
+  getColleagues,
+  getConversationWith
 } from '../../../actions';
 import ProfileNavBar, { profileNavWrapperRef } from './NavBar';
 import ProfileHeader from './Header';
@@ -51,6 +54,7 @@ let observer: IntersectionObserver;
 export interface ProfileProps {
   profileData: FetchState<UserData>;
   profilePosts: FetchState<PostStateProps[]>;
+  colleagues: FetchState<UserData[]>;
   userData: UserData;
   windowWidth: number;
   auth: AuthState;
@@ -62,6 +66,7 @@ const Profile = (props: ProfileProps) => {
   const {
     profileData: _profileData,
     profilePosts: _profilePosts,
+    colleagues: _colleagues,
     userData,
     windowWidth,
     auth,
@@ -119,8 +124,13 @@ const Profile = (props: ProfileProps) => {
   }, [windowWidth, isSelfView]);
 
   useEffect(() => {
-    if (!isSelfView && isAuthenticated) {
-      dispatch(getDeepProfileData(idOrUsername));
+    if (isAuthenticated) {
+      if (!isSelfView) {
+        dispatch(getDeepProfileData(idOrUsername));
+        dispatch(getConversationWith(idOrUsername));
+      }
+
+      dispatch(getColleagues(idOrUsername));
     }
 
     dispatch(getProfileData(idOrUsername));
@@ -150,7 +160,7 @@ const Profile = (props: ProfileProps) => {
     <Box
       className={`Profile ${isSelfView ? 'self-view' : ''} ${
         _profilePosts.err ? 'de-animate-skeleton' : ''
-      } fade-in pb-3`}>
+      } fade-in`}>
       {/* Profile Header */}
       <ProfileHeader
         data={finalData}
@@ -186,7 +196,12 @@ const Profile = (props: ProfileProps) => {
             />
 
             {/* Profile Right Pane */}
-            <ProfileRightPane />
+            <ProfileRightPane
+              profileUserId={idOrUsername}
+              colleagues={_colleagues}
+              colleague_count={finalData.colleague_count}
+              isAuthenticated={isAuthenticated}
+            />
           </Col>
         </Row>
       </Container>
@@ -199,6 +214,7 @@ const mapStateToProps = (state: ProfileProps) => ({
   userData: state.userData,
   profileData: state.profileData,
   profilePosts: state.profilePosts,
+  colleagues: state.colleagues,
   windowWidth: state.windowWidth
 });
 

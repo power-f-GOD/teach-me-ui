@@ -21,8 +21,8 @@ const Media = ({
           media?.length === 1 ? 2 : Math.ceil((media as any[]).length / 2)
         }, 12em)`,
         gridAutoFlow: 'row',
-        columnGap: '0.15em',
-        rowGap: '0.15em'
+        columnGap: '0.2em',
+        rowGap: '0.2em'
       }}>
       {media?.map((m, i, self) => {
         const style: any = {};
@@ -69,8 +69,8 @@ const Media = ({
               }
               src={url}
               alt='post image'
-              style={{ opacity: 0 }}
-              onLoad={(e) => ((e.target as any).style.opacity = 1)}
+              data-hide='true'
+              onLoad={(e) => ((e.target as any).dataset.hide = 'false')}
             />
           </div>
         );

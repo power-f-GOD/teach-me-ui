@@ -431,7 +431,7 @@ export const processPost = (post: string) => {
 
 export const openCreateRepostModal = (meta: any) => (e: any) => {
   displayModal(true, false, MAKE_REPOST, {
-    title: 'Create Repost',
+    title: 'Make Repost',
     post: meta
   });
 };

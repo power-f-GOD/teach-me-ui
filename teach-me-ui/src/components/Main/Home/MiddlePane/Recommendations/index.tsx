@@ -27,7 +27,7 @@ const Recommendations = ({
           <Box
             component='h3'
             className='font-bold theme-tertiary-darker recommendations-heading fade-in-opacity'>
-            Colleauges you may know
+            Colleague Suggestions
           </Box>
           <Box
             className='recommendations fade-in-opacity'

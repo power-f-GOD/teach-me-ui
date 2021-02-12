@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import { dispatch } from '../../../functions';
+import { dispatch, getNecessaryConversationData } from '../../../functions';
 import {
   chatState,
   conversationMessages,
@@ -24,7 +24,7 @@ import ChatMiddlePane from './MiddlePane';
 import ChatRightPane from './RightPane';
 import createMemo from '../../../Memo';
 import { getState } from '../../../appStore';
-import { Redirect, match } from 'react-router-dom';
+import { Redirect, match, useHistory } from 'react-router-dom';
 import {
   MiddlePaneHeaderContext,
   ColleagueNameAndStatusContext
@@ -40,6 +40,7 @@ interface ChatProps {
   conversationMessages: SearchState;
   conversationsMessages?: SearchState;
   userData: UserData;
+  windowWidth: number;
   webSocket: WebSocket;
   location: Location;
   match: match<{ convoId: string }>;
@@ -63,6 +64,7 @@ const Chat = (props: ChatProps) => {
     userData,
     webSocket: socket,
     location,
+    windowWidth,
     match
   } = props;
   const {
@@ -100,10 +102,10 @@ const Chat = (props: ChatProps) => {
   const middlePane = middlePaneRef.current;
   const rightPane = rightPaneRef.current;
 
-  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
   const [activePaneIndex, setActivePaneIndex] = useState<number>(0);
   const [onlineStatusString, setOnlineStatusString] = useState<string>('');
   const [shouldGoBackToHome, setShouldGoBackToHome] = useState<boolean>(false);
+  const history = useHistory();
 
   const scrollViewProviderValue = useMemo(() => {
     return {
@@ -112,7 +114,8 @@ const Chat = (props: ChatProps) => {
       convoParticipants,
       convoNewMessage,
       convoUnreadCount,
-      convoLastReadDate
+      convoLastReadDate,
+      search: location.search
     };
   }, [
     convoMessagesErr,
@@ -120,7 +123,8 @@ const Chat = (props: ChatProps) => {
     convoParticipants,
     convoNewMessage,
     convoUnreadCount,
-    convoLastReadDate
+    convoLastReadDate,
+    location.search
   ]);
 
   const middlePaneHeaderProviderValue = useMemo(() => {
@@ -156,77 +160,14 @@ const Chat = (props: ChatProps) => {
   ]);
 
   useEffect(() => {
-    dispatch(
-      chatState({ pathname: location.pathname, queryParam: location.search })
-    );
-  }, [location.search, location.pathname]);
+    const isRef = /ref=/.test(location.search);
+    const [pathname, queryParam] = [
+      isRef ? location.pathname : '/chat/0',
+      isRef ? location.search : '?0'
+    ];
 
-  useEffect(() => {
-    if (windowWidth < 992) {
-      const index = parseInt(queryParamVal!);
-
-      if (+index >= 0) {
-        setActivePaneIndex(index);
-      }
-    }
-  }, [queryParamVal, windowWidth]);
-
-  useEffect(() => {
-    window.onpopstate = () =>
-      setTimeout(() => {
-        const cid = match.params.convoId;
-
-        dispatch(
-          chatState({
-            pathname: window.location.pathname,
-            queryParam: window.location.search
-          })
-        );
-
-        if (windowWidth < 992) {
-          if (queryParamVal === '0') {
-            dispatch(
-              conversationsMessages({
-                convoId,
-                statusText: 'replace messages',
-                data: { [convoId]: [...getState().conversationMessages.data] }
-              })
-            );
-            setShouldGoBackToHome(true);
-            return;
-          }
-        } else {
-          if (cid === '0') {
-            dispatch(conversation(''));
-            dispatch(conversationMessages({ data: [] }));
-          } else {
-            if (window.navigator.onLine) {
-              // dispatch(getConversationInfo(userId)(dispatch));
-              dispatch(
-                getConversationMessages(cid, 'pending', 'loading new')(dispatch)
-              );
-            } else {
-              dispatch(
-                conversationMessages({ status: 'pending', err: true, data: [] })
-              );
-            }
-
-            dispatch(conversation(cid, { user_typing: '' }));
-          }
-        }
-      }, 0);
-
-    return () => {
-      window.onpopstate = () => {};
-    };
-  }, [match, windowWidth, pathnameConvoId, queryParamVal, convoId]);
-
-  useEffect(() => {
-    const [pathname, queryParam] = ['/chat/0', '?0'];
-
-    if (/\/chat/.test(location.pathname)) {
-      props.location.pathname = pathname;
-      props.location.search = queryParam;
+    if (/\/chat/.test(location.pathname) && !isRef) {
+      history.replace(pathname + queryParam);
       document.body.style.overflow = 'hidden';
     }
 
@@ -242,12 +183,6 @@ const Chat = (props: ChatProps) => {
         isOpen: true
       })
     );
-
-    window.onresize = (e: any) => {
-      if (/chat/.test(window.location.pathname)) {
-        setWindowWidth(e.target.innerWidth);
-      }
-    };
 
     return () => {
       document.body.style.overflow = 'auto';
@@ -267,7 +202,81 @@ const Chat = (props: ChatProps) => {
       dispatch(conversationMessages({ data: [] }));
     };
     //eslint-disable-next-line
-  }, []);
+  }, [history]);
+
+  useEffect(() => {
+    dispatch(
+      chatState({ pathname: location.pathname, queryParam: location.search })
+    );
+
+    // this block is for when the 'Chat with Colleague' button is clicked from 'Profile'
+    if (
+      !convoId &&
+      /^\/chat\//.test(location.pathname) &&
+      /ref=/.test(location.search)
+    ) {
+      setTimeout(() => {
+        const convoId = window.location.pathname.split('/')[2];
+        const userId = window.location.search.replace(/.*ref=(.*)&?.*/, '$1');
+
+        if (userId && convoId !== '0') {
+          getNecessaryConversationData({ extra: { convoId, userId }, history });
+        }
+      }, 500);
+    }
+  }, [location.search, location.pathname, convoId, history]);
+
+  useEffect(() => {
+    if (windowWidth < 992) {
+      const index = parseInt(queryParamVal!);
+
+      if (+index >= 0) {
+        setActivePaneIndex(index);
+      }
+    }
+  }, [queryParamVal, windowWidth]);
+
+  useEffect(() => {
+    window.onpopstate = () => {
+      const cid = match.params.convoId;
+
+      if (windowWidth < 992) {
+        if (queryParamVal === '0' && pathnameConvoId !== '0') {
+          dispatch(
+            conversationsMessages({
+              convoId,
+              statusText: 'replace messages',
+              data: { [convoId]: [...getState().conversationMessages.data] }
+            })
+          );
+          setShouldGoBackToHome(true);
+          return;
+        }
+      } else {
+        if (cid === '0') {
+          dispatch(conversation(''));
+          dispatch(conversationMessages({ data: [] }));
+        } else {
+          if (window.navigator.onLine) {
+            // dispatch(getConversationInfo(userId)(dispatch));
+            dispatch(
+              getConversationMessages(cid, 'pending', 'loading new')(dispatch)
+            );
+          } else {
+            dispatch(
+              conversationMessages({ status: 'pending', err: true, data: [] })
+            );
+          }
+
+          dispatch(conversation(cid, { user_typing: '' }));
+        }
+      }
+    };
+
+    return () => {
+      window.onpopstate = () => {};
+    };
+  }, [match, windowWidth, pathnameConvoId, queryParamVal, convoId]);
 
   useEffect(() => {
     if (windowWidth < 992) {
@@ -377,6 +386,7 @@ const mapStateToProps = (state: ChatProps) => {
     // conversationsMessages: state.conversationsMessages,
     // conversationInfo: state.conversationInfo,
     userData: state.userData,
+    windowWidth: state.windowWidth,
     webSocket: state.webSocket
   };
 };

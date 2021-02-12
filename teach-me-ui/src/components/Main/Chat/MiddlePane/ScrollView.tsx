@@ -27,6 +27,23 @@ import {
 import { ChatMiddlePaneProps, messagesStatusInfo } from '.';
 import { Memoize } from '..';
 
+interface ScrollViewProps {
+  userId: string;
+  username: string;
+  convoMessages: APIMessageResponse[];
+  convoMessagesStatus: FetchState<APIMessageResponse>['status'];
+  convoFriendship: string;
+  convoUsername: string;
+  convoId: string;
+  convoDisplayName: string;
+  clearSelections: boolean;
+  selectedMessages: { [id: string]: SelectedMessageValue };
+  setClearSelections: Function;
+  setSelectedMessages: Function;
+  location: Location;
+  handleProfileLinkClick: React.MouseEventHandler;
+}
+
 export const ScrollViewContext = createContext(
   {} as Partial<ChatMiddlePaneProps>
 );
@@ -42,21 +59,7 @@ let scrollViewPrevScrollPos = 0;
 export const stickyChatDateRef: any = createRef<HTMLInputElement | null>();
 let newMessageCount = 0;
 
-export const ScrollView = (props: {
-  userId: string;
-  username: string;
-  convoMessages: APIMessageResponse[];
-  convoMessagesStatus: FetchState<APIMessageResponse>['status'];
-  convoFriendship: string;
-  convoUsername: string;
-  convoId: string;
-  convoDisplayName: string;
-  clearSelections: boolean;
-  selectedMessages: { [id: string]: SelectedMessageValue };
-  setClearSelections: Function;
-  setSelectedMessages: Function;
-  handleProfileLinkClick: React.MouseEventHandler;
-}) => {
+export const ScrollView = (props: ScrollViewProps) => {
   const {
     userId,
     username,
@@ -78,7 +81,8 @@ export const ScrollView = (props: {
     convoParticipants,
     convoNewMessage,
     convoUnreadCount,
-    convoLastReadDate
+    convoLastReadDate,
+    search
   } = useContext(ScrollViewContext);
 
   const [hasReachedTopOfConvo, setHasReachedTopOfConvo] = useState(false);
@@ -166,7 +170,14 @@ export const ScrollView = (props: {
   }, []);
 
   useEffect(() => {
-    //call this on app load to take care of wider screens where messages may not be long enough for a scroll
+    // reset scrollView position to bottom onViewSwitch
+    if (scrollView && search?.slice(1) === '1') {
+      scrollView.scrollTop = scrollView.scrollHeight;
+    }
+  }, [search]);
+
+  useEffect(() => {
+    //call this on app load to take care of wider screens where messages may not be much enough for a scroll
     if (
       scrollView &&
       scrollView.scrollHeight <= scrollView.offsetHeight &&

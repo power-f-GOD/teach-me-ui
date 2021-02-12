@@ -16,13 +16,13 @@ import Profile from '../Main/Profile';
 const Index = (props: any) => {
   React.useEffect(() => () => window.scrollTo(0, 0), []);
 
-  if (props.location.search) {
-    return <Redirect to={`/home${props.location.search}`} />;
+  if (props.location.search && !/^\/chat/.test(props.location.pathname)) {
+    return <Redirect to={`/search?q=${props.location.search.slice(1)}`} />;
   }
 
   return (
     <Grid className='index-root-grid custom-scroll-bar fade-in'>
-      <Nav for='index' location={props.location} />
+      <Nav location={props.location} />
 
       <Box className='index-root-box'>
         <Switch>

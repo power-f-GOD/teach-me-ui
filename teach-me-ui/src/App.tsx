@@ -29,7 +29,13 @@ const App = (props: any) => {
 
     window.onresize = () => {
       // Attepmt to fix test-build error/failure
-      if (setWindowWidth) dispatch(setWindowWidth(window.innerWidth));
+      if (setWindowWidth) {
+        dispatch(setWindowWidth(window.innerWidth));
+      }
+
+      if (window.innerWidth > 767) {
+        document.body.dataset.hideNav = '' + false;
+      }
     };
     window.onresize(window as any);
   }, []);

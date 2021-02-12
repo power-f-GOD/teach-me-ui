@@ -4,6 +4,7 @@ export interface ChatState {
   pathname?: string;
   queryParam?: string;
   isOpen?: boolean;
+  history?: any | History;
 }
 
 export interface RoomInfo {

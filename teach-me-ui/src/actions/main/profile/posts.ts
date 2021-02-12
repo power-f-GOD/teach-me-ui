@@ -27,7 +27,7 @@ export const getProfilePosts = (
     profilePosts({
       ...(isGettingNew ? { status: 'pending', data: [] } : {}),
       statusText,
-      err: false
+      err: !navigator.onLine
     })
   );
   checkNetworkStatusWhilstPend({
