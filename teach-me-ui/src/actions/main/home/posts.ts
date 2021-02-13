@@ -6,7 +6,7 @@ import {
   logError,
   http
 } from '../../../functions';
-import { updatePost } from '../../../utils/posts';
+import { updatePosts } from '../../../utils/posts';
 
 export const getPosts = (update = false, statusText?: string, url?: string) => (
   dispatch: Function
@@ -91,6 +91,6 @@ export const getPosts = (update = false, statusText?: string, url?: string) => (
 export const posts = (_payload: FetchState<PostStateProps[], number>) => {
   return {
     type: SET_FEEDS_POSTS,
-    payload: updatePost(_payload)
+    payload: updatePosts(_payload)
   };
 };

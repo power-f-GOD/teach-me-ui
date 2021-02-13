@@ -9,28 +9,11 @@ import {
   logError,
   http
 } from '../../../functions';
+import { setUserData } from '../..';
 
-export const getProfileData = (username: string) => (
-  dispatch: Function,
-  getState: Function
+export const getProfileData = (username: string, forSelf?: boolean) => (
+  dispatch: Function
 ): ReduxActionV2<any> => {
-  const userData = getState().userData as UserData;
-
-  if (userData.username === username) {
-    // ensure to make profileData data always defined (if self)
-    dispatch(
-      profileData({
-        status: 'fulfilled',
-        err: false,
-        data: getState().userData
-      })
-    );
-
-    return {
-      type: GET_PROFILE_DATA
-    };
-  }
-
   checkNetworkStatusWhilstPend({
     name: 'profileData',
     func: profileData
@@ -59,6 +42,28 @@ export const getProfileData = (username: string) => (
             : {}
         })
       );
+
+      // update state and localStorage
+      if (forSelf) {
+        setUserData({
+          ...data,
+          displayName,
+          dob: data?.date_of_birth,
+          bio: data?.bio || PLACEHOLDER_BIO
+        });
+
+        if (navigator.cookieEnabled) {
+          const prevStorage = JSON.parse(localStorage.kanyimuta);
+
+          localStorage.kanyimuta = JSON.stringify({
+            ...prevStorage,
+            ...data,
+            displayName,
+            dob: data.date_of_birth,
+            token: prevStorage.token
+          });
+        }
+      }
     })
     .catch(logError(profileData));
 

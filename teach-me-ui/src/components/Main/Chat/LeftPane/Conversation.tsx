@@ -77,9 +77,16 @@ const Conversation = ({
   );
 
   const handleChatClick = useCallback(
-    (extra: { convoId: string; userId: string }) => (e: any) =>
-      getNecessaryConversationData({ extra, e, history }),
-    [history]
+    (extra: { convoId: string; userId: string }) => (e: any) => {
+      //attempt to fix popstate issue(s)
+      if (window.location.search.slice(1) === '1') {
+        e.preventDefault();
+        history.replace(`/chat/${convoId}?1`);
+      }
+
+      getNecessaryConversationData({ extra, e, history });
+    },
+    [history, convoId]
   );
 
   return (
