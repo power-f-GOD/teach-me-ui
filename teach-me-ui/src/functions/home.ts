@@ -53,8 +53,6 @@ export const updatePostPage = (data: PostStateProps) => {
   const { fetchPost: fetchPostProps, userData} = getState();
   switch (data.pipe) {
     case POST_REPLY:
-      console.log(data);
-      
       const postToUpdateReply = {...fetchPostProps.data, reply_count: data.parent!.reply_count, replies: [...fetchPostProps.data.replies, { ...data, upvote_count: 0, downvote_count: 0}]};
       dispatch(fetchPost({ data: postToUpdateReply }));
       userData.id === data.sender.id && window.scrollTo(0,document.body.scrollHeight);

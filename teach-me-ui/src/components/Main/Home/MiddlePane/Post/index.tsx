@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 
 import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
@@ -58,6 +59,7 @@ const Post: React.FC<
     quote?: any;
     webSocket?: WebSocket;
     pageReplies?: any;
+    replyStatusText?: string;
   }
 > = (props) => {
   const {
@@ -88,7 +90,8 @@ const Post: React.FC<
     head,
     numRepliesToShow: _numRepliesToShow,
     replies,
-    pageReplies
+    pageReplies,
+    replyStatusText
   } = others || {};
   const parent_id = parent?.id;
   const { username: sender_username, first_name, last_name, profile_photo } =
@@ -239,6 +242,10 @@ const Post: React.FC<
     numRepliesToShow = numRepliesToShow > 7 ? 7 : numRepliesToShow;
   }
 
+  const fetchMoreReplies = () => {
+    dispatch(fetchRepliesRequest(id, pageReplies[pageReplies.length - 1].date))
+  }
+
   const renderPostPageReplies = () => {
     const finalReplies = [...pageReplies, ...replies];
     return finalReplies!.map((reply: any) => <PostReply {...reply} key={reply.id} />)
@@ -368,8 +375,9 @@ const Post: React.FC<
           openCreateRepostModal={openCreateRepostModal}
         />
 
-        {/* {head && pageReplies.length === 10
-        } */}
+        {(head && (pageReplies.length % 10 !== 0 || replyStatusText !== 'the end')) && (
+          <Button onClick={fetchMoreReplies} className='ml-2 previus-reply-button'> View previous replies</Button>
+        )}
 
         {/* Post replies */}
         {head
