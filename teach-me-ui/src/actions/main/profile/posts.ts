@@ -12,7 +12,7 @@ import {
   http,
   isAuthenticated
 } from '../../../functions';
-import { updatePost } from '../../../utils/posts';
+import { updatePosts } from '../../../utils/posts';
 
 export const getProfilePosts = (
   userId: string,
@@ -67,6 +67,6 @@ export const profilePosts = (
 ) => {
   return {
     type: SET_PROFILE_POSTS,
-    payload: updatePost(_payload, POSTS_ANCHOR__PROFILE)
+    payload: updatePosts(_payload, POSTS_ANCHOR__PROFILE)
   };
 };

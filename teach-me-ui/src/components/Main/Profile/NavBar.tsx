@@ -30,7 +30,7 @@ import {
   UNCOLLEAGUE,
   CANCEL_REQUEST
 } from '../../../constants';
-import { requestColleagueAction } from '../../../actions';
+import { requestColleagueAction, getConversationWith } from '../../../actions';
 
 import Loader from '../../shared/Loaders';
 import { FAIcon } from '../../shared/Icons';
@@ -63,6 +63,7 @@ const ProfileNavBar = (props: ProfileNavBarProps) => {
     _deepProfileData?.status === 'pending';
   const hasPendingRequest = _deepProfileData?.data?.status === PENDING_REQUEST;
   const isColleague = _deepProfileData?.data?.status === IS_COLLEAGUE;
+  const idOrUsername = data.username || data.id || '';
 
   const [isRespondingView, setIsRespondingView] = useState<boolean>(false);
   const [action, setAction] = useState<{
@@ -138,6 +139,11 @@ const ProfileNavBar = (props: ProfileNavBarProps) => {
       }
     });
   }, [deepProfileDataStatus]);
+
+  useEffect(() => {
+    if (idOrUsername && isColleague)
+      dispatch(getConversationWith(idOrUsername));
+  }, [isColleague, idOrUsername]);
 
   return (
     <>

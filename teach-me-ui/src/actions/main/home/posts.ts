@@ -6,7 +6,7 @@ import {
   logError,
   http
 } from '../../../functions';
-import { updatePost } from '../../../utils/posts';
+import { updatePosts } from '../../../utils/posts';
 
 export const getPosts = (update = false, statusText?: string, url?: string) => (
   dispatch: Function
@@ -14,7 +14,8 @@ export const getPosts = (update = false, statusText?: string, url?: string) => (
   const { posts: _posts } = getState() as {
     posts: FetchState<PostStateProps[]>;
   };
-  const limit = 5;
+  const isFetching = /fetching/i.test(statusText || '');
+  const limit = isFetching ? 8 : 4;
   const offset = _posts.data?.length && update ? _posts.extra : Date.now();
 
   dispatch(
@@ -41,7 +42,6 @@ export const getPosts = (update = false, statusText?: string, url?: string) => (
     )
     .then(({ error, message, data, meta }) => {
       const isRecycling = /recycl(e|ing)/i.test(statusText || '');
-      const isFetching = /fetching/i.test(statusText || '');
 
       if (error) {
         dispatch(posts({ status: 'settled', statusText: message, err: true }));
@@ -91,6 +91,6 @@ export const getPosts = (update = false, statusText?: string, url?: string) => (
 export const posts = (_payload: FetchState<PostStateProps[], number>) => {
   return {
     type: SET_FEEDS_POSTS,
-    payload: updatePost(_payload)
+    payload: updatePosts(_payload)
   };
 };

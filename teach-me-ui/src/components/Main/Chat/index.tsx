@@ -8,7 +8,6 @@ import { dispatch, getNecessaryConversationData } from '../../../functions';
 import {
   chatState,
   conversationMessages,
-  getConversationMessages,
   conversation,
   conversationsMessages
 } from '../../../actions/main/chat';
@@ -222,7 +221,7 @@ const Chat = (props: ChatProps) => {
         if (userId && convoId !== '0') {
           getNecessaryConversationData({ extra: { convoId, userId }, history });
         }
-      }, 400);
+      }, 300);
     }
   }, [location.search, location.pathname, convoId, history]);
 
@@ -238,45 +237,39 @@ const Chat = (props: ChatProps) => {
 
   useEffect(() => {
     window.onpopstate = () => {
-      const cid = match.params.convoId;
+      const { pathname, search } = window.location;
+      const cid = windowWidth < 992 ? pathnameConvoId : pathname.split('/')[2];
+      const viewIndex = windowWidth < 992 ? queryParamVal : search.slice(1);
+
+      if (!convoId && cid !== '0') {
+        history.replace('/chat/0?0/');
+      }
+
+      if (convoId) {
+        dispatch(
+          conversationsMessages({
+            convoId,
+            statusText: 'replace messages',
+            data: { [convoId]: [...getState().conversationMessages.data] }
+          })
+        );
+      }
 
       if (windowWidth < 992) {
-        if (queryParamVal === '0' && pathnameConvoId !== '0') {
-          dispatch(
-            conversationsMessages({
-              convoId,
-              statusText: 'replace messages',
-              data: { [convoId]: [...getState().conversationMessages.data] }
-            })
-          );
+        if (cid === '0' && viewIndex === '0') {
           setShouldGoBackToHome(true);
-          return;
         }
       } else {
-        if (cid === '0') {
-          dispatch(conversation(''));
-          dispatch(conversationMessages({ data: [] }));
-        } else {
-          if (window.navigator.onLine) {
-            // dispatch(getConversationInfo(userId)(dispatch));
-            dispatch(
-              getConversationMessages(cid, 'pending', 'loading new')(dispatch)
-            );
-          } else {
-            dispatch(
-              conversationMessages({ status: 'pending', err: true, data: [] })
-            );
-          }
-
-          dispatch(conversation(cid, { user_typing: '' }));
-        }
+        history.replace('/chat/0?0/');
+        dispatch(conversation(''));
+        dispatch(conversationMessages({ data: [] }));
       }
     };
 
     return () => {
       window.onpopstate = () => {};
     };
-  }, [match, windowWidth, pathnameConvoId, queryParamVal, convoId]);
+  }, [match, windowWidth, pathnameConvoId, queryParamVal, convoId, history]);
 
   useEffect(() => {
     if (windowWidth < 992) {
