@@ -258,7 +258,7 @@ const Post: React.FC<
   }
 
   const fetchMoreReplies = () => {
-    dispatch(fetchRepliesRequest(id, pageReplies[pageReplies.length - 1].date))
+    dispatch(fetchRepliesRequest(id, pageReplies[0].date))
   }
 
   const renderPostPageReplies = () => {
@@ -390,7 +390,7 @@ const Post: React.FC<
           openCreateRepostModal={openCreateRepostModal}
         />
 
-        {(head && (pageReplies.length % 10 !== 0 || replyStatusText !== 'the end')) && (
+        {(head && replyStatusText !== 'the end' && pageReplies[0]) && (
           <Button onClick={fetchMoreReplies} className='ml-2 previus-reply-button'> View previous replies</Button>
         )}
 

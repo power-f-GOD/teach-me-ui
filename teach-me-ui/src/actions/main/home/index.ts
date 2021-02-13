@@ -71,7 +71,7 @@ export const fetchReplies = (payload: FetchState<Array<PostStateProps>, string>,
 export const fetchRepliesRequest = (postId?: string, offset?: number) => (
   dispatch: Function
 ) => {
-  dispatch(fetchReplies({ status: 'pending', data: [] }));
+  dispatch(fetchReplies({ status: 'pending' }));
 
   checkNetworkStatusWhilstPend({
     name: 'fetchReplies',
@@ -90,7 +90,8 @@ export const fetchRepliesRequest = (postId?: string, offset?: number) => (
           fetchReplies({
             status: 'fulfilled',
             err: false,
-            data: data.reverse()
+            data: data.reverse(),
+            statusText: data.length < 10 ? 'the end' : undefined
           }, offset? true : false)
         );
       } else {
@@ -133,7 +134,7 @@ export const fetchPostRequest = (postId?: string) => (dispatch: Function) => {
           fetchPost({
             status: 'fulfilled',
             err: false,
-            data
+            data: {...data, replies:[]}
           })
         );
       } else {

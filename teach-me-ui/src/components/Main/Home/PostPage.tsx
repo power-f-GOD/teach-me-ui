@@ -42,7 +42,7 @@ const PostPage = (props: {
   return (
     <>
       <Container className='p-0 fade-in'>
-        <Post head {...{ ...fetchPost.data, pageReplies: fetchReplies.data }} />
+        <Post head {...{ ...fetchPost.data, pageReplies: fetchReplies.data, replyStatusText: fetchReplies.statusText }} />
       </Container>
     </>
   );
