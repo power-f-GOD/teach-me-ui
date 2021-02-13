@@ -13,8 +13,7 @@ import { Link } from 'react-router-dom';
 import { PostStateProps } from '../../../../../types';
 
 import PostFooter from './Footer';
-import { processPost } from '.';
-import TextTruncator from '../../../../shared/TextTruncator';
+import { processText } from '../../../../../utils';
 
 const PostReply = (props: Partial<PostStateProps>) => {
   const {
@@ -79,7 +78,7 @@ const PostReply = (props: Partial<PostStateProps>) => {
                 <Link to={`/@${sender_username}`} className='font-bold'>
                   {sender_name}
                 </Link>
-                <Box component='span' className='theme-tertiary ml-1'>
+                <Box component='span' className='theme-tertiary-darker ml-1'>
                   | @{sender_username}
                 </Box>
               </Box>
@@ -96,10 +95,7 @@ const PostReply = (props: Partial<PostStateProps>) => {
         {sender_name ? (
           <Row className='post-body'>
             {/* Post repost */}
-            <Col className='text'>
-              {processPost(text!)}
-              <TextTruncator anchorEllipsis={true} lineClamp={4} />
-            </Col>
+            <Col className='text'>{processText(text!)}</Col>
           </Row>
         ) : (
           <Box p={2}>

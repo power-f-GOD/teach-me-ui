@@ -222,7 +222,7 @@ const Chat = (props: ChatProps) => {
         if (userId && convoId !== '0') {
           getNecessaryConversationData({ extra: { convoId, userId }, history });
         }
-      }, 500);
+      }, 400);
     }
   }, [location.search, location.pathname, convoId, history]);
 

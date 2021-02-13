@@ -5,12 +5,11 @@ import Skeleton from 'react-loading-skeleton';
 import Row from 'react-bootstrap/Row';
 
 import Box from '@material-ui/core/Box';
-import { PostStateProps } from '../../../../../types';
 
+import { PostStateProps } from '../../../../../types';
 import QuotedPost from './QuotedPost';
-import { processPost } from '.';
-import TextTruncator from '../../../../shared/TextTruncator';
 import Media from './Media';
+import { processText } from '../../../../../utils';
 
 interface PostBodyProps {
   head?: boolean;
@@ -75,8 +74,7 @@ const PostBody = (props: PostBodyProps) => {
           onClick={navigate(id!, props.head)}
           className={`text ${!text?.trim() ? 'py-2' : ''}`}
           data-id={id}>
-          {processPost(text!)}
-          <TextTruncator lineClamp={8} anchorEllipsis={true} />
+          {processText(text!)}
         </Box>
 
         <Media media={media} showModal={showModal} />

@@ -44,6 +44,7 @@ import { apiBaseURL, ONLINE_STATUS } from '../constants';
 
 export * from './chat';
 export * from './posts';
+export * from './shared';
 
 export const { dispatch, getState }: any = store;
 

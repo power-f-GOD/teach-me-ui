@@ -55,7 +55,7 @@ const PostFooter = (props: PostCrumbs) => {
               xs={3}
               sm={2}
               as='small'
-              className='theme-tertiary px-0 text-ellipsis'>
+              className='theme-tertiary-darker px-0 text-ellipsis'>
               {formatDate(date)?.replace('ago', '')}
             </Col>
           )}

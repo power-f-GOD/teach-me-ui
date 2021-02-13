@@ -10,16 +10,11 @@ import Fade from '@material-ui/core/Fade';
 import ArrowBack from '@material-ui/icons/ArrowBackIos';
 import ArrowForward from '@material-ui/icons/ArrowForwardIos';
 
-import { Link } from 'react-router-dom';
-
 import { dispatch, loopThru, createObserver } from '../../../../../utils';
 import { PostStateProps, LoopFind, AuthState } from '../../../../../types';
 
 import { displayModal } from '../../../../../functions';
-import {
-  triggerSearchKanyimuta,
-  fetchRepliesRequest
-} from '../../../../../actions';
+import { fetchRepliesRequest } from '../../../../../actions';
 
 import { LazyLoadImage as LazyImg } from 'react-lazy-load-image-component';
 
@@ -371,53 +366,6 @@ const Post: React.FC<
       </Container>
     </>
   );
-};
-
-const stopProp = (e: any) => {
-  e.stopPropagation();
-};
-
-export const processPost = (post: string) => {
-  if (!post) return;
-
-  const mid = post.replace(/([\t\r\n\f]+)/gi, ' $1 ');
-  return mid
-    .trim()
-    .split(/ /gi)
-    .map((w, i) => {
-      w = w.replace(/ /gi, '');
-      return /(^@)[A-Za-z0-9_]+[,.!?]*$/.test(w) ? (
-        <Box component='span' key={i}>
-          <Link
-            onClick={stopProp}
-            to={`/${/[,.!]+$/.test(w) ? w.slice(0, -1) : w}`}>{`${
-            /[,.!]+$/.test(w) ? w.slice(0, -1) : w
-          }`}</Link>
-          {`${/[,.!]+$/.test(w) ? w.slice(-1) : ''}`}{' '}
-        </Box>
-      ) : /(^#)[A-Za-z0-9_]+[,.!?]*$/.test(w) ? (
-        <Box component='span' key={i}>
-          <Link
-            onClick={(e: any) => {
-              stopProp(e);
-              dispatch(triggerSearchKanyimuta(w)(dispatch));
-            }}
-            to={`/search?q=${w.substring(1)}`}>
-            {w}
-          </Link>{' '}
-        </Box>
-      ) : /^https?:\/\/(?!\.)[A-Za-z0-9.-]+.[A-Za-z0-9.]+(\/[A-Za-z-/0-9@]+)?$/.test(
-          w
-        ) ? (
-        <Box component='span' key={i}>
-          <a onClick={stopProp} href={w} target='blank'>
-            {w}
-          </a>{' '}
-        </Box>
-      ) : (
-        <React.Fragment key={i}>{w} </React.Fragment>
-      );
-    });
 };
 
 export const openCreateRepostModal = (meta: any) => (e: any) => {

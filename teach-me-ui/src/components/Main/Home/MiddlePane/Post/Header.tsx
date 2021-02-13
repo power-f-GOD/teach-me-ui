@@ -42,11 +42,11 @@ const PostHeader = (props: PostHeaderProps) => {
               <Link to={`/@${sender_username}`} className='font-bold'>
                 {sender_name}
               </Link>
-              <Box component='span' className='theme-tertiary ml-1'>
+              <Box component='span' className='theme-tertiary-darker ml-1'>
                 | @{sender_username}
               </Box>
             </Box>
-            <Box component='small' className='theme-tertiary'>
+            <Box component='small' className='theme-tertiary-darker'>
               {formatDate(+posted_at!)}
             </Box>
           </>
@@ -54,11 +54,11 @@ const PostHeader = (props: PostHeaderProps) => {
           <>
             <Box className='d-flex'>
               <Skeleton width={150} />
-              <Box className='theme-tertiary-lighter ml-2'>
+              <Box className='ml-2'>
                 <Skeleton width={100} />
               </Box>
             </Box>
-            <Box component='small' className='theme-tertiary'>
+            <Box component='small'>
               <Skeleton width={100} />
             </Box>
           </>

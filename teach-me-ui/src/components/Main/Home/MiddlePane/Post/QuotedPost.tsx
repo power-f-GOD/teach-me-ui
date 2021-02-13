@@ -6,8 +6,7 @@ import Col from 'react-bootstrap/Col';
 import Box from '@material-ui/core/Box';
 import { Avatar } from '@material-ui/core';
 
-import { processPost } from '.';
-import { formatDate } from '../../../../../utils';
+import { formatDate, processText } from '../../../../../utils';
 import { PostStateProps } from '../../../../../types';
 import Media from './Media';
 
@@ -45,11 +44,11 @@ const QuotedPost = (
                 {sender_name}
               </Col>
             )}
-            <Col as='span' className='theme-tertiary ml-1 px-0'>
+            <Col as='span' className='theme-tertiary-darker ml-1 px-0'>
               | @{username}
             </Col>
           </Box>
-          <Box component='small' className='theme-tertiary'>
+          <Box component='small' className='theme-tertiary-darker'>
             {formatDate(posted_at!)}
           </Box>
         </Col>
@@ -58,7 +57,7 @@ const QuotedPost = (
       <Row className='mt-2 post-text mx-0'>
         {text && (
           <Box component='div' className='px-2 pb-2'>
-            {processPost(text as string)}
+            {processText(text as string)}
           </Box>
         )}
         <Media media={media} showModal={showModal} />
