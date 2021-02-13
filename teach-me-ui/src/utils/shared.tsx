@@ -33,14 +33,23 @@ export const processWord = (word: string, i?: number) => {
         </Fragment>
       );
     }
-    case /^(https?:\/\/)?([a-z0-9_]+\.[a-z0-9_]+[^.]*)+$/.test(word): {
+    case /^(https?:\/\/)?([a-z0-9_-]+\.[a-z0-9_-]+)[^]*[^.]$/.test(word): {
+      const { origin } = window.location;
+
       return (
         <Fragment key={i}>
           {' '}
           <a
-            href={/https?:/.test(word) ? word : `https://${word}`}
+            href={
+              /https?:/.test(word)
+                ? new RegExp(`^${origin}`, 'i').test(word)
+                  ? word.replace(origin, '')
+                  : word
+                : `https://${word}`
+            }
             target='_blank'
-            rel='noopener noreferrer'>
+            rel='noopener noreferrer'
+            onClick={(e) => e.stopPropagation()}>
             {word}
           </a>
         </Fragment>

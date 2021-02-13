@@ -14,7 +14,8 @@ export const getPosts = (update = false, statusText?: string, url?: string) => (
   const { posts: _posts } = getState() as {
     posts: FetchState<PostStateProps[]>;
   };
-  const limit = 5;
+  const isFetching = /fetching/i.test(statusText || '');
+  const limit = isFetching ? 8 : 4;
   const offset = _posts.data?.length && update ? _posts.extra : Date.now();
 
   dispatch(
@@ -41,7 +42,6 @@ export const getPosts = (update = false, statusText?: string, url?: string) => (
     )
     .then(({ error, message, data, meta }) => {
       const isRecycling = /recycl(e|ing)/i.test(statusText || '');
-      const isFetching = /fetching/i.test(statusText || '');
 
       if (error) {
         dispatch(posts({ status: 'settled', statusText: message, err: true }));
