@@ -39,7 +39,6 @@ export default function post(
       case POST_REACTION:
       case POST_REPLY: {
         const data = [{ ..._data }] as PostStateProps[];
-
         dispatch(inProfile() ? profilePosts({ data }) : posts({ data }));
         inPostPage() && updatePostPage(data[0]);
         break;
@@ -67,6 +66,7 @@ export default function post(
           // And although, I've put a check in the action to test for the window location hash too which would prevent history.back() from being called unnecessarily
           displayModal(false);
         }
+        inPostPage() && updatePostPage(_data as PostStateProps);
 
         break;
       }

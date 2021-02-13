@@ -1,8 +1,14 @@
+@import '../../../../constants';
+
 .Post {
   box-shadow: 0 0.125em rgba(0, 0, 0, 0.1);
   overflow: hidden;
   border: 0.0625rem solid rgba(0, 0, 0, 0.175);
   padding-bottom: 0.25em;
+
+  .previus-reply-button {
+    color: $theme-primary;
+  }
 }
 
 $pad-x: 1em;

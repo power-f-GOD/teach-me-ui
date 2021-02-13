@@ -58,15 +58,9 @@ export const makeRepostRequest = (payload: SendReplyProps) => (
   socket.send(JSON.stringify(payload));
 };
 
-export const fetchReplies = (payload: FetchState<Array<PostStateProps>, string>, realtime?: boolean) => {
-  const { fetchReplies } = getState();
-  if (realtime) {
-    payload.data![0] = {
-      ...payload.data![0],
-      upvote_count: 0,
-      downvote_count: 0,
-    };
-    payload.data = [payload.data![0],...fetchReplies.data]
+export const fetchReplies = (payload: FetchState<Array<PostStateProps>, string>, update?: boolean) => {
+  if (update) {
+    payload.data = [...payload.data, ...getState().fetchReplies.data]
   }
   return {
     type: FETCH_REPLIES,
@@ -74,10 +68,10 @@ export const fetchReplies = (payload: FetchState<Array<PostStateProps>, string>,
   };
 };
 
-export const fetchRepliesRequest = (postId?: string) => (
+export const fetchRepliesRequest = (postId?: string, offset?: number) => (
   dispatch: Function
 ) => {
-  dispatch(fetchReplies({ status: 'pending', data: [] }));
+  dispatch(fetchReplies({ status: 'pending' }));
 
   checkNetworkStatusWhilstPend({
     name: 'fetchReplies',
@@ -85,20 +79,20 @@ export const fetchRepliesRequest = (postId?: string) => (
   });
 
   http
-    .get(`/post/${postId}/replies?limit=10&offset=0`, true)
+    .get(`/post/${postId}/replies?limit=10&offset=${offset}`, true)
     .then((res) => {
       const { error, data } = res as {
         error: boolean;
         data: any;
       };
       if (!error) {
-        console.log()
         dispatch(
           fetchReplies({
             status: 'fulfilled',
             err: false,
-            data: data
-          })
+            data: data.reverse(),
+            statusText: data.length < 10 ? 'the end' : undefined
+          }, offset? true : false)
         );
       } else {
         dispatch(
@@ -140,7 +134,7 @@ export const fetchPostRequest = (postId?: string) => (dispatch: Function) => {
           fetchPost({
             status: 'fulfilled',
             err: false,
-            data
+            data: {...data, replies:[]}
           })
         );
       } else {

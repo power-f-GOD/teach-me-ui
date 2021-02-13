@@ -23,7 +23,6 @@ const PostPage = (props: {
 }) => {
   const { match, fetchPost, fetchReplies, location } = props;
   // const { status: postsStatus } = posts;
-
   useEffect(() => {
     window.scrollTo(0, 0);
     dispatch(fetchPostRequest(match.params.id));
@@ -39,10 +38,11 @@ const PostPage = (props: {
     return <Redirect to='/404' />;
   }
 
+
   return (
     <>
       <Container className='p-0 fade-in'>
-        <Post head {...{ ...fetchPost.data, replies: fetchReplies.data }} />
+        <Post head {...{ ...fetchPost.data, pageReplies: fetchReplies.data, replyStatusText: fetchReplies.statusText }} />
       </Container>
     </>
   );
