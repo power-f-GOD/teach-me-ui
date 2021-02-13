@@ -8,7 +8,7 @@ body,
   margin: 0;
   font-size: 1rem;
   background: #eee;
-  color: $theme-tertiary-v1;
+  color: #111;
   line-height: 1.4em;
 }
 
@@ -202,6 +202,11 @@ hr {
     color: $theme-secondary !important;
     background-color: transparent;
   }
+}
+
+code {
+  font-family: 'Courier New', Courier, monospace !important;
+  white-space: pre-wrap;
 }
 
 button {

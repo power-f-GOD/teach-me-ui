@@ -1,7 +1,7 @@
 .Post {
   box-shadow: 0 0.125em rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  border: 0.0625rem solid rgba(0, 0, 0, 0.25);
+  border: 0.0625rem solid rgba(0, 0, 0, 0.175);
   padding-bottom: 0.25em;
 }
 
@@ -64,11 +64,11 @@ $pad-x: 1em;
 
   small {
     display: inline-block;
-    color: $theme-tertiary-v6;
+    color: $theme-tertiary-v5;
 
     &.extra {
       display: block;
-      color: $theme-tertiary-v5;
+      color: $theme-tertiary-v4;
       font-size: 0.8em;
       overflow: hidden;
       margin-bottom: -0.25em;

@@ -87,11 +87,11 @@
   }
 
   .username {
-    color: #777;
+    color: $theme-tertiary-v3;
   }
 
   .status {
-    color: $theme-tertiary-v6;
+    color: $theme-tertiary-v5;
     font-size: 0.9rem;
     margin: 1.5rem 0 0 -4.75rem;
     min-width: calc(100% + 4.5rem);
@@ -116,6 +116,6 @@
   }
 
   .academic {
-    color: #777;
+    color: $theme-tertiary-v5;
   }
 }
