@@ -11,16 +11,11 @@ import Fade from '@material-ui/core/Fade';
 import ArrowBack from '@material-ui/icons/ArrowBackIos';
 import ArrowForward from '@material-ui/icons/ArrowForwardIos';
 
-import { Link } from 'react-router-dom';
-
 import { dispatch, loopThru, createObserver } from '../../../../../utils';
 import { PostStateProps, LoopFind, AuthState } from '../../../../../types';
 
 import { displayModal } from '../../../../../functions';
-import {
-  triggerSearchKanyimuta,
-  fetchRepliesRequest
-} from '../../../../../actions';
+import { fetchRepliesRequest } from '../../../../../actions';
 
 import { LazyLoadImage as LazyImg } from 'react-lazy-load-image-component';
 
@@ -175,19 +170,39 @@ const Post: React.FC<
   }, [id, head, socket, parent_id]);
 
   if (colleague_reposts?.length && colleague_reposts?.length > 1) {
-    let senderName1 = `${colleague_reposts[0]?.sender?.first_name}`;
-    let senderName2 = `${colleague_reposts[1]?.sender?.first_name}`;
+    const firstReposter = colleague_reposts[0]?.sender;
+    const sendersNames = Array.from(
+      new Set(
+        colleague_reposts.map(
+          ({ sender: { first_name, username } }) => `${first_name} ${username}`
+        )
+      )
+    );
+    const senderName2 = sendersNames[1]?.split(' ')[0];
 
-    switch (colleague_reposts.length) {
+    switch (sendersNames.length) {
+      case 1:
+        extra = `<b>${firstReposter.first_name}</b> reposted ${
+          firstReposter.id === sender!.id
+            ? 'their own'
+            : sender?.id === userId
+            ? 'your'
+            : `<b>${sender_name}</b>'s`
+        } post <b>${colleague_reposts.length}</b> times`;
+        break;
       case 2:
-        extra = `<b>${senderName1}</b> and <b>${senderName2}</b> reposted <b>${sender_name}</b>'s post`;
+        extra = `<b>${
+          sender?.id === userId ? 'You' : firstReposter.first_name
+        }</b> and <b>${senderName2}</b> reposted ${
+          sender?.id === userId ? 'your' : `<b>${sender_name}</b>'s`
+        } post`;
         break;
       default:
         extra = `${
-          colleague_reposts[0]?.sender?.id === userId
+          firstReposter?.id === userId
             ? 'You'
-            : `<b>${senderName1}</b>`
-        } and <b>${colleague_reposts?.length - 1} others</b> reposted ${
+            : `<b>${firstReposter.first_name}</b>`
+        } and <b>${sendersNames?.length - 1} others</b> reposted ${
           sender?.id === userId ? 'your' : `<b>${first_name}</b>'s`
         }  post`;
     }
@@ -388,53 +403,6 @@ const Post: React.FC<
       </Container>
     </>
   );
-};
-
-const stopProp = (e: any) => {
-  e.stopPropagation();
-};
-
-export const processPost = (post: string) => {
-  if (!post) return;
-
-  const mid = post.replace(/([\t\r\n\f]+)/gi, ' $1 ');
-  return mid
-    .trim()
-    .split(/ /gi)
-    .map((w, i) => {
-      w = w.replace(/ /gi, '');
-      return /(^@)[A-Za-z0-9_]+[,.!?]*$/.test(w) ? (
-        <Box component='span' key={i}>
-          <Link
-            onClick={stopProp}
-            to={`/${/[,.!]+$/.test(w) ? w.slice(0, -1) : w}`}>{`${
-            /[,.!]+$/.test(w) ? w.slice(0, -1) : w
-          }`}</Link>
-          {`${/[,.!]+$/.test(w) ? w.slice(-1) : ''}`}{' '}
-        </Box>
-      ) : /(^#)[A-Za-z0-9_]+[,.!?]*$/.test(w) ? (
-        <Box component='span' key={i}>
-          <Link
-            onClick={(e: any) => {
-              stopProp(e);
-              dispatch(triggerSearchKanyimuta(w)(dispatch));
-            }}
-            to={`/search?q=${w.substring(1)}`}>
-            {w}
-          </Link>{' '}
-        </Box>
-      ) : /^https?:\/\/(?!\.)[A-Za-z0-9.-]+.[A-Za-z0-9.]+(\/[A-Za-z-/0-9@]+)?$/.test(
-          w
-        ) ? (
-        <Box component='span' key={i}>
-          <a onClick={stopProp} href={w} target='blank'>
-            {w}
-          </a>{' '}
-        </Box>
-      ) : (
-        <React.Fragment key={i}>{w} </React.Fragment>
-      );
-    });
 };
 
 export const openCreateRepostModal = (meta: any) => (e: any) => {

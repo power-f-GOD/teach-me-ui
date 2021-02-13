@@ -12,7 +12,12 @@
   }
 
   a {
-    color: $theme-secondary-v6;
+    color: $theme-primary-v7;
+
+    &:hover,
+    &:focus {
+      text-decoration: underline;
+    }
   }
 
   .chat-header-name_control-wrapper {

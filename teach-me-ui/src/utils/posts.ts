@@ -7,7 +7,7 @@ import {
 import { PostStateProps, FetchState, LoopFind } from '../types';
 import { getState, loopThru } from '../functions';
 
-export const updatePost = (
+export const updatePosts = (
   _payload: FetchState<PostStateProps[], number>,
   anchor?: 'FEEDS' | 'PROFILE'
 ): FetchState<PostStateProps[], number> => {
@@ -22,18 +22,17 @@ export const updatePost = (
   const { data: _data, statusText } = _payload;
   const newData = _data ?? [];
   const pipeData = newData[0];
-  const pipe = pipeData?.pipe;
-  const feedsUnmounts = /(feeds?\s?)unmount(s|ed)/.test(statusText || '');
+  const feedsUnmounted = /(feeds?\s?)unmount(s|ed)/.test(statusText || '');
   const refreshingFeeds = /refreshing\s(feeds?)?/.test(statusText || '');
   const hadReachedEnd = /reached\send/.test(prevPostsState.statusText || ''); //attempt to reset Posts to [] if it had reached end in order to get fresh feeds
   const newPostCreated = /(new\s)?post\screated/.test(statusText || '');
-  const updateFromSocket = !!pipe;
+  const updateFromSocket = !!pipeData?.pipe;
   let resultantData = [] as PostStateProps[];
 
   if (anchorIsProfile) {
-    resultantData = feedsUnmounts ? [] : [...prevPostsState.data];
+    resultantData = feedsUnmounted ? [] : [...prevPostsState.data];
   } else {
-    resultantData = feedsUnmounts
+    resultantData = feedsUnmounted
       ? hadReachedEnd
         ? []
         : [...prevPostsState.data?.slice(-3)]
@@ -41,7 +40,7 @@ export const updatePost = (
   }
 
   if (!updateFromSocket) {
-    if (!feedsUnmounts) {
+    if (!feedsUnmounted) {
       resultantData[newPostCreated ? 'unshift' : 'push'](...newData);
     }
 
@@ -59,50 +58,61 @@ export const updatePost = (
         id === pipeData.parent?.id,
       { type: 'find', includeIndex: true }
     ) as LoopFind<PostStateProps>;
-    const isForReply = !!pipeData.parent_id;
-    // console.log(actualPost, pipeData)
 
     if (actualPost) {
-      switch (pipe) {
-        case POST_REACTION:
-          if (isForReply && actualPost.sec_type !== 'REPLY') {
-            let {
-              value: actualReply,
-              index: replyIndex
-            } = loopThru(
-              actualPost.colleague_replies ?? [],
-              (reply) => reply.id === pipeData.id,
-              { type: 'find', includeIndex: true }
-            ) as LoopFind<PostStateProps>;
-
-            actualPost.colleague_replies[replyIndex] = {
-              ...actualReply,
-              ...pipeData
-            };
-          } else {
-            actualPost = { ...actualPost, ...pipeData };
-          }
-
-          finalPayload.data![postIndex] = actualPost;
-          break;
-        case POST_REPLY:
-          if (!actualPost.colleague_replies) {
-            actualPost.colleague_replies = [];
-          }
-
-          actualPost.colleague_replies.push({
-            ...pipeData,
-            upvote_count: 0,
-            downvote_count: 0,
-            reaction: POST_REACTION__NEUTRAL
-          });
-          actualPost.numRepliesToShow = (actualPost.numRepliesToShow ?? 2) + 1;
-          actualPost.reply_count = pipeData.parent!.reply_count!;
-          finalPayload.data![postIndex] = actualPost;
-          break;
-      }
+      finalPayload.data![postIndex] = updatePost(actualPost, {
+        pipe: pipeData.pipe,
+        data: pipeData
+      });
     }
   }
 
   return finalPayload;
+};
+
+export const updatePost = (
+  _post: PostStateProps,
+  { pipe, data }: { pipe: PostStateProps['pipe']; data: PostStateProps }
+) => {
+  const updateIsForReply = !!data.parent_id;
+  let updatedPost = { ..._post };
+
+  switch (pipe) {
+    case POST_REACTION:
+      if (updateIsForReply && updatedPost.sec_type !== 'REPLY') {
+        let {
+          value: actualReply,
+          index: replyIndex
+        } = loopThru(
+          updatedPost.colleague_replies ?? [],
+          (reply) => reply.id === data.id,
+          { type: 'find', includeIndex: true }
+        ) as LoopFind<PostStateProps>;
+
+        updatedPost.colleague_replies[replyIndex] = {
+          ...actualReply,
+          ...data
+        };
+      } else {
+        updatedPost = { ...updatedPost, ...data };
+      }
+
+      break;
+    case POST_REPLY:
+      if (!updatedPost.colleague_replies) {
+        updatedPost.colleague_replies = [];
+      }
+
+      updatedPost.colleague_replies.push({
+        ...data,
+        upvote_count: 0,
+        downvote_count: 0,
+        reaction: POST_REACTION__NEUTRAL
+      });
+      updatedPost.numRepliesToShow = (updatedPost.numRepliesToShow ?? 2) + 1;
+      updatedPost.reply_count = data.parent!.reply_count!;
+      break;
+  }
+
+  return updatedPost;
 };

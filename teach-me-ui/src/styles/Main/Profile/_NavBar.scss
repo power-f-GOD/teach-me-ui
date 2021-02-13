@@ -81,11 +81,11 @@
         transform: translateX(0) scale(1);
 
         &.back {
-          transform: translateX(calc(-100% - 0.5rem)) scale(1);
+          transform: translateX(calc(-100% - 0.5em)) scale(1);
         }
 
         &.cancel {
-          transform: translateX(calc(100% + 0.5rem)) scale(1);
+          transform: translateX(calc(100% + 0.5em)) scale(1);
         }
 
         &:disabled {
@@ -106,11 +106,11 @@
 
   .colleague-action-button {
     position: relative;
-    min-width: 6rem;
+    min-width: 6em;
     box-shadow: none;
-    padding: 0.4rem 0.9rem !important;
+    padding: 0.65em 1em !important;
     margin: 0;
-    margin-left: 0.75rem;
+    margin-left: 1.5em;
     white-space: nowrap;
     transition: 0.2s;
     transform: scale(1);
@@ -126,8 +126,8 @@
   }
 
   .icon-button {
-    height: 2.5rem;
-    width: 2.5rem;
+    height: 2.5em;
+    width: 2.5em;
     position: absolute;
     z-index: 5;
     border-radius: 50%;
@@ -142,7 +142,7 @@
     &:focus {
       .tool-tip {
         opacity: 1;
-        transform: translateY(0.5rem);
+        transform: translateY(0.5em);
       }
     }
 
@@ -152,7 +152,7 @@
       font-size: 0.65em;
       white-space: nowrap;
       padding: 0.2em 0.5em;
-      border-radius: 0.35rem;
+      border-radius: 0.35em;
       top: 115%;
       right: -0.5em;
       opacity: 0;

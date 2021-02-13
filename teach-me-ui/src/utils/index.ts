@@ -44,6 +44,7 @@ import { apiBaseURL, ONLINE_STATUS } from '../constants';
 
 export * from './chat';
 export * from './posts';
+export * from './shared';
 
 export const { dispatch, getState }: any = store;
 
@@ -301,7 +302,12 @@ export const emitUserOnlineStatus = (
     }
 
     if (_profile.err && _profile.data?.username) {
-      dispatch(getProfileData(_profile.data?.username));
+      dispatch(
+        getProfileData(
+          _profile.data?.username,
+          userData.username === _profile.data.username
+        )
+      );
     }
 
     if (_deepProfile.err && _profile.data?.username) {

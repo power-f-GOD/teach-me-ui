@@ -21,8 +21,7 @@ import {
   setWindowWidth,
   getDeepProfileData,
   displaySnackbar,
-  getColleagues,
-  getConversationWith
+  getColleagues
 } from '../../../actions';
 import ProfileNavBar, { profileNavWrapperRef } from './NavBar';
 import ProfileHeader from './Header';
@@ -127,13 +126,12 @@ const Profile = (props: ProfileProps) => {
     if (isAuthenticated) {
       if (!isSelfView) {
         dispatch(getDeepProfileData(idOrUsername));
-        dispatch(getConversationWith(idOrUsername));
       }
 
       dispatch(getColleagues(idOrUsername));
     }
 
-    dispatch(getProfileData(idOrUsername));
+    dispatch(getProfileData(idOrUsername, isSelfView));
     window.scrollTo(0, 0);
   }, [idOrUsername, isAuthenticated, isSelfView]);
 

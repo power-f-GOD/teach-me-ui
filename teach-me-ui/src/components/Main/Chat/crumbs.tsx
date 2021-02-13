@@ -27,7 +27,8 @@ import {
   interval,
   createObserver,
   dispatch,
-  getState
+  getState,
+  processText
 } from '../../../utils';
 import { conversation, conversations } from '../../../actions/main/chat';
 import { stickyChatDateRef } from './MiddlePane/ScrollView';
@@ -238,7 +239,7 @@ export const Message = (props: {
                 : "You can't see this message"}
             </>
           ) : (
-            text
+            processText(text)
           )}
           {/* <TextTruncator lineClamp={10} className='theme-primary-lighter' /> */}
           <ChatTimestamp

@@ -39,7 +39,7 @@ $pad-x: 1.2em;
     // padding-bottom: 0.125em;
     background: $bg;
     margin-left: 0.55em;
-    border-radius: 1em 1em 0 0;
+    border-radius: 0.75em 0.75em 0 0;
   }
 
   .post-avatar {
@@ -53,7 +53,7 @@ $pad-x: 1.2em;
   }
 
   .post-body {
-    border-radius: 0 0 1em 1em;
+    border-radius: 0 0 0.75em 0.75em;
     margin: -0.25em 0 0.25em 3em;
     width: calc(100% - 3em);
     background: $bg;
