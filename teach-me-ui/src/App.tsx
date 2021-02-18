@@ -86,6 +86,7 @@ const App = (props: any) => {
               '/profile/:id',
               '/@:username',
               '/@:username/colleagues',
+              '/p/:id',
               '/support',
               '/*'
             ]}
