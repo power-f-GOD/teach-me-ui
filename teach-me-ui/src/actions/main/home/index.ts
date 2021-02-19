@@ -24,7 +24,8 @@ import {
   logError,
   http,
   displayModal,
-  promisedDispatch
+  promisedDispatch,
+  isAuthenticated
 } from '../../../functions';
 
 import { pingUser } from '../notifications';
@@ -79,7 +80,7 @@ export const fetchRepliesRequest = (postId?: string, offset?: number) => (
   });
 
   http
-    .get(`/post/${postId}/replies?limit=10&offset=${offset}`, true)
+    .get(`/post/${postId}/replies?limit=10&offset=${offset}`, isAuthenticated() ? true : false)
     .then((res) => {
       const { error, data } = res as {
         error: boolean;
@@ -123,7 +124,7 @@ export const fetchPostRequest = (postId?: string) => (dispatch: Function) => {
   });
 
   http
-    .get(`/post/${postId}`, true)
+    .get(`/post/${postId}`, isAuthenticated() ? true : false)
     .then((res) => {
       const { error, data } = res as {
         error: boolean;

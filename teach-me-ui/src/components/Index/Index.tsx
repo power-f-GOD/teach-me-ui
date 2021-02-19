@@ -12,6 +12,7 @@ import Footer from '../crumbs/Footer';
 import _404 from './_404';
 import Search from '../Main/Search';
 import Profile from '../Main/Profile';
+import Home from '../Main/Home';
 
 const Index = (props: any) => {
   React.useEffect(() => () => window.scrollTo(0, 0), []);
@@ -26,6 +27,7 @@ const Index = (props: any) => {
 
       <Box className='index-root-box'>
         <Switch>
+          <Route path='/p/:id' component={Home} />
           <Route path={['/', '/index']} exact component={Landing} />
           <Route path='/about' component={About} />
           <Route path='/support' component={Support} />
