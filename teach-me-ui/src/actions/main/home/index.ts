@@ -118,10 +118,10 @@ export const fetchPostRequest = (postId?: string) => (dispatch: Function) => {
   dispatch(fetchReplies({ status: 'pending', data: [] }));
   dispatch(fetchPost({ status: 'pending', data: postState }));
 
-  // checkNetworkStatusWhilstPend({
-  //   name: 'fetchPost',
-  //   func: fetchPost
-  // });
+  checkNetworkStatusWhilstPend({
+    name: 'fetchPost',
+    func: fetchPost
+  });
 
   http
     .get(`/post/${postId}`, isAuthenticated() ? true : false)
@@ -130,7 +130,6 @@ export const fetchPostRequest = (postId?: string) => (dispatch: Function) => {
         error: boolean;
         data: any;
       };
-      console.log(data)
       if (!error) {
         dispatch(
           fetchPost({
