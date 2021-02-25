@@ -16,7 +16,7 @@ import {
   http
 } from '../../functions';
 
-export const getNotifications = (date: number) => (
+export const getNotifications = (date?: number) => (
   dispatch: Function
 ): ReduxAction => {
   checkNetworkStatusWhilstPend({
@@ -41,7 +41,7 @@ export const getNotifications = (date: number) => (
                 entities
               }
             : {}
-        })
+        }, date ? true : false)
       );
     })
     .catch(logError(notifications));
@@ -52,7 +52,11 @@ export const getNotifications = (date: number) => (
   };
 };
 
-export const notifications = (payload: NotificationState) => {
+export const notifications = (payload: NotificationState, update?: boolean) => {
+  const { notifications:notificationsInState } = getState();
+  if (update) {
+    payload.data = {notifications: [...notificationsInState.data.notifications, ...payload.data?.notifications], entities: {...notificationsInState.data.entities, ...payload.data?.entities}}
+  }
   return {
     type: SET_NOTIFICATIONS,
     payload
@@ -75,7 +79,7 @@ export const setLastseen = () => {
   http
     .post('/notifications/seen', {}, true)
     .then(() => {
-      dispatch(getNotifications(Date.now())(dispatch));
+      dispatch(getNotifications()(dispatch));
     })
     .catch(logError(notifications));
 };

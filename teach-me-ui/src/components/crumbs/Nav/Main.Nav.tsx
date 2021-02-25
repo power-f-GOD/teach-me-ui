@@ -31,7 +31,7 @@ const MainNav = (props: MainNavProps) => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      dispatch(getNotifications(Date.now()));
+      dispatch(getNotifications());
     }
   }, [isAuthenticated]);
 
