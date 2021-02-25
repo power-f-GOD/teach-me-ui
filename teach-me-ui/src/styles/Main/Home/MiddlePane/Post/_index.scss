@@ -6,6 +6,10 @@
   border: 0.0625rem solid rgba(0, 0, 0, 0.175);
   padding-bottom: 0.25em;
 
+  .reply-loader {
+    width: 100%;
+  }
+
   .previus-reply-button {
     color: $theme-primary;
   }

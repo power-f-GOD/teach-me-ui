@@ -45,6 +45,6 @@ export default function notifications(_data: PingUserProps) {
         break;
     }
 
-    dispatch(getNotifications(Date.now())(dispatch));
+    dispatch(getNotifications()(dispatch));
   } catch (e) {}
 }
