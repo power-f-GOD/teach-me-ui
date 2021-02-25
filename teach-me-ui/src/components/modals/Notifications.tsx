@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 
 import Container from 'react-bootstrap/Container';
 
+import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import ListItem from '@material-ui/core/ListItem';
@@ -15,8 +16,11 @@ import ListItem from '@material-ui/core/ListItem';
 import {
   formatDate,
   formatNotification,
-  eraseLastHistoryStateOnClick
+  eraseLastHistoryStateOnClick,
+  dispatch
 } from '../../utils';
+import Loader from '../shared/Loaders'
+import { getNotifications } from '../../actions';
 import { displayModal } from '../../functions';
 
 const Notifications = (props: any) => {
@@ -29,9 +33,13 @@ const Notifications = (props: any) => {
     read = true;
   };
 
+  const fetchMoreNotifications = () => {
+    dispatch(getNotifications(result[result.length - 1].date));
+  }
+
   return (
     <Box className='dropdown-contents'>
-      {notifications.status === 'pending' ? (
+      {(notifications.status === 'pending' && !result[0]) ? (
         <Box className='first-skeleton notification-container mx-auto'>
           {Array(6)
             .fill('')
@@ -117,6 +125,19 @@ const Notifications = (props: any) => {
               })
             ) : (
               <ListItem> No notifications yet...</ListItem>
+            )}
+            {(result[0] && notifications.status === 'pending') ? (
+              <Loader
+                type='ellipsis'
+                inline={true}
+                color='#555'
+                size={6}
+                className='notification-loader'
+              />
+            ) : (
+              (notifications.statusText !== 'the end' && result[0]) && (
+                <Button onClick={fetchMoreNotifications} className='see-more-button'> See more </Button>
+              )
             )}
           </Box>
         </Container>

@@ -42,6 +42,15 @@
   border-radius: 0.5rem;
   margin: 0 !important;
 
+  .notification-loader {
+    width: 100%;
+  }
+
+  .see-more-button {
+    color: #0073a0;
+    width: 100%;
+  }
+
   &.hide {
     opacity: 0;
     visibility: hidden;

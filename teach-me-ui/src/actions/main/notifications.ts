@@ -29,7 +29,7 @@ export const getNotifications = (date?: number) => (
     .get<{
       notifications: Array<string>;
       entities: any;
-    }>(`/notifications?offset=${date}`, true)
+    }>(`/notifications?limit=10&offset=${date}`, true)
     .then(({ error: err, data: { notifications: notifs, entities } }) => {
       dispatch(
         notifications({
@@ -40,7 +40,8 @@ export const getNotifications = (date?: number) => (
                 notifications: notifs,
                 entities
               }
-            : {}
+            : {},
+          statusText: notifs.length < 10 ? 'the end' : undefined
         }, date ? true : false)
       );
     })
