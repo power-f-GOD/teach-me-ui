@@ -29,6 +29,7 @@ import {
 import PostBody from './Body';
 import PostHeader from './Header';
 import PostInfo from './Info';
+import Loader from '../../../../shared/Loaders';
 
 export interface PostCrumbs extends Partial<PostStateProps> {
   navigate?: Function;
@@ -55,6 +56,7 @@ const Post: React.FC<
     webSocket?: WebSocket;
     pageReplies?: any;
     replyStatusText?: string;
+    repliesStatus?: string;
   }
 > = (props) => {
   const {
@@ -389,9 +391,18 @@ const Post: React.FC<
           anchorIsParent={true}
           openCreateRepostModal={openCreateRepostModal}
         />
-
-        {(head && replyStatusText !== 'the end' && pageReplies[0]) && (
-          <Button onClick={fetchMoreReplies} className='ml-2 previus-reply-button'> View previous replies</Button>
+        {(head && props.repliesStatus === 'pending' && pageReplies[0]) ? (
+          <Loader
+            type='ellipsis'
+            inline={true}
+            color='#555'
+            size={6}
+            className='reply-loader'
+          />
+        ) : (
+          (head && replyStatusText !== 'the end' && pageReplies[0]) && (
+            <Button onClick={fetchMoreReplies} className='ml-2 previus-reply-button'> View previous replies</Button>
+          )
         )}
 
         {/* Post replies */}
