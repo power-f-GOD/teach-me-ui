@@ -2,11 +2,7 @@ import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import Index from './components/Index/Index';
-import Auth from './components/Auth/Auth';
-import Main from './components/Main';
-import Loader from './components/shared/Loaders';
-import SnackBar from './components/crumbs/SnackBar';
+import { Index, Auth, Main, Loader, SnackBar, Gallery } from './components';
 import ProtectedRoute from './ProtectedRoute';
 
 import { verifyAuth } from './actions';
@@ -97,6 +93,7 @@ const App = (props: any) => {
         </Switch>
       </BrowserRouter>
       <Memo memoizedComponent={SnackBar} />
+      <Gallery />
     </>
   );
 };

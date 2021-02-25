@@ -33,25 +33,31 @@ export const processWord = (word: string, i?: number) => {
         </Fragment>
       );
     }
-    case /^(https?:\/\/)?([a-z0-9_-]+\.[a-z0-9_-]+)[^]*[^.]$/.test(word): {
+    case /^(https?:\/\/)?([a-z0-9_-]+(\.|:)[a-z0-9_-]+)[^]*[^.]$/.test(word): {
       const { origin } = window.location;
+      const hasHttp = /https?:/.test(word);
+      const isSameOrigin = new RegExp(`^${origin}`, 'i').test(
+        hasHttp ? word : `https://${word}`
+      );
 
       return (
         <Fragment key={i}>
           {' '}
-          <a
-            href={
-              /https?:/.test(word)
-                ? new RegExp(`^${origin}`, 'i').test(word)
-                  ? word.replace(origin, '')
-                  : word
-                : `https://${word}`
-            }
-            target='_blank'
-            rel='noopener noreferrer'
-            onClick={(e) => e.stopPropagation()}>
-            {word}
-          </a>
+          {isSameOrigin ? (
+            <Link
+              to={(hasHttp ? word : `https://${word}`).replace(origin, '')}
+              onClick={(e) => e.stopPropagation()}>
+              {word}
+            </Link>
+          ) : (
+            <a
+              href={hasHttp ? word : `https://${word}`}
+              target='_blank'
+              rel='noopener noreferrer'
+              onClick={(e) => e.stopPropagation()}>
+              {word}
+            </a>
+          )}
         </Fragment>
       );
     }
@@ -102,7 +108,7 @@ export const processText = (text: string): any[] => {
     const atLastLine = i === indexOfLast;
 
     if (
-      !/(@|#|(https?:\/\/)?[a-z0-9_]+\.[a-z0-9_]|\*|_|`(``)?)[a-z0-9_]/i.test(
+      !/(@|#|(https?:\/\/)?[a-z0-9_]+(\.|:)[a-z0-9_]|\*|_|`(``)?)[a-z0-9_]/i.test(
         line
       )
     ) {

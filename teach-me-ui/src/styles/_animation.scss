@@ -14,7 +14,7 @@
 }
 
 .fade-in-opacity {
-  animation: fadeInOpacity 0.6s;
+  animation: fadeInOpacity 0.5s;
 }
 
 @keyframes fadeInOpacity {
@@ -42,7 +42,7 @@
 }
 
 .fade-out {
-  animation: fadeOut 0.3s ease;
+  animation: fadeOut 0.35s;
 }
 
 @keyframes fadeOut {
@@ -67,11 +67,7 @@
   }
 }
 
-.slide-in-right {
-  animation: slideInRight 1s ease;
-}
-
-@keyframes slideInRight {
+@keyframes slideInRightScale {
   from {
     opacity: 0;
     transform: translateX(200%) scale(2);
@@ -82,8 +78,21 @@
   }
 }
 
+.slide-in-right {
+  animation: slideInRight 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
 .slide-in-left {
-  animation: slideInLeft 1s ease;
+  animation: slideInLeft 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 @keyframes slideInLeft {
@@ -120,7 +129,7 @@
 }
 
 .slide-in-top {
-  animation: slideInTop 0.35s;
+  animation: slideInTop 0.45s;
 }
 
 @keyframes slideInTop {
@@ -134,14 +143,16 @@
   }
 }
 
+.slide-in-bottom {
+  animation: slideInBottom 0.45s;
+}
+
 @keyframes slideInBottom {
   from {
     transform: translateY(100%);
-    opacity: 0;
   }
   to {
     transform: translateY(0);
-    opacity: 1;
   }
 }
 

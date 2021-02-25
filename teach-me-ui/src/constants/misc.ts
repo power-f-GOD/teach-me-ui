@@ -19,6 +19,8 @@ export const wsBaseURL = `ws://${useLiveUrl || true ? live : local}/api/v1`;
 
 export const DISPLAY_SNACK_BAR = 'DISPLAY_SNACK_BAR';
 
+export const DISPLAY_GALLERY = 'DISPLAY_GALLERY';
+
 export const POPULATE_STATE_WITH_USER_DATA = 'POPULATE_STATE_WITH_USER_DATA';
 
 export const INIT_WEB_SOCKET = 'INIT_WEB_SOCKET';
