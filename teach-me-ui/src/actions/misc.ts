@@ -14,17 +14,21 @@ import {
   TONE_TYPE__GENERAL,
   TONE_TYPE__OUTGOING_MESSAGE,
   TONE_NAME__ALL_EYES_ON_ME,
-  SET_WINDOW_WIDTH
+  SET_WINDOW_WIDTH,
+  DISPLAY_GALLERY
 } from '../constants';
 import {
   NotificationSoundState,
   ReduxAction,
   SnackbarState,
   UserData,
-  ReduxActionV2
+  ReduxActionV2,
+  GalleryProps,
+  MediaDataProp
 } from '../types';
 import { getState } from '../utils';
 import { dispatch } from '../appStore';
+import { ReactImageGalleryItem } from 'react-image-gallery';
 
 export const triggerNotificationSound = (_payload: NotificationSoundState) => {
   const { isReady } = getState().notificationSound as NotificationSoundState;
@@ -59,6 +63,27 @@ export const triggerNotificationSound = (_payload: NotificationSoundState) => {
 export const displaySnackbar = (payload: SnackbarState): ReduxAction => {
   return {
     type: DISPLAY_SNACK_BAR,
+    payload
+  };
+};
+
+export const displayGallery = (
+  payload: GalleryProps
+): ReduxActionV2<GalleryProps> => {
+  const media = (payload.data as any[])
+    ?.map((_medium) => {
+      const medium = JSON.parse(_medium) as MediaDataProp;
+
+      return (medium.type === 'image'
+        ? { original: medium.url, thumbnail: medium.url }
+        : null) as ReactImageGalleryItem;
+    })
+    .filter((medium) => medium);
+
+  payload.data = media;
+
+  return {
+    type: DISPLAY_GALLERY,
     payload
   };
 };

@@ -174,7 +174,7 @@ export const requestCreatePost = ({
     func: makePost
   });
 
-  http
+  http 
     .post<PostStateProps>(
       '/post/make',
       {

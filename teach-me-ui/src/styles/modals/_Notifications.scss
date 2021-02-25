@@ -66,13 +66,7 @@
   }
 }
 
-@media only screen and (max-width: 480px) {
-  .notification-avatar {
-    display: block;
-    width: 3.4rem !important;
-    height: 3.5rem !important;
-  }
-
+@media only screen and (max-width: 575px) {
   .dropdown-contents {
     width: 100%;
   }

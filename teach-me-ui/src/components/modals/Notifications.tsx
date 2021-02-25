@@ -19,7 +19,7 @@ import {
   eraseLastHistoryStateOnClick,
   dispatch
 } from '../../utils';
-import Loader from '../shared/Loaders'
+import Loader from '../shared/Loaders';
 import { getNotifications } from '../../actions';
 import { displayModal } from '../../functions';
 
@@ -35,11 +35,11 @@ const Notifications = (props: any) => {
 
   const fetchMoreNotifications = () => {
     dispatch(getNotifications(result[result.length - 1].date));
-  }
+  };
 
   return (
     <Box className='dropdown-contents'>
-      {(notifications.status === 'pending' && !result[0]) ? (
+      {notifications.status === 'pending' && !result[0] ? (
         <Box className='first-skeleton notification-container mx-auto'>
           {Array(6)
             .fill('')
@@ -73,7 +73,6 @@ const Notifications = (props: any) => {
           <Box className='notification-container mx-auto'>
             {result[0] ? (
               result.map((notification: any, key: number) => {
-                notification.seen && makeReadTrue();
                 const action = notification.action || '';
                 const date = new Date(notification.date);
                 const notificationDate = formatDate(date);
@@ -85,6 +84,11 @@ const Notifications = (props: any) => {
                         ? 'read-notifications-date'
                         : 'unread-notifications-date'
                     }">${notificationDate}</p></div>`;
+
+                if (notification.seen) {
+                  makeReadTrue();
+                }
+
                 return (
                   <ListItem
                     key={key}
@@ -107,9 +111,12 @@ const Notifications = (props: any) => {
                           component='span'
                           className='notification-avatar'
                           src={
-                            notification.profile_photo
-                              ? notification.profile_photo
-                              : '/images/avatar-1.png'
+                            entities[
+                              notification.message?.replace(
+                                /.*{{(\w+)}}.*/,
+                                '$1'
+                              )
+                            ]?.profile_photo
                           }
                         />
 
@@ -126,7 +133,7 @@ const Notifications = (props: any) => {
             ) : (
               <ListItem> No notifications yet...</ListItem>
             )}
-            {(result[0] && notifications.status === 'pending') ? (
+            {result[0] && notifications.status === 'pending' ? (
               <Loader
                 type='ellipsis'
                 inline={true}
@@ -135,8 +142,14 @@ const Notifications = (props: any) => {
                 className='notification-loader'
               />
             ) : (
-              (notifications.statusText !== 'the end' && result[0]) && (
-                <Button onClick={fetchMoreNotifications} className='see-more-button'> See more </Button>
+              notifications.statusText !== 'the end' &&
+              result[0] && (
+                <Button
+                  onClick={fetchMoreNotifications}
+                  className='see-more-button'>
+                  {' '}
+                  See more{' '}
+                </Button>
               )
             )}
           </Box>

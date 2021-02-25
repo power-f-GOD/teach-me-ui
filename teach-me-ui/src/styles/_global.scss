@@ -181,9 +181,9 @@ h6 {
   }
 }
 
-path {
-  stroke-width: 0.0625rem !important;
-}
+// path {
+//   stroke-width: 0.0625rem !important;
+// }
 
 hr {
   margin: 1.25rem 0;
@@ -217,7 +217,7 @@ button {
 button,
 a {
   text-transform: unset !important;
-  border-radius: 0.5rem;
+  border-radius: $br;
 
   &[class*='outlined'] {
     display: inline-flex;

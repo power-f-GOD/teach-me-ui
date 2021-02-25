@@ -15,7 +15,7 @@ export const getPosts = (update = false, statusText?: string, url?: string) => (
     posts: FetchState<PostStateProps[]>;
   };
   const isFetching = /fetching/i.test(statusText || '');
-  const limit = isFetching ? 8 : 4;
+  const limit = isFetching ? 5 : 10;
   const offset = _posts.data?.length && update ? _posts.extra : Date.now();
 
   dispatch(
