@@ -4,7 +4,6 @@ import Skeleton from 'react-loading-skeleton';
 import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 
-import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -14,7 +13,7 @@ import Badge from '@material-ui/core/Badge';
 import { SELECT_PHOTO } from '../../../constants';
 import { UserData } from '../../../types';
 import { displayModal, formatMapDateString } from '../../../functions';
-import { FAIcon, Img } from '../../shared';
+import { FAIcon, Img, KAvatar } from '../../shared';
 
 const ProfileHeader = (props: {
   data: UserData;
@@ -70,16 +69,10 @@ const ProfileHeader = (props: {
             className={online_status?.toLowerCase() ?? 'offline'}
             overlap='circle'
             variant='dot'>
-            <Avatar
-              component='span'
+            <KAvatar
               className='profile-avatar profile-photo'
               alt={displayName}
               src={profile_photo}
-              imgProps={{
-                'aria-hidden': true,
-                onLoad: (e: React.SyntheticEvent<HTMLImageElement, Event>) =>
-                  ((e.target as any).ariaHidden = false)
-              }}
             />
           </Badge>
 
@@ -94,7 +87,7 @@ const ProfileHeader = (props: {
           )}
         </Box>
 
-        <Col className='px-2 px-sm-4 pt-1'>
+        <Col className='px-2 px-sm-4 pt-1 pointer-events-none'>
           <Col as='h1' className='display-name p-0 my-0 d-inline-flex'>
             {displayName || (
               <>

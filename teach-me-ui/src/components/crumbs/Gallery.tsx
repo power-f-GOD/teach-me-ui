@@ -15,7 +15,7 @@ import { displayGallery } from '../../actions';
 
 const Gallery = (props: { gallery: GalleryProps; windowWidth: number }) => {
   const {
-    gallery: { open, data, startIndex },
+    gallery: { open, data, startIndex, hasExtra },
     windowWidth
   } = props;
   const [willClose, setWillClose] = useState(false);
@@ -38,8 +38,8 @@ const Gallery = (props: { gallery: GalleryProps; windowWidth: number }) => {
     <MuiModal
       aria-labelledby='spring-modal-title'
       aria-describedby='spring-modal-description'
-      className={`Gallery fade-in-opacity ${
-        willClose ? 'fade-out' : ''
+      className={`Gallery fade-in-opacity ${willClose ? 'fade-out' : ''} ${
+        hasExtra ? 'has-extra' : ''
       } d-flex justify-content-center align-content-center`}
       open={open || false}
       onClose={handleClose}
@@ -62,10 +62,10 @@ const Gallery = (props: { gallery: GalleryProps; windowWidth: number }) => {
           <ImageGallery
             items={(data ?? []) as ReactImageGalleryItem[]}
             showPlayButton={false}
-            showIndex={true}
+            showIndex={hasExtra}
             startIndex={startIndex || 0}
             additionalClass={
-              windowWidth < 768 ? 'slide-in-top' : 'slide-in-left'
+              windowWidth < 768 || !hasExtra ? 'fade-in' : 'slide-in-left'
             }
             onClick={(e) => {
               if (!/A|BUTTON|IMG/.test((e as any).target.tagName)) {
@@ -73,17 +73,19 @@ const Gallery = (props: { gallery: GalleryProps; windowWidth: number }) => {
               }
             }}
           />
-          <Container
-            as='aside'
-            className={`${
-              windowWidth < 768 ? 'slide-in-bottom' : 'slide-in-right'
-            } p-3`}>
-            Post or Extra
-            <br />
-            <br /> contents <br />
-            <br /> goes <br />
-            <br /> here
-          </Container>
+          {hasExtra && (
+            <Container
+              as='aside'
+              className={`${
+                windowWidth < 768 ? 'slide-in-bottom' : 'slide-in-right'
+              } p-3`}>
+              Post or Extra
+              <br />
+              <br /> contents <br />
+              <br /> goes <br />
+              <br /> here
+            </Container>
+          )}
         </Container>
       </div>
     </MuiModal>

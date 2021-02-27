@@ -7,13 +7,7 @@ import { dispatch } from '../../../../../appStore';
 import { displayGallery } from '../../../../../actions';
 import { MediaDataProp } from '../../../../../types';
 
-const Media = ({
-  media,
-  showModal
-}: {
-  media?: string[];
-  showModal?(e: React.MouseEvent<HTMLImageElement, MouseEvent>): void;
-}) => {
+const Media = ({ media }: { media?: string[] }) => {
   return (media?.length || 0) > 0 ? (
     <Box
       className='media-container'

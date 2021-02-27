@@ -5,11 +5,11 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import Box from '@material-ui/core/Box';
-import Avatar from '@material-ui/core/Avatar';
 
 import Skeleton from 'react-loading-skeleton';
 
 import { formatDate } from '../../../../../utils';
+import { KAvatar } from '../../../../shared';
 
 interface PostHeaderProps {
   isLoading: boolean;
@@ -30,7 +30,7 @@ const PostHeader = (props: PostHeaderProps) => {
 
   return (
     <Row className='post-header'>
-      <Avatar
+      <KAvatar
         className='post-avatar align-self-center mr-1'
         alt={sender_name}
         src={profile_photo ? profile_photo : ''}

@@ -6,7 +6,6 @@ import { useHistory } from 'react-router-dom';
 
 import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Collapse from '@material-ui/core/Collapse';
 
@@ -20,6 +19,7 @@ import {
   ColleagueProps
 } from '../../../../types';
 import { cleanUp } from '../../../../functions';
+import { KAvatar } from '../../../shared';
 // import { fetchColleagueRequests, fetchColleagues } from '../../../../actions';
 
 export default () => {
@@ -112,8 +112,7 @@ const Colleague: FunctionComponent<{
   return (
     <Collapse in={!collapsed}>
       <div className={`d-flex p-3 ${removed ? 'removed-request' : ''}`}>
-        <Avatar
-          component='span'
+        <KAvatar
           className='chat-avatar request-avatar mr-2'
           alt={colleague.firstname}
           src={
@@ -203,7 +202,7 @@ const Request: FunctionComponent<{
   return (
     <Collapse in={!collapsed}>
       <div className={`d-flex p-3 ${removed ? 'removed-request' : ''}`}>
-        <Avatar
+        <KAvatar
           component='span'
           className='chat-avatar request-avatar mr-2'
           alt={request.sender.firstname}

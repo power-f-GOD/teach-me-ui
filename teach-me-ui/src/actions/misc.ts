@@ -72,7 +72,9 @@ export const displayGallery = (
 ): ReduxActionV2<GalleryProps> => {
   const media = (payload.data as any[])
     ?.map((_medium) => {
-      const medium = JSON.parse(_medium) as MediaDataProp;
+      const medium = (typeof _medium === 'string'
+        ? JSON.parse(_medium)
+        : { ..._medium }) as MediaDataProp;
 
       return (medium.type === 'image'
         ? { original: medium.url, thumbnail: medium.url }

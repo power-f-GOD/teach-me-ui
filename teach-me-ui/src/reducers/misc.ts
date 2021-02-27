@@ -40,10 +40,12 @@ export const snackbar = (
 export const gallery = (
   state: GalleryProps = { open: false, data: [] },
   action: ReduxActionV2<GalleryProps>
-): SnackbarState => {
-  return action.type === DISPLAY_GALLERY
-    ? { ...state, ...action.payload }
-    : state;
+): GalleryProps => {
+  if (action.type === DISPLAY_GALLERY) {
+    return { ...state, hasExtra: true, ...action.payload };
+  }
+
+  return state;
 };
 
 export const displayName = (state: string = 'User', action: ReduxAction) => {

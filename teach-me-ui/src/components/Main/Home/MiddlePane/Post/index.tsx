@@ -1,23 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import Container from 'react-bootstrap/Container';
 
-import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import Modal from '@material-ui/core/Modal';
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
-
-import ArrowBack from '@material-ui/icons/ArrowBackIos';
-import ArrowForward from '@material-ui/icons/ArrowForwardIos';
 
 import { dispatch, loopThru, createObserver } from '../../../../../utils';
 import { PostStateProps, LoopFind, AuthState } from '../../../../../types';
 
 import { displayModal } from '../../../../../functions';
 import { fetchRepliesRequest } from '../../../../../actions';
-
-import { LazyLoadImage as LazyImg } from 'react-lazy-load-image-component';
 
 import PostFooter from './Footer';
 import PostReply from './Reply';
@@ -97,28 +88,7 @@ const Post: React.FC<
   let numRepliesToShow = _numRepliesToShow ?? 2;
   let mostRecentColleagueReplyIndex: number | null = null;
 
-  const [mediaPreview, setMediaPreview] = useState(false);
-  const [selectedMedia, setSelectedMedia] = useState(0);
-
   let extra: string | null = '';
-
-  const removeModal = (e: any) => {
-    setMediaPreview(false);
-  };
-
-  const prev = () => {
-    const newIndex = selectedMedia - 1;
-    setSelectedMedia(newIndex < 0 ? 0 : newIndex);
-  };
-
-  const next = () => {
-    const newIndex = selectedMedia + 1;
-    setSelectedMedia(
-      newIndex > (media as any[]).length - 1
-        ? (media as any[]).length - 1
-        : newIndex
-    );
-  };
 
   useEffect(() => {
     if (head && id) {
@@ -260,159 +230,105 @@ const Post: React.FC<
   }
 
   const fetchMoreReplies = () => {
-    dispatch(fetchRepliesRequest(id, pageReplies[0].date))
-  }
+    dispatch(fetchRepliesRequest(id, pageReplies[0].date));
+  };
 
   const renderPostPageReplies = () => {
     const finalReplies = [...pageReplies, ...replies];
-    return finalReplies!.map((reply: any) => <PostReply {...reply} key={reply.id} />)
-  }
+    return finalReplies!.map((reply: any) => (
+      <PostReply {...reply} key={reply.id} />
+    ));
+  };
 
   return (
-    <>
-      <Modal
-        onClose={removeModal}
-        className='modal-wrapper'
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between'
-        }}
-        open={mediaPreview}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 300,
-          style: {
-            background: 'rgba(0,0,0,0.7)'
-          }
-        }}>
-        <>
-          <div onClick={prev}>
-            <Box
-              component='button'
-              className='carousel-btn'
-              height='30px'
-              width='30px'
-              border='none'
-              borderRadius='50%'>
-              <ArrowBack />
-            </Box>
-          </div>
-          {media && media.length && (
-            <Fade in={true}>
-              <LazyImg
-                src={
-                  JSON.parse((media as any[])[selectedMedia]).type === 'raw'
-                    ? '/images/file-icon.svg'
-                    : JSON.parse((media as any[])[selectedMedia]).url
-                }
-                alt='post'
-                style={{
-                  maxHeight: '70vh',
-                  maxWidth: '70vh'
-                }}
-              />
-            </Fade>
-          )}
-          <div onClick={next}>
-            <Box
-              component='button'
-              className='carousel-btn'
-              height='30px'
-              width='30px'
-              border='none'
-              borderRadius='50%'>
-              <ArrowForward />
-            </Box>
-          </div>
-        </>
-      </Modal>
+    <Container
+      id={id}
+      className={`Post ${postsErred ? 'remove-skeleton-animation' : ''} ${
+        colleague_replies?.length ? 'has-replies' : ''
+      } ${media?.length ? 'has-media' : ''} ${
+        parent ? 'has-quote' : colleague_reposts?.length ? 'has-quotes' : ''
+      } mx-0 px-0`}
+      ref={postElementRef}>
+      {extra && !head && (
+        <small
+          className='extra'
+          dangerouslySetInnerHTML={{ __html: extra }}></small>
+      )}
 
-      {/* Post */}
-      <Container
+      {/* Post header */}
+      <PostHeader
+        isLoading={!sender_name}
+        sender_name={sender_name}
+        sender_username={sender_username}
+        profile_photo={profile_photo}
+        posted_at={date}
+      />
+
+      {/* Post body */}
+      <PostBody
+        head={!!props.head}
+        isLoading={!sender_name}
+        parent={parent}
+        post_id={id!}
+        text={text!}
+        index={index}
+        reposts={colleague_reposts}
+        media={media}
+      />
+
+      {/* Post info */}
+      <PostInfo
+        isLoading={!reaction}
+        reactions={reactions}
+        reaction={reaction!}
+        reaction_count={(upvote_count ?? 0) + (downvote_count ?? 0)}
+        reply_count={reply_count}
+        sender={sender}
+        userId={userId}
+      />
+
+      {/* Post footer (reaction buttons) */}
+      <PostFooter
+        isLoading={!reaction}
         id={id}
-        className={`Post ${postsErred ? 'remove-skeleton-animation' : ''} ${
-          colleague_replies?.length ? 'has-replies' : ''
-        } ${media?.length ? 'has-media' : ''} ${
-          parent ? 'has-quote' : colleague_reposts?.length ? 'has-quotes' : ''
-        } mx-0 px-0`}
-        ref={postElementRef}>
-        {extra && !head && (
-          <small
-            className='extra'
-            dangerouslySetInnerHTML={{ __html: extra }}></small>
-        )}
-
-        {/* Post header */}
-        <PostHeader
-          isLoading={!sender_name}
-          sender_name={sender_name}
-          sender_username={sender_username}
-          profile_photo={profile_photo}
-          posted_at={date}
+        text={text}
+        upvote_count={upvote_count}
+        downvote_count={downvote_count}
+        reaction={reaction}
+        repost_count={repost_count}
+        reply_count={reply_count}
+        repostMeta={others}
+        anchorIsParent={true}
+        openCreateRepostModal={openCreateRepostModal}
+      />
+      {head && props.repliesStatus === 'pending' && pageReplies[0] ? (
+        <Loader
+          type='ellipsis'
+          inline={true}
+          color='#555'
+          size={6}
+          className='reply-loader'
         />
+      ) : (
+        head &&
+        replyStatusText !== 'the end' &&
+        pageReplies[0] && (
+          <Button
+            onClick={fetchMoreReplies}
+            className='ml-2 previus-reply-button'>
+            {' '}
+            View previous replies
+          </Button>
+        )
+      )}
 
-        {/* Post body */}
-        <PostBody
-          head={!!props.head}
-          isLoading={!sender_name}
-          parent={parent}
-          post_id={id!}
-          text={text!}
-          index={index}
-          reposts={colleague_reposts}
-          media={media}
-          setMediaPreview={setMediaPreview}
-          setSelectedMedia={setSelectedMedia}
-        />
-
-        {/* Post info */}
-        <PostInfo
-          isLoading={!reaction}
-          reactions={reactions}
-          reaction={reaction!}
-          reaction_count={(upvote_count ?? 0) + (downvote_count ?? 0)}
-          reply_count={reply_count}
-          sender={sender}
-          userId={userId}
-        />
-
-        {/* Post footer (reaction buttons) */}
-        <PostFooter
-          isLoading={!reaction}
-          id={id}
-          text={text}
-          upvote_count={upvote_count}
-          downvote_count={downvote_count}
-          reaction={reaction}
-          repost_count={repost_count}
-          reply_count={reply_count}
-          repostMeta={others}
-          anchorIsParent={true}
-          openCreateRepostModal={openCreateRepostModal}
-        />
-        {(head && props.repliesStatus === 'pending' && pageReplies[0]) ? (
-          <Loader
-            type='ellipsis'
-            inline={true}
-            color='#555'
-            size={6}
-            className='reply-loader'
-          />
-        ) : (
-          (head && replyStatusText !== 'the end' && pageReplies[0]) && (
-            <Button onClick={fetchMoreReplies} className='ml-2 previus-reply-button'> View previous replies</Button>
-          )
-        )}
-
-        {/* Post replies */}
-        {head
-          ? renderPostPageReplies()
-          : colleague_replies
-              ?.slice(-numRepliesToShow)
-              .map((reply) => <PostReply {...reply} key={reply.id} />)}
-      </Container>
-    </>
+      {/* Post replies */}
+      {head
+        ? renderPostPageReplies()
+        : colleague_replies
+            ?.slice(-numRepliesToShow)
+            .map((reply) => <PostReply {...reply} key={reply.id} />)}
+    </Container>
   );
 };
 
