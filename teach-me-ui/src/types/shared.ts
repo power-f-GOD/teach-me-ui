@@ -18,8 +18,9 @@ export interface MediaDataProp {
 
 export interface GalleryProps {
   open?: boolean;
-  data?: ReactImageGalleryItem[] | string[];
+  data?: ReactImageGalleryItem[] | string[] | any[];
   startIndex?: number;
+  hasExtra?: boolean;
 }
 
 export interface InfoCardProps {

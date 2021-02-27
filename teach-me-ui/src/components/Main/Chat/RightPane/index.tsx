@@ -5,7 +5,6 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import Box from '@material-ui/core/Box';
-import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
@@ -14,6 +13,7 @@ import { APIConversationResponse } from '../../../../types';
 import { InfoCard } from '../../../shared/Card';
 import { FAIcon } from '../../../shared/Icons';
 import { useHistory } from 'react-router-dom';
+import { KAvatar } from '../../../shared';
 
 interface ChatRightPaneProps {
   convoType: string;
@@ -72,11 +72,10 @@ const ChatRightPane = (props: ChatRightPaneProps) => {
           className='chat-user-info-container custom-scroll-bar grey-scrollbar p-3 debugger'>
           <Row as='section' className='m-0 flex-column mb-5'>
             <Col className='p-0 text-center'>
-              <Avatar
-                component='span'
+              <KAvatar
                 className='chat-avatar d-inline-block'
                 alt={convoDisplayName}
-                src={convoProfilePhoto || ''}
+                src={convoProfilePhoto}
               />
             </Col>
             <Col className='p-0 text-center'>

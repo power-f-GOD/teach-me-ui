@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 
 import Row from 'react-bootstrap/Row';
 import IconButton from '@material-ui/core/IconButton';
-import Avatar from '@material-ui/core/Avatar';
 import TextField from '@material-ui/core/TextField';
 
 import { UserData } from '../../../../../types';
@@ -21,7 +20,7 @@ import {
   emitUserOnlineStatus
 } from '../../../../../functions';
 import { pingUser } from '../../../../../actions';
-import { FAIcon } from '../../../../shared/Icons';
+import { FAIcon, KAvatar } from '../../../../shared';
 
 interface CreateReplyProps {
   post_id: string;
@@ -135,7 +134,7 @@ const CreateReply = (props: CreateReplyProps) => {
       className={`Comment ${className}`}
       ref={commentFormRef}>
       <Row className='comment-container' ref={commentContainerRef}>
-        <Avatar
+        <KAvatar
           className='comment-avatar'
           component='span'
           alt={displayName}

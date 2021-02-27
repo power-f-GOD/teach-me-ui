@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Avatar from '@material-ui/core/Avatar';
 import CreateIcon from '@material-ui/icons/Create';
 // import LocationOnIcon from '@material-ui/icons/LocationOn';
 import SchoolIcon from '@material-ui/icons/School';
@@ -17,6 +16,7 @@ import Col from 'react-bootstrap/Col';
 import Box from '@material-ui/core/Box';
 
 import { UserData } from '../../../../types';
+import { KAvatar } from '../../../shared';
 
 interface LeftPaneProps {
   userData: UserData;
@@ -44,8 +44,7 @@ const HomeLeftPane = (props: LeftPaneProps) => {
             className='cover-photo'
             style={{ backgroundImage: `url(${cover_photo})` }}
           />
-          <Avatar
-            component='span'
+          <KAvatar
             className={`avatar ${profile_photo ? 'has-photo' : ''}`}
             alt={displayName}
             src={profile_photo ? profile_photo : ''}

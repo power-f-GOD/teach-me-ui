@@ -1,15 +1,11 @@
 import React from 'react';
-
 import Skeleton from 'react-loading-skeleton';
-
 import { connect } from 'react-redux';
-
 import { Link } from 'react-router-dom';
 
 import Container from 'react-bootstrap/Container';
 
 import Button from '@material-ui/core/Button';
-import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import ListItem from '@material-ui/core/ListItem';
 
@@ -19,9 +15,9 @@ import {
   eraseLastHistoryStateOnClick,
   dispatch
 } from '../../utils';
-import Loader from '../shared/Loaders';
 import { getNotifications } from '../../actions';
 import { displayModal } from '../../functions';
+import { KAvatar, Loader } from '../shared';
 
 const Notifications = (props: any) => {
   const { notifications } = props;
@@ -107,8 +103,7 @@ const Notifications = (props: any) => {
                       }}>
                       {' '}
                       <div className='d-flex color-black'>
-                        <Avatar
-                          component='span'
+                        <KAvatar
                           className='notification-avatar'
                           src={
                             entities[

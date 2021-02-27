@@ -4,20 +4,18 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import Box from '@material-ui/core/Box';
-import { Avatar } from '@material-ui/core';
 
 import { formatDate, processText } from '../../../../../utils';
 import { PostStateProps } from '../../../../../types';
 import Media from './Media';
+import { KAvatar } from '../../../../shared';
 
 const QuotedPost = (
   props: Partial<PostStateProps> & {
     navigate: Function;
-    showModal(e: React.MouseEvent<HTMLImageElement, MouseEvent>): void;
   }
 ) => {
-  const { id, sender, date: posted_at, text, media, navigate, showModal } =
-    props || {};
+  const { id, sender, date: posted_at, text, media, navigate } = props || {};
   const { first_name, last_name, profile_photo, username } = sender || {};
   const sender_name = `${first_name} ${last_name}`;
 
@@ -27,8 +25,7 @@ const QuotedPost = (
       data-id={id}
       onClick={!props.head ? navigate(id as string) : undefined}>
       <Row className='mx-0 align-items-center my-2 px-2'>
-        <Avatar
-          component='span'
+        <KAvatar
           className='post-avatar'
           alt={sender_name}
           src={profile_photo ? profile_photo : ''}
@@ -60,7 +57,7 @@ const QuotedPost = (
             {processText(text as string)}
           </Box>
         )}
-        <Media media={media} showModal={showModal} />
+        <Media media={media} />
       </Row>
     </Box>
   );
