@@ -8,7 +8,7 @@ import Post from './MiddlePane/Post';
 
 import { connect } from 'react-redux';
 
-import { fetchPostRequest } from '../../../actions';
+import { fetchPostRequest, fetchReplies } from '../../../actions';
 
 import { Redirect } from 'react-router-dom';
 
@@ -21,7 +21,12 @@ const PostPage = (props: {
   fetchPost: any;
   fetchReplies: any;
 }) => {
-  const { match, fetchPost, fetchReplies, location } = props;
+  const { match, fetchPost, fetchReplies: fetchRepliesProps, location } = props;
+
+  useEffect(() => {
+    dispatch(fetchReplies({ data: []}));
+  }, [match.params.id]);
+
   // const { status: postsStatus } = posts;
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -42,7 +47,12 @@ const PostPage = (props: {
   return (
     <>
       <Container className='p-0 fade-in'>
-        <Post head {...{ ...fetchPost.data, repliesStatus: fetchReplies.status, pageReplies: fetchReplies.data, replyStatusText: fetchReplies.statusText }} />
+        <Post head {...{ ...fetchPost.data, 
+          repliesStatus: fetchRepliesProps.status, 
+          pageReplies: fetchRepliesProps.data, 
+          replyStatusText: fetchRepliesProps.statusText ,
+          postStatus: fetchPost.status
+        }} />
       </Container>
     </>
   );
