@@ -4,10 +4,9 @@ import Skeleton from 'react-loading-skeleton';
 
 import Col from 'react-bootstrap/Col';
 
-import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 
-import { FAIcon } from './';
+import { FAIcon, KAvatar } from './';
 import { UserData } from '../../types';
 
 const User = (props: Partial<UserData> & { linkify?: boolean }) => {
@@ -31,16 +30,10 @@ const User = (props: Partial<UserData> & { linkify?: boolean }) => {
         className={online_status?.toLowerCase() ?? 'offline'}
         overlap='circle'
         variant='dot'>
-        <Avatar
-          component='span'
+        <KAvatar
           className='profile-photo'
           alt={displayName}
           src={profile_photo}
-          imgProps={{
-            'aria-hidden': true,
-            onLoad: (e: React.SyntheticEvent<HTMLImageElement, Event>) =>
-              ((e.target as any).ariaHidden = false)
-          }}
         />
       </Badge>
 

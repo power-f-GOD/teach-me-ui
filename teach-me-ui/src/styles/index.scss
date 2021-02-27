@@ -1,3 +1,5 @@
+@import 'node_modules/react-image-gallery/styles/scss/image-gallery.scss';
+
 @import 'global';
 @import 'animation';
 
@@ -30,7 +32,6 @@
 
 @import 'Main/Home/responsive';
 @import 'Main/Home/MiddlePane/Post/responsive';
-
 
 @import 'Main/Profile/index';
 @import 'Main/Profile/Header';

@@ -1,6 +1,5 @@
 import React, { useState, MouseEvent } from 'react';
 
-import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 
@@ -19,6 +18,7 @@ import { makeRepostRequest } from '../../actions';
 import QuotedPost from '../Main/Home/MiddlePane/Post/QuotedPost';
 
 import { POST_REPOST } from '../../constants';
+import { KAvatar } from '../shared';
 
 const MakeRePost: React.FC<any> = (props) => {
   const { userData } = props;
@@ -59,8 +59,7 @@ const MakeRePost: React.FC<any> = (props) => {
     <Box className='repost' p={1} pt={0}>
       <Row className='container-fluid p-0 mx-auto mb-2'>
         <Box pr={1}>
-          <Avatar
-            component='span'
+          <KAvatar
             className='chat-avatar compose-avatar'
             alt={userData.displayName}
             src={userData.profile_photo ? userData.profile_photo : ''}

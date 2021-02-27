@@ -7,14 +7,16 @@ import {
   INIT_WEB_SOCKET,
   notificationSoundState,
   TRIGGER_NOTIFICATION_SOUND,
-  SET_WINDOW_WIDTH
+  SET_WINDOW_WIDTH,
+  DISPLAY_GALLERY
 } from '../constants';
 import {
   ReduxAction,
   UserData,
   SnackbarState,
   NotificationSoundState,
-  ReduxActionV2
+  ReduxActionV2,
+  GalleryProps
 } from '../types';
 
 export const notificationSound = (
@@ -33,6 +35,17 @@ export const snackbar = (
   return action.type === DISPLAY_SNACK_BAR
     ? { ...state, autoHide: false, timeout: undefined, ...action.payload }
     : state;
+};
+
+export const gallery = (
+  state: GalleryProps = { open: false, data: [] },
+  action: ReduxActionV2<GalleryProps>
+): GalleryProps => {
+  if (action.type === DISPLAY_GALLERY) {
+    return { ...state, hasExtra: true, ...action.payload };
+  }
+
+  return state;
 };
 
 export const displayName = (state: string = 'User', action: ReduxAction) => {

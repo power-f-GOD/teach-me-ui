@@ -3,10 +3,10 @@ import React from 'react';
 import Row from 'react-bootstrap/Row';
 
 import Container from '@material-ui/core/Container';
-import Avatar from '@material-ui/core/Avatar';
 import CheckIcon from '@material-ui/icons/Check';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import { KAvatar } from '../../../shared';
 
 const Answer = ({ answer }: any) => {
   return (
@@ -39,7 +39,7 @@ const Answer = ({ answer }: any) => {
             <Container className='p-0 m-0'>
               <Container component='div' className='pb-2 px-0 mt-2 user-details'>
                 <Container component='div' className='pb-2 px-0 mt-2 d-flex user-details'>
-                  <Avatar/>
+                  <KAvatar/>
                   <Container component='div' className='m-0 p-0'>
                     <Container component='div' className='d-flex p-0'>
                       <Container component='a' href='/@prince' className='pl-2 display-name'>

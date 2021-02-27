@@ -1,10 +1,27 @@
 import { AxiosRequestConfig } from 'axios';
+import { ReactImageGalleryItem } from 'react-image-gallery';
+
 import { OnlineStatus } from './chat';
 import { PostContent } from './home';
 
 export type Partial<T> = {
   [P in keyof T]?: T[P];
 };
+
+export interface MediaDataProp {
+  format: 'jpg' | 'png' | string;
+  public_id: string;
+  type: 'image' | 'video' | 'raw' | string;
+  url: string;
+  mime_type: 'image/jpeg' | 'image/png' | string;
+}
+
+export interface GalleryProps {
+  open?: boolean;
+  data?: ReactImageGalleryItem[] | string[] | any[];
+  startIndex?: number;
+  hasExtra?: boolean;
+}
 
 export interface InfoCardProps {
   icon: Element | JSX.Element | null;

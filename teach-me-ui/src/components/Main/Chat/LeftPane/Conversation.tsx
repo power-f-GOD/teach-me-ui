@@ -4,7 +4,6 @@ import { NavLink, match as Match, useHistory } from 'react-router-dom';
 import Col from 'react-bootstrap/Col';
 
 import Box from '@material-ui/core/Box';
-import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 import BlockIcon from '@material-ui/icons/Block';
 
@@ -15,6 +14,7 @@ import {
 } from '../../../../types';
 import { ChatTimestamp, ChatStatus } from '../crumbs';
 import { getNecessaryConversationData } from '../../../../functions';
+import { KAvatar } from '../../../shared';
 
 const Conversation = ({
   conversation: _conversation,
@@ -110,8 +110,7 @@ const Conversation = ({
           className={online_status?.toLowerCase() ?? 'offline'}
           overlap='circle'
           variant='dot'>
-          <Avatar
-            component='span'
+          <KAvatar
             className={'chat-avatar mr-2'}
             alt={displayName}
             src={profile_photo || ''}

@@ -13,7 +13,6 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import CloseIcon from '@material-ui/icons/Close';
-import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
@@ -24,14 +23,16 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import PersonIcon from '@material-ui/icons/Person';
 import FilterNoneRoundedIcon from '@material-ui/icons/FilterNoneRounded';
 import ReplyRoundedIcon from '@material-ui/icons/ReplyRounded';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 import { APIMessageResponse, Partial, OnlineStatus } from '../../../../types';
 import {
   conversationMessages,
   conversations,
   conversation,
-  conversationsMessages
-} from '../../../../actions/main/chat';
+  conversationsMessages,
+  displaySnackbar
+} from '../../../../actions';
 import {
   dispatch,
   delay,
@@ -46,7 +47,7 @@ import { placeHolderDisplayName, Memoize } from '..';
 import {
   CHAT_MESSAGE_DELETED,
   CHAT_MESSAGE_DELETED_FOR
-} from '../../../../constants/chat';
+} from '../../../../constants';
 import {
   ConfirmDialog,
   SelectedMessageValue,
@@ -54,10 +55,10 @@ import {
   CANCEL_DELETE,
   DELETE_FOR_ALL
 } from '../crumbs';
-import { displaySnackbar } from '../../../../actions';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+
 import { ChatMiddlePaneProps } from '.';
 import { messageBox } from './MessageBox';
+import { KAvatar } from '../../../shared';
 
 export const MiddlePaneHeaderContext = createContext(
   {} as Partial<ChatMiddlePaneProps>
@@ -374,7 +375,7 @@ function MiddlePandeHeaderConversationNameAndStatus(props: {
             }`}
             overlap='circle'
             variant='dot'>
-            <Avatar
+            <KAvatar
               component='span'
               className='chat-avatar'
               alt={convoDisplayName}
@@ -404,7 +405,7 @@ function MiddlePandeHeaderConversationNameAndStatus(props: {
         </Col>
       ) : (
         <>
-          <Avatar
+          <KAvatar
             component='span'
             className='chat-avatar ml-0'
             alt='Emmanuel Sunday'

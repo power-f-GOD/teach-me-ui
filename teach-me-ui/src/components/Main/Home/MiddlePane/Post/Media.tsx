@@ -3,14 +3,11 @@ import axios from 'axios';
 import { LazyLoadImage as LazyImg } from 'react-lazy-load-image-component';
 
 import Box from '@material-ui/core/Box';
+import { dispatch } from '../../../../../appStore';
+import { displayGallery } from '../../../../../actions';
+import { MediaDataProp } from '../../../../../types';
 
-const Media = ({
-  media,
-  showModal
-}: {
-  media?: any[];
-  showModal?(e: React.MouseEvent<HTMLImageElement, MouseEvent>): void;
-}) => {
+const Media = ({ media }: { media?: string[] }) => {
   return (media?.length || 0) > 0 ? (
     <Box
       className='media-container'
@@ -40,33 +37,36 @@ const Media = ({
 
             break;
         }
-        const mData = JSON.parse(m);
+        const mData: MediaDataProp = JSON.parse(m);
         const url = mData.type === 'raw' ? '/images/file-icon.svg' : mData.url;
 
         return (
           <div key={i} style={style}>
             <LazyImg
               id={i.toString()}
-              onClick={
-                mData.type === 'raw' || true
-                  ? () => {
-                      if (2 > 3)
-                        axios({
-                          url: mData.url,
-                          method: 'GET',
-                          responseType: 'blob'
-                        }).then((res) => {
-                          const dataURL = URL.createObjectURL(
-                            new Blob([res.data])
-                          );
-                          const a = document.createElement('a');
-                          a.href = dataURL;
-                          a.download = 'file';
-                          a.click();
-                        });
-                    }
-                  : showModal
-              }
+              onClick={() => {
+                if (mData.type === 'raw' && 2 > 3) {
+                  axios({
+                    url: mData.url,
+                    method: 'GET',
+                    responseType: 'blob'
+                  }).then((res) => {
+                    const dataURL = URL.createObjectURL(new Blob([res.data]));
+                    const a = document.createElement('a');
+                    a.href = dataURL;
+                    a.download = 'file';
+                    a.click();
+                  });
+                } else {
+                  dispatch(
+                    displayGallery({
+                      open: true,
+                      data: media,
+                      startIndex: i
+                    })
+                  );
+                }
+              }}
               src={url}
               alt='post image'
               data-hide='true'

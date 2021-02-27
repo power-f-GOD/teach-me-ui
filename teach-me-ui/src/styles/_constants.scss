@@ -145,6 +145,7 @@ $error: rgb(255, 34, 34);
 $info: #222;
 
 $app-max-width: 1300px;
+$br: 0.55rem;
 
 @mixin debugger($color: red) {
   &,

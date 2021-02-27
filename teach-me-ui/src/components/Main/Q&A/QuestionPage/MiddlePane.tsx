@@ -3,7 +3,6 @@ import React from 'react';
 import Row from 'react-bootstrap/Row';
 
 import Container from '@material-ui/core/Container';
-import Avatar from '@material-ui/core/Avatar';
 
 import Answer from '../crumbs/Answer';
 
@@ -13,6 +12,7 @@ import {
 import {
   CREATE_ANSWER
 } from '../../../../constants';
+import { KAvatar } from '../../../shared';
 
 const MiddlePane = (props: any) => {
   const tags: string[] = ['Machine-Learning', 'Python', 'Tensorflow'];
@@ -92,7 +92,7 @@ const MiddlePane = (props: any) => {
             Answer this question
           </small>
           <Container component='div' className='pb-2 px-0 mt-2 d-flex user-details'>
-            <Avatar/>
+            <KAvatar/>
             <Container component='div' className='m-0 p-0'>
               <Container component='div' className='d-flex p-0'>
                 <Container component='a' href='/@prince' className='pl-2 display-name'>

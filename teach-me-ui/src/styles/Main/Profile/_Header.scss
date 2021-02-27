@@ -2,6 +2,7 @@
   height: 22rem;
   padding-top: 3.5rem;
   width: 100%;
+  display: flex;
   overflow: hidden;
   background-color: white;
   position: relative;
@@ -21,11 +22,12 @@
   .details-container {
     display: flex;
     align-items: center;
+    align-self: center;
     padding: 0 1rem;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 0;
     text-shadow: 0 0 0.15rem rgba(0, 0, 0, 0.5);
   }
 
@@ -39,6 +41,7 @@
 
     &::before {
       @include before-or-after($zi: 1, $bg: rgba(0, 0, 0, 0.5));
+      pointer-events: none;
     }
   }
 
@@ -46,7 +49,8 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: top;
+    object-position: center;
+    cursor: pointer;
   }
 
   .change-cover {
@@ -215,6 +219,7 @@
       padding-bottom: 2rem;
       flex-direction: column;
       text-shadow: unset;
+      height: 100%;
 
       * {
         justify-content: center;

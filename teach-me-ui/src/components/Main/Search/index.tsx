@@ -11,7 +11,6 @@ import Row from 'react-bootstrap/Row';
 import Box from '@material-ui/core/Box';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import Avatar from '@material-ui/core/Avatar';
 import InputBase from '@material-ui/core/InputBase';
 import SearchIcon from '@material-ui/icons/Search';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -19,6 +18,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import { ColleagueData } from '../../../types';
 import { dispatch } from '../../../utils';
 import { triggerSearchKanyimuta } from '../../../actions/main/search';
+import { KAvatar } from '../../shared';
 
 const searchBoxRef = createRef<HTMLInputElement>();
 const searchInputRef = createRef<HTMLInputElement>();
@@ -153,8 +153,7 @@ const Search = (props: any) => {
 
                     return (
                       <Link to={link} className='d-flex'>
-                        <Avatar
-                          component='span'
+                        <KAvatar
                           className='profile-avatar'
                           alt={'P'}
                           src={result.profile_photo ? result.profile_photo : `/images/${result.avatar ?? ''}`}

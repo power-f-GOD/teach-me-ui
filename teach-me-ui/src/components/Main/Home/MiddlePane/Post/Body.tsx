@@ -20,8 +20,6 @@ interface PostBodyProps {
   index?: number;
   reposts?: Partial<PostStateProps>[];
   media?: any[];
-  setMediaPreview: Function;
-  setSelectedMedia: Function;
 }
 
 const PostBody = (props: PostBodyProps) => {
@@ -32,9 +30,7 @@ const PostBody = (props: PostBodyProps) => {
     text,
     index,
     reposts,
-    media,
-    setMediaPreview,
-    setSelectedMedia
+    media
   } = props;
 
   const history = useHistory();
@@ -48,26 +44,11 @@ const PostBody = (props: PostBodyProps) => {
     [history]
   );
 
-  const showModal = useCallback(
-    (e: any) => {
-      setSelectedMedia(parseInt(e.target.id));
-      setMediaPreview(true);
-    },
-    [setSelectedMedia, setMediaPreview]
-  );
-
   if (!isLoading)
     return (
       <Row className='post-body'>
         {/* Post repost */}
-        {quote && (
-          <QuotedPost
-            {...quote}
-            navigate={navigate}
-            showModal={showModal}
-            key={quote.id}
-          />
-        )}
+        {quote && <QuotedPost {...quote} navigate={navigate} key={quote.id} />}
 
         <Box
           component='div'
@@ -77,7 +58,7 @@ const PostBody = (props: PostBodyProps) => {
           {processText(text!)}
         </Box>
 
-        <Media media={media} showModal={showModal} />
+        <Media media={media} />
 
         {/* {sec_type === 'REPOST' &&
         text && */}
@@ -86,12 +67,7 @@ const PostBody = (props: PostBodyProps) => {
             ?.filter((repost) => (reposts.length > 5 ? repost.text : repost))
             .slice(0, 5)
             .map((repost) => (
-              <QuotedPost
-                {...repost}
-                navigate={navigate}
-                showModal={showModal}
-                key={repost.id}
-              />
+              <QuotedPost {...repost} navigate={navigate} key={repost.id} />
             ))}
       </Row>
     );

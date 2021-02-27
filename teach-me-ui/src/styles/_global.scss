@@ -130,7 +130,8 @@ body {
   }
 }
 
-img {
+img,
+.k-avatar {
   max-width: 100%;
   height: auto;
   transition: 0.35s;
@@ -139,6 +140,26 @@ img {
   &[aria-hidden='true'] {
     opacity: 0 !important;
     pointer-events: none;
+  }
+}
+
+.k-avatar {
+  border: 0.0625em solid transparent;
+  align-items: unset;
+
+  &.no-image {
+    align-items: center;
+  }
+
+  &:hover {
+    border-color: rgba($sec-r + 50, $sec-g + 50, $sec-b + 50, 0.9);
+  }
+
+  img {
+    width: 100%;
+    border-radius: 50%;
+    object-position: center;
+    object-fit: cover;
   }
 }
 
@@ -181,9 +202,9 @@ h6 {
   }
 }
 
-path {
-  stroke-width: 0.0625rem !important;
-}
+// path {
+//   stroke-width: 0.0625rem !important;
+// }
 
 hr {
   margin: 1.25rem 0;
@@ -217,7 +238,7 @@ button {
 button,
 a {
   text-transform: unset !important;
-  border-radius: 0.5rem;
+  border-radius: $br;
 
   &[class*='outlined'] {
     display: inline-flex;
@@ -894,6 +915,10 @@ div {
 
 .pointer-events-none {
   pointer-events: none;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 
 #background-grey {

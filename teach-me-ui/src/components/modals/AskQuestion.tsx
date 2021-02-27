@@ -2,7 +2,6 @@ import React, { useState, useRef, ChangeEvent } from 'react';
 
 import { connect } from 'react-redux';
 
-// import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';

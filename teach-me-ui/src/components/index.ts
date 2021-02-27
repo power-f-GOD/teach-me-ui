@@ -1,6 +1,5 @@
 import Index from './Index/Index';
 import Landing from './Index/Landing';
-import Nav from './crumbs/Nav';
 import Auth from './Auth/Auth';
 import Signin from './Auth/Signin';
 import Signup from './Auth/Signup';
@@ -13,15 +12,11 @@ import Support from './Index/Support';
 import Profile from './Main/Profile';
 import _404 from './Index/_404';
 import Loader from './shared/Loaders';
-import SnackBar from './crumbs/SnackBar';
 import Chat from './Main/Chat';
 import Search from './Main/Search';
-import Footer from './crumbs/Footer';
-
 export {
   Index,
   Landing,
-  Nav,
   Auth,
   Signin,
   Signup,
@@ -33,9 +28,9 @@ export {
   Support,
   Profile,
   Loader,
-  SnackBar,
   Chat,
   Search,
-  _404,
-  Footer
+  _404
 };
+
+export * from './crumbs';

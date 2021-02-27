@@ -2,7 +2,6 @@ import React, { useState, useRef, ChangeEvent } from 'react';
 
 import { connect } from 'react-redux';
 
-import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 
@@ -30,7 +29,7 @@ import {
   getFileExtension
 } from '../../functions';
 import { Container } from '@material-ui/core';
-import Loader from '../shared/Loaders';
+import { Loader, KAvatar } from '../shared';
 
 const MakePost = (props: any) => {
   const { userData, sendFile, uploadsProp, makePostProp } = props;
@@ -259,8 +258,7 @@ const MakePost = (props: any) => {
     <Box p={1} pt={0} className='post'>
       <Row className='container-fluid p-0 mx-auto mb-2'>
         <Box pr={1}>
-          <Avatar
-            component='span'
+          <KAvatar
             className='chat-avatar compose-avatar'
             alt={displayName}
             src={profile_photo ? profile_photo : ''}
