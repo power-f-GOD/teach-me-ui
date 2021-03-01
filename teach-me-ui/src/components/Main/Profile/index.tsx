@@ -84,6 +84,7 @@ const Profile = (props: ProfileProps) => {
   const idOrUsername = profileId || username;
   const userNotFound = /user.*not\sfound/.test(_profileData.statusText || '');
   const isSelfView = isAuthenticated ? username === userData.username : false;
+  console.log(userData.displayName)
   const finalData = {
     ...(isSelfView ? userData : data),
     username,

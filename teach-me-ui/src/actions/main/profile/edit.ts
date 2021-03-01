@@ -155,7 +155,7 @@ export const getUserDetailsRequest = () => (
     .then((res: any) => {
       const { error, data } = res.data;
       if (!error) {
-        const displayName = `${data.firstname} ${data.lastname}`;
+        const displayName = `${data.first_name} ${data.last_name}`;
         const institution = `${data.institution.name}, ${data.institution.country}`;
         populateStateWithUserData({
           ...data,
@@ -407,7 +407,6 @@ export const updateUserDataRequest = (
     func: updateUserData
   });
   dispatch(updateUserData({ status: 'pending' }));
-  console.log(data);
 
   axios({
     url: '/account/update',

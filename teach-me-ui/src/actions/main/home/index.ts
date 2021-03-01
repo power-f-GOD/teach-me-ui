@@ -63,6 +63,7 @@ export const fetchReplies = (payload: FetchState<Array<PostStateProps>, string>,
   if (update) {
     payload.data = [...payload.data, ...getState().fetchReplies.data]
   }
+
   return {
     type: FETCH_REPLIES,
     payload
@@ -115,7 +116,6 @@ export const fetchPost = (payload: FetchState<Object, string>) => {
 };
 
 export const fetchPostRequest = (postId?: string) => (dispatch: Function) => {
-  dispatch(fetchReplies({ status: 'pending', data: [] }));
   dispatch(fetchPost({ status: 'pending', data: postState }));
 
   checkNetworkStatusWhilstPend({

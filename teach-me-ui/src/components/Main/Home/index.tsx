@@ -13,6 +13,7 @@ import HomeLeftPane from './LeftPane';
 import { connect } from 'react-redux';
 import { PostStateProps, FetchState } from '../../../types';
 import PostPage from './PostPage';
+import Search from '../Search';
 
 interface HomeProps {
   posts: FetchState<PostStateProps>;
@@ -33,7 +34,8 @@ const Home = (props: HomeProps) => {
               exact
               component={HomeMiddlePane}
             />
-            <Route path={['/p/:id']} exact component={PostPage} />
+            <Route path='/p/:id' exact component={PostPage} />
+            <Route path='/search' exact component={Search} />
           </Switch>
         </Col>
         <Col lg={3} className='d-none hang-in d-lg-block right-pane-col'>
