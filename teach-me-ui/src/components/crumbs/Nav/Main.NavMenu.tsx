@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 
 import { FAIcon } from '../../shared/Icons';
@@ -11,15 +12,24 @@ import {
   handleSignoutRequest,
   getState,
   countNewNotifications,
-  displayModal
+  displayModal,
+  dispatch
 } from '../../../functions';
 import { NOTIFICATIONS } from '../../../constants';
-import { UserData } from '../../../types';
+import { AuthState, UserData } from '../../../types';
 
 import NavGeneralLinks from './GeneralLinks';
+import { getNotifications } from '../../../actions';
 
-export default function MainNavMenu(props: any) {
-  const { className, notifications } = props;
+const MainNavMenu = (props: any) => {
+  const { className, notifications, isAuthenticated } = props;
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(getNotifications());
+    }
+  }, [isAuthenticated]);
+
   const username = (getState().userData as UserData).username;
   const numOfNewNotifs = countNewNotifications(
     notifications.data.notifications
@@ -91,3 +101,7 @@ export default function MainNavMenu(props: any) {
     </Box>
   );
 }
+
+export default connect((state: { userData: UserData; auth: AuthState }) => ({
+  isAuthenticated: state.auth.isAuthenticated!
+}))(MainNavMenu);

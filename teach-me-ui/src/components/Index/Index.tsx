@@ -10,7 +10,6 @@ import Landing from './Landing';
 import Support from './Support';
 import Footer from '../crumbs/Footer';
 import _404 from './_404';
-import Search from '../Main/Search';
 import Profile from '../Main/Profile';
 import Home from '../Main/Home';
 
@@ -31,7 +30,7 @@ const Index = (props: any) => {
           <Route path={['/', '/index']} exact component={Landing} />
           <Route path='/about' component={About} />
           <Route path='/support' component={Support} />
-          <Route path={['/search/:query', '/search']} component={Search} />
+          <Route path={['/search/:query', '/search']} component={Home} />
           <Route
             path={['/@:username', '/@:username/colleagues', '/profile/:id']}
             component={Profile}
