@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { Index, Auth, Main, Loader, SnackBar, Gallery } from './components';
+import { Index, Auth, Main, Loader, SnackBar } from './components';
 import ProtectedRoute from './ProtectedRoute';
 
 import { verifyAuth } from './actions';
@@ -93,7 +93,6 @@ const App = (props: any) => {
         </Switch>
       </BrowserRouter>
       <Memo memoizedComponent={SnackBar} />
-      <Gallery />
     </>
   );
 };
