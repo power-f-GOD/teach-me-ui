@@ -79,7 +79,7 @@
 }
 
 .slide-in-right {
-  animation: slideInRight 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+  animation: slideInRight 0.5s cubic-bezier(0, 1, 0.15, 1); // cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 @keyframes slideInRight {
@@ -105,7 +105,7 @@
 }
 
 .slide-out {
-  animation: slideOut 0.75s forwards ease;
+  animation: slideOut 0.5s forwards ease;
 }
 
 @keyframes slideOut {
@@ -129,7 +129,7 @@
 }
 
 .slide-in-top {
-  animation: slideInTop 0.45s;
+  animation: slideInTop 0.5s cubic-bezier(0, 1, 0.15, 1);
 }
 
 @keyframes slideInTop {
@@ -144,7 +144,7 @@
 }
 
 .slide-in-bottom {
-  animation: slideInBottom 0.45s;
+  animation: slideInBottom 0.5s;
 }
 
 @keyframes slideInBottom {

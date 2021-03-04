@@ -45,7 +45,7 @@
     left: 0;
     height: 100%;
     width: 100vw;
-    background: rgba($prim-r - 75, $prim-g - 75, $prim-b - 75, 0.95) !important;
+    background: rgba($prim-r - 80, $prim-g - 80, $prim-b - 80, 0.95) !important;
 
     aside {
       background: white;
@@ -55,7 +55,7 @@
   }
 
   .image-gallery {
-    animation-timing-function: cubic-bezier(0,1,.5,1);
+    animation-timing-function: cubic-bezier(0, 1, 0.15, 1);
   }
 
   .image-gallery-slide {
@@ -95,6 +95,7 @@
     svg {
       color: white !important;
       transition: 0.25s;
+      pointer-events: unset;
     }
 
     [class*='-nav'] {
@@ -110,6 +111,15 @@
     &:focus-within {
       [class*='-nav'] {
         opacity: 1;
+
+        &:disabled {
+          opacity: 0.25;
+          cursor: unset;
+
+          svg {
+            transform: unset;
+          }
+        }
       }
     }
   }
