@@ -45,7 +45,6 @@ const Post: React.FC<
     forceUpdate?: any;
     quote?: any;
     webSocket?: WebSocket;
-    pageReplies?: any;
     replyStatusText?: string;
     repliesStatus?: string;
   }
@@ -78,7 +77,6 @@ const Post: React.FC<
     head,
     numRepliesToShow: _numRepliesToShow,
     replies,
-    pageReplies,
     replyStatusText
   } = others || {};
   const parent_id = parent?.id;
@@ -230,14 +228,7 @@ const Post: React.FC<
   }
 
   const fetchMoreReplies = () => {
-    dispatch(fetchRepliesRequest(id, pageReplies[0].date));
-  };
-
-  const renderPostPageReplies = () => {
-    const finalReplies = [...pageReplies, ...replies];
-    return finalReplies!.map((reply: any) => (
-      <PostReply {...reply} key={reply.id} />
-    ));
+    dispatch(fetchRepliesRequest(id, replies![0].date));
   };
 
   return (
@@ -301,7 +292,7 @@ const Post: React.FC<
         anchorIsParent={true}
         openCreateRepostModal={openCreateRepostModal}
       />
-      {head && props.repliesStatus === 'pending' && pageReplies[0] ? (
+      {head && props.repliesStatus === 'pending' && replies![0] ? (
         <Loader
           type='ellipsis'
           inline={true}
@@ -312,7 +303,7 @@ const Post: React.FC<
       ) : (
         head &&
         replyStatusText !== 'the end' &&
-        pageReplies[0] && (
+        replies![0] && (
           <Button
             onClick={fetchMoreReplies}
             className='ml-2 previus-reply-button'>
@@ -324,7 +315,9 @@ const Post: React.FC<
 
       {/* Post replies */}
       {head
-        ? renderPostPageReplies()
+        ? replies!.map((reply: any) => (
+          <PostReply {...reply} key={reply.id} />
+        ))
         : colleague_replies
             ?.slice(-numRepliesToShow)
             .map((reply) => <PostReply {...reply} key={reply.id} />)}

@@ -1,6 +1,5 @@
 import { 
   displaySnackbar,
-  fetchReplies,
   fetchPost
 } from '../actions';
 
@@ -59,31 +58,17 @@ export const updatePostPage = (data: PostStateProps) => {
       break;
     case POST_REACTION:
       if (data.parent_id) {
-        let replyInPost: boolean = true;
-        let finalReplies = [];
         let finalRepliesFromPost = [];
-        const { fetchReplies:repliesInState } = getState();
-        let tempRepliesInState : Array<PostStateProps> = Array.from(repliesInState.data);
-        for (let reply of tempRepliesInState) {
-          if (reply.id === data.id) {
-            replyInPost = false;
-            reply.reaction = data.reaction;
-            reply.upvote_count = data.upvote_count;
-            reply.downvote_count = data.downvote_count;
-          }
-          finalReplies.push(reply);
-        }
 
         for (let reply of fetchPostProps.data.replies) {
           if (reply.id === data.id) {
-            replyInPost = true;
             reply.reaction = data.reaction;
             reply.upvote_count = data.upvote_count;
             reply.downvote_count = data.downvote_count;
           }
           finalRepliesFromPost.push(reply);
         }
-        replyInPost ? dispatch(fetchPost({data: { ...fetchPostProps.data, replies: finalRepliesFromPost}})) : dispatch(fetchReplies({data: finalReplies}));
+        dispatch(fetchPost({data: { ...fetchPostProps.data, replies: finalRepliesFromPost}}));
       } else {
         const { fetchPost:postsInState } = getState();
         let tempPost = {}

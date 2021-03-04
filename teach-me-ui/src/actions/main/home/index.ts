@@ -59,11 +59,7 @@ export const makeRepostRequest = (payload: SendReplyProps) => (
   socket.send(JSON.stringify(payload));
 };
 
-export const fetchReplies = (payload: FetchState<Array<PostStateProps>, string>, update?: boolean) => {
-  if (update) {
-    payload.data = [...payload.data, ...getState().fetchReplies.data]
-  }
-
+export const fetchReplies = (payload: FetchState<Array<PostStateProps>, string>) => {
   return {
     type: FETCH_REPLIES,
     payload
@@ -90,12 +86,16 @@ export const fetchRepliesRequest = (postId?: string, offset?: number) => (
       if (!error) {
         dispatch(
           fetchReplies({
-            status: 'fulfilled',
             err: false,
-            data: data.reverse(),
+            status: 'fulfilled',
             statusText: data.length < 10 ? 'the end' : undefined
-          }, offset? true : false)
+          }, )
         );
+        dispatch(
+          fetchPost({
+            data: data.reverse()
+          }, true, offset? true : false)
+        )
       } else {
         dispatch(
           fetchReplies({
@@ -108,7 +108,14 @@ export const fetchRepliesRequest = (postId?: string, offset?: number) => (
     .catch(logError(fetchReplies));
 };
 
-export const fetchPost = (payload: FetchState<Object, string>) => {
+export const fetchPost = (payload: FetchState<any, string>, reply?: boolean, update?: boolean) => {
+
+  if (update && reply) {
+    payload.data = { ...getState().fetchPost.data, replies: [...payload.data, ...getState().fetchPost.data.replies]}
+  } else if (reply) {
+    payload.data = { ...getState().fetchPost.data, replies: payload.data}
+  }
+
   return {
     type: FETCH_POST,
     payload

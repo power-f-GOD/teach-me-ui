@@ -49,7 +49,6 @@ const PostPage = (props: {
       <Container className='p-0 fade-in'>
         <Post head {...{ ...fetchPost.data, 
           repliesStatus: fetchRepliesProps.status, 
-          pageReplies: fetchRepliesProps.data, 
           replyStatusText: fetchRepliesProps.statusText ,
           postStatus: fetchPost.status
         }} />
