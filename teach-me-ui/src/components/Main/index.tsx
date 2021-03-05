@@ -7,7 +7,7 @@ import Row from 'react-bootstrap/Row';
 import ChatIcon from '@material-ui/icons/Chat';
 import Badge from '@material-ui/core/Badge';
 
-import Nav from '../crumbs/Nav';
+import { Nav, Gallery } from '../crumbs';
 import Home from './Home';
 import About from '../Index/About';
 import Support from '../Index/Support';
@@ -242,6 +242,7 @@ const Main = (props: MainProps) => {
         <source src={notifSoundSrc.replace('ogg', 'mp3')} type='audio/mpeg' />
         <p>Your browser doesn't support HTML5 audio.</p>
       </audio>
+      <Gallery location={props.location} />
     </>
   );
 };

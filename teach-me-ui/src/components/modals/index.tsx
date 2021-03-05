@@ -49,9 +49,9 @@ const removeNotificationModal = (event: any) => {
   displayModal(false, true);
 };
 
-const ModalFrame = (props: any) => {
-  let modalBody = null;
+let modalBody: JSX.Element | null = null;
 
+const ModalFrame = (props: any) => {
   switch (props.modal.type) {
     case MAKE_POST:
       modalBody = <MakePost />;

@@ -4,11 +4,10 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 
-import Nav from '../crumbs/Nav';
+import { Nav, Footer, Gallery } from '../crumbs';
 import About from './About';
 import Landing from './Landing';
 import Support from './Support';
-import Footer from '../crumbs/Footer';
 import _404 from './_404';
 import Profile from '../Main/Profile';
 import Home from '../Main/Home';
@@ -40,6 +39,7 @@ const Index = (props: any) => {
       </Box>
 
       <Footer />
+      <Gallery location={props.location} />
     </Grid>
   );
 };

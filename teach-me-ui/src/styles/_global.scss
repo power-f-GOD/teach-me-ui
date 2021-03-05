@@ -239,6 +239,7 @@ button,
 a {
   text-transform: unset !important;
   border-radius: $br;
+  cursor: pointer;
 
   &[class*='outlined'] {
     display: inline-flex;

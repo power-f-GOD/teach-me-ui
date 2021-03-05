@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import ImageGallery, { ReactImageGalleryItem } from 'react-image-gallery';
 import { connect } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 import Container from 'react-bootstrap/Container';
 
@@ -13,26 +14,61 @@ import { delay, dispatch } from '../../utils';
 import { GalleryProps } from '../../types';
 import { displayGallery } from '../../actions';
 
-const Gallery = (props: { gallery: GalleryProps; windowWidth: number }) => {
+const Gallery = (props: {
+  gallery: GalleryProps;
+  windowWidth: number;
+  location: Location;
+}) => {
   const {
     gallery: { open, data, startIndex, hasExtra },
     windowWidth
   } = props;
-  const [willClose, setWillClose] = useState(false);
 
-  const handleClose = () => {
-    setWillClose(true);
-    delay(300).then(() => {
-      dispatch(displayGallery({ open: false }));
-    });
-  };
+  const [willClose, setWillClose] = useState(false);
+  const history = useHistory();
+
+  const handleClose = useCallback(() => {
+    if (open) {
+      // remove event listener to prevent redundant calls and weird behaviours
+      window.removeEventListener('popstate', checkOpenState);
+      setWillClose(true);
+      delay(300).then(() => {
+        dispatch(displayGallery({ open: false }));
+      });
+
+      if (/g=1/.test(window.location.hash)) {
+        history.goBack();
+      }
+    }
+    //eslint-disable-next-line
+  }, [open]);
+
+  const checkOpenState = useCallback(() => {
+    handleClose();
+  }, [handleClose]);
+
+  useEffect(() => {
+    if (/g=1/.test(window.location.hash)) {
+      history.goBack();
+    }
+    //eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
+    if (open) {
+      window.addEventListener('popstate', checkOpenState);
+    }
+  }, [checkOpenState, open]);
 
   useEffect(() => {
     if (open) {
       setWillClose(false);
+      history.push(window.location.pathname + '#g=1');
       document.body.style.overflow = 'hidden';
-    } else document.body.style.overflow = 'auto';
-  }, [open]);
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+  }, [open, history]);
 
   return (
     <MuiModal
@@ -46,9 +82,7 @@ const Gallery = (props: { gallery: GalleryProps; windowWidth: number }) => {
       closeAfterTransition
       disableScrollLock
       BackdropComponent={Backdrop}
-      BackdropProps={{
-        timeout: 100
-      }}>
+      BackdropProps={{ timeout: 100 }}>
       <div>
         <IconButton
           edge='start'
@@ -67,6 +101,7 @@ const Gallery = (props: { gallery: GalleryProps; windowWidth: number }) => {
             additionalClass={
               windowWidth < 768 || !hasExtra ? 'fade-in' : 'slide-in-left'
             }
+            infinite={false}
             onClick={(e) => {
               if (!/A|BUTTON|IMG/.test((e as any).target.tagName)) {
                 handleClose();
@@ -77,7 +112,7 @@ const Gallery = (props: { gallery: GalleryProps; windowWidth: number }) => {
             <Container
               as='aside'
               className={`${
-                windowWidth < 768 ? 'slide-in-bottom' : 'slide-in-right'
+                windowWidth < 768 ? 'fade-in' : 'slide-in-right'
               } p-3`}>
               Post or Extra
               <br />
