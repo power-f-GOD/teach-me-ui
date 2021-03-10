@@ -750,8 +750,8 @@ const mapStateToProps = (state: any) => {
   return {
     bio: state.bio,
     userData: state.userData,
-    firstname: state.firstname,
-    lastname: state.lastname,
+    firstname: state.first_name,
+    lastname: state.last_name,
     username: state.username,
     email: state.email,
     dob: state.dob,

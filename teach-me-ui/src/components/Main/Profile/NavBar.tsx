@@ -103,9 +103,7 @@ const ProfileNavBar = (props: ProfileNavBarProps) => {
   };
 
   const handleEditClick = () => {
-    if (2 > 3) {
       openEditProfileModal();
-    }
   };
 
   const deepProfileDataStatus = _deepProfileData?.data?.status;
@@ -266,7 +264,7 @@ const ProfileNavBar = (props: ProfileNavBarProps) => {
                   </IconButton>
                 </>
               ) : (
-                false && (
+                (
                   <Button
                     variant='contained'
                     size='large'
