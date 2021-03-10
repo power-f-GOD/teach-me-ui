@@ -82,8 +82,8 @@ export function handleEditProfileRequest() {
   }
 
   const {
-    firstname,
-    lastname,
+    first_name,
+    last_name,
     username,
     email,
     dob,
@@ -94,8 +94,8 @@ export function handleEditProfileRequest() {
   } = (getState() as unknown) as any;
 
   if (
-    firstname.err ||
-    lastname.err ||
+    first_name.err ||
+    last_name.err ||
     username.err ||
     email.err ||
     dob.err ||
@@ -108,8 +108,8 @@ export function handleEditProfileRequest() {
   }
 
   let formData: any = {
-    first_name: firstname.value as string,
-    last_name: lastname.value as string,
+    first_name: first_name.value as string,
+    last_name: last_name.value as string,
     username: username.value as string,
     email: email.value as string,
     dob: dob.value as string,
