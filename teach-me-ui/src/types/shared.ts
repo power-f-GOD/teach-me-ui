@@ -11,16 +11,30 @@ export type Partial<T> = {
 export interface MediaDataProp {
   format: 'jpg' | 'png' | string;
   public_id: string;
-  type: 'image' | 'video' | 'raw' | string;
+  type: MediaType;
   url: string;
   mime_type: 'image/jpeg' | 'image/png' | string;
 }
 
+export type MediaType = 'image' | 'video' | 'document' | 'raw';
+
 export interface GalleryProps {
   open?: boolean;
-  data?: ReactImageGalleryItem[] | string[] | any[];
+  data?: (ReactImageGalleryItem & { type: MediaType }[]) | string[] | any[];
   startIndex?: number;
   hasExtra?: boolean;
+  title?: string;
+}
+
+export interface APIUploadModel {
+  id: string;
+  date: number;
+  format: string;
+  public_id: string;
+  type: MediaType;
+  uploader: string;
+  url: string;
+  mimetype: string;
 }
 
 export interface InfoCardProps {
@@ -70,12 +84,12 @@ export interface HTTP {
     contentType?: string
   ): AxiosRequestConfig;
   get<T>(url: string, requiresAuth?: boolean): Promise<APIResponseModel<T>>;
-  post<T, T2 = T | any>(
+  post<ResponseType, RequestType = ResponseType | any>(
     url: string,
-    data?: T2,
+    data?: RequestType,
     requiresAuth?: boolean,
     contentType?: string
-  ): Promise<APIResponseModel<T>>;
+  ): Promise<APIResponseModel<ResponseType>>;
 }
 
 export type LoopFind<valueType> = {

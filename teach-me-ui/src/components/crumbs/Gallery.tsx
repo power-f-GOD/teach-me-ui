@@ -3,6 +3,8 @@ import ImageGallery, { ReactImageGalleryItem } from 'react-image-gallery';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
+import ReactPlayer from 'react-player/lazy';
+
 import Container from 'react-bootstrap/Container';
 
 import IconButton from '@material-ui/core/IconButton';
@@ -11,7 +13,7 @@ import Backdrop from '@material-ui/core/Backdrop';
 import CloseIcon from '@material-ui/icons/Close';
 
 import { delay, dispatch } from '../../utils';
-import { GalleryProps } from '../../types';
+import { GalleryProps, MediaType } from '../../types';
 import { displayGallery } from '../../actions';
 
 const Gallery = (props: {
@@ -25,6 +27,7 @@ const Gallery = (props: {
   } = props;
 
   const [willClose, setWillClose] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(startIndex);
   const history = useHistory();
 
   const handleClose = useCallback(() => {
@@ -41,18 +44,22 @@ const Gallery = (props: {
       }
     }
     //eslint-disable-next-line
-  }, [open]);
+  }, [open, startIndex]);
 
   const checkOpenState = useCallback(() => {
     handleClose();
   }, [handleClose]);
 
   useEffect(() => {
-    if (/g=1/.test(window.location.hash)) {
+    if (/g=1|modal/.test(window.location.hash)) {
       history.goBack();
     }
     //eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    setCurrentIndex(startIndex);
+  }, [startIndex]);
 
   useEffect(() => {
     if (open) {
@@ -94,18 +101,60 @@ const Gallery = (props: {
         </IconButton>
         <Container fluid className='image-gallery-container px-0'>
           <ImageGallery
-            items={(data ?? []) as ReactImageGalleryItem[]}
+            items={
+              (data ?? []).map((_datum, i) => {
+                const datum = { ..._datum } as ReactImageGalleryItem & {
+                  type: MediaType;
+                };
+
+                if (datum.type === 'video') {
+                  datum.renderItem = (props) => (
+                    <ReactPlayer
+                      url={props.original}
+                      width='100%'
+                      height='22em'
+                      controls={true}
+                      config={{
+                        file: {
+                          attributes: {
+                            autoPlay: currentIndex === i,
+                            controlsList: 'nodownload',
+                            disablePictureInPicture: true
+                          }
+                        }
+                      }}
+                      playing={currentIndex === i}
+                    />
+                  );
+                  datum.renderThumbInner = (props) => (
+                    <video
+                      width='100%'
+                      height='100%'
+                      aria-label='thumbnail'
+                      src={props.original.replace(/#t=[^"]*/, '')}
+                      controls={false}
+                      style={{ pointerEvents: 'none' }}
+                    />
+                  );
+                }
+
+                return datum;
+              }) as ReactImageGalleryItem[]
+            }
             showPlayButton={false}
             showIndex={hasExtra}
-            startIndex={startIndex || 0}
+            startIndex={currentIndex || 0}
             additionalClass={
               windowWidth < 768 || !hasExtra ? 'fade-in' : 'slide-in-left'
             }
             infinite={false}
             onClick={(e) => {
-              if (!/A|BUTTON|IMG/.test((e as any).target.tagName)) {
+              if (!/A|BUTTON|IMG|VIDEO/i.test((e as any).target.tagName)) {
                 handleClose();
               }
+            }}
+            onSlide={(currentIndex) => {
+              setCurrentIndex(currentIndex);
             }}
           />
           {hasExtra && (

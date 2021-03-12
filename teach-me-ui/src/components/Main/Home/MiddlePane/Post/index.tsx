@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import Container from 'react-bootstrap/Container';
 
@@ -30,10 +30,6 @@ export interface PostCrumbs extends Partial<PostStateProps> {
   isLoading?: boolean;
   auth?: AuthState;
 }
-
-const postElementRef = React.createRef<any>();
-
-let postElement: HTMLElement | null = null;
 
 let observer: IntersectionObserver;
 
@@ -85,8 +81,9 @@ const Post: React.FC<
   const sender_name = first_name ? `${first_name} ${last_name}` : '';
   let numRepliesToShow = _numRepliesToShow ?? 2;
   let mostRecentColleagueReplyIndex: number | null = null;
-
   let extra: string | null = '';
+
+  const postElementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (head && id) {
@@ -95,7 +92,7 @@ const Post: React.FC<
   }, [id, head]);
 
   useEffect(() => {
-    postElement = postElementRef.current;
+    const postElement = postElementRef.current;
 
     if (postElement && !head) {
       observer = createObserver(
@@ -121,12 +118,30 @@ const Post: React.FC<
           if (entry.isIntersecting) {
             emitSeen(id!, parent_id);
 
-            if (postElement) {
-              observer.unobserve(postElement);
+            // if (postElement) {
+            //   observer.unobserve(postElement);
+            // }
+          }
+
+          if (media?.length) {
+            const videos = postElement?.querySelectorAll('video');
+
+            if (videos?.length) {
+              if (entry.isIntersecting) {
+                videos.forEach((video: HTMLVideoElement) => {
+                  video.pause();
+                });
+                videos[0].play();
+              } else {
+                videos.forEach((video: HTMLVideoElement) => {
+                  video.pause();
+                  video.currentTime = 0;
+                });
+              }
             }
           }
         },
-        { threshold: [0.125] }
+        { threshold: [0.5] }
       );
 
       observer.observe(postElement);
@@ -137,7 +152,7 @@ const Post: React.FC<
         observer?.unobserve(postElement as Element);
       }
     };
-  }, [id, head, socket, parent_id]);
+  }, [id, head, socket, parent_id, media]);
 
   if (colleague_reposts?.length && colleague_reposts?.length > 1) {
     const firstReposter = colleague_reposts[0]?.sender;
@@ -315,9 +330,7 @@ const Post: React.FC<
 
       {/* Post replies */}
       {head
-        ? replies!.map((reply: any) => (
-          <PostReply {...reply} key={reply.id} />
-        ))
+        ? replies!.map((reply: any) => <PostReply {...reply} key={reply.id} />)
         : colleague_replies
             ?.slice(-numRepliesToShow)
             .map((reply) => <PostReply {...reply} key={reply.id} />)}

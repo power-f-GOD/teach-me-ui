@@ -11,7 +11,7 @@ import Row from 'react-bootstrap/Row';
 import { dispatch, displayModal } from '../../functions';
 import {
   getUploads,
-  sendFilesToServer,
+  uploadFiles,
   updateUserDataRequest
 } from '../../actions';
 import { CircularProgress } from '@material-ui/core';
@@ -26,7 +26,7 @@ const UploadsPreview = (props: any) => {
 
   const fileSelectedHandler = (e: any) => {
     if (props.title === 'Select Profile Photo') {
-      sendFilesToServer(
+      uploadFiles(
         [e.target.files[0]],
         updateUserDataRequest,
         [],
@@ -34,7 +34,7 @@ const UploadsPreview = (props: any) => {
         false
       );
     } else {
-      sendFilesToServer(
+      uploadFiles(
         [e.target.files[0]],
         updateUserDataRequest,
         [],

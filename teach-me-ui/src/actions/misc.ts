@@ -24,7 +24,8 @@ import {
   UserData,
   ReduxActionV2,
   GalleryProps,
-  MediaDataProp
+  MediaDataProp,
+  MediaType
 } from '../types';
 import { getState } from '../utils';
 import { dispatch } from '../appStore';
@@ -76,9 +77,16 @@ export const displayGallery = (
         ? JSON.parse(_medium)
         : { ..._medium }) as MediaDataProp;
 
-      return (medium.type === 'image'
-        ? { original: medium.url, thumbnail: medium.url }
-        : null) as ReactImageGalleryItem;
+      return {
+        type:
+          medium.type === 'image'
+            ? 'image'
+            : /raw|document/.test(medium.type)
+            ? 'document'
+            : 'video',
+        original: medium.url,
+        ...(medium.type === 'image' ? { thumbnail: medium.url } : {})
+      } as ReactImageGalleryItem & { type: MediaType };
     })
     .filter((medium) => medium);
 
