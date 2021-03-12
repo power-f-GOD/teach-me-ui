@@ -25,6 +25,7 @@ const Gallery = (props: {
     gallery: { open, data, startIndex, hasExtra },
     windowWidth
   } = props;
+  const numOfMedia = data?.length;
 
   const [willClose, setWillClose] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(startIndex);
@@ -58,8 +59,8 @@ const Gallery = (props: {
   }, []);
 
   useEffect(() => {
-    setCurrentIndex(startIndex);
-  }, [startIndex]);
+    setCurrentIndex(startIndex! > numOfMedia! - 1 ? 0 : startIndex);
+  }, [startIndex, numOfMedia]);
 
   useEffect(() => {
     if (open) {
