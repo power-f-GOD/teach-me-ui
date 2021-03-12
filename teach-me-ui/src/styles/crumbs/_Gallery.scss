@@ -3,12 +3,12 @@
 
   &.has-extra {
     .close-modal-button {
-      right: 22.5rem;
+      right: 24.5rem;
     }
 
     .image-gallery-container {
       display: grid;
-      grid-template-columns: auto 22rem;
+      grid-template-columns: auto 24rem;
     }
   }
 
@@ -125,7 +125,13 @@
   }
 
   .image-gallery-index {
-    right: unset;
+    bottom: 0;
+    top: unset;
+  }
+
+  .image-gallery-description {
+    top: 0.5em;
+    bottom: unset;
   }
 
   .image-gallery-fullscreen-button {
@@ -153,6 +159,11 @@
         transform: unset;
       }
     }
+  }
+
+  .image-gallery-thumbnail {
+    height: 4.25em;
+    max-height: 20vh;
   }
 
   .image-gallery-thumbnail-inner {

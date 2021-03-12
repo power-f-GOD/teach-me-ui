@@ -13,7 +13,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import { PostEditorState } from '../../types';
 
 import {
-  sendFilesToServer,
+  uploadFiles,
   getUploads,
   makePost,
   requestCreatePost
@@ -240,7 +240,7 @@ const MakePost = (props: any) => {
   const onPostSubmit = () => {
     if (state.post.text || state.selectedFiles.length) {
       if (state.selectedFiles[0] || state.selectedUploads[0]) {
-        sendFilesToServer(
+        uploadFiles(
           state.selectedFiles,
           requestCreatePost,
           state.selectedUploads,
