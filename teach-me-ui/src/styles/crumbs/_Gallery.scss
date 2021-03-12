@@ -79,14 +79,15 @@
     iframe {
       height: 85vh;
       height: clamp(50vh, 44em, 85vh);
-      max-width: 90vw;
-      max-width: clamp(40em, 70%, 90vw);
+      max-width: 100vw;
       max-height: calc(100% - 1rem) !important;
     }
 
     video,
     iframe {
       width: clamp(40em, 70%, 90vw);
+      object-fit: contain;
+      background-color: #111;
     }
   }
 
@@ -125,7 +126,7 @@
   }
 
   .image-gallery-index {
-    bottom: 0;
+    bottom: -0.25em;
     top: unset;
   }
 
