@@ -157,6 +157,11 @@ $pad-x: 1em;
         opacity: 1;
       }
     }
+
+    video {
+      object-fit: contain;
+      background-color: #111;
+    }
   }
 
   .post-info {
