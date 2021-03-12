@@ -59,7 +59,7 @@ const Gallery = (props: {
   }, []);
 
   useEffect(() => {
-    setCurrentIndex(numOfMedia === 1 ? 0 : startIndex);
+    setCurrentIndex(startIndex! > numOfMedia! - 1 ? 0 : startIndex);
   }, [startIndex, numOfMedia]);
 
   useEffect(() => {
