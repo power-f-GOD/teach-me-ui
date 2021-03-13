@@ -1,17 +1,59 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import axios from 'axios';
 import { LazyLoadImage as LazyImg } from 'react-lazy-load-image-component';
 import ReactPlayer from 'react-player/lazy';
 
 import Box from '@material-ui/core/Box';
-import { dispatch } from '../../../../../appStore';
-import { displayGallery } from '../../../../../actions';
-import { MediaDataProp } from '../../../../../types';
+import { dispatch } from '../../appStore';
+import { displayGallery } from '../../actions';
+import { MediaDataProp } from '../../types';
+import { userDeviceIsMobile } from '../..';
 
 const Media = ({ media }: { media?: string[] }) => {
+  const handleVideoClick = useCallback(
+    (media: string[], videoIndex: number, isLocalHost: boolean) => (
+      e: React.MouseEvent<HTMLElement, MouseEvent>
+    ) => {
+      let video = e.currentTarget as HTMLVideoElement;
+
+      if (video.tagName !== 'VIDEO') {
+        video = video.querySelector('video')!;
+      }
+
+      if (!video) return;
+
+      dispatch(
+        displayGallery({
+          open: true,
+          data: media.map((medium, i) =>
+            medium.replace(
+              /(url":")([^"]*)(",)/,
+              `$1${
+                isLocalHost
+                  ? i % 2 === 0
+                    ? '/videos/nature-video.mp4'
+                    : '/videos/nature-trailer.mp4'
+                  : '$2'
+              }#t=${video.currentTime}$3`
+            )
+          ),
+          startIndex: videoIndex
+        })
+      );
+      // mute current Post video while video in Gallery will be playing
+      setTimeout(() => {
+        if (/g=1/.test(window.location.hash) && video) {
+          video.muted = true;
+          video.play();
+        }
+      }, 10);
+    },
+    []
+  );
+
   return (media?.length || 0) > 0 ? (
     <Box
-      className='media-container'
+      className='Media'
       style={{
         display: media?.length === 1 ? 'block' : 'grid',
         gridTemplateColumns: '1fr 1fr',
@@ -53,7 +95,18 @@ const Media = ({ media }: { media?: string[] }) => {
             : mData.url;
 
         return (
-          <div key={i} style={style}>
+          <div
+            key={i}
+            style={style}
+            onClick={
+              mData.type === 'video' && userDeviceIsMobile
+                ? handleVideoClick(media, i, isLocalHost)
+                : undefined
+            }>
+            {/* Hack to by media onClick event prevention for videos on mobile devices */}
+            {userDeviceIsMobile && (
+              <div className='video-overlay__mobile--hack'></div>
+            )}
             {(() => {
               switch (mData.type) {
                 case 'video':
@@ -63,46 +116,21 @@ const Media = ({ media }: { media?: string[] }) => {
                       height='22em'
                       style={{ maxHeight: '100%' }}
                       controls={true}
+                      url={url}
                       config={{
                         file: {
                           attributes: {
                             muted: true,
                             autoPlay: true,
+                            loop: true,
                             controlsList: 'nodownload',
                             disablePictureInPicture: true,
-                            onClick: (e: Event) => {
-                              const video = e.currentTarget as HTMLVideoElement;
-
-                              dispatch(
-                                displayGallery({
-                                  open: true,
-                                  data: media.map((medium, i) =>
-                                    medium.replace(
-                                      /(url":")([^"]*)(",)/,
-                                      `$1${
-                                        isLocalHost
-                                          ? i % 2 === 0
-                                            ? '/videos/nature-video.mp4'
-                                            : '/videos/nature-trailer.mp4'
-                                          : '$2'
-                                      }#t=${video.currentTime}$3`
-                                    )
-                                  ),
-                                  startIndex: i
-                                })
-                              );
-                              // mute current Post video while video in Gallery will be playing
-                              setTimeout(() => {
-                                if (/g=1/.test(window.location.hash) && video) {
-                                  video.muted = true;
-                                  video.play();
-                                }
-                              }, 10);
-                            }
+                            onClick: !userDeviceIsMobile
+                              ? handleVideoClick(media, i, isLocalHost)
+                              : undefined
                           }
                         }
                       }}
-                      url={url}
                     />
                   );
                 case 'image':

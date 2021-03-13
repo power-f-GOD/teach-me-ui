@@ -114,7 +114,9 @@ const Gallery = (props: {
                       url={props.original}
                       width='100%'
                       height='22em'
+                      style={{maxHeight: 'calc(100vh - 4.5em)'}}
                       controls={true}
+                      loop={true}
                       config={{
                         file: {
                           attributes: {
