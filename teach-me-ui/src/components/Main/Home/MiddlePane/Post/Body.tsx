@@ -8,7 +8,7 @@ import Box from '@material-ui/core/Box';
 
 import { PostStateProps } from '../../../../../types';
 import QuotedPost from './QuotedPost';
-import Media from './Media';
+import Media from '../../../../shared/Media';
 import { processText } from '../../../../../utils';
 
 interface PostBodyProps {

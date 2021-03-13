@@ -7,7 +7,7 @@ import Box from '@material-ui/core/Box';
 
 import { formatDate, processText } from '../../../../../utils';
 import { PostStateProps } from '../../../../../types';
-import Media from './Media';
+import Media from '../../../../shared/Media';
 import { KAvatar } from '../../../../shared';
 
 const QuotedPost = (
