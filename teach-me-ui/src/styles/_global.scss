@@ -232,16 +232,23 @@ code {
   white-space: pre-wrap;
 }
 
+label {
+  cursor: pointer;
+}
+
 button {
+  border: unset;
   font-size: 1rem;
   font-weight: normal;
 }
 
 button,
 a {
+  position: relative;
   text-transform: unset !important;
   border-radius: $br;
   cursor: pointer;
+  transition: 0.3s;
 
   &[class*='outlined'] {
     display: inline-flex;
@@ -286,7 +293,7 @@ a {
       position: relative;
       background-color: #ccc;
       border-radius: 1.75rem;
-      height: 3.2rem;
+      height: 3rem;
       font-size: 1rem;
       color: white;
 
@@ -519,6 +526,13 @@ a {
   }
 }
 
+.MuiIconButton-root {
+  min-height: 2.25rem;
+  min-width: 2.25rem;
+  font-size: 1rem;
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .MuiOutlinedInput-root {
   &:hover,
   &:focus {
@@ -564,39 +578,8 @@ div {
   background: #f8f8f8;
 }
 
-.Auth {
-  [class^='MuiFormControl'],
-  div {
-    fieldset {
-      border-color: #eee;
-    }
-
-    .Mui-focused {
-      color: $theme-secondary !important;
-
-      fieldset {
-        border-color: $theme-secondary !important;
-      }
-    }
-
-    .Mui-error {
-      color: $error !important;
-
-      input {
-        color: $error !important;
-      }
-      fieldset {
-        border-color: $error !important;
-      }
-    }
-
-    .Mui-disabled {
-      fieldset {
-        background: #ddd;
-        border: none !important;
-      }
-    }
-  }
+.MuiTooltip-popper > div {
+  background-color: rgba(0, 0, 0, 0.75);
 }
 
 .MuiCard-root {

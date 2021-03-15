@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col';
 import Box from '@material-ui/core/Box';
 
 import { formatDate, processText } from '../../../../../utils';
-import { PostStateProps } from '../../../../../types';
+import { PostStateProps, MediaProps } from '../../../../../types';
 import Media from '../../../../shared/Media';
 import { KAvatar } from '../../../../shared';
 
@@ -57,7 +57,9 @@ const QuotedPost = (
             {processText(text as string)}
           </Box>
         )}
-        <Media media={media} />
+        <Media
+          media={media?.map((medium) => JSON.parse(medium) as MediaProps)}
+        />
       </Row>
     </Box>
   );

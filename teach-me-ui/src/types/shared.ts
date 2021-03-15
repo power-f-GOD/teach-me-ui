@@ -8,11 +8,13 @@ export type Partial<T> = {
   [P in keyof T]?: T[P];
 };
 
-export interface MediaDataProp {
-  format: 'jpg' | 'png' | string;
+export interface MediaProps {
+  format: 'jpg' | 'png' | 'mp4' | 'webp' | 'jpeg';
   public_id: string;
   type: MediaType;
   url: string;
+  title: string;
+  thumbnail: string;
   mime_type: 'image/jpeg' | 'image/png' | string;
 }
 
@@ -20,7 +22,7 @@ export type MediaType = 'image' | 'video' | 'document' | 'raw';
 
 export interface GalleryProps {
   open?: boolean;
-  data?: (ReactImageGalleryItem & { type: MediaType }[]) | string[] | any[];
+  data?: Partial<ReactImageGalleryItem & MediaProps>[];
   startIndex?: number;
   hasExtra?: boolean;
   title?: string;

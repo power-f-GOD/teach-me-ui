@@ -23,13 +23,10 @@ import {
   SnackbarState,
   UserData,
   ReduxActionV2,
-  GalleryProps,
-  MediaDataProp,
-  MediaType
+  GalleryProps
 } from '../types';
 import { getState } from '../utils';
 import { dispatch } from '../appStore';
-import { ReactImageGalleryItem } from 'react-image-gallery';
 
 export const triggerNotificationSound = (_payload: NotificationSoundState) => {
   const { isReady } = getState().notificationSound as NotificationSoundState;
@@ -71,24 +68,12 @@ export const displaySnackbar = (payload: SnackbarState): ReduxAction => {
 export const displayGallery = (
   payload: GalleryProps
 ): ReduxActionV2<GalleryProps> => {
-  const media = (payload.data as any[])
-    ?.map((_medium) => {
-      const medium = (typeof _medium === 'string'
-        ? JSON.parse(_medium)
-        : { ..._medium }) as MediaDataProp;
-
-      return {
-        type:
-          medium.type === 'image'
-            ? 'image'
-            : /raw|document/.test(medium.type)
-            ? 'document'
-            : 'video',
-        original: medium.url,
-        ...(medium.type === 'image' ? { thumbnail: medium.url } : {})
-      } as ReactImageGalleryItem & { type: MediaType };
-    })
-    .filter((medium) => medium);
+  const media = payload.data?.map((medium) => {
+    return {
+      ...medium,
+      original: medium.url
+    };
+  });
 
   payload.data = media;
 

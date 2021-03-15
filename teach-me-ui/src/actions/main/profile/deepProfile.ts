@@ -9,10 +9,6 @@ import {
 export const getDeepProfileData = (username: string) => (
   dispatch: Function
 ) => {
-  checkNetworkStatusWhilstPend({
-    name: 'deepProfileData',
-    func: deepProfileData
-  });
   dispatch(
     deepProfileData({
       status: 'pending',
@@ -20,6 +16,10 @@ export const getDeepProfileData = (username: string) => (
       err: !navigator.onLine
     })
   );
+  checkNetworkStatusWhilstPend({
+    name: 'deepProfileData',
+    func: deepProfileData
+  });
 
   http
     .get<DeepProfileProps>(`/profile/${username}/deep`, true)

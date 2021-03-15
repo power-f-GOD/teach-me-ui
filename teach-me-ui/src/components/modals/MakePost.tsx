@@ -4,8 +4,9 @@ import { connect } from 'react-redux';
 
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-
-import AttachmentIcon from '@material-ui/icons/Attachment';
+import Container from '@material-ui/core/Container';
+import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@material-ui/core/IconButton';
 
 import Row from 'react-bootstrap/Row';
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -19,8 +20,8 @@ import {
   requestCreatePost
 } from '../../actions';
 
+import { Loader, KAvatar, FAIcon, RenderImage } from '../shared';
 import Editor from '../crumbs/Editor';
-import RenderImage from '../shared/RenderImage';
 
 import {
   displayModal,
@@ -28,8 +29,7 @@ import {
   isImage,
   getFileExtension
 } from '../../functions';
-import { Container } from '@material-ui/core';
-import { Loader, KAvatar } from '../shared';
+import { userDeviceIsMobile } from '../..';
 
 const MakePost = (props: any) => {
   const { userData, sendFile, uploadsProp, makePostProp } = props;
@@ -179,10 +179,12 @@ const MakePost = (props: any) => {
       button.classList.remove('check-button-selected');
       button.classList.add('check-button');
       let selectedUploads = [];
+
       for (let uploaded of state.tempSelectedUploads) {
         if (uploaded.url === element.getAttribute('src')) continue;
         selectedUploads.push(uploaded);
       }
+
       setState({
         ...state,
         tempSelectedUploads: selectedUploads
@@ -255,7 +257,7 @@ const MakePost = (props: any) => {
   };
 
   return (
-    <Box p={1} pt={0} className='post'>
+    <Box p={1} pt={0} className='MakePost'>
       <Row className='container-fluid p-0 mx-auto mb-2'>
         <Box pr={1}>
           <KAvatar
@@ -272,31 +274,35 @@ const MakePost = (props: any) => {
       <form>
         <Editor onUpdate={onUpdate} />
         {!(state.showUploads && uploadsProp.data[0]) && (
-          <Dropdown drop='up'>
-            <Dropdown.Toggle title='attach file(s)' id='dropdown'>
-              <AttachmentIcon className='cursor-pointer' />
+          <Dropdown drop='right' className='upload__dropdown'>
+            <Dropdown.Toggle
+              title='upload file(s)'
+              className='upload__dropdown-toggle'>
+              <FAIcon name='paperclip' />
             </Dropdown.Toggle>
-            <Dropdown.Menu className='upload-drop-menu'>
-              <label
-                htmlFor='my-input'
-                onClick={hideUploadedFiles}
-                className='upload-menu-options'>
-                local Disk
-              </label>
-              <hr id='upload-divider' />
-              <div className='upload-menu-options' onClick={displayUploads}>
-                uploaded files
-              </div>
+            <Dropdown.Menu className='upload__dropdown-menu'>
+              <Tooltip title='from device'>
+                <IconButton onClick={hideUploadedFiles}>
+                  <FAIcon name={userDeviceIsMobile ? 'mobile' : 'desktop'} />
+                  <label htmlFor='my-input'></label>
+                </IconButton>
+              </Tooltip>
+              <input
+                multiple={true}
+                id='my-input'
+                onChange={fileSelectedHandler}
+                className='d-none'
+                type='file'
+              />
+              <Tooltip title='from previous uploads'>
+                <IconButton onClick={displayUploads}>
+                  <FAIcon name='cloud' />
+                </IconButton>
+              </Tooltip>
             </Dropdown.Menu>
           </Dropdown>
         )}
-        <input
-          multiple={true}
-          id='my-input'
-          onChange={fileSelectedHandler}
-          className='d-none'
-          type={'file'}
-        />
+
         {!state.showUploads && (
           <Row className='d-flex mx-auto mt-1'>
             <Container component='div' id='upload-grid-box'>

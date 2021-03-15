@@ -114,7 +114,7 @@ const Gallery = (props: {
                       url={props.original}
                       width='100%'
                       height='22em'
-                      style={{maxHeight: 'calc(100vh - 4.5em)'}}
+                      style={{ maxHeight: 'calc(100vh - 4.5em)' }}
                       controls={true}
                       loop={true}
                       config={{
@@ -129,17 +129,12 @@ const Gallery = (props: {
                       playing={currentIndex === i}
                     />
                   );
-                  datum.renderThumbInner = (props) => (
-                    <video
-                      width='100%'
-                      height='100%'
-                      aria-label='thumbnail'
-                      src={props.original.replace(/#t=[^"]*/, '')}
-                      controls={false}
-                      style={{ pointerEvents: 'none' }}
-                    />
-                  );
                 }
+
+                datum.thumbnail =
+                  datum.thumbnail
+                    ?.replace(/h_250/, 'h_75')
+                    .replace(/w_250/, 'w_90') || datum.original;
 
                 return datum;
               }) as ReactImageGalleryItem[]

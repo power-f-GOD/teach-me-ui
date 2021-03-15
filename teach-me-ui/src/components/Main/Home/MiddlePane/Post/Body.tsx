@@ -6,7 +6,7 @@ import Row from 'react-bootstrap/Row';
 
 import Box from '@material-ui/core/Box';
 
-import { PostStateProps } from '../../../../../types';
+import { PostStateProps, MediaProps } from '../../../../../types';
 import QuotedPost from './QuotedPost';
 import Media from '../../../../shared/Media';
 import { processText } from '../../../../../utils';
@@ -58,7 +58,9 @@ const PostBody = (props: PostBodyProps) => {
           {processText(text!)}
         </Box>
 
-        <Media media={media} />
+        <Media
+          media={media?.map((medium) => JSON.parse(medium) as MediaProps)}
+        />
 
         {/* {sec_type === 'REPOST' &&
         text && */}

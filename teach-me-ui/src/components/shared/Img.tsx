@@ -15,19 +15,24 @@ export const Img = (props: {
     setError(true);
   };
 
+  const handleImageLoadEvent = (
+    e: React.SyntheticEvent<HTMLImageElement, Event>
+  ) => ((e.target as any).ariaHidden = false);
+
   return (
     <img
       alt={alt}
-      aria-hidden={error}
+      aria-hidden={true}
       className={`${className} d-block ${error ? 'hide' : 'show'}`}
       src={src}
+      onLoad={handleImageLoadEvent}
       onError={onError}
       onClick={() => {
         dispatch(
           displayGallery({
             open: true,
             hasExtra: false,
-            data: [{ type: 'image', url: src, hasExtra: false }]
+            data: [{ type: 'image', url: src }]
           })
         );
       }}

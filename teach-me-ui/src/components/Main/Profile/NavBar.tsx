@@ -48,6 +48,8 @@ interface ProfileNavBarProps {
 
 export const profileNavWrapperRef = createRef<HTMLElement | null>();
 
+let getConversationWithTimeout: any = null;
+
 const ProfileNavBar = (props: ProfileNavBarProps) => {
   const {
     data,
@@ -62,7 +64,9 @@ const ProfileNavBar = (props: ProfileNavBarProps) => {
     colleagueAction?.status === 'pending' ||
     _deepProfileData?.status === 'pending';
   const hasPendingRequest = _deepProfileData?.data?.status === PENDING_REQUEST;
-  const isColleague = _deepProfileData?.data?.status === IS_COLLEAGUE;
+  const isColleague =
+    _deepProfileData?.data?.status === IS_COLLEAGUE &&
+    !colleagueActionIsPending;
   const idOrUsername = data.username || data.id || '';
 
   const [isRespondingView, setIsRespondingView] = useState<boolean>(false);
@@ -139,9 +143,15 @@ const ProfileNavBar = (props: ProfileNavBarProps) => {
   }, [deepProfileDataStatus]);
 
   useEffect(() => {
-    if (idOrUsername && isColleague)
-      dispatch(getConversationWith(idOrUsername));
-  }, [isColleague, idOrUsername]);
+    // Fix for 404 response from server (for '/conversation/with/${username}') due to sudden update of idOrUsername (from match params) and a slight delay in corresponding IS_COLLEAGUE update from deeProfile (i.e. stale IS_COLLEAGUE value from a previous profile view)
+    clearTimeout(getConversationWithTimeout);
+
+    if (idOrUsername && isColleague && !selfView) {
+      getConversationWithTimeout = setTimeout(() => {
+        dispatch(getConversationWith(idOrUsername));
+      }, 100);
+    }
+  }, [isColleague, idOrUsername, selfView]);
 
   return (
     <>

@@ -1,4 +1,9 @@
-import { UserData, SocketPipe, SocketStruct, StatusPropsState } from './shared';
+import {
+  UserData,
+  SocketPipe,
+  SocketStruct,
+  StatusPropsState
+} from './shared';
 import { ColleagueData } from './profile';
 
 export interface PostStateProps {
@@ -11,7 +16,7 @@ export interface PostStateProps {
   upvote_count: number;
   downvotes: number;
   id: string;
-  media: any[];
+  media: string[];
   date: number;
   pipe?: SocketPipe;
   parent_id?: string;
