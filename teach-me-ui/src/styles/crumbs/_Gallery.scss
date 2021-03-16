@@ -8,7 +8,7 @@
 
     .image-gallery-container {
       display: grid;
-      grid-template-columns: auto 24rem;
+      grid-template-columns: calc(100% - 24em) 24rem;
     }
   }
 
@@ -59,8 +59,7 @@
   }
 
   .image-gallery-slide {
-    min-height: calc(100vh - 5rem) !important;
-    // height: 80vh;
+    height: calc(100vh - 5rem);
     transition: 0.3s !important;
     display: flex;
     align-items: center;
@@ -68,7 +67,6 @@
 
     & > div {
       height: inherit;
-      min-height: inherit;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -93,11 +91,14 @@
   }
 
   .image-gallery-slide-wrapper {
-    button,
-    svg {
-      color: white !important;
+    svg,
+    button {
       transition: 0.25s;
       pointer-events: unset;
+    }
+
+    svg {
+      color: white !important;
     }
 
     [class*='-nav'] {
@@ -173,6 +174,7 @@
   .image-gallery-thumbnail {
     height: 4.25em;
     max-height: 20vh;
+    overflow: hidden;
   }
 
   .image-gallery-thumbnail-inner {
@@ -197,7 +199,6 @@
       }
 
       .image-gallery-slide {
-        min-height: unset !important;
         height: 75vh;
       }
     }
@@ -206,7 +207,12 @@
   @media screen and (min-width: 768px) {
     .image-gallery-thumbnails {
       overflow-x: auto;
-      max-width: calc(100vw - 23rem);
+    }
+
+    &.has-extra {
+      .image-gallery-thumbnails {
+        max-width: calc(100vw - 23rem);
+      }
     }
   }
 }

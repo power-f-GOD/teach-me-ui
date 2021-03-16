@@ -1,12 +1,12 @@
 .Media {
   width: calc(100% - (#{($pad-x / 4) * 2}));
   margin: 0.25em 0 0.5em (($pad-x / 4));
-  cursor: pointer;
   min-height: 10em;
   max-height: 30em;
   border-radius: $pad-x / 1.75;
   position: relative;
   overflow: hidden;
+  display: grid;
 
   &.has- {
     &1-media,
@@ -14,7 +14,6 @@
     &3-media,
     &4-media,
     &5-media {
-      display: grid;
       grid-template-columns: calc(50% - 0.125em) calc(50% - 0.125em);
       grid-template-rows: 12.5em 12.5em;
       column-gap: 0.25em;
@@ -45,12 +44,14 @@
     border: 0.0625em solid #eee;
     border-radius: inherit;
     overflow: hidden;
+    cursor: pointer;
 
-    &:hover {
-      .media-title__file {
-        transform: translateY(-100%);
-      }
+    &.is-doc {
+      cursor: unset;
+    }
 
+    &:hover,
+    &:focus-within {
       img {
         transform: scale(1.075);
       }
@@ -117,35 +118,146 @@
     }
   }
 
-  .media-title__file {
-    background-color: rgba(0, 0, 0, 0.5);
-    position: absolute;
-    z-index: 1;
-    padding: 0.25em 0.35em;
-    white-space: nowrap;
-    color: white;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    width: 100%;
-    transition: 0.3s cubic-bezier(0, 1, 0.15, 1);
-    // border-radius: $pad-x / 1.75 $pad-x / 1.75 0 0;
-
-    & > div {
-      max-width: calc(100% - 2.5em);
-
-      span {
-        text-overflow: ellipsis;
-        overflow: hidden;
-      }
-    }
-  }
-
   @media screen and (max-width: 575px) {
     &.has- {
       &2-media {
         grid-template-columns: auto;
         grid-template-rows: 12.5em 12.5em;
       }
+    }
+  }
+}
+
+@mixin media-document-theme($color: #1349aa) {
+  .media-document__background {
+    background-color: $color;
+  }
+
+  button {
+    &:hover,
+    &:focus {
+      background-color: white;
+      color: $color;
+    }
+  }
+}
+
+.MediaDocument {
+  &:hover,
+  &:focus-within {
+    .media-document__title {
+      transform: translateY(-100%);
+    }
+
+    .media-document__background {
+      & > .icon,
+      button {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+  }
+
+  &.word {
+    @include media-document-theme(#1349aa);
+  }
+
+  &.powerpoint {
+    @include media-document-theme(#b8361a);
+  }
+
+  &.excel {
+    @include media-document-theme(#0d6d37);
+  }
+
+  &.pdf {
+    @include media-document-theme(#a31a20);
+  }
+
+  &.alt {
+    @include media-document-theme($theme-tertiary-v1);
+  }
+
+  &.is-thumbnail {
+    .media-document__background {
+      & > .icon,
+      button {
+        $val: 0.5em;
+
+        margin-top: -#{$val};
+        transform: translateY($val - 0.2em) !important;
+      }
+    }
+  }
+
+  &.is-gallery {
+    .media-document__title {
+      bottom: 0.25em;
+      transform: unset;
+      background-color: rgba(0, 0, 0, 0.25);
+    }
+
+    .media-document__background {
+      & > .icon,
+      button {
+        transform: translateY(0);
+        opacity: 1;
+        z-index: 2;
+      }
+    }
+  }
+}
+
+.media-document__title {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  z-index: 1;
+  padding: 0.25em 0.35em;
+  white-space: nowrap;
+  color: white;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 100%;
+  transition: 0.25s;
+  line-height: 1.25;
+  text-align: left;
+
+  & > div {
+    max-width: calc(100% - 2.5em);
+
+    span {
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
+}
+
+.media-document__background {
+  background-color: rgb(19, 73, 170);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  width: 100%;
+  height: 100%;
+
+  & > .icon,
+  button {
+    transform: translateY(1.5rem);
+    transition: 0.25s;
+  }
+
+  button {
+    width: 7em;
+    background-color: transparent;
+    color: white;
+    border: 0.0625rem solid white;
+    opacity: 0;
+    transform: translateY(2.75rem);
+
+    &:hover,
+    &:focus {
+      background-color: white;
     }
   }
 }

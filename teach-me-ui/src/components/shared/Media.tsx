@@ -3,12 +3,16 @@ import axios from 'axios';
 import { LazyLoadImage as LazyImg } from 'react-lazy-load-image-component';
 import ReactPlayer from 'react-player/lazy';
 
+import Container from 'react-bootstrap/Container';
+
 import Box from '@material-ui/core/Box';
+
 import { dispatch } from '../../appStore';
 import { displayGallery } from '../../actions';
 import { MediaProps } from '../../types';
 import { userDeviceIsMobile } from '../..';
-import { FAIcon } from './Icons';
+
+import MediaDocument from './Media.Document';
 
 const Media = ({ media }: { media?: MediaProps[] }) => {
   const handleVideoClick = useCallback(
@@ -71,25 +75,9 @@ const Media = ({ media }: { media?: MediaProps[] }) => {
             ? '/videos/' +
               (i % 2 === 0 ? 'nature-video.mp4' : 'nature-trailer.mp4') // for dev/testing purpose (in order to save data on every save/reload)
             : medium.url;
-        let fileIconName = 'word';
-
-        switch (true) {
-          case /presentation/.test(medium.mime_type):
-            fileIconName = 'powerpoint';
-            break;
-          case /pdf/.test(medium.mime_type):
-            fileIconName = 'pdf';
-            break;
-          case /sheet/.test(medium.mime_type):
-            fileIconName = 'excel';
-            break;
-          case /te?xt/.test(medium.mime_type):
-            fileIconName = 'alt';
-            break;
-        }
-
+        // console.log(medium);
         return (
-          <div
+          <Box
             key={i}
             className={isDoc ? 'is-doc' : ''}
             onClick={
@@ -99,8 +87,9 @@ const Media = ({ media }: { media?: MediaProps[] }) => {
             }>
             {/* Hack to by media onClick event prevention for videos on mobile devices */}
             {userDeviceIsMobile && medium.type === 'video' && (
-              <div className='video-overlay__mobile--hack'></div>
+              <Container className='video-overlay__mobile--hack' />
             )}
+
             {(() => {
               switch (medium.type) {
                 case 'video':
@@ -129,71 +118,59 @@ const Media = ({ media }: { media?: MediaProps[] }) => {
                   );
                 case 'document':
                 case 'raw':
+                  return (
+                    <MediaDocument
+                      title={medium.title}
+                      mime_type={medium.mime_type}
+                    />
+                  );
                 case 'image':
                   return (
-                    <>
-                      {isDoc && (
-                        <div className='media-title__file d-flex'>
-                          <FAIcon
-                            name={'file-' + fileIconName}
-                            className='m-2'
-                            fontSize='2.125em'
-                          />
-                          <div className='d-flex flex-column align-self-center'>
-                            <span className='font-bold'>{medium.title}</span>
-                            <small className='theme-tertiary-lightest'>
-                              Size: 8KB
-                            </small>
-                          </div>
-                        </div>
-                      )}
-                      <LazyImg
-                        id={i.toString()}
-                        onClick={() => {
-                          if (medium.type === 'raw' && 2 > 3) {
-                            axios({
-                              url: medium.url,
-                              method: 'GET',
-                              responseType: 'blob'
-                            }).then((res) => {
-                              const dataURL = URL.createObjectURL(
-                                new Blob([res.data])
-                              );
-                              const a = document.createElement('a');
-
-                              a.href = dataURL;
-                              a.download = 'file';
-                              a.click();
-                            });
-                          } else {
-                            dispatch(
-                              displayGallery({
-                                open: true,
-                                data: media,
-                                startIndex: i
-                              })
+                    <LazyImg
+                      onClick={() => {
+                        if (medium.type === 'raw' && 2 > 3) {
+                          axios({
+                            url: medium.url,
+                            method: 'GET',
+                            responseType: 'blob'
+                          }).then((res) => {
+                            const dataURL = URL.createObjectURL(
+                              new Blob([res.data])
                             );
-                          }
-                        }}
-                        src={isDoc ? medium.thumbnail : url}
-                        alt={medium.title}
-                        data-hide='true'
-                        onLoad={(e) =>
-                          ((e.target as any).dataset.hide = 'false')
+                            const a = document.createElement('a');
+
+                            a.href = dataURL;
+                            a.download = 'file';
+                            a.click();
+                          });
+                        } else {
+                          dispatch(
+                            displayGallery({
+                              open: true,
+                              data: media,
+                              startIndex: i
+                            })
+                          );
                         }
-                        onError={(e) => ((e.target as any).src = url)}
-                      />
-                    </>
+                      }}
+                      src={url}
+                      alt={medium.title}
+                      data-hide='true'
+                      onLoad={(e) => ((e.target as any).dataset.hide = 'false')}
+                      onError={(e) => ((e.target as any).src = url)}
+                    />
                   );
               }
             })()}
 
             {i === 3 && media.length > 4 && (
-              <div className='more-media-overlay'>
-                <span>+1</span>
-              </div>
+              <Container className='more-media-overlay px-0'>
+                <Container as='span' className='px-0 w-auto'>
+                  +1
+                </Container>
+              </Container>
             )}
-          </div>
+          </Box>
         );
       })}
     </Box>
