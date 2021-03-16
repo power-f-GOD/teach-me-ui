@@ -1,4 +1,59 @@
-.post {
+.MakePost {
+  .upload__dropdown {
+    position: relative;
+
+    button {
+      height: 2.5em;
+      width: 2.5em;
+      border-radius: 50%;
+      background-color: #eee;
+
+      &:hover,
+      &:focus {
+        background-color: #ddd;
+      }
+    }
+  }
+
+  .upload__dropdown-toggle {
+    z-index: 1;
+  }
+
+  .upload__dropdown-menu {
+    bottom: 0.5rem !important;
+    left: 0.5rem !important;
+    transition: 0.3s;
+
+    &.show {
+      button {
+        transform: translateX(0) !important;
+      }
+    }
+
+    button {
+      z-index: unset;
+
+      &:first-child {
+        transform: translateX(-0.5rem);
+      }
+
+      &:last-child {
+        left: 0.5rem;
+        transform: translateX(-3.5rem);
+      }
+
+      label {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+      }
+    }
+  }
+
+  .show {
+    transition-delay: unset;
+  }
+
   ::-webkit-scrollbar {
     width: 0.5rem;
     border-radius: 0.4375rem;

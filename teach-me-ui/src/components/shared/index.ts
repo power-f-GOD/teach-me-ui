@@ -3,10 +3,10 @@ import Feeds from './Feeds';
 import User from './User';
 import KAvatar from './KAvatar';
 import Loader from './Loaders';
+import RenderImage from './RenderImage';
 
 export * from './Card';
 export * from './Icons';
 export * from './Img';
-export * from './RenderImage';
 export * from './TextTruncator';
-export { Empty, Feeds, User, Loader, KAvatar };
+export { Empty, Feeds, User, Loader, KAvatar, RenderImage };

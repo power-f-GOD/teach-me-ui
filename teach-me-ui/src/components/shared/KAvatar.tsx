@@ -40,7 +40,7 @@ const KAvatar = (props: {
             displayGallery({
               open: true,
               hasExtra: false,
-              data: [{ type: 'image', url: src, hasExtra: false }]
+              data: [{ type: 'image', url: src }]
             })
           );
         }
