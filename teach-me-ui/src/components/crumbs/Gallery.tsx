@@ -13,8 +13,9 @@ import Backdrop from '@material-ui/core/Backdrop';
 import CloseIcon from '@material-ui/icons/Close';
 
 import { delay, dispatch } from '../../utils';
-import { GalleryProps, MediaType } from '../../types';
+import { GalleryProps, MediaProps } from '../../types';
 import { displayGallery } from '../../actions';
+import { MediaDocument } from '../shared';
 
 const Gallery = (props: {
   gallery: GalleryProps;
@@ -91,7 +92,7 @@ const Gallery = (props: {
       disableScrollLock
       BackdropComponent={Backdrop}
       BackdropProps={{ timeout: 100 }}>
-      <div>
+      <Container fluid className='px-0'>
         <IconButton
           edge='start'
           className='close-modal-button slide-in-top'
@@ -100,41 +101,65 @@ const Gallery = (props: {
           aria-label='close modal'>
           <CloseIcon fontSize='large' />
         </IconButton>
+
         <Container fluid className='image-gallery-container px-0'>
           <ImageGallery
             items={
               (data ?? []).map((_datum, i) => {
-                const datum = { ..._datum } as ReactImageGalleryItem & {
-                  type: MediaType;
-                };
-
-                if (datum.type === 'video') {
-                  datum.renderItem = (props) => (
-                    <ReactPlayer
-                      url={props.original}
-                      width='100%'
-                      height='22em'
-                      style={{ maxHeight: 'calc(100vh - 4.5em)' }}
-                      controls={true}
-                      loop={true}
-                      config={{
-                        file: {
-                          attributes: {
-                            autoPlay: currentIndex === i,
-                            controlsList: 'nodownload',
-                            disablePictureInPicture: true
-                          }
-                        }
-                      }}
-                      playing={currentIndex === i}
-                    />
-                  );
-                }
+                const datum = { ..._datum };
 
                 datum.thumbnail =
                   datum.thumbnail
                     ?.replace(/h_250/, 'h_75')
                     .replace(/w_250/, 'w_90') || datum.original;
+
+                switch (datum.type) {
+                  case 'video':
+                    datum.renderItem = (props) => (
+                      <ReactPlayer
+                        url={props.original}
+                        width='100%'
+                        height='22em'
+                        style={{ maxHeight: 'calc(100vh - 4.5em)' }}
+                        controls={true}
+                        loop={true}
+                        config={{
+                          file: {
+                            attributes: {
+                              autoPlay: currentIndex === i,
+                              controlsList: 'nodownload',
+                              disablePictureInPicture: true
+                            }
+                          }
+                        }}
+                        playing={currentIndex === i}
+                      />
+                    );
+                    break;
+                  case 'document':
+                  case 'raw':
+                    datum.renderItem = ({
+                      title,
+                      mime_type
+                    }: Partial<ReactImageGalleryItem & MediaProps>) => (
+                      <MediaDocument
+                        title={title!}
+                        mime_type={mime_type!}
+                        isGallery={true}
+                      />
+                    );
+                    datum.renderThumbInner = ({
+                      title,
+                      mime_type
+                    }: Partial<ReactImageGalleryItem & MediaProps>) => (
+                      <MediaDocument
+                        title={title!}
+                        mime_type={mime_type!}
+                        isThumbnail={true}
+                      />
+                    );
+                    break;
+                }
 
                 return datum;
               }) as ReactImageGalleryItem[]
@@ -169,7 +194,7 @@ const Gallery = (props: {
             </Container>
           )}
         </Container>
-      </div>
+      </Container>
     </MuiModal>
   );
 };
