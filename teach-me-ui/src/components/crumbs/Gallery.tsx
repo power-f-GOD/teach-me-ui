@@ -140,11 +140,13 @@ const Gallery = (props: {
                   case 'raw':
                     datum.renderItem = ({
                       title,
-                      mime_type
+                      mime_type,
+                      url
                     }: Partial<ReactImageGalleryItem & MediaProps>) => (
                       <MediaDocument
                         title={title!}
                         mime_type={mime_type!}
+                        url={url}
                         isGallery={true}
                       />
                     );
