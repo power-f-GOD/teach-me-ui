@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useCallback } from 'react';
+import axios from 'axios';
 
 import Container from 'react-bootstrap/Container';
 
@@ -10,11 +11,30 @@ import { FAIcon } from './Icons';
 const MediaDocument = (props: {
   title: string;
   mime_type: string;
+  url?: string;
   isThumbnail?: boolean;
   isGallery?: boolean;
 }) => {
-  const { title, mime_type, isThumbnail, isGallery } = props;
+  const { title, mime_type, url, isThumbnail, isGallery } = props;
   let fileIconName = '';
+
+  const handleDownloadClick = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      axios
+        .get(url!, {
+          responseType: 'blob'
+        })
+        .then(({ data }) => {
+          const dataURL = URL.createObjectURL(new Blob([data]));
+          const a = document.createElement('a');
+
+          a.href = dataURL;
+          a.download = title;
+          a.click();
+        });
+    },
+    [url, title]
+  );
 
   switch (true) {
     case /document/.test(mime_type):
@@ -72,7 +92,8 @@ const MediaDocument = (props: {
             variant='contained'
             size='small'
             className='btn-white px-2 px-md-3 py-1 mt-3'
-            color='default'>
+            color='default'
+            onClick={handleDownloadClick}>
             <FAIcon name='download' className='mr-2 my-1' /> Save
           </Button>
         )}

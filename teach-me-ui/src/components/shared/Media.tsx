@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import axios from 'axios';
 import { LazyLoadImage as LazyImg } from 'react-lazy-load-image-component';
 import ReactPlayer from 'react-player/lazy';
 
@@ -122,36 +121,20 @@ const Media = ({ media }: { media?: MediaProps[] }) => {
                     <MediaDocument
                       title={medium.title}
                       mime_type={medium.mime_type}
+                      url={medium.url}
                     />
                   );
                 case 'image':
                   return (
                     <LazyImg
                       onClick={() => {
-                        if (medium.type === 'raw' && 2 > 3) {
-                          axios({
-                            url: medium.url,
-                            method: 'GET',
-                            responseType: 'blob'
-                          }).then((res) => {
-                            const dataURL = URL.createObjectURL(
-                              new Blob([res.data])
-                            );
-                            const a = document.createElement('a');
-
-                            a.href = dataURL;
-                            a.download = 'file';
-                            a.click();
-                          });
-                        } else {
-                          dispatch(
-                            displayGallery({
-                              open: true,
-                              data: media,
-                              startIndex: i
-                            })
-                          );
-                        }
+                        dispatch(
+                          displayGallery({
+                            open: true,
+                            data: media,
+                            startIndex: i
+                          })
+                        );
                       }}
                       src={url}
                       alt={medium.title}
