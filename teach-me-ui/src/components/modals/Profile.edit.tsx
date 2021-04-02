@@ -86,16 +86,6 @@ const EditProfile = (props: any) => {
     getUserDetailsProp
   } = props;
 
-  const removeModal = () => {
-    displayModal(false, true);
-  }
-  
-  const closeModal = (e: any) => {
-    if (String(window.location.hash)  === '') removeModal();
-  }
-  
-  window.onhashchange = closeModal;
-
   if (updateAcademicData.status === 'fulfilled'
       && updateUserData.status === 'fulfilled'
       && updateEmail.status === 'fulfilled'
@@ -110,7 +100,6 @@ const EditProfile = (props: any) => {
   }
 
   if (getUserDetailsProp.status === 'fulfilled') {
-    window.history.back();
     displayModal(false);
     dispatch(getUserDetails({status: 'settled', data: []}));
     dispatch(matchingDepartments({ status: 'settled', data: []}));
@@ -397,6 +386,10 @@ const EditProfile = (props: any) => {
   );
 
   useEffect(() => () => window.scrollTo(0, 0), []);
+
+  setTimeout(() => {
+    window.location.hash = 'modal';
+  }, 0);
 
   return (
     <Box 
@@ -757,8 +750,8 @@ const mapStateToProps = (state: any) => {
   return {
     bio: state.bio,
     userData: state.userData,
-    firstname: state.firstname,
-    lastname: state.lastname,
+    firstname: state.first_name,
+    lastname: state.last_name,
     username: state.username,
     email: state.email,
     dob: state.dob,

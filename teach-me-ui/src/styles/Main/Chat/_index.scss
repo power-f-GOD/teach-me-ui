@@ -1,0 +1,169 @@
+@import '../../constants';
+
+$chat-text-color: $theme-tertiary-v1;
+$chat-header-min-height: 3.75rem;
+
+.ChatBox {
+  width: 100%;
+  height: 100%;
+  max-height: 100vh;
+  box-shadow: 0 0.25rem 1.5rem rgba(0, 0, 0, 0.2);
+  background: white;
+  left: 0;
+  top: 0;
+  position: fixed;
+  right: 0;
+  z-index: 1200;
+  transition: transform 0.4s cubic-bezier(0, 1, 0.15, 1) 0.5s,
+    opacity 0.4s cubic-bezier(0, 1, 0.15, 1) 0.5s;
+
+  * {
+    color: inherit;
+  }
+
+  button {
+    transition: 0.35s;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  header.chat-header {
+    position: relative;
+    font-weight: bold;
+    z-index: 4;
+    flex: none;
+    background: inherit;
+    background-color: white;
+    box-shadow: 0.5rem 0 1.75rem rgba(0, 0, 0, 0.15);
+    min-height: $chat-header-min-height;
+    max-height: $chat-header-min-height;
+    // @include debugger();
+  }
+}
+
+.chat-header,
+.chat-tab-panel-item {
+  .online {
+    .MuiBadge-dot {
+      background-color: limegreen !important;
+    }
+  }
+
+  .away {
+    .MuiBadge-dot {
+      background-color: orange !important;
+    }
+  }
+
+  .offline {
+    .MuiBadge-dot {
+      background-color: #999 !important;
+    }
+  }
+
+  .MuiBadge-dot {
+    transition: 0.3s;
+    background-color: $error;
+  }
+}
+
+.chat-avatar {
+  $size: 2.75rem;
+
+  height: $size;
+  width: $size;
+  border-radius: 50%;
+  color: $chat-text-color;
+  // background-color: $theme-primary-v4;
+  transition: 0.3s;
+
+  + .MuiBadge-dot {
+    $size: 1rem;
+
+    border-radius: 50%;
+    border: 0.2rem solid white;
+    height: $size;
+    width: $size;
+    right: 18%;
+  }
+
+  [class*='Icon'] {
+    color: #fff;
+  }
+}
+
+.chat-conversation-name-wrapper,
+.chat-header-controls,
+.chat-header-control-wrapper {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+}
+
+.chat-header-controls {
+  justify-content: flex-end;
+  max-width: 6.5rem;
+}
+
+.chat-header-name_control-wrapper {
+  max-width: 100%;
+  // @include debugger();
+}
+
+body.desktop {
+  .ChatBox {
+    .custom-scroll-bar,
+    textarea,
+    #chat-msg-box {
+      &::-webkit-scrollbar {
+        width: 0.55em;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0);
+      }
+
+      &::-webkit-scrollbar-thumb {
+        border-radius: 0.5rem;
+      }
+
+      &.grey-scrollbar {
+        &::-webkit-scrollbar-thumb {
+          background: #555;
+        }
+        *::-webkit-scrollbar-thumb {
+          background: #555;
+        }
+      }
+
+      & + .scroll-bar-fader {
+        // pointer-events: none;
+
+        @include before-or-after(
+          $w: 0.5rem,
+          $l: unset,
+          $r: 0,
+          $bg: inherit,
+          $zi: 2,
+          $t: 0
+        );
+      }
+
+      &:hover {
+        & + .scroll-bar-fader {
+          opacity: 0;
+          z-index: -1;
+        }
+      }
+
+      & + .scroll-bar-fader {
+        &:hover {
+          opacity: 0;
+          z-index: -1;
+        }
+      }
+    }
+  }
+}

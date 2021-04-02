@@ -7,10 +7,9 @@ const About = () => {
   React.useEffect(() => () => window.scrollTo(0, 0), []);
 
   return (
-    <Box className='fade-in' paddingY='100px'>
+    <Box className='fade-in' paddingY='100px' minHeight='100vh'>
       <Container>
-        <h1>ABOUT component goes here!</h1>
-        <h1>And more ABOUT component content goes here!</h1>
+        <h1>ABOUT US coming soon!</h1>
       </Container>
     </Box>
   );

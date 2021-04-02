@@ -1,7 +1,7 @@
 import { ChangeEvent } from 'react';
 
-import * as actions from '../actions/validate';
-import { getState, dispatch } from './utils';
+import * as actions from '../actions/auth/validate';
+import { getState, dispatch } from '../utils';
 import { refs as editProfileRefs } from '../components/modals/Profile.edit';
 import { 
   updateProfileRequest,
@@ -43,7 +43,7 @@ export function handleEditProfileInputChange({
       let uid = target.dataset?.uid;
 
       return dispatch(
-        actions.validateInstitution({ value: { keyword: value, uid } })
+        actions.validateInstitution({ value: { keyword: value, uid: uid } })
       );
     case 'department':
       return dispatch(actions.validateDepartment({ value }));
@@ -82,8 +82,8 @@ export function handleEditProfileRequest() {
   }
 
   const {
-    firstname,
-    lastname,
+    first_name,
+    last_name,
     username,
     email,
     dob,
@@ -94,8 +94,8 @@ export function handleEditProfileRequest() {
   } = (getState() as unknown) as any;
 
   if (
-    firstname.err ||
-    lastname.err ||
+    first_name.err ||
+    last_name.err ||
     username.err ||
     email.err ||
     dob.err ||
@@ -108,8 +108,8 @@ export function handleEditProfileRequest() {
   }
 
   let formData: any = {
-    firstname: firstname.value as string,
-    lastname: lastname.value as string,
+    first_name: first_name.value as string,
+    last_name: last_name.value as string,
     username: username.value as string,
     email: email.value as string,
     dob: dob.value as string,

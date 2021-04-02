@@ -1,10 +1,24 @@
 @import '../constants';
 
+body[data-hide-nav='true'] {
+  .MuiAppBar-root {
+    transform: translateY(-4rem);
+    transition-delay: 0.2s;
+    pointer-events: none;
+  }
+
+  .Compose {
+    transform: translateY(-1rem);
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
 .MuiAppBar-root {
   // @include debugger();
 
   background-color: transparent !important;
-  transition: 0.5s;
+  transition: 0.3s;
   width: 100%;
   left: 0;
 }
@@ -39,82 +53,103 @@
 
 .nav-links-wrapper {
   display: flex;
+
+  .profile-photo {
+    $size: 97.5%;
+
+    width: $size;
+    height: $size;
+    transition: 0.3s;
+    background: inherit;
+    color: inherit;
+  }
 }
 
-.nav-icon {
-  transition: 0.35s;
-}
+$btn-size: 3em;
 
 .nav-link {
+  $size: $btn-size;
+
+  min-height: $size;
+  height: $size;
+  min-width: $size;
+  width: $size;
   box-shadow: none;
   display: inline-flex;
+  justify-content: center;
   align-items: center;
-  margin: 0 0.5em;
+  margin: 0 0 0 1rem;
   padding: 0.75em;
   font-size: 1rem;
-  color: #f0f0f0 !important;
-  background: unset;
+  color: white !important;
+  opacity: 0.55;
   text-transform: uppercase !important;
-  transition: 0.35s;
+  transition: 0.3s, font-weight 0s;
   position: relative;
 
-  &::before {
-    position: absolute;
-    content: ' ';
-    width: 0.25em;
-    max-width: 50%;
-    height: 0.25em;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: -1;
-    border-radius: 0.25em;
-    background-color: $theme-primary-v8;
-    transition: 0.35s;
-  }
-
   &.active {
+    opacity: 1;
+    font-weight: bold;
+
     &::before {
-      width: 60% !important;
-      background: $theme-secondary;
+      background: $theme-gradient;
+      border-color: #fff;
+    }
+
+    .profile-photo {
+      $size: 85%;
+
+      width: $size;
+      height: $size;
+      background-color: $theme-primary-v4;
     }
   }
 
-  &:hover, &:focus {
-    color: $theme-secondary-v8 !important;
+  &.new-notification {
+    opacity: 1;
+  }
+
+  &:hover,
+  &:focus {
+    opacity: 1;
+    font-weight: bolder;
 
     &::before {
-      width: 3em;
-      background-color: $theme-secondary-v7;
+      transform: rotateZ(-60deg) scale(1.09);
+      border-right-color: #eee;
+      border-left-color: #eee;
     }
   }
 
-  &:last-child {
-    margin-right: 0;
-    padding: 0.5em 1em;
-    color: white !important;
-    background-color: unset;
-
-    &::before {
-      top: -70%;
-      max-width: unset;
-      width: 100%;
-      height: 180%;
-      background: $theme-primary-v6;
-    }
-
-    &:hover, &:focus {
-      &::before {
-        height: 100%;
-        top: 0;
-        background-color: $theme-secondary;
-      }
-    }
+  &::before {
+    @include before-or-after($br: 50%, $bg: rgba(255, 255, 255, 0.125));
+    transition: border-color 0.1s,
+      transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 0.15rem solid transparent;
   }
 
   .nav-label {
     display: none;
+  }
+
+  .icon {
+    font-size: 1.4em;
+  }
+}
+
+.drawer {
+  .menu-button {
+    $size: $btn-size - 1em;
+
+    max-height: $size;
+    max-width: $size;
+    margin-left: 0.0625em;
+    transition: 0.3s;
+
+    &:hover,
+    &:focus {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
   }
 }
 
@@ -135,32 +170,29 @@
 
   .nav-link {
     padding: 0.85em;
+    width: auto;
     margin: 0 0.5em;
     margin-top: 0.5em;
+    justify-content: flex-start;
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
       border-bottom-color: transparent;
     }
 
-    &:last-child {
-      margin-top: 2rem;
-      justify-content: flex-start;
+    &:before {
+      height: $btn-size - 0.125em;
+      width: $btn-size - 0.125em;
+      left: 0.125em;
+    }
 
-      &::before {
-        top: 0;
-        width: 150%;
-        height: 100%;
-      }
-
-      &:hover, &:focus {
-        &::before {
-          width: 100%;
-        }
-      }
+    .icon {
+      position: absolute;
     }
 
     .nav-label {
-      display: inline;
+      display: inline-block;
+      transform: translateX(3em);
     }
   }
 
@@ -176,7 +208,7 @@
   }
 
   .MuiDrawer-paper {
-    width: 60%;
+    width: 70%;
     overflow-x: hidden;
     background: $theme-primary-v3;
     max-width: 300px;

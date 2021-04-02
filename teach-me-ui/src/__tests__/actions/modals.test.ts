@@ -1,14 +1,8 @@
 import { cleanup } from '@testing-library/react';
 
-import { 
-  ReduxAction, 
-  ModalState, 
-  CREATE_POST 
-} from '../../constants';
-import { 
-  hideModal, 
-  showModal 
-} from '../../actions';
+import { MAKE_POST } from '../../constants';
+import { ReduxAction, ModalState } from '../../types';
+import { hideModal, showModal } from '../../actions';
 
 afterEach(cleanup);
 
@@ -23,7 +17,7 @@ it("creates modals (inputs) action and should be called with its 'state props' a
     type: expect.any(String),
     payload: {
       open: true,
-      type: CREATE_POST,
+      type: MAKE_POST,
       meta: { title: 'Create Post' }
     }
   };

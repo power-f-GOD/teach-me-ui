@@ -1,0 +1,56 @@
+.recommendations-heading {
+  background-color: white;
+  padding: 0.75rem 0.75rem;
+  font-size: 1.2rem;
+  border-radius: 0.5rem;
+  margin: 1.5rem 0 -0.75rem;
+}
+
+.recommendations {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  display: grid;
+  border-radius: 1rem;
+  margin: 1.5rem 0;
+  padding: 0;
+
+  .container,
+  .col {
+    padding: 0;
+  }
+
+  @media (hover: none) and (pointer: coarse) {
+    & {
+      margin-bottom: 0;
+    }
+  }
+}
+
+body.desktop.not-mac {
+  .recommendations {
+    border-radius: 1.5rem 1.5rem 0 0;
+
+    &::-webkit-scrollbar {
+      width: 5px;
+      height: 10px;
+    }
+
+    @media (hover: none) and (pointer: coarse) {
+      &::-webkit-scrollbar {
+        width: 5px;
+        height: 0px;
+      }
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #999;
+      border-radius: 5px;
+    }
+  }
+}
+
+@import './Recommendation';

@@ -1,64 +1,93 @@
-import { dispatch } from '../functions';
+import { dispatch, getState, promisedDispatch, inProfile, inPostPage, updatePostPage } from '../functions';
 
 import {
-  updatePost,
-  replyToPost,
-  makeRepostResolved,
-  makeRepostRejected,
-  updateRepostData,
-  createPost
+  posts,
+  triggerNotificationSound,
+  makeRepost,
+  profilePosts
 } from '../actions';
 
 import { displayModal } from '../functions';
 
-import { PostReactionResult, SocketPipe, RepostResult } from '../constants';
+import {
+  postState,
+  POST_REACTION,
+  POST_REPLY,
+  TONE_NAME__OPEN_ENDED,
+  POST_REPOST
+} from '../constants';
+import {
+  SocketPipe,
+  NotificationSoundState,
+  PostStateProps,
+  UserData
+} from '../types';
 
-export default function post(data: any) {
+export default function post(
+  _data: { message: string; error: boolean } & Partial<PostStateProps>
+) {
+  const { notificationSound, userData } = getState() as {
+    notificationSound: NotificationSoundState;
+    userData: UserData;
+  };
+  const toneName: NotificationSoundState['toneName'] = TONE_NAME__OPEN_ENDED;
+  const senderIsSelf = userData.id === _data.sender?.id;
+
+  // console.log('payload from server:', _data);
   try {
-    switch (data.pipe as SocketPipe) {
-      case 'POST_REACTION':
-        dispatch(updatePost(data as PostReactionResult));
+    switch (_data.pipe as SocketPipe) {
+      case POST_REACTION:
+      case POST_REPLY: {
+        const data = [{ ..._data }] as PostStateProps[];
+        dispatch(inProfile() ? profilePosts({ data }) : posts({ data }));
+        inPostPage() && updatePostPage(data[0]);
         break;
-      case 'POST_REPOST':
-        if (!data.error) {
-          if (data.count !== undefined) {
-            dispatch(updateRepostData(data as RepostResult));
-          }
-          if (data.action_count !== undefined) dispatch(createPost(data));
-          document.querySelector('.middle-pane-col')?.scrollTo(0, 0);
+      }
+      case POST_REPOST: {
+        if (senderIsSelf) {
+          const data = {
+            data: [
+              { ...postState, ..._data, sender: userData, pipe: undefined }
+            ],
+            statusText: 'new post created'
+          };
+
           dispatch(
-            makeRepostResolved({
-              error: false,
-              message: 'Repost was made successfully'
-            })
+            inProfile() ? profilePosts({ ...data }) : posts({ ...data })
           );
-          window.history.back();
-          dispatch(displayModal(false));
-        } else {
-          dispatch(makeRepostRejected({ error: true, message: data.message }));
-        }
-        break;
-      case 'POST_REPLY':
-        if (!data.error) {
           dispatch(
-            replyToPost({
-              status: 'fulfilled',
+            makeRepost({
               err: false,
-              data
+              status: 'fulfilled'
             })
           );
-        } else {
-          dispatch(
-            replyToPost({
-              status: 'fulfilled',
-              err: true,
-              data
-            })
-          );
+
+          // @Prince, instead of this check I'm currently temporarily doing, you should check if the modal is currently being displayed to dispatch this action else skip
+          // And although, I've put a check in the action to test for the window location hash too which would prevent history.back() from being called unnecessarily
+          displayModal(false);
         }
+        inPostPage() && updatePostPage(_data as PostStateProps);
+
         break;
+      }
       default:
         break;
     }
   } catch (e) {}
+
+  if (senderIsSelf) {
+    switch (_data.pipe) {
+      case POST_REPLY:
+      case POST_REPOST:
+        if (notificationSound.isPlaying) {
+          promisedDispatch(
+            triggerNotificationSound({ play: false, isPlaying: false })
+          ).then(() => {
+            dispatch(triggerNotificationSound({ play: true, toneName }));
+          });
+        } else {
+          dispatch(triggerNotificationSound({ play: true, toneName }));
+        }
+    }
+  }
 }

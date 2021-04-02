@@ -1,0 +1,125 @@
+@import '../../../constants';
+
+.chat-right-pane {
+  background-color: #fff;
+  height: 100vh;
+  max-height: 100vh;
+  border-left: 0.0625rem solid #ddd;
+  position: absolute;
+  right: 0;
+  animation: slideInRightScale 0.35s;
+
+  header {
+    background-color: inherit;
+  }
+}
+
+.chat-user-info-container {
+  overflow-x: hidden;
+
+  > section:first-child {
+    position: relative;
+    z-index: 3;
+
+    &::before {
+      @include before-or-after(
+        $bg: #eee,
+        $zi: 0,
+        $h: 25.25rem,
+        $w: calc(100% + 3rem),
+        $t: -7rem,
+        $l: -1.5rem
+      );
+    }
+  }
+
+  + .scroll-bar-fader {
+    background-color: #fff !important;
+  }
+
+  .chat-avatar {
+    $size: 8rem;
+
+    height: $size;
+    margin: 1.25rem 0;
+    width: $size;
+    font-size: 2.5rem;
+    display: inline-flex !important;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+  }
+
+  .display-name {
+    margin: 0.25rem 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  .username {
+    color: #555;
+  }
+
+  .online-status {
+    color: #888;
+    font-size: 0.9rem;
+    position: relative;
+    margin-left: 1rem;
+    display: inline;
+
+    &::before {
+      @include before-or-after(
+        $t: 0.125rem,
+        $h: 1rem,
+        $w: 1rem,
+        $tr: 0.3s,
+        $zi: unset,
+        $l: -1.25rem,
+        $br: 50%,
+        $bg: #999
+      );
+      border: 0.125rem solid white;
+    }
+
+    &.online {
+      &::before {
+        background-color: limegreen;
+      }
+    }
+
+    &.away {
+      &::before {
+        background-color: orange;
+      }
+    }
+
+    &.offline {
+      &::before {
+        background-color: #999;
+      }
+    }
+
+    &.font-bold {
+      color: limegreen;
+    }
+  }
+
+  .info {
+    font-size: 0.9rem;
+  }
+
+  .status {
+    color: #777;
+    text-align: center;
+    font-size: 0.9rem;
+
+    .MuiSvgIcon-root {
+      color: inherit;
+      margin-left: auto;
+    }
+  }
+
+  .academic {
+    color: #666;
+  }
+}

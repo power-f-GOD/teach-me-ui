@@ -1,6 +1,8 @@
-import { dispatch } from "./utils";
-import { requestSignout } from "../actions";
+import { dispatch, promisedDispatch } from '../utils';
+import { requestSignout, closeWebSocket } from '../actions';
 
 export function handleSignoutRequest() {
-  dispatch(requestSignout()(dispatch));
+  promisedDispatch(closeWebSocket()).then(() => {
+    dispatch(requestSignout()(dispatch));
+  });
 }

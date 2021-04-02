@@ -2,24 +2,39 @@ import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import Index from './components/Index/Index';
-import Auth from './components/Auth/Auth';
-import Main from './components/Main/Main';
-import Loader from './components/crumbs/Loader';
-import SnackBar from './components/crumbs/SnackBar';
+import { Index, Auth, Main, Loader, SnackBar } from './components';
 import ProtectedRoute from './ProtectedRoute';
 
-import { verifyAuth } from './actions/auth';
+import { verifyAuth } from './actions';
 import createMemo from './Memo';
 import { dispatch } from './appStore';
 
-import { emitUserOnlineStatus } from './functions/utils';
+import { emitUserOnlineStatus } from './utils';
+import { AuthState, FetchState } from './types';
+import { setWindowWidth } from './actions';
 
 const Memo = createMemo();
 
 const App = (props: any) => {
   const { signout, auth } = props;
   const { status: authStatus, isAuthenticated } = auth;
+
+  React.useEffect(() => {
+    //verify auth to keep user logged in assuming page is refreshed/reloaded
+    dispatch(verifyAuth());
+
+    window.onresize = () => {
+      // Attepmt to fix test-build error/failure
+      if (setWindowWidth) {
+        dispatch(setWindowWidth(window.innerWidth));
+      }
+
+      if (window.innerWidth > 767) {
+        document.body.dataset.hideNav = '' + false;
+      }
+    };
+    window.onresize(window as any);
+  }, []);
 
   if (authStatus === 'pending' || signout?.status === 'pending') {
     return <Loader />;
@@ -39,10 +54,13 @@ const App = (props: any) => {
                     '/about',
                     '/support',
                     '/profile/:id',
-                    '/@:userId',
-                    '/@:userId/colleagues',
+                    '/@:username',
+                    '/@:username/colleagues',
                     '/search',
                     '/p/:id',
+                    '/questions',
+                    '/question/:id',
+                    '/chat/:convoId',
                     '/*'
                   ]
                 : ['/home', '/search']
@@ -62,8 +80,9 @@ const App = (props: any) => {
               '/index',
               '/about',
               '/profile/:id',
-              '/@:userId',
-              '/@:userId/colleagues',
+              '/@:username',
+              '/@:username/colleagues',
+              '/p/:id',
               '/support',
               '/*'
             ]}
@@ -78,9 +97,6 @@ const App = (props: any) => {
   );
 };
 
-//verify auth to keep user logged in assuming page is refreshed/reloaded
-dispatch(verifyAuth()(dispatch));
-
 window.ononline = () => {
   emitUserOnlineStatus(true, false, { open: true })();
 };
@@ -89,7 +105,13 @@ window.onoffline = () => {
   emitUserOnlineStatus(false, true)();
 };
 
-const mapStateToProps = ({ auth, signout }: any) => {
+const mapStateToProps = ({
+  auth,
+  signout
+}: {
+  auth: AuthState;
+  signout: FetchState<any>;
+}) => {
   return { auth, signout };
 };
 

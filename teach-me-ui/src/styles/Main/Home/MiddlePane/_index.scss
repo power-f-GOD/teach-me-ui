@@ -1,0 +1,9 @@
+.feeds-scroll-observer {
+  // @include debugger();
+  position: absolute;
+  bottom: 0;
+  height: 125vh;
+  min-height: 40rem;
+  left: 0;
+  pointer-events: none;
+}

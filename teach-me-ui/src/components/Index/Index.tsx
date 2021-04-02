@@ -4,43 +4,42 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 
-import Nav from '../crumbs/Nav';
+import { Nav, Footer, Gallery } from '../crumbs';
 import About from './About';
 import Landing from './Landing';
 import Support from './Support';
-import Footer from '../crumbs/Footer';
 import _404 from './_404';
-import Search from '../Main/Search';
 import Profile from '../Main/Profile';
-import ProfileRedirect from '../Main/ProfileRedirect';
+import Home from '../Main/Home';
 
 const Index = (props: any) => {
   React.useEffect(() => () => window.scrollTo(0, 0), []);
 
-  if (props.location.search) {
-    return <Redirect to={`/home${props.location.search}`} />;
+  if (props.location.search && !/^\/chat/.test(props.location.pathname)) {
+    return <Redirect to={`/search?q=${props.location.search.slice(1)}`} />;
   }
 
   return (
     <Grid className='index-root-grid custom-scroll-bar fade-in'>
-      <Nav for='index' />
+      <Nav location={props.location} />
 
       <Box className='index-root-box'>
         <Switch>
+          <Route path='/p/:id' component={Home} />
           <Route path={['/', '/index']} exact component={Landing} />
           <Route path='/about' component={About} />
           <Route path='/support' component={Support} />
-          <Route path={['/search/:query', '/search']} component={Search} />
+          <Route path={['/search/:query', '/search']} component={Home} />
           <Route
-            path={['/@:userId', '/@:userId/colleagues']}
+            path={['/@:username', '/@:username/colleagues', '/profile/:id']}
             component={Profile}
           />
-          <Route path={'/profile/:id'} component={ProfileRedirect} />
           <Route component={_404} />
         </Switch>
       </Box>
 
       <Footer />
+      <Gallery location={props.location} />
     </Grid>
   );
 };

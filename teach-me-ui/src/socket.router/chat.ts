@@ -1,13 +1,12 @@
-import queryString from 'query-string';
-
 import {
   APIMessageResponse,
   UserData,
   APIConversationResponse,
   FetchState,
-  ChatSocketMessageResponse
-} from '../constants/interfaces';
-import { getState, dispatch } from '../functions/utils';
+  ChatSocketMessageResponse,
+  NotificationSoundState
+} from '../types';
+import { getState, dispatch, promisedDispatch } from '../utils';
 import {
   CHAT_NEW_MESSAGE,
   CHAT_MESSAGE_DELIVERED,
@@ -21,7 +20,12 @@ import {
   conversations,
   conversation,
   conversationsMessages
-} from '../actions/chat';
+} from '../actions/main/chat';
+import { triggerNotificationSound } from '../actions';
+import {
+  TONE_TYPE__INCOMING_MESSAGE,
+  TONE_TYPE__OUTGOING_MESSAGE
+} from '../constants';
 
 let userTypingTimeout: any = null;
 let conversationTypingTimeouts: any = {};
@@ -31,17 +35,24 @@ export default function chat(message: Partial<ChatSocketMessageResponse>) {
     webSocket: socket,
     userData,
     conversation: _conversation,
-    conversationMessages: _conversationMessages
+    conversationMessages: _conversationMessages,
+    notificationSound
   } = getState() as {
     webSocket: WebSocket;
     userData: UserData;
     conversation: APIConversationResponse;
     conversationMessages: FetchState<APIMessageResponse[]>;
+    notificationSound: NotificationSoundState;
   };
   const { id: convoId, unread_count } = _conversation ?? {};
-  const { cid, chat } = queryString.parse(window.location.search) ?? {};
+  const { pathname, search } = window.location;
+  const [cid, chat, activePaneIndex] = [
+    pathname.split('/').slice(-1)[0],
+    /\/chat/.test(pathname),
+    +search.slice(1)
+  ];
   const userId = userData.id;
-  const [isOpen, isMinimized] = [!!chat, chat === 'm2'];
+  const [isOpen, isMinimized] = [chat, activePaneIndex !== 1];
 
   if (socket) {
     const {
@@ -61,10 +72,12 @@ export default function chat(message: Partial<ChatSocketMessageResponse>) {
       pipe
     };
 
-    // console.log(pipe, message);
-
     switch (pipe) {
       case CHAT_NEW_MESSAGE:
+        const toneType: NotificationSoundState['toneType'] =
+          type === 'outgoing'
+            ? TONE_TYPE__OUTGOING_MESSAGE
+            : TONE_TYPE__INCOMING_MESSAGE;
         let willEmitDelivered = false;
         let willEmitSeen = false;
 
@@ -98,6 +111,10 @@ export default function chat(message: Partial<ChatSocketMessageResponse>) {
                   pipe: CHAT_READ_RECEIPT
                 })
               );
+
+              // updateConversation(convoId, {
+              //   unread_count: 0
+              // });
             } else {
               if (convoId === conversation_id && convoId) {
                 updateConversation(convoId, {
@@ -107,6 +124,7 @@ export default function chat(message: Partial<ChatSocketMessageResponse>) {
             }
           } else {
             if (convoId === conversation_id && convoId) {
+              // console.log(convoId)
               updateConversation(convoId, {
                 last_read: message.date,
                 unread_count: 0
@@ -137,6 +155,17 @@ export default function chat(message: Partial<ChatSocketMessageResponse>) {
             })
           );
         }
+
+        if (notificationSound.isPlaying) {
+          promisedDispatch(
+            triggerNotificationSound({ play: false, isPlaying: false })
+          ).then(() => {
+            dispatch(triggerNotificationSound({ play: true, toneType }));
+          });
+        } else {
+          dispatch(triggerNotificationSound({ play: true, toneType }));
+        }
+
         break;
       case CHAT_MESSAGE_DELIVERED:
         if (delivered_to) {
@@ -169,6 +198,7 @@ export default function chat(message: Partial<ChatSocketMessageResponse>) {
 
         if (user_id && cid === conversation_id) {
           dispatch(conversation(conversation_id!, { user_typing: user_id }));
+
           userTypingTimeout = setTimeout(() => {
             dispatch(conversation(conversation_id!, { user_typing: '' }));
           }, 500);

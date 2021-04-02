@@ -1,0 +1,89 @@
+.Profile {
+  @media screen and (max-width: 575px) {
+    .nav-bar-wrapper {
+      margin-bottom: 0.125em;
+    }
+  }
+
+  @media screen and (min-width: 576px) {
+    .nav-bar-wrapper {
+      top: 6rem;
+      transform: translateY(-50%);
+    }
+
+    .nav-bar {
+      transform: translateX(calc(50vw - 50%));
+      width: max-content;
+      border-radius: 0.75rem;
+    }
+
+    .InfoCard {
+      &.header {
+        width: calc(100% - 2rem);
+        margin-left: 1rem;
+      }
+    }
+  }
+
+  @media screen and (min-width: 768px) {
+    .nav-bar-wrapper {
+      // @include debugger();
+      top: 6.75rem;
+      width: 100%;
+
+      @media screen and (max-width: 991px) {
+        &.observee-is-sticking {
+          width: (7/12 * 100%);
+          padding-right: 0.25rem;
+          // transform: translateY(-50%);
+
+          .nav-bar {
+            width: 100%;
+            transform: translateX(0.5rem);
+          }
+        }
+      }
+    }
+
+    .InfoCard {
+      &.header {
+        width: 100%;
+        margin-left: unset;
+      }
+    }
+  }
+
+  @media screen and (min-width: 992px) {
+    .middle-pane-wrapper {
+      transform: translateY(-5.25rem);
+    }
+
+    .nav-bar-wrapper {
+      top: 10.25rem;
+      transform: unset;
+      width: calc(100% + 1rem);
+      margin-bottom: 1.75rem;
+    }
+
+    .nav-bar {
+      transform: translate(-0.5rem);
+      width: 100%;
+    }
+  }
+
+  @media screen and (min-width: 1301px) {
+    header {
+      .change-cover-photo-button {
+        right: calc(50vw - (1300px / 2) + 0.75rem);
+      }
+    }
+
+    .Post {
+      .reaction-wrapper {
+        &:last-child {
+          max-width: 22%;
+        }
+      }
+    }
+  }
+}

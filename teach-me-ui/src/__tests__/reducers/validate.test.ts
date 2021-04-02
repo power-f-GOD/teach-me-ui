@@ -1,8 +1,8 @@
 import { cleanup } from '@testing-library/react';
 
 import {
-  firstname,
-  lastname,
+  first_name,
+  last_name,
   password,
   email,
   username,
@@ -14,14 +14,13 @@ import {
   signinId,
   signinPassword
 } from '../../reducers/validate';
+import { basicInputState } from '../../constants';
 import {
-  basicInputState,
-  institutionInputState,
   BasicInputState,
   ReduxAction,
   SearchState,
   InstitutionInputState
-} from '../../constants';
+} from '../../types';
 
 afterEach(cleanup);
 
@@ -40,10 +39,10 @@ it("validate reducers should be called with 'state' and 'action' and return obje
     payload: { ...mockInputState, helperText: 'New helper text.' }
   };
   const firstnameMockFunc = jest.fn(
-    (state: BasicInputState, action: ReduxAction) => firstname(state, action)
+    (state: BasicInputState, action: ReduxAction) => first_name(state, action)
   );
   const lastnameMockFunc = jest.fn(
-    (state: BasicInputState, action: ReduxAction) => lastname(state, action)
+    (state: BasicInputState, action: ReduxAction) => last_name(state, action)
   );
   const usernameMockFunc = jest.fn(
     (state: BasicInputState, action: ReduxAction) => username(state, action)
@@ -62,11 +61,10 @@ it("validate reducers should be called with 'state' and 'action' and return obje
       institution(state, action)
   );
   const departmentMockFunc = jest.fn(
-    (state: BasicInputState, action: ReduxAction) =>
-      department(state, action)
+    (state: BasicInputState, action: ReduxAction) => department(state, action)
   );
-  const levelMockFunc = jest.fn(
-    (state: BasicInputState, action: ReduxAction) => level(state, action)
+  const levelMockFunc = jest.fn((state: BasicInputState, action: ReduxAction) =>
+    level(state, action)
   );
   const matchingInstitutionsMockFunc = jest.fn(
     (state: SearchState, action: ReduxAction) =>
@@ -82,13 +80,13 @@ it("validate reducers should be called with 'state' and 'action' and return obje
 
   firstnameMockFunc(basicInputState, action);
   expect(firstnameMockFunc).toHaveBeenCalledWith(basicInputState, action);
-  expect(firstname(<BasicInputState>mockInputState, action)).toMatchObject(
+  expect(first_name(<BasicInputState>mockInputState, action)).toMatchObject(
     basicInputState
   );
 
   lastnameMockFunc(basicInputState, action);
   expect(lastnameMockFunc).toHaveBeenCalledWith(basicInputState, action);
-  expect(lastname(<BasicInputState>mockInputState, action)).toMatchObject(
+  expect(last_name(<BasicInputState>mockInputState, action)).toMatchObject(
     basicInputState
   );
 

@@ -1,4 +1,4 @@
-import { ChatState } from './interfaces';
+import { ChatState } from '../types';
 
 export const SET_CHAT_STATE = 'SET_CHAT_STATE';
 
@@ -11,12 +11,14 @@ export const ONE_TO_ONE = 'ONE_TO_ONE';
 export const ONE_TO_MANY = 'ONE_TO_MANY';
 
 export const GET_CONVERSATION_MESSAGES = 'GET_CHAT_MESSAGES';
-export const GET_CONVERSATIONS_MESSAGES = 'GET_CHATS_MESSAGES';
 export const SET_CONVERSATION_MESSAGES = 'SET_CHATS_MESSAGES';
+export const GET_CONVERSATIONS_MESSAGES = 'GET_CHATS_MESSAGES';
 export const SET_CONVERSATIONS_MESSAGES = 'SET_CONVERSATIONS_MESSAGES';
 export const GET_CONVERSATION_INFO = 'GET_CONVERSATION_INFO';
 export const SET_CONVERSATION_INFO = 'SET_CONVERSATION_INFO';
 export const SET_CONVERSATION = 'SET_CONVERSATION';
+export const GET_CONVERSATION_WITH = 'GET_CONVERSATION_WITH';
+export const SET_CONVERSATION_WITH = 'SET_CONVERSATION_WITH';
 
 export const REQUEST_DELETE_MESSAGE = 'REQUEST_DELETE_MESSAGE';
 export const DELETE_MESSAGE = 'DELETE_MESSAGE';
@@ -37,7 +39,7 @@ export const CHAT_MESSAGE_DELETED = 'CHAT_MESSAGE_DELETED';
 export const CHAT_MESSAGE_DELETED_FOR = 'CHAT_MESSAGE_DELETED_FOR';
 
 export const chatStateProps: ChatState = {
-  queryString: window.location.pathname,
+  pathname: '',
   isOpen: false,
-  isMinimized: false
+  queryParam: ''
 };

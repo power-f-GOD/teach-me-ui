@@ -42,7 +42,7 @@
 }
 
 .fade-out {
-  animation: fadeOut 0.3s ease;
+  animation: fadeOut 0.35s;
 }
 
 @keyframes fadeOut {
@@ -54,11 +54,20 @@
   }
 }
 
-.slide-in-right {
-  animation: slideInRight 1s ease;
+.rotate-infinitely {
+  animation: rotate 2s infinite linear;
 }
 
-@keyframes slideInRight {
+@keyframes rotate {
+  from {
+    transform: rotateZ(0);
+  }
+  to {
+    transform: rotateZ(360deg);
+  }
+}
+
+@keyframes slideInRightScale {
   from {
     opacity: 0;
     transform: translateX(200%) scale(2);
@@ -69,8 +78,21 @@
   }
 }
 
+.slide-in-right {
+  animation: slideInRight 0.5s cubic-bezier(0, 1, 0.15, 1); // cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
 .slide-in-left {
-  animation: slideInLeft 1s ease;
+  animation: slideInLeft 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 @keyframes slideInLeft {
@@ -83,7 +105,7 @@
 }
 
 .slide-out {
-  animation: slideOut 0.75s forwards ease;
+  animation: slideOut 0.5s forwards ease;
 }
 
 @keyframes slideOut {
@@ -107,7 +129,7 @@
 }
 
 .slide-in-top {
-  animation: slideInTop 0.35s;
+  animation: slideInTop 0.5s cubic-bezier(0, 1, 0.15, 1);
 }
 
 @keyframes slideInTop {
@@ -121,14 +143,16 @@
   }
 }
 
+.slide-in-bottom {
+  animation: slideInBottom 0.5s;
+}
+
 @keyframes slideInBottom {
   from {
     transform: translateY(100%);
-    opacity: 0;
   }
   to {
     transform: translateY(0);
-    opacity: 1;
   }
 }
 
@@ -228,7 +252,7 @@
 
 .hide {
   transition: opacity 0.35s;
-  transition-delay: 0.275s;
+  transition-delay: 0.25s;
   // visibility: hidden;
   opacity: 0 !important;
   pointer-events: none;
@@ -236,7 +260,7 @@
 
 .show {
   transition: opacity 0.35s;
-  transition-delay: 0.275s;
+  transition-delay: 0.25s;
   // visibility: visible;
   opacity: 1 !important;
 }

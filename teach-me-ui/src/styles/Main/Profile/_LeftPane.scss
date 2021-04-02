@@ -1,0 +1,19 @@
+@import '../../constants';
+
+.Profile {
+  // @include debugger($color: green);
+  // background-color: #ddd;
+  position: relative;
+  min-height: 100vh;
+
+  .info-name {
+    color: $theme-tertiary-v6;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+
+  .info-value {
+    font-weight: 500;
+    font-size: 1.1rem;
+  }
+}

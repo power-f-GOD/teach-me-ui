@@ -1,0 +1,49 @@
+@import '../../constants';
+
+.Profile {
+  // @include debugger($color: green);
+  // background-color: #ddd;
+  position: relative;
+  min-height: 100vh;
+
+  //////////////////////
+
+  .view-request-button {
+    font-size: 0.925rem;
+    padding: 0.3rem 1.25rem !important;
+    min-height: unset;
+    margin-right: 0.5rem;
+
+    &.delete {
+      background-color: $theme-tertiary-v5;
+    }
+  }
+
+  .request-avatar {
+    height: 5rem;
+    width: 5rem;
+  }
+
+  .colleague-nav {
+    display: flex;
+    border-bottom: 0.5px solid #eee;
+
+    div {
+      padding: 1rem 1rem;
+      margin: 0 0.5rem;
+      cursor: pointer;
+
+      &.active {
+        color: #00537e;
+        border-bottom: 2px solid #00537e;
+      }
+    }
+  }
+
+  //////////////////////
+
+  .MuiFormHelperText-root {
+    margin: 0 0.15rem;
+    min-height: 1.35rem;
+  }
+}

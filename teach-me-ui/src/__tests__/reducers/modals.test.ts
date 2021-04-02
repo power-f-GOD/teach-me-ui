@@ -1,13 +1,7 @@
 import { cleanup } from '@testing-library/react';
 
-import {
-  ReduxAction,
-  ModalState,
-  modalState,
-  SHOW_MODAL,
-  HIDE_MODAL, 
-  CREATE_POST
-} from '../../constants';
+import { modalState, SHOW_MODAL, HIDE_MODAL, MAKE_POST } from '../../constants';
+import { ReduxAction, ModalState } from '../../types';
 import { modal } from '../../reducers/modals';
 
 afterEach(cleanup);
@@ -23,7 +17,7 @@ it("modals reducers should be called with 'state' and 'action' params and return
     payload: {
       ...modalState,
       open: true,
-      type: CREATE_POST,
+      type: MAKE_POST,
       meta: { title: 'Create Post' }
     }
   };

@@ -1,10 +1,10 @@
 import { ChangeEvent } from 'react';
 
-import * as actions from '../actions/validate';
-import { getState, dispatch } from './utils';
+import * as actions from '../actions/auth/validate';
+import { getState, dispatch } from '../utils';
 import { refs as signupRefs } from '../components/Auth/Signup';
 import { requestSignup } from '../actions';
-import { SignupFormData, SignupPropsState } from '../constants';
+import { SignupFormData, SignupPropsState } from '../types';
 
 export function handleSignupInputChange({
   target
@@ -12,9 +12,9 @@ export function handleSignupInputChange({
   let { id, value } = target;
 
   switch (id) {
-    case 'firstname':
+    case 'first_name':
       return dispatch(actions.validateFirstname({ value }));
-    case 'lastname':
+    case 'last_name':
       return dispatch(actions.validateLastname({ value }));
     case 'username':
       return dispatch(actions.validateUsername({ value }));
@@ -28,7 +28,7 @@ export function handleSignupInputChange({
       let uid = target.dataset?.uid;
 
       return dispatch(
-        actions.validateInstitution({ value: { keyword: value, uid } })
+        actions.validateInstitution({ value: { keyword: value, uid: uid } })
       );
     case 'department':
       return dispatch(actions.validateDepartment({ value }));
@@ -39,10 +39,7 @@ export function handleSignupInputChange({
 
 export function handleSignupRequest() {
   let signupFormValidated = true;
-  const {
-    institution: _institution,
-    matchingInstitutions
-  } = getState();
+  const { institution: _institution, matchingInstitutions } = getState();
 
   for (const key in signupRefs) {
     const event = {
@@ -83,8 +80,8 @@ export function handleSignupRequest() {
   }
 
   const {
-    firstname,
-    lastname,
+    first_name,
+    last_name,
     username,
     email,
     dob,
@@ -95,8 +92,8 @@ export function handleSignupRequest() {
   } = (getState() as unknown) as SignupPropsState;
 
   if (
-    firstname.err ||
-    lastname.err ||
+    first_name.err ||
+    last_name.err ||
     username.err ||
     email.err ||
     dob.err ||
@@ -109,8 +106,8 @@ export function handleSignupRequest() {
   }
 
   let formData: SignupFormData = {
-    firstname: firstname.value as string,
-    lastname: lastname.value as string,
+    first_name: first_name.value as string,
+    last_name: last_name.value as string,
     username: username.value as string,
     email: email.value as string,
     dob: dob.value as string,

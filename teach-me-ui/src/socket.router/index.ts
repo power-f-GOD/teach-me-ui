@@ -4,7 +4,7 @@ import chat from './chat';
 import misc from './misc';
 
 import { getState } from '../functions';
-import { SocketPipe } from '../constants';
+import { SocketPipe } from '../types';
 
 export default function activateSocketRouters() {
   const socket: WebSocket = getState().webSocket;
@@ -25,7 +25,8 @@ export default function activateSocketRouters() {
 
     switch (true) {
       case pipe.startsWith('POST_'):
-        post(message);
+        // console.log('Post pipe response:', message);
+        if (!message.error) post(message);
         break;
       case pipe.startsWith('PING_'):
         notifications(message);

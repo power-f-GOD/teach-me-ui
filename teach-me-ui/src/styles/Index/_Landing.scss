@@ -2,7 +2,7 @@
 
 .Landing {
   position: relative;
-  background-color: #fff;
+  background-color: #eee;
 
   * {
     position: relative;
@@ -94,9 +94,9 @@
       position: relative;
       border: none !important;
 
-      &.animate {
-        animation: ripple 2.25s infinite ease-out;
-      }
+      // &.animate {
+      //   animation: ripple 2.25s infinite ease-out;
+      // }
 
       @keyframes ripple {
         from {

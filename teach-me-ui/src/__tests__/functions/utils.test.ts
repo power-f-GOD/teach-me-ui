@@ -12,7 +12,7 @@ import {
   countNewNotifications,
   getCharacterSequenceFromText
 } from '../../functions';
-import { ReduxAction, UserData } from '../../constants';
+import { ReduxAction, UserData } from '../../types';
 
 afterEach(cleanup);
 
@@ -64,8 +64,8 @@ it("populateStateWithUserData should be called with 'user data' as param and ret
     type: 'POPULATE_STATE_WITH_USER_DATA'
   };
   let userData: UserData = {
-    firstname: 'John',
-    lastname: 'Doe',
+    first_name: 'John',
+    last_name: 'Doe',
     displayName: 'John Doe',
     email: 'johndoe@gmail.com',
     username: 'johndoe',
@@ -87,7 +87,7 @@ it("logError should be called with an 'action' as param and return undefined.", 
   let action = (): ReduxAction => ({
     type: 'SIGNIN_USER'
   });
-  let error = { message: 'A sample error occurred.' };
+  let error = { message: 'A sample error occurred.' } as Error;
   let mockFunc = jest.fn();
 
   logError(mockFunc(action) || action)(mockFunc(error) || error);
@@ -96,16 +96,20 @@ it("logError should be called with an 'action' as param and return undefined.", 
   expect(logError(action)(error)).toBeUndefined();
 });
 
-
 it('checks if function to count new notifications acts accordingly', () => {
   expect(countNewNotifications([])).toBe(0);
-  expect(countNewNotifications([{},{},{seen: 78}])).toBe(2);
-  expect(countNewNotifications([{seen: 67}])).toBe(0);
+  expect(countNewNotifications([{}, {}, { seen: 78 }])).toBe(2);
+  expect(countNewNotifications([{ seen: 67 }])).toBe(0);
 });
 
 it('checks if functions for getting mentions and hashtags acts accordingly', () => {
-  expect(getCharacterSequenceFromText('@backend, @prince', '@')).toStrictEqual(['backend', 'prince']);
-  expect(getCharacterSequenceFromText('#bnbnb #hhhhh, #bnnm6*', '#')).toStrictEqual(['#bnbnb', '#hhhhh']);
+  expect(getCharacterSequenceFromText('@backend, @prince', '@')).toStrictEqual([
+    'backend',
+    'prince'
+  ]);
+  expect(
+    getCharacterSequenceFromText('#bnbnb #hhhhh, #bnnm6*', '#')
+  ).toStrictEqual(['#bnbnb', '#hhhhh']);
   expect(getCharacterSequenceFromText('', '#')).toStrictEqual([]);
   expect(getCharacterSequenceFromText('', '@')).toStrictEqual([]);
 });

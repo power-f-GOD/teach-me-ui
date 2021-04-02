@@ -1,0 +1,127 @@
+.recommendation {
+  background-color: white;
+  border-radius: 1rem;
+  height: 17rem;
+  position: relative;
+  width: 12rem;
+  overflow: hidden;
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+  transition: 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  &,
+  * {
+    text-decoration: unset !important;
+    color: inherit;
+  }
+
+  &.no-photo {
+    .display-name-wrapper {
+      color: inherit;
+      text-shadow: unset;
+    }
+
+    &:hover,
+    &:focus {
+      .profile-photo {
+        background-color: #ddd;
+      }
+    }
+
+    .profile-photo {
+      transform: translateY(-4.15rem) !important;
+
+      &::before {
+        opacity: 0;
+      }
+    }
+  }
+
+  &.null {
+    background-color: #eee;
+    transform: unset !important;
+    box-shadow: unset !important;
+  }
+
+  &:hover,
+  &:focus {
+    .profile-photo {
+      transform: translateY(0);
+
+      &::before {
+        opacity: 0;
+      }
+    }
+  }
+
+  .profile-photo {
+    height: 100%;
+    transform: translateY(-4.15rem);
+    position: relative;
+    z-index: 1;
+    background: {
+      size: cover;
+      position: center;
+      color: #eee;
+    }
+    transition: 0.25s;
+
+    &::before {
+      @include before-or-after($zi: 0, $tr: 0.25s, $o: 0.4, $bg: black);
+    }
+  }
+
+  .display-name-wrapper {
+    display: flex;
+    position: absolute;
+    bottom: 0.75rem;
+    left: 0.75rem;
+    padding-right: 0.75rem;
+    flex-direction: column;
+    color: white;
+    text-shadow: 0 0 0.125rem rgba(0, 0, 0, 0.85);
+  }
+
+  .display-name {
+    font-size: 1.25rem;
+  }
+
+  .username {
+    min-height: 1.5rem;
+  }
+
+  .info {
+    display: block;
+    padding: 0.05rem 0.75rem;
+    overflow: hidden;
+    min-height: 1.5rem;
+    width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .academic {
+    position: absolute;
+    bottom: 0.65rem;
+  }
+
+  .institution {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    color: $theme-tertiary-v5;
+    width: calc(100% - 0.75rem);
+  }
+
+  .department {
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-top: -0.25rem;
+    padding-left: 2.25rem;
+    width: calc(100% - 0.75rem);
+  }
+
+  svg {
+    color: $theme-tertiary-v7;
+    margin-bottom: -0.25rem;
+  }
+}

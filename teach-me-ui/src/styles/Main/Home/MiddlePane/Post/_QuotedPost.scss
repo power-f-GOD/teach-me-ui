@@ -1,0 +1,31 @@
+$pad-x: 1.1em;
+
+.QuotedPost {
+  border-radius: $pad-x - 0.125em;
+  border: 0.125rem solid #ddd;
+  padding: 0.125em 0.3em;
+  margin: $pad-x;
+  // margin-right: $pad-x + 0.25em !important;
+  margin-top: 0;
+  width: calc(100% - #{$pad-x * 2});
+  cursor: pointer;
+  font-size: 0.9rem;
+  background: rgba(0, 0, 0, 0.035);
+
+  .header {
+    a {
+      color: inherit;
+    }
+  }
+
+  .post-avatar {
+    $size: 2.15em;
+
+    height: $size;
+    width: $size;
+  }
+
+  .post-text {
+    white-space: pre-line;
+  }
+}

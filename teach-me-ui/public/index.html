@@ -1,14 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- google analytics -->
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H45YFQTCNQ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-H45YFQTCNQ');
+    </script>
     <meta charset="utf-8" />
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#00537e" id='theme-color' />
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <meta name="theme-color" content="rgb(0, 90, 135)" id="theme-color" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="upgrade-insecure-requests"
+    />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <!-- <link id='font-cdn' rel="stylesheet" href="https://fonts.googleapis.com/css?family=Google+Sans|Roboto|Roboto+Mono|Material+Icons" /> -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,600,700,800,900|Audiowide&display=swap" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,600,700,800,900|Audiowide&display=swap"
+    />
+
+    <script>
+      setTimeout(function () {
+        document.head.insertAdjacentHTML(
+          'afterbegin',
+          '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />'
+        );
+      }, 100);
+    </script>
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -20,7 +44,7 @@
     -->
     <title>Kanyimuta</title>
   </head>
-  <body class='custom-scroll-bar'>
+  <body class="custom-scroll-bar">
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root" class="custom-scroll-bar"></div>
     <script src="https://cdn.jsdelivr.net/npm/inert-polyfill@0.2.5/inert-polyfill.min.js"></script>

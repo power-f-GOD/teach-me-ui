@@ -6,7 +6,8 @@ import {
   SET_CONVERSATIONS,
   SET_CONVERSATION_MESSAGES,
   SET_CONVERSATION,
-  SET_CONVERSATIONS_MESSAGES
+  SET_CONVERSATIONS_MESSAGES,
+  SET_CONVERSATION_WITH
 } from '../constants/chat';
 import {
   ChatState,
@@ -15,7 +16,7 @@ import {
   ConversationsMessages,
   APIConversationResponse,
   ReduxActionV2
-} from '../constants/interfaces';
+} from '../types';
 import { searchState } from '../constants';
 
 export const conversations = (
@@ -54,6 +55,20 @@ export const conversation = (
     return {
       ...(Object.keys(action.payload!).length ? state : {}),
       friendship: action.payload?.friendship,
+      ...action.payload
+    };
+  }
+
+  return state;
+};
+
+export const conversationWith = (
+  state = {} as Partial<APIConversationResponse>,
+  action: ReduxActionV2<Partial<APIConversationResponse>>
+): Partial<APIConversationResponse> => {
+  if (action.type === SET_CONVERSATION_WITH) {
+    return {
+      ...state,
       ...action.payload
     };
   }

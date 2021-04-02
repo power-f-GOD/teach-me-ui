@@ -1,74 +1,5 @@
-// InfoCard style(s)
-
-.InfoCard {
-  width: 100%;
-  display: inline-block;
-  max-width: 32rem;
-  position: relative;
-  overflow: hidden;
-  margin-bottom: 1.5rem;
-  background: transparent;
-  border-radius: 1.25rem;
-
-  path {
-    stroke: transparent;
-    fill: $theme-primary-v6;
-  }
-
-  hr {
-    height: 0.0625rem;
-    width: calc(100% - 0.8rem);
-    margin-left: 0.45rem;
-    background: #eee;
-  }
-
-  [class*='info-section-wrapper'] {
-    min-width: 200%;
-    display: flex;
-    position: relative;
-  }
-
-  [class*='-info-wrapper'] {
-    width: 50%;
-    transition: opacity 0.25s;
-    opacity: 1;
-    position: relative;
-
-    &.hide {
-      position: absolute;
-      // visibility: hidden;
-      opacity: 0;
-    }
-  }
-
-  .card-title {
-    margin: 0;
-    font-size: 1.2rem;
-    font-weight: 600;
-  }
-
-  .info-name {
-    color: $theme-tertiary-v6;
-    text-transform: uppercase;
-    margin-bottom: 0.25rem;
-  }
-
-  .info-value {
-    font-weight: 500;
-    font-size: 1.05rem;
-  }
-}
-
-.cursor-pointer {
-  cursor: pointer;
-}
-
 .upload-progress {
   color: green;
-}
-
-.read-notifications-date {
-  color: #888;
 }
 
 .unread-notifications-date {
@@ -77,10 +8,6 @@
 
 .unread-notifications {
   color: #000;
-}
-
-.read-notifications {
-  color: #888;
 }
 
 .no-space {
@@ -114,59 +41,19 @@
   background-color: inherit;
 }
 
-.padding-left-0.4 {
-  padding-left: 0.4em;
-}
-
 .first-skeleton {
   padding-top: 0.6rem;
 }
 
-// Loader
-
-.ellipsis-loader {
-  display: block;
-  text-align: center;
-  position: relative;
-  opacity: 0;
-  transition: 0.3s;
-
-  &.show {
-    opacity: 1;
-  }
-
-  .dot {
-    height: 0.5rem;
-    width: 0.5rem;
-    background: $theme-primary-v6;
-    display: inline-block;
-    border-radius: 50%;
-    box-shadow: 0.0625rem 0.0625rem 0.0625rem rgba(0, 0, 0, 0.2);
-    margin-right: 0.5rem;
-    animation: ellipsisScale 1.35s infinite forwards;
-    opacity: 0;
-
-    &:nth-of-type(2) {
-      animation-delay: 0.2s;
-    }
-
-    &:nth-of-type(3) {
-      animation-delay: 0.4s;
-    }
+.text-decoration-none {
+  &:hover {
+    text-decoration: none !important;
   }
 }
 
-@keyframes ellipsisScale {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(0.5);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+.global-divider {
+  background-image: none;
+  background-color: #eee;
+  height: 0.0625rem !important;
+  border-radius: 1rem;
 }
