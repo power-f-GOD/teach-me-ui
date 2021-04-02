@@ -1,6 +1,6 @@
 # Teach Me UI 
 
-Teach Me is an online learning app that helps connect Universities, lecturers and students for a better education and learning experience. This project [Teach Me UI], as the name implies, is for the UI \[Front-end\] of Teach Me project which is live at [https://teach-me-ui.herokuapp.com](https://teach-me-ui.herokuapp.com/).
+Teach Me is an online learning app that helps connect Universities, lecturers and students for a better education and learning experience. This project [Teach Me UI], as the name implies, is for the UI \[Front-end\] of Teach Me project.
 
 ### Getting Started 
 
