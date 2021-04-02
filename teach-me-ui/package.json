@@ -24,7 +24,7 @@
     "@types/react-test-renderer": "^16.9.3",
     "@types/redux": "^3.6.0",
     "autoprefixer": "^9.8.6",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "draft-js": "^0.11.7",
     "draft-js-hashtag-plugin": "^2.0.4",
     "draft-js-linkify-plugin": "^2.0.2",
