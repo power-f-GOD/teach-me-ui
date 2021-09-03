@@ -36,7 +36,7 @@
     "enzyme-to-json": "^3.6.1",
     "eslint": "^6.8.0",
     "gsap": "^3.6.0",
-    "immer": "^6.0.9",
+    "immer": "^9.0.6",
     "jest-dom": "^4.0.0",
     "moment": "^2.29.1",
     "postcss-cli": "^7.1.2",
